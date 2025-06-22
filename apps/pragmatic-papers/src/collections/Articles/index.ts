@@ -90,6 +90,15 @@ export const Articles: CollectionConfig = {
       },
     },
     {
+      name: 'category',
+      type: 'relationship',
+      admin: {
+        position: 'sidebar',
+      },
+      relationTo: 'categories',
+      required: true,
+    },
+    {
       name: 'authors',
       type: 'relationship',
       admin: {

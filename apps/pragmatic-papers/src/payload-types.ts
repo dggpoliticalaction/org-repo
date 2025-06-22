@@ -753,6 +753,7 @@ export interface Article {
     [k: string]: unknown;
   };
   publishedAt?: string | null;
+  category: number | Category;
   authors?: (number | User)[] | null;
   populatedAuthors?:
     | {
@@ -1200,6 +1201,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   heroImage?: T;
   content?: T;
   publishedAt?: T;
+  category?: T;
   authors?: T;
   populatedAuthors?:
     | T
