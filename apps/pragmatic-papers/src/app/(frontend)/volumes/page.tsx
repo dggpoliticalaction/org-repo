@@ -17,7 +17,7 @@ export default async function Page() {
   const volumes = await payload.find({
     collection: 'volumes',
     depth: 1,
-    limit: 12,
+    limit: 6,
     overrideAccess: false,
     select: {
       title: true,
