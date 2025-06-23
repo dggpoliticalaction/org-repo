@@ -23,10 +23,16 @@ export const config = [
       "quotes": ["error", "single", { "avoidEscape": true }],
       "semi": ["error", "always"],
       "comma-dangle": ["error", "always-multiline"],
-      "no-console": ["warn"],
+      // Allow console.warn and console.error until we set up something like sentry
+      "no-console": ["warn", { "allow": ["warn", "error"] }],
       "no-debugger": ["warn"],
       "no-alert": ["warn"],
-      "no-unused-vars": ["warn"],
+      "no-unused-vars": "off", // Turn off base rule as it can report incorrect errors
+      "@typescript-eslint/no-unused-vars": ["warn", { 
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }],
       "prefer-const": ["error"],
       "object-curly-spacing": ["error", "always"],
       "array-bracket-spacing": ["error", "never"],
