@@ -12,6 +12,8 @@ export const Button = ({ children, className, appName }: ButtonProps) => {
   return (
     <button
       className={className}
+      
+      // eslint-disable-next-line no-alert
       onClick={() => alert(`Hello from your ${appName} app!`)}
     >
       {children}
