@@ -48,14 +48,3 @@ jobs:
 
       - name: Check Prettier formatting
         run: pnpm prettier:check
-
-      - name: Run Prettier formatting
-        run: pnpm format
-
-      - name: Check for changes
-        run: |
-          if [[ -n "$(git status --porcelain)" ]]; then
-            echo "Prettier made changes. Please run 'pnpm format' locally and commit the changes."
-            git diff
-            exit 1
-          fi
