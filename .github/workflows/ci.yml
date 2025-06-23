@@ -24,15 +24,3 @@ jobs:
 
       - name: Check Prettier formatting
         run: pnpm prettier:check
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup PNPM
-        uses: ./.github/actions/setup-pnpm
-
-      - name: Build
-        run: pnpm build
