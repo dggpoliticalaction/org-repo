@@ -14,6 +14,10 @@ const defaultCollectionLabels = {
     plural: 'Articles',
     singular: 'Article',
   },
+  volumes: {
+    plural: 'Volumes',
+    singular: 'Volume',
+  },
 }
 
 export const PageRange: React.FC<{

@@ -63,8 +63,8 @@ export const Entry: React.FC<{
 
   return (
     <article className={cn('overflow-hidden hover:cursor-pointer', className)} ref={entry.ref}>
-      <div className="p-4 group">
-        <div className="text-left">
+      <div className="group">
+        <div className="text-left text-sm">
           <span className="pe-2">Volume {toRoman(volumeNumber)}</span>
           <span className="text-brandLight">{dateToString(Date.parse(publishedAt))}</span>
         </div>
@@ -72,7 +72,7 @@ export const Entry: React.FC<{
           {titleToUse && (
             <h3 className="my-6">
               <Link
-                className="text-3xl group-hover:text-brandLight transition-colors"
+                className="text-3xl font-bold group-hover:text-brandLight transition-colors"
                 href={href}
                 ref={link.ref}
               >

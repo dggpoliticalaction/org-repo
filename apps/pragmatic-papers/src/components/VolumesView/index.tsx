@@ -11,7 +11,7 @@ export const VolumesView: React.FC<Props> = (props) => {
   const { volumes } = props
 
   return (
-    <div className={cn('container')}>
+    <div className={cn('m-auto max-w-xl w-3/4')}>
       <div>
         <div className="grid grid-cols-1 gap-4">
           {volumes?.map((result, index) => {
