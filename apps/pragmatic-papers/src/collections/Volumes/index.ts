@@ -35,26 +35,65 @@ export const Volumes: CollectionConfig = {
       required: true,
     },
     {
-      name: 'volumeNumber',
-      type: 'number',
-      required: true,
+      type: 'tabs',
+      tabs: [
+        {
+          fields: [
+            {
+              name: 'volumeNumber',
+              type: 'number',
+              admin: {
+                position: 'sidebar',
+              },
+              required: true,
+            },
+            {
+              name: 'description',
+              type: 'textarea',
+              required: true,
+            },
+            {
+              name: 'editorsNote',
+              type: 'richText',
+              editor: lexicalEditor({
+                features: ({ rootFeatures }) => {
+                  return [
+                    ...rootFeatures,
+                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+                    BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
+                    FixedToolbarFeature(),
+                    InlineToolbarFeature(),
+                    HorizontalRuleFeature(),
+                  ]
+                },
+              }),
+              label: "Editor's Note",
+            },
+
+          ],
+          label: 'content',
+        },
+      ],
     },
     {
-      name: 'editorsNote',
-      type: 'richText',
-      editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-            BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-            HorizontalRuleFeature(),
-          ]
+      name: 'publishedAt',
+      type: 'date',
+      admin: {
+        date: {
+          pickerAppearance: 'dayAndTime',
         },
-      }),
-      label: "Editor's Note",
+        position: 'sidebar',
+      },
+      hooks: {
+        beforeChange: [
+          ({ siblingData, value }) => {
+            if (siblingData._status === 'published' && !value) {
+              return new Date()
+            }
+            return value
+          },
+        ],
+      },
     },
     ...numberSlugField('volumeNumber'),
   ],
