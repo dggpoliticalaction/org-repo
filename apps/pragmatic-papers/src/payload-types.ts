@@ -778,6 +778,7 @@ export interface Volume {
   id: number;
   title: string;
   volumeNumber: number;
+  description: string;
   editorsNote?: {
     root: {
       type: string;
@@ -793,6 +794,7 @@ export interface Volume {
     };
     [k: string]: unknown;
   } | null;
+  publishedAt?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -1258,7 +1260,9 @@ export interface ArticlesSelect<T extends boolean = true> {
 export interface VolumesSelect<T extends boolean = true> {
   title?: T;
   volumeNumber?: T;
+  description?: T;
   editorsNote?: T;
+  publishedAt?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;

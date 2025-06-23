@@ -1,0 +1,64 @@
+import type { Metadata } from 'next/types'
+
+import { PageRange } from '@/components/PageRange'
+import { Pagination } from '@/components/Pagination'
+import configPromise from '@payload-config'
+import { getPayload } from 'payload'
+import React from 'react'
+import PageClient from './page.client'
+import { VolumesView } from '@/components/VolumesView'
+
+export const dynamic = 'force-static'
+export const revalidate = 600
+
+export default async function Page() {
+  const payload = await getPayload({ config: configPromise })
+
+  const volumes = await payload.find({
+    collection: 'volumes',
+    depth: 1,
+    limit: 12,
+    overrideAccess: false,
+    select: {
+      title: true,
+      slug: true,
+      description: true,
+      volumeNumber: true,
+      publishedAt: true,
+    },
+  })
+
+  return (
+    <div className="pt-24 pb-24">
+      <PageClient />
+      <div className="container mb-16">
+        <div className="prose dark:prose-invert max-w-none">
+          <h1>Volumes</h1>
+        </div>
+      </div>
+
+      <VolumesView volumes={volumes.docs} />
+
+      <div className="container mb-8">
+        <PageRange
+          collection="posts"
+          currentPage={volumes.page}
+          limit={6}
+          totalDocs={volumes.totalDocs}
+        />
+      </div>
+
+      <div className="container">
+        {volumes.totalPages > 1 && volumes.page && (
+          <Pagination page={volumes.page} totalPages={volumes.totalPages} />
+        )}
+      </div>
+    </div>
+  )
+}
+
+export function generateMetadata(): Metadata {
+  return {
+    title: `Payload Website Template Posts`,
+  }
+}
