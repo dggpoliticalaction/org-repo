@@ -1,13 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
-  "globalEnv": [
-        "VERCEL_PROJECT_PRODUCTION_URL",
-        "PREVIEW_SECRET",
-        "DATABASE_URI",
-        "PAYLOAD_SECRET",
-        "CRON_SECRET"
-      ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
