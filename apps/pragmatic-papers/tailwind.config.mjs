@@ -1,5 +1,6 @@
 import tailwindcssAnimate from 'tailwindcss-animate'
 import typography from '@tailwindcss/typography'
+import tailwindcssTextStroke from '@designbycode/tailwindcss-text-stroke'
 
 /** @type {import('tailwindcss').Config} */
 const config = {
@@ -10,7 +11,7 @@ const config = {
     './src/**/*.{ts,tsx}',
   ],
   darkMode: ['selector', '[data-theme="dark"]'],
-  plugins: [tailwindcssAnimate, typography],
+  plugins: [tailwindcssAnimate, typography, tailwindcssTextStroke],
   prefix: '',
   safelist: [
     'lg:col-span-4',
