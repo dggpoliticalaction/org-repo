@@ -70,6 +70,7 @@ export interface Config {
     pages: Page;
     posts: Post;
     articles: Article;
+    volumes: Volume;
     media: Media;
     categories: Category;
     users: User;
@@ -87,6 +88,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
+    volumes: VolumesSelect<false> | VolumesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -769,6 +771,20 @@ export interface Article {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "volumes".
+ */
+export interface Volume {
+  id: number;
+  title: string;
+  volumeNumber: number;
+  attachedArticles?: (number | Article)[] | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -951,6 +967,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'articles';
         value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'volumes';
+        value: number | Volume;
       } | null)
     | ({
         relationTo: 'media';
@@ -1214,6 +1234,19 @@ export interface ArticlesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "volumes_select".
+ */
+export interface VolumesSelect<T extends boolean = true> {
+  title?: T;
+  volumeNumber?: T;
+  attachedArticles?: T;
+  slug?: T;
+  slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
