@@ -99,6 +99,15 @@ export const Articles: CollectionConfig = {
       required: true,
     },
     {
+      name: 'volume',
+      type: 'relationship',
+      admin: {
+        position: 'sidebar',
+      },
+      relationTo: 'volumes',
+      required: true,
+    },
+    {
       name: 'authors',
       type: 'relationship',
       admin: {

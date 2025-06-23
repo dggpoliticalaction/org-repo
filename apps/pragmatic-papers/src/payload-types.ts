@@ -756,6 +756,7 @@ export interface Article {
   };
   publishedAt?: string | null;
   category: number | Category;
+  volume: number | Volume;
   authors?: (number | User)[] | null;
   populatedAuthors?:
     | {
@@ -777,7 +778,21 @@ export interface Volume {
   id: number;
   title: string;
   volumeNumber: number;
-  attachedArticles?: (number | Article)[] | null;
+  editorsNote?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -1222,6 +1237,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   content?: T;
   publishedAt?: T;
   category?: T;
+  volume?: T;
   authors?: T;
   populatedAuthors?:
     | T
@@ -1242,7 +1258,7 @@ export interface ArticlesSelect<T extends boolean = true> {
 export interface VolumesSelect<T extends boolean = true> {
   title?: T;
   volumeNumber?: T;
-  attachedArticles?: T;
+  editorsNote?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
