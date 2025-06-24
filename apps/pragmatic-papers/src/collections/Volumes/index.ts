@@ -69,7 +69,6 @@ export const Volumes: CollectionConfig = {
               }),
               label: "Editor's Note",
             },
-
           ],
           label: 'content',
         },
