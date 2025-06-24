@@ -20,8 +20,9 @@ const blockComponents = {
 
 export const RenderBlocks: React.FC<{
   blocks: Page['layout'][0][]
+  searchParamsPromise: Promise<{ p?: string }>
 }> = (props) => {
-  const { blocks } = props
+  const { blocks, searchParamsPromise } = props
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
@@ -31,7 +32,18 @@ export const RenderBlocks: React.FC<{
         {blocks.map((block, index) => {
           const { blockType } = block
 
-          if (blockType && blockType in blockComponents) {
+          if (blockType == 'volumeView') {
+            return (
+              <div className="my-16" key={index}>
+                <VolumeViewBlock
+                  {...block}
+                  id={block.id ?? undefined}
+                  searchParamsPromise={searchParamsPromise}
+                  blockType={'volumeView'}
+                />
+              </div>
+            )
+          } else if (blockType && blockType in blockComponents) {
             const Block = blockComponents[blockType]
 
             if (Block) {

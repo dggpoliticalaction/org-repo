@@ -12,17 +12,25 @@ import { PaginationVolumes } from '@/components/PaginationVolumes'
 export const VolumeViewBlock: React.FC<
   VolumeBlockProps & {
     id?: string
+    searchParamsPromise: Promise<{ p?: string }>
   }
 > = async (props) => {
-  const { id, introContent, populateBy, selectedDocs } = props
+  const { id, introContent, populateBy, selectedDocs, searchParamsPromise } = props
 
   if (populateBy === 'collection') {
     const payload = await getPayload({ config: configPromise })
 
+    const { p: pageNumber } = await searchParamsPromise
+
+    let sanitizedPageNumber = Number(pageNumber)
+
+    if (!Number.isInteger(sanitizedPageNumber)) sanitizedPageNumber = 0
+
     const volumes = await payload.find({
       collection: 'volumes',
       depth: 1,
-      limit: 6,
+      limit: 1,
+      page: sanitizedPageNumber,
       overrideAccess: false,
       select: {
         title: true,
@@ -47,7 +55,7 @@ export const VolumeViewBlock: React.FC<
           <PageRange
             collection="volumes"
             currentPage={volumes.page}
-            limit={6}
+            limit={1}
             totalDocs={volumes.totalDocs}
           />
         </div>

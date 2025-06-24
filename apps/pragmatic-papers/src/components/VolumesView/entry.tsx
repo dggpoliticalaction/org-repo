@@ -28,14 +28,18 @@ function toRoman(x: number) {
   // the largest smaller base value
   let i = base.length - 1
   while (x > 0) {
-    let div = Math.floor(x / base[i])
-    while (div) {
-      res += sym[i]
-      div--
+    if (typeof base[i] !== 'undefined') {
+      let div = Math.floor(x / base[i]!)
+      while (div) {
+        res += sym[i]
+        div--
+      }
     }
 
     // Repeat the process for remainder
-    x %= base[i]
+    if (typeof base[i] !== 'undefined') {
+      x %= base[i] as number
+    }
     i--
   }
 
@@ -64,8 +68,10 @@ export const Entry: React.FC<{
     <article className={cn('overflow-hidden hover:cursor-pointer', className)} ref={entry.ref}>
       <div className="group">
         <div className="text-left text-sm">
-          <span className="pe-2">Volume {toRoman(volumeNumber)}</span>
-          <span className="text-brandLight">{dateToString(Date.parse(publishedAt))}</span>
+          <span className="pe-2">Volume {toRoman(volumeNumber ?? 1)}</span>
+          <span className="text-brandLight">
+            {publishedAt ? dateToString(Date.parse(publishedAt)) : ''}
+          </span>
         </div>
         <div className="text-justify">
           {titleToUse && (
