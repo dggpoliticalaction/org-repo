@@ -7,16 +7,14 @@ import RichText from '@/components/RichText'
 
 import { VolumesView } from '@/components/VolumesView'
 import { PageRange } from '@/components/PageRange'
-import { Pagination } from '@/components/Pagination'
+import { PaginationVolumes } from '@/components/PaginationVolumes'
 
 export const VolumeViewBlock: React.FC<
   VolumeBlockProps & {
     id?: string
   }
 > = async (props) => {
-  const { id, introContent, limit: limitFromProps, populateBy, selectedDocs } = props
-
-  const limit = limitFromProps || 3
+  const { id, introContent, populateBy, selectedDocs } = props
 
   if (populateBy === 'collection') {
     const payload = await getPayload({ config: configPromise })
@@ -24,7 +22,7 @@ export const VolumeViewBlock: React.FC<
     const volumes = await payload.find({
       collection: 'volumes',
       depth: 1,
-      limit,
+      limit: 6,
       overrideAccess: false,
       select: {
         title: true,
@@ -33,6 +31,7 @@ export const VolumeViewBlock: React.FC<
         volumeNumber: true,
         publishedAt: true,
       },
+      sort: '-volumeNumber',
     })
 
     return (
@@ -48,14 +47,14 @@ export const VolumeViewBlock: React.FC<
           <PageRange
             collection="volumes"
             currentPage={volumes.page}
-            limit={limit}
+            limit={6}
             totalDocs={volumes.totalDocs}
           />
         </div>
 
         <div className="container">
           {volumes.totalPages > 1 && volumes.page && (
-            <Pagination page={volumes.page} totalPages={volumes.totalPages} />
+            <PaginationVolumes page={volumes.page} totalPages={volumes.totalPages} />
           )}
         </div>
       </div>
