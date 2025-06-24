@@ -5,7 +5,10 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "lint:ci": "turbo run lint -- --max-warnings 0",
+    "lint:fix": "turbo run lint -- --fix",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "prettier:check": "prettier --check \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
@@ -16,5 +19,10 @@
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=18"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
   }
 }

@@ -1,6 +1,7 @@
 import type { RequiredDataFromCollectionSlug } from 'payload'
 import type { Media } from '@/payload-types'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type HomeArgs = {
   heroImage: Media
   metaImage: Media

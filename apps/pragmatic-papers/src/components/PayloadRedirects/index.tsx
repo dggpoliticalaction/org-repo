@@ -14,6 +14,7 @@ interface Props {
 export const PayloadRedirects: React.FC<Props> = async ({ disableNotFound, url }) => {
   const redirects = await getCachedRedirects()()
 
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   const redirectItem = redirects.find((redirect) => redirect.from === url)
 
   if (redirectItem) {

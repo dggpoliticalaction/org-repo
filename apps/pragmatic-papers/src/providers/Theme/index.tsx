@@ -15,6 +15,7 @@ const initialContext: ThemeContextType = {
 
 const ThemeContext = createContext(initialContext)
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setThemeState] = useState<Theme | undefined>(
     canUseDOM ? (document.documentElement.getAttribute('data-theme') as Theme) : undefined,

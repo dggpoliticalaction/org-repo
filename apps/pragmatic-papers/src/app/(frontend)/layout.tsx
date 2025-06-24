@@ -16,6 +16,7 @@ import { draftMode } from 'next/headers'
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
 

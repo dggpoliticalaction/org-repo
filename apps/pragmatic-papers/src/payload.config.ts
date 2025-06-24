@@ -3,6 +3,7 @@ import { sqliteAdapter } from '@payloadcms/db-sqlite'
 
 import sharp from 'sharp' // sharp-import
 import path from 'path'
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 

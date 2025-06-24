@@ -2,6 +2,7 @@ import type { CheckboxField, TextField } from 'payload'
 
 import { formatSlugHook } from './formatSlug'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Overrides = {
   slugOverrides?: Partial<TextField>
   checkboxOverrides?: Partial<CheckboxField>
@@ -24,6 +25,7 @@ export const slugField: Slug = (fieldToUse = 'title', overrides = {}) => {
   }
 
   // @ts-expect-error - ts mismatch Partial<TextField> with TextField
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   const slugField: TextField = {
     name: 'slug',
     type: 'text',

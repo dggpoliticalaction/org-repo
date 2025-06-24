@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { BeforeSync, DocToSync } from '@payloadcms/plugin-search/types'
 
 export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searchDoc }) => {

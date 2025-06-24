@@ -2,6 +2,7 @@ import React from 'react'
 
 import { Code } from './Component.client'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type CodeBlockProps = {
   code: string
   language?: string

@@ -11,6 +11,7 @@ import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type FormBlockType = {
   blockName?: string
   blockType?: 'formBlock'

@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { RequiredDataFromCollectionSlug } from 'payload'
 import type { PostArgs } from './post-1'
 

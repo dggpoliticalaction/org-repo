@@ -11,12 +11,14 @@ import { notFound } from 'next/navigation'
 
 export const revalidate = 600
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Args = {
   params: Promise<{
     pageNumber: string
   }>
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function Page({ params: paramsPromise }: Args) {
   const { pageNumber } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
@@ -69,6 +71,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
   const { totalDocs } = await payload.count({

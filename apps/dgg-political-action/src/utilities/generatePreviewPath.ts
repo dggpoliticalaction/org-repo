@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { PayloadRequest, CollectionSlug } from 'payload'
 
 const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
@@ -5,12 +6,14 @@ const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
   pages: '',
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Props = {
   collection: keyof typeof collectionPrefixMap
   slug: string
   req: PayloadRequest
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const generatePreviewPath = ({ collection, slug }: Props) => {
   const encodedParams = new URLSearchParams({
     slug,

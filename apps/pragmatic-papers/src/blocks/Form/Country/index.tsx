@@ -46,6 +46,7 @@ export const Country: React.FC<
                 <SelectValue placeholder={label} />
               </SelectTrigger>
               <SelectContent>
+                {/* eslint-disable-next-line @typescript-eslint/no-shadow */}
                 {countryOptions.map(({ label, value }) => {
                   return (
                     <SelectItem key={value} value={value}>

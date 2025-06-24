@@ -81,15 +81,19 @@ export const seed = async ({
   payload.logger.info(`— Seeding media...`)
 
   const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post1.webp',
     ),
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post2.webp',
     ),
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post3.webp',
     ),
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-hero1.webp',
     ),

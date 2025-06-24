@@ -5,6 +5,7 @@ import { cn } from '@/utilities/ui'
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
 import * as React from 'react'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
   <nav
     aria-label="pagination"
@@ -29,6 +30,7 @@ type PaginationLinkProps = {
 } & Pick<ButtonProps, 'size'> &
   React.ComponentProps<'button'>
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const PaginationLink = ({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) => (
   <button
     aria-current={isActive ? 'page' : undefined}
@@ -46,6 +48,7 @@ const PaginationLink = ({ className, isActive, size = 'icon', ...props }: Pagina
 const PaginationPrevious = ({
   className,
   ...props
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink
     aria-label="Go to previous page"
@@ -58,6 +61,7 @@ const PaginationPrevious = ({
   </PaginationLink>
 )
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink
     aria-label="Go to next page"
@@ -70,6 +74,7 @@ const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof Pag
   </PaginationLink>
 )
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const PaginationEllipsis = ({ className, ...props }: React.ComponentProps<'span'>) => (
   <span
     aria-hidden

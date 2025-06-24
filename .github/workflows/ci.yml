@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup PNPM
+        uses: ./.github/actions/setup-pnpm
+        
+      - name: Run lint
+        run: pnpm lint:ci
+        
+      - name: Check Types
+        run: pnpm check-types 
+
+      - name: Check Prettier formatting
+        run: pnpm prettier:check

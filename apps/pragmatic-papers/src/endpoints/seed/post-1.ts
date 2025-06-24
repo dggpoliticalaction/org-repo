@@ -1,6 +1,8 @@
 import type { Media, User } from '@/payload-types'
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { RequiredDataFromCollectionSlug } from 'payload'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type PostArgs = {
   heroImage: Media
   blockImage: Media

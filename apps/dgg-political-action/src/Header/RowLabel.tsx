@@ -1,5 +1,7 @@
 'use client'
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Header } from '@/payload-types'
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { RowLabelProps, useRowLabel } from '@payloadcms/ui'
 
 export const RowLabel: React.FC<RowLabelProps> = () => {

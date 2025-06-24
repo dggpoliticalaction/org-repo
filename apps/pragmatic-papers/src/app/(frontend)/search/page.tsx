@@ -6,13 +6,16 @@ import { getPayload } from 'payload'
 import React from 'react'
 import { Search } from '@/search/Component'
 import PageClient from './page.client'
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { CardPostData } from '@/components/Card'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Args = {
   searchParams: Promise<{
     q: string
   }>
 }
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function Page({ searchParams: searchParamsPromise }: Args) {
   const { q: query } = await searchParamsPromise
   const payload = await getPayload({ config: configPromise })

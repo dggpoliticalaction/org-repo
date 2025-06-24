@@ -44,6 +44,7 @@ export const Select: React.FC<
                 <SelectValue placeholder={label} />
               </SelectTrigger>
               <SelectContent>
+                {/* eslint-disable-next-line @typescript-eslint/no-shadow */}
                 {options.map(({ label, value }) => {
                   return (
                     <SelectItem key={value} value={value}>

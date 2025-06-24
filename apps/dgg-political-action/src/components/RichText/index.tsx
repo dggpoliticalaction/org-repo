@@ -1,16 +1,19 @@
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import {
   DefaultNodeTypes,
   SerializedBlockNode,
   SerializedLinkNode,
   type DefaultTypedEditorState,
 } from '@payloadcms/richtext-lexical'
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import {
   JSXConvertersFunction,
   LinkJSXConverter,
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
 
 import type {
@@ -47,7 +50,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
         {...node.fields}
         captionClassName="mx-auto max-w-[48rem]"
         enableGutter={false}
-        disableInnerContainer={true}
+        disableInnerContainer
       />
     ),
     code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
@@ -61,6 +64,7 @@ type Props = {
   enableProse?: boolean
 } & React.HTMLAttributes<HTMLDivElement>
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function RichText(props: Props) {
   const { className, enableProse = true, enableGutter = true, ...rest } = props
   return (

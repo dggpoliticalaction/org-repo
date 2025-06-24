@@ -113,6 +113,7 @@ export const Posts: CollectionConfig<'posts'> = {
               admin: {
                 position: 'sidebar',
               },
+              // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
               filterOptions: ({ id }) => {
                 return {
                   id: {
@@ -175,6 +176,7 @@ export const Posts: CollectionConfig<'posts'> = {
       },
       hooks: {
         beforeChange: [
+          // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
           ({ siblingData, value }) => {
             if (siblingData._status === 'published' && !value) {
               return new Date()
