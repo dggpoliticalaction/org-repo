@@ -1,7 +1,7 @@
 import { cn } from '@/utilities/ui'
 import React from 'react'
 
-import type { Entry, EntryVolumeData } from './entry'
+import { Entry, type EntryVolumeData } from './entry'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type Props = {
