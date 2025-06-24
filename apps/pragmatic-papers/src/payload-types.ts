@@ -519,6 +519,7 @@ export interface VolumeView {
   } | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'volumes' | null;
+  limit?: number | null;
   selectedDocs?:
     | {
         relationTo: 'volumes';
@@ -1214,6 +1215,7 @@ export interface VolumeViewSelect<T extends boolean = true> {
   introContent?: T;
   populateBy?: T;
   relationTo?: T;
+  limit?: T;
   selectedDocs?: T;
   id?: T;
   blockName?: T;

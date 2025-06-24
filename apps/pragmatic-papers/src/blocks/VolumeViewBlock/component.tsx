@@ -15,11 +15,19 @@ export const VolumeViewBlock: React.FC<
     searchParamsPromise: Promise<{ p?: string }>
   }
 > = async (props) => {
-  const { id, introContent, populateBy, selectedDocs, searchParamsPromise } = props
+  const {
+    id,
+    introContent,
+    populateBy,
+    selectedDocs,
+    searchParamsPromise,
+    limit: limitFromProps,
+  } = props
 
   if (populateBy === 'collection') {
     const payload = await getPayload({ config: configPromise })
 
+    const limit = limitFromProps || 6
     const { p: pageNumber } = await searchParamsPromise
 
     let sanitizedPageNumber = Number(pageNumber)
@@ -29,7 +37,7 @@ export const VolumeViewBlock: React.FC<
     const volumes = await payload.find({
       collection: 'volumes',
       depth: 1,
-      limit: 1,
+      limit,
       page: sanitizedPageNumber,
       overrideAccess: false,
       select: {
@@ -55,7 +63,7 @@ export const VolumeViewBlock: React.FC<
           <PageRange
             collection="volumes"
             currentPage={volumes.page}
-            limit={1}
+            limit={limit}
             totalDocs={volumes.totalDocs}
           />
         </div>
