@@ -27,19 +27,6 @@ export const nextJsConfig = [
     },
     settings: { react: { version: "detect" } },
     rules: {
-      "@typescript-eslint/consistent-type-definitions": ["error"],
-      "@typescript-eslint/consistent-type-imports": [
-        "error",
-        { fixStyle: "inline-type-imports" },
-      ],
-      "@typescript-eslint/explicit-module-boundary-types": "error",
-      "@typescript-eslint/no-empty-function": "error",
-      "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/no-shadow": "error",
-      "@typescript-eslint/no-unused-vars": "error",
-      "@typescript-eslint/no-use-before-define": "error",
-      "@typescript-eslint/no-var-requires": "error",
-      "@typescript-eslint/prefer-ts-expect-error": "error",
       "react/jsx-key": "error",
       // React scope no longer necessary with new JSX transform.
       "react/react-in-jsx-scope": "off",

@@ -33,6 +33,18 @@ export const config = [
         "varsIgnorePattern": "^_",
         "caughtErrorsIgnorePattern": "^_"
       }],
+      "@typescript-eslint/consistent-type-definitions": ["error"],
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        { "fixStyle": "inline-type-imports" }
+      ],
+      "@typescript-eslint/explicit-module-boundary-types": "error",
+      "@typescript-eslint/no-empty-function": "error",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-shadow": "error",
+      "@typescript-eslint/no-use-before-define": "error",
+      "@typescript-eslint/no-var-requires": "error",
+      "@typescript-eslint/prefer-ts-expect-error": "error",
       "prefer-const": ["error"],
       "object-curly-spacing": ["error", "always"],
       "array-bracket-spacing": ["error", "never"],
