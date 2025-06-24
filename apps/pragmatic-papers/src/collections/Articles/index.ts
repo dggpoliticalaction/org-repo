@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload'
 
 import {
   BlocksFeature,
@@ -80,6 +80,7 @@ export const Articles: CollectionConfig = {
       },
       hooks: {
         beforeChange: [
+          // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
           ({ siblingData, value }) => {
             if (siblingData._status === 'published' && !value) {
               return new Date()

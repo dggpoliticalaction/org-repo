@@ -14,6 +14,7 @@ import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
   const articles = await payload.find({
@@ -34,16 +35,19 @@ export async function generateStaticParams() {
   return params
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Args = {
   params: Promise<{
     slug?: string
   }>
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function Article({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   const url = '/articles/' + slug
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   const article = await queryArticleBySlug({ slug })
 
   if (!article) return <PayloadRedirects url={url} />
@@ -70,6 +74,7 @@ export default async function Article({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   const article = await queryArticleBySlug({ slug })
 
   return generateMeta({ doc: article })

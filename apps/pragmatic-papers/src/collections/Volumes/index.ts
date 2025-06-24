@@ -86,6 +86,7 @@ export const Volumes: CollectionConfig = {
       },
       hooks: {
         beforeChange: [
+          // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
           ({ siblingData, value }) => {
             if (siblingData._status === 'published' && !value) {
               return new Date()

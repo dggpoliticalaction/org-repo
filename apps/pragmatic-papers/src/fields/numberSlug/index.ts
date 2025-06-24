@@ -2,6 +2,7 @@ import type { CheckboxField, TextField } from 'payload'
 
 import { formatSlugHook } from './formatSlug'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Overrides = {
   slugOverrides?: Partial<TextField>
   checkboxOverrides?: Partial<CheckboxField>
