@@ -1,4 +1,5 @@
 import type { CollectionAfterReadHook } from 'payload'
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { User } from 'src/payload-types'
 
 // The `user` collection has access control locked so that users are not publicly accessible
@@ -22,6 +23,7 @@ export const populateAuthors: CollectionAfterReadHook = async ({ doc, req: { pay
         }
 
         if (authorDocs.length > 0) {
+          // eslint-disable-next-line @typescript-eslint/no-shadow
           doc.populatedAuthors = authorDocs.map((authorDoc) => ({
             id: authorDoc.id,
             name: authorDoc.name,

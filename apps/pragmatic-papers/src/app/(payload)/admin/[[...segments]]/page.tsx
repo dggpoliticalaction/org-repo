@@ -6,6 +6,7 @@ import config from '@payload-config'
 import { RootPage, generatePageMetadata } from '@payloadcms/next/views'
 import { importMap } from '../importMap'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Args = {
   params: Promise<{
     segments: string[]
@@ -18,6 +19,7 @@ type Args = {
 export const generateMetadata = ({ params, searchParams }: Args): Promise<Metadata> =>
   generatePageMetadata({ config, params, searchParams })
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const Page = ({ params, searchParams }: Args) =>
   RootPage({ config, params, searchParams, importMap })
 

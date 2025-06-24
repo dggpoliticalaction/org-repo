@@ -51,9 +51,11 @@ export const SeedButton: React.FC = () => {
                     reject('An error occurred while seeding.')
                   }
                 })
+                // eslint-disable-next-line @typescript-eslint/no-shadow
                 .catch((error) => {
                   reject(error)
                 })
+              // eslint-disable-next-line @typescript-eslint/no-shadow
             } catch (error) {
               reject(error)
             }
@@ -65,6 +67,7 @@ export const SeedButton: React.FC = () => {
           },
         )
       } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/no-shadow
         const error = err instanceof Error ? err.message : String(err)
         setError(error)
       }

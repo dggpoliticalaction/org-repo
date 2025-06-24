@@ -18,6 +18,7 @@ const initialContext: ContextType = {
 
 const HeaderThemeContext = createContext(initialContext)
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const HeaderThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [headerTheme, setThemeState] = useState<Theme | undefined | null>(
     canUseDOM ? (document.documentElement.getAttribute('data-theme') as Theme) : undefined,

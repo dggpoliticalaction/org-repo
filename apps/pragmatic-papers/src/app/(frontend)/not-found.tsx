@@ -3,6 +3,7 @@ import React from 'react'
 
 import { Button } from '@/components/ui/button'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function NotFound() {
   return (
     <div className="container py-28">

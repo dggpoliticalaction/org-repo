@@ -1,5 +1,6 @@
 'use client'
 import React, { useCallback, useEffect } from 'react'
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { TextFieldClientProps } from 'payload'
 
 import { useField, Button, TextInput, FieldLabel, useFormFields, useForm } from '@payloadcms/ui'

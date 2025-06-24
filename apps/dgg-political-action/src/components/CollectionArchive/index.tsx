@@ -1,8 +1,10 @@
 import { cn } from '@/utilities/ui'
 import React from 'react'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Card, CardPostData } from '@/components/Card'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type Props = {
   posts: CardPostData[]
 }

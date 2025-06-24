@@ -2,6 +2,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function getRedirects(depth = 1) {
   const payload = await getPayload({ config: configPromise })
 
@@ -20,6 +21,7 @@ export async function getRedirects(depth = 1) {
  *
  * Cache all redirects together to avoid multiple fetches.
  */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getCachedRedirects = () =>
   unstable_cache(async () => getRedirects(), ['redirects'], {
     tags: ['redirects'],

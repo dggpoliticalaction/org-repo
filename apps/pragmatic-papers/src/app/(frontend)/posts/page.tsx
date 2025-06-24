@@ -11,6 +11,7 @@ import PageClient from './page.client'
 export const dynamic = 'force-static'
 export const revalidate = 600
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function Page() {
   const payload = await getPayload({ config: configPromise })
 

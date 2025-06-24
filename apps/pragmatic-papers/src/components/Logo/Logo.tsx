@@ -8,6 +8,7 @@ interface Props {
   priority?: 'auto' | 'high' | 'low'
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const Logo = (props: Props) => {
   const { loading: loadingFromProps, priority: priorityFromProps, className } = props
 

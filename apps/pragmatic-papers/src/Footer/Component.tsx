@@ -8,6 +8,7 @@ import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function Footer() {
   const footerData: Footer = await getCachedGlobal('footer', 1)()
 

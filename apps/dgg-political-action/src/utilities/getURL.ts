@@ -1,5 +1,6 @@
 import canUseDOM from './canUseDOM'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getServerSideURL = () => {
   let url = process.env.NEXT_PUBLIC_SERVER_URL
 
@@ -14,6 +15,7 @@ export const getServerSideURL = () => {
   return url
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getClientSideURL = () => {
   if (canUseDOM) {
     const protocol = window.location.protocol

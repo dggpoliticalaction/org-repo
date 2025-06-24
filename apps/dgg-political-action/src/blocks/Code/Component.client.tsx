@@ -3,6 +3,7 @@ import { Highlight, themes } from 'prism-react-renderer'
 import React from 'react'
 import { CopyButton } from './CopyButton'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Props = {
   code: string
   language?: string

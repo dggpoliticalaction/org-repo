@@ -5,6 +5,7 @@ import React from 'react'
 
 import type { Page, Post } from '@/payload-types'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type CMSLinkType = {
   appearance?: 'inline' | ButtonProps['variant']
   children?: React.ReactNode

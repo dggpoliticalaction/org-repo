@@ -15,6 +15,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
   const posts = await payload.find({
@@ -35,16 +36,19 @@ export async function generateStaticParams() {
   return params
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Args = {
   params: Promise<{
     slug?: string
   }>
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function Post({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   const url = '/posts/' + slug
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   const post = await queryPostBySlug({ slug })
 
   if (!post) return <PayloadRedirects url={url} />
@@ -66,6 +70,7 @@ export default async function Post({ params: paramsPromise }: Args) {
           {post.relatedPosts && post.relatedPosts.length > 0 && (
             <RelatedPosts
               className="mt-12 max-w-[52rem] lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"
+              // eslint-disable-next-line @typescript-eslint/no-shadow
               docs={post.relatedPosts.filter((post) => typeof post === 'object')}
             />
           )}
@@ -77,6 +82,7 @@ export default async function Post({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   const post = await queryPostBySlug({ slug })
 
   return generateMeta({ doc: post })

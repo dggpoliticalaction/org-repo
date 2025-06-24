@@ -4,6 +4,7 @@ import type { RefObject } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef } from 'react'
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type UseClickableCardType<T extends HTMLElement> = {
   card: {
     ref: RefObject<T | null>

@@ -13,6 +13,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
   const pages = await payload.find({
@@ -37,12 +38,14 @@ export async function generateStaticParams() {
   return params
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Args = {
   params: Promise<{
     slug?: string
   }>
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function Page({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = 'home' } = await paramsPromise
@@ -50,6 +53,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   let page: RequiredDataFromCollectionSlug<'pages'> | null
 
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   page = await queryPageBySlug({
     slug,
   })
@@ -81,6 +85,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = 'home' } = await paramsPromise
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   const page = await queryPageBySlug({
     slug,
   })

@@ -48,6 +48,7 @@ const getPostsSitemap = unstable_cache(
   },
 )
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function GET() {
   const sitemap = await getPostsSitemap()
 
