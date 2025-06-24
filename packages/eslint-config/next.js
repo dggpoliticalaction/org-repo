@@ -11,7 +11,7 @@ import { config as baseConfig } from "./base.js";
  * A custom ESLint configuration for libraries that use Next.js.
  *
  * @type {import("eslint").Linter.Config[]}
- * */
+ */
 export const nextJsConfig = [
   ...baseConfig,
   js.configs.recommended,
@@ -25,23 +25,22 @@ export const nextJsConfig = [
         ...globals.serviceworker,
       },
     },
-  },
-  {
-    plugins: {
-      "@next/next": pluginNext,
-    },
-    rules: {
-      ...pluginNext.configs.recommended.rules,
-      ...pluginNext.configs["core-web-vitals"].rules,
-    },
-  },
-  {
-    plugins: {
-      "react-hooks": pluginReactHooks,
-    },
     settings: { react: { version: "detect" } },
     rules: {
-      ...pluginReactHooks.configs.recommended.rules,
+      "@typescript-eslint/consistent-type-definitions": ["error"],
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        { fixStyle: "inline-type-imports" },
+      ],
+      "@typescript-eslint/explicit-module-boundary-types": "error",
+      "@typescript-eslint/no-empty-function": "error",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-shadow": "error",
+      "@typescript-eslint/no-unused-vars": "error",
+      "@typescript-eslint/no-use-before-define": "error",
+      "@typescript-eslint/no-var-requires": "error",
+      "@typescript-eslint/prefer-ts-expect-error": "error",
+      "react/jsx-key": "error",
       // React scope no longer necessary with new JSX transform.
       "react/react-in-jsx-scope": "off",
       // React specific rules
@@ -109,6 +108,23 @@ export const nextJsConfig = [
           ]
         }
       }],
+    },
+  },
+  {
+    plugins: {
+      "@next/next": pluginNext,
+    },
+    rules: {
+      ...pluginNext.configs.recommended.rules,
+      ...pluginNext.configs["core-web-vitals"].rules,
+    },
+  },
+  {
+    plugins: {
+      "react-hooks": pluginReactHooks,
+    },
+    rules: {
+      ...pluginReactHooks.configs.recommended.rules,
     },
   },
 ];
