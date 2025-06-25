@@ -18,7 +18,7 @@ export const VolumesView: React.FC<Props> = (props) => {
           {volumes?.map((result, index) => {
             if (typeof result === 'object' && result !== null) {
               return (
-                <div className="" key={index}>
+                <div className="pt-3" key={index}>
                   <Entry className="h-full" doc={result} relationTo="volumes" />
                 </div>
               )

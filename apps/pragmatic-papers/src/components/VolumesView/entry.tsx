@@ -9,6 +9,8 @@ import type { Volume } from '@/payload-types'
 import { formatWithOptions } from 'date-fns/fp'
 import { enUS } from 'date-fns/locale'
 
+import { SquiggleStatic } from '@/components/ui/squiggle'
+
 // import { Media } from '@/components/Media'
 
 export type EntryVolumeData = Pick<
@@ -88,6 +90,7 @@ export const Entry: React.FC<{
           {description && (
             <div className="my-3 text-gray-400">{description && <p>{sanitizedDescription}</p>}</div>
           )}
+          <SquiggleStatic />
         </div>
       </div>
     </article>
