@@ -59,7 +59,7 @@ export const VolumeViewBlock: React.FC<
         )}
         <VolumesView volumes={volumes.docs} />
 
-        <div className="container mb-8">
+        <div className="container mb-8 mt-6">
           <PageRange
             collection="volumes"
             currentPage={volumes.page}
