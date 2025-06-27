@@ -1,5 +1,6 @@
 import tailwindcssAnimate from 'tailwindcss-animate'
 import typography from '@tailwindcss/typography'
+import tailwindcssTextStroke from '@designbycode/tailwindcss-text-stroke'
 
 /** @type {import('tailwindcss').Config} */
 const config = {
@@ -10,7 +11,7 @@ const config = {
     './src/**/*.{ts,tsx}',
   ],
   darkMode: ['selector', '[data-theme="dark"]'],
-  plugins: [tailwindcssAnimate, typography],
+  plugins: [tailwindcssAnimate, typography, tailwindcssTextStroke],
   prefix: '',
   safelist: [
     'lg:col-span-4',
@@ -56,6 +57,11 @@ const config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
+        /* TODO: Move these definitions to shared styles */
+        brand: '#0080ff',
+        brandLight: '#56b0ff',
+        /* END */
+
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',

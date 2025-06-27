@@ -2,22 +2,23 @@ import type { Metadata } from 'next'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
-import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
+import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
-import { homeStatic } from '@/endpoints/seed/home-static'
 
-import { RenderBlocks } from '@/blocks/RenderBlocks'
-import { RenderHero } from '@/heros/RenderHero'
+import type { Article } from '@/payload-types'
+
+import { PostHero } from '@/heros/PostHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import RichText from '@/components/RichText'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
-  const pages = await payload.find({
-    collection: 'pages',
+  const articles = await payload.find({
+    collection: 'articles',
     draft: false,
     limit: 1000,
     overrideAccess: false,
@@ -27,13 +28,9 @@ export async function generateStaticParams() {
     },
   })
 
-  const params = pages.docs
-    ?.filter((doc) => {
-      return doc.slug !== 'home'
-    })
-    .map(({ slug }) => {
-      return { slug }
-    })
+  const params = articles.docs.map(({ slug }) => {
+    return { slug }
+  })
 
   return params
 }
@@ -43,73 +40,57 @@ type Args = {
   params: Promise<{
     slug?: string
   }>
-  searchParams: Promise<{
-    p?: string
-  }>
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default async function Page({
-  params: paramsPromise,
-  searchParams: searchParamsPromise,
-}: Args) {
+export default async function Article({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
-  const { slug = 'home' } = await paramsPromise
-  const url = '/' + slug
-
-  let page: RequiredDataFromCollectionSlug<'pages'> | null
-
+  const { slug = '' } = await paramsPromise
+  const url = '/articles/' + slug
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
-  page = await queryPageBySlug({
-    slug,
-  })
+  const article = await queryArticleBySlug({ slug })
 
-  // Remove this code once your website is seeded
-  if (!page && slug === 'home') {
-    page = homeStatic
-  }
-
-  if (!page) {
-    return <PayloadRedirects url={url} />
-  }
-
-  const { hero, layout } = page
+  if (!article) return <PayloadRedirects url={url} />
 
   return (
-    <article className="pb-24">
+    <article className="pt-16 pb-16">
       <PageClient />
+
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
 
-      <RenderHero {...hero} />
-      <RenderBlocks blocks={layout} searchParamsPromise={searchParamsPromise} />
+      <PostHero post={article} />
+
+      <div className="flex flex-col items-center gap-4 pt-8">
+        <div className="container">
+          <RichText className="max-w-[48rem] mx-auto" data={article.content} enableGutter={false} />
+        </div>
+      </div>
     </article>
   )
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = 'home' } = await paramsPromise
+  const { slug = '' } = await paramsPromise
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
-  const page = await queryPageBySlug({
-    slug,
-  })
+  const article = await queryArticleBySlug({ slug })
 
-  return generateMeta({ doc: page })
+  return generateMeta({ doc: article })
 }
 
-const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
 
   const payload = await getPayload({ config: configPromise })
 
   const result = await payload.find({
-    collection: 'pages',
+    collection: 'articles',
     draft,
     limit: 1,
-    pagination: false,
     overrideAccess: draft,
+    pagination: false,
     where: {
       slug: {
         equals: slug,
