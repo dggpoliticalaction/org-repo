@@ -818,7 +818,6 @@ export interface Article {
     [k: string]: unknown;
   };
   publishedAt?: string | null;
-  category: number | Category;
   volume: number | Volume;
   authors?: (number | User)[] | null;
   populatedAuthors?:
@@ -1285,7 +1284,6 @@ export interface ArticlesSelect<T extends boolean = true> {
   heroImage?: T;
   content?: T;
   publishedAt?: T;
-  category?: T;
   volume?: T;
   authors?: T;
   populatedAuthors?:
