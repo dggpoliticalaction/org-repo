@@ -1,7 +1,7 @@
 {
   "*/**/*.{js,jsx,ts,tsx}": [
     "prettier --write",
-    "eslint --fix --c apps/pragmatic-papers/eslint.config.mjs"
+    "eslint --fix --c apps/pragmatic-papers/eslint.config.mjs --max-warnings 0"
   ],
   "*/**/*.{json,css,md}": ["prettier --write"]
 }
