@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import {
   BlocksFeature,
@@ -9,7 +9,6 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
@@ -26,14 +25,18 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
+import { editorOrSelf, restrictWritersToDraftOnly } from '@/access/editorOrSelf'
+import { writer } from '@/access/writer'
+import { editorFieldLevel } from '@/access/editor'
+import { type Article } from '@/payload-types'
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: writer,
+    delete: editorOrSelf,
     read: authenticatedOrPublished,
-    update: authenticated,
+    update: restrictWritersToDraftOnly,
   },
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
@@ -55,6 +58,9 @@ export const Articles: CollectionConfig = {
         req,
       }),
     useAsTitle: 'title',
+    components: {
+      edit: {},
+    },
   },
   fields: [
     {
@@ -125,6 +131,9 @@ export const Articles: CollectionConfig = {
     {
       name: 'publishedAt',
       type: 'date',
+      access: {
+        update: editorFieldLevel,
+      },
       admin: {
         date: {
           pickerAppearance: 'dayAndTime',
@@ -161,6 +170,18 @@ export const Articles: CollectionConfig = {
       hasMany: true,
       relationTo: 'users',
     },
+    {
+      name: 'createdBy',
+      type: 'relationship',
+      relationTo: 'users',
+      access: {
+        update: () => false,
+      },
+      admin: {
+        readOnly: true,
+        hidden: true,
+      },
+    },
     // This field is only used to populate the user data via the `populateAuthors` hook
     // This is because the `user` collection has access control locked to protect user privacy
     // GraphQL will also not return mutated user data that differs from the underlying schema
@@ -188,6 +209,17 @@ export const Articles: CollectionConfig = {
     ...slugField(),
   ],
   hooks: {
+    beforeChange: [
+      (args: Parameters<CollectionBeforeChangeHook<Article>>[0]): Partial<Article> | void => {
+        const { req, operation, data } = args
+        if (operation === 'create') {
+          if (req.user) {
+            data.createdBy = req.user.id
+            return data
+          }
+        }
+      },
+    ],
     afterChange: [revalidateArticle],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],

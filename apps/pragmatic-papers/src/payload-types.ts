@@ -842,6 +842,7 @@ export interface Article {
   publishedAt?: string | null;
   volume: number | Volume;
   authors?: (number | User)[] | null;
+  createdBy?: (number | null) | User;
   populatedAuthors?:
     | {
         id?: string | null;
@@ -1280,6 +1281,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   publishedAt?: T;
   volume?: T;
   authors?: T;
+  createdBy?: T;
   populatedAuthors?:
     | T
     | {

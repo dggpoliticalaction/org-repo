@@ -9,21 +9,21 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-import { anyone } from '../../access/anyone'
-import { authenticated } from '../../access/authenticated'
 import { numberSlugField } from '@/fields/numberSlug'
 
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { editor } from '@/access/editor'
+import { anyone } from '@/access/anyone'
 
 export const Volumes: CollectionConfig = {
   slug: 'volumes',
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: editor,
+    delete: editor,
     read: anyone,
-    update: authenticated,
+    update: editor,
   },
   admin: {
     useAsTitle: 'title',
