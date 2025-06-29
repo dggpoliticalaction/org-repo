@@ -119,9 +119,26 @@ const config = {
             {
               '--tw-prose-body': 'var(--text)',
               '--tw-prose-headings': 'var(--text)',
+              fontFamily: 'var(--font-serif)',
               h1: {
                 fontWeight: 'normal',
                 marginBottom: '0.25em',
+              },
+              p: {
+                fontSize: '1.188rem',
+                lineHeight: '1.9rem',
+                fontWeight: '400',
+                letterSpacing: '-0.25px',
+                fontVariationSettings: '"opsz" 20',
+              },
+              a: {
+                boxShadow: 'inset 0 -2px 0 0 var(--brand)',
+                textDecoration: 'none',
+                color: 'inherit',
+                transition: 'box-shadow 0.2s ease-out',
+              },
+              'a:hover': {
+                boxShadow: 'inset 0 -11px 0 0 var(--brand-light)',
               },
             },
           ],
