@@ -13,15 +13,10 @@ export const editorOrSelf: Access = ({ req: { user } }) => {
   )
 }
 
-export const restrictWritersToDraftOnly: Access = ({ req: { user, data } }) => {
+export const restrictWritersToDraftOnly: Access = ({ req: { user }, data }) => {
   if (!user) {
     return false
   }
 
-  return (
-    isEditor(user) ||
-    (data?.status === 'draft' && {
-      createdBy: { equals: user.id },
-    })
-  )
+  return isEditor(user) || (data?._status !== 'published' && { createdBy: { equals: user.id } })
 }
