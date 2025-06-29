@@ -4,6 +4,7 @@ import { PayloadRequest, CollectionSlug } from 'payload'
 const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
   posts: '/posts',
   pages: '',
+  articles: '/articles',
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
