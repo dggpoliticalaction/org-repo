@@ -5,5 +5,9 @@ export const isAdmin = (user: User): boolean => {
 }
 
 export const isEditor = (user: User): boolean => {
-  return user.role === 'editor' || user.role === 'chief-editor'
+  return user.role === 'editor' || isAdmin(user)
+}
+
+export const isWriter = (user: User): boolean => {
+  return user.role === 'writer' || isEditor(user)
 }
