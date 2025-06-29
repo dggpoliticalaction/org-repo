@@ -1,18 +1,21 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
+import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { admin, adminFieldLevel } from '@/access/admins'
+import { adminOrSelf } from '@/access/adminOrSelf'
 
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
     admin: authenticated,
-    create: authenticated,
-    delete: authenticated,
+    create: admin,
+    delete: admin,
     read: authenticated,
-    update: authenticated,
+    update: adminOrSelf,
   },
   admin: {
-    defaultColumns: ['name', 'email'],
+    defaultColumns: ['name', 'role', 'email'],
     useAsTitle: 'name',
   },
   auth: true,
@@ -20,6 +23,43 @@ export const Users: CollectionConfig = {
     {
       name: 'name',
       type: 'text',
+    },
+    {
+      name: 'biography',
+      type: 'richText',
+      editor: lexicalEditor(),
+      required: false,
+    },
+    {
+      name: 'role',
+      type: 'select',
+      saveToJWT: true,
+      defaultValue: 'user',
+      access: {
+        update: adminFieldLevel,
+      },
+      options: [
+        {
+          label: 'Admin',
+          value: 'admin',
+        },
+        {
+          label: 'Chief Editor',
+          value: 'chief-editor',
+        },
+        {
+          label: 'Editor',
+          value: 'editor',
+        },
+        {
+          label: 'Writer',
+          value: 'writer',
+        },
+        {
+          label: 'User',
+          value: 'user',
+        },
+      ],
     },
   ],
   timestamps: true,

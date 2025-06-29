@@ -378,6 +378,22 @@ export interface Category {
 export interface User {
   id: number;
   name?: string | null;
+  biography?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'user') | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -1447,6 +1463,8 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  biography?: T;
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
