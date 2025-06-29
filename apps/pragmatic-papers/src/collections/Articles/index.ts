@@ -18,6 +18,7 @@ import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { slugField } from '@/fields/slug'
 import { revalidateArticle, revalidateDelete } from './hooks/revalidateArticle'
 import { populateAuthors } from './hooks/populateAuthors'
+import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
@@ -29,6 +30,24 @@ export const Articles: CollectionConfig = {
   },
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
+    livePreview: {
+      url: ({ data, req }) => {
+        const path = generatePreviewPath({
+          slug: typeof data?.slug === 'string' ? data.slug : '',
+          collection: 'articles',
+          req,
+        })
+
+        return path
+      },
+    },
+    preview: (data, { req }) =>
+      generatePreviewPath({
+        slug: typeof data?.slug === 'string' ? data.slug : '',
+        collection: 'articles',
+        req,
+      }),
+    useAsTitle: 'title',
   },
   fields: [
     {
