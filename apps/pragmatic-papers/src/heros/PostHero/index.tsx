@@ -1,48 +1,34 @@
 import React from 'react'
 
 import type { Post } from '@/payload-types'
-
-//import { Media } from '@/components/Media'
+import { Squiggle } from '@/components/ui/squiggle'
 import { formatAuthors } from '@/utilities/formatAuthors'
+import { formatDateTime } from '@/utilities/formatDateTime'
 
 export const PostHero: React.FC<{
   post: Post
 }> = ({ post }) => {
-  const { categories, populatedAuthors, publishedAt, title } = post
+  const { populatedAuthors, publishedAt, title } = post
+
+  const hasAuthors =
+    populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
 
   return (
     <div className="relative -mt-[6.4rem] flex items-end">
-      <div className="container z-10 relative text-white pb-8 flex-col">
-        <div className="uppercase text-sm mb-6">
-          {categories?.map((category, index) => {
-            if (typeof category === 'object' && category !== null) {
-              const { title: categoryTitle } = category
-
-              const titleToUse = categoryTitle || 'Untitled category'
-
-              const isLast = index === categories.length - 1
-
-              return (
-                <React.Fragment key={index}>
-                  {titleToUse}
-                  {!isLast && <React.Fragment>, &nbsp;</React.Fragment>}
-                </React.Fragment>
-              )
-            }
-            return null
-          })}
-        </div>
-
-        <div className="">
-          <h1 className="mb-6 text-4xl text-center font-bold">{title}</h1>
-        </div>
-      </div>
-      {/* <div className="min-h-[80vh] select-none">
-        {heroImage && typeof heroImage !== 'string' && (
-          <Media fill priority imgClassName="-z-10 object-cover" resource={heroImage} />
+      <div className="container z-10 relative text-white pb-4 flex-col">
+        <h1 className="mb-6 text-4xl text-center font-bold">{title}</h1>
+        {hasAuthors && (
+          <div className="text-center text-lg">
+            <p>by {formatAuthors(populatedAuthors)}</p>
+          </div>
         )}
-        <div className="absolute pointer-events-none left-0 bottom-0 w-full h-1/2 bg-gradient-to-t from-black to-transparent" />
-      </div> */}
+        {publishedAt && (
+          <div className="text-sm text-center italic">
+            <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
+          </div>
+        )}
+        <Squiggle className="w-1/2 h-6 mx-auto" />
+      </div>
     </div>
   )
 }

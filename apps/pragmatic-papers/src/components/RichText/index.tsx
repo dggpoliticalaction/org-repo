@@ -75,8 +75,7 @@ export default function RichText(props: Props) {
         {
           container: enableGutter,
           'max-w-none': !enableGutter,
-          'mx-auto prose md:prose-md dark:prose-invert [&_p]:text-lg font-serif font-normal':
-            enableProse,
+          'mx-auto prose md:prose-md dark:prose-invert': enableProse,
         },
         className,
       )}

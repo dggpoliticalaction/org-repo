@@ -13,8 +13,6 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
-import { formatAuthors } from '@/utilities/formatAuthors'
-import { formatDateTime } from 'src/utilities/formatDateTime'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function generateStaticParams() {
@@ -54,13 +52,8 @@ export default async function Article({ params: paramsPromise }: Args) {
 
   if (!article) return <PayloadRedirects url={url} />
 
-  const { populatedAuthors, publishedAt } = article
-
-  const hasAuthors =
-    populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
-
   return (
-    <article className="pt-16 pb-16">
+    <article className="pt-16 pb-16 max-w-3xl mx-auto">
       <PageClient />
 
       {/* Allows redirects for valid pages too */}
@@ -73,20 +66,6 @@ export default async function Article({ params: paramsPromise }: Args) {
       <div className="flex flex-col items-center gap-4 pt-8">
         <div className="container">
           <div className="flex flex-col gap-4 max-w-[48rem] mx-auto">
-            {hasAuthors && (
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm">By </p>
-
-                  <p>{formatAuthors(populatedAuthors)}</p>
-                </div>
-              </div>
-            )}
-            {publishedAt && (
-              <div className="flex flex-col gap-1 italic">
-                <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
-              </div>
-            )}
             <RichText className="" data={article.content} enableGutter={false} />
           </div>
         </div>

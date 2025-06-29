@@ -817,6 +817,14 @@ export interface Article {
     };
     [k: string]: unknown;
   };
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
   publishedAt?: string | null;
   volume: number | Volume;
   authors?: (number | User)[] | null;
@@ -1283,6 +1291,13 @@ export interface ArticlesSelect<T extends boolean = true> {
   title?: T;
   heroImage?: T;
   content?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   publishedAt?: T;
   volume?: T;
   authors?: T;
