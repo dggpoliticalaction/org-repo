@@ -15,14 +15,14 @@ import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { editor } from '@/access/editor'
-import { anyone } from '@/access/anyone'
+import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 
 export const Volumes: CollectionConfig = {
   slug: 'volumes',
   access: {
     create: editor,
     delete: editor,
-    read: anyone,
+    read: authenticatedOrPublished,
     update: editor,
   },
   admin: {
@@ -97,4 +97,13 @@ export const Volumes: CollectionConfig = {
     },
     ...numberSlugField('volumeNumber'),
   ],
+  versions: {
+    drafts: {
+      autosave: {
+        interval: 100, // We set this interval for optimal live preview
+      },
+      schedulePublish: true,
+    },
+    maxPerDoc: 50,
+  },
 }
