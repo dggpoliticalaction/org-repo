@@ -1,3 +1,1 @@
-pnpm lint:ci
-pnpm check-types
-pnpm prettier:check
+lint-staged

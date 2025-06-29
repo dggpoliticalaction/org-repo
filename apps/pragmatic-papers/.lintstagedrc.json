@@ -1,0 +1,7 @@
+{
+  "*/**/*.{js,jsx,ts,tsx}": [
+    "prettier --write",
+    "eslint --fix --c apps/pragmatic-papers/eslint.config.mjs"
+  ],
+  "*/**/*.{json,css,md}": ["prettier --write"]
+}
