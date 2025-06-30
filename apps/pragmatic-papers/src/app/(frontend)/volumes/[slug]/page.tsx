@@ -105,7 +105,7 @@ export default async function VolumePage({
   const articles = await queryArticlesByVolume({ volumeId: id })
 
   return (
-    <div className="pt-16 pb-16 max-w-2xl px-4 mx-auto">
+    <div className="pb-16 max-w-2xl px-4 mx-auto">
       <PageClient />
 
       {/* Allows redirects for valid pages too */}
