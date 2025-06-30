@@ -14,8 +14,7 @@ import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
   const articles = await payload.find({
     collection: 'articles',
@@ -35,19 +34,44 @@ export async function generateStaticParams() {
   return params
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type Args = {
+interface Args {
   params: Promise<{
     slug?: string
   }>
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default async function Article({ params: paramsPromise }: Args) {
+const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
+  const { isEnabled: draft } = await draftMode()
+
+  const payload = await getPayload({ config: configPromise })
+
+  const result = await payload.find({
+    collection: 'articles',
+    draft,
+    limit: 1,
+    overrideAccess: draft,
+    pagination: false,
+    where: {
+      slug: {
+        equals: slug,
+      },
+    },
+  })
+
+  return result.docs?.[0] || null
+})
+
+export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
+  const { slug = '' } = await paramsPromise
+  const article = await queryArticleBySlug({ slug })
+
+  return generateMeta({ doc: article })
+}
+
+export default async function Article({ params: paramsPromise }: Args): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   const url = '/articles/' + slug
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   const article = await queryArticleBySlug({ slug })
 
   if (!article) return <PayloadRedirects url={url} />
@@ -73,32 +97,3 @@ export default async function Article({ params: paramsPromise }: Args) {
     </article>
   )
 }
-
-export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
-  const article = await queryArticleBySlug({ slug })
-
-  return generateMeta({ doc: article })
-}
-
-const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
-
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'articles',
-    draft,
-    limit: 1,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-  })
-
-  return result.docs?.[0] || null
-})
