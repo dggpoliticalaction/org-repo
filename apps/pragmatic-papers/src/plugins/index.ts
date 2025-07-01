@@ -45,6 +45,9 @@ export const plugins: Plugin[] = [
       hooks: {
         afterChange: [revalidateRedirects],
       },
+      admin: {
+        hidden: true, // TODO: Setup redirects plugin
+      },
     },
   }),
   nestedDocsPlugin({
@@ -78,6 +81,14 @@ export const plugins: Plugin[] = [
           }
           return field
         })
+      },
+      admin: {
+        hidden: true, // TODO: Setup form builder plugin
+      },
+    },
+    formSubmissionOverrides: {
+      admin: {
+        hidden: true, // TODO: Setup form builder plugin
       },
     },
   }),
