@@ -7,11 +7,12 @@ import (
 	"text/template"
 	"time"
 
+	"fmt"
+
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"fmt"
 )
 
 type volumeRow struct {
@@ -111,38 +112,59 @@ func main()  {
   for _, volume := range volumes {
     // output typescript code of the volume data using golang template
     // define a template string
-    templateString := `
-    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-    import { RequiredDataFromCollectionSlug } from 'payload'
+templateString := `// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { RequiredDataFromCollectionSlug } from 'payload'
 
-    export const volume{{.ID}}: RequiredDataFromCollectionSlug<'volumes'> = () => {
-      return {
-        id: {{.ID}},
-        title: "{{.Title}}",
-        volumeNumber: {{.VolumeNumber}},
-        description: "{{.Description}}",
-        editorsNote: {
-          root: {
-            children: [{{range .EditorsNote.Root.Children}}
-              {          children: [{{range .Children}}
-                  {              direction: "{{.Direction}}",
-                    format: {{if .Format}}{{.Format}}{{else}}null{{end}},
-                  }{{if .Children}},{{end}}{{end}}]
-                }{{if .Children}},{{end}}
+export const volume{{.ID}}: () => RequiredDataFromCollectionSlug<'volumes'> = () => {
+  return {
+    id: {{.ID}},
+    title: "{{.Title}}",
+    volumeNumber: {{.VolumeNumber}},
+    description: "{{.Description}}",
+    editorsNote: {
+      root: {
+        children: [
+          {{range .EditorsNote.Root.Children}}
+          {
+            children: [
+              {{if .Children}}
+              {{range .Children}}
+              {
+                {{if .Tag}}tag: "{{.Tag}}",{{end}}
+                {{if .TextFormat}}textFormat: {{.TextFormat}},{{end}}
+                {{if .TextStyle}}textStyle: "{{.TextStyle}}",{{end}}
+                direction: "{{.Direction}}",
+                format: {{if .Format}}{{.Format}}{{else}}""{{end}},
+                indent: {{.Indent}},
+                type: "{{.Type}}",
+                version: {{.Version}},
+              },
+              {{end}}
               {{end}}
             ],
-            direction: "{{.EditorsNote.Root.Direction}}",
-            format: {{if .EditorsNote.Root.Format}}{{.EditorsNote.Root.Format}}{{else}}null{{end}},
-            indent: {{.EditorsNote.Root.Indent}},
-            type: "{{.EditorsNote.Root.Type}}",
-            version: {{.EditorsNote.Root.Version}},
-            {{if .EditorsNote.Root.Tag}}tag: "{{.EditorsNote.Root.Tag}}",{{end}}
-            {{if .EditorsNote.Root.TextFormat}}textFormat: {{.EditorsNote.Root.TextFormat}},{{end}}
-            {{if .EditorsNote.Root.TextStyle}}textStyle: "{{.EditorsNote.Root.TextStyle}}",{{end}}
-          }
-        }
+            Direction  string `json:"direction" db:"direction"`
+      Format     *int `json:"format" db:"format"`
+      Indent     int    `json:"indent" db:"indent"`
+      Type       string `json:"type" db:"type"`
+      Version    int    `json:"version" db:"version"`
+      Tag        string `json:"tag,omitempty" db:"tag,omitempty"`
+      TextFormat int    `json:"textFormat,omitempty" db:"textFormat,omitempty"`
+      TextStyle
+            {{if .Tag}}tag: "{{.Tag}}",{{end}}
+            {{if .TextFormat}}textFormat: {{.TextFormat}},{{end}}
+            {{if .TextStyle}}textStyle: "{{.TextStyle}}",{{end}}
+          },
+          {{end}}
+        ],
+        direction: "{{.EditorsNote.Root.Direction}}",
+        format: {{if .EditorsNote.Root.Format}}{{.EditorsNote.Root.Format}}{{else}}""{{end}},
+        indent: {{.EditorsNote.Root.Indent}},
+        type: "{{.EditorsNote.Root.Type}}",
+        version: {{.EditorsNote.Root.Version}},
       }
-    }`
+    }
+  }
+}`
 
     // create a new template
     tmpl, err := template.New("volume").Parse(templateString)

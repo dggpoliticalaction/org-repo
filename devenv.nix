@@ -5,7 +5,7 @@
   env.GREET = "devenv";
 
   # https://devenv.sh/packages/
-  packages = [ pkgs.git ];
+  packages = [ pkgs.git pkgs.yaegi ];
 
   # https://devenv.sh/languages/
   # languages.rust.enable = true;
@@ -13,6 +13,10 @@
   languages.javascript = {
     enable = true;
     pnpm.enable = true;
+  };
+
+  languages.go = {
+    enable = true;
   };
 
   # https://devenv.sh/processes/
