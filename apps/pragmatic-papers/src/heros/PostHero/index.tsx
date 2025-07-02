@@ -14,7 +14,7 @@ export const PostHero: React.FC<{
     populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
 
   return (
-    <div className="relative -mt-[6.4rem] flex items-end">
+    <div className="relative flex items-end">
       <div className="container z-10 relative text-white pb-4 flex-col">
         <h1 className="mb-6 text-4xl text-center font-bold">{title}</h1>
         {hasAuthors && (
