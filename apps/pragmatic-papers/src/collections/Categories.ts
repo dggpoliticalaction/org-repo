@@ -14,6 +14,7 @@ export const Categories: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    hidden: true, // TODO: Remove collection from repo
   },
   fields: [
     {
