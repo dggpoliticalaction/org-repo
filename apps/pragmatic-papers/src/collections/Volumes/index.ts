@@ -16,6 +16,13 @@ import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { editor } from '@/access/editor'
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
+import {
+  MetaDescriptionField,
+  MetaImageField,
+  MetaTitleField,
+  OverviewField,
+  PreviewField,
+} from '@payloadcms/plugin-seo/fields'
 
 export const Volumes: CollectionConfig = {
   slug: 'volumes',
@@ -69,8 +76,46 @@ export const Volumes: CollectionConfig = {
               }),
               label: "Editor's Note",
             },
+            {
+              name: 'articles',
+              type: 'relationship',
+              hasMany: true,
+              relationTo: 'articles',
+              admin: {
+                description: 'Select and order articles for this volume',
+                allowCreate: false,
+                isSortable: true,
+              },
+            },
           ],
-          label: 'content',
+          label: 'Content',
+        },
+        {
+          name: 'meta',
+          label: 'SEO',
+          fields: [
+            OverviewField({
+              titlePath: 'meta.title',
+              descriptionPath: 'meta.description',
+              imagePath: 'meta.image',
+            }),
+            MetaTitleField({
+              hasGenerateFn: true,
+            }),
+            MetaImageField({
+              relationTo: 'media',
+            }),
+
+            MetaDescriptionField({}),
+            PreviewField({
+              // if the `generateUrl` function is configured
+              hasGenerateFn: true,
+
+              // field paths to match the target field for data
+              titlePath: 'meta.title',
+              descriptionPath: 'meta.description',
+            }),
+          ],
         },
       ],
     },

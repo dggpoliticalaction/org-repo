@@ -159,7 +159,6 @@ export const Articles: CollectionConfig = {
         position: 'sidebar',
       },
       relationTo: 'volumes',
-      required: true,
     },
     {
       name: 'authors',
