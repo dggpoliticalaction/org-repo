@@ -40,13 +40,6 @@ interface Args {
     slug?: string
   }>
 }
-export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
-  const article = await queryArticleBySlug({ slug })
-
-  return generateMeta({ doc: article })
-}
 
 const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
@@ -68,6 +61,13 @@ const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
 
   return result.docs?.[0] || null
 })
+
+export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
+  const { slug = '' } = await paramsPromise
+  const article = await queryArticleBySlug({ slug })
+
+  return generateMeta({ doc: article })
+}
 
 const queryArticlesByVolume = cache(async ({ volumeId }: { volumeId: string | number }) => {
   const { isEnabled: draft } = await draftMode()
