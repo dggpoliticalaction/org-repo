@@ -13,10 +13,10 @@ import {
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
 
-import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { Banner } from '../../blocks/Banner/config'
-import { Code } from '../../blocks/Code/config'
-import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
+import { Banner } from '@/blocks/Banner/config'
+import { Code } from '@/blocks/Code/config'
+import { MediaBlock } from '@/blocks/MediaBlock/config'
 
 import { slugField } from '@/fields/slug'
 import { revalidateArticle, revalidateDelete } from './hooks/revalidateArticle'
@@ -33,6 +33,7 @@ import { editorOrSelf, restrictWritersToDraftOnly } from '@/access/editorOrSelf'
 import { writer } from '@/access/writer'
 import { editorFieldLevel } from '@/access/editor'
 import { type Article } from '@/payload-types'
+import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
@@ -90,7 +91,10 @@ export const Articles: CollectionConfig = {
                   return [
                     ...rootFeatures,
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
+                    BlocksFeature({
+                      blocks: [Banner, Code, MediaBlock, DisplayMathBlock],
+                      inlineBlocks: [InlineMathBlock],
+                    }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
