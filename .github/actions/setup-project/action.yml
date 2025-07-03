@@ -18,6 +18,11 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
         cache: pnpm
+    
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: '10.12.4'
 
     - name: Restore or cache node_modules
       id: cache-node-modules
