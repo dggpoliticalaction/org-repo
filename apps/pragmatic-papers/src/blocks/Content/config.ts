@@ -1,6 +1,7 @@
 import type { Block, Field } from 'payload'
 
 import {
+  EXPERIMENTAL_TableFeature,
   FixedToolbarFeature,
   HeadingFeature,
   InlineToolbarFeature,
@@ -43,6 +44,7 @@ const columnFields: Field[] = [
           HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
           FixedToolbarFeature(),
           InlineToolbarFeature(),
+          EXPERIMENTAL_TableFeature(),
         ]
       },
     }),
