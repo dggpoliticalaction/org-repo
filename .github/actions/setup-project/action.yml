@@ -13,16 +13,16 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: '10.12.4'
+
     - name: Use Node.js ${{ inputs.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
         cache: pnpm
-    
-    - name: Install pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: '10.12.4'
 
     - name: Restore or cache node_modules
       id: cache-node-modules
