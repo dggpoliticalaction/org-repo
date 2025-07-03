@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import {
+  BlockquoteFeature,
   BlocksFeature,
   FixedToolbarFeature,
   HeadingFeature,
@@ -70,6 +71,7 @@ export const Volumes: CollectionConfig = {
                     UnorderedListFeature(),
                     OrderedListFeature(),
                     IndentFeature(),
+                    BlockquoteFeature(),
                   ]
                 },
               }),
