@@ -3,8 +3,11 @@ import type { Block, Field } from 'payload'
 import {
   FixedToolbarFeature,
   HeadingFeature,
+  IndentFeature,
   InlineToolbarFeature,
   lexicalEditor,
+  UnorderedListFeature,
+  OrderedListFeature,
 } from '@payloadcms/richtext-lexical'
 
 import { link } from '@/fields/link'
@@ -43,6 +46,9 @@ const columnFields: Field[] = [
           HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
           FixedToolbarFeature(),
           InlineToolbarFeature(),
+          IndentFeature(),
+          UnorderedListFeature(),
+          OrderedListFeature(),
         ]
       },
     }),
