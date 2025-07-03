@@ -1,20 +1,17 @@
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import {
+import type {
   DefaultNodeTypes,
   SerializedBlockNode,
   SerializedLinkNode,
-  type DefaultTypedEditorState,
+  DefaultTypedEditorState,
 } from '@payloadcms/richtext-lexical'
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import {
-  JSXConvertersFunction,
+  type JSXConvertersFunction,
   LinkJSXConverter,
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
+import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
 
 import type {
   BannerBlock as BannerBlockProps,
@@ -24,10 +21,13 @@ import type {
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { cn } from '@/utilities/ui'
+import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 
 type NodeTypes =
   | DefaultNodeTypes
-  | SerializedBlockNode<CTABlockProps | MediaBlockProps | BannerBlockProps | CodeBlockProps>
+  | SerializedBlockNode<
+      CTABlockProps | MediaBlockProps | BannerBlockProps | CodeBlockProps | MathBlockProps
+    >
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
@@ -55,6 +55,14 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     ),
     code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
     cta: ({ node }) => <CallToActionBlock {...node.fields} />,
+    displayMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
+      <MathBlock {...node.fields} />
+    ),
+  },
+  inlineBlocks: {
+    inlineMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
+      <MathBlock {...node.fields} />
+    ),
   },
 })
 
