@@ -8,7 +8,7 @@ export const Providers: React.FC<{
   children: React.ReactNode
 }> = ({ children }) => {
   return (
-    <MathJaxContext src="/mathjax/js/tex-chtml-full-speech.js">
+    <MathJaxContext>
       <ThemeProvider>
         <HeaderThemeProvider>{children}</HeaderThemeProvider>
       </ThemeProvider>
