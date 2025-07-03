@@ -14,7 +14,7 @@ runs:
   using: composite
   steps:
     - name: Install pnpm
-      uses: pnpm/action-setup@v2
+      uses: pnpm/action-setup@v4
       with:
         version: '10.12.4'
 
@@ -24,23 +24,7 @@ runs:
         node-version: ${{ inputs.node-version }}
         cache: pnpm
 
-    - name: Restore or cache node_modules
-      id: cache-node-modules
-      uses: actions/cache@v4
-      with:
-        path: node_modules
-        key: node-modules-${{ inputs.node-version }}-${{ hashFiles('package-lock.json') }}
-
     - name: Install dependencies
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
       shell: bash
       run: pnpm install --frozen-lockfile
-
-    - name: Restore Next.js build output
-      if: inputs.restore-nextjs-cache == 'true'
-      uses: actions/cache/restore@v4
-      with:
-        path: |
-          .next
-        key: nextjs-build-${{ inputs.node-version }}-${{ github.sha }}
-        fail-on-cache-miss: true
