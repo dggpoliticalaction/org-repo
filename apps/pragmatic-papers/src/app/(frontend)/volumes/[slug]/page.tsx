@@ -41,7 +41,7 @@ interface Args {
   }>
 }
 
-const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
 
   const payload = await getPayload({ config: configPromise })
@@ -57,6 +57,7 @@ const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
         equals: slug,
       },
     },
+    depth: 1,
   })
 
   return result.docs?.[0] || null
@@ -64,31 +65,10 @@ const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
-  const article = await queryArticleBySlug({ slug })
+  const volume = await queryVolumeBySlug({ slug })
 
-  return generateMeta({ doc: article })
+  return generateMeta({ doc: volume })
 }
-
-const queryArticlesByVolume = cache(async ({ volumeId }: { volumeId: string | number }) => {
-  const { isEnabled: draft } = await draftMode()
-
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'articles',
-    draft,
-    limit: 100,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      volume: {
-        equals: volumeId,
-      },
-    },
-  })
-
-  return result.docs || []
-})
 
 export default async function VolumePage({
   params: paramsPromise,
@@ -96,13 +76,14 @@ export default async function VolumePage({
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   const url = '/volumes/' + slug
-  const volume = await queryArticleBySlug({ slug })
+  const volume = await queryVolumeBySlug({ slug })
 
   if (!volume) return <PayloadRedirects url={url} />
-  const { publishedAt, editorsNote, id } = volume
-
-  // Fetch articles for this volume
-  const articles = await queryArticlesByVolume({ volumeId: id })
+  const { publishedAt, editorsNote, articles } = volume
+  if (articles?.filter((article) => typeof article === 'number')?.length ?? 0 > 0) {
+    console.error('Fetching volume with unfetched articles', slug)
+  }
+  const actualArticles = articles?.filter((article) => typeof article !== 'number')
 
   return (
     <div className="pb-16 max-w-2xl px-4 mx-auto">
@@ -144,7 +125,7 @@ export default async function VolumePage({
       <Squiggle className="w-1/2 h-6 mx-auto" />
       <div className="flex flex-col items-center gap-4 pt-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-          {articles.map((article) => (
+          {actualArticles?.map((article) => (
             <ArticleCard key={article.id} doc={article} relationTo="articles" />
           ))}
         </div>
