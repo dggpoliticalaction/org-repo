@@ -13,8 +13,6 @@ import {
   OrderedListFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-// custom styles for EXPERIMENTAL_TableFeature
-import '@/components/Table/style.scss'
 
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { Banner } from '@/blocks/Banner/config'
