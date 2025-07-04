@@ -28,35 +28,38 @@ export const ArticleCard: React.FC<{
   const href = `/${relationTo}/${slug}`
 
   return (
-    <article
-      className={cn(
-        'relative flex flex-col min-h-[400px] rounded-lg overflow-hidden hover:cursor-pointer border border-border',
-        className,
-      )}
-      ref={card.ref}
-    >
-      <div className="relative w-full h-2/4 flex-shrink-0">
-        {metaImage && typeof metaImage !== 'string' && (
-          <Media
-            resource={metaImage}
-            size="100vw"
-            className="h-full w-full"
-            imgClassName="object-cover h-full w-full"
-          />
-        )}
-      </div>
-      <div className="flex-grow p-4 bg-card">
-        {titleToUse && (
-          <div className="prose">
-            <h3>
-              <Link className="not-prose" href={href} ref={link.ref}>
-                {titleToUse}
-              </Link>
-            </h3>
-          </div>
-        )}
-        {description && <div className="mt-2">{description && <p>{sanitizedDescription}</p>}</div>}
-      </div>
-    </article>
+    <div className="rounded-lg border border-border overflow-hidden h-full">
+      <article
+        className={cn('relative flex flex-col h-full hover:cursor-pointer', className)}
+        ref={card.ref}
+      >
+        <div className="relative w-full max-h-[300px] aspect-[4/3] overflow-hidden">
+          {metaImage && typeof metaImage !== 'string' && (
+            <Media
+              resource={metaImage}
+              size="100vw"
+              className="h-full w-full"
+              imgClassName="object-cover h-full w-full"
+            />
+          )}
+        </div>
+        <div className="flex flex-col flex-grow p-4 bg-card">
+          {titleToUse && (
+            <div className="prose">
+              <h3 className="line-clamp-4">
+                <Link className="not-prose hover:underline" href={href} ref={link.ref}>
+                  {titleToUse}
+                </Link>
+              </h3>
+            </div>
+          )}
+          {description && (
+            <div className="mt-2">
+              <p className="text-sm text-muted-foreground line-clamp-5">{sanitizedDescription}</p>
+            </div>
+          )}
+        </div>
+      </article>
+    </div>
   )
 }
