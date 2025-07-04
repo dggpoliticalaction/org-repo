@@ -3,6 +3,7 @@ import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 import {
   BlockquoteFeature,
   BlocksFeature,
+  EXPERIMENTAL_TableFeature,
   FixedToolbarFeature,
   HeadingFeature,
   HorizontalRuleFeature,
@@ -12,6 +13,8 @@ import {
   OrderedListFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
+// custom styles for EXPERIMENTAL_TableFeature
+import '@/components/Table/style.scss'
 
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { Banner } from '@/blocks/Banner/config'
@@ -102,6 +105,7 @@ export const Articles: CollectionConfig = {
                     OrderedListFeature(),
                     IndentFeature(),
                     BlockquoteFeature(),
+                    EXPERIMENTAL_TableFeature(),
                   ]
                 },
               }),
