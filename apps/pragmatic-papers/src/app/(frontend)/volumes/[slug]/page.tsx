@@ -57,7 +57,7 @@ const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
         equals: slug,
       },
     },
-    depth: 1,
+    depth: 2,
   })
 
   return result.docs?.[0] || null
