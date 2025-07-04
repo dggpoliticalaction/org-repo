@@ -7,8 +7,11 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { VolumeViewBlock } from '@/blocks/VolumeViewBlock/component'
+import { MathBlock } from '@/blocks/Math/Component'
 
 const blockComponents = {
+  InlineMathBlock: MathBlock,
+  DisplayMathBlock: MathBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
   formBlock: FormBlock,
