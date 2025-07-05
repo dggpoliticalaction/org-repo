@@ -8,6 +8,7 @@ import type { Header } from '@/payload-types'
 
 import { Logo } from '@/components/Logo/Logo'
 import { HeaderNav } from './Nav'
+import { cn } from '@/utilities/ui'
 
 interface HeaderClientProps {
   data: Header
@@ -34,7 +35,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
       <Link href="/">
         <Logo loading="eager" priority="high" className="invert dark:invert-0" />
       </Link>
-      <div className="py-8 flex justify-between">
+      <div className={cn('flex justify-between', !data.navItems ? 'py-8' : '')}>
         <HeaderNav data={data} />
       </div>
     </header>

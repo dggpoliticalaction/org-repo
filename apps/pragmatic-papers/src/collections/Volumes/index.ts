@@ -38,6 +38,7 @@ export const Volumes: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    defaultColumns: ['title', 'volumeNumber', 'publishedAt', 'description'],
   },
   fields: [
     {
