@@ -1,4 +1,5 @@
-import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { type MigrateUpArgs, type MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
@@ -9,7 +10,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"path" varchar NOT NULL,
   	"articles_id" integer
   );
-  
+
   CREATE TABLE "_volumes_v_rels" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"order" integer,
@@ -17,7 +18,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"path" varchar NOT NULL,
   	"articles_id" integer
   );
-  
+
   ALTER TABLE "volumes" ADD COLUMN "meta_title" varchar;
   ALTER TABLE "volumes" ADD COLUMN "meta_image_id" integer;
   ALTER TABLE "volumes" ADD COLUMN "meta_description" varchar;
@@ -49,9 +50,9 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "volumes_rels" CASCADE;
   DROP TABLE "_volumes_v_rels" CASCADE;
   ALTER TABLE "volumes" DROP CONSTRAINT "volumes_meta_image_id_media_id_fk";
-  
+
   ALTER TABLE "_volumes_v" DROP CONSTRAINT "_volumes_v_version_meta_image_id_media_id_fk";
-  
+
   DROP INDEX "volumes_meta_meta_image_idx";
   DROP INDEX "_volumes_v_version_meta_version_meta_image_idx";
   ALTER TABLE "volumes" DROP COLUMN "meta_title";
