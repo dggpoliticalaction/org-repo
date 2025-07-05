@@ -167,14 +167,6 @@ export const Articles: CollectionConfig = {
       },
     },
     {
-      name: 'volume',
-      type: 'relationship',
-      admin: {
-        position: 'sidebar',
-      },
-      relationTo: 'volumes',
-    },
-    {
       name: 'authors',
       type: 'relationship',
       admin: {
