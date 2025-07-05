@@ -1,6 +1,7 @@
 import type { Block, Field } from 'payload'
 
 import {
+  EXPERIMENTAL_TableFeature,
   FixedToolbarFeature,
   HeadingFeature,
   IndentFeature,
@@ -49,6 +50,7 @@ const columnFields: Field[] = [
           IndentFeature(),
           UnorderedListFeature(),
           OrderedListFeature(),
+          EXPERIMENTAL_TableFeature(),
         ]
       },
     }),

@@ -3,6 +3,7 @@ import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 import {
   BlockquoteFeature,
   BlocksFeature,
+  EXPERIMENTAL_TableFeature,
   FixedToolbarFeature,
   HeadingFeature,
   HorizontalRuleFeature,
@@ -102,6 +103,7 @@ export const Articles: CollectionConfig = {
                     OrderedListFeature(),
                     IndentFeature(),
                     BlockquoteFeature(),
+                    EXPERIMENTAL_TableFeature(),
                   ]
                 },
               }),

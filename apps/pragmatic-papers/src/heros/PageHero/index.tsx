@@ -23,7 +23,7 @@ type PageHeroType =
 export const PageHero: React.FC<PageHeroType> = ({ children, richText }) => {
   return (
     <div className="flex justify-center">
-      <div className="max-w-[48rem] [&_h1]:text-transparent [&_h1]:text-stroke-2 [&_h1]:text-stroke-brandLight [&_h1]:text-8xl [&_h1]:font-bold text-center">
+      <div className="text-center">
         {children ||
           (richText && (
             <RichText data={richText} enableGutter={false} className={openSans.className} />

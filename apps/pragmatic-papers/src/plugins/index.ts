@@ -2,6 +2,7 @@ import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Plugin } from 'payload'
@@ -91,6 +92,16 @@ export const plugins: Plugin[] = [
         hidden: true, // TODO: Setup form builder plugin
       },
     },
+  }),
+  vercelBlobStorage({
+    // eslint-disable-next-line turbo/no-undeclared-env-vars
+    enabled: process.env.NODE_ENV === 'production',
+    collections: {
+      // If you have another collection that supports uploads, you can add it below
+      media: true,
+    },
+    // eslint-disable-next-line turbo/no-undeclared-env-vars
+    token: process.env.BLOB_READ_WRITE_TOKEN,
   }),
   payloadCloudPlugin(),
 ]

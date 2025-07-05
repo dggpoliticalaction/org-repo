@@ -51,7 +51,7 @@ export const VolumeViewBlock: React.FC<
     })
 
     return (
-      <div className="my-16" id={`block-${id}`}>
+      <div className="my-4" id={`block-${id}`}>
         {introContent && (
           <div className="mb-16">
             <RichText className="ms-0 max-w-[48rem]" data={introContent} enableGutter={false} />
@@ -82,7 +82,7 @@ export const VolumeViewBlock: React.FC<
       }) as Volume[]
 
       return (
-        <div className="my-16" id={`block-${id}`}>
+        <div className="my-4" id={`block-${id}`}>
           {introContent && (
             <div className="container mb-16">
               <RichText className="ms-0 max-w-[48rem]" data={introContent} enableGutter={false} />

@@ -19,6 +19,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 
 const sourceSerif4 = Source_Serif_4({
   variable: '--font-serif',
+  subsets: ['latin'],
 })
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
