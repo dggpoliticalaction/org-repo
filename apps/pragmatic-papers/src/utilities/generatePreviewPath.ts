@@ -5,6 +5,7 @@ const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
   posts: '/posts',
   pages: '',
   articles: '/articles',
+  volumes: '/volumes',
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions

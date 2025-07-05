@@ -64,9 +64,6 @@ export const Articles: CollectionConfig = {
         req,
       }),
     useAsTitle: 'title',
-    components: {
-      edit: {},
-    },
   },
   fields: [
     {

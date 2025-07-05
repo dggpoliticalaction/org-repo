@@ -27,6 +27,8 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
+import { generatePreviewPath } from '@/utilities/generatePreviewPath'
+import { revalidateArticle, revalidateDelete } from './hooks/revalidateVolumes'
 
 export const Volumes: CollectionConfig = {
   slug: 'volumes',
@@ -39,6 +41,23 @@ export const Volumes: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'volumeNumber', 'publishedAt', 'description'],
+    livePreview: {
+      url: ({ data, req }) => {
+        const path = generatePreviewPath({
+          slug: typeof data?.slug === 'string' ? data.slug : '',
+          collection: 'volumes',
+          req,
+        })
+
+        return path
+      },
+    },
+    preview: (data, { req }) =>
+      generatePreviewPath({
+        slug: typeof data?.slug === 'string' ? data.slug : '',
+        collection: 'volumes',
+        req,
+      }),
   },
   fields: [
     {
@@ -151,6 +170,10 @@ export const Volumes: CollectionConfig = {
     },
     ...numberSlugField('volumeNumber'),
   ],
+  hooks: {
+    afterChange: [revalidateArticle],
+    afterDelete: [revalidateDelete],
+  },
   versions: {
     drafts: {
       autosave: {
