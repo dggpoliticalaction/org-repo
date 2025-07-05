@@ -4,7 +4,7 @@ const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
   description: 'Community-driven articles focusing on what matters in the world.',
   images: [
-    // TODO: Add default image image
+    // TODO: Add default image
     // {
     // url: `${getServerSideURL()}/website-template-OG.webp`,
     // },
