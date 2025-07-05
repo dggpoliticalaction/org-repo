@@ -127,6 +127,7 @@ const config = {
                 color: 'transparent',
                 '-webkit-text-stroke-width': '2px',
                 '-webkit-text-stroke-color': 'var(--brand-light)',
+                fontFamily: 'Open Sans,Open Sans Fallback',
               },
               h2: {
                 fontSize: '2.25rem',

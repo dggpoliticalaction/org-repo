@@ -10,6 +10,7 @@ import { importMap } from './admin/importMap.js'
 import './custom.scss'
 import { MathJaxContext } from 'better-react-mathjax'
 
+
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Args = {
   children: React.ReactNode

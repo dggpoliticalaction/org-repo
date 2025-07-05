@@ -12,7 +12,7 @@ export const VolumesView: React.FC<Props> = (props) => {
   const { volumes } = props
 
   return (
-    <div className={cn('m-auto max-w-xl w-3/4')}>
+    <div className={cn('m-auto max-w-xl w-11/12')}>
       <div>
         <div className="grid grid-cols-1 gap-4">
           {volumes?.map((result, index) => {
