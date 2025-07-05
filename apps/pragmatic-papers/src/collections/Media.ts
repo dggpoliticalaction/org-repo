@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import {
   FixedToolbarFeature,
@@ -9,7 +9,10 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
-import { authenticated } from '../access/authenticated'
+import { writer } from '@/access/writer'
+import { editorOrSelf } from '@/access/editorOrSelf'
+
+import type { Media as MediaType } from '@/payload-types'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -17,10 +20,10 @@ const dirname = path.dirname(filename)
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: writer,
+    delete: editorOrSelf,
     read: anyone,
-    update: authenticated,
+    update: editorOrSelf,
   },
   fields: [
     {
@@ -37,7 +40,32 @@ export const Media: CollectionConfig = {
         },
       }),
     },
+    {
+      name: 'createdBy',
+      type: 'relationship',
+      relationTo: 'users',
+      access: {
+        update: () => false,
+      },
+      admin: {
+        readOnly: true,
+        hidden: true,
+      },
+    },
   ],
+  hooks: {
+    beforeChange: [
+      (args: Parameters<CollectionBeforeChangeHook<MediaType>>[0]): Partial<MediaType> | void => {
+        const { req, operation, data } = args
+        if (operation === 'create') {
+          if (req.user) {
+            data.createdBy = req.user.id
+            return data
+          }
+        }
+      },
+    ],
+  },
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
     staticDir: path.resolve(dirname, '../../public/media'),
