@@ -1,4 +1,3 @@
-import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
@@ -93,7 +92,12 @@ export const plugins: Plugin[] = [
   s3Storage({
     enabled: process.env.NODE_ENV === 'production',
     collections: {
-      media: true,
+      media: {
+        disablePayloadAccessControl: true,
+        generateFileURL: ({ filename }) => {
+          return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${process.env.S3_BUCKET}/${filename}`
+        },
+      },
     },
     bucket: process.env.S3_BUCKET || '',
     config: {
@@ -107,5 +111,4 @@ export const plugins: Plugin[] = [
     },
     clientUploads: true,
   }),
-  payloadCloudPlugin(),
 ]
