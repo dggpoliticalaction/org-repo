@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
-import { getServerSideURL } from './getURL'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
-  description: 'An open-source website built with Payload and Next.js.',
+  description: 'Community-driven articles focusing on what matters in the world.',
   images: [
-    {
-      url: `${getServerSideURL()}/website-template-OG.webp`,
-    },
+    // TODO: Add default image image
+    // {
+    // url: `${getServerSideURL()}/website-template-OG.webp`,
+    // },
   ],
   siteName: 'Pragmatic Papers',
   title: 'Pragmatic Papers',
