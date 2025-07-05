@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
-  description: 'Community-driven articles focusing on what matters in the world.',
+  description:
+    'Pragmatic, community-driven articles focusing on new, politics, economics and more.',
   images: [
     // TODO: Add default image
     // {
