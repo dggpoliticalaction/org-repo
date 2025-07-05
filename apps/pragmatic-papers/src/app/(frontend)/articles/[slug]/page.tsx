@@ -77,7 +77,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   if (!article) return <PayloadRedirects url={url} />
 
   return (
-    <article className="pb-16 max-w-3xl mx-auto">
+    <article className="pb-16 max-w-3xl m-auto p-5">
       <PageClient />
 
       {/* Allows redirects for valid pages too */}
@@ -87,13 +87,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
       <PostHero post={article} />
 
-      <div className="flex flex-col items-center gap-4 pt-8">
-        <div className="container">
-          <div className="flex flex-col gap-4 max-w-[48rem] mx-auto">
-            <RichText className="" data={article.content} enableGutter={false} />
-          </div>
-        </div>
-      </div>
+      <RichText className="" data={article.content} enableGutter={false} />
     </article>
   )
 }

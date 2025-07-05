@@ -1,4 +1,5 @@
 // storage-adapter-import-placeholder
+import { postgresAdapter } from '@payloadcms/db-postgres'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 
 import sharp from 'sharp' // sharp-import
@@ -29,9 +30,6 @@ export default buildConfig({
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeLogin` statement on line 15.
       beforeLogin: ['@/components/BeforeLogin'],
-      // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below and the import `BeforeDashboard` statement on line 15.
-      beforeDashboard: ['@/components/BeforeDashboard'],
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -62,11 +60,19 @@ export default buildConfig({
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
-  db: sqliteAdapter({
-    client: {
-      url: process.env.DATABASE_URI || '',
-    },
-  }),
+  db:
+    // eslint-disable-next-line turbo/no-undeclared-env-vars
+    process.env.NODE_ENV === 'production'
+      ? postgresAdapter({
+          pool: {
+            connectionString: process.env.DATABASE_URI || '',
+          },
+        })
+      : sqliteAdapter({
+          client: {
+            url: process.env.DATABASE_URI || '',
+          },
+        }),
   collections: [Pages, Posts, Articles, Volumes, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],

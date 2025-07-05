@@ -50,7 +50,7 @@ export const Entry: React.FC<{
           {titleToUse && (
             <h3 className="my-6">
               <Link
-                className="text-3xl font-bold group-hover:text-brandLight transition-colors"
+                className="text-xl md:text-3xl font-bold group-hover:text-brandLight transition-colors"
                 href={href}
                 ref={link.ref}
               >
@@ -59,7 +59,9 @@ export const Entry: React.FC<{
             </h3>
           )}
           {description && (
-            <div className="my-3 text-gray-400">{description && <p>{sanitizedDescription}</p>}</div>
+            <div className="my-3 text-sm md:text-base text-gray-400">
+              {description && <p>{sanitizedDescription}</p>}
+            </div>
           )}
           <SquiggleStatic />
         </div>

@@ -7,20 +7,52 @@ on:
     branches: [ main ]
 
 jobs:
-  lint:
-    name: Lint
+  build:
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x, 24.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    name: Build with ${{ matrix.node-version }}
     runs-on: ubuntu-latest
+    # Use Vercel Remote Caching
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Setup PNPM
-        uses: ./.github/actions/setup-pnpm
-        
-      - name: Run lint
-        run: pnpm lint:ci
-        
-      - name: Check Types
-        run: pnpm check-types 
 
-      - name: Check Prettier formatting
-        run: pnpm prettier:check
+      - name: Set up Node.js environment
+        uses: ./.github/actions/setup-project
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Build Next.js
+        run: pnpm run build -- --experimental-build-mode compile
+        env:
+          NEXT_PUBLIC_SENTRY_DISABLED: 'true' # Only upload Sentry source maps in deployment
+
+  static:
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    name: Run static checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Retrieve Git history, needed to verify commits
+
+      - name: Set up Node.js environment
+        uses: ./.github/actions/setup-project
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Linter
+        run: pnpm run lint:ci
+
+      - name: Type checking
+        run: pnpm run check-types

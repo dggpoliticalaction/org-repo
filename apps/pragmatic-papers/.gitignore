@@ -9,5 +9,7 @@ node_modules
 # Payload default media upload directory
 public/media/
 
+public/mathjax
+
 public/robots.txt
 public/sitemap*.xml

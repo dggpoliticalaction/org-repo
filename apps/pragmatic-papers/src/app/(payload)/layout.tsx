@@ -8,6 +8,8 @@ import React from 'react'
 
 import { importMap } from './admin/importMap.js'
 import './custom.scss'
+import { MathJaxContext } from 'better-react-mathjax'
+
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Args = {
@@ -26,7 +28,7 @@ const serverFunction: ServerFunctionClient = async function (args) {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const Layout = ({ children }: Args) => (
   <RootLayout config={config} importMap={importMap} serverFunction={serverFunction}>
-    {children}
+    <MathJaxContext>{children}</MathJaxContext>
   </RootLayout>
 )
 

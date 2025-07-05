@@ -1,7 +1,15 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import {
+  FixedToolbarFeature,
+  HeadingFeature,
+  IndentFeature,
+  InlineToolbarFeature,
+  lexicalEditor,
+  OrderedListFeature,
+  UnorderedListFeature,
+} from '@payloadcms/richtext-lexical'
 import { admin, adminFieldLevel } from '@/access/admins'
 import { adminOrSelf } from '@/access/adminOrSelf'
 
@@ -27,7 +35,19 @@ export const Users: CollectionConfig = {
     {
       name: 'biography',
       type: 'richText',
-      editor: lexicalEditor(),
+      editor: lexicalEditor({
+        features: ({ rootFeatures }) => {
+          return [
+            ...rootFeatures,
+            HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+            FixedToolbarFeature(),
+            InlineToolbarFeature(),
+            OrderedListFeature(),
+            UnorderedListFeature(),
+            IndentFeature(),
+          ]
+        },
+      }),
       required: false,
     },
     {

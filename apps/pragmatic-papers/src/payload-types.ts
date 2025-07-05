@@ -1813,6 +1813,32 @@ export interface CodeBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DisplayMathBlock".
+ */
+export interface DisplayMathBlock {
+  /**
+   * Enter a LaTeX math expression.
+   */
+  math: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'displayMathBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InlineMathBlock".
+ */
+export interface InlineMathBlock {
+  /**
+   * Enter a LaTeX math expression.
+   */
+  math: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'inlineMathBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
 export interface Auth {

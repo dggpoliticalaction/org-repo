@@ -121,8 +121,34 @@ const config = {
               '--tw-prose-headings': 'var(--text)',
               fontFamily: 'var(--font-serif)',
               h1: {
-                fontWeight: 'normal',
+                fontSize: '20vw',
+                fontWeight: 700,
                 marginBottom: '0.25em',
+                color: 'transparent',
+                '-webkit-text-stroke-width': '2px',
+                '-webkit-text-stroke-color': 'var(--brand-light)',
+                fontFamily: 'Open Sans,Open Sans Fallback',
+              },
+              h2: {
+                fontSize: '2.25rem',
+                fontWeight: 700,
+                textAlign: 'center',
+                lineHeight: 1.2,
+                letterSpacing: 0,
+              },
+              h3: {
+                fontSize: '1.5rem',
+                fontWeight: 700,
+                textAlign: 'center',
+                lineHeight: 1.2,
+                letterSpacing: 0,
+              },
+              h4: {
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                textAlign: 'left',
+                lineHeight: '30px',
+                letterSpacing: 0,
               },
               p: {
                 fontSize: '1.188rem',
@@ -136,22 +162,10 @@ const config = {
                 textDecoration: 'none',
                 color: 'inherit',
                 transition: 'box-shadow 0.2s ease-out',
+                wordBreak: 'break-all',
               },
               'a:hover': {
                 boxShadow: 'inset 0 -11px 0 0 var(--brand-light)',
-              },
-            },
-          ],
-        },
-        base: {
-          css: [
-            {
-              h1: {
-                fontSize: '2.5rem',
-              },
-              h2: {
-                fontSize: '1.25rem',
-                fontWeight: 600,
               },
             },
           ],
@@ -160,10 +174,12 @@ const config = {
           css: [
             {
               h1: {
-                fontSize: '3.5rem',
-              },
-              h2: {
-                fontSize: '1.5rem',
+                fontSize: '9.5vw',
+                fontWeight: 700,
+                marginBottom: '0.25em',
+                color: 'transparent',
+                '-webkit-text-stroke-width': '2px',
+                '-webkit-text-stroke-color': 'var(--brand-light)',
               },
             },
           ],
