@@ -1,18 +1,16 @@
+/* eslint-disable turbo/no-undeclared-env-vars */
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { seoPlugin } from '@payloadcms/plugin-seo'
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Plugin } from 'payload'
+import { type Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
+import { type GenerateTitle, type GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
+import { s3Storage } from '@payloadcms/storage-s3'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Page, Post } from '@/payload-types'
+import { type Page, type Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
@@ -93,15 +91,19 @@ export const plugins: Plugin[] = [
       },
     },
   }),
-  vercelBlobStorage({
-    // eslint-disable-next-line turbo/no-undeclared-env-vars
+  s3Storage({
     enabled: process.env.NODE_ENV === 'production',
     collections: {
-      // If you have another collection that supports uploads, you can add it below
       media: true,
     },
-    // eslint-disable-next-line turbo/no-undeclared-env-vars
-    token: process.env.BLOB_READ_WRITE_TOKEN,
+    bucket: process.env.S3_BUCKET || '',
+    config: {
+      credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+      },
+      region: process.env.S3_REGION,
+    },
   }),
   payloadCloudPlugin(),
 ]
