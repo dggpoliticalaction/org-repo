@@ -8,8 +8,7 @@ import { getServerSideURL } from './getURL'
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
 
-  // TODO: Add default image, SVG is not supported by OpenGraph
-  let url = null
+  let url = serverUrl + '/pragmaticpapers-logo-dark-og.png'
 
   if (image && typeof image === 'object' && 'url' in image) {
     const ogUrl = image.sizes?.og?.url
