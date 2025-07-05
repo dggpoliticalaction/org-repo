@@ -113,13 +113,7 @@ export default async function VolumePage({
       </div>
       {editorsNote && (
         <div className="w-full container">
-          <h2 className="text-2xl font-bold">Editor's Note:</h2>
-          <RichText
-            className="w-full"
-            enableProse={false}
-            enableGutter={false}
-            data={editorsNote}
-          />
+          <RichText className="w-full" enableGutter={false} data={editorsNote} />
         </div>
       )}
       <Squiggle className="w-1/2 h-6 mx-auto" />
