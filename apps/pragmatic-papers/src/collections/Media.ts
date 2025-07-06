@@ -69,9 +69,9 @@ export const Media: CollectionConfig = {
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
     staticDir: path.resolve(dirname, '../../public/media'),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    adminThumbnail: ({ doc }: { doc: any }) => {
-      return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${process.env.S3_BUCKET}/${doc.sizes.thumbnail.filename}`
+
+    adminThumbnail: ({ doc }: { doc: unknown }) => {
+      return `${(doc as MediaType).sizes?.thumbnail?.url ?? ''}`
     },
     formatOptions: {
       format: 'webp',
