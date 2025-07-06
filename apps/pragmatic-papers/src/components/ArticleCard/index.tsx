@@ -37,7 +37,6 @@ export const ArticleCard: React.FC<{
           {metaImage && typeof metaImage !== 'string' && (
             <Media
               resource={metaImage}
-              size="100vw"
               className="h-full w-full"
               imgClassName="object-cover h-full w-full"
             />
