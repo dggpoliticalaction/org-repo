@@ -23,7 +23,7 @@ export const PostHero: React.FC<{
           resource={heroImage}
         />
       )}
-      <div className="container z-10 relative text-white pb-4 flex-col">
+      <div className="container z-10 relative pb-4 flex-col dark:text-white">
         <h1 className="mb-6 text-4xl text-center font-bold">{title}</h1>
         {hasAuthors && (
           <div className="text-center text-lg">
