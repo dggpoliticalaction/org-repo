@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 const redirects = async () => {
   const internetExplorerRedirect = {
     destination: '/ie-incompatible.html',
