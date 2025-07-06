@@ -3,6 +3,7 @@ import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 import {
   BlockquoteFeature,
   BlocksFeature,
+  ChecklistFeature,
   EXPERIMENTAL_TableFeature,
   FixedToolbarFeature,
   HeadingFeature,
@@ -11,6 +12,9 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
   OrderedListFeature,
+  StrikethroughFeature,
+  SubscriptFeature,
+  SuperscriptFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
 
@@ -96,11 +100,15 @@ export const Articles: CollectionConfig = {
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
-                    UnorderedListFeature(),
-                    OrderedListFeature(),
-                    IndentFeature(),
                     BlockquoteFeature(),
                     EXPERIMENTAL_TableFeature(),
+                    StrikethroughFeature(),
+                    SubscriptFeature(),
+                    SuperscriptFeature(),
+                    IndentFeature(),
+                    UnorderedListFeature(),
+                    OrderedListFeature(),
+                    ChecklistFeature(),
                   ]
                 },
               }),
