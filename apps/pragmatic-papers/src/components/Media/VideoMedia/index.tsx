@@ -37,7 +37,13 @@ export const VideoMedia: React.FC<MediaProps> = (props) => {
         playsInline
         ref={videoRef}
       >
-        <source src={getMediaUrl(`/media/${filename}`)} />
+        <source
+          src={getMediaUrl(
+            process.env.NODE_ENV === 'production'
+              ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${process.env.S3_BUCKET}/${filename}`
+              : `media/${filename}`,
+          )}
+        />
       </video>
     )
   }
