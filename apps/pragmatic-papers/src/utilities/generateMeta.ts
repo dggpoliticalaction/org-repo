@@ -26,7 +26,7 @@ export const generateMeta = async (args: {
 
   const ogImage = getImageURL(doc?.meta?.image)
 
-  const title = doc?.meta?.title ? doc?.meta?.title + ' | Pragmatic Papers' : 'Pragmatic Papers'
+  const title = doc?.meta?.title ? doc?.meta?.title : 'Pragmatic Papers'
 
   return {
     description: doc?.meta?.description,
