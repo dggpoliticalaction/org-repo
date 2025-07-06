@@ -73,6 +73,9 @@ export const Media: CollectionConfig = {
     adminThumbnail: ({ doc }: { doc: any }) => {
       return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${process.env.S3_BUCKET}/${doc.sizes.thumbnail.filename}`
     },
+    formatOptions: {
+      format: 'webp',
+    },
     focalPoint: true,
     disableLocalStorage: process.env.NODE_ENV === 'production',
     imageSizes: [
