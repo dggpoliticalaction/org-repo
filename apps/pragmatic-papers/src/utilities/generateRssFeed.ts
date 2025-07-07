@@ -1,10 +1,9 @@
 import { Feed } from 'feed'
 import { type Article, type Media, type Volume } from '../payload-types'
 import { getServerSideURL } from './getURL'
+import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 
 const SITE_URL = getServerSideURL()
-
-const wrapInCDATA = (html: string) => `<![CDATA[${html}]]>`
 
 const formatArticleLink = (article: Article) => {
   if (!article.meta?.description) {
@@ -29,7 +28,7 @@ const formatVolumeDescription = (volume: Volume) => {
     sections.push(`
 <div style="margin: 1.5em 0">
   <h3>Editor's Note</h3>
-  ${volume.editorsNote}
+  ${convertLexicalToHTML({ data: volume.editorsNote })}
 </div>`)
   }
 
@@ -51,7 +50,7 @@ const formatVolumeDescription = (volume: Volume) => {
 </div>`)
   }
 
-  return wrapInCDATA(sections.join('\n'))
+  return sections.join('\n')
 }
 
 const createBaseFeedConfig = (type: 'Articles' | 'Volumes') => ({
@@ -80,7 +79,7 @@ export const generateArticleFeed = (articles: Article[]): string => {
         title: article.title,
         id: `${SITE_URL}/articles/${article.slug}`,
         link: `${SITE_URL}/articles/${article.slug}`,
-        description: article.meta?.description ? wrapInCDATA(article.meta.description) : '',
+        description: article.meta?.description ? article.meta.description : '',
         date: new Date(article.publishedAt),
         image:
           article.meta?.image && typeof article.meta.image !== 'string'
