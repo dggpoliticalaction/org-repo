@@ -16,7 +16,7 @@ export const Media: React.FC<Props> = (props) => {
     <Tag
       {...(htmlElement !== null
         ? {
-            className: cn('not-prose', className),
+            className: cn('not-prose flex justify-center', className),
           }
         : {})}
     >
