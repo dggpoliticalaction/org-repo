@@ -27,7 +27,6 @@ const formatVolumeDescription = (volume: Volume) => {
   if (volume.editorsNote) {
     sections.push(`
 <div style="margin: 1.5em 0">
-  <h3>Editor's Note</h3>
   ${convertLexicalToHTML({ data: volume.editorsNote })}
 </div>`)
   }
