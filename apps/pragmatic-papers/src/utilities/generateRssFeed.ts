@@ -59,7 +59,7 @@ const createBaseFeedConfig = (type: 'Articles' | 'Volumes') => ({
   link: SITE_URL,
   language: 'en',
   favicon: `${SITE_URL}/favicon.ico`,
-  image: `${SITE_URL}/pragmatic-papers-logo-dark-og.png`,
+  image: `${SITE_URL}/pragmaticpapers-logo-dark-og.png`,
   copyright: `All rights reserved ${new Date().getFullYear()}`,
   generator: 'Pragmatic Papers',
   updated: new Date(),
@@ -82,7 +82,7 @@ export const generateArticleFeed = (articles: Article[]): string => {
         date: new Date(article.publishedAt),
         image:
           article.meta?.image && typeof article.meta.image !== 'string'
-            ? `${SITE_URL}${(article.meta.image as Media).url}`
+            ? ((article.meta.image as Media).url ?? '')
             : undefined,
         author: article.populatedAuthors?.map((author) => ({
           name: author.name || '',
