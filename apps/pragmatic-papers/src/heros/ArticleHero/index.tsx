@@ -1,15 +1,15 @@
 import React from 'react'
 
-import type { Post } from '@/payload-types'
+import type { Article } from '@/payload-types'
 import { Squiggle } from '@/components/ui/squiggle'
 import { formatAuthors } from '@/utilities/formatAuthors'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { ImageMedia } from '@/components/Media/ImageMedia'
 
-export const PostHero: React.FC<{
-  post: Post
-}> = ({ post }) => {
-  const { populatedAuthors, publishedAt, title, heroImage } = post
+export const ArticleHero: React.FC<{
+  article: Article
+}> = ({ article }) => {
+  const { populatedAuthors, publishedAt, title, heroImage } = article
 
   const hasAuthors =
     populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
