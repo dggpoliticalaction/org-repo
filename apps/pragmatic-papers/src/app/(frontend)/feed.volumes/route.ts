@@ -37,6 +37,4 @@ export async function GET(_request: NextRequest): Promise<Response> {
   })
 }
 
-// This tells Next.js to generate the RSS feed at build time
 export const dynamic = 'force-static'
-export const revalidate = 3600 // Revalidate every hour
