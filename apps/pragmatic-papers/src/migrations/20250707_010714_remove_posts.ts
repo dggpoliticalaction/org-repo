@@ -15,17 +15,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   DROP TABLE "_posts_v_version_populated_authors" CASCADE;
   DROP TABLE "_posts_v" CASCADE;
   DROP TABLE "_posts_v_rels" CASCADE;
-  ALTER TABLE "pages_rels" DROP CONSTRAINT "pages_rels_posts_fk";
-
-  ALTER TABLE "_pages_v_rels" DROP CONSTRAINT "_pages_v_rels_posts_fk";
-
-  ALTER TABLE "redirects_rels" DROP CONSTRAINT "redirects_rels_posts_fk";
-
-  ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_posts_fk";
-
-  ALTER TABLE "header_rels" DROP CONSTRAINT "header_rels_posts_fk";
-
-  ALTER TABLE "footer_rels" DROP CONSTRAINT "footer_rels_posts_fk";
 
   DROP INDEX "pages_rels_posts_id_idx";
   DROP INDEX "_pages_v_rels_posts_id_idx";
