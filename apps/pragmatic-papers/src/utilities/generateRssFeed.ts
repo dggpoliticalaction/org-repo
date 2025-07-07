@@ -66,7 +66,6 @@ const createBaseFeedConfig = (type: 'Articles' | 'Volumes') => ({
   link: SITE_URL,
   language: 'en',
   favicon: `${SITE_URL}/favicon.ico`,
-  image: `${SITE_URL}/pragmaticpapers-logo-dark-og.png`,
   copyright: `All rights reserved ${new Date().getFullYear()}`,
   generator: 'Pragmatic Papers',
   updated: new Date(),
