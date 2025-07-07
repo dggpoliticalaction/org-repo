@@ -47,6 +47,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <InitTheme />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        <link
+          href="/feed.articles"
+          rel="alternate"
+          title="Pragmatic Papers - Articles RSS Feed"
+          type="application/rss+xml"
+        />
+        <link
+          href="/feed.volumes"
+          rel="alternate"
+          title="Pragmatic Papers - Volumes RSS Feed"
+          type="application/rss+xml"
+        />
       </head>
       <body>
         <Providers>
