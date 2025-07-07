@@ -5,6 +5,13 @@ import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 
 const SITE_URL = getServerSideURL()
 
+const getMediaUrl = (url: string) => {
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url
+  }
+  return `${SITE_URL}${url}`
+}
+
 const formatArticleLink = (article: Article) => {
   if (!article.meta?.description) {
     return `<li style="margin: 1em 0"><a href="${SITE_URL}/articles/${article.slug}">${article.title}</a></li>`
@@ -82,7 +89,7 @@ export const generateArticleFeed = (articles: Article[]): string => {
         date: new Date(article.publishedAt),
         image:
           article.meta?.image && typeof article.meta.image !== 'string'
-            ? ((article.meta.image as Media).url ?? '')
+            ? getMediaUrl((article.meta.image as Media).url ?? '')
             : undefined,
         author: article.populatedAuthors?.map((author) => ({
           name: author.name || '',
