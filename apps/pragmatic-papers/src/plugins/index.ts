@@ -8,14 +8,14 @@ import { type GenerateTitle, type GenerateURL } from '@payloadcms/plugin-seo/typ
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
 
-import { type Page, type Post } from '@/payload-types'
+import type { Article, Volume, Page } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 
-const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
+const generateTitle: GenerateTitle<Volume | Article | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Pragmatic Papers` : 'Pragmatic Papers'
 }
 
-const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
+const generateURL: GenerateURL<Volume | Article | Page> = ({ doc }) => {
   const url = getServerSideURL()
 
   return doc?.slug ? `${url}/${doc.slug}` : url
@@ -23,7 +23,7 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
 
 export const plugins: Plugin[] = [
   redirectsPlugin({
-    collections: ['pages', 'posts'],
+    collections: ['pages', 'volumes', 'articles'],
     overrides: {
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {

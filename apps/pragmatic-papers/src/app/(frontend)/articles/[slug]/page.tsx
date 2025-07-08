@@ -8,7 +8,7 @@ import React, { cache } from 'react'
 
 import type { Article } from '@/payload-types'
 
-import { PostHero } from '@/heros/PostHero'
+import { ArticleHero } from '@/heros/ArticleHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -85,7 +85,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
       {draft && <LivePreviewListener />}
 
-      <PostHero post={article} />
+      <ArticleHero article={article} />
 
       <RichText className="" data={article.content} enableGutter={false} />
     </article>
