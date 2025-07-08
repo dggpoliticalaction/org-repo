@@ -82,33 +82,61 @@ export const Media: CollectionConfig = {
       {
         name: 'thumbnail',
         width: 300,
+        formatOptions: {
+          format: 'avif',
+        },
       },
       {
         name: 'square',
         width: 500,
         height: 500,
+        formatOptions: {
+          format: 'avif',
+        },
       },
       {
         name: 'small',
         width: 600,
+        formatOptions: {
+          format: 'avif',
+        },
       },
       {
         name: 'medium',
         width: 900,
+        formatOptions: {
+          format: 'avif',
+        },
       },
       {
         name: 'large',
         width: 1400,
+        formatOptions: {
+          format: 'avif',
+        },
       },
       {
         name: 'xlarge',
         width: 1920,
+        formatOptions: {
+          format: 'avif',
+        },
       },
       {
         name: 'og',
         width: 1200,
         height: 630,
         crop: 'center',
+        formatOptions: {
+          format: 'jpeg',
+        },
+      },
+      {
+        name: 'medium-compat',
+        width: 900,
+        formatOptions: {
+          format: 'jpeg',
+        },
       },
     ],
   },
