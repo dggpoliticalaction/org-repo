@@ -9,7 +9,7 @@ import { resolveDependencies, resolveDependency } from '@/utils/functions';
  * Add a active user to the database if doesn't exist.
  * @param user
  */
-export async function syncUser(user: DUser) {
+export async function syncUser(user: DUser): Promise<void> {
   const [db, stats, logger] = await resolveDependencies([Database, Stats, Logger]);
 
   const userRepo = db.get(User);
@@ -35,7 +35,7 @@ export async function syncUser(user: DUser) {
  * @param guildId
  * @param client
  */
-export async function syncGuild(guildId: string, client: Client) {
+export async function syncGuild(guildId: string, client: Client): Promise<void> {
   const [db, stats, logger] = await resolveDependencies([Database, Stats, Logger]);
 
   const guildRepo = db.get(Guild);
@@ -43,7 +43,8 @@ export async function syncGuild(guildId: string, client: Client) {
 
   const fetchedGuild = await client.guilds.fetch(guildId).catch(() => null);
 
-  // check if this guild exists in the database, if not it creates it (or recovers it from the deleted ones)
+  // check if this guild exists in the database,
+  // if not it creates it (or recovers it from the deleted ones)
   if (!guildData) {
     const deletedGuildData = await guildRepo.findOne({ id: guildId, deleted: true });
 
@@ -80,7 +81,7 @@ export async function syncGuild(guildId: string, client: Client) {
  * Sync all guilds with the database.
  * @param client
  */
-export async function syncAllGuilds(client: Client) {
+export async function syncAllGuilds(client: Client): Promise<void> {
   const db = await resolveDependency(Database);
 
   // add missing guilds

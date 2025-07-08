@@ -1,3 +1,3 @@
 interface state {
-  [key: string]: any
+  [key: string]: unknown
 }

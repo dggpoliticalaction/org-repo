@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
 declare enum AdditionalLocaleString {
   English = 'en',
 }

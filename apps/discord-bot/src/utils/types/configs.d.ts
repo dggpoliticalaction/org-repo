@@ -1,7 +1,9 @@
+import type { Locales } from '@/i18n';
+
 interface GeneralConfigType {
   name: string
   description: string
-  defaultLocale: import('@/i18n').Locales
+  defaultLocale: Locales
   ownerId: string
   timezone: string
   automaticUploadImagesToImgur: boolean

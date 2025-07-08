@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import process from 'node:process';
 
 import { cleanEnv, num, str } from 'envalid';
@@ -26,7 +27,7 @@ export const env = cleanEnv(process.env, {
 export function checkEnvironmentVariables() {
   const config = mikroORMConfig[env.NODE_ENV];
 
-  // @ts-expect-error
+  // @ts-expect-error: config may not have 'dbName' or 'port' properties
   const isSqliteDatabase = !!config.dbName && !config.port;
   if (!isSqliteDatabase) {
     cleanEnv(process.env, {

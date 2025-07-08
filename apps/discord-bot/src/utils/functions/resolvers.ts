@@ -15,6 +15,18 @@ import { type SimpleCommandMessage } from 'discordx';
 
 import packageJson from '../../../package.json';
 
+type AllInteractions =
+  | SimpleCommandMessage
+  | ChatInputCommandInteraction
+  | ContextMenuCommandInteraction
+  | ButtonInteraction
+  | StringSelectMenuInteraction
+  | ModalSubmitInteraction
+  | Message
+  | VoiceState
+  | MessageReaction
+  | PartialMessageReaction
+
 const resolvers = {
   user: {
     SimpleCommandMessage: (interaction: SimpleCommandMessage) => interaction.message.author,
@@ -34,7 +46,7 @@ const resolvers = {
     MessageReaction: (interaction: MessageReaction) => interaction.message.author,
     PartialMessageReaction: (interaction: PartialMessageReaction) => interaction.message.author,
 
-    fallback: (_: any) => null,
+    fallback: (_: unknown) => null,
   },
 
   member: {
@@ -54,7 +66,7 @@ const resolvers = {
     MessageReaction: (interaction: MessageReaction) => interaction.message.member,
     PartialMessageReaction: (interaction: PartialMessageReaction) => interaction.message.member,
 
-    fallback: (_: any) => null,
+    fallback: (_: unknown) => null,
   },
 
   guild: {
@@ -69,7 +81,7 @@ const resolvers = {
     StringSelectMenuInteraction: (interaction: StringSelectMenuInteraction) => interaction.guild,
     ModalSubmitInteraction: (interaction: ModalSubmitInteraction) => interaction.guild,
 
-    fallback: (_: any) => null,
+    fallback: (_: unknown) => null,
   },
 
   channel: {
@@ -84,7 +96,7 @@ const resolvers = {
     StringSelectMenuInteraction: (interaction: StringSelectMenuInteraction) => interaction.channel,
     ModalSubmitInteraction: (interaction: ModalSubmitInteraction) => interaction.channel,
 
-    fallback: (_: any) => null,
+    fallback: (_: unknown) => null,
   },
 
   commandName: {
@@ -96,7 +108,7 @@ const resolvers = {
     MessageContextMenuCommandInteraction: (interaction: ContextMenuCommandInteraction) =>
       interaction.commandName,
 
-    fallback: (_: any) => '',
+    fallback: (_: unknown) => '',
   },
 
   action: {
@@ -121,7 +133,7 @@ const resolvers = {
     StringSelectMenuInteraction: (interaction: StringSelectMenuInteraction) => interaction.customId,
     ModalSubmitInteraction: (interaction: ModalSubmitInteraction) => interaction.customId,
 
-    fallback: (_: any) => '',
+    fallback: (_: unknown) => '',
   },
 
   locale: {
@@ -137,9 +149,21 @@ const resolvers = {
     StringSelectMenuInteraction: (interaction: StringSelectMenuInteraction) => interaction.locale,
     ModalSubmitInteraction: (interaction: ModalSubmitInteraction) => interaction.locale,
 
-    fallback: (_: any) => 'en',
+    fallback: (_: unknown) => 'en',
   },
 };
+
+export function getTypeOfInteraction(
+  interaction:
+    | AllInteractions
+    | Interaction
+    | Message
+    | VoiceState
+    | MessageReaction
+    | PartialMessageReaction,
+): string {
+  return interaction?.constructor.name ?? 'Unknown';
+}
 
 export function resolveUser(
   interaction:
@@ -149,10 +173,10 @@ export function resolveUser(
     | VoiceState
     | MessageReaction
     | PartialMessageReaction,
-) {
+): unknown {
   return (
     resolvers.user[getTypeOfInteraction(interaction) as keyof typeof resolvers.user]?.(
-      interaction,
+      interaction as never,
     ) || resolvers.user.fallback(interaction)
   );
 }
@@ -165,10 +189,10 @@ export function resolveMember(
     | VoiceState
     | MessageReaction
     | PartialMessageReaction,
-) {
+): unknown {
   return (
     resolvers.member[getTypeOfInteraction(interaction) as keyof typeof resolvers.member]?.(
-      interaction,
+      interaction as never,
     ) || resolvers.member.fallback(interaction)
   );
 }
@@ -181,50 +205,46 @@ export function resolveGuild(
     | VoiceState
     | MessageReaction
     | PartialMessageReaction,
-) {
+): unknown {
   return (
     resolvers.guild[getTypeOfInteraction(interaction) as keyof typeof resolvers.guild]?.(
-      interaction,
+      interaction as never,
     ) || resolvers.guild.fallback(interaction)
   );
 }
 
-export function resolveChannel(interaction: AllInteractions) {
+export function resolveChannel(interaction: AllInteractions): unknown {
   return (
     resolvers.channel[getTypeOfInteraction(interaction) as keyof typeof resolvers.channel]?.(
-      interaction,
+      interaction as never,
     ) || resolvers.channel.fallback(interaction)
   );
 }
 
-export function resolveCommandName(interaction: CommandInteraction | SimpleCommandMessage) {
+export function resolveCommandName(interaction: CommandInteraction | SimpleCommandMessage): string {
   return (
     resolvers.commandName[interaction.constructor.name as keyof typeof resolvers.commandName]?.(
-      interaction,
+      interaction as never,
     ) || resolvers.commandName.fallback(interaction)
   );
 }
 
-export function resolveAction(interaction: AllInteractions) {
+export function resolveAction(interaction: AllInteractions): string {
   return (
     resolvers.action[getTypeOfInteraction(interaction) as keyof typeof resolvers.action]?.(
-      interaction,
+      interaction as never,
     ) || resolvers.action.fallback(interaction)
   );
 }
 
-export function resolveLocale(interaction: AllInteractions) {
+export function resolveLocale(interaction: AllInteractions): string {
   return (
     resolvers.locale[getTypeOfInteraction(interaction) as keyof typeof resolvers.locale]?.(
-      interaction,
+      interaction as never,
     ) || resolvers.locale.fallback(interaction)
   );
 }
 
-export function getTypeOfInteraction(interaction: any): string {
-  return interaction.constructor.name;
-}
-
-export function getTscordVersion() {
+export function getTscordVersion(): string {
   return packageJson.tscord.version;
 }

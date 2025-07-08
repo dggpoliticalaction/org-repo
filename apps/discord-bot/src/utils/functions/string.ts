@@ -18,27 +18,27 @@ export function validString(...strings: Array<unknown>): boolean {
   return true;
 }
 
-export function oneLine(strings: TemplateStringsArray, ...keys: any[]) {
+export function oneLine(strings: TemplateStringsArray, ...keys: unknown[]): string {
   return strings
     .reduce((result, part, i) => result + part + (keys[i] ?? ''), '')
     .replace(/(?:\n\s*)+/g, ' ')
-    .split('\NEWLINE')
+    .split('NEWLINE')
     .join('\n')
     .trim();
 }
 
-export function numberAlign(number: number, align: number = 2) {
+export function numberAlign(number: number, align: number = 2): string {
   return number.toString().padStart(align, ' ');
 }
 
-export function constantPreserveDots(string: string) {
+export function constantPreserveDots(string: string): string {
   return string
     .split('.')
     .map((word) => constant(word))
     .join('.');
 }
 
-export function isValidUrl(url: string) {
+export function isValidUrl(url: string): boolean {
   try {
     new URL(url);
 
