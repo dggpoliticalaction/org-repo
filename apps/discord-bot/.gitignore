@@ -1,0 +1,32 @@
+# npm
+node_modules/
+
+# secrets
+.env
+.env.local
+
+# build
+build/
+
+# db
+*.sqlite
+objects/
+snapshot*.txt
+/data/
+
+# logs
+logs/
+*.log
+
+# other
+tests/
+
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
