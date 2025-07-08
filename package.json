@@ -26,9 +26,13 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@scarf/scarf",
       "core-js-pure",
       "esbuild",
-      "sharp"
+      "fast-folder-size",
+      "sharp",
+      "sqlite3",
+      "unrs-resolver"
     ]
   }
 }
