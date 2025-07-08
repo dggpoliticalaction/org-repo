@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-
   # ==== Application ====
 
   app:
@@ -14,14 +13,13 @@ services:
     ports:
       - 4000:4000
     volumes:
-        - ./database:/app/database
-        - ./logs/:/app/logs
-        - ./assets:/app/assets
+      - ./database:/app/database
+      - ./logs/:/app/logs
+      - ./assets:/app/assets
     restart: unless-stopped
     # depends_on:
     #   - database
 
-  
   # ==== PostgreSQL database ====
 
   # database:

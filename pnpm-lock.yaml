@@ -349,6 +349,12 @@ importers:
       '@antfu/eslint-config':
         specifier: ^2.27.3
         version: 2.27.3(@typescript-eslint/utils@8.34.0(eslint@9.29.0(jiti@1.21.7))(typescript@5.8.3))(@vue/compiler-sfc@3.5.17)(eslint@9.29.0(jiti@1.21.7))(typescript@5.8.3)
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
       '@types/archiver':
         specifier: ^6.0.3
         version: 6.0.3
@@ -376,6 +382,9 @@ importers:
       '@types/swagger-ui-express':
         specifier: ~4.1.8
         version: 4.1.8
+      eslint:
+        specifier: ^9.16.0
+        version: 9.29.0(jiti@1.21.7)
       eslint-plugin-simple-import-sort:
         specifier: ^12.1.1
         version: 12.1.1(eslint@9.29.0(jiti@1.21.7))
@@ -391,6 +400,9 @@ importers:
       plop:
         specifier: ^2.7.6
         version: 2.7.6
+      prettier:
+        specifier: ^3.4.2
+        version: 3.5.3
       rimraf:
         specifier: ~5.0.10
         version: 5.0.10

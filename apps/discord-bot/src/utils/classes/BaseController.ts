@@ -1,3 +1,1 @@
-export abstract class BaseController {
-
-}
+export abstract class BaseController {}

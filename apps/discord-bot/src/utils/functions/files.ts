@@ -1,36 +1,33 @@
-import fs from 'node:fs'
-import process from 'node:process'
+import fs from 'node:fs';
+import process from 'node:process';
 
-import { env } from '@/env'
+import { env } from '@/env';
 
 /**
  * recursively get files paths from a directory
  * @param path
  */
 export function getFiles(path: string): string[] {
-	if (!fs.existsSync(path))
-		return []
+  if (!fs.existsSync(path)) return [];
 
-	const files = fs.readdirSync(path)
-	const fileList = []
+  const files = fs.readdirSync(path);
+  const fileList = [];
 
-	for (const file of files) {
-		const filePath = `${path}/${file}`
-		const stats = fs.statSync(filePath)
+  for (const file of files) {
+    const filePath = `${path}/${file}`;
+    const stats = fs.statSync(filePath);
 
-		if (stats.isDirectory())
-			fileList.push(...getFiles(filePath))
-		else
-			fileList.push(filePath)
-	}
+    if (stats.isDirectory()) fileList.push(...getFiles(filePath));
+    else fileList.push(filePath);
+  }
 
-	return fileList
+  return fileList;
 }
 
 export function fileOrDirectoryExists(path: string): boolean {
-	return fs.existsSync(path)
+  return fs.existsSync(path);
 }
 
 export function getSourceCodeLocation(): string {
-	return `${process.cwd()}/${env.NODE_ENV === 'production' ? 'build' : 'src'}`
+  return `${process.cwd()}/${env.NODE_ENV === 'production' ? 'build' : 'src'}`;
 }

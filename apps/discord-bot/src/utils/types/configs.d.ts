@@ -1,93 +1,86 @@
-type GeneralConfigType = {
+interface GeneralConfigType {
+  name: string
+  description: string
+  defaultLocale: import('@/i18n').Locales
+  ownerId: string
+  timezone: string
+  automaticUploadImagesToImgur: boolean
 
-	name: string
-	description: string
-	defaultLocale: import('@/i18n').Locales
-	ownerId: string
-	timezone: string
-	automaticUploadImagesToImgur: boolean
+  simpleCommandsPrefix: string
+  automaticDeferring: boolean
 
-	simpleCommandsPrefix: string
-	automaticDeferring: boolean
+  links: {
+    invite: string
+    supportServer: string
+    gitRemoteRepo: string
+  }
 
-	links: {
-		invite: string
-		supportServer: string
-		gitRemoteRepo: string
-	}
+  devs: string[]
 
-	devs: string[]
-
-	activities: {
-		text: string
-		type: 'PLAYING' | 'STREAMING' | 'LISTENING' | 'WATCHING' | 'CUSTOM' | 'COMPETING'
-	}[]
-
+  activities: {
+    text: string
+    type: 'PLAYING' | 'STREAMING' | 'LISTENING' | 'WATCHING' | 'CUSTOM' | 'COMPETING'
+  }[]
 }
 
-type DatabaseConfigType = {
+interface DatabaseConfigType {
+  path: `${string}/`
 
-	path: `${string}/`
-
-	backup: {
-		enabled: boolean
-		path: `${string}/`
-	}
+  backup: {
+    enabled: boolean
+    path: `${string}/`
+  }
 }
 
-type LogsConfigType = {
+interface LogsConfigType {
+  debug: boolean
+  logTailMaxSize: number
 
-	debug: boolean
-	logTailMaxSize: number
+  archive: {
+    enabled: boolean
+    retention: number
+  }
 
-	archive: {
-		enabled: boolean
-		retention: number
-	}
+  interaction: {
+    file: boolean
+    console: boolean
+    channel: string | null
 
-	interaction: {
-		file: boolean
-		console: boolean
-		channel: string | null
+    exclude: InteractionsConstants[]
+  }
 
-		exclude: InteractionsConstants[]
-	}
+  simpleCommand: {
+    file: boolean
+    console: boolean
+    channel: string | null
+  }
 
-	simpleCommand: {
-		file: boolean
-		console: boolean
-		channel: string | null
-	}
+  newUser: {
+    file: boolean
+    console: boolean
+    channel: string | null
+  }
 
-	newUser: {
-		file: boolean
-		console: boolean
-		channel: string | null
-	}
+  guild: {
+    file: boolean
+    console: boolean
+    channel: string | null
+  }
 
-	guild: {
-		file: boolean
-		console: boolean
-		channel: string | null
-	}
-
-	error: {
-		file: boolean
-		console: boolean
-		channel: string | null
-	}
+  error: {
+    file: boolean
+    console: boolean
+    channel: string | null
+  }
 }
 
-type StatsConfigType = {
-
-	interaction: {
-
-		exclude: InteractionsConstants[]
-	}
+interface StatsConfigType {
+  interaction: {
+    exclude: InteractionsConstants[]
+  }
 }
 
-type APIConfigType = {
-
-	enabled: boolean
-	port: number
+interface APIConfigType {
+  enabled: boolean
+  port: number
 }

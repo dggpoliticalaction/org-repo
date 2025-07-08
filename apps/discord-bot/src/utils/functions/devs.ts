@@ -1,10 +1,10 @@
-import { generalConfig } from '@/configs'
+import { generalConfig } from '@/configs';
 
 /**
  * Get a curated list of devs including the owner id
  */
 export function getDevs(): string[] {
-	return [...new Set([...generalConfig.devs, generalConfig.ownerId])]
+  return [...new Set([...generalConfig.devs, generalConfig.ownerId])];
 }
 
 /**
@@ -12,5 +12,5 @@ export function getDevs(): string[] {
  * @param id Discord user id
  */
 export function isDev(id: string): boolean {
-	return getDevs().includes(id)
+  return getDevs().includes(id);
 }

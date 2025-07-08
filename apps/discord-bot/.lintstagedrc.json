@@ -1,0 +1,7 @@
+{
+  "*/**/*.{js,jsx,ts,tsx}": [
+    "pnpx prettier --write",
+    "pnpx eslint --fix --max-warnings 0"
+  ],
+  "*/**/*.{json,css,md}": ["pnpx prettier --write"]
+}

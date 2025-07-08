@@ -16,12 +16,13 @@
 
 # What is TSCord
 
-#### **TSCord** is a fully-featured **[discord bot](https://discord.com/developers/docs/intro#bots-and-apps)** *template* written in [Typescript](https://www.typescriptlang.org/), intended to provide a framework that's easy to use, extend and modify.
+#### **TSCord** is a fully-featured **[discord bot](https://discord.com/developers/docs/intro#bots-and-apps)** _template_ written in [Typescript](https://www.typescriptlang.org/), intended to provide a framework that's easy to use, extend and modify.
 
 It uses [`discordx`](https://github.com/discordx-ts/discordx) and [`discord.js v14`](https://github.com/discordjs/discord.js) under the hood to simplify the development of discord bots.
 
 This template was created to give developers a starting point for new Discord bots, so that much of the initial setup can be avoided and developers can instead focus on meaningful bot features. Developers can simply follow the [installation](https://tscord.bartho.dev/docs/bot/get-started/installation) and the [configuration](https://tscord.bartho.dev/docs/bot/get-started/configuration) instructions, and have a working bot with many boilerplate features already included!
-    </td>
+</td>
+
   </tr>
 </table>
 
@@ -41,7 +42,7 @@ npx tscord init bot my-bot
 </tr>
 </table>
 
-*But TSCord is not only a Discord bot template...*
+_But TSCord is not only a Discord bot template..._
 
 <table>
 <tr>
@@ -101,16 +102,16 @@ Fully extensible thanks to the plugin eco-system
 Talking about features, here are some of the core features of the template:
 
 - Advanced **handlers** for:
-    - Interactions (slash, context menu, button, modal, select menu, etc)
-    - Simple message commands
-    - Discord events listeners
+  - Interactions (slash, context menu, button, modal, select menu, etc)
+  - Simple message commands
+  - Discord events listeners
 - **Guards** functions, acting like middlewares on handlers with some built-ins:
-    - Rate limiter
-    - Maintenance mode
-    - Disabling command
-    - Guild only command (no DMs)
-    - NSFW only command
-    - Message's content match using regex
+  - Rate limiter
+  - Maintenance mode
+  - Disabling command
+  - Guild only command (no DMs)
+  - NSFW only command
+  - Message's content match using regex
 - Internal **API** to interact with the bot from external services, with built-in useful endpoints
 - Multiple **databases** support out-of-the-box using [Mikro-ORM](https://mikro-orm.io/)
 - **Migrations** system to keep a safe database
@@ -124,10 +125,11 @@ Talking about features, here are some of the core features of the template:
 - Automatic **static assets upload** to [imgur](https://imgur.com/)
 
 This template is also developer friendly and follow strict design patterns to ease its maintenance:
+
 - Written in **Typescript**
 - Built around the **Dependency Injection** and **Singleton** patterns
 - **HMR** on events and commands for a faster development
-- Use of battle-tested **libraries** under the hood (*discordx* and *discord.js*)
+- Use of battle-tested **libraries** under the hood (_discordx_ and _discord.js_)
 - **Linting** and **formatting** thanks to a top-notch ESLint config
 - Typesafe and validated **environment variables**
 - Built-in **debugging** setup for VSCode
@@ -135,13 +137,14 @@ This template is also developer friendly and follow strict design patterns to ea
 - Support for running with **[Docker](https://www.docker.com/)**
 - CI/CD integration with **Github Actions**
 
-*and many more!*
+_and many more!_
 
 ## 📚 Documentation
 
 ### Check the [**official documentation**](https://tscord.bartho.dev/) to get started and understand how to use this template.
 
 You can also find useful documentations at:
+
 - [discordx documentation](https://discordx.js.org/)
 - [Discord.js Guide](https://discordjs.guide/)
 - [Discord's developer portal](https://discord.com/developers/docs/intro)
@@ -153,6 +156,7 @@ If you need support on the template or just want to exchange with us, don't hesi
 ## Roadmap
 
 We use Github milestones for
+
 #### [Click here](https://github.com/barthofu/tscord-template/milestones?direction=asc&sort=title&state=open) to access the milestone roadmap
 
 ## 📑 License
@@ -160,4 +164,5 @@ We use Github milestones for
 MIT License
 
 Copyright (c) barthofu
+
 # discord-bot

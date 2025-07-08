@@ -49,9 +49,7 @@
       "indexes": [
         {
           "keyName": "primary",
-          "columnNames": [
-            "key"
-          ],
+          "columnNames": ["key"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -130,9 +128,7 @@
       "indexes": [
         {
           "keyName": "primary",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -251,9 +247,7 @@
       "indexes": [
         {
           "keyName": "primary",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -312,9 +306,7 @@
       "indexes": [
         {
           "keyName": "primary",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -383,9 +375,7 @@
       "indexes": [
         {
           "keyName": "primary",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -443,9 +433,7 @@
       "indexes": [
         {
           "keyName": "primary",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,

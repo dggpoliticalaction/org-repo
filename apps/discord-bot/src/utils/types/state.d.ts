@@ -1,3 +1,3 @@
-type state = {
-	[key: string]: any
+interface state {
+  [key: string]: any
 }

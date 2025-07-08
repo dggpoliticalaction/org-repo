@@ -11,20 +11,20 @@ import ru from './ru'
 import uk from './uk'
 
 const localeTranslations = {
-	en,
-	fr,
-	ru,
-	uk,
+  en,
+  fr,
+  ru,
+  uk,
 }
 
 export const loadLocale = (locale: Locales): void => {
-	if (loadedLocales[locale]) return
+  if (loadedLocales[locale]) return
 
-	loadedLocales[locale] = localeTranslations[locale] as unknown as Translations
-	loadFormatters(locale)
+  loadedLocales[locale] = localeTranslations[locale] as unknown as Translations
+  loadFormatters(locale)
 }
 
 export const loadAllLocales = (): void => locales.forEach(loadLocale)
 
 export const loadFormatters = (locale: Locales): void =>
-	void (loadedFormatters[locale] = initFormatters(locale))
+  void (loadedFormatters[locale] = initFormatters(locale))

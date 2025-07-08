@@ -1,123 +1,114 @@
-import fs from 'node:fs'
-import { sep } from 'node:path'
+import fs from 'node:fs';
+import { sep } from 'node:path';
 
-import { resolve } from '@discordx/importer'
-import { AnyEntity, EntityClass } from '@mikro-orm/core'
-import { BaseTranslation } from 'typesafe-i18n'
-import { ImportLocaleMapping, storeTranslationsToDisk } from 'typesafe-i18n/importer'
+import { resolve } from '@discordx/importer';
+import { type AnyEntity, type EntityClass } from '@mikro-orm/core';
+import { type BaseTranslation } from 'typesafe-i18n';
+import { type ImportLocaleMapping, storeTranslationsToDisk } from 'typesafe-i18n/importer';
 
-import { Service } from '@/decorators'
-import { locales } from '@/i18n'
-import { Store } from '@/services'
-import { BaseController, Plugin } from '@/utils/classes'
-import { getSourceCodeLocation } from '@/utils/functions'
+import { Service } from '@/decorators';
+import { locales } from '@/i18n';
+import { type Store } from '@/services';
+import { type BaseController, Plugin } from '@/utils/classes';
+import { getSourceCodeLocation } from '@/utils/functions';
 
 @Service()
 export class PluginsManager {
+  private _plugins: Plugin[] = [];
 
-	private _plugins: Plugin[] = []
+  constructor(private store: Store) {}
 
-	constructor(
-		private store: Store
-	) {}
+  public async loadPlugins(): Promise<void> {
+    const pluginPaths = await resolve(`${getSourceCodeLocation()}/plugins/*`);
 
-	public async loadPlugins(): Promise<void> {
-		const pluginPaths = await resolve(`${getSourceCodeLocation()}/plugins/*`)
+    for (const path of pluginPaths) {
+      const plugin = new Plugin(path);
+      await plugin.load();
 
-		for (const path of pluginPaths) {
-			const plugin = new Plugin(path)
-			await plugin.load()
+      if (plugin.isValid()) this.plugins.push(plugin);
+    }
+  }
 
-			if (plugin.isValid())
-				this.plugins.push(plugin)
-		}
-	}
+  public getEntities(): EntityClass<AnyEntity>[] {
+    return this._plugins.map((plugin) => Object.values(plugin.entities)).flat();
+  }
 
-	public getEntities(): EntityClass<AnyEntity>[] {
-		return this._plugins.map(plugin => Object.values(plugin.entities)).flat()
-	}
+  public getControllers(): (typeof BaseController)[] {
+    return this._plugins.map((plugin) => Object.values(plugin.controllers)).flat();
+  }
 
-	public getControllers(): typeof BaseController[] {
-		return this._plugins.map(plugin => Object.values(plugin.controllers)).flat()
-	}
+  public async importCommands(): Promise<void> {
+    for (const plugin of this._plugins) await plugin.importCommands();
+  }
 
-	public async importCommands(): Promise<void> {
-		for (const plugin of this._plugins) await plugin.importCommands()
-	}
+  public async importEvents(): Promise<void> {
+    for (const plugin of this._plugins) await plugin.importEvents();
+  }
 
-	public async importEvents(): Promise<void> {
-		for (const plugin of this._plugins) await plugin.importEvents()
-	}
+  public async initServices(): Promise<{ [key: string]: any }> {
+    const services: { [key: string]: any } = {};
 
-	public async initServices(): Promise<{ [key: string]: any }> {
-		const services: { [key: string]: any } = {}
+    for (const plugin of this._plugins) {
+      for (const service in plugin.services) services[service] = new plugin.services[service]();
+    }
 
-		for (const plugin of this._plugins) {
-			for (const service in plugin.services)
+    return services;
+  }
 
-				services[service] = new plugin.services[service]()
-		}
+  public async execMains(): Promise<void> {
+    for (const plugin of this._plugins) await plugin.execMain();
+  }
 
-		return services
-	}
+  public async syncTranslations(): Promise<void> {
+    const localeMapping: ImportLocaleMapping[] = [];
+    const namespaces: { [key: string]: string[] } = {};
+    const translations: { [key: string]: BaseTranslation } = {};
 
-	public async execMains(): Promise<void> {
-		for (const plugin of this._plugins)
-			await plugin.execMain()
-	}
+    for (const locale of locales) {
+      const path = `${getSourceCodeLocation()}/i18n/${locale}`;
+      if (fs.existsSync(path)) translations[locale] = (await import(path))?.default;
+    }
 
-	public async syncTranslations(): Promise<void> {
-		const localeMapping: ImportLocaleMapping[] = []
-		const namespaces: { [key: string]: string[] } = {}
-		const translations: { [key: string]: BaseTranslation } = {}
+    for (const plugin of this._plugins) {
+      for (const locale in plugin.translations) {
+        if (!translations[locale]) translations[locale] = {};
+        if (!namespaces[locale]) namespaces[locale] = [];
 
-		for (const locale of locales) {
-			const path = `${getSourceCodeLocation()}/i18n/${locale}`
-			if (fs.existsSync(path))
-				translations[locale] = (await import(path))?.default
-		}
+        translations[locale] = {
+          ...translations[locale],
+          [plugin.name]: plugin.translations[locale],
+        };
+        namespaces[locale].push(plugin.name);
+      }
+    }
 
-		for (const plugin of this._plugins) {
-			for (const locale in plugin.translations) {
-				if (!translations[locale])
-					translations[locale] = {}
-				if (!namespaces[locale])
-					namespaces[locale] = []
+    for (const locale in translations) {
+      if (!locales.includes(locale as any)) continue;
 
-				translations[locale] = { ...translations[locale], [plugin.name]: plugin.translations[locale] }
-				namespaces[locale].push(plugin.name)
-			}
-		}
+      localeMapping.push({
+        locale,
+        translations: translations[locale],
+        namespaces: namespaces[locale],
+      });
+    }
 
-		for (const locale in translations) {
-			if (!locales.includes(locale as any))
-				continue
+    const pluginsName = this._plugins.map((plugin) => plugin.name);
 
-			localeMapping.push({
-				locale,
-				translations: translations[locale],
-				namespaces: namespaces[locale],
-			})
-		}
+    for (const path of await resolve(`${getSourceCodeLocation()}/i18n/*/*/index.ts`)) {
+      const name = path.split(sep).at(-2) || '';
 
-		const pluginsName = this._plugins.map(plugin => plugin.name)
+      if (!pluginsName.includes(name))
+        await fs.rmSync(path.slice(0, -8), { recursive: true, force: true });
+    }
 
-		for (const path of await resolve(`${getSourceCodeLocation()}/i18n/*/*/index.ts`)) {
-			const name = path.split(sep).at(-2) || ''
+    await storeTranslationsToDisk(localeMapping, true);
+  }
 
-			if (!pluginsName.includes(name))
-				await fs.rmSync(path.slice(0, -8), { recursive: true, force: true })
-		}
+  public isPluginLoad(pluginName: string): boolean {
+    return this._plugins.findIndex((plugin) => plugin.name === pluginName) !== -1;
+  }
 
-		await storeTranslationsToDisk(localeMapping, true)
-	}
-
-	public isPluginLoad(pluginName: string): boolean {
-		return this._plugins.findIndex(plugin => plugin.name === pluginName) !== -1
-	}
-
-	get plugins() {
-		return this._plugins
-	}
-
+  get plugins() {
+    return this._plugins;
+  }
 }

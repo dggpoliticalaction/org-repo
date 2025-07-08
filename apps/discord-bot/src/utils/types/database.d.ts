@@ -1,6 +1,6 @@
-type DatabaseSize = {
-	db: number | null
-	backups: number | null
+interface DatabaseSize {
+  db: number | null
+  backups: number | null
 }
 
 type DatabaseDriver = import('@mikro-orm/sqlite').SqliteDriver

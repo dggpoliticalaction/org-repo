@@ -1,9 +1,9 @@
-import { CronJob } from 'cron'
-import { isValidCron } from 'cron-validator'
-import { container, InjectionToken } from 'tsyringe'
+import { CronJob } from 'cron';
+import { isValidCron } from 'cron-validator';
+import { container, type InjectionToken } from 'tsyringe';
 
-import { generalConfig } from '@/configs'
-import { resolveDependency } from '@/utils/functions'
+import { generalConfig } from '@/configs';
+import { resolveDependency } from '@/utils/functions';
 
 /**
  * Schedule a job to be executed at a specific time (cron)
@@ -11,32 +11,28 @@ import { resolveDependency } from '@/utils/functions'
  * @param jobName - name of the job (the name of the function will be used if it is not provided)
  */
 export function Schedule(cronExpression: string, jobName?: string) {
-	if (!isValidCron(cronExpression, { alias: true, seconds: true }))
-		throw new Error(`Invalid cron expression: ${cronExpression}`)
+  if (!isValidCron(cronExpression, { alias: true, seconds: true }))
+    throw new Error(`Invalid cron expression: ${cronExpression}`);
 
-	return (
-		target: any,
-		propertyKey: string,
-		descriptor: PropertyDescriptor
-	) => {
-		// associate the context to the function, with the injected dependencies defined
-		const oldDescriptor = descriptor.value
-		descriptor.value = function (...args: any[]) {
-			return oldDescriptor.apply(container.resolve(this.constructor as InjectionToken<any>), args)
-		}
+  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+    // associate the context to the function, with the injected dependencies defined
+    const oldDescriptor = descriptor.value;
+    descriptor.value = function (...args: any[]) {
+      return oldDescriptor.apply(container.resolve(this.constructor as InjectionToken<any>), args);
+    };
 
-		const job = new CronJob(
-			cronExpression,
-			descriptor.value,
-			null,
-			false,
-			generalConfig.timezone,
-			target
-		)
+    const job = new CronJob(
+      cronExpression,
+      descriptor.value,
+      null,
+      false,
+      generalConfig.timezone,
+      target,
+    );
 
-		import('@/services').then(async (services) => {
-			const scheduler = await resolveDependency(services.Scheduler)
-			scheduler.addJob(jobName ?? propertyKey, job)
-		})
-	}
+    import('@/services').then(async (services) => {
+      const scheduler = await resolveDependency(services.Scheduler);
+      scheduler.addJob(jobName ?? propertyKey, job);
+    });
+  };
 }

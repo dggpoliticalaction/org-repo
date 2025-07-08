@@ -1,35 +1,31 @@
-import { Store as RxStore } from 'rxeta'
+import { Store as RxStore } from 'rxeta';
 
-import { apiConfig } from '@/configs'
-import { Service } from '@/decorators'
+import { apiConfig } from '@/configs';
+import { Service } from '@/decorators';
 
-type State = {
-
-	authorizedAPITokens: string[]
-	botHasBeenReloaded: boolean
-	ready: {
-		bot: boolean | null
-		api: boolean | null
-	}
+interface State {
+  authorizedAPITokens: string[]
+  botHasBeenReloaded: boolean
+  ready: {
+    bot: boolean | null
+    api: boolean | null
+  }
 }
 
 const initialState: State = {
-
-	authorizedAPITokens: [],
-	botHasBeenReloaded: false,
-	ready: {
-		bot: false,
-		api: apiConfig.enabled ? false : null,
-	},
-}
+  authorizedAPITokens: [],
+  botHasBeenReloaded: false,
+  ready: {
+    bot: false,
+    api: apiConfig.enabled ? false : null,
+  },
+};
 
 @Service({
-	keepInstanceAfterHmr: true,
+  keepInstanceAfterHmr: true,
 })
 export class Store extends RxStore<State> {
-
-	constructor() {
-		super(initialState)
-	}
-
+  constructor() {
+    super(initialState);
+  }
 }

@@ -1,6 +1,17 @@
-import { ClassDecoratorEx, ClassMethodDecorator, SlashGroup as SlashGroupX, SlashGroupOptions as SlashGroupOptionsX, VerifyName } from 'discordx'
+import {
+  type ClassDecoratorEx,
+  type ClassMethodDecorator,
+  SlashGroup as SlashGroupX,
+  type SlashGroupOptions as SlashGroupOptionsX,
+  type VerifyName,
+} from 'discordx';
 
-import { constantPreserveDots, sanitizeLocales, setFallbackDescription, setOptionsLocalization } from '@/utils/functions'
+import {
+  constantPreserveDots,
+  sanitizeLocales,
+  setFallbackDescription,
+  setOptionsLocalization,
+} from '@/utils/functions';
 
 /**
  * Create slash group
@@ -14,9 +25,7 @@ import { constantPreserveDots, sanitizeLocales, setFallbackDescription, setOptio
  *
  * @category Decorator
  */
-export function SlashGroup(
-	options: SlashGroupOptions
-): ClassDecoratorEx
+export function SlashGroup(options: SlashGroupOptions): ClassDecoratorEx
 
 /**
  * Assign a group to a method or class
@@ -30,9 +39,7 @@ export function SlashGroup(
  *
  * @category Decorator
  */
-export function SlashGroup<TName extends string>(
-	name: VerifyName<TName>
-): ClassMethodDecorator
+export function SlashGroup<TName extends string>(name: VerifyName<TName>): ClassMethodDecorator
 
 /**
  * Assign a group to a method or class
@@ -48,8 +55,8 @@ export function SlashGroup<TName extends string>(
  * @category Decorator
  */
 export function SlashGroup<TName extends string, TRoot extends string>(
-	name: VerifyName<TName>,
-	root: VerifyName<TRoot>
+  name: VerifyName<TName>,
+  root: VerifyName<TRoot>,
 ): ClassMethodDecorator
 
 /**
@@ -65,35 +72,40 @@ export function SlashGroup<TName extends string, TRoot extends string>(
  *
  * @category Decorator
  */
-export function SlashGroup<TRoot extends string>(options: VerifyName<string> | SlashGroupOptions, root?: VerifyName<TRoot>) {
-	if (typeof options !== 'string') {
-		let localizationSource: TranslationsNestedPaths | null = null
-		if (options.localizationSource)
-			localizationSource = constantPreserveDots(options.localizationSource) as TranslationsNestedPaths
+export function SlashGroup<TRoot extends string>(
+  options: VerifyName<string> | SlashGroupOptions,
+  root?: VerifyName<TRoot>,
+) {
+  if (typeof options !== 'string') {
+    let localizationSource: TranslationsNestedPaths | null = null;
+    if (options.localizationSource)
+      localizationSource = constantPreserveDots(
+        options.localizationSource,
+      ) as TranslationsNestedPaths;
 
-		if (localizationSource) {
-			options = setOptionsLocalization({
-				target: 'description',
-				options,
-				localizationSource,
-			})
+    if (localizationSource) {
+      options = setOptionsLocalization({
+        target: 'description',
+        options,
+        localizationSource,
+      });
 
-			options = setOptionsLocalization({
-				target: 'name',
-				options,
-				localizationSource,
-			})
-		}
+      options = setOptionsLocalization({
+        target: 'name',
+        options,
+        localizationSource,
+      });
+    }
 
-		options = sanitizeLocales(options)
+    options = sanitizeLocales(options);
 
-		if (!options.description)
-			options = setFallbackDescription(options)
+    if (!options.description) options = setFallbackDescription(options);
 
-		return SlashGroupX(options as SlashGroupOptionsX<VerifyName<string>, string, VerifyName<string>>)
-	} else {
-		if (root)
-			return SlashGroupX(options, root)
-		else return SlashGroupX(options)
-	}
+    return SlashGroupX(
+      options as SlashGroupOptionsX<VerifyName<string>, string, VerifyName<string>>,
+    );
+  } else {
+    if (root) return SlashGroupX(options, root);
+    else return SlashGroupX(options);
+  }
 }

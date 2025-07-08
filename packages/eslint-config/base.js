@@ -64,6 +64,6 @@ export const config = [
     },
   },
   {
-    ignores: ["dist/**", "node_modules/**", ".next/**", "out/**"],
+    ignores: ["dist/**", "node_modules/**", ".next/**", "out/**", "build/**"],
   },
 ];

@@ -1,15 +1,13 @@
-import { Discord, OnCustom } from '@/decorators'
+import { Discord, OnCustom } from '@/decorators';
 
 @Discord()
 export default class TemplateReadyEvent {
+  // =============================
+  // ========= Handlers ==========
+  // =============================
 
-	// =============================
-	// ========= Handlers ==========
-	// =============================
-
-	@OnCustom('templateReady')
-	async templateReadyHandler() {
-		console.log('the template is fully ready!')
-	}
-
+  @OnCustom('templateReady')
+  async templateReadyHandler() {
+    console.log('the template is fully ready!');
+  }
 }
