@@ -39,6 +39,7 @@ export const ArticleCard: React.FC<{
               resource={metaImage}
               className="h-full w-full"
               imgClassName="object-cover h-full w-full"
+              size="square"
             />
           )}
         </div>
