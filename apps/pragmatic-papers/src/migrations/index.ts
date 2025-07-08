@@ -4,6 +4,7 @@ import * as migration_20250705_185916_add_media_access_control from './20250705_
 import * as migration_20250705_213213_remove_unused_volume_relation from './20250705_213213_remove_unused_volume_relation'
 import * as migration_20250707_010714_remove_posts from './20250707_010714_remove_posts'
 import * as migration_20250708_020740_update_payload from './20250708_020740_update_payload'
+import * as migration_20250708_042411_update_media_image_sizes from './20250708_042411_update_media_image_sizes'
 
 export const migrations = [
   {
@@ -35,5 +36,10 @@ export const migrations = [
     up: migration_20250708_020740_update_payload.up,
     down: migration_20250708_020740_update_payload.down,
     name: '20250708_020740_update_payload',
+  },
+  {
+    up: migration_20250708_042411_update_media_image_sizes.up,
+    down: migration_20250708_042411_update_media_image_sizes.down,
+    name: '20250708_042411_update_media_image_sizes',
   },
 ]
