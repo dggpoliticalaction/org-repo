@@ -94,9 +94,10 @@ export const plugins: Plugin[] = [
     collections: {
       media: {
         disablePayloadAccessControl: true,
-        generateFileURL: ({ filename }) => {
-          return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${process.env.S3_BUCKET}/${filename}`
+        generateFileURL: ({ filename, prefix }) => {
+          return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${process.env.S3_BUCKET}/${prefix}/${filename}`
         },
+        prefix: 'media',
       },
     },
     bucket: process.env.S3_BUCKET || '',

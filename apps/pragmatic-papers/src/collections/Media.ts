@@ -74,7 +74,7 @@ export const Media: CollectionConfig = {
       return `${(doc as MediaType).sizes?.thumbnail?.url ?? ''}`
     },
     formatOptions: {
-      format: 'webp',
+      format: 'avif',
     },
     focalPoint: true,
     disableLocalStorage: process.env.NODE_ENV === 'production',
