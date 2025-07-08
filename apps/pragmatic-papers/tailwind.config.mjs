@@ -163,7 +163,7 @@ const config = {
                 textDecoration: 'none',
                 color: 'inherit',
                 transition: 'box-shadow 0.2s ease-out',
-                wordBreak: 'break-all',
+                wordBreak: 'break-word',
               },
               'a:hover': {
                 boxShadow: 'inset 0 -11px 0 0 var(--brand-light)',
