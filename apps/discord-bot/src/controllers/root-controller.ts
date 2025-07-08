@@ -1,16 +1,16 @@
-import { type Request, type Response, Router } from 'express';
+import { type Request, type Response, Router } from 'express'
 
-import { type Controller } from './index.js';
+import { type Controller } from './index.js'
 
 export class RootController implements Controller {
-  public path = '/';
-  public router: Router = Router();
+  public path = '/'
+  public router: Router = Router()
 
   public register(): void {
-    this.router.get('/', (req, res) => this.get(req, res));
+    this.router.get('/', (req, res) => this.get(req, res))
   }
 
   private async get(req: Request, res: Response): Promise<void> {
-    res.status(200).json({ name: 'Discord Bot Cluster API', author: 'Kevin Novak' });
+    res.status(200).json({ name: 'Discord Bot Cluster API', author: 'Kevin Novak' })
   }
 }

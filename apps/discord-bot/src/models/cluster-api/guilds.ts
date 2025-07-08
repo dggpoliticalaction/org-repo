@@ -1,3 +1,3 @@
 export interface GetGuildsResponse {
-    guilds: string[];
+  guilds: string[]
 }

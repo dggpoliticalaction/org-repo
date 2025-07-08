@@ -1,4 +1,8 @@
-import { DiscordAPIError, RESTJSONErrorCodes as DiscordApiErrors, type ThreadChannel } from 'discord.js';
+import {
+  DiscordAPIError,
+  RESTJSONErrorCodes as DiscordApiErrors,
+  type ThreadChannel,
+} from 'discord.js'
 
 const IGNORED_ERRORS = [
   DiscordApiErrors.UnknownMessage,
@@ -9,7 +13,7 @@ const IGNORED_ERRORS = [
   DiscordApiErrors.CannotSendMessagesToThisUser, // User blocked bot or DM disabled
   DiscordApiErrors.ReactionWasBlocked, // User blocked bot or DM disabled
   DiscordApiErrors.MaximumActiveThreads,
-];
+]
 
 export class ThreadUtils {
   public static async archive(
@@ -17,35 +21,32 @@ export class ThreadUtils {
     archived: boolean = true,
   ): Promise<ThreadChannel> {
     try {
-      return await thread.setArchived(archived);
+      return await thread.setArchived(archived)
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
 
-  public static async lock(
-    thread: ThreadChannel,
-    locked: boolean = true,
-  ): Promise<ThreadChannel> {
+  public static async lock(thread: ThreadChannel, locked: boolean = true): Promise<ThreadChannel> {
     try {
-      return await thread.setLocked(locked);
+      return await thread.setLocked(locked)
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }

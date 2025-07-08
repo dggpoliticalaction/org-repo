@@ -1,19 +1,17 @@
-import { type ErrorRequestHandler } from 'express';
-import { createRequire } from 'node:module';
+import { type ErrorRequestHandler } from 'express'
+import { createRequire } from 'node:module'
 
-import { Logger } from '../services/index.js';
+import { Logger } from '../services/index.js'
 
-const require = createRequire(import.meta.url);
-const Logs = require('../../lang/logs.json');
+const require = createRequire(import.meta.url)
+const Logs = require('../../lang/logs.json')
 
 export function handleError(): ErrorRequestHandler {
   return (error, req, res, _next) => {
     Logger.error(
-      Logs.error.apiRequest
-        .replaceAll('{HTTP_METHOD}', req.method)
-        .replaceAll('{URL}', req.url),
+      Logs.error.apiRequest.replaceAll('{HTTP_METHOD}', req.method).replaceAll('{URL}', req.url),
       error,
-    );
-    res.status(500).json({ error: true, message: error.message });
-  };
+    )
+    res.status(500).json({ error: true, message: error.message })
+  }
 }

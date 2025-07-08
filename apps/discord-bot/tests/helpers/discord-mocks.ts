@@ -6,8 +6,8 @@ import {
   PermissionsBitField,
   ThreadChannel,
   User,
-} from 'discord.js';
-import { vi } from 'vitest';
+} from 'discord.js'
+import { vi } from 'vitest'
 
 /**
  * Creates a mock Discord.js User that correctly passes instanceof checks
@@ -28,22 +28,22 @@ export function createMockUser(overrides: any = {}): any {
     // Common methods
     send: vi.fn().mockResolvedValue({}),
     fetch: vi.fn().mockImplementation(function () {
-      return Promise.resolve(this);
+      return Promise.resolve(this)
     }),
     toString: vi.fn().mockReturnValue('<@123456789012345678>'),
-  };
+  }
 
   // Add overrides
-  Object.assign(baseUser, overrides);
+  Object.assign(baseUser, overrides)
 
   // Create a properly structured mock that will pass instanceof checks
   const mockUser = Object.create(User.prototype, {
     ...Object.getOwnPropertyDescriptors(baseUser),
     // Make sure the user correctly identifies as a User
     constructor: { value: User },
-  });
+  })
 
-  return mockUser;
+  return mockUser
 }
 
 /**
@@ -51,7 +51,7 @@ export function createMockUser(overrides: any = {}): any {
  */
 export function createMockCommandInteraction(overrides: any = {}): any {
   // Create a mock guild member first to ensure consistent user data
-  const mockMember = createMockGuildMember();
+  const mockMember = createMockGuildMember()
 
   return {
     id: '987612345678901234',
@@ -81,7 +81,7 @@ export function createMockCommandInteraction(overrides: any = {}): any {
     deferred: false,
     replied: false,
     ...overrides,
-  };
+  }
 }
 
 /**
@@ -97,19 +97,19 @@ export function createMockGuildChannel(overrides: any = {}): any {
       user: { id: '987654321098765432' },
     },
     type: ChannelType.GuildText,
-  };
+  }
 
   // Add overrides
-  Object.assign(baseChannel, overrides);
+  Object.assign(baseChannel, overrides)
 
   // Create a properly structured mock that will pass instanceof checks
   const mockChannel = Object.create(GuildChannel.prototype, {
     ...Object.getOwnPropertyDescriptors(baseChannel),
     // Make sure the channel correctly identifies as a GuildChannel
     constructor: { value: GuildChannel },
-  });
+  })
 
-  return mockChannel;
+  return mockChannel
 }
 
 /**
@@ -128,19 +128,19 @@ export function createMockThreadChannel(overrides: any = {}): any {
     permissionsFor: vi.fn().mockReturnValue({
       has: vi.fn().mockReturnValue(true),
     }),
-  };
+  }
 
   // Add overrides
-  Object.assign(baseChannel, overrides);
+  Object.assign(baseChannel, overrides)
 
   // Create a properly structured mock that will pass instanceof checks
   const mockChannel = Object.create(ThreadChannel.prototype, {
     ...Object.getOwnPropertyDescriptors(baseChannel),
     // Make sure the channel correctly identifies as a ThreadChannel
     constructor: { value: ThreadChannel },
-  });
+  })
 
-  return mockChannel;
+  return mockChannel
 }
 
 /**
@@ -158,7 +158,7 @@ export function createMockCommand(overrides: any = {}): any {
       interval: 5000,
     },
     ...overrides,
-  };
+  }
 }
 
 /**
@@ -166,7 +166,7 @@ export function createMockCommand(overrides: any = {}): any {
  */
 export function createMockGuildMember(overrides: any = {}): any {
   // Create a mock user first
-  const mockUser = createMockUser();
+  const mockUser = createMockUser()
 
   // Create base object with properties we need
   const baseMember = {
@@ -207,20 +207,20 @@ export function createMockGuildMember(overrides: any = {}): any {
     timeout: vi.fn().mockResolvedValue({}),
     edit: vi.fn().mockResolvedValue({}),
     fetch: vi.fn().mockImplementation(function () {
-      return Promise.resolve(this);
+      return Promise.resolve(this)
     }),
     send: vi.fn().mockResolvedValue({}),
-  };
+  }
 
   // Add overrides
-  Object.assign(baseMember, overrides);
+  Object.assign(baseMember, overrides)
 
   // Create a properly structured mock that will pass instanceof checks
   const mockMember = Object.create(GuildMember.prototype, {
     ...Object.getOwnPropertyDescriptors(baseMember),
     // Make sure the member correctly identifies as a GuildMember
     constructor: { value: GuildMember },
-  });
+  })
 
-  return mockMember;
+  return mockMember
 }

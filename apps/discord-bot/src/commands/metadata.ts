@@ -4,14 +4,14 @@ import {
   PermissionsBitField,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   type RESTPostAPIContextMenuApplicationCommandsJSONBody,
-} from 'discord.js';
+} from 'discord.js'
 
-import { Args } from './index.js';
-import { Language } from '../models/enum-helpers/index.js';
-import { Lang } from '../services/index.js';
+import { Args } from './index.js'
+import { Language } from '../models/enum-helpers/index.js'
+import { Lang } from '../services/index.js'
 
 export const ChatCommandMetadata: {
-    [command: string]: RESTPostAPIChatInputApplicationCommandsJSONBody;
+  [command: string]: RESTPostAPIChatInputApplicationCommandsJSONBody
 } = {
   DEV: {
     type: ApplicationCommandType.ChatInput,
@@ -69,10 +69,10 @@ export const ChatCommandMetadata: {
     dm_permission: true,
     default_member_permissions: undefined,
   },
-};
+}
 
 export const MessageCommandMetadata: {
-    [command: string]: RESTPostAPIContextMenuApplicationCommandsJSONBody;
+  [command: string]: RESTPostAPIContextMenuApplicationCommandsJSONBody
 } = {
   VIEW_DATE_SENT: {
     type: ApplicationCommandType.Message,
@@ -81,10 +81,10 @@ export const MessageCommandMetadata: {
     default_member_permissions: undefined,
     dm_permission: true,
   },
-};
+}
 
 export const UserCommandMetadata: {
-    [command: string]: RESTPostAPIContextMenuApplicationCommandsJSONBody;
+  [command: string]: RESTPostAPIContextMenuApplicationCommandsJSONBody
 } = {
   VIEW_DATE_JOINED: {
     type: ApplicationCommandType.User,
@@ -93,4 +93,4 @@ export const UserCommandMetadata: {
     default_member_permissions: undefined,
     dm_permission: true,
   },
-};
+}

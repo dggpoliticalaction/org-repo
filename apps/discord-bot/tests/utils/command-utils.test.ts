@@ -1,12 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { type Command } from '../../src/commands/index.js';
-import { CommandUtils } from '../../src/utils/command-utils.js';
+import { type Command } from '../../src/commands/index.js'
+import { CommandUtils } from '../../src/utils/command-utils.js'
 import {
   createMockCommand,
   createMockCommandInteraction,
   createMockGuildChannel,
-} from '../helpers/discord-mocks.js';
+} from '../helpers/discord-mocks.js'
 
 // Mock dependencies
 vi.mock('../../src/utils/index.js', () => ({
@@ -16,13 +16,13 @@ vi.mock('../../src/utils/index.js', () => ({
   FormatUtils: {
     duration: vi.fn().mockReturnValue('5 seconds'),
   },
-}));
+}))
 
 vi.mock('../../src/services/index.js', () => ({
   Lang: {
     getEmbed: vi.fn().mockReturnValue({ title: 'Mock Embed' }),
   },
-}));
+}))
 
 vi.mock('../../src/models/enum-helpers/index.js', () => ({
   Permission: {
@@ -35,12 +35,12 @@ vi.mock('../../src/models/enum-helpers/index.js', () => ({
       },
     },
   },
-}));
+}))
 
 describe('CommandUtils', () => {
   // Test findCommand method
   describe('findCommand', () => {
-    let mockCommands: Command[];
+    let mockCommands: Command[]
 
     beforeEach(() => {
       // Create mock commands using the helper
@@ -48,32 +48,32 @@ describe('CommandUtils', () => {
         createMockCommand({ names: ['test'] }),
         createMockCommand({ names: ['user', 'info'] }),
         createMockCommand({ names: ['user', 'avatar'] }),
-      ] as unknown as Command[];
-    });
+      ] as unknown as Command[]
+    })
 
     it('should find a command with exact match', () => {
-      const result = CommandUtils.findCommand(mockCommands, ['test']);
-      expect(result).toBe(mockCommands[0]);
-    });
+      const result = CommandUtils.findCommand(mockCommands, ['test'])
+      expect(result).toBe(mockCommands[0])
+    })
 
     it('should find a nested command with exact match', () => {
-      const result = CommandUtils.findCommand(mockCommands, ['user', 'info']);
-      expect(result).toBe(mockCommands[1]);
-    });
+      const result = CommandUtils.findCommand(mockCommands, ['user', 'info'])
+      expect(result).toBe(mockCommands[1])
+    })
 
     it('should return undefined if no match found', () => {
-      const result = CommandUtils.findCommand(mockCommands, ['nonexistent']);
-      expect(result).toBeUndefined();
-    });
-  });
+      const result = CommandUtils.findCommand(mockCommands, ['nonexistent'])
+      expect(result).toBeUndefined()
+    })
+  })
 
   // Test runChecks method
   describe('runChecks', () => {
     let mockCommand: Command & {
-            cooldown: { take: ReturnType<typeof vi.fn>; amount: number; interval: number };
-        };
-    let mockInteraction: any;
-    let mockEventData: any;
+      cooldown: { take: ReturnType<typeof vi.fn>; amount: number; interval: number }
+    }
+    let mockInteraction: any
+    let mockEventData: any
 
     beforeEach(() => {
       // Create a mock command with cooldown using helper
@@ -84,16 +84,16 @@ describe('CommandUtils', () => {
           amount: 1,
           interval: 5000,
         },
-      });
+      })
 
       // Explicitly type the mock command to include the cooldown property
       mockCommand = cmdMock as unknown as Command & {
-                cooldown: {
-                    take: ReturnType<typeof vi.fn>;
-                    amount: number;
-                    interval: number;
-                };
-            };
+        cooldown: {
+          take: ReturnType<typeof vi.fn>
+          amount: number
+          interval: number
+        }
+      }
 
       // Create a mock interaction using helper
       mockInteraction = createMockCommandInteraction({
@@ -104,68 +104,56 @@ describe('CommandUtils', () => {
             has: vi.fn().mockReturnValue(true),
           }),
         }),
-      });
+      })
 
       // Create mock event data
-      mockEventData = { lang: 'en-US' };
-    });
+      mockEventData = { lang: 'en-US' }
+    })
 
     it('should pass checks when all requirements are met', async () => {
       // Mock cooldown.take to return false (not limited)
-      mockCommand.cooldown.take.mockReturnValue(false);
+      mockCommand.cooldown.take.mockReturnValue(false)
 
-      const result = await CommandUtils.runChecks(
-        mockCommand,
-        mockInteraction,
-        mockEventData,
-      );
+      const result = await CommandUtils.runChecks(mockCommand, mockInteraction, mockEventData)
 
-      expect(result).toBe(true);
-      expect(mockCommand.cooldown.take).toHaveBeenCalledWith('123456789012345678');
-    });
+      expect(result).toBe(true)
+      expect(mockCommand.cooldown.take).toHaveBeenCalledWith('123456789012345678')
+    })
 
     it('should fail and send message when on cooldown', async () => {
       // Mock the imported InteractionUtils.send function
-      const { InteractionUtils } = await import('../../src/utils/index.js');
+      const { InteractionUtils } = await import('../../src/utils/index.js')
 
       // Mock cooldown.take to return true (is limited)
-      mockCommand.cooldown.take.mockReturnValue(true);
+      mockCommand.cooldown.take.mockReturnValue(true)
 
-      const result = await CommandUtils.runChecks(
-        mockCommand,
-        mockInteraction,
-        mockEventData,
-      );
+      const result = await CommandUtils.runChecks(mockCommand, mockInteraction, mockEventData)
 
-      expect(result).toBe(false);
-      expect(mockCommand.cooldown.take).toHaveBeenCalledWith('123456789012345678');
-      expect(InteractionUtils.send).toHaveBeenCalled();
-    });
+      expect(result).toBe(false)
+      expect(mockCommand.cooldown.take).toHaveBeenCalledWith('123456789012345678')
+      expect(InteractionUtils.send).toHaveBeenCalled()
+    })
 
     it('should fail when missing client permissions', async () => {
       // Mock the imported InteractionUtils.send function
-      const { InteractionUtils } = await import('../../src/utils/index.js');
+      const { InteractionUtils } = await import('../../src/utils/index.js')
 
       // Create a GuildChannel mock with failing permission check
       mockInteraction.channel = createMockGuildChannel({
         permissionsFor: vi.fn().mockReturnValue({
           has: vi.fn().mockReturnValue(false),
         }),
-      });
+      })
 
       // Set up command for test
-      mockCommand.cooldown.take.mockReturnValue(false);
+      mockCommand.cooldown.take.mockReturnValue(false)
 
       // Run test
-      const result = await CommandUtils.runChecks(
-        mockCommand,
-        mockInteraction,
-        mockEventData,
-      );
+      const result = await CommandUtils.runChecks(mockCommand, mockInteraction, mockEventData)
 
       // Verify the result
-      expect(result).toBe(false);
-      expect(InteractionUtils.send).toHaveBeenCalled();
-    });
-  });
-});
+      expect(result).toBe(false)
+      expect(InteractionUtils.send).toHaveBeenCalled()
+    })
+  })
+})

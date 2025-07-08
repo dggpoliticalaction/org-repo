@@ -1,4 +1,4 @@
 export enum InfoOption {
-    ABOUT = 'ABOUT',
-    TRANSLATE = 'TRANSLATE',
+  ABOUT = 'ABOUT',
+  TRANSLATE = 'TRANSLATE',
 }

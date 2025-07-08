@@ -13,12 +13,12 @@ import {
   TextChannel,
   type User,
   VoiceChannel,
-} from 'discord.js';
+} from 'discord.js'
 
-import { PermissionUtils, RegexUtils } from './index.js';
-import { Lang } from '../services/index.js';
+import { PermissionUtils, RegexUtils } from './index.js'
+import { Lang } from '../services/index.js'
 
-const FETCH_MEMBER_LIMIT = 20;
+const FETCH_MEMBER_LIMIT = 20
 const IGNORED_ERRORS = [
   DiscordApiErrors.UnknownMessage,
   DiscordApiErrors.UnknownChannel,
@@ -27,127 +27,127 @@ const IGNORED_ERRORS = [
   DiscordApiErrors.UnknownUser,
   DiscordApiErrors.UnknownInteraction,
   DiscordApiErrors.MissingAccess,
-];
+]
 
 export class ClientUtils {
   public static async getGuild(client: Client, discordId: string): Promise<Guild> {
-    discordId = RegexUtils.discordId(discordId);
+    discordId = RegexUtils.discordId(discordId)
     if (!discordId) {
-      return;
+      return
     }
 
     try {
-      return await client.guilds.fetch(discordId);
+      return await client.guilds.fetch(discordId)
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
 
   public static async getChannel(client: Client, discordId: string): Promise<Channel> {
-    discordId = RegexUtils.discordId(discordId);
+    discordId = RegexUtils.discordId(discordId)
     if (!discordId) {
-      return;
+      return
     }
 
     try {
-      return await client.channels.fetch(discordId);
+      return await client.channels.fetch(discordId)
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
 
   public static async getUser(client: Client, discordId: string): Promise<User> {
-    discordId = RegexUtils.discordId(discordId);
+    discordId = RegexUtils.discordId(discordId)
     if (!discordId) {
-      return;
+      return
     }
 
     try {
-      return await client.users.fetch(discordId);
+      return await client.users.fetch(discordId)
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
 
   public static async findAppCommand(client: Client, name: string): Promise<ApplicationCommand> {
-    const commands = await client.application.commands.fetch();
-    return commands.find(command => command.name === name);
+    const commands = await client.application.commands.fetch()
+    return commands.find((command) => command.name === name)
   }
 
   public static async findMember(guild: Guild, input: string): Promise<GuildMember> {
     try {
-      const discordId = RegexUtils.discordId(input);
+      const discordId = RegexUtils.discordId(input)
       if (discordId) {
-        return await guild.members.fetch(discordId);
+        return await guild.members.fetch(discordId)
       }
 
-      const tag = RegexUtils.tag(input);
+      const tag = RegexUtils.tag(input)
       if (tag) {
-        return (
-          await guild.members.fetch({ query: tag.username, limit: FETCH_MEMBER_LIMIT })
-        ).find(member => member.user.discriminator === tag.discriminator);
+        return (await guild.members.fetch({ query: tag.username, limit: FETCH_MEMBER_LIMIT })).find(
+          (member) => member.user.discriminator === tag.discriminator,
+        )
       }
 
-      return (await guild.members.fetch({ query: input, limit: 1 })).first();
+      return (await guild.members.fetch({ query: input, limit: 1 })).first()
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
 
   public static async findRole(guild: Guild, input: string): Promise<Role> {
     try {
-      const discordId = RegexUtils.discordId(input);
+      const discordId = RegexUtils.discordId(input)
       if (discordId) {
-        return await guild.roles.fetch(discordId);
+        return await guild.roles.fetch(discordId)
       }
 
-      const search = input.trim().toLowerCase().replace(/^@/, '');
-      const roles = await guild.roles.fetch();
+      const search = input.trim().toLowerCase().replace(/^@/, '')
+      const roles = await guild.roles.fetch()
       return (
-        roles.find(role => role.name.toLowerCase() === search) ??
-                roles.find(role => role.name.toLowerCase().includes(search))
-      );
+        roles.find((role) => role.name.toLowerCase() === search) ??
+        roles.find((role) => role.name.toLowerCase().includes(search))
+      )
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
@@ -157,33 +157,33 @@ export class ClientUtils {
     input: string,
   ): Promise<NewsChannel | TextChannel> {
     try {
-      const discordId = RegexUtils.discordId(input);
+      const discordId = RegexUtils.discordId(input)
       if (discordId) {
-        const channel = await guild.channels.fetch(discordId);
+        const channel = await guild.channels.fetch(discordId)
         if (channel instanceof NewsChannel || channel instanceof TextChannel) {
-          return channel;
+          return channel
         } else {
-          return;
+          return
         }
       }
 
-      const search = input.trim().toLowerCase().replace(/^#/, '').replaceAll(' ', '-');
+      const search = input.trim().toLowerCase().replace(/^#/, '').replaceAll(' ', '-')
       const channels = [...(await guild.channels.fetch()).values()].filter(
-        channel => channel instanceof NewsChannel || channel instanceof TextChannel,
-      );
+        (channel) => channel instanceof NewsChannel || channel instanceof TextChannel,
+      )
       return (
-        channels.find(channel => channel.name.toLowerCase() === search) ??
-                channels.find(channel => channel.name.toLowerCase().includes(search))
-      );
+        channels.find((channel) => channel.name.toLowerCase() === search) ??
+        channels.find((channel) => channel.name.toLowerCase().includes(search))
+      )
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
@@ -193,33 +193,33 @@ export class ClientUtils {
     input: string,
   ): Promise<VoiceChannel | StageChannel> {
     try {
-      const discordId = RegexUtils.discordId(input);
+      const discordId = RegexUtils.discordId(input)
       if (discordId) {
-        const channel = await guild.channels.fetch(discordId);
+        const channel = await guild.channels.fetch(discordId)
         if (channel instanceof VoiceChannel || channel instanceof StageChannel) {
-          return channel;
+          return channel
         } else {
-          return;
+          return
         }
       }
 
-      const search = input.trim().toLowerCase().replace(/^#/, '');
+      const search = input.trim().toLowerCase().replace(/^#/, '')
       const channels = [...(await guild.channels.fetch()).values()].filter(
-        channel => channel instanceof VoiceChannel || channel instanceof StageChannel,
-      );
+        (channel) => channel instanceof VoiceChannel || channel instanceof StageChannel,
+      )
       return (
-        channels.find(channel => channel.name.toLowerCase() === search) ??
-                channels.find(channel => channel.name.toLowerCase().includes(search))
-      );
+        channels.find((channel) => channel.name.toLowerCase() === search) ??
+        channels.find((channel) => channel.name.toLowerCase().includes(search))
+      )
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
@@ -229,17 +229,17 @@ export class ClientUtils {
     langCode: Locale,
   ): Promise<TextChannel | NewsChannel> {
     // Prefer the system channel
-    const systemChannel = guild.systemChannel;
+    const systemChannel = guild.systemChannel
     if (systemChannel && PermissionUtils.canSend(systemChannel, true)) {
-      return systemChannel;
+      return systemChannel
     }
 
     // Otherwise look for a bot channel
     return (await guild.channels.fetch()).find(
-      channel =>
+      (channel) =>
         (channel instanceof TextChannel || channel instanceof NewsChannel) &&
-                PermissionUtils.canSend(channel, true) &&
-                Lang.getRegex('channelRegexes.bot', langCode).test(channel.name),
-    ) as TextChannel | NewsChannel;
+        PermissionUtils.canSend(channel, true) &&
+        Lang.getRegex('channelRegexes.bot', langCode).test(channel.name),
+    ) as TextChannel | NewsChannel
   }
 }

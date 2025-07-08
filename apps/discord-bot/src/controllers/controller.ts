@@ -1,8 +1,8 @@
-import { type Router } from 'express';
+import { type Router } from 'express'
 
 export interface Controller {
-    path: string;
-    router: Router;
-    authToken?: string;
-    register(): void;
+  path: string
+  router: Router
+  authToken?: string
+  register(): void
 }

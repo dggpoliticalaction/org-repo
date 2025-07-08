@@ -1,8 +1,8 @@
-import { type ActivityType, Client, type ClientOptions, type Presence } from 'discord.js';
+import { type ActivityType, Client, type ClientOptions, type Presence } from 'discord.js'
 
 export class CustomClient extends Client {
   constructor(clientOptions: ClientOptions) {
-    super(clientOptions);
+    super(clientOptions)
   }
 
   public setPresence(
@@ -18,6 +18,6 @@ export class CustomClient extends Client {
           url,
         },
       ],
-    });
+    })
   }
 }

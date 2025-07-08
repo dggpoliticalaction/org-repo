@@ -1,5 +1,5 @@
-import fetch, { type Response } from 'node-fetch';
-import { type URL } from 'node:url';
+import fetch, { type Response } from 'node-fetch'
+import { type URL } from 'node:url'
 
 export class HttpService {
   public async get(url: string | URL, authorization: string): Promise<Response> {
@@ -9,7 +9,7 @@ export class HttpService {
         Authorization: authorization,
         Accept: 'application/json',
       },
-    });
+    })
   }
 
   public async post(url: string | URL, authorization: string, body?: object): Promise<Response> {
@@ -21,7 +21,7 @@ export class HttpService {
         Accept: 'application/json',
       },
       body: body ? JSON.stringify(body) : undefined,
-    });
+    })
   }
 
   public async put(url: string | URL, authorization: string, body?: object): Promise<Response> {
@@ -33,14 +33,10 @@ export class HttpService {
         Accept: 'application/json',
       },
       body: body ? JSON.stringify(body) : undefined,
-    });
+    })
   }
 
-  public async delete(
-    url: string | URL,
-    authorization: string,
-    body?: object,
-  ): Promise<Response> {
+  public async delete(url: string | URL, authorization: string, body?: object): Promise<Response> {
     return await fetch(url.toString(), {
       method: 'delete',
       headers: {
@@ -49,6 +45,6 @@ export class HttpService {
         Accept: 'application/json',
       },
       body: body ? JSON.stringify(body) : undefined,
-    });
+    })
   }
 }

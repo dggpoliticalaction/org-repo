@@ -1,6 +1,6 @@
-import { type Message } from 'discord.js';
+import { type Message } from 'discord.js'
 
-import { type EventHandler, type TriggerHandler } from './index.js';
+import { type EventHandler, type TriggerHandler } from './index.js'
 
 export class MessageHandler implements EventHandler {
   constructor(private triggerHandler: TriggerHandler) {}
@@ -8,10 +8,10 @@ export class MessageHandler implements EventHandler {
   public async process(msg: Message): Promise<void> {
     // Don't respond to system messages or self
     if (msg.system || msg.author.id === msg.client.user?.id) {
-      return;
+      return
     }
 
     // Process trigger
-    await this.triggerHandler.process(msg);
+    await this.triggerHandler.process(msg)
   }
 }

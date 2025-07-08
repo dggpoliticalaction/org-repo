@@ -1,15 +1,15 @@
-import { EmbedBuilder, type Locale, type LocalizationMap, resolveColor } from 'discord.js';
-import { Linguini, type TypeMapper, TypeMappers, Utils } from 'linguini';
-import path, { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { EmbedBuilder, type Locale, type LocalizationMap, resolveColor } from 'discord.js'
+import { Linguini, type TypeMapper, TypeMappers, Utils } from 'linguini'
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-import { Language } from '../models/enum-helpers/index.js';
+import { Language } from '../models/enum-helpers/index.js'
 
 export class Lang {
   private static linguini = new Linguini(
     path.resolve(dirname(fileURLToPath(import.meta.url)), '../../lang'),
     'lang',
-  );
+  )
 
   public static getEmbed(
     location: string,
@@ -18,15 +18,15 @@ export class Lang {
   ): EmbedBuilder {
     return (
       this.linguini.get(location, langCode, this.embedTm, variables) ??
-            this.linguini.get(location, Language.Default, this.embedTm, variables)
-    );
+      this.linguini.get(location, Language.Default, this.embedTm, variables)
+    )
   }
 
   public static getRegex(location: string, langCode: Locale): RegExp {
     return (
       this.linguini.get(location, langCode, TypeMappers.RegExp) ??
-            this.linguini.get(location, Language.Default, TypeMappers.RegExp)
-    );
+      this.linguini.get(location, Language.Default, TypeMappers.RegExp)
+    )
   }
 
   public static getRef(
@@ -36,23 +36,23 @@ export class Lang {
   ): string {
     return (
       this.linguini.getRef(location, langCode, variables) ??
-            this.linguini.getRef(location, Language.Default, variables)
-    );
+      this.linguini.getRef(location, Language.Default, variables)
+    )
   }
 
   public static getRefLocalizationMap(
     location: string,
     variables?: { [name: string]: string },
   ): LocalizationMap {
-    const obj = {};
+    const obj = {}
     for (const langCode of Language.Enabled) {
-      obj[langCode] = this.getRef(location, langCode, variables);
+      obj[langCode] = this.getRef(location, langCode, variables)
     }
-    return obj;
+    return obj
   }
 
   public static getCom(location: string, variables?: { [name: string]: string }): string {
-    return this.linguini.getCom(location, variables);
+    return this.linguini.getCom(location, variables)
   }
 
   private static embedTm: TypeMapper<EmbedBuilder> = (jsonValue: any) => {
@@ -64,7 +64,7 @@ export class Lang {
         url: jsonValue.thumbnail,
       },
       description: Utils.join(jsonValue.description, '\n'),
-      fields: jsonValue.fields?.map(field => ({
+      fields: jsonValue.fields?.map((field) => ({
         name: Utils.join(field.name, '\n'),
         value: Utils.join(field.value, '\n'),
         inline: field.inline ? field.inline : false,
@@ -78,6 +78,6 @@ export class Lang {
       },
       timestamp: jsonValue.timestamp ? Date.now() : undefined,
       color: resolveColor(jsonValue.color ?? Lang.getCom('colors.default')),
-    });
-  };
+    })
+  }
 }

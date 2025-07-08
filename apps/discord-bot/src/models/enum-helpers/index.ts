@@ -1,2 +1,2 @@
-export { Language } from './language.js';
-export { Permission } from './permission.js';
+export { Language } from './language.js'
+export { Permission } from './permission.js'

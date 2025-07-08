@@ -1,264 +1,264 @@
-import { type Locale, type PermissionsString } from 'discord.js';
+import { type Locale, type PermissionsString } from 'discord.js'
 
-import { Lang } from '../../services/index.js';
+import { Lang } from '../../services/index.js'
 
 interface PermissionData {
-    displayName(langCode: Locale): string;
+  displayName(langCode: Locale): string
 }
 
 export class Permission {
   public static Data: {
-        [key in PermissionsString]: PermissionData;
-    } = {
-      AddReactions: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.AddReactions', langCode);
-        },
+    [key in PermissionsString]: PermissionData
+  } = {
+    AddReactions: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.AddReactions', langCode)
       },
-      Administrator: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.Administrator', langCode);
-        },
+    },
+    Administrator: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.Administrator', langCode)
       },
-      AttachFiles: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.AttachFiles', langCode);
-        },
+    },
+    AttachFiles: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.AttachFiles', langCode)
       },
-      BanMembers: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.BanMembers', langCode);
-        },
+    },
+    BanMembers: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.BanMembers', langCode)
       },
-      ChangeNickname: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ChangeNickname', langCode);
-        },
+    },
+    ChangeNickname: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ChangeNickname', langCode)
       },
-      Connect: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.Connect', langCode);
-        },
+    },
+    Connect: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.Connect', langCode)
       },
-      CreateEvents: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.CreateEvents', langCode);
-        },
+    },
+    CreateEvents: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.CreateEvents', langCode)
       },
-      CreateGuildExpressions: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.CreateGuildExpressions', langCode);
-        },
+    },
+    CreateGuildExpressions: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.CreateGuildExpressions', langCode)
       },
-      CreateInstantInvite: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.CreateInstantInvite', langCode);
-        },
+    },
+    CreateInstantInvite: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.CreateInstantInvite', langCode)
       },
-      CreatePrivateThreads: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.CreatePrivateThreads', langCode);
-        },
+    },
+    CreatePrivateThreads: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.CreatePrivateThreads', langCode)
       },
-      CreatePublicThreads: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.CreatePublicThreads', langCode);
-        },
+    },
+    CreatePublicThreads: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.CreatePublicThreads', langCode)
       },
-      DeafenMembers: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.DeafenMembers', langCode);
-        },
+    },
+    DeafenMembers: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.DeafenMembers', langCode)
       },
-      EmbedLinks: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.EmbedLinks', langCode);
-        },
+    },
+    EmbedLinks: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.EmbedLinks', langCode)
       },
-      KickMembers: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.KickMembers', langCode);
-        },
+    },
+    KickMembers: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.KickMembers', langCode)
       },
-      ManageChannels: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ManageChannels', langCode);
-        },
+    },
+    ManageChannels: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ManageChannels', langCode)
       },
-      ManageEmojisAndStickers: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ManageEmojisAndStickers', langCode);
-        },
+    },
+    ManageEmojisAndStickers: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ManageEmojisAndStickers', langCode)
       },
-      ManageEvents: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ManageEvents', langCode);
-        },
+    },
+    ManageEvents: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ManageEvents', langCode)
       },
-      ManageGuild: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ManageGuild', langCode);
-        },
+    },
+    ManageGuild: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ManageGuild', langCode)
       },
-      ManageGuildExpressions: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ManageGuildExpressions', langCode);
-        },
+    },
+    ManageGuildExpressions: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ManageGuildExpressions', langCode)
       },
-      ManageMessages: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ManageMessages', langCode);
-        },
+    },
+    ManageMessages: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ManageMessages', langCode)
       },
-      ManageNicknames: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ManageNicknames', langCode);
-        },
+    },
+    ManageNicknames: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ManageNicknames', langCode)
       },
-      ManageRoles: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ManageRoles', langCode);
-        },
+    },
+    ManageRoles: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ManageRoles', langCode)
       },
-      ManageThreads: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ManageThreads', langCode);
-        },
+    },
+    ManageThreads: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ManageThreads', langCode)
       },
-      ManageWebhooks: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ManageWebhooks', langCode);
-        },
+    },
+    ManageWebhooks: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ManageWebhooks', langCode)
       },
-      MentionEveryone: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.MentionEveryone', langCode);
-        },
+    },
+    MentionEveryone: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.MentionEveryone', langCode)
       },
-      ModerateMembers: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ModerateMembers', langCode);
-        },
+    },
+    ModerateMembers: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ModerateMembers', langCode)
       },
-      MoveMembers: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.MoveMembers', langCode);
-        },
+    },
+    MoveMembers: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.MoveMembers', langCode)
       },
-      MuteMembers: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.MuteMembers', langCode);
-        },
+    },
+    MuteMembers: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.MuteMembers', langCode)
       },
-      PrioritySpeaker: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.PrioritySpeaker', langCode);
-        },
+    },
+    PrioritySpeaker: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.PrioritySpeaker', langCode)
       },
-      ReadMessageHistory: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ReadMessageHistory', langCode);
-        },
+    },
+    ReadMessageHistory: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ReadMessageHistory', langCode)
       },
-      RequestToSpeak: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.RequestToSpeak', langCode);
-        },
+    },
+    RequestToSpeak: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.RequestToSpeak', langCode)
       },
-      SendMessages: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.SendMessages', langCode);
-        },
+    },
+    SendMessages: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.SendMessages', langCode)
       },
-      SendMessagesInThreads: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.SendMessagesInThreads', langCode);
-        },
+    },
+    SendMessagesInThreads: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.SendMessagesInThreads', langCode)
       },
-      SendPolls: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.SendPolls', langCode);
-        },
+    },
+    SendPolls: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.SendPolls', langCode)
       },
-      SendTTSMessages: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.SendTTSMessages', langCode);
-        },
+    },
+    SendTTSMessages: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.SendTTSMessages', langCode)
       },
-      SendVoiceMessages: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.SendVoiceMessages', langCode);
-        },
+    },
+    SendVoiceMessages: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.SendVoiceMessages', langCode)
       },
-      Speak: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.Speak', langCode);
-        },
+    },
+    Speak: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.Speak', langCode)
       },
-      Stream: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.Stream', langCode);
-        },
+    },
+    Stream: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.Stream', langCode)
       },
-      UseApplicationCommands: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.UseApplicationCommands', langCode);
-        },
+    },
+    UseApplicationCommands: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.UseApplicationCommands', langCode)
       },
-      UseEmbeddedActivities: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.UseEmbeddedActivities', langCode);
-        },
+    },
+    UseEmbeddedActivities: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.UseEmbeddedActivities', langCode)
       },
-      UseExternalApps: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.UseExternalApps', langCode);
-        },
+    },
+    UseExternalApps: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.UseExternalApps', langCode)
       },
-      UseExternalEmojis: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.UseExternalEmojis', langCode);
-        },
+    },
+    UseExternalEmojis: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.UseExternalEmojis', langCode)
       },
-      UseExternalSounds: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.UseExternalSounds', langCode);
-        },
+    },
+    UseExternalSounds: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.UseExternalSounds', langCode)
       },
-      UseExternalStickers: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.UseExternalStickers', langCode);
-        },
+    },
+    UseExternalStickers: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.UseExternalStickers', langCode)
       },
-      UseSoundboard: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.UseSoundboard', langCode);
-        },
+    },
+    UseSoundboard: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.UseSoundboard', langCode)
       },
-      UseVAD: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.UseVAD', langCode);
-        },
+    },
+    UseVAD: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.UseVAD', langCode)
       },
-      ViewAuditLog: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ViewAuditLog', langCode);
-        },
+    },
+    ViewAuditLog: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ViewAuditLog', langCode)
       },
-      ViewChannel: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ViewChannel', langCode);
-        },
+    },
+    ViewChannel: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ViewChannel', langCode)
       },
-      ViewCreatorMonetizationAnalytics: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ViewCreatorMonetizationAnalytics', langCode);
-        },
+    },
+    ViewCreatorMonetizationAnalytics: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ViewCreatorMonetizationAnalytics', langCode)
       },
-      ViewGuildInsights: {
-        displayName(langCode: Locale): string {
-          return Lang.getRef('permissions.ViewGuildInsights', langCode);
-        },
+    },
+    ViewGuildInsights: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.ViewGuildInsights', langCode)
       },
-    };
+    },
+  }
 }

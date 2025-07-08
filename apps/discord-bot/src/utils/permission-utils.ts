@@ -1,14 +1,20 @@
-import { type Channel, DMChannel, GuildChannel, PermissionFlagsBits, ThreadChannel } from 'discord.js';
+import {
+  type Channel,
+  DMChannel,
+  GuildChannel,
+  PermissionFlagsBits,
+  ThreadChannel,
+} from 'discord.js'
 
 export class PermissionUtils {
   public static canSend(channel: Channel, embedLinks: boolean = false): boolean {
     if (channel instanceof DMChannel) {
-      return true;
+      return true
     } else if (channel instanceof GuildChannel || channel instanceof ThreadChannel) {
-      const channelPerms = channel.permissionsFor(channel.client.user);
+      const channelPerms = channel.permissionsFor(channel.client.user)
       if (!channelPerms) {
         // This can happen if the guild disconnected while a collector is running
-        return false;
+        return false
       }
 
       // VIEW_CHANNEL - Needed to view the channel
@@ -18,20 +24,20 @@ export class PermissionUtils {
         PermissionFlagsBits.ViewChannel,
         PermissionFlagsBits.SendMessages,
         ...(embedLinks ? [PermissionFlagsBits.EmbedLinks] : []),
-      ]);
+      ])
     } else {
-      return false;
+      return false
     }
   }
 
   public static canMention(channel: Channel): boolean {
     if (channel instanceof DMChannel) {
-      return true;
+      return true
     } else if (channel instanceof GuildChannel || channel instanceof ThreadChannel) {
-      const channelPerms = channel.permissionsFor(channel.client.user);
+      const channelPerms = channel.permissionsFor(channel.client.user)
       if (!channelPerms) {
         // This can happen if the guild disconnected while a collector is running
-        return false;
+        return false
       }
 
       // VIEW_CHANNEL - Needed to view the channel
@@ -39,20 +45,20 @@ export class PermissionUtils {
       return channelPerms.has([
         PermissionFlagsBits.ViewChannel,
         PermissionFlagsBits.MentionEveryone,
-      ]);
+      ])
     } else {
-      return false;
+      return false
     }
   }
 
   public static canReact(channel: Channel, removeOthers: boolean = false): boolean {
     if (channel instanceof DMChannel) {
-      return true;
+      return true
     } else if (channel instanceof GuildChannel || channel instanceof ThreadChannel) {
-      const channelPerms = channel.permissionsFor(channel.client.user);
+      const channelPerms = channel.permissionsFor(channel.client.user)
       if (!channelPerms) {
         // This can happen if the guild disconnected while a collector is running
-        return false;
+        return false
       }
 
       // VIEW_CHANNEL - Needed to view the channel
@@ -65,20 +71,20 @@ export class PermissionUtils {
         PermissionFlagsBits.AddReactions,
         PermissionFlagsBits.ReadMessageHistory,
         ...(removeOthers ? [PermissionFlagsBits.ManageMessages] : []),
-      ]);
+      ])
     } else {
-      return false;
+      return false
     }
   }
 
   public static canPin(channel: Channel, findOld: boolean = false): boolean {
     if (channel instanceof DMChannel) {
-      return true;
+      return true
     } else if (channel instanceof GuildChannel || channel instanceof ThreadChannel) {
-      const channelPerms = channel.permissionsFor(channel.client.user);
+      const channelPerms = channel.permissionsFor(channel.client.user)
       if (!channelPerms) {
         // This can happen if the guild disconnected while a collector is running
-        return false;
+        return false
       }
 
       // VIEW_CHANNEL - Needed to view the channel
@@ -88,9 +94,9 @@ export class PermissionUtils {
         PermissionFlagsBits.ViewChannel,
         PermissionFlagsBits.ManageMessages,
         ...(findOld ? [PermissionFlagsBits.ReadMessageHistory] : []),
-      ]);
+      ])
     } else {
-      return false;
+      return false
     }
   }
 
@@ -100,12 +106,12 @@ export class PermissionUtils {
     findOld: boolean = false,
   ): boolean {
     if (channel instanceof DMChannel) {
-      return false;
+      return false
     } else if (channel instanceof GuildChannel || channel instanceof ThreadChannel) {
-      const channelPerms = channel.permissionsFor(channel.client.user);
+      const channelPerms = channel.permissionsFor(channel.client.user)
       if (!channelPerms) {
         // This can happen if the guild disconnected while a collector is running
-        return false;
+        return false
       }
 
       // VIEW_CHANNEL - Needed to view the channel
@@ -119,9 +125,9 @@ export class PermissionUtils {
         PermissionFlagsBits.CreatePublicThreads,
         ...(manageThreads ? [PermissionFlagsBits.ManageThreads] : []),
         ...(findOld ? [PermissionFlagsBits.ReadMessageHistory] : []),
-      ]);
+      ])
     } else {
-      return false;
+      return false
     }
   }
 }

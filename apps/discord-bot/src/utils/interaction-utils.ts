@@ -13,7 +13,7 @@ import {
   MessageFlags,
   type ModalSubmitInteraction,
   type WebhookMessageEditOptions,
-} from 'discord.js';
+} from 'discord.js'
 
 const IGNORED_ERRORS = [
   DiscordApiErrors.UnknownMessage,
@@ -24,7 +24,7 @@ const IGNORED_ERRORS = [
   DiscordApiErrors.CannotSendMessagesToThisUser, // User blocked bot or DM disabled
   DiscordApiErrors.ReactionWasBlocked, // User blocked bot or DM disabled
   DiscordApiErrors.MaximumActiveThreads,
-];
+]
 
 export class InteractionUtils {
   public static async deferReply(
@@ -34,16 +34,16 @@ export class InteractionUtils {
     try {
       return await intr.deferReply({
         flags: hidden ? MessageFlags.Ephemeral : undefined,
-      });
+      })
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
@@ -52,16 +52,16 @@ export class InteractionUtils {
     intr: MessageComponentInteraction | ModalSubmitInteraction,
   ): Promise<InteractionResponse> {
     try {
-      return await intr.deferUpdate();
+      return await intr.deferUpdate()
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
@@ -73,32 +73,32 @@ export class InteractionUtils {
   ): Promise<Message> {
     try {
       const options: InteractionReplyOptions =
-                typeof content === 'string'
-                  ? { content }
-                  : content instanceof EmbedBuilder
-                    ? { embeds: [content] }
-                    : content;
+        typeof content === 'string'
+          ? { content }
+          : content instanceof EmbedBuilder
+            ? { embeds: [content] }
+            : content
       if (intr.deferred || intr.replied) {
         return await intr.followUp({
           ...options,
           flags: hidden ? MessageFlags.Ephemeral : undefined,
-        });
+        })
       } else {
         return await intr.reply({
           ...options,
           flags: hidden ? MessageFlags.Ephemeral : undefined,
           fetchReply: true,
-        });
+        })
       }
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
@@ -108,16 +108,16 @@ export class InteractionUtils {
     choices: ApplicationCommandOptionChoiceData[] = [],
   ): Promise<void> {
     try {
-      return await intr.respond(choices);
+      return await intr.respond(choices)
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
@@ -128,21 +128,21 @@ export class InteractionUtils {
   ): Promise<Message> {
     try {
       const options: WebhookMessageEditOptions =
-                typeof content === 'string'
-                  ? { content }
-                  : content instanceof EmbedBuilder
-                    ? { embeds: [content] }
-                    : content;
-      return await intr.editReply(options);
+        typeof content === 'string'
+          ? { content }
+          : content instanceof EmbedBuilder
+            ? { embeds: [content] }
+            : content
+      return await intr.editReply(options)
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }
@@ -153,24 +153,24 @@ export class InteractionUtils {
   ): Promise<Message> {
     try {
       const options: InteractionUpdateOptions =
-                typeof content === 'string'
-                  ? { content }
-                  : content instanceof EmbedBuilder
-                    ? { embeds: [content] }
-                    : content;
+        typeof content === 'string'
+          ? { content }
+          : content instanceof EmbedBuilder
+            ? { embeds: [content] }
+            : content
       return await intr.update({
         ...options,
         fetchReply: true,
-      });
+      })
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
-                typeof error.code == 'number' &&
-                IGNORED_ERRORS.includes(error.code)
+        typeof error.code == 'number' &&
+        IGNORED_ERRORS.includes(error.code)
       ) {
-        return;
+        return
       } else {
-        throw error;
+        throw error
       }
     }
   }

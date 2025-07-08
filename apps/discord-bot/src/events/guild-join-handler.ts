@@ -1,13 +1,13 @@
-import { type Guild } from 'discord.js';
-import { createRequire } from 'node:module';
+import { type Guild } from 'discord.js'
+import { createRequire } from 'node:module'
 
-import { type EventHandler } from './index.js';
-import { Language } from '../models/enum-helpers/index.js';
-import { type EventDataService, Lang, Logger } from '../services/index.js';
-import { ClientUtils, FormatUtils, MessageUtils } from '../utils/index.js';
+import { type EventHandler } from './index.js'
+import { Language } from '../models/enum-helpers/index.js'
+import { type EventDataService, Lang, Logger } from '../services/index.js'
+import { ClientUtils, FormatUtils, MessageUtils } from '../utils/index.js'
 
-const require = createRequire(import.meta.url);
-const Logs = require('../../lang/logs.json');
+const require = createRequire(import.meta.url)
+const Logs = require('../../lang/logs.json')
 
 export class GuildJoinHandler implements EventHandler {
   constructor(private eventDataService: EventDataService) {}
@@ -17,18 +17,18 @@ export class GuildJoinHandler implements EventHandler {
       Logs.info.guildJoined
         .replaceAll('{GUILD_NAME}', guild.name)
         .replaceAll('{GUILD_ID}', guild.id),
-    );
+    )
 
-    const owner = await guild.fetchOwner();
+    const owner = await guild.fetchOwner()
 
     // Get data from database
     const data = await this.eventDataService.create({
       user: owner?.user,
       guild,
-    });
+    })
 
     // Send welcome message to the server's notify channel
-    const notifyChannel = await ClientUtils.findNotifyChannel(guild, data.langGuild);
+    const notifyChannel = await ClientUtils.findNotifyChannel(guild, data.langGuild)
     if (notifyChannel) {
       await MessageUtils.send(
         notifyChannel,
@@ -43,7 +43,7 @@ export class GuildJoinHandler implements EventHandler {
           name: guild.name,
           iconURL: guild.iconURL(),
         }),
-      );
+      )
     }
 
     // Send welcome message to owner
@@ -61,7 +61,7 @@ export class GuildJoinHandler implements EventHandler {
           name: guild.name,
           iconURL: guild.iconURL(),
         }),
-      );
+      )
     }
   }
 }

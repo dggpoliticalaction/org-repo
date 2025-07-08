@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Type } from 'class-transformer'
 import {
   IsDefined,
   IsInt,
@@ -7,36 +7,36 @@ import {
   IsUrl,
   Length,
   ValidateNested,
-} from 'class-validator';
+} from 'class-validator'
 
 export class Callback {
-    @IsDefined()
-    @IsUrl({ require_tld: false })
-      url: string;
+  @IsDefined()
+  @IsUrl({ require_tld: false })
+  url: string
 
-    @IsDefined()
-    @IsString()
-    @Length(5, 2000)
-      token: string;
+  @IsDefined()
+  @IsString()
+  @Length(5, 2000)
+  token: string
 }
 
 export class RegisterClusterRequest {
-    @IsDefined()
-    @IsInt()
-    @IsPositive()
-      shardCount: number;
+  @IsDefined()
+  @IsInt()
+  @IsPositive()
+  shardCount: number
 
-    @IsDefined()
-    @ValidateNested()
-    @Type(() => Callback)
-      callback: Callback;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => Callback)
+  callback: Callback
 }
 
 export interface RegisterClusterResponse {
-    id: string;
+  id: string
 }
 
 export interface LoginClusterResponse {
-    shardList: number[];
-    totalShards: number;
+  shardList: number[]
+  totalShards: number
 }

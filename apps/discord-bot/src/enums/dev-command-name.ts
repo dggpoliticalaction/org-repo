@@ -1,3 +1,3 @@
 export enum DevCommandName {
-    INFO = 'INFO',
+  INFO = 'INFO',
 }

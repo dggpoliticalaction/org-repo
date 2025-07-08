@@ -1,27 +1,25 @@
-import { fetchRecommendedShardCount, ShardClientUtil, ShardingManager } from 'discord.js';
+import { fetchRecommendedShardCount, ShardClientUtil, ShardingManager } from 'discord.js'
 
-import { MathUtils } from './index.js';
-import { DiscordLimits } from '../constants/index.js';
+import { MathUtils } from './index.js'
+import { DiscordLimits } from '../constants/index.js'
 
 export class ShardUtils {
   public static async requiredShardCount(token: string): Promise<number> {
-    return await this.recommendedShardCount(token, DiscordLimits.GUILDS_PER_SHARD);
+    return await this.recommendedShardCount(token, DiscordLimits.GUILDS_PER_SHARD)
   }
 
   public static async recommendedShardCount(
     token: string,
     serversPerShard: number,
   ): Promise<number> {
-    return Math.ceil(
-      await fetchRecommendedShardCount(token, { guildsPerShard: serversPerShard }),
-    );
+    return Math.ceil(await fetchRecommendedShardCount(token, { guildsPerShard: serversPerShard }))
   }
 
   public static shardIds(shardInterface: ShardingManager | ShardClientUtil): number[] {
     if (shardInterface instanceof ShardingManager) {
-      return shardInterface.shards.map(shard => shard.id);
+      return shardInterface.shards.map((shard) => shard.id)
     } else if (shardInterface instanceof ShardClientUtil) {
-      return shardInterface.ids;
+      return shardInterface.ids
     }
   }
 
@@ -29,7 +27,7 @@ export class ShardUtils {
     // See sharding formula:
     //   https://discord.com/developers/docs/topics/gateway#sharding-sharding-formula
     // tslint:disable-next-line:no-bitwise
-    return Number((BigInt(guildId) >> 22n) % BigInt(shardCount));
+    return Number((BigInt(guildId) >> 22n) % BigInt(shardCount))
   }
 
   public static async serverCount(
@@ -37,7 +35,7 @@ export class ShardUtils {
   ): Promise<number> {
     const shardGuildCounts = (await shardInterface.fetchClientValues(
       'guilds.cache.size',
-    )) as number[];
-    return MathUtils.sum(shardGuildCounts);
+    )) as number[]
+    return MathUtils.sum(shardGuildCounts)
   }
 }

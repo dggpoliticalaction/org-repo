@@ -1,8 +1,8 @@
-import { type APIApplicationCommandBasicOption, ApplicationCommandOptionType } from 'discord.js';
+import { type APIApplicationCommandBasicOption, ApplicationCommandOptionType } from 'discord.js'
 
-import { DevCommandName, HelpOption, InfoOption } from '../enums/index.js';
-import { Language } from '../models/enum-helpers/index.js';
-import { Lang } from '../services/index.js';
+import { DevCommandName, HelpOption, InfoOption } from '../enums/index.js'
+import { Language } from '../models/enum-helpers/index.js'
+import { Lang } from '../services/index.js'
 
 export class Args {
   public static readonly DEV_COMMAND: APIApplicationCommandBasicOption = {
@@ -18,7 +18,7 @@ export class Args {
         value: DevCommandName.INFO,
       },
     ],
-  };
+  }
   public static readonly HELP_OPTION: APIApplicationCommandBasicOption = {
     name: Lang.getRef('arguments.option', Language.Default),
     name_localizations: Lang.getRefLocalizationMap('arguments.option'),
@@ -37,7 +37,7 @@ export class Args {
         value: HelpOption.COMMANDS,
       },
     ],
-  };
+  }
   public static readonly INFO_OPTION: APIApplicationCommandBasicOption = {
     name: Lang.getRef('arguments.option', Language.Default),
     name_localizations: Lang.getRefLocalizationMap('arguments.option'),
@@ -56,5 +56,5 @@ export class Args {
         value: InfoOption.TRANSLATE,
       },
     ],
-  };
+  }
 }
