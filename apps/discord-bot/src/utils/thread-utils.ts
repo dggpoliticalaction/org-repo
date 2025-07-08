@@ -28,7 +28,7 @@ export class ThreadUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return thread
       } else {
         throw error
       }
@@ -44,7 +44,7 @@ export class ThreadUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return thread
       } else {
         throw error
       }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ChannelType,
   GuildChannel,
@@ -44,121 +45,6 @@ export function createMockUser(overrides: any = {}): any {
   })
 
   return mockUser
-}
-
-/**
- * Creates a mock Discord.js CommandInteraction
- */
-export function createMockCommandInteraction(overrides: any = {}): any {
-  // Create a mock guild member first to ensure consistent user data
-  const mockMember = createMockGuildMember()
-
-  return {
-    id: '987612345678901234',
-    user: mockMember.user,
-    member: mockMember,
-    client: {
-      user: {
-        id: '987654321098765432',
-        username: 'TestBot',
-      },
-    },
-    guild: mockMember.guild,
-    channel: createMockGuildChannel(),
-    commandName: 'test',
-    options: {
-      getString: vi.fn(),
-      getUser: vi.fn(),
-      getInteger: vi.fn(),
-      getBoolean: vi.fn(),
-      getSubcommand: vi.fn(),
-      getSubcommandGroup: vi.fn(),
-    },
-    reply: vi.fn().mockResolvedValue({}),
-    editReply: vi.fn().mockResolvedValue({}),
-    deferReply: vi.fn().mockResolvedValue({}),
-    followUp: vi.fn().mockResolvedValue({}),
-    deferred: false,
-    replied: false,
-    ...overrides,
-  }
-}
-
-/**
- * Creates a mock Discord.js GuildChannel that correctly passes instanceof checks
- */
-export function createMockGuildChannel(overrides: any = {}): any {
-  // Create base object with properties we need
-  const baseChannel = {
-    id: '444555666777888999',
-    name: 'test-channel',
-    guild: { id: '111222333444555666', name: 'Test Guild' },
-    client: {
-      user: { id: '987654321098765432' },
-    },
-    type: ChannelType.GuildText,
-  }
-
-  // Add overrides
-  Object.assign(baseChannel, overrides)
-
-  // Create a properly structured mock that will pass instanceof checks
-  const mockChannel = Object.create(GuildChannel.prototype, {
-    ...Object.getOwnPropertyDescriptors(baseChannel),
-    // Make sure the channel correctly identifies as a GuildChannel
-    constructor: { value: GuildChannel },
-  })
-
-  return mockChannel
-}
-
-/**
- * Creates a mock Discord.js ThreadChannel that correctly passes instanceof checks
- */
-export function createMockThreadChannel(overrides: any = {}): any {
-  // Create base object with properties we need
-  const baseChannel = {
-    id: '444555666777888999',
-    name: 'test-thread',
-    guild: { id: '111222333444555666', name: 'Test Guild' },
-    client: {
-      user: { id: '987654321098765432' },
-    },
-    type: ChannelType.PublicThread,
-    permissionsFor: vi.fn().mockReturnValue({
-      has: vi.fn().mockReturnValue(true),
-    }),
-  }
-
-  // Add overrides
-  Object.assign(baseChannel, overrides)
-
-  // Create a properly structured mock that will pass instanceof checks
-  const mockChannel = Object.create(ThreadChannel.prototype, {
-    ...Object.getOwnPropertyDescriptors(baseChannel),
-    // Make sure the channel correctly identifies as a ThreadChannel
-    constructor: { value: ThreadChannel },
-  })
-
-  return mockChannel
-}
-
-/**
- * Creates a mock Command object
- */
-export function createMockCommand(overrides: any = {}): any {
-  return {
-    names: ['test'],
-    deferType: 'HIDDEN',
-    requireClientPerms: [],
-    execute: vi.fn().mockResolvedValue({}),
-    cooldown: {
-      take: vi.fn().mockReturnValue(false),
-      amount: 1,
-      interval: 5000,
-    },
-    ...overrides,
-  }
 }
 
 /**
@@ -223,4 +109,119 @@ export function createMockGuildMember(overrides: any = {}): any {
   })
 
   return mockMember
+}
+
+/**
+ * Creates a mock Discord.js GuildChannel that correctly passes instanceof checks
+ */
+export function createMockGuildChannel(overrides: any = {}): any {
+  // Create base object with properties we need
+  const baseChannel = {
+    id: '444555666777888999',
+    name: 'test-channel',
+    guild: { id: '111222333444555666', name: 'Test Guild' },
+    client: {
+      user: { id: '987654321098765432' },
+    },
+    type: ChannelType.GuildText,
+  }
+
+  // Add overrides
+  Object.assign(baseChannel, overrides)
+
+  // Create a properly structured mock that will pass instanceof checks
+  const mockChannel = Object.create(GuildChannel.prototype, {
+    ...Object.getOwnPropertyDescriptors(baseChannel),
+    // Make sure the channel correctly identifies as a GuildChannel
+    constructor: { value: GuildChannel },
+  })
+
+  return mockChannel
+}
+
+/**
+ * Creates a mock Discord.js CommandInteraction
+ */
+export function createMockCommandInteraction(overrides: any = {}): any {
+  // Create a mock guild member first to ensure consistent user data
+  const mockMember = createMockGuildMember()
+
+  return {
+    id: '987612345678901234',
+    user: mockMember.user,
+    member: mockMember,
+    client: {
+      user: {
+        id: '987654321098765432',
+        username: 'TestBot',
+      },
+    },
+    guild: mockMember.guild,
+    channel: createMockGuildChannel(),
+    commandName: 'test',
+    options: {
+      getString: vi.fn(),
+      getUser: vi.fn(),
+      getInteger: vi.fn(),
+      getBoolean: vi.fn(),
+      getSubcommand: vi.fn(),
+      getSubcommandGroup: vi.fn(),
+    },
+    reply: vi.fn().mockResolvedValue({}),
+    editReply: vi.fn().mockResolvedValue({}),
+    deferReply: vi.fn().mockResolvedValue({}),
+    followUp: vi.fn().mockResolvedValue({}),
+    deferred: false,
+    replied: false,
+    ...overrides,
+  }
+}
+
+/**
+ * Creates a mock Discord.js ThreadChannel that correctly passes instanceof checks
+ */
+export function createMockThreadChannel(overrides: any = {}): any {
+  // Create base object with properties we need
+  const baseChannel = {
+    id: '444555666777888999',
+    name: 'test-thread',
+    guild: { id: '111222333444555666', name: 'Test Guild' },
+    client: {
+      user: { id: '987654321098765432' },
+    },
+    type: ChannelType.PublicThread,
+    permissionsFor: vi.fn().mockReturnValue({
+      has: vi.fn().mockReturnValue(true),
+    }),
+  }
+
+  // Add overrides
+  Object.assign(baseChannel, overrides)
+
+  // Create a properly structured mock that will pass instanceof checks
+  const mockChannel = Object.create(ThreadChannel.prototype, {
+    ...Object.getOwnPropertyDescriptors(baseChannel),
+    // Make sure the channel correctly identifies as a ThreadChannel
+    constructor: { value: ThreadChannel },
+  })
+
+  return mockChannel
+}
+
+/**
+ * Creates a mock Command object
+ */
+export function createMockCommand(overrides: any = {}): any {
+  return {
+    names: ['test'],
+    deferType: 'HIDDEN',
+    requireClientPerms: [],
+    execute: vi.fn().mockResolvedValue({}),
+    cooldown: {
+      take: vi.fn().mockReturnValue(false),
+      amount: 1,
+      interval: 5000,
+    },
+    ...overrides,
+  }
 }

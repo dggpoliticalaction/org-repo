@@ -3,7 +3,7 @@ export class RandomUtils {
     return Math.floor(Math.random() * (max - min + 1) + min)
   }
 
-  public static shuffle(input: any[]): any[] {
+  public static shuffle(input: unknown[]): unknown[] {
     for (let i = input.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
       ;[input[i], input[j]] = [input[j], input[i]]

@@ -86,7 +86,7 @@ export class CommandRegistrationService {
           return
         }
 
-        const remoteCmd = remoteCmds.find((remoteCmd) => remoteCmd.name == oldName)
+        const remoteCmd = remoteCmds.find((cmd) => cmd.name == oldName)
         if (!remoteCmd) {
           Logger.error(Logs.error.commandActionNotFound.replaceAll('{COMMAND_NAME}', oldName))
           return
@@ -113,7 +113,7 @@ export class CommandRegistrationService {
           return
         }
 
-        const remoteCmd = remoteCmds.find((remoteCmd) => remoteCmd.name == name)
+        const remoteCmd = remoteCmds.find((cmd) => cmd.name == name)
         if (!remoteCmd) {
           Logger.error(Logs.error.commandActionNotFound.replaceAll('{COMMAND_NAME}', name))
           return

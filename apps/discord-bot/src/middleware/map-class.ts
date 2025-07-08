@@ -2,6 +2,20 @@ import { type ClassConstructor, plainToInstance } from 'class-transformer'
 import { validate, type ValidationError } from 'class-validator'
 import { type NextFunction, type Request, type RequestHandler, type Response } from 'express'
 
+interface ValidationErrorLog {
+  property: string
+  constraints?: { [type: string]: string }
+  children?: ValidationErrorLog[]
+}
+
+function formatValidationErrors(errors: ValidationError[]): ValidationErrorLog[] {
+  return errors.map((error) => ({
+    property: error.property,
+    constraints: error.constraints,
+    children: error.children && error.children.length > 0 ? formatValidationErrors(error.children) : undefined,
+  }))
+}
+
 export function mapClass(cls: ClassConstructor<object>): RequestHandler {
   return async (req: Request, res: Response, next: NextFunction) => {
     // Map to class
@@ -23,18 +37,4 @@ export function mapClass(cls: ClassConstructor<object>): RequestHandler {
     res.locals.input = obj
     next()
   }
-}
-
-interface ValidationErrorLog {
-  property: string
-  constraints?: { [type: string]: string }
-  children?: ValidationErrorLog[]
-}
-
-function formatValidationErrors(errors: ValidationError[]): ValidationErrorLog[] {
-  return errors.map((error) => ({
-    property: error.property,
-    constraints: error.constraints,
-    children: error.children?.length > 0 ? formatValidationErrors(error.children) : undefined,
-  }))
 }

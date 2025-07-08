@@ -1,3 +1,3 @@
 export interface EventHandler {
-  process(...args: any[]): Promise<void>
+  process(...args: unknown[]): Promise<void>
 }

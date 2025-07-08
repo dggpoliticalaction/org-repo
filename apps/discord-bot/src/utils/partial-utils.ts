@@ -19,7 +19,7 @@ const IGNORED_ERRORS = [
 ]
 
 export class PartialUtils {
-  public static async fillUser(user: User | PartialUser): Promise<User> {
+  public static async fillUser(user: User | PartialUser): Promise<User | null> {
     if (user.partial) {
       try {
         return await user.fetch()
@@ -29,7 +29,7 @@ export class PartialUtils {
           typeof error.code == 'number' &&
           IGNORED_ERRORS.includes(error.code)
         ) {
-          return
+          return null
         } else {
           throw error
         }
@@ -39,7 +39,7 @@ export class PartialUtils {
     return user as User
   }
 
-  public static async fillMessage(msg: Message | PartialMessage): Promise<Message> {
+  public static async fillMessage(msg: Message | PartialMessage): Promise<Message | null> {
     if (msg.partial) {
       try {
         return await msg.fetch()
@@ -49,7 +49,7 @@ export class PartialUtils {
           typeof error.code == 'number' &&
           IGNORED_ERRORS.includes(error.code)
         ) {
-          return
+          return null
         } else {
           throw error
         }
@@ -61,7 +61,7 @@ export class PartialUtils {
 
   public static async fillReaction(
     msgReaction: MessageReaction | PartialMessageReaction,
-  ): Promise<MessageReaction> {
+  ): Promise<MessageReaction | null> {
     if (msgReaction.partial) {
       try {
         msgReaction = await msgReaction.fetch()
@@ -71,17 +71,18 @@ export class PartialUtils {
           typeof error.code == 'number' &&
           IGNORED_ERRORS.includes(error.code)
         ) {
-          return
+          return null
         } else {
           throw error
         }
       }
     }
 
-    msgReaction.message = await this.fillMessage(msgReaction.message)
-    if (!msgReaction.message) {
-      return
+    const filledMessage = await this.fillMessage(msgReaction.message)
+    if (!filledMessage) {
+      return null
     }
+    msgReaction.message = filledMessage
 
     return msgReaction as MessageReaction
   }

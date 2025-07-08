@@ -55,6 +55,7 @@ export class Lang {
     return this.linguini.getCom(location, variables)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private static embedTm: TypeMapper<EmbedBuilder> = (jsonValue: any) => {
     return new EmbedBuilder({
       author: jsonValue.author,

@@ -7,6 +7,8 @@ import {
   createMockCommandInteraction,
   createMockGuildChannel,
 } from '../helpers/discord-mocks.js'
+import { Locale, type CommandInteraction, type MessageComponentInteraction, type ModalSubmitInteraction } from 'discord.js'
+import { type EventData } from '../../src/models/internal-models.js'
 
 // Mock dependencies
 vi.mock('../../src/utils/index.js', () => ({
@@ -72,8 +74,8 @@ describe('CommandUtils', () => {
     let mockCommand: Command & {
       cooldown: { take: ReturnType<typeof vi.fn>; amount: number; interval: number }
     }
-    let mockInteraction: any
-    let mockEventData: any
+    let mockInteraction: CommandInteraction | MessageComponentInteraction | ModalSubmitInteraction
+    let mockEventData: EventData
 
     beforeEach(() => {
       // Create a mock command with cooldown using helper
@@ -107,7 +109,7 @@ describe('CommandUtils', () => {
       })
 
       // Create mock event data
-      mockEventData = { lang: 'en-US' }
+      mockEventData = { lang: Locale.EnglishUS, langGuild: Locale.EnglishUS } as EventData
     })
 
     it('should pass checks when all requirements are met', async () => {
@@ -139,10 +141,17 @@ describe('CommandUtils', () => {
       const { InteractionUtils } = await import('../../src/utils/index.js')
 
       // Create a GuildChannel mock with failing permission check
-      mockInteraction.channel = createMockGuildChannel({
+      const newChannel = createMockGuildChannel({
         permissionsFor: vi.fn().mockReturnValue({
           has: vi.fn().mockReturnValue(false),
         }),
+      })
+      
+      // Create a new mock interaction with the new channel using the helper
+      mockInteraction = createMockCommandInteraction({
+        user: { id: '123456789012345678' },
+        client: { user: { id: '987654321098765432' } },
+        channel: newChannel,
       })
 
       // Set up command for test
