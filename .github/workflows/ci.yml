@@ -34,7 +34,7 @@ jobs:
   static:
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x]
 
     name: Run static checks
     runs-on: ubuntu-latest
