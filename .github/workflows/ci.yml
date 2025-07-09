@@ -27,7 +27,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Build Next.js
-        run: pnpm run build -- --experimental-build-mode compile
+        run: pnpm run build
         env:
           NEXT_PUBLIC_SENTRY_DISABLED: "true" # Only upload Sentry source maps in deployment
 
