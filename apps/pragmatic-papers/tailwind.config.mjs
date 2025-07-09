@@ -127,8 +127,11 @@ const config = {
                 marginBottom: '0.25em',
                 color: 'transparent',
                 '-webkit-text-stroke-width': '2px',
-                '-webkit-text-stroke-color': 'var(--brand-light)',
+                '-webkit-text-stroke-color': 'var(--brand)',
                 fontFamily: 'Open Sans,Open Sans Fallback',
+                '[data-theme="dark"] &': {
+                  '-webkit-text-stroke-color': 'var(--brand-light)',
+                },
               },
               h2: {
                 fontSize: '2.25rem',
@@ -180,7 +183,10 @@ const config = {
                 marginBottom: '0.25em',
                 color: 'transparent',
                 '-webkit-text-stroke-width': '2px',
-                '-webkit-text-stroke-color': 'var(--brand-light)',
+                '-webkit-text-stroke-color': 'var(--brand)',
+                '[data-theme="dark"] &': {
+                  '-webkit-text-stroke-color': 'var(--brand-light)',
+                },
               },
             },
           ],
