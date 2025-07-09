@@ -4,7 +4,7 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 
 import type { Article } from '../../../payload-types'
 
-export const revalidateArticle: CollectionAfterChangeHook<Article> = ({
+export const revalidateArticle: CollectionAfterChangeHook<Article> = async ({
   doc,
   previousDoc,
   req: { payload, context },
@@ -18,6 +18,23 @@ export const revalidateArticle: CollectionAfterChangeHook<Article> = ({
       revalidatePath(path)
       revalidatePath('/feed.articles')
       revalidateTag('articles-sitemap')
+
+      // Find and revalidate all volumes that reference this article
+      const volumes = await payload.find({
+        collection: 'volumes',
+        where: {
+          'articles.id': {
+            equals: doc.id,
+          },
+        },
+        depth: 0,
+      })
+
+      volumes.docs.forEach((volume) => {
+        const volumePath = `/volumes/${volume.slug}`
+        payload.logger.info(`Revalidating volume at path: ${volumePath}`)
+        revalidatePath(volumePath)
+      })
     }
 
     // If the article was previously published, we need to revalidate the old path
@@ -29,18 +46,59 @@ export const revalidateArticle: CollectionAfterChangeHook<Article> = ({
       revalidatePath(oldPath)
       revalidatePath('/feed.articles')
       revalidateTag('articles-sitemap')
+
+      // Find and revalidate all volumes that reference this article
+      const volumes = await payload.find({
+        collection: 'volumes',
+        where: {
+          'articles.id': {
+            equals: doc.id,
+          },
+        },
+        select: {
+          slug: true,
+        },
+        depth: 0,
+      })
+
+      volumes.docs.forEach((volume) => {
+        const volumePath = `/volumes/${volume.slug}`
+        revalidatePath(volumePath)
+      })
     }
   }
   return doc
 }
 
-export const revalidateDelete: CollectionAfterDeleteHook<Article> = ({ doc, req: { context } }) => {
+export const revalidateDelete: CollectionAfterDeleteHook<Article> = async ({
+  doc,
+  req: { payload, context },
+}) => {
   if (!context.disableRevalidate) {
     const path = `/articles/${doc?.slug}`
 
     revalidatePath(path)
     revalidatePath('/feed.articles')
     revalidateTag('articles-sitemap')
+
+    // Find and revalidate all volumes that reference this article
+    const volumes = await payload.find({
+      collection: 'volumes',
+      where: {
+        'articles.id': {
+          equals: doc.id,
+        },
+      },
+      select: {
+        slug: true,
+      },
+      depth: 0,
+    })
+
+    volumes.docs.forEach((volume) => {
+      const volumePath = `/volumes/${volume.slug}`
+      revalidatePath(volumePath)
+    })
   }
 
   return doc
