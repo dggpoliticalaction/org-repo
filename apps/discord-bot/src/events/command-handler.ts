@@ -43,7 +43,7 @@ export class CommandHandler implements EventHandler {
             intr.commandName,
             intr.options.getSubcommandGroup(false),
             intr.options.getSubcommand(false),
-          ].filter(Boolean)
+          ].filter((part): part is string => typeof part === 'string')
         : [intr.commandName]
     const commandName = commandParts.join(' ')
 
@@ -129,8 +129,8 @@ export class CommandHandler implements EventHandler {
     // Get data from database
     const data = await this.eventDataService.create({
       user: intr.user,
-      channel: intr.channel,
-      guild: intr.guild,
+      channel: intr.channel ?? undefined,
+      guild: intr.guild ?? undefined,
       args: intr instanceof ChatInputCommandInteraction ? intr.options : undefined,
     })
 

@@ -129,12 +129,12 @@ export class Bot {
     }
 
     try {
-      msg = await PartialUtils.fillMessage(msg)
-      if (!msg) {
+      const filledMsg = await PartialUtils.fillMessage(msg)
+      if (!filledMsg) {
         return
       }
 
-      await this.messageHandler.process(msg)
+      await this.messageHandler.process(filledMsg)
     } catch (error) {
       Logger.error(Logs.error.message, error)
     }
@@ -175,15 +175,17 @@ export class Bot {
     }
 
     try {
-      msgReaction = await PartialUtils.fillReaction(msgReaction)
-      if (!msgReaction) {
+      const filledReaction = await PartialUtils.fillReaction(msgReaction)
+      if (!filledReaction) {
         return
       }
+      msgReaction = filledReaction
 
-      reactor = await PartialUtils.fillUser(reactor)
-      if (!reactor) {
+      const filledUser = await PartialUtils.fillUser(reactor)
+      if (!filledUser) {
         return
       }
+      reactor = filledUser
 
       await this.reactionHandler.process(msgReaction, msgReaction.message as Message, reactor)
     } catch (error) {

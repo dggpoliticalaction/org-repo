@@ -48,7 +48,8 @@ export class Language {
   }
 
   public static find(input: string, enabled: boolean): Locale {
-    return this.findMultiple(input, enabled, 1)[0]
+    const result = this.findMultiple(input, enabled, 1)[0]
+    return result ?? this.Default
   }
 
   public static findMultiple(

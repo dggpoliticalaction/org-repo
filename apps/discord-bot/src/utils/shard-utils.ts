@@ -21,7 +21,7 @@ export class ShardUtils {
     } else if (shardInterface instanceof ShardClientUtil) {
       return shardInterface.ids
     }
-    
+
     return []
   }
 

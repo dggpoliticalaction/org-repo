@@ -2,7 +2,7 @@ export class RegexUtils {
   public static regex(input: string): RegExp {
     const match = input.match(/^\/(.*)\/([^/]*)$/)
     if (!match) {
-      return new RegExp('');
+      return new RegExp('')
     }
 
     return new RegExp(match[1] ?? '', match[2])
@@ -19,7 +19,7 @@ export class RegexUtils {
   public static tag(input: string): { username: string; tag: string; discriminator: string } {
     const match = input.match(/\b(.+)#([\d]{4})\b/)
     if (!match) {
-      return { username: '', tag: '', discriminator: ''}
+      return { username: '', tag: '', discriminator: '' }
     }
 
     return {

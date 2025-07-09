@@ -69,15 +69,15 @@ export class ButtonHandler implements EventHandler {
     // Get data from database
     const data = await this.eventDataService.create({
       user: intr.user,
-      channel: intr.channel,
-      guild: intr.guild,
+      channel: intr.channel ?? undefined,
+      guild: intr.guild ?? undefined,
     })
 
     // Execute the button
     await button.execute(intr, data)
   }
 
-  private findButton(id: string): Button {
+  private findButton(id: string): Button | undefined {
     return this.buttons.find((button) => button.ids.includes(id))
   }
 }

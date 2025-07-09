@@ -29,8 +29,8 @@ export class MessageUtils {
   public static async send(
     target: User | TextBasedChannel,
     content: string | EmbedBuilder | BaseMessageOptions,
-  ): Promise<Message> {
-    if (target instanceof PartialGroupDMChannel) return
+  ): Promise<Message | null> {
+    if (target instanceof PartialGroupDMChannel) return null
     try {
       const options: BaseMessageOptions =
         typeof content === 'string'
@@ -45,7 +45,7 @@ export class MessageUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
@@ -55,7 +55,7 @@ export class MessageUtils {
   public static async reply(
     msg: Message,
     content: string | EmbedBuilder | BaseMessageOptions,
-  ): Promise<Message> {
+  ): Promise<Message | null> {
     try {
       const options: BaseMessageOptions =
         typeof content === 'string'
@@ -70,7 +70,7 @@ export class MessageUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
@@ -80,7 +80,7 @@ export class MessageUtils {
   public static async edit(
     msg: Message,
     content: string | EmbedBuilder | MessageEditOptions,
-  ): Promise<Message> {
+  ): Promise<Message | null> {
     try {
       const options: MessageEditOptions =
         typeof content === 'string'
@@ -95,14 +95,14 @@ export class MessageUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
     }
   }
 
-  public static async react(msg: Message, emoji: EmojiResolvable): Promise<MessageReaction> {
+  public static async react(msg: Message, emoji: EmojiResolvable): Promise<MessageReaction | null> {
     try {
       return await msg.react(emoji)
     } catch (error) {
@@ -111,14 +111,14 @@ export class MessageUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
     }
   }
 
-  public static async pin(msg: Message, pinned: boolean = true): Promise<Message> {
+  public static async pin(msg: Message, pinned: boolean = true): Promise<Message | null> {
     try {
       return pinned ? await msg.pin() : await msg.unpin()
     } catch (error) {
@@ -127,7 +127,7 @@ export class MessageUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
@@ -137,7 +137,7 @@ export class MessageUtils {
   public static async startThread(
     msg: Message,
     options: StartThreadOptions,
-  ): Promise<ThreadChannel> {
+  ): Promise<ThreadChannel | null> {
     try {
       return await msg.startThread(options)
     } catch (error) {
@@ -146,14 +146,14 @@ export class MessageUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
     }
   }
 
-  public static async delete(msg: Message): Promise<Message> {
+  public static async delete(msg: Message): Promise<Message | null> {
     try {
       return await msg.delete()
     } catch (error) {
@@ -162,7 +162,7 @@ export class MessageUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }

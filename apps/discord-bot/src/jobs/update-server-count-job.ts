@@ -16,8 +16,8 @@ export class UpdateServerCountJob extends Job {
   public name = 'Update Server Count'
   public schedule: string = Config.jobs.updateServerCount.schedule
   public log: boolean = Config.jobs.updateServerCount.log
-  public runOnce: boolean = Config.jobs.updateServerCount.runOnce
-  public initialDelaySecs: number = Config.jobs.updateServerCount.initialDelaySecs
+  public override runOnce: boolean = Config.jobs.updateServerCount.runOnce
+  public override initialDelaySecs: number = Config.jobs.updateServerCount.initialDelaySecs
 
   private botSites: BotSite[]
 
@@ -32,7 +32,7 @@ export class UpdateServerCountJob extends Job {
   public async run(): Promise<void> {
     const serverCount = await ShardUtils.serverCount(this.shardManager)
 
-    const type = ActivityType.Streaming
+    const type: ActivityType.Streaming = ActivityType.Streaming
     const name = `to ${serverCount.toLocaleString()} servers`
     const url = Lang.getCom('links.stream')
 

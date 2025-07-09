@@ -48,7 +48,7 @@ export class TriggerHandler {
     const data = await this.eventDataService.create({
       user: msg.author,
       channel: msg.channel,
-      guild: msg.guild,
+      guild: msg.guild ?? undefined,
     })
 
     // Execute triggers

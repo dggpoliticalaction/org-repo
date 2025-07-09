@@ -7,7 +7,12 @@ import {
   createMockCommandInteraction,
   createMockGuildChannel,
 } from '../helpers/discord-mocks.js'
-import { Locale, type CommandInteraction, type MessageComponentInteraction, type ModalSubmitInteraction } from 'discord.js'
+import {
+  Locale,
+  type CommandInteraction,
+  type MessageComponentInteraction,
+  type ModalSubmitInteraction,
+} from 'discord.js'
 import { type EventData } from '../../src/models/internal-models.js'
 
 // Mock dependencies
@@ -63,9 +68,9 @@ describe('CommandUtils', () => {
       expect(result).toBe(mockCommands[1])
     })
 
-    it('should return undefined if no match found', () => {
+    it('should return null if no match found', () => {
       const result = CommandUtils.findCommand(mockCommands, ['nonexistent'])
-      expect(result).toBeUndefined()
+      expect(result).toBeNull()
     })
   })
 
@@ -146,7 +151,7 @@ describe('CommandUtils', () => {
           has: vi.fn().mockReturnValue(false),
         }),
       })
-      
+
       // Create a new mock interaction with the new channel using the helper
       mockInteraction = createMockCommandInteraction({
         user: { id: '123456789012345678' },

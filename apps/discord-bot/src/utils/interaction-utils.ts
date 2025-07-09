@@ -30,7 +30,7 @@ export class InteractionUtils {
   public static async deferReply(
     intr: CommandInteraction | MessageComponentInteraction | ModalSubmitInteraction,
     hidden: boolean = false,
-  ): Promise<InteractionResponse> {
+  ): Promise<InteractionResponse | null> {
     try {
       return await intr.deferReply({
         flags: hidden ? MessageFlags.Ephemeral : undefined,
@@ -41,7 +41,7 @@ export class InteractionUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
@@ -50,7 +50,7 @@ export class InteractionUtils {
 
   public static async deferUpdate(
     intr: MessageComponentInteraction | ModalSubmitInteraction,
-  ): Promise<InteractionResponse> {
+  ): Promise<InteractionResponse | null> {
     try {
       return await intr.deferUpdate()
     } catch (error) {
@@ -59,7 +59,7 @@ export class InteractionUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
@@ -70,7 +70,7 @@ export class InteractionUtils {
     intr: CommandInteraction | MessageComponentInteraction | ModalSubmitInteraction,
     content: string | EmbedBuilder | InteractionReplyOptions,
     hidden: boolean = false,
-  ): Promise<Message> {
+  ): Promise<Message | null> {
     try {
       const options: InteractionReplyOptions =
         typeof content === 'string'
@@ -96,7 +96,7 @@ export class InteractionUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
@@ -125,7 +125,7 @@ export class InteractionUtils {
   public static async editReply(
     intr: CommandInteraction | MessageComponentInteraction | ModalSubmitInteraction,
     content: string | EmbedBuilder | WebhookMessageEditOptions,
-  ): Promise<Message> {
+  ): Promise<Message | null> {
     try {
       const options: WebhookMessageEditOptions =
         typeof content === 'string'
@@ -140,7 +140,7 @@ export class InteractionUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
@@ -150,7 +150,7 @@ export class InteractionUtils {
   public static async update(
     intr: MessageComponentInteraction,
     content: string | EmbedBuilder | InteractionUpdateOptions,
-  ): Promise<Message> {
+  ): Promise<Message | null> {
     try {
       const options: InteractionUpdateOptions =
         typeof content === 'string'
@@ -168,7 +168,7 @@ export class InteractionUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }

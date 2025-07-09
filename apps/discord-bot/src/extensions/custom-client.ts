@@ -10,7 +10,10 @@ export class CustomClient extends Client {
     name: string,
     url: string,
   ): Presence {
-    return this.user?.setPresence({
+    if (!this.user) {
+      throw new Error('Client user is not available.')
+    }
+    return this.user.setPresence({
       activities: [
         {
           type,

@@ -13,17 +13,17 @@ import { type EventData } from '../models/internal-models.js'
 import { Lang } from '../services/index.js'
 
 export class CommandUtils {
-  public static findCommand(commands: Command[], commandParts: string[]): Command {
+  public static findCommand(commands: Command[], commandParts: string[]): Command | null {
     let found = [...commands]
-    let closestMatch: Command
+    let closestMatch: Command | null = null
     for (const [index, commandPart] of commandParts.entries()) {
       found = found.filter((command) => command.names[index] === commandPart)
       if (found.length === 0) {
-        return closestMatch
+        return null
       }
 
       if (found.length === 1) {
-        return found[0]
+        return found[0] ?? null
       }
 
       const exactMatch = found.find((command) => command.names.length === index + 1)
@@ -55,7 +55,7 @@ export class CommandUtils {
 
     if (
       (intr.channel instanceof GuildChannel || intr.channel instanceof ThreadChannel) &&
-      !intr.channel.permissionsFor(intr.client.user).has(command.requireClientPerms)
+      !intr.channel.permissionsFor(intr.client.user)?.has(command.requireClientPerms)
     ) {
       await InteractionUtils.send(
         intr,

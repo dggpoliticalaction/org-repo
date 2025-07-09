@@ -30,10 +30,10 @@ const IGNORED_ERRORS = [
 ]
 
 export class ClientUtils {
-  public static async getGuild(client: Client, discordId: string): Promise<Guild> {
+  public static async getGuild(client: Client, discordId: string): Promise<Guild | null> {
     discordId = RegexUtils.discordId(discordId)
     if (!discordId) {
-      return
+      return null
     }
 
     try {
@@ -44,17 +44,17 @@ export class ClientUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
     }
   }
 
-  public static async getChannel(client: Client, discordId: string): Promise<Channel> {
+  public static async getChannel(client: Client, discordId: string): Promise<Channel | null> {
     discordId = RegexUtils.discordId(discordId)
     if (!discordId) {
-      return
+      return null
     }
 
     try {
@@ -65,17 +65,17 @@ export class ClientUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
     }
   }
 
-  public static async getUser(client: Client, discordId: string): Promise<User> {
+  public static async getUser(client: Client, discordId: string): Promise<User | null> {
     discordId = RegexUtils.discordId(discordId)
     if (!discordId) {
-      return
+      return null
     }
 
     try {
@@ -86,19 +86,22 @@ export class ClientUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
     }
   }
 
-  public static async findAppCommand(client: Client, name: string): Promise<ApplicationCommand> {
-    const commands = await client.application.commands.fetch()
-    return commands.find((command) => command.name === name)
+  public static async findAppCommand(
+    client: Client,
+    name: string,
+  ): Promise<ApplicationCommand | null> {
+    const commands = await client.application?.commands.fetch()
+    return commands?.find((command) => command.name === name) ?? null
   }
 
-  public static async findMember(guild: Guild, input: string): Promise<GuildMember> {
+  public static async findMember(guild: Guild, input: string): Promise<GuildMember | null> {
     try {
       const discordId = RegexUtils.discordId(input)
       if (discordId) {
@@ -107,37 +110,40 @@ export class ClientUtils {
 
       const tag = RegexUtils.tag(input)
       if (tag) {
-        return (await guild.members.fetch({ query: tag.username, limit: FETCH_MEMBER_LIMIT })).find(
-          (member) => member.user.discriminator === tag.discriminator,
+        return (
+          (await guild.members.fetch({ query: tag.username, limit: FETCH_MEMBER_LIMIT })).find(
+            (member) => member.user.discriminator === tag.discriminator,
+          ) ?? null
         )
       }
 
-      return (await guild.members.fetch({ query: input, limit: 1 })).first()
+      return (await guild.members.fetch({ query: input, limit: 1 })).first() ?? null
     } catch (error) {
       if (
         error instanceof DiscordAPIError &&
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
     }
   }
 
-  public static async findRole(guild: Guild, input: string): Promise<Role> {
+  public static async findRole(guild: Guild, input: string): Promise<Role | null> {
     try {
       const discordId = RegexUtils.discordId(input)
       if (discordId) {
-        return await guild.roles.fetch(discordId)
+        return (await guild.roles.fetch(discordId)) ?? null
       }
 
       const search = input.trim().toLowerCase().replace(/^@/, '')
       const roles = await guild.roles.fetch()
       return (
         roles.find((role) => role.name.toLowerCase() === search) ??
-        roles.find((role) => role.name.toLowerCase().includes(search))
+        roles.find((role) => role.name.toLowerCase().includes(search)) ??
+        null
       )
     } catch (error) {
       if (
@@ -145,7 +151,7 @@ export class ClientUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
@@ -155,7 +161,7 @@ export class ClientUtils {
   public static async findTextChannel(
     guild: Guild,
     input: string,
-  ): Promise<NewsChannel | TextChannel> {
+  ): Promise<NewsChannel | TextChannel | null> {
     try {
       const discordId = RegexUtils.discordId(input)
       if (discordId) {
@@ -163,7 +169,7 @@ export class ClientUtils {
         if (channel instanceof NewsChannel || channel instanceof TextChannel) {
           return channel
         } else {
-          return
+          return null
         }
       }
 
@@ -173,7 +179,8 @@ export class ClientUtils {
       )
       return (
         channels.find((channel) => channel.name.toLowerCase() === search) ??
-        channels.find((channel) => channel.name.toLowerCase().includes(search))
+        channels.find((channel) => channel.name.toLowerCase().includes(search)) ??
+        null
       )
     } catch (error) {
       if (
@@ -181,7 +188,7 @@ export class ClientUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }
@@ -191,7 +198,7 @@ export class ClientUtils {
   public static async findVoiceChannel(
     guild: Guild,
     input: string,
-  ): Promise<VoiceChannel | StageChannel> {
+  ): Promise<VoiceChannel | StageChannel | null> {
     try {
       const discordId = RegexUtils.discordId(input)
       if (discordId) {
@@ -199,7 +206,7 @@ export class ClientUtils {
         if (channel instanceof VoiceChannel || channel instanceof StageChannel) {
           return channel
         } else {
-          return
+          return null
         }
       }
 
@@ -209,7 +216,8 @@ export class ClientUtils {
       )
       return (
         channels.find((channel) => channel.name.toLowerCase() === search) ??
-        channels.find((channel) => channel.name.toLowerCase().includes(search))
+        channels.find((channel) => channel.name.toLowerCase().includes(search)) ??
+        null
       )
     } catch (error) {
       if (
@@ -217,7 +225,7 @@ export class ClientUtils {
         typeof error.code == 'number' &&
         IGNORED_ERRORS.includes(error.code)
       ) {
-        return
+        return null
       } else {
         throw error
       }

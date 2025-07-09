@@ -33,6 +33,9 @@ export class ReactionHandler implements EventHandler {
     }
 
     // Try to find the reaction the user wants
+    if (!msgReaction.emoji.name) {
+      return
+    }
     const reaction = this.findReaction(msgReaction.emoji.name)
     if (!reaction) {
       return
@@ -55,14 +58,14 @@ export class ReactionHandler implements EventHandler {
     const data = await this.eventDataService.create({
       user: reactor,
       channel: msg.channel,
-      guild: msg.guild,
+      guild: msg.guild ?? undefined,
     })
 
     // Execute the reaction
     await reaction.execute(msgReaction, msg, reactor, data)
   }
 
-  private findReaction(emoji: string): Reaction {
-    return this.reactions.find((reaction) => reaction.emoji === emoji)
+  private findReaction(emoji: string): Reaction | null {
+    return this.reactions.find((reaction) => reaction.emoji === emoji) ?? null
   }
 }

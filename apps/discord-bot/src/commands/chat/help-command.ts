@@ -29,19 +29,21 @@ export class HelpCommand implements Command {
         break
       }
       case HelpOption.COMMANDS: {
+        const testCmd = await ClientUtils.findAppCommand(
+          intr.client,
+          Lang.getRef('chatCommands.test', Language.Default),
+        )
+        const infoCmd = await ClientUtils.findAppCommand(
+          intr.client,
+          Lang.getRef('chatCommands.info', Language.Default),
+        )
         embed = Lang.getEmbed('displayEmbeds.helpCommands', data.lang, {
-          CMD_LINK_TEST: FormatUtils.commandMention(
-            await ClientUtils.findAppCommand(
-              intr.client,
-              Lang.getRef('chatCommands.test', Language.Default),
-            ),
-          ),
-          CMD_LINK_INFO: FormatUtils.commandMention(
-            await ClientUtils.findAppCommand(
-              intr.client,
-              Lang.getRef('chatCommands.info', Language.Default),
-            ),
-          ),
+          CMD_LINK_TEST: testCmd
+            ? FormatUtils.commandMention(testCmd)
+            : Lang.getRef('other.na', data.lang),
+          CMD_LINK_INFO: infoCmd
+            ? FormatUtils.commandMention(infoCmd)
+            : Lang.getRef('other.na', data.lang),
         })
         break
       }

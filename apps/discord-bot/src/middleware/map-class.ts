@@ -12,7 +12,10 @@ function formatValidationErrors(errors: ValidationError[]): ValidationErrorLog[]
   return errors.map((error) => ({
     property: error.property,
     constraints: error.constraints,
-    children: error.children && error.children.length > 0 ? formatValidationErrors(error.children) : undefined,
+    children:
+      error.children && error.children.length > 0
+        ? formatValidationErrors(error.children)
+        : undefined,
   }))
 }
 

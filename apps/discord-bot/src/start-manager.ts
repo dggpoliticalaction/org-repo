@@ -60,10 +60,10 @@ async function start(): Promise<void> {
   })
 
   // Jobs
-  const jobs: Job[] = [
+  const jobs = [
     Config.clustering.enabled ? undefined : new UpdateServerCountJob(shardManager, httpService),
     // TODO: Add new jobs here
-  ].filter(Boolean)
+  ].filter(Boolean) as Job[]
 
   const manager = new Manager(shardManager, new JobService(jobs))
 

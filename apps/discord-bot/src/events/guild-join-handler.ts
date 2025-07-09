@@ -30,38 +30,41 @@ export class GuildJoinHandler implements EventHandler {
     // Send welcome message to the server's notify channel
     const notifyChannel = await ClientUtils.findNotifyChannel(guild, data.langGuild)
     if (notifyChannel) {
+      const notifyCmd = await ClientUtils.findAppCommand(
+        guild.client,
+        Lang.getRef('chatCommands.help', Language.Default),
+      )
+      const notifyCmdLinkHelp = notifyCmd
+        ? FormatUtils.commandMention(notifyCmd)
+        : Lang.getRef('other.na', data.langGuild)
+
       await MessageUtils.send(
         notifyChannel,
         Lang.getEmbed('displayEmbeds.welcome', data.langGuild, {
-          CMD_LINK_HELP: FormatUtils.commandMention(
-            await ClientUtils.findAppCommand(
-              guild.client,
-              Lang.getRef('chatCommands.help', Language.Default),
-            ),
-          ),
+          CMD_LINK_HELP: notifyCmdLinkHelp,
         }).setAuthor({
           name: guild.name,
-          iconURL: guild.iconURL(),
+          iconURL: guild.iconURL() ?? undefined,
         }),
       )
     }
 
-    // Send welcome message to owner
-    if (owner) {
-      await MessageUtils.send(
-        owner.user,
-        Lang.getEmbed('displayEmbeds.welcome', data.lang, {
-          CMD_LINK_HELP: FormatUtils.commandMention(
-            await ClientUtils.findAppCommand(
-              guild.client,
-              Lang.getRef('chatCommands.help', Language.Default),
-            ),
-          ),
-        }).setAuthor({
-          name: guild.name,
-          iconURL: guild.iconURL(),
-        }),
-      )
-    }
+    const ownerCmd = await ClientUtils.findAppCommand(
+      guild.client,
+      Lang.getRef('chatCommands.help', Language.Default),
+    )
+    const ownerCmdLinkHelp = ownerCmd
+      ? FormatUtils.commandMention(ownerCmd)
+      : Lang.getRef('other.na', data.lang)
+
+    await MessageUtils.send(
+      owner.user,
+      Lang.getEmbed('displayEmbeds.welcome', data.lang, {
+        CMD_LINK_HELP: ownerCmdLinkHelp,
+      }).setAuthor({
+        name: guild.name,
+        iconURL: guild.iconURL() ?? undefined,
+      }),
+    )
   }
 }
