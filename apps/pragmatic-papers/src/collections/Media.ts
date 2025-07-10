@@ -85,6 +85,7 @@ export const Media: CollectionConfig = {
         formatOptions: {
           format: 'webp',
         },
+        withoutEnlargement: false,
       },
       {
         name: 'square',
@@ -93,6 +94,7 @@ export const Media: CollectionConfig = {
         formatOptions: {
           format: 'webp',
         },
+        withoutEnlargement: false,
       },
       {
         name: 'small',
@@ -100,6 +102,7 @@ export const Media: CollectionConfig = {
         formatOptions: {
           format: 'webp',
         },
+        withoutEnlargement: false,
       },
       {
         name: 'medium',
@@ -107,6 +110,7 @@ export const Media: CollectionConfig = {
         formatOptions: {
           format: 'webp',
         },
+        withoutEnlargement: false,
       },
       {
         name: 'large',
@@ -114,6 +118,7 @@ export const Media: CollectionConfig = {
         formatOptions: {
           format: 'webp',
         },
+        withoutEnlargement: false,
       },
       {
         name: 'xlarge',
@@ -121,6 +126,7 @@ export const Media: CollectionConfig = {
         formatOptions: {
           format: 'webp',
         },
+        withoutEnlargement: false,
       },
       {
         name: 'og',
@@ -130,6 +136,7 @@ export const Media: CollectionConfig = {
         formatOptions: {
           format: 'jpeg',
         },
+        withoutEnlargement: false,
       },
     ],
   },
