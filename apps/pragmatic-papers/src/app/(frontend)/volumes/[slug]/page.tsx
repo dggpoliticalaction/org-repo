@@ -86,7 +86,7 @@ export default async function VolumePage({
   const actualArticles = articles?.filter((article) => typeof article !== 'number')
 
   return (
-    <div className="pb-16 max-w-2xl px-4 mx-auto">
+    <div className="pb-16 max-w-3xl px-4 mx-auto">
       <PageClient />
 
       {/* Allows redirects for valid pages too */}
