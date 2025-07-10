@@ -42,7 +42,7 @@ export const Entry: React.FC<{
       <div className="group">
         <div className="text-left text-sm">
           <span className="pe-2">Volume {toRoman(volumeNumber ?? 1)}</span>
-          <span className="text-brand dark:text-brandLight">
+          <span className="text-brand">
             {publishedAt ? dateToString(Date.parse(publishedAt)) : ''}
           </span>
         </div>
