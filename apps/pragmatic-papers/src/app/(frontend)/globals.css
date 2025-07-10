@@ -14,8 +14,13 @@
   }
 
   :root {
-    --brand: #0080ff;
-    --brand-light: #56b0ff;
+    --brand: #56b0ff;
+    --brand-light: #0080ff;
+
+    [data-theme='dark'] {
+      --brand: #0080ff;
+      --brand-light: #56b0ff;
+    }
 
     --background: 0 0% 98%;
     --foreground: 222.2 84% 4.9%;
