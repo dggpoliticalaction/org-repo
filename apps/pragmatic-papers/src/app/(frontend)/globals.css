@@ -17,11 +17,6 @@
     --brand: #56b0ff;
     --brand-light: #0080ff;
 
-    [data-theme='dark'] {
-      --brand: #0080ff;
-      --brand-light: #56b0ff;
-    }
-
     --background: 0 0% 98%;
     --foreground: 222.2 84% 4.9%;
 
@@ -60,6 +55,9 @@
   [data-theme='dark'] {
     --background: 0 0% 0%;
     --foreground: 210 40% 98%;
+
+    --brand: #0080ff;
+    --brand-light: #56b0ff;
 
     --card: 0 0% 4%;
     --card-foreground: 210 40% 98%;
