@@ -81,7 +81,9 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         Object.values(resource.sizes)
           .filter(
             (resourceSize) =>
-              resourceSize !== resource.sizes?.square && resourceSize !== resource.sizes?.og,
+              resourceSize.url &&
+              resourceSize !== resource.sizes?.square &&
+              resourceSize !== resource.sizes?.og,
           )
           .map((resourceSize) => (
             <source
