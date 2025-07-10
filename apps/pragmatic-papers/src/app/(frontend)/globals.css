@@ -14,10 +14,10 @@
   }
 
   :root {
-    --brand: #0080ff;
-    --brand-light: #56b0ff;
+    --brand: #56b0ff;
+    --brand-light: #0080ff;
 
-    --background: 0 0% 100%;
+    --background: 0 0% 98%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 240 5% 96%;
@@ -55,6 +55,9 @@
   [data-theme='dark'] {
     --background: 0 0% 0%;
     --foreground: 210 40% 98%;
+
+    --brand: #0080ff;
+    --brand-light: #56b0ff;
 
     --card: 0 0% 4%;
     --card-foreground: 210 40% 98%;
