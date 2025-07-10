@@ -122,7 +122,7 @@ const config = {
               '--tw-prose-headings': 'var(--text)',
               fontFamily: 'var(--font-serif)',
               h1: {
-                fontSize: '20vw',
+                fontSize: '8rem',
                 fontWeight: 700,
                 marginBottom: '0.25em',
                 color: 'transparent',
