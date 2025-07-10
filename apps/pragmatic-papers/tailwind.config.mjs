@@ -122,7 +122,7 @@ const config = {
               '--tw-prose-headings': 'var(--text)',
               fontFamily: 'var(--font-serif)',
               h1: {
-                fontSize: '20vw',
+                fontSize: '4rem',
                 fontWeight: 700,
                 marginBottom: '0.25em',
                 color: 'transparent',
@@ -175,12 +175,7 @@ const config = {
           css: [
             {
               h1: {
-                fontSize: '9.5vw',
-                fontWeight: 700,
-                marginBottom: '0.25em',
-                color: 'transparent',
-                '-webkit-text-stroke-width': '2px',
-                '-webkit-text-stroke-color': 'var(--brand-light)',
+                fontSize: '6rem',
               },
             },
           ],

@@ -34,7 +34,7 @@ export default async function Page() {
       <PageClient />
 
       <div className="flex justify-center">
-        <div className="text-center prose md:prose-md dark:prose-invert max-w-none">
+        <div className="text-center prose md:prose-md dark:prose-invert">
           <h1>Volumes</h1>
         </div>
       </div>
