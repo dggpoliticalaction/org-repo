@@ -42,7 +42,7 @@ export const Entry: React.FC<{
       <div className="group">
         <div className="text-left text-sm">
           <span className="pe-2">Volume {toRoman(volumeNumber ?? 1)}</span>
-          <span className="text-brandLight">
+          <span className="text-brand">
             {publishedAt ? dateToString(Date.parse(publishedAt)) : ''}
           </span>
         </div>
@@ -59,7 +59,7 @@ export const Entry: React.FC<{
             </h3>
           )}
           {description && (
-            <div className="my-3 text-sm md:text-base text-gray-400">
+            <div className="my-3 text-sm md:text-base text-muted-foreground">
               {description && <p>{sanitizedDescription}</p>}
             </div>
           )}
