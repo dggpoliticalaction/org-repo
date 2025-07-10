@@ -176,11 +176,6 @@ const config = {
             {
               h1: {
                 fontSize: '6rem',
-                // fontWeight: 700,
-                // marginBottom: '0.25em',
-                // color: 'transparent',
-                // '-webkit-text-stroke-width': '2px',
-                // '-webkit-text-stroke-color': 'var(--brand-light)',
               },
             },
           ],
