@@ -50,8 +50,7 @@ const getVolumesSitemap = unstable_cache(
   },
 )
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export async function GET() {
+export async function GET(): Promise<Response> {
   const sitemap = await getVolumesSitemap()
 
   return getServerSideSitemap(sitemap)
