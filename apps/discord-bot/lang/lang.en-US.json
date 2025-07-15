@@ -123,6 +123,9 @@
             ]
           }
         ]
+      },
+      "rules": {
+        "title": "Follow the rules!"
       }
     },
     "validationEmbeds": {
@@ -190,7 +193,8 @@
       "dev": "dev",
       "help": "help",
       "info": "info",
-      "test": "test"
+      "test": "test",
+      "rules": "rules"
     },
     "userCommands": {
       "viewDateJoined": "View Date Joined"
@@ -200,18 +204,21 @@
     },
     "arguments": {
       "command": "command",
-      "option": "option"
+      "option": "option",
+      "ruleNumber": "rulenumber"
     },
     "commandDescs": {
       "dev": "Developer use only.",
       "help": "Find help or contact support.",
       "info": "View bot info.",
-      "test": "Run the test command."
+      "test": "Run the test command.",
+      "rules": "List the rules, or a specific one."
     },
     "argDescs": {
       "devCommand": "Command.",
       "helpOption": "Option.",
-      "infoOption": "Option."
+      "infoOption": "Option.",
+      "ruleNumber": "Rule number."
     },
     "fields": {
       "commands": "Commands",
