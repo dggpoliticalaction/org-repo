@@ -29,6 +29,7 @@ import {
 } from '@payloadcms/plugin-seo/fields'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { revalidateArticle, revalidateDelete } from './hooks/revalidateVolumes'
+import { publishArticles } from './hooks/publishArticles'
 
 export const Volumes: CollectionConfig = {
   slug: 'volumes',
@@ -171,6 +172,7 @@ export const Volumes: CollectionConfig = {
     ...numberSlugField('volumeNumber'),
   ],
   hooks: {
+    beforeChange: [publishArticles],
     afterChange: [revalidateArticle],
     afterDelete: [revalidateDelete],
   },
