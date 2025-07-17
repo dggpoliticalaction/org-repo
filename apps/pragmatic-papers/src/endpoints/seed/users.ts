@@ -3,12 +3,13 @@ import type { User } from '@/payload-types'
 
 interface Users {
   admin: User
+  editor: User
   writer1: User
   writer2: User
 }
 
 export const createUsers = async (payload: Payload): Promise<Users> => {
-  // Create an admin user
+  // Create an admin user (just in case you configured your admin account strangely)
   const admin = await payload.create({
     collection: 'users',
     data: {
@@ -19,7 +20,17 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
     },
   })
 
-  // Create writers
+  // It's helpful to see what an editor can see with restricted access
+  const editor = await payload.create({
+    collection: 'users',
+    data: {
+      email: 'editor@example.com',
+      password: 'password123',
+      name: 'Editor User',
+      role: 'editor',
+    },
+  })
+
   const writer1 = await payload.create({
     collection: 'users',
     data: {
@@ -86,5 +97,5 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
     },
   })
 
-  return { admin, writer1, writer2 }
+  return { admin, editor, writer1, writer2 }
 }

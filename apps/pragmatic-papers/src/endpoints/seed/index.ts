@@ -6,12 +6,10 @@ import { createVolumes } from './volumes'
 import { createMedia } from './media'
 
 export const seed = async (payload: Payload): Promise<void> => {
-  // Create users
   const { writer1, writer2 } = await createUsers(payload)
 
   const { mediaDocs } = await createMedia(payload)
 
-  // Create articles
   const articleResults = await createArticles(
     payload,
     [writer1, writer2],
@@ -35,7 +33,6 @@ export const seed = async (payload: Payload): Promise<void> => {
     throw new Error('Failed to create articles for one or more volumes')
   }
 
-  // Create volumes
   await createVolumes(
     payload,
     [
@@ -61,7 +58,7 @@ export const seed = async (payload: Payload): Promise<void> => {
     mediaDocs,
   )
 
-  // Create home page
+  // The homepage is literally a "page" in Payload.
   await payload.create({
     collection: 'pages',
     data: homeStatic,
