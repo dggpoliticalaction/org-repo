@@ -27,16 +27,18 @@ export const publishArticles: CollectionBeforeChangeHook<Volume> = async ({
 
     if (articlesToPublish.length > 0) {
       // Update each article individually
-      for (const article of articlesToPublish) {
-        await payload.update({
-          collection: 'articles',
-          id: typeof article === 'object' ? article.id : article,
-          data: {
-            _status: 'published',
-            publishedAt: new Date().toISOString(),
-          },
-        })
-      }
+      await Promise.all(
+        articlesToPublish.map((article) =>
+          payload.update({
+            collection: 'articles',
+            id: typeof article === 'object' ? article.id : article,
+            data: {
+              _status: 'published',
+              publishedAt: new Date().toISOString(),
+            },
+          }),
+        ),
+      )
     }
   }
 }
