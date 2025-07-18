@@ -3,6 +3,7 @@ import { type APIApplicationCommandBasicOption, ApplicationCommandOptionType } f
 import { DevCommandName, HelpOption, InfoOption } from '../enums/index.js'
 import { Language } from '../models/enum-helpers/index.js'
 import { Lang } from '../services/index.js'
+import { Rules } from '../constants/rules.js'
 
 export class Args {
   public static readonly DEV_COMMAND: APIApplicationCommandBasicOption = {
@@ -56,5 +57,15 @@ export class Args {
         value: InfoOption.TRANSLATE,
       },
     ],
+  }
+  public static readonly RULES_OPTIION: APIApplicationCommandBasicOption = {
+    name: Lang.getRef('arguments.ruleNumber', Language.Default),
+    name_localizations: Lang.getRefLocalizationMap('arguments.ruleNumber'),
+    description: Lang.getRef('argDescs.ruleNumber', Language.Default),
+    description_localizations: Lang.getRefLocalizationMap('argDescs.ruleNumber'),
+    type: ApplicationCommandOptionType.Integer,
+    required: false,
+    min_value: 1,
+    max_value: Rules.ServerRules.length,
   }
 }
