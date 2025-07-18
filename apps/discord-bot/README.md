@@ -1,3 +1,52 @@
+# DGGPA Discord bot
+
+## Commands
+
+* /rules - Post the rules. Optionally specify a rule number. Rule list is located
+at `src/constants/rules.ts`.
+
+## Message Actions
+
+* List Region Completion (wip) - Generate a ranking of how much the message was engaged with by region (via the reactions)
+
+## User Actions
+
+None so far.
+
+## Adding features
+
+This will involve creating/editing:
+* Code: This will go under `src/commands`, as an instance of the `Command` class. There are three subfolders:
+   * `chat`: Slash commands
+   * `message`: Context menu actions for when you right click on a message (under Apps)
+   * `user`: Context menu actions for when you right click on a user
+* Language strings: These will let us easily translate the bot for others. Currently the only languages are en-US and en-GB. These go in JSON files under `src/lang`. Any features you add will need to be supported by all languages, or you'll encounter errors.
+* Embed templates: These are the fancy, pretty replies bots and apps can send (along with regularly formatted messages). The template will be filled in with data by the code you write. These templates also live in the language files.
+* Metadata files to update:
+   * `src/commands/metadata.ts`: Info about your command, like its name and description.
+   * `src/commands/args.ts`: Defines the arguments your command can optionally accept.
+   * Additionally, you'll need to add your command to the `commands` array within `src/start-bot.ts`.
+
+
+As an example of creating a slash command that takes a single int argument (reference other commands while you do this e.g. the rules command):
+
+1. Create a new file for your command under `src/commands/chat/ping.ts`. Go ahead and add an export to the `index.ts` under this folder too.
+2. Implement your command as an instance of the `Command` class. `rules-command.ts` is an example that uses arguments and embeds (those will be added next). In the language files:
+   * Create an entry in `chatCommands` with the name of your command (which will be used as the slash command).
+   * Create an entry in `arguments` with the name of your arg.
+   * Create your embed under `displayEmbeds`. Note that within embeds you can reference other parts of the language file, along with data supplied by the calling code.
+3. Add metadata about the arguments your command takes in `src/commands/args.ts`. This will be an instance of `APIApplicationCommandBasicOption` on `Args`. You will define the type of argument (string, int, etc) as well as whether it's required.
+   * The name will be a language reference to the item in `arguments` you just created.
+   * Create a lang item under `argDescs` to provide a hint as to what your argument represents.
+4. Add metadata for your command in `src/commands/metadata.ts`.
+   * For the name, reference the `chatCommands` lang item you created.
+   * Create a lang item under `commandDescs` with a description of the command.
+5. Add an instance of your command class to the `commands` array in `src/start-bot.ts`.
+6. Copy `config/config.example.json` to `config.json`. Fill in your user ID in the `developers` array. Add your app's client ID and bot token.
+7. Also copy `config/debug.example.json` to `config/debug.json`
+8. Synchronize the bot's commands with Discord by running `pnpm run commands:register`.
+9. Test your new command by running `pnpm run start`.
+
 # Discord Bot TypeScript Template
 
 [![discord.js](https://img.shields.io/github/package-json/dependency-version/KevinNovak/Discord-Bot-TypeScript-Template/discord.js)](https://discord.js.org/)
