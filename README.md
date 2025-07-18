@@ -53,7 +53,7 @@ To run or develop a single application:
   ```
 - or, you can filter turborepo tasks
   ```
-  turbo run dev#pragmatic-papers
+  turbo run pragmatic-papers#dev
   ```
 
 ## Useful Links
