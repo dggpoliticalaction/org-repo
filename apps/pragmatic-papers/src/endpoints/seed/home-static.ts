@@ -2,87 +2,33 @@ import type { RequiredDataFromCollectionSlug } from 'payload'
 
 // Used for pre-seeded content so that the homepage is not empty
 export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
-  slug: 'home',
-  _status: 'published',
+  title: 'Home',
   hero: {
     type: 'lowImpact',
-    richText: {
-      root: {
-        type: 'root',
-        children: [
-          {
-            type: 'heading',
-            children: [
-              {
-                type: 'text',
-                detail: 0,
-                format: 0,
-                mode: 'normal',
-                style: '',
-                text: 'Payload Website Template',
-                version: 1,
-              },
-            ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
-            tag: 'h1',
-            version: 1,
-          },
-          {
-            type: 'paragraph',
-            children: [
-              {
-                type: 'link',
-                children: [
-                  {
-                    type: 'text',
-                    detail: 0,
-                    format: 0,
-                    mode: 'normal',
-                    style: '',
-                    text: 'Visit the admin dashboard',
-                    version: 1,
-                  },
-                ],
-                direction: 'ltr',
-                fields: {
-                  linkType: 'custom',
-                  newTab: false,
-                  url: '/admin',
-                },
-                format: '',
-                indent: 0,
-                version: 2,
-              },
-              {
-                type: 'text',
-                detail: 0,
-                format: 0,
-                mode: 'normal',
-                style: '',
-                text: ' to make your account and seed content for your website.',
-                version: 1,
-              },
-            ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
-            textFormat: 0,
-            version: 1,
-          },
-        ],
-        direction: 'ltr',
-        format: '',
-        indent: 0,
-        version: 1,
-      },
+    richText: null,
+    links: [],
+    media: null,
+  },
+  layout: [
+    {
+      introContent: null,
+      populateBy: 'collection',
+      relationTo: 'volumes',
+      limit: 6,
+      blockName: null,
+      blockType: 'volumeView',
+      selectedDocs: [],
     },
-  },
+  ],
   meta: {
-    description: 'An open-source website built with Payload and Next.js.',
-    title: 'Payload Website Template',
+    title: null,
+    image: null,
+    description: null,
   },
-  title: 'Home',
-  layout: [],
+  publishedAt: '2025-07-09T07:54:37.358Z',
+  slug: 'home',
+  slugLock: true,
+  updatedAt: '2025-07-13T23:32:37.273Z',
+  createdAt: '2025-07-09T07:54:36.604Z',
+  _status: 'published',
 }
