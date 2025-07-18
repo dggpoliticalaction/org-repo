@@ -40,24 +40,32 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
       role: 'writer',
       biography: {
         root: {
-          type: 'root',
           children: [
             {
-              type: 'paragraph',
               children: [
                 {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
                   text: 'A prolific writer specializing in academic research and scientific papers.',
+                  type: 'text',
+                  version: 1,
                 },
               ],
-              direction: null,
+              direction: 'ltr',
               format: '',
               indent: 0,
+              type: 'paragraph',
               version: 1,
+              textFormat: 0,
+              textStyle: '',
             },
           ],
           direction: 'ltr',
           format: '',
           indent: 0,
+          type: 'root',
           version: 1,
         },
       },
@@ -73,24 +81,32 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
       role: 'writer',
       biography: {
         root: {
-          type: 'root',
           children: [
             {
-              type: 'paragraph',
               children: [
                 {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
                   text: 'An experienced researcher with focus on theoretical physics and mathematics.',
+                  type: 'text',
+                  version: 1,
                 },
               ],
-              direction: null,
+              direction: 'ltr',
               format: '',
               indent: 0,
+              type: 'paragraph',
               version: 1,
+              textFormat: 0,
+              textStyle: '',
             },
           ],
           direction: 'ltr',
           format: '',
           indent: 0,
+          type: 'root',
           version: 1,
         },
       },
