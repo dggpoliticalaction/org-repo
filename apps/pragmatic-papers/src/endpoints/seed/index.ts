@@ -6,6 +6,43 @@ import { createVolumes } from './volumes'
 import { createMedia } from './media'
 
 export const seed = async (payload: Payload): Promise<void> => {
+  // Delete all content before seeding
+  await payload.delete({
+    collection: 'users',
+    where: {
+      email: {
+        in: [
+          'admin@example.com',
+          'editor@example.com',
+          'writer1@example.com',
+          'writer2@example.com',
+        ],
+      },
+    },
+  })
+
+  await payload.delete({
+    collection: 'articles',
+    where: {},
+  })
+
+  await payload.delete({
+    collection: 'volumes',
+    where: {},
+  })
+
+  await payload.delete({
+    collection: 'media',
+    where: {},
+  })
+
+  await payload.delete({
+    collection: 'pages',
+    where: {},
+  })
+
+  // Begin seeding
+
   const { writer1, writer2 } = await createUsers(payload)
 
   const { mediaDocs } = await createMedia(payload)
