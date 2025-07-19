@@ -80,9 +80,17 @@ export const ChatCommandMetadata: {
       {
         ...Args.RULES_OPTIION,
         required: false,
-      }
-    ]
-  }
+      },
+    ],
+  },
+  PRAGPAPER: {
+    type: ApplicationCommandType.ChatInput,
+    name: Lang.getRef('chatCommands.pragPapers', Language.Default),
+    name_localizations: Lang.getRefLocalizationMap('chatCommands.pragPapers'),
+    description: Lang.getRef('commandDescs.pragPapers', Language.Default),
+    description_localizations: Lang.getRefLocalizationMap('commandDescs.pragPapers'),
+    default_member_permissions: undefined,
+  },
 }
 
 export const MessageCommandMetadata: {

@@ -7,8 +7,9 @@ import {
   DevCommand,
   HelpCommand,
   InfoCommand,
+  PragPapersCommand,
   RulesCommand,
-  TestCommand
+  TestCommand,
 } from './commands/chat/index.js'
 import {
   ChatCommandMetadata,
@@ -68,6 +69,7 @@ async function start(): Promise<void> {
     new InfoCommand(),
     new TestCommand(),
     new RulesCommand(),
+    new PragPapersCommand(),
 
     // Message Context Commands
     new ViewDateSent(),
