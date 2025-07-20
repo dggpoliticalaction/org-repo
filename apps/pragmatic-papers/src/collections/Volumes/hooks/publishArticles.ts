@@ -11,13 +11,14 @@ export const publishArticles: CollectionBeforeChangeHook<Volume> = async ({
     let articles: Article[] = []
     if (typeof data.articles[0] === 'number') {
       articles = await Promise.all(
-        data.articles.map(
-          async (articleId) =>
-            await payload.findByID({
-              collection: 'articles',
-              id: articleId as number,
-            }),
-        ),
+        (
+          await payload.find({
+            collection: 'articles',
+            where: {
+              id: { in: data.articles as number[] },
+            },
+          })
+        ).docs,
       )
     } else {
       articles = data.articles as Article[]
@@ -26,19 +27,20 @@ export const publishArticles: CollectionBeforeChangeHook<Volume> = async ({
     const articlesToPublish = articles.filter((article) => article._status !== 'published')
 
     if (articlesToPublish.length > 0) {
-      // Update each article individually
-      await Promise.all(
-        articlesToPublish.map((article) =>
-          payload.update({
-            collection: 'articles',
-            id: typeof article === 'object' ? article.id : article,
-            data: {
-              _status: 'published',
-              publishedAt: new Date().toISOString(),
-            },
-          }),
-        ),
-      )
+      await payload.update({
+        collection: 'articles',
+        where: {
+          id: {
+            in: articlesToPublish.map((article) =>
+              typeof article === 'object' ? article.id : article,
+            ),
+          },
+        },
+        data: {
+          _status: 'published',
+          publishedAt: new Date().toISOString(),
+        },
+      })
     }
   }
 }
