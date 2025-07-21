@@ -126,6 +126,9 @@
       },
       "rules": {
         "title": "Follow the rules!"
+      },
+      "pragPapers": {
+        "title": "{{REF:links.pragPapersEmbed}}"
       }
     },
     "validationEmbeds": {
@@ -194,7 +197,8 @@
       "help": "help",
       "info": "info",
       "test": "test",
-      "rules": "rules"
+      "rules": "rules",
+      "pragPapers": "prag-papers"
     },
     "userCommands": {
       "viewDateJoined": "View Date Joined"
@@ -212,7 +216,8 @@
       "help": "Find help or contact support.",
       "info": "View bot info.",
       "test": "Run the test command.",
-      "rules": "List the rules, or a specific one."
+      "rules": "List the rules, or a specific one.",
+      "pragPapers": "Gives a link to the Pragmatic Papers website."
     },
     "argDescs": {
       "devCommand": "Command.",
@@ -311,7 +316,8 @@
       "supportEmbed": "[Join Support Server]({{COM:links.support}})",
       "templateEmbed": "[Discord Bot TypeScript Template]({{COM:links.template}})",
       "termsEmbed": "[View Terms of Service]({{COM:links.terms}})",
-      "voteEmbed": "[Vote for {{COM:bot.name}}!]({{COM:links.vote}})"
+      "voteEmbed": "[Vote for {{COM:bot.name}}!]({{COM:links.vote}})",
+      "pragPapersEmbed": "[Read the Pragmatic Papers here: ]({{COM:links.pragPapers}})"
     }
   }
 }
