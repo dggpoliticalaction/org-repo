@@ -60,7 +60,7 @@ Basic access control is setup to limit access to various content based based on 
 - `editors`: Have the ability edit and publish volumes and articles.
 - `users`: Users can access the admin panel and create or edit content.
 - `articles`: Everyone can access published articles, but only writers can create, update, or delete them. And editors can only publish them.
-- `volumes`: Everyone can access published articles, but only writers can create, update, or delete them. And editors can only publish them.
+- `volumes`: Everyone can access published volumes, but only writers can create, update, or delete them. And editors can only publish them.
 - `pages`: Everyone can access published pages, but only admins can create, update, or delete them.
 
 For more details on how to extend this functionality, see the [Payload Access Control](https://payloadcms.com/docs/access-control/overview#access-control) docs.
