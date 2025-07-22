@@ -126,6 +126,9 @@
       },
       "rules": {
         "title": "Follow the rules!"
+      },
+      "listRegionCompletion": {
+        "title": "CTA completion by region"
       }
     },
     "validationEmbeds": {
@@ -200,7 +203,8 @@
       "viewDateJoined": "View Date Joined"
     },
     "messageCommands": {
-      "viewDateSent": "View Date Sent"
+      "viewDateSent": "View Date Sent",
+      "listRegionCompletion": "List Region Completion"
     },
     "arguments": {
       "command": "command",
