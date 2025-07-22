@@ -26,6 +26,8 @@ const getArticlesSitemap = unstable_cache(
       select: {
         slug: true,
         updatedAt: true,
+        title: true,
+        publishedAt: true,
       },
     })
 
@@ -38,6 +40,12 @@ const getArticlesSitemap = unstable_cache(
             return {
               loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}/articles/${page?.slug}`,
               lastmod: page.updatedAt || dateFallback,
+              news: {
+                title: page.title,
+                publicationName: 'Pragmatic Papers',
+                publicationLanguage: 'en',
+                date: page.publishedAt ?? dateFallback,
+              },
             }
           })
       : []
