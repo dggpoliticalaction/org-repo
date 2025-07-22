@@ -31,11 +31,11 @@ async function start(): Promise<void> {
     if (Config.clustering.enabled) {
       const resBody = await masterApiService.login()
       shardList = resBody.shardList
-      const requiredShards = await ShardUtils.requiredShardCount(Config.client.token)
+      const requiredShards = await ShardUtils.requiredShardCount(process.env.DISCORD_BOT_TOKEN)
       totalShards = Math.max(requiredShards, resBody.totalShards)
     } else {
       const recommendedShards = await ShardUtils.recommendedShardCount(
-        Config.client.token,
+        process.env.DISCORD_BOT_TOKEN,
         Config.sharding.serversPerShard,
       )
       shardList = MathUtils.range(0, recommendedShards)
@@ -52,7 +52,7 @@ async function start(): Promise<void> {
   }
 
   const shardManager = new ShardingManager('dist/start-bot.js', {
-    token: Config.client.token,
+    token: process.env.DISCORD_BOT_TOKEN,
     mode: Debug.override.shardMode.enabled ? Debug.override.shardMode.value : 'process',
     respawn: true,
     totalShards,
