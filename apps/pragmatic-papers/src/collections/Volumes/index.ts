@@ -30,6 +30,7 @@ import {
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { revalidateArticle, revalidateDelete } from './hooks/revalidateVolumes'
 import { checkArticles } from './hooks/checkArticles'
+import { pushToBot } from './hooks/pushToBot'
 
 export const Volumes: CollectionConfig = {
   slug: 'volumes',
@@ -173,7 +174,7 @@ export const Volumes: CollectionConfig = {
     ...numberSlugField('volumeNumber'),
   ],
   hooks: {
-    afterChange: [revalidateArticle],
+    afterChange: [revalidateArticle, pushToBot],
     afterDelete: [revalidateDelete],
   },
   versions: {
