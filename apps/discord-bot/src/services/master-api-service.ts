@@ -1,4 +1,3 @@
-import { createRequire } from 'node:module'
 import { URL } from 'node:url'
 
 import { type HttpService } from './index.js'
@@ -8,8 +7,7 @@ import {
   type RegisterClusterResponse,
 } from '../models/master-api/index.js'
 
-const require = createRequire(import.meta.url)
-const Config = require('../../config/config.json')
+import Config from '../../config/config.json'  with { type: "json" };
 
 export class MasterApiService {
   private clusterId: string
@@ -21,13 +19,13 @@ export class MasterApiService {
       shardCount: Config.clustering.shardCount,
       callback: {
         url: Config.clustering.callbackUrl,
-        token: Config.api.secret,
+        token: process.env.DISCORD_BOT_API_SECRET,
       },
     }
 
     const res = await this.httpService.post(
       new URL('/clusters', Config.clustering.masterApi.url),
-      Config.clustering.masterApi.token,
+      process.env.DISCORD_BOT_MASTER_API_TOKEN,
       reqBody,
     )
 
@@ -42,7 +40,7 @@ export class MasterApiService {
   public async login(): Promise<LoginClusterResponse> {
     const res = await this.httpService.put(
       new URL(`/clusters/${this.clusterId}/login`, Config.clustering.masterApi.url),
-      Config.clustering.masterApi.token,
+      process.env.DISCORD_BOT_MASTER_API_TOKEN,
     )
 
     if (!res.ok) {
@@ -55,7 +53,7 @@ export class MasterApiService {
   public async ready(): Promise<void> {
     const res = await this.httpService.put(
       new URL(`/clusters/${this.clusterId}/ready`, Config.clustering.masterApi.url),
-      Config.clustering.masterApi.token,
+      process.env.DISCORD_BOT_MASTER_API_TOKEN,
     )
 
     if (!res.ok) {

@@ -116,6 +116,30 @@ You can run the bot in multiple modes:
    - Type `npm run start:pm2`.
    - Similar to Manager Mode but uses [PM2](https://pm2.keymetrics.io/) to manage processes.
 
+## Environment Variables
+
+The bot requires certain environment variables to be set. In development, these can be set in a `.env` file in the root of the discord-bot directory. In production, these should be set in your deployment environment.
+
+Required environment variables:
+
+```env
+# Discord Bot Configuration
+DISCORD_CLIENT_ID="your-discord-client-id"
+DISCORD_BOT_TOKEN="your-discord-bot-token"
+DISCORD_BOT_DEVELOPER_IDS="123456789012345678,987654321098765432" # comma-separated list of Discord user IDs
+
+# API Configuration
+DISCORD_BOT_API_SECRET="00000000-0000-0000-0000-000000000000"
+
+# Clustering Configuration (only needed if clustering.enabled is true)
+DISCORD_BOT_MASTER_API_TOKEN="00000000-0000-0000-0000-000000000000"
+```
+
+For local development:
+1. Copy the above environment variables into a new `.env` file
+2. Replace the placeholder values with your actual configuration
+3. The `.env` file is gitignored by default to prevent committing secrets
+
 ## Bots Using This Template
 
 A list of Discord bots using this template.
