@@ -32,6 +32,7 @@
     "support": "https://support.discord.com/",
     "template": "https://github.com/KevinNovak/Discord-Bot-TypeScript-Template",
     "terms": "https://github.com/KevinNovak/Discord-Bot-TypeScript-Template/blob/master/LEGAL.md#terms-of-service",
-    "vote": "https://top.gg/"
+    "vote": "https://top.gg/",
+    "pragPapers": "https://pragmaticpapers.com/"
   }
 }
