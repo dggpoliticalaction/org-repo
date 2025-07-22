@@ -2,6 +2,7 @@ import djs, { type ChatInputCommandInteraction, type PermissionsString } from 'd
 import { createRequire } from 'node:module'
 import os from 'node:os'
 import typescript from 'typescript'
+import { getDeveloperIds } from '../../config/environment.js'
 
 import { DevCommandName } from '../../enums/index.js'
 import { Language } from '../../models/enum-helpers/index.js'
@@ -11,15 +12,15 @@ import { FormatUtils, InteractionUtils, ShardUtils } from '../../utils/index.js'
 import { type Command, CommandDeferType } from '../index.js'
 
 const require = createRequire(import.meta.url)
-const Config = require('../../../config/config.json')
 const TsConfig = require('../../../tsconfig.json')
+
 
 export class DevCommand implements Command {
   public names = [Lang.getRef('chatCommands.dev', Language.Default)]
   public deferType = CommandDeferType.HIDDEN
   public requireClientPerms: PermissionsString[] = []
   public async execute(intr: ChatInputCommandInteraction, data: EventData): Promise<void> {
-    if (!Config.developers.includes(intr.user.id)) {
+    if (!getDeveloperIds().includes(intr.user.id)) {
       await InteractionUtils.send(intr, Lang.getEmbed('validationEmbeds.devOnly', data.lang))
       return
     }

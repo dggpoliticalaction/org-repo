@@ -1,8 +1,7 @@
 {
-  "developers": ["<YOUR_DISCORD_ID>"],
+  "// NOTE: developers are now managed via DISCORD_BOT_DEVELOPER_IDS environment variable": "",
   "client": {
-    "id": "<DISCORD_BOT_ID>",
-    "token": "<DISCORD_BOT_TOKEN>",
+    "// NOTE: id and token are now managed via environment variables": "",
     "intents": [
       "Guilds",
       "GuildMessages",
@@ -29,7 +28,7 @@
   },
   "api": {
     "port": 3001,
-    "secret": "00000000-0000-0000-0000-000000000000"
+    "// NOTE: secret is now managed via environment variables": ""
   },
   "sharding": {
     "spawnDelay": 5,
@@ -42,7 +41,7 @@
     "callbackUrl": "http://localhost:3001/",
     "masterApi": {
       "url": "http://localhost:5000/",
-      "token": "00000000-0000-0000-0000-000000000000"
+      "// NOTE: token is now managed via environment variables": ""
     }
   },
   "jobs": {
