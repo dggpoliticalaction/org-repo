@@ -28,7 +28,7 @@ export const Webhooks: CollectionConfig = {
       hooks: {
         afterRead: [
           (ctx: FieldHookArgs<Webhook, unknown, { pushed: { volumeNumber: number }[] }>): number =>
-            Math.max(...(ctx.siblingData.pushed?.map((v) => v.volumeNumber) ?? [])),
+            Math.max(...(ctx.siblingData.pushed?.map((v) => v.volumeNumber) ?? [0])),
         ],
       },
     },
