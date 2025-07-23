@@ -93,7 +93,14 @@ export const generateArticleFeed = (articles: Article[]): string => {
         author: article.populatedAuthors?.map((author) => ({
           name: author.name || '',
         })),
-        content: convertLexicalToHTML({ data: article.content }),
+        content: (() => {
+          try {
+            return article.content ? convertLexicalToHTML({ data: article.content }) : ''
+          } catch (error) {
+            console.error('Error converting article content to HTML:', error)
+            return ''
+          }
+        })(),
         extensions: [
           {
             name: 'updated',
