@@ -1,6 +1,7 @@
 import { admin } from '@/access/admins'
 import { type Webhook } from '@/payload-types'
 import { type FieldHookArgs, type CollectionConfig } from 'payload'
+import { format, isAfter } from 'date-fns'
 
 export const Webhooks: CollectionConfig = {
   slug: 'webhooks',
@@ -23,19 +24,17 @@ export const Webhooks: CollectionConfig = {
     },
     {
       type: 'text',
-      name: 'mostRecentPushed',
+      name: 'mostRecent',
       label: 'Most Recent',
       hooks: {
         afterRead: [
-          (
-            ctx: FieldHookArgs<Webhook, unknown, { pushed: { volumeNumber: number }[] }>,
-          ): string => {
-            return (
-              ctx.data?.pushed
-                ?.map((v) => v.volumeNumber ?? 0)
-                .reduce((prev, curr) => (prev > curr ? prev : curr))
-                ?.toString() ?? '-'
-            )
+          (ctx: FieldHookArgs<Webhook>): string => {
+            const latest = ctx.data?.pushed
+              ?.map((v) => {
+                return { vol: v.volumeNumber, time: new Date(v.timePushed ?? 0) }
+              })
+              .reduce((prev, curr) => (isAfter(prev.time, curr.time) ? prev : curr))
+            return latest ? `Vol. ${latest.vol} - ${format(latest.time, 'PP pp')}` : '-'
           },
         ],
       },
@@ -55,6 +54,14 @@ export const Webhooks: CollectionConfig = {
         {
           name: 'volumeNumber',
           type: 'number',
+          admin: {
+            readOnly: true,
+            hidden: true,
+          },
+        },
+        {
+          name: 'timePushed',
+          type: 'date',
           admin: {
             readOnly: true,
             hidden: true,

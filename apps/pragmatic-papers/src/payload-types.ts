@@ -814,10 +814,14 @@ export interface Webhook {
   id: number;
   name?: string | null;
   url: string;
-  mostRecentPushed?: string | null;
+  /**
+   * The most recent volume number that has been pushed to this webhook
+   */
+  mostRecent?: string | null;
   pushed?:
     | {
         volumeNumber?: number | null;
+        timePushed?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -1390,11 +1394,12 @@ export interface UsersSelect<T extends boolean = true> {
 export interface WebhooksSelect<T extends boolean = true> {
   name?: T;
   url?: T;
-  mostRecentPushed?: T;
+  mostRecent?: T;
   pushed?:
     | T
     | {
         volumeNumber?: T;
+        timePushed?: T;
         id?: T;
       };
   updatedAt?: T;

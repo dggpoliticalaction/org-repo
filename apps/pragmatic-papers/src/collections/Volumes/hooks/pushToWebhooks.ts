@@ -2,9 +2,10 @@ import { type Volume } from '@/payload-types'
 import { getPayload, type CollectionAfterChangeHook } from 'payload'
 import config from '@payload-config'
 import { env } from 'process'
+import { Volumes } from '..'
 
-export const pushToBot: CollectionAfterChangeHook<Volume> = async (args) => {
-  // NOTE: unpublishing then republishing will never trigger a webhook event
+export const pushToWebhooks: CollectionAfterChangeHook<Volume> = async (args) => {
+  // NOTE: current check is supposed to filter for first publish
   if (
     args.previousDoc._status != 'draft' ||
     args.doc._status != 'published' ||
@@ -12,7 +13,7 @@ export const pushToBot: CollectionAfterChangeHook<Volume> = async (args) => {
   )
     return
 
-  const url = `${env.NEXT_PUBLIC_SERVER_URL}/volumes/${args.data.slug}`
+  const url = `${env.NEXT_PUBLIC_SERVER_URL}/${Volumes.slug}/${args.data.slug}`
   const payload = await getPayload({ config })
   const webhooks = await payload.find({ collection: 'webhooks' })
 
@@ -39,14 +40,19 @@ export const pushToBot: CollectionAfterChangeHook<Volume> = async (args) => {
       if (res) console.error(`    ${res.status}: ${res.statusText}`)
       return
     }
-    const articlesPushed = webhook.pushed ?? []
-    articlesPushed.push({ volumeNumber: args.doc.volumeNumber, id: args.doc.id.toString() })
+
+    const volumesPushed = webhook.pushed ?? []
+    volumesPushed.push({
+      volumeNumber: args.doc.volumeNumber,
+      timePushed: new Date(Date.now()).toISOString(),
+      id: args.doc.id.toString(),
+    })
 
     payload.update({
       collection: 'webhooks',
       id: webhook.id,
       data: {
-        pushed: articlesPushed,
+        pushed: volumesPushed,
       },
     })
   }
