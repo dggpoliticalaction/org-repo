@@ -814,7 +814,7 @@ export interface Webhook {
   id: number;
   name?: string | null;
   url: string;
-  mostRecentPushed?: number | null;
+  mostRecentPushed?: string | null;
   pushed?:
     | {
         volumeNumber?: number | null;

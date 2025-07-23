@@ -22,13 +22,21 @@ export const Webhooks: CollectionConfig = {
       required: true,
     },
     {
-      type: 'number',
+      type: 'text',
       name: 'mostRecentPushed',
       label: 'Most Recent',
       hooks: {
         afterRead: [
-          (ctx: FieldHookArgs<Webhook, unknown, { pushed: { volumeNumber: number }[] }>): number =>
-            Math.max(...(ctx.siblingData.pushed?.map((v) => v.volumeNumber) ?? [0])),
+          (
+            ctx: FieldHookArgs<Webhook, unknown, { pushed: { volumeNumber: number }[] }>,
+          ): string => {
+            return (
+              ctx.data?.pushed
+                ?.map((v) => v.volumeNumber ?? 0)
+                .reduce((prev, curr) => (prev > curr ? prev : curr))
+                ?.toString() ?? '-'
+            )
+          },
         ],
       },
     },

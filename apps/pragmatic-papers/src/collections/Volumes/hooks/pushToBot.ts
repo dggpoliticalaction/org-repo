@@ -34,7 +34,11 @@ export const pushToBot: CollectionAfterChangeHook<Volume> = async (args) => {
       console.error(e)
     })
 
-    if (!res || !res.ok) return
+    if (!res || !res.ok) {
+      console.error(`Request to webhook ${webhook.name} failed`)
+      if (res) console.error(`    ${res.status}: ${res.statusText}`)
+      return
+    }
     const articlesPushed = webhook.pushed ?? []
     articlesPushed.push({ volumeNumber: args.doc.volumeNumber, id: args.doc.id.toString() })
 
