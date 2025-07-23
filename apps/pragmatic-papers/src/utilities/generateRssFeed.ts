@@ -24,7 +24,7 @@ const formatArticleLink = (article: Article) => {
 </li>`
 }
 
-const formatVolumeDescription = (volume: Volume) => {
+const formatVolumeContent = (volume: Volume) => {
   const sections = []
 
   if (volume.description) {
@@ -70,7 +70,6 @@ const createBaseFeedConfig = (type: 'Articles' | 'Volumes') => ({
   generator: 'Pragmatic Papers',
   updated: new Date(),
   feedLinks: {
-    rss2: `${SITE_URL}/feed.${type.toLowerCase()}/route.xml`,
     atom: `${SITE_URL}/feed.${type.toLowerCase()}/route.xml`,
   },
 })
@@ -84,6 +83,7 @@ export const generateArticleFeed = (articles: Article[]): string => {
         title: article.title,
         id: `${SITE_URL}/articles/${article.slug}`,
         link: `${SITE_URL}/articles/${article.slug}`,
+        published: new Date(article.publishedAt),
         description: article.meta?.description ? article.meta.description : '',
         date: new Date(article.publishedAt),
         image:
@@ -93,11 +93,18 @@ export const generateArticleFeed = (articles: Article[]): string => {
         author: article.populatedAuthors?.map((author) => ({
           name: author.name || '',
         })),
+        content: convertLexicalToHTML({ data: article.content }),
+        extensions: [
+          {
+            name: 'updated',
+            objects: new Date(article.updatedAt).toISOString(),
+          },
+        ],
       })
     }
   })
 
-  return feed.rss2()
+  return feed.atom1()
 }
 
 export const generateVolumeFeed = (volumes: Volume[]): string => {
@@ -109,15 +116,31 @@ export const generateVolumeFeed = (volumes: Volume[]): string => {
         title: volume.title,
         id: `${SITE_URL}/volumes/${volume.slug}`,
         link: `${SITE_URL}/volumes/${volume.slug}`,
-        description: formatVolumeDescription(volume),
+        description: volume.meta?.description || '',
         date: new Date(volume.publishedAt),
         image:
           volume.meta?.image && typeof volume.meta.image !== 'string'
-            ? `${SITE_URL}${(volume.meta.image as Media).url}`
+            ? getMediaUrl((volume.meta.image as Media).url ?? '')
             : undefined,
+        content: formatVolumeContent(volume),
+        extensions: [
+          {
+            name: 'updated',
+            objects: new Date(volume.updatedAt).toISOString(),
+          },
+        ],
+        published: new Date(volume.publishedAt),
+        author: volume.articles
+          ?.filter((articleRef): articleRef is Article => typeof articleRef !== 'string')
+          .flatMap(
+            (article) =>
+              article.populatedAuthors?.map((author) => ({
+                name: author.name || '',
+              })) || [],
+          ),
       })
     }
   })
 
-  return feed.rss2()
+  return feed.atom1()
 }
