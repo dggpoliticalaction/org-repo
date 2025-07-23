@@ -70,7 +70,7 @@ const createBaseFeedConfig = (type: 'Articles' | 'Volumes') => ({
   generator: 'Pragmatic Papers',
   updated: new Date(),
   feedLinks: {
-    atom: `${SITE_URL}/feed.${type.toLowerCase()}/route.xml`,
+    atom: `${SITE_URL}/feed.${type.toLowerCase()}`,
   },
 })
 
