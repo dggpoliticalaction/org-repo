@@ -39,6 +39,10 @@ export const Webhooks: CollectionConfig = {
           },
         ],
       },
+      admin: {
+        readOnly: true,
+        description: 'The most recent volume number that has been pushed to this webhook',
+      },
     },
     {
       name: 'pushed',
