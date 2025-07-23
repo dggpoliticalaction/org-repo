@@ -17,6 +17,7 @@ import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 import { Articles } from './collections/Articles'
 import { Volumes } from './collections/Volumes'
+import { Webhooks } from './collections/Webhooks'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -70,7 +71,7 @@ export default buildConfig({
             url: process.env.DATABASE_URI || '',
           },
         }),
-  collections: [Pages, Articles, Volumes, Media, Categories, Users],
+  collections: [Pages, Articles, Volumes, Media, Categories, Users, Webhooks],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [...plugins],
