@@ -1,5 +1,6 @@
 import { admin } from '@/access/admins'
-import { type CollectionConfig } from 'payload'
+import { type Webhook } from '@/payload-types'
+import { type FieldHookArgs, type CollectionConfig } from 'payload'
 
 export const Webhooks: CollectionConfig = {
   slug: 'webhooks',
@@ -21,16 +22,23 @@ export const Webhooks: CollectionConfig = {
       required: true,
     },
     {
-      name: 'latestVolume',
       type: 'number',
-      admin: {
-        readOnly: true,
-        hidden: true,
+      name: 'mostRecentPushed',
+      label: 'Most Recent',
+      hooks: {
+        afterRead: [
+          (ctx: FieldHookArgs<Webhook, unknown, { pushed: { volumeNumber: number }[] }>): number =>
+            Math.max(...(ctx.siblingData.pushed?.map((v) => v.volumeNumber) ?? [])),
+        ],
       },
     },
     {
       name: 'pushed',
       type: 'array',
+      labels: {
+        plural: 'volumes',
+        singular: 'volume',
+      },
       fields: [
         {
           name: 'volumeNumber',

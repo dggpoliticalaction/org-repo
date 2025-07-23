@@ -3,17 +3,21 @@ import { getPayload, type CollectionAfterChangeHook } from 'payload'
 import config from '@payload-config'
 
 export const pushToBot: CollectionAfterChangeHook<Volume> = async (args) => {
-  if (!args.data.slug || !args.req.host) return
+  // TODO: unpublishing then republishing will not trigger a webhook push
+  if (
+    args.previousDoc._status != 'draft' ||
+    args.doc._status != 'published' ||
+    args.previousDoc.publishedAt
+  )
+    return
 
   const url = `${args.req.origin}/volumes/${args.data.slug}`
   const payload = await getPayload({ config })
   const webhooks = await payload.find({ collection: 'webhooks' })
 
   for (const webhook of webhooks.docs) {
-    const latestHasBeenPushed =
-      (webhook.latestVolume && webhook.latestVolume >= args.doc.volumeNumber) ||
-      webhook.pushed?.map((v) => v.id).includes(args.doc.id.toString())
-    if (latestHasBeenPushed) continue
+    const hasBeenPushed = webhook.pushed?.map((v) => v.id).includes(args.doc.id.toString())
+    if (hasBeenPushed) continue
 
     const res = await fetch(webhook.url, {
       method: 'post',
@@ -38,7 +42,6 @@ export const pushToBot: CollectionAfterChangeHook<Volume> = async (args) => {
       id: webhook.id,
       data: {
         pushed: articlesPushed,
-        latestVolume: args.data.volumeNumber,
       },
     })
   }
