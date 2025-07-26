@@ -6,6 +6,7 @@ import * as migration_20250707_010714_remove_posts from './20250707_010714_remov
 import * as migration_20250708_020740_update_payload from './20250708_020740_update_payload'
 import * as migration_20250708_042411_update_media_image_sizes from './20250708_042411_update_media_image_sizes'
 import * as migration_20250708_212941_remove_medium_compat_size from './20250708_212941_remove_medium_compat_size'
+import * as migration_20250726_210541_implement_webhooks from './20250726_210541_implement_webhooks'
 
 export const migrations = [
   {
@@ -47,5 +48,10 @@ export const migrations = [
     up: migration_20250708_212941_remove_medium_compat_size.up,
     down: migration_20250708_212941_remove_medium_compat_size.down,
     name: '20250708_212941_remove_medium_compat_size',
+  },
+  {
+    up: migration_20250726_210541_implement_webhooks.up,
+    down: migration_20250726_210541_implement_webhooks.down,
+    name: '20250726_210541_implement_webhooks',
   },
 ]
