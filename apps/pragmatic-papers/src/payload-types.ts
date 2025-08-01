@@ -402,6 +402,12 @@ export interface Media {
 export interface User {
   id: number;
   name?: string | null;
+  socialTwitter?: string | null;
+  socialReddit?: string | null;
+  socialInstagram?: string | null;
+  socialTiktok?: string | null;
+  socialYoutube?: string | null;
+  avatar?: (number | null) | Media;
   biography?: {
     root: {
       type: string;
@@ -417,7 +423,21 @@ export interface User {
     };
     [k: string]: unknown;
   } | null;
+  meta?: {
+    /**
+     * Uncheck to hide this page from the public
+     */
+    publishPage?: boolean | null;
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
   role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'user') | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -1368,8 +1388,24 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  socialTwitter?: T;
+  socialReddit?: T;
+  socialInstagram?: T;
+  socialTiktok?: T;
+  socialYoutube?: T;
+  avatar?: T;
   biography?: T;
+  meta?:
+    | T
+    | {
+        publishPage?: T;
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   role?: T;
+  slug?: T;
+  slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
