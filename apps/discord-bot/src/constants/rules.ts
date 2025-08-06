@@ -10,7 +10,7 @@ export class Rules {
     },
     {
       title: "Effective Organizing",
-      description: " This server supports electoral efforts, develops strategies, and builds momentum. While critical discussion is welcome, we do not allow direct advocacy against electoral engagement or organizing. If you’re here, it’s because you believe change is possible."
+      description: "This server supports electoral efforts, develops strategies, and builds momentum. While critical discussion is welcome, we do not allow direct advocacy against electoral engagement or organizing. If you’re here, it’s because you believe change is possible."
     },
     {
       title: "Be Positive",
@@ -26,7 +26,7 @@ export class Rules {
     },
     {
       title: "Cultural Common Sense",
-      description: " Be mindful of how others will perceive your words, actions, or aesthetics. If your message could push an undecided voter toward a reactionary candidate, reconsider what you are about to say. We’re trying to win hearts and minds, not drive people away with self-sabotaging aesthetics."
+      description: "Be mindful of how others will perceive your words, actions, or aesthetics. If your message could push an undecided voter toward a reactionary candidate, reconsider what you are about to say. We’re trying to win hearts and minds, not drive people away with self-sabotaging aesthetics."
     },
     {
       title: "Do Not Falsely or Poorly Represent the Org",
