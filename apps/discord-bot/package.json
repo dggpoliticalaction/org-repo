@@ -1,8 +1,8 @@
 {
-  "name": "my-bot",
+  "name": "dggac-bot",
   "version": "1.0.0",
-  "author": "Kevin Novak",
-  "description": "A discord.js bot template written with TypeScript",
+  "author": "DGG AC Dev Team",
+  "description": "A discord.js bot for DGGAC discord server",
   "license": "MIT",
   "private": true,
   "engines": {
