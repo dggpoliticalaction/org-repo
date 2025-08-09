@@ -1,7 +1,6 @@
 {
   "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
-
     "declaration": false, // Workaround for https://github.com/payloadcms/payload/issues/9914
     "declarationMap": false,
 
@@ -12,15 +11,9 @@
       }
     ],
     "paths": {
-      "@payload-config": [
-        "./src/payload.config.ts"
-      ],
-      "react": [
-        "./node_modules/@types/react"
-      ],
-      "@/*": [
-        "./src/*"
-      ],
+      "@payload-config": ["./src/payload.config.ts"],
+      "react": ["./node_modules/@types/react"],
+      "@/*": ["./src/*"]
     }
   },
   "include": [
@@ -28,10 +21,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "redirects.js",
+    "next-env.d.ts",
     "next.config.js",
     "next-sitemap.config.cjs"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
