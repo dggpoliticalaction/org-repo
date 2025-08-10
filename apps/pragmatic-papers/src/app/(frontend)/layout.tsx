@@ -46,8 +46,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     >
       <head>
         <InitTheme />
+        <link href="/manifest.json" rel="manifest" />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
         <link
           href="/feed.articles"
           rel="alternate"
