@@ -38,6 +38,7 @@ import {
   Logger,
 } from './services/index.js'
 import { type Trigger } from './triggers/index.js'
+import { CTAPostTrigger } from './triggers/cta-post.js'
 
 const require = createRequire(import.meta.url)
 const Config = require('../config/config.json')
@@ -90,6 +91,7 @@ async function start(): Promise<void> {
   // Triggers
   const triggers: Trigger[] = [
     // TODO: Add new triggers here
+    new CTAPostTrigger()
   ]
 
   // Event handlers
