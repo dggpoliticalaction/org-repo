@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { type Message } from "discord.js";
+import { ChannelType, ThreadAutoArchiveDuration, type Message } from "discord.js";
 import { type Trigger } from "./trigger";
 import { type EventData } from "../models/internal-models";
 
@@ -26,14 +26,32 @@ export class CTAPostTrigger implements Trigger {
 
         /*
         TODO
-            - Create Public Thread
-            - Async read reactions to message
-                - Get users and roles from reactions
-            - Create chart from reactions sorted by role
+            [X] Create Public Thread
+            [ ] Async read reactions to message
+                [ ] Get users and roles from reactions
+            [ ] Create chart from reactions sorted by role
         */
 
-        console.log("Message: " + msg)
-        console.log("Data: " + data)
-        return
+        if (msg.channel.type === ChannelType.GuildText) {
+            const thread = msg.startThread({
+                name: 'CTA Thread',
+                autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
+                reason: 'Tracking CTA participation.'
+            })
+            console.log(`Created thread: ${(await thread).name}`)
+
+            const collector = msg.createReactionCollector({time: 15_000});
+            
+            collector.on('collect', (reaction, user) => {
+                console.log(`Collected ${reaction.emoji.name} from ${user.displayName}`)
+            })
+            
+            collector.on('end', collected => {
+                console.log(`Collected ${collected.size} items`)
+            })
+            console.log(`Data: ${data}`)
+            return
+        }
+
     }
 }
