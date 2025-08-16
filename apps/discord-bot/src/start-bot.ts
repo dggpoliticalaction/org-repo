@@ -7,8 +7,9 @@ import {
   DevCommand,
   HelpCommand,
   InfoCommand,
+  PragPapersCommand,
   RulesCommand,
-  TestCommand
+  TestCommand,
 } from './commands/chat/index.js'
 import {
   ChatCommandMetadata,
@@ -69,6 +70,7 @@ async function start(): Promise<void> {
     new InfoCommand(),
     new TestCommand(),
     new RulesCommand(),
+    new PragPapersCommand(),
 
     // Message Context Commands
     new ViewDateSent(),
@@ -110,7 +112,7 @@ async function start(): Promise<void> {
 
   // Bot
   const bot = new Bot(
-    Config.client.token,
+    process.env.DISCORD_BOT_TOKEN,
     client,
     guildJoinHandler,
     guildLeaveHandler,
@@ -124,7 +126,7 @@ async function start(): Promise<void> {
   // Register
   if (process.argv[2] == 'commands') {
     try {
-      const rest = new REST({ version: '10' }).setToken(Config.client.token)
+      const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN)
       const commandRegistrationService = new CommandRegistrationService(rest)
       const localCmds = [
         ...Object.values(ChatCommandMetadata).sort((a, b) => (a.name > b.name ? 1 : -1)),

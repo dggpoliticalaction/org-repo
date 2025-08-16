@@ -186,6 +186,9 @@ importers:
       discord.js-rate-limiter:
         specifier: 1.3.2
         version: 1.3.2(discord.js@14.21.0)
+      dotenv:
+        specifier: ^17.2.0
+        version: 17.2.0
       express:
         specifier: 5.1.0
         version: 5.1.0
@@ -4145,6 +4148,10 @@ packages:
 
   dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
+
+  dotenv@17.2.0:
+    resolution: {integrity: sha512-Q4sgBT60gzd0BB0lSyYD3xM4YxrXA9y4uBDof1JNYGzOXrQdQ6yX+7XIAqoFOGQFOTK1D3Hts5OllpxMDZFONQ==}
     engines: {node: '>=12'}
 
   drizzle-kit@0.31.1:
@@ -11447,7 +11454,7 @@ snapshots:
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 22.15.3
+      '@types/node': 22.16.2
 
   '@types/hast@3.0.4':
     dependencies:
@@ -11555,7 +11562,7 @@ snapshots:
 
   '@types/through@0.0.33':
     dependencies:
-      '@types/node': 22.15.3
+      '@types/node': 22.16.2
 
   '@types/tinycolor2@1.4.6': {}
 
@@ -12592,6 +12599,8 @@ snapshots:
       no-case: 2.3.2
 
   dotenv@16.0.3: {}
+
+  dotenv@17.2.0: {}
 
   drizzle-kit@0.31.1:
     dependencies:
@@ -16299,7 +16308,7 @@ snapshots:
   tsx@4.19.2:
     dependencies:
       esbuild: 0.23.1
-      get-tsconfig: 4.8.1
+      get-tsconfig: 4.10.1
     optionalDependencies:
       fsevents: 2.3.3
 

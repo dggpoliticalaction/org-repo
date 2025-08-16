@@ -3,7 +3,15 @@ import React, { useCallback, useEffect } from 'react'
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { TextFieldClientProps } from 'payload'
 
-import { useField, Button, TextInput, FieldLabel, useFormFields, useForm } from '@payloadcms/ui'
+import {
+  useField,
+  Button,
+  TextInput,
+  FieldLabel,
+  useFormFields,
+  useForm,
+  useDocumentInfo,
+} from '@payloadcms/ui'
 
 import { formatSlug } from './formatSlug'
 import './index.scss'
@@ -27,8 +35,9 @@ export const SlugComponent: React.FC<SlugComponentProps> = ({
     : checkboxFieldPathFromProps
 
   const { value, setValue } = useField<string>({ path: path || field.name })
-
   const { dispatchFields } = useForm()
+  const documentInfo = useDocumentInfo()
+  const isPublished = documentInfo?.hasPublishedDoc
 
   // The value of the checkbox
   // We're using separate useFormFields to minimise re-renders
@@ -42,7 +51,7 @@ export const SlugComponent: React.FC<SlugComponentProps> = ({
   })
 
   useEffect(() => {
-    if (checkboxValue) {
+    if (!isPublished && checkboxValue) {
       if (targetFieldValue) {
         const formattedSlug = formatSlug(targetFieldValue)
 
@@ -51,30 +60,37 @@ export const SlugComponent: React.FC<SlugComponentProps> = ({
         if (value !== '') setValue('')
       }
     }
-  }, [targetFieldValue, checkboxValue, setValue, value])
+  }, [targetFieldValue, checkboxValue, setValue, value, isPublished])
 
   const handleLock = useCallback(
     (e: React.MouseEvent<Element>) => {
       e.preventDefault()
 
-      dispatchFields({
-        type: 'UPDATE',
-        path: checkboxFieldPath,
-        value: !checkboxValue,
-      })
+      if (!isPublished) {
+        dispatchFields({
+          type: 'UPDATE',
+          path: checkboxFieldPath,
+          value: !checkboxValue,
+        })
+      }
     },
-    [checkboxValue, checkboxFieldPath, dispatchFields],
+    [checkboxValue, checkboxFieldPath, dispatchFields, isPublished],
   )
 
-  const readOnly = readOnlyFromProps || checkboxValue
+  const readOnly = readOnlyFromProps || checkboxValue || isPublished
 
   return (
     <div className="field-type slug-field-component">
       <div className="label-wrapper">
         <FieldLabel htmlFor={`field-${path}`} label={label} />
 
-        <Button className="lock-button" buttonStyle="none" onClick={handleLock}>
-          {checkboxValue ? 'Unlock' : 'Lock'}
+        <Button
+          className="lock-button"
+          buttonStyle="none"
+          onClick={handleLock}
+          disabled={isPublished}
+        >
+          {isPublished ? 'Locked (Published)' : checkboxValue ? 'Unlock' : 'Lock'}
         </Button>
       </div>
 

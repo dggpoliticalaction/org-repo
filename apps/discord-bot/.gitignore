@@ -3,8 +3,9 @@
 # =====================================================
 /dist
 /temp
-/**/config/**/*.json
-!/**/config/**/*.example.json
+
+/config/bot-sites.json
+/config/debug.json
 
 # =====================================================
 # Node.js

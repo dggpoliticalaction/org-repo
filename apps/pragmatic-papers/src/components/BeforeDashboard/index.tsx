@@ -7,6 +7,12 @@ import './index.scss'
 const baseClass = 'before-dashboard'
 
 const BeforeDashboard: React.FC = () => {
+  // These are dev instructions, so we don't want to show them in production but feel free to make a component
+  // for the production dashboard if you want to show something different.
+  if (process.env.NODE_ENV === 'production') {
+    return null
+  }
+
   return (
     <div className={baseClass}>
       <Banner className={`${baseClass}__banner`} type="success">
@@ -16,16 +22,13 @@ const BeforeDashboard: React.FC = () => {
       <ul className={`${baseClass}__instructions`}>
         <li>
           <SeedButton />
-          {' with a few pages, posts, and projects to jump-start your new site, then '}
+          {
+            ' with a few volumes, articles, authors, and images to jump-start your local development, then '
+          }
           <a href="/" target="_blank">
-            visit your website
+            visit the website
           </a>
           {' to see the results.'}
-        </li>
-        <li>
-          If you created this repo using Payload Cloud, head over to GitHub and clone it to your
-          local machine. It will be under the <i>GitHub Scope</i> that you selected when creating
-          this project.
         </li>
         <li>
           {'Modify your '}
@@ -44,7 +47,9 @@ const BeforeDashboard: React.FC = () => {
           >
             fields
           </a>
-          {' as needed. If you are new to Payload, we also recommend you check out the '}
+          {
+            ' as needed for your task. If you are new to Payload, we also recommend you check out the '
+          }
           <a
             href="https://payloadcms.com/docs/getting-started/what-is-payload"
             rel="noopener noreferrer"
@@ -53,9 +58,6 @@ const BeforeDashboard: React.FC = () => {
             Getting Started
           </a>
           {' docs.'}
-        </li>
-        <li>
-          Commit and push your changes to the repository to trigger a redeployment of your project.
         </li>
       </ul>
       {'Pro Tip: This block is a '}
