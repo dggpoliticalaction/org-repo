@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
-import { ChannelType, ThreadAutoArchiveDuration, type Message } from "discord.js";
+import { ChannelType, Client, ThreadAutoArchiveDuration, User, type Message } from "discord.js";
 import { type Trigger } from "./trigger";
 import { type EventData } from "../models/internal-models";
+import { channel } from "diagnostics_channel";
 
 const channelName = "call-to-action";
 
@@ -27,28 +28,37 @@ export class CTAPostTrigger implements Trigger {
         /*
         TODO
             [X] Create Public Thread
-            [ ] Async read reactions to message
-                [ ] Get users and roles from reactions
+            [X] Async read reactions to message
+                [X] Get users and roles from reactions
             [ ] Create chart from reactions sorted by role
         */
 
         if (msg.channel.type === ChannelType.GuildText) {
+            const userReactions: {[reactId: string]: string[]} = {};
+            const collector = msg.createReactionCollector({time: 15_000});
             const thread = msg.startThread({
                 name: 'CTA Thread',
                 autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
                 reason: 'Tracking CTA participation.'
             })
+            
             console.log(`Created thread: ${(await thread).name}`)
-
-            const collector = msg.createReactionCollector({time: 15_000});
-            
-            collector.on('collect', (reaction, user) => {
-                console.log(`Collected ${reaction.emoji.name} from ${user.displayName}`)
-            })
-            
+           
             collector.on('end', collected => {
-                console.log(`Collected ${collected.size} items`)
-            })
+                console.log(`Collected ${collected.size} reactions. Thank you for participating.`);
+            });
+            
+            while (!collector.checkEnd()) {
+                collector.on('collect', (reaction, user) => {
+                    if (!userReactions[reaction.emoji?.name ?? '']) {
+                        userReactions[reaction.emoji?.name ?? ''] = [];
+                    }
+                    console.log(`${reaction.emoji.name} from ${user.displayName}`);
+                    userReactions[reaction.emoji?.name ?? '']?.push(user.id);
+                });
+            };
+
+            console.log(`Reactions: ${userReactions}`)
             console.log(`Data: ${data}`)
             return
         }
