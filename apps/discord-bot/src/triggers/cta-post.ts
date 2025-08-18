@@ -2,7 +2,6 @@
 import { ChannelType, Client, ThreadAutoArchiveDuration, User, type Message } from "discord.js";
 import { type Trigger } from "./trigger";
 import { type EventData } from "../models/internal-models";
-import { channel } from "diagnostics_channel";
 
 const channelName = "call-to-action";
 
@@ -48,15 +47,15 @@ export class CTAPostTrigger implements Trigger {
                 console.log(`Collected ${collected.size} reactions. Thank you for participating.`);
             });
             
-            while (!collector.checkEnd()) {
-                collector.on('collect', (reaction, user) => {
-                    if (!userReactions[reaction.emoji?.name ?? '']) {
-                        userReactions[reaction.emoji?.name ?? ''] = [];
-                    }
-                    console.log(`${reaction.emoji.name} from ${user.displayName}`);
-                    userReactions[reaction.emoji?.name ?? '']?.push(user.id);
-                });
-            };
+            collector.on('collect', (reaction, user) => {
+                let reactionEmojiName = reaction.emoji?.name ?? '';
+                
+                if (!userReactions[reactionEmojiName]) {
+                    userReactions[reactionEmojiName] = [];
+                }
+                console.log(`${reactionEmojiName} from ${user.displayName}`);
+                userReactions[reactionEmojiName]?.push(user.id);
+            });
 
             console.log(`Reactions: ${userReactions}`)
             console.log(`Data: ${data}`)
