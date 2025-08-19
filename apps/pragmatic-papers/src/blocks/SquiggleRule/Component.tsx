@@ -15,7 +15,7 @@ export const SquiggleRuleBlock: React.FC<Props> = ({ className, variant, size })
     small: 'max-w-xs',
     medium: 'max-w-md',
     large: 'max-w-lg',
-    full: 'w-full'
+    full: 'w-full',
   }
 
   return (

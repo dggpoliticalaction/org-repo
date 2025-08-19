@@ -28,7 +28,12 @@ import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-      CTABlockProps | MediaBlockProps | BannerBlockProps | CodeBlockProps | MathBlockProps | SquiggleRuleBlockProps
+      | CTABlockProps
+      | MediaBlockProps
+      | BannerBlockProps
+      | CodeBlockProps
+      | MathBlockProps
+      | SquiggleRuleBlockProps
     >
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
