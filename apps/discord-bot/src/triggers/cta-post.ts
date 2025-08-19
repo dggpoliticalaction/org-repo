@@ -2,6 +2,8 @@
 import { ChannelType, Client, ThreadAutoArchiveDuration, User, type Message } from "discord.js";
 import { type Trigger } from "./trigger";
 import { type EventData } from "../models/internal-models";
+import { BarController, BarElement, CategoryScale, Chart, LinearScale, plugins } from "chart.js";
+import { Canvas } from "canvas";
 
 const channelName = "call-to-action";
 
@@ -35,18 +37,7 @@ export class CTAPostTrigger implements Trigger {
         if (msg.channel.type === ChannelType.GuildText) {
             const userReactions: {[reactId: string]: string[]} = {};
             const collector = msg.createReactionCollector({time: 15_000});
-            const thread = msg.startThread({
-                name: 'CTA Thread',
-                autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
-                reason: 'Tracking CTA participation.'
-            })
-            
-            console.log(`Created thread: ${(await thread).name}`)
-           
-            collector.on('end', collected => {
-                console.log(`Collected ${collected.size} reactions. Thank you for participating.`);
-            });
-            
+
             collector.on('collect', (reaction, user) => {
                 let reactionEmojiName = reaction.emoji?.name ?? '';
                 
@@ -57,7 +48,51 @@ export class CTAPostTrigger implements Trigger {
                 userReactions[reactionEmojiName]?.push(user.id);
             });
 
-            console.log(`Reactions: ${userReactions}`)
+            collector.on('end', collected => {
+                console.log(`Collected ${collected.size} reactions. Thank you for participating.`);
+                const thread = msg.startThread({
+                    name: 'CTA Thread',
+                    autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
+                    reason: 'Tracking CTA participation.'
+                });
+
+                // const reactionSummary = Object.entries(userReactions).map(([emoji, users]) => `${emoji}: ${users.length} users`).join('\n');
+                
+                Chart.register(
+                    CategoryScale,
+                    BarController,
+                    BarElement,
+                    LinearScale,
+                );
+
+                const canvas = new Canvas(800, 600);
+                const chart = new Chart(canvas, {
+                    type: "bar",
+                    data: {
+                        labels: Object.keys(userReactions),
+                        datasets: [{
+                            label: "Reactions",
+                            data: Object.values(userReactions).map(users => users.length),
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        }]
+                    }
+                });
+
+                const pngBuffer = canvas.toBuffer('image/png');
+                const attachment = {
+                    files: [{
+                        attachment: pngBuffer,
+                        name: 'reaction_summary.png'
+                    }]
+                };
+                (async () => {
+                    const threadChannel = await thread;
+                    await threadChannel.send(`Reaction Summary:\n${
+                        attachment.files[0]?.attachment
+                    }`);
+                })();
+            });
+            
             console.log(`Data: ${data}`)
             return
         }
