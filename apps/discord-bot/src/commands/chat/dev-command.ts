@@ -14,7 +14,6 @@ import { type Command, CommandDeferType } from '../index.js'
 const require = createRequire(import.meta.url)
 const TsConfig = require('../../../tsconfig.json')
 
-
 export class DevCommand implements Command {
   public names = [Lang.getRef('chatCommands.dev', Language.Default)]
   public deferType = CommandDeferType.HIDDEN
