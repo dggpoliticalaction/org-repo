@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
 import {
+  AlignFeature,
   FixedToolbarFeature,
   HeadingFeature,
   IndentFeature,
@@ -39,6 +40,7 @@ export const Users: CollectionConfig = {
         features: ({ rootFeatures }) => {
           return [
             ...rootFeatures,
+            AlignFeature(),
             HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
             FixedToolbarFeature(),
             InlineToolbarFeature(),

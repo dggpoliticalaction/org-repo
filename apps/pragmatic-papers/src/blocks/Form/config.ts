@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import {
+  AlignFeature,
   FixedToolbarFeature,
   HeadingFeature,
   InlineToolbarFeature,
@@ -32,6 +33,7 @@ export const FormBlock: Block = {
         features: ({ rootFeatures }) => {
           return [
             ...rootFeatures,
+            AlignFeature(),
             HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
             FixedToolbarFeature(),
             InlineToolbarFeature(),
