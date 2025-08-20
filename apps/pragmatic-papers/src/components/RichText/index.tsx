@@ -1,3 +1,4 @@
+import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import type {
   DefaultNodeTypes,
@@ -16,6 +17,7 @@ import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
 import type {
   BannerBlock as BannerBlockProps,
   CallToActionBlock as CTABlockProps,
+  SquiggleRuleBlock as SquiggleRuleBlockProps,
   MediaBlock as MediaBlockProps,
 } from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
@@ -26,7 +28,12 @@ import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-      CTABlockProps | MediaBlockProps | BannerBlockProps | CodeBlockProps | MathBlockProps
+      | CTABlockProps
+      | MediaBlockProps
+      | BannerBlockProps
+      | CodeBlockProps
+      | MathBlockProps
+      | SquiggleRuleBlockProps
     >
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
@@ -58,6 +65,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     displayMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
       <MathBlock {...node.fields} />
     ),
+    squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
   },
   inlineBlocks: {
     inlineMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (

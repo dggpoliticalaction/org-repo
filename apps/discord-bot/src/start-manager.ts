@@ -3,7 +3,7 @@ import { createRequire } from 'node:module'
 import 'reflect-metadata'
 
 import { GuildsController, RootController, ShardsController } from './controllers/index.js'
-import { type Job, UpdateServerCountJob } from './jobs/index.js'
+import { type Job } from './jobs/index.js'
 import { Api } from './models/api.js'
 import { Manager } from './models/manager.js'
 import { HttpService, JobService, Logger, MasterApiService } from './services/index.js'
@@ -61,7 +61,7 @@ async function start(): Promise<void> {
 
   // Jobs
   const jobs = [
-    Config.clustering.enabled ? undefined : new UpdateServerCountJob(shardManager, httpService),
+    // Config.clustering.enabled ? undefined : new UpdateServerCountJob(shardManager, httpService),
     // TODO: Add new jobs here
   ].filter(Boolean) as Job[]
 

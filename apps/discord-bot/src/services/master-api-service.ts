@@ -7,7 +7,7 @@ import {
   type RegisterClusterResponse,
 } from '../models/master-api/index.js'
 
-import Config from '../../config/config.json'  with { type: "json" };
+import Config from '../../config/config.json' with { type: 'json' }
 
 export class MasterApiService {
   private clusterId: string

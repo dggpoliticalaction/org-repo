@@ -39,7 +39,7 @@ import { writer } from '@/access/writer'
 import { editorFieldLevel } from '@/access/editor'
 import { type Article } from '@/payload-types'
 import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
-
+import { SquiggleRule } from '@/blocks/SquiggleRule/config'
 export const Articles: CollectionConfig = {
   slug: 'articles',
   access: {
@@ -94,7 +94,7 @@ export const Articles: CollectionConfig = {
                     ...rootFeatures,
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
                     BlocksFeature({
-                      blocks: [Banner, Code, MediaBlock, DisplayMathBlock],
+                      blocks: [Banner, Code, MediaBlock, DisplayMathBlock, SquiggleRule],
                       inlineBlocks: [InlineMathBlock],
                     }),
                     FixedToolbarFeature(),
