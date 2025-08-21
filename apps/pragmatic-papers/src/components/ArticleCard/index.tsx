@@ -29,7 +29,7 @@ export const ArticleCard: React.FC<{
 
   return (
     <div className="rounded-lg overflow-hidden h-full">
-      <div
+      <article
         className={cn('relative flex flex-col h-full hover:cursor-pointer', className)}
         ref={card.ref}
       >
@@ -45,19 +45,15 @@ export const ArticleCard: React.FC<{
         </div>
         <div className="flex flex-col flex-grow p-4 ">
           {titleToUse && (
-            <div className="font-sans font-extrabold text-xl pb-1">
-              <Link
-                className="not-prose hover:text-brand transition-colors"
-                href={href}
-                ref={link.ref}
-              >
+            <div className="font-sans font-extrabold text-xl pb-1 line-clamp-4">
+              <Link className="hover:text-brand transition-colors" href={href} ref={link.ref}>
                 {titleToUse}
               </Link>
             </div>
           )}
           {description && <p className="text-sm pt-1 line-clamp-5">{sanitizedDescription}</p>}
         </div>
-      </div>
+      </article>
     </div>
   )
 }

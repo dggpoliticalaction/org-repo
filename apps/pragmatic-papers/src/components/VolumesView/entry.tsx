@@ -41,7 +41,7 @@ export const Entry: React.FC<{
       <div className="group hover:cursor-pointer">
         <div className="text-left font-mono font-thin text-xs">
           <span className="pe-2">Volume {toRoman(volumeNumber ?? 1)}</span>
-          <span className="text-brandLight">
+          <span className="text-brand">
             {publishedAt ? dateToString(Date.parse(publishedAt)) : ''}
           </span>
         </div>
