@@ -33,7 +33,7 @@ export const ArticleCard: React.FC<{
         className={cn('relative flex flex-col h-full hover:cursor-pointer', className)}
         ref={card.ref}
       >
-        <div className="relative w-full max-h-[300px] rounded-lg aspect-[4/3] overflow-hidden">
+        <div className="relative w-full max-h-[300px] rounded-lg  overflow-hidden">
           {metaImage && typeof metaImage !== 'string' && (
             <Media
               resource={metaImage}

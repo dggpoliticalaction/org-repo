@@ -37,8 +37,8 @@ export const Entry: React.FC<{
   const dateToString = formatWithOptions({ locale: enUS }, 'MMMM dd')
 
   return (
-    <article className={cn('overflow-hidden', className)}>
-      <div className="group hover:cursor-pointer" ref={entry.ref}>
+    <article className={cn('overflow-hidden', className)} ref={entry.ref}>
+      <div className="group hover:cursor-pointer">
         <div className="text-left font-mono font-thin text-xs">
           <span className="pe-2">Volume {toRoman(volumeNumber ?? 1)}</span>
           <span className="text-brandLight">

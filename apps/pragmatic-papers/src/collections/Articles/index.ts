@@ -95,11 +95,6 @@ export const Articles: CollectionConfig = {
         {
           fields: [
             {
-              name: 'heroImage',
-              type: 'upload',
-              relationTo: 'media',
-            },
-            {
               name: 'content',
               type: 'richText',
               editor: lexicalEditor({

@@ -9,7 +9,6 @@ import React, { cache } from 'react'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import RichText from '@/components/RichText'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { ArticleCard } from '@/components/ArticleCard'
 import { toRoman } from '@/utilities/toRoman'
@@ -79,7 +78,8 @@ export default async function VolumePage({
   const volume = await queryVolumeBySlug({ slug })
 
   if (!volume) return <PayloadRedirects url={url} />
-  const { publishedAt, editorsNote, articles } = volume
+
+  const { title, showTitle, publishedAt, articles } = volume
   if (articles?.filter((article) => typeof article === 'number')?.length ?? 0 > 0) {
     console.error('Fetching volume with unfetched articles', slug)
   }
@@ -93,35 +93,37 @@ export default async function VolumePage({
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
-      <div className="relative flex items-end">
-        <div className="container pb-8 text-center">
-          <div>
-            <div>
-              <h1 className="mb-6 text-3xl md:text-5xl lg:text-6xl">{`Volume ${toRoman(Number(volume.slug))}`}</h1>
-            </div>
 
-            <div className="flex flex-col md:flex-row gap-4 md:gap-16 justify-center">
-              {publishedAt && (
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm">Date Published</p>
-                  <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
-                </div>
-              )}
+      <div className="container bg">
+        <div className="text-center">
+          <div className="flex flex-col justify-center items-center text-xs leading-tight">
+            <div className="flex">
+              <h1 className="font-mono">{`Volume ${toRoman(Number(volume.volumeNumber))}`}</h1>
             </div>
+            {publishedAt && (
+              <div className="font-mono">
+                <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
+              </div>
+            )}
           </div>
         </div>
-      </div>
-      {editorsNote && (
-        <div className="w-full container">
-          <RichText className="w-full" enableGutter={false} data={editorsNote} />
+
+        {title && showTitle && (
+          <div className="w-full my-8">
+            <h1 className="font-sans text-4xl text-center font-bold tracking-normal">{title}</h1>
+          </div>
+        )}
+
+        <div className="my-10">
+          <Squiggle />
         </div>
-      )}
-      <Squiggle className="w-1/2 h-6 mx-auto" />
-      <div className="flex flex-col items-center gap-4 pt-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-          {actualArticles?.map((article) => (
-            <ArticleCard key={article.id} doc={article} relationTo="articles" />
-          ))}
+
+        <div className="flex flex-col items-center gap-4 pt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            {actualArticles?.map((article) => (
+              <ArticleCard key={article.id} doc={article} relationTo="articles" />
+            ))}
+          </div>
         </div>
       </div>
     </div>
