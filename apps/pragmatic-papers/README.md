@@ -41,7 +41,7 @@ See the [Collections](https://payloadcms.com/docs/configuration/collections) doc
 
 ### Globals
 
-See the [Globals](https://payloadcms.com/docs/configuration/globals) docs for details on how to extend this functionality.
+See the [Globals](https://payloadcms.com/docs/configuration/globals) docs for details on how to extend this functionality. These should live in the `src/globals/` folder.
 
 - `Header`
 
