@@ -41,6 +41,7 @@ import { editorFieldLevel } from '@/access/editor'
 import { type Article } from '@/payload-types'
 import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
 import { SquiggleRule } from '@/blocks/SquiggleRule/config'
+
 export const Articles: CollectionConfig = {
   slug: 'articles',
   access: {
@@ -72,9 +73,21 @@ export const Articles: CollectionConfig = {
   },
   fields: [
     {
-      name: 'title',
-      type: 'text',
-      required: true,
+      type: 'group',
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'showTitle',
+          type: 'checkbox',
+          label: 'Display title on Article page',
+          defaultValue: true,
+          required: false,
+        },
+      ],
     },
     {
       type: 'tabs',

@@ -65,9 +65,21 @@ export const Volumes: CollectionConfig = {
   },
   fields: [
     {
-      name: 'title',
-      type: 'text',
-      required: true,
+      type: 'group',
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'showTitle',
+          type: 'checkbox',
+          label: 'Display title on Volume page',
+          defaultValue: false,
+          required: false,
+        },
+      ],
     },
     {
       type: 'tabs',

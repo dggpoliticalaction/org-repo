@@ -17,7 +17,7 @@ export const ArticleCard: React.FC<{
   relationTo: 'articles'
   title?: string
 }> = (props) => {
-  const { card, link } = useClickableCard({})
+  const { card, link } = useClickableCard<HTMLDivElement>({})
   const { className, doc, relationTo, title: titleFromProps } = props
 
   const { slug, meta, title } = doc || {}
@@ -28,38 +28,36 @@ export const ArticleCard: React.FC<{
   const href = `/${relationTo}/${slug}`
 
   return (
-    <div className="rounded-lg border border-border overflow-hidden h-full">
-      <article
+    <div className="rounded-lg overflow-hidden h-full">
+      <div
         className={cn('relative flex flex-col h-full hover:cursor-pointer', className)}
         ref={card.ref}
       >
-        <div className="relative w-full max-h-[300px] aspect-[4/3] overflow-hidden">
+        <div className="relative w-full max-h-[300px] rounded-lg aspect-[4/3] overflow-hidden">
           {metaImage && typeof metaImage !== 'string' && (
             <Media
               resource={metaImage}
               className="h-full w-full"
-              imgClassName="object-cover h-full w-full"
+              imgClassName="object-cover h-full w-full rounded-lg"
               size="square"
             />
           )}
         </div>
-        <div className="flex flex-col flex-grow p-4 bg-card">
+        <div className="flex flex-col flex-grow p-4 ">
           {titleToUse && (
-            <div className="prose">
-              <h3 className="line-clamp-4">
-                <Link className="not-prose hover:underline" href={href} ref={link.ref}>
-                  {titleToUse}
-                </Link>
-              </h3>
+            <div className="font-sans font-extrabold text-xl pb-1">
+              <Link
+                className="not-prose hover:text-brand transition-colors"
+                href={href}
+                ref={link.ref}
+              >
+                {titleToUse}
+              </Link>
             </div>
           )}
-          {description && (
-            <div className="mt-2">
-              <p className="text-sm text-muted-foreground line-clamp-5">{sanitizedDescription}</p>
-            </div>
-          )}
+          {description && <p className="text-sm pt-1 line-clamp-5">{sanitizedDescription}</p>}
         </div>
-      </article>
+      </div>
     </div>
   )
 }

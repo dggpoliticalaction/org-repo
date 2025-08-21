@@ -8,11 +8,13 @@ import React, { cache } from 'react'
 
 import type { Article } from '@/payload-types'
 
-import { ArticleHero } from '@/heros/ArticleHero'
 import { generateMeta } from '@/utilities/generateMeta'
+import { formatAuthors } from '@/utilities/formatAuthors'
+import { formatDateTime } from '@/utilities/formatDateTime'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
+import { Squiggle } from '@/components/ui/squiggle'
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -76,6 +78,11 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
+  const { populatedAuthors, publishedAt, title, showTitle } = article
+
+  const hasAuthors =
+    populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
+
   return (
     <article className="pb-16 max-w-3xl m-auto p-5">
       <PageClient />
@@ -85,9 +92,34 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
       {draft && <LivePreviewListener />}
 
-      <ArticleHero article={article} />
+      <div className="flex-col">
+        <div className="pb-4 flex-col dark:text-white">
+          {showTitle && (
+            <h1 className="mb-6 leading-tight text-4xl text-center font-bold tracking-normal">
+              {title}
+            </h1>
+          )}
+          {hasAuthors && (
+            <div className="font-mono text-xs text-center">
+              <p>by {formatAuthors(populatedAuthors)}</p>
+            </div>
+          )}
+          {publishedAt && (
+            <div className="font-mono text-xs text-center">
+              <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
+            </div>
+          )}
+        </div>
+        <div className="my-8">
+          <Squiggle />
+        </div>
+      </div>
 
-      <RichText className="" data={article.content} enableGutter={false} />
+      <RichText
+        className="font-serif text-md tracking-tight font-normal leading-relaxed"
+        data={article.content}
+        enableGutter={false}
+      />
     </article>
   )
 }

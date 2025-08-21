@@ -37,28 +37,28 @@ export const Entry: React.FC<{
   const dateToString = formatWithOptions({ locale: enUS }, 'MMMM dd')
 
   return (
-    <article className={cn('overflow-hidden hover:cursor-pointer', className)} ref={entry.ref}>
-      <div className="group">
-        <div className="text-left text-sm">
+    <article className={cn('overflow-hidden', className)}>
+      <div className="group hover:cursor-pointer" ref={entry.ref}>
+        <div className="text-left font-mono font-thin text-xs">
           <span className="pe-2">Volume {toRoman(volumeNumber ?? 1)}</span>
-          <span className="text-brand">
+          <span className="text-brandLight">
             {publishedAt ? dateToString(Date.parse(publishedAt)) : ''}
           </span>
         </div>
-        <div className="text-justify">
+        <div>
           {titleToUse && (
-            <h3 className="my-6">
+            <h2 className="my-6 text-xl md:text-3xl font-bold tracking-tight text-left font-sans">
               <Link
-                className="text-xl md:text-3xl font-bold group-hover:text-brandLight transition-colors"
+                className="group-hover:text-brandLight transition-colors font-sans"
                 href={href}
                 ref={link.ref}
               >
                 {titleToUse}
               </Link>
-            </h3>
+            </h2>
           )}
           {description && (
-            <div className="my-3 text-sm md:text-base text-muted-foreground">
+            <div className="my-3 text-sm text-muted-foreground font-sans">
               {description && <p>{sanitizedDescription}</p>}
             </div>
           )}

@@ -52,19 +52,14 @@ export const MediaBlock: React.FC<Props> = (props) => {
       {caption && (
         <figcaption
           className={cn(
-            'mt-3 text-center',
+            'mt-3 text-center font-sans leading-6 text-sm text-muted-foreground',
             {
               container: !disableInnerContainer,
             },
             captionClassName,
           )}
         >
-          <RichText
-            data={caption}
-            enableGutter={false}
-            enableProse={false}
-            className="text-[0.95rem] text-muted-foreground not-prose"
-          />
+          <RichText data={caption} enableGutter={false} enableProse={false} className="not-prose" />
         </figcaption>
       )}
     </figure>
