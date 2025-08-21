@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import {
+  AlignFeature,
   BlockquoteFeature,
   BlocksFeature,
   FixedToolbarFeature,
@@ -93,6 +94,7 @@ export const Volumes: CollectionConfig = {
                 features: ({ rootFeatures }) => {
                   return [
                     ...rootFeatures,
+                    AlignFeature(),
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
                     BlocksFeature({ blocks: [Banner, Code, MediaBlock, SquiggleRule] }),
                     FixedToolbarFeature(),
