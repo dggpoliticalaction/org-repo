@@ -9,7 +9,6 @@ import type { Volume } from '@/payload-types'
 import { formatWithOptions } from 'date-fns/fp'
 import { enUS } from 'date-fns/locale'
 
-import { SquiggleStatic } from '@/components/ui/squiggle'
 import { toRoman } from '@/utilities/toRoman'
 
 // import { Media } from '@/components/Media'
@@ -63,7 +62,6 @@ export const Entry: React.FC<{
               {description && <p>{sanitizedDescription}</p>}
             </div>
           )}
-          <SquiggleStatic />
         </div>
       </div>
     </article>
