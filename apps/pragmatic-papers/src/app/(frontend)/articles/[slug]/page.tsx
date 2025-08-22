@@ -99,7 +99,9 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
           </h1>
           {hasAuthors && (
             <div className="font-mono text-xs text-center">
-              <p>by {formatAuthors(populatedAuthors)}</p>
+              <span>
+                by <strong className="font-bold inline">{formatAuthors(populatedAuthors)}</strong>
+              </span>
             </div>
           )}
           {publishedAt && (
@@ -113,11 +115,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
         </div>
       </div>
 
-      <RichText
-        className="font-serif text-md tracking-tight font-normal leading-relaxed"
-        data={article.content}
-        enableGutter={false}
-      />
+      <RichText className="font-serif" data={article.content} enableGutter={false} />
     </article>
   )
 }
