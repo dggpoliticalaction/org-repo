@@ -49,7 +49,7 @@ export const Entry: React.FC<{
           {titleToUse && (
             <h2 className="my-6 text-xl md:text-3xl font-bold tracking-tight text-left font-sans">
               <Link
-                className="group-hover:text-brandLight transition-colors font-sans"
+                className="group-hover:text-brand transition-colors font-sans"
                 href={href}
                 ref={link.ref}
               >

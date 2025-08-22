@@ -79,7 +79,7 @@ export default async function VolumePage({
 
   if (!volume) return <PayloadRedirects url={url} />
 
-  const { title, showTitle, publishedAt, articles } = volume
+  const { title, publishedAt, articles } = volume
   if (articles?.filter((article) => typeof article === 'number')?.length ?? 0 > 0) {
     console.error('Fetching volume with unfetched articles', slug)
   }
@@ -108,11 +108,9 @@ export default async function VolumePage({
           </div>
         </div>
 
-        {title && showTitle && (
-          <div className="w-full my-8">
-            <h1 className="font-sans text-4xl text-center font-bold tracking-normal">{title}</h1>
-          </div>
-        )}
+        <div className="w-full my-8">
+          <h1 className="font-sans text-4xl text-center font-bold tracking-normal">{title}</h1>
+        </div>
 
         <div className="my-10">
           <Squiggle />

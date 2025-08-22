@@ -220,7 +220,6 @@ export interface Page {
 export interface Volume {
   id: number;
   title: string;
-  showTitle?: boolean | null;
   volumeNumber: number;
   description: string;
   editorsNote?: {
@@ -264,7 +263,6 @@ export interface Volume {
 export interface Article {
   id: number;
   title: string;
-  showTitle?: boolean | null;
   content: {
     root: {
       type: string;
@@ -1201,7 +1199,6 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface ArticlesSelect<T extends boolean = true> {
   title?: T;
-  showTitle?: T;
   content?: T;
   meta?:
     | T
@@ -1231,7 +1228,6 @@ export interface ArticlesSelect<T extends boolean = true> {
  */
 export interface VolumesSelect<T extends boolean = true> {
   title?: T;
-  showTitle?: T;
   volumeNumber?: T;
   description?: T;
   editorsNote?: T;

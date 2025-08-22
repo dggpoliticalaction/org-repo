@@ -73,21 +73,9 @@ export const Articles: CollectionConfig = {
   },
   fields: [
     {
-      type: 'group',
-      fields: [
-        {
-          name: 'title',
-          type: 'text',
-          required: true,
-        },
-        {
-          name: 'showTitle',
-          type: 'checkbox',
-          label: 'Display title on Article page',
-          defaultValue: true,
-          required: false,
-        },
-      ],
+      name: 'title',
+      type: 'text',
+      required: true,
     },
     {
       type: 'tabs',
