@@ -76,7 +76,7 @@ export default async function Page({
   const { hero, layout } = page
 
   return (
-    <article className="pb-24 max-w-3xl m-auto">
+    <article className="pb-24 max-w-3xl mx-auto">
       <PageClient />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
