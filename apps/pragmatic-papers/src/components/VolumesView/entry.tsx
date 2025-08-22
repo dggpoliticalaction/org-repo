@@ -40,14 +40,14 @@ export const Entry: React.FC<{
     <article className={cn('overflow-hidden', className)} ref={entry.ref}>
       <div className="group hover:cursor-pointer">
         <div className="text-left font-mono font-thin text-xs">
-          <span className="pe-2">Volume {toRoman(volumeNumber ?? 1)}</span>
+          <span className="pe-2">VOLUME {toRoman(volumeNumber ?? 1)}</span>
           <span className="text-brand">
             {publishedAt ? dateToString(Date.parse(publishedAt)) : ''}
           </span>
         </div>
         <div>
           {titleToUse && (
-            <h2 className="my-6 text-xl md:text-3xl font-bold tracking-tight text-left font-sans">
+            <h3 className="my-6 text-xl md:text-3xl font-bold tracking-tight text-left font-sans">
               <Link
                 className="group-hover:text-brand transition-colors font-sans"
                 href={href}
@@ -55,7 +55,7 @@ export const Entry: React.FC<{
               >
                 {titleToUse}
               </Link>
-            </h2>
+            </h3>
           )}
           {description && (
             <div className="my-3 text-sm text-muted-foreground font-sans">
