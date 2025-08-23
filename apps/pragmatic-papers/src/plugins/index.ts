@@ -5,7 +5,12 @@ import { seoPlugin } from '@payloadcms/plugin-seo'
 import { type Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { type GenerateTitle, type GenerateURL } from '@payloadcms/plugin-seo/types'
-import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
+import {
+  AlignFeature,
+  FixedToolbarFeature,
+  HeadingFeature,
+  lexicalEditor,
+} from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
 
 import type { Article, Volume, Page } from '@/payload-types'
@@ -71,6 +76,7 @@ export const plugins: Plugin[] = [
                     ...rootFeatures,
                     FixedToolbarFeature(),
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+                    AlignFeature(),
                   ]
                 },
               }),
