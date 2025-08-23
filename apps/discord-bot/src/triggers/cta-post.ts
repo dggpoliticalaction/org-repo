@@ -4,6 +4,7 @@ import { type Trigger } from "./trigger";
 import { type EventData } from "../models/internal-models";
 import { BarController, BarElement, CategoryScale, Chart, LinearScale, plugins } from "chart.js";
 import { Canvas } from "canvas";
+import { writeFile } from "node:fs";
 
 const channelName = "call-to-action";
 
@@ -85,12 +86,18 @@ export class CTAPostTrigger implements Trigger {
                         name: 'reaction_summary.png'
                     }]
                 };
-                (async () => {
-                    const threadChannel = await thread;
-                    await threadChannel.send(`Reaction Summary:\n${
-                        attachment.files[0]?.attachment
-                    }`);
-                })();
+
+                writeFile('./misc/tmp/reaction_summary.png', pngBuffer, (err) => {
+                    if (err) throw err;
+                    console.log('Chart saved');
+                });
+                
+               // (async () => {
+                //     const threadChannel = await thread;
+                //     await threadChannel.send(`Reaction Summary:\n${
+                //         attachment.files[0]?.attachment
+                //     }`);
+                // })();
             });
             
             console.log(`Data: ${data}`)
