@@ -2,7 +2,7 @@ import { cn } from '@/utilities/ui'
 import React from 'react'
 
 import { Entry, type EntryVolumeData } from './entry'
-
+import { SquiggleStatic } from '@/components/ui/squiggle'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type Props = {
   volumes: EntryVolumeData[]
@@ -19,7 +19,8 @@ export const VolumesView: React.FC<Props> = (props) => {
             if (typeof result === 'object' && result !== null) {
               return (
                 <div className="pt-3" key={index}>
-                  <Entry className="h-full" doc={result} relationTo="volumes" />
+                  <Entry doc={result} relationTo="volumes" />
+                  {index + 1 !== volumes.length ? <SquiggleStatic size="full" /> : null}
                 </div>
               )
             }

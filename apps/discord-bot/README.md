@@ -136,6 +136,7 @@ DISCORD_BOT_MASTER_API_TOKEN="00000000-0000-0000-0000-000000000000"
 ```
 
 For local development:
+
 1. Copy the above environment variables into a new `.env` file
 2. Replace the placeholder values with your actual configuration
 3. The `.env` file is gitignored by default to prevent committing secrets

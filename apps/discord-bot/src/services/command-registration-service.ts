@@ -10,7 +10,7 @@ import {
 import '../config/environment.js'
 import { Logger } from './logger.js'
 
-import Logs from '../../lang/logs.json'  with { type: "json" };
+import Logs from '../../lang/logs.json' with { type: 'json' }
 
 export class CommandRegistrationService {
   constructor(private rest: REST) {}
@@ -98,9 +98,12 @@ export class CommandRegistrationService {
         const body: RESTPatchAPIApplicationCommandJSONBody = {
           name: newName,
         }
-        await this.rest.patch(Routes.applicationCommand(process.env.DISCORD_CLIENT_ID, remoteCmd.id), {
-          body,
-        })
+        await this.rest.patch(
+          Routes.applicationCommand(process.env.DISCORD_CLIENT_ID, remoteCmd.id),
+          {
+            body,
+          },
+        )
         Logger.info(Logs.info.commandActionRenamed)
         return
       }
@@ -118,7 +121,9 @@ export class CommandRegistrationService {
         }
 
         Logger.info(Logs.info.commandActionDeleting.replaceAll('{COMMAND_NAME}', remoteCmd.name))
-        await this.rest.delete(Routes.applicationCommand(process.env.DISCORD_CLIENT_ID, remoteCmd.id))
+        await this.rest.delete(
+          Routes.applicationCommand(process.env.DISCORD_CLIENT_ID, remoteCmd.id),
+        )
         Logger.info(Logs.info.commandActionDeleted)
         return
       }
