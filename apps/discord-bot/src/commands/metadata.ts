@@ -103,13 +103,6 @@ export const MessageCommandMetadata: {
     default_member_permissions: undefined,
     dm_permission: true,
   },
-  LIST_REGION_COMPLETION: {
-    type: ApplicationCommandType.Message,
-    name: Lang.getRef('messageCommands.listRegionCompletion', Language.Default),
-    name_localizations: Lang.getRefLocalizationMap('messageCommands.listRegionCompletion'),
-    default_member_permissions: undefined,
-    dm_permission: false,
-  },
 }
 
 export const UserCommandMetadata: {

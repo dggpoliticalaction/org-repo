@@ -17,7 +17,7 @@ import {
   MessageCommandMetadata,
   UserCommandMetadata,
 } from './commands/index.js'
-import { ListRegionCompletion, ViewDateSent } from './commands/message/index.js'
+import { ViewDateSent } from './commands/message/index.js'
 import { ViewDateJoined } from './commands/user/index.js'
 import {
   ButtonHandler,
@@ -74,7 +74,6 @@ async function start(): Promise<void> {
 
     // Message Context Commands
     new ViewDateSent(),
-    new ListRegionCompletion(),
 
     // User Context Commands
     new ViewDateJoined(),
