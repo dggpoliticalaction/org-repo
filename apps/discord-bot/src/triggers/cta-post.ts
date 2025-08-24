@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { ChannelType, Collection, GuildMember, roleMention, ThreadAutoArchiveDuration, type Message } from "discord.js";
+import { ChannelType, ThreadAutoArchiveDuration, type Message } from "discord.js";
 import { type Trigger } from "./trigger";
 import { type EventData } from "../models/internal-models";
 import { BarController, Colors, BarElement, CategoryScale, Chart, LinearScale, PieController, ArcElement, Legend, Title } from "chart.js";
