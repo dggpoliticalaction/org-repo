@@ -204,8 +204,7 @@
       "viewDateJoined": "View Date Joined"
     },
     "messageCommands": {
-      "viewDateSent": "View Date Sent",
-      "listRegionCompletion": "List Region Completion"
+      "viewDateSent": "View Date Sent"
     },
     "arguments": {
       "command": "command",
