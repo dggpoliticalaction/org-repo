@@ -222,6 +222,21 @@ export interface Volume {
   title: string;
   volumeNumber: number;
   description: string;
+  introduction?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   editorsNote?: {
     root: {
       type: string;
@@ -248,6 +263,9 @@ export interface Volume {
      */
     image?: (number | null) | Media;
     description?: string | null;
+  };
+  layout: {
+    content: (VolumeIntroduction | EditorsNote | ArticleCardsGrid | SquiggleRuleBlock)[];
   };
   publishedAt?: string | null;
   slug?: string | null;
@@ -286,6 +304,9 @@ export interface Article {
      */
     image?: (number | null) | Media;
     description?: string | null;
+  };
+  layout?: {
+    content?: (ArticleIntroduction | ArticleBodyContent | EditorsNote | SquiggleRuleBlock)[] | null;
   };
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
@@ -435,6 +456,126 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articleIntroduction".
+ */
+export interface ArticleIntroduction {
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'articleIntroduction';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articleBodyContent".
+ */
+export interface ArticleBodyContent {
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'articleBodyContent';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "editorsNote".
+ */
+export interface EditorsNote {
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'editorsNote';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SquiggleRuleBlock".
+ */
+export interface SquiggleRuleBlock {
+  variant: 'animated' | 'static';
+  size?: ('small' | 'medium' | 'large' | 'full') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'squiggleRule';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "volumeIntroduction".
+ */
+export interface VolumeIntroduction {
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'volumeIntroduction';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ArticleCardsGrid".
+ */
+export interface ArticleCardsGrid {
+  /**
+   * Select articles to display in the grid. If left empty, will use the volume's articles.
+   */
+  articles?: (number | Article)[] | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'articleCardsGrid';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1209,6 +1350,18 @@ export interface ArticlesSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  layout?:
+    | T
+    | {
+        content?:
+          | T
+          | {
+              articleIntroduction?: T | ArticleIntroductionSelect<T>;
+              articleBodyContent?: T | ArticleBodyContentSelect<T>;
+              editorsNote?: T | EditorsNoteSelect<T>;
+              squiggleRule?: T | SquiggleRuleBlockSelect<T>;
+            };
+      };
   publishedAt?: T;
   authors?: T;
   createdBy?: T;
@@ -1226,12 +1379,50 @@ export interface ArticlesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articleIntroduction_select".
+ */
+export interface ArticleIntroductionSelect<T extends boolean = true> {
+  content?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articleBodyContent_select".
+ */
+export interface ArticleBodyContentSelect<T extends boolean = true> {
+  content?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "editorsNote_select".
+ */
+export interface EditorsNoteSelect<T extends boolean = true> {
+  content?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SquiggleRuleBlock_select".
+ */
+export interface SquiggleRuleBlockSelect<T extends boolean = true> {
+  variant?: T;
+  size?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "volumes_select".
  */
 export interface VolumesSelect<T extends boolean = true> {
   title?: T;
   volumeNumber?: T;
   description?: T;
+  introduction?: T;
   editorsNote?: T;
   articles?: T;
   meta?:
@@ -1241,12 +1432,42 @@ export interface VolumesSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  layout?:
+    | T
+    | {
+        content?:
+          | T
+          | {
+              volumeIntroduction?: T | VolumeIntroductionSelect<T>;
+              editorsNote?: T | EditorsNoteSelect<T>;
+              articleCardsGrid?: T | ArticleCardsGridSelect<T>;
+              squiggleRule?: T | SquiggleRuleBlockSelect<T>;
+            };
+      };
   publishedAt?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "volumeIntroduction_select".
+ */
+export interface VolumeIntroductionSelect<T extends boolean = true> {
+  content?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ArticleCardsGrid_select".
+ */
+export interface ArticleCardsGridSelect<T extends boolean = true> {
+  articles?: T;
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1819,17 +2040,6 @@ export interface DisplayMathBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'displayMathBlock';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "SquiggleRuleBlock".
- */
-export interface SquiggleRuleBlock {
-  variant: 'animated' | 'static';
-  size?: ('small' | 'medium' | 'large' | 'full') | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'squiggleRule';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

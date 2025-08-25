@@ -41,6 +41,11 @@ import { editorFieldLevel } from '@/access/editor'
 import { type Article } from '@/payload-types'
 import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
 import { SquiggleRule } from '@/blocks/SquiggleRule/config'
+
+import { ArticleContent } from '@/blocks/ArticleContent/config'
+import { ArticleIntroduction } from '@/blocks/ArticleIntroduction/config'
+import { EditorsNote } from '@/blocks/EditorsNote/config'
+
 export const Articles: CollectionConfig = {
   slug: 'articles',
   access: {
@@ -145,6 +150,18 @@ export const Articles: CollectionConfig = {
               titlePath: 'meta.title',
               descriptionPath: 'meta.description',
             }),
+          ],
+        },
+        {
+          name: 'layout',
+          label: 'Layout',
+          fields: [
+            {
+              type: 'blocks',
+              name: 'content',
+              blocks: [ArticleIntroduction, ArticleContent, EditorsNote, SquiggleRule],
+              required: true,
+            },
           ],
         },
       ],

@@ -92,6 +92,7 @@ export default function RichText(props: Props) {
           container: enableGutter,
           'max-w-none': !enableGutter,
           'prose md:prose-md dark:prose-invert': enableProse,
+          'not-prose': !enableProse,
         },
         className,
       )}
