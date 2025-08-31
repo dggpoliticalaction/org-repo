@@ -10,7 +10,7 @@ import { Rules } from '../../constants/rules.js'
 export class RulesCommand implements Command {
   names = [Lang.getRef('chatCommands.rules', Language.Default)]
   cooldown = new RateLimiter(2, 30 * 1000)
-  deferType = CommandDeferType.PUBLIC
+  deferType = CommandDeferType.HIDDEN
   requireClientPerms = []
 
   public async execute(intr: ChatInputCommandInteraction, data: EventData): Promise<void> {
