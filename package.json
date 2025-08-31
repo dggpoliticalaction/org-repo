@@ -28,7 +28,8 @@
     "onlyBuiltDependencies": [
       "core-js-pure",
       "esbuild",
-      "sharp"
+      "sharp",
+      "unrs-resolver"
     ]
   }
 }
