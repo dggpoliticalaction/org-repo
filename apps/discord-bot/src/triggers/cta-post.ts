@@ -26,6 +26,7 @@ export class CTAPostTrigger implements Trigger {
 
             // check message came from cta channel
             if (msg.channelId === ctaChannel.id) {
+                console.log("triggered...")
                 return true
             }
         }
@@ -65,6 +66,69 @@ export class CTAPostTrigger implements Trigger {
         }
 
         return undefined
+    }
+
+    // start a reaction collector on the given message
+    private async startCTAReactionCollector(msg: Message, thread: PublicThreadChannel): Promise<void> {
+        const filter = (reaction, user) => reaction.emoji.name === finishedEmoji && user.id != msg.client.user.id
+        const collector = msg.createReactionCollector({ filter, time: oneHour });
+
+        collector.on('collect', async (reaction, user) => {
+            const member = msg.guild?.members.fetch(user.id)
+            if (member != undefined) {
+
+                console.log(`Got ${reaction.emoji.name} from ${(await member).displayName}`)
+
+                const memberRoles = (await member).roles.cache;
+                const role = memberRoles.filter(r => regionRoles.includes(r.name));
+                const memberRegionRole = role.first()?.name;
+
+                if (memberRegionRole != undefined) {
+                    if (!roleReactions[memberRegionRole]) {
+                        roleReactions[memberRegionRole] = [];
+                    }
+                    if (!roleReactions[memberRegionRole]?.includes(user.id)) {
+                        roleReactions[memberRegionRole]?.push(user.id);
+                        console.log(`Adding ${role.first()?.name} member, ${user.displayName}`);
+                    }
+                }
+
+                this.sendChartToThread(msg, thread);
+            }
+        });
+
+        collector.on('end', collected => {
+            console.log(`Collected ${collected.size} reactions.`);
+            this.sendChartToThread(msg, thread);
+        });
+    }
+
+    private async deleteLastChart(tc: PublicThreadChannel): Promise<void> {
+        const threadMessages = await tc.messages.fetch({ limit: 1 });
+        const latest = threadMessages.first();
+        if (latest && latest.attachments.size > 0) {
+            await latest.delete();
+        }
+    }
+
+    private async sendChartToThread(msg: Message, thread: PublicThreadChannel): Promise<void> {
+        const pngBuffer = this.createChart(roleReactions).toBuffer('image/png');
+
+        writeFile('./misc/tmp/reaction_summary.png', pngBuffer, (err) => {
+            if (err) throw err;
+        });
+
+        (async () => {
+            const threadChannel = await thread;
+            if (!threadChannel.archived) {
+                await this.deleteLastChart(threadChannel);
+                await threadChannel.send({
+                    files: ["./misc/tmp/reaction_summary.png"],
+                    flags: [MessageFlags.SuppressNotifications]
+                });
+                this.startCTAReactionCollector(msg, thread);
+            }
+        })();
     }
 
     private createChart(rr: object): Canvas {
@@ -145,65 +209,5 @@ export class CTAPostTrigger implements Trigger {
         });
 
         return canvas
-    }
-
-    // start a reaction collector on the given message
-    private async startCTAReactionCollector(msg: Message, thread: PublicThreadChannel): Promise<void> {
-        const filter = (reaction, user) => reaction.emoji.name === finishedEmoji && user.id != msg.client.user.id
-        const collector = msg.createReactionCollector({ filter, time: oneHour });
-
-        collector.on('collect', async (reaction, user) => {
-            const member = msg.guild?.members.fetch(user.id)
-            if (member != undefined) {
-
-                console.log(`Got ${reaction.emoji.name} from ${(await member).displayName}`)
-
-                const memberRoles = (await member).roles.cache;
-                const role = memberRoles.filter(r => regionRoles.includes(r.name));
-                const memberRegionRole = role.first()?.name;
-
-                if (memberRegionRole != undefined) {
-                    if (!roleReactions[memberRegionRole]) {
-                        roleReactions[memberRegionRole] = [];
-                    }
-                    if (!roleReactions[memberRegionRole]?.includes(user.id)) {
-                        roleReactions[memberRegionRole]?.push(user.id);
-                        console.log(`Adding ${role.first()?.name} member, ${user.displayName}`);
-                    }
-                }
-
-                console.log(`${Object.entries(roleReactions)}`)
-            }
-        });
-
-        collector.on('end', collected => {
-            console.log(`Collected ${collected.size} reactions.`);
-
-            const pngBuffer = this.createChart(roleReactions).toBuffer('image/png');
-
-            writeFile('./misc/tmp/reaction_summary.png', pngBuffer, (err) => {
-                if (err) throw err;
-            });
-
-            (async () => {
-                const threadChannel = await thread;
-                if (!threadChannel.archived) {
-                    await this.deleteLastChart(threadChannel);
-                    await threadChannel.send({
-                        files: ["./misc/tmp/reaction_summary.png"],
-                        flags: [MessageFlags.SuppressNotifications]
-                    });
-                    this.startCTAReactionCollector(msg, thread);
-                }
-            })();
-        });
-    }
-
-    private async deleteLastChart(tc: PublicThreadChannel): Promise<void> {
-        const threadMessages = await tc.messages.fetch({ limit: 1 });
-        const latest = threadMessages.first();
-        if (latest && latest.attachments.size > 0) {
-            await latest.delete();
-        }
     }
 }
