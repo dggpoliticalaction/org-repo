@@ -51,7 +51,3 @@ devenv.local.nix
 # vscode and ide files
 .cursor
 .idea
-
-# discord-bot
-apps/discord-bot/misc/tmp/reaction_summary.png
-.gitkeep
