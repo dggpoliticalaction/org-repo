@@ -17,7 +17,7 @@
     --brand: #56b0ff;
     --brand-light: #0080ff;
 
-    --background: 0 0% 98%;
+    --background: 0 0% 95%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 240 5% 96%;
@@ -53,7 +53,7 @@
   }
 
   [data-theme='dark'] {
-    --background: 0 0% 0%;
+    --background: 0 0% 5%;
     --foreground: 210 40% 98%;
 
     --brand: #0080ff;
@@ -94,6 +94,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground min-h-[100vh] flex flex-col;
   }
