@@ -1833,6 +1833,21 @@ export interface SquiggleRuleBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TwitterEmbedBlock".
+ */
+export interface TwitterEmbedBlock {
+  url: string;
+  hideMedia?: boolean | null;
+  hideThread?: boolean | null;
+  align?: ('none' | 'left' | 'center' | 'right') | null;
+  lang: string;
+  maxWidth: number;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'twitterEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "InlineMathBlock".
  */
 export interface InlineMathBlock {

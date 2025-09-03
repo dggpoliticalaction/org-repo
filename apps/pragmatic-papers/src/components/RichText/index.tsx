@@ -19,11 +19,13 @@ import type {
   CallToActionBlock as CTABlockProps,
   SquiggleRuleBlock as SquiggleRuleBlockProps,
   MediaBlock as MediaBlockProps,
+  TwitterEmbedBlock as TwitterEmbedBlockProps,
 } from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { cn } from '@/utilities/ui'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
+import { TwitterEmbedBlock } from '@/blocks/TwitterEmbed/Component'
 
 type NodeTypes =
   | DefaultNodeTypes
@@ -34,6 +36,7 @@ type NodeTypes =
       | CodeBlockProps
       | MathBlockProps
       | SquiggleRuleBlockProps
+      | TwitterEmbedBlockProps
     >
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
@@ -66,6 +69,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       <MathBlock {...node.fields} />
     ),
     squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
+    twitterEmbed: ({ node }) => <TwitterEmbedBlock {...node.fields} />,
   },
   inlineBlocks: {
     inlineMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
