@@ -33,6 +33,7 @@ async function getTweet(options: TwitterEmbedOptions): Promise<any> {
     align: options.align!,
     lang: options.lang!,
     theme: options.theme!,
+    dnt: 'true',
   })
   const oembedUrl = `https://publish.twitter.com/oembed?${queryParams.toString()}`
   const res = await fetch(oembedUrl)

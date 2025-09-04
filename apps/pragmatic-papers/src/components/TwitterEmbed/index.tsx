@@ -19,13 +19,17 @@ export const TwitterEmbed: React.FC<{
 
   useEffect(() => {
     if (!props.url) return
+
+    const theme = document.getElementsByTagName('html')[0]?.getAttribute('data-theme') ?? 'dark'
+
     fetchTwitterEmbed({
       url: props.url,
       hide_media: props.hideMedia,
       hide_thread: props.hideThread,
       align: props.align,
       lang: props.lang,
-      maxwidth: props.maxWidth
+      maxwidth: props.maxWidth,
+      theme: theme as ('light' | 'dark')
     })
       .then(res => {
         if (!res) {
