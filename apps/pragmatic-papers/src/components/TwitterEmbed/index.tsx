@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 'use client'
 
 import type React from 'react';
@@ -52,6 +53,7 @@ export const TwitterEmbed: React.FC<{
   return (
     <div>
       <Script src="https://platform.twitter.com/widgets.js" />
+      /* This shouldn't be dangerous as the HTML is coming from Payload after it's retrieved from the X oEmbed API. */
       <div dangerouslySetInnerHTML={{ __html: content }} ref={contentRef} />
     </div>
   )

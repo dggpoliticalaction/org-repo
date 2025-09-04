@@ -22,9 +22,23 @@ const DEFAULT_OPTIONS: TwitterEmbedOptions = {
   theme: 'light'
 }
 
+interface TwitterEmbedData {
+  url: string,
+  author_name: string,
+  author_url: string,
+  html: string,
+  width: number,
+  height?: number,
+  type: string,
+  cache_age: number,
+  provider_name: string,
+  provider_url: string,
+  version: string,
+}
+
 const twitterCache = new NodeCache()
 
-async function getTweet(options: TwitterEmbedOptions): Promise<any> {
+async function getTweet(options: TwitterEmbedOptions): Promise<TwitterEmbedData> {
   const queryParams = new URLSearchParams({
     url: options.url,
     maxwidth: options.maxwidth!.toString(),
@@ -43,7 +57,7 @@ async function getTweet(options: TwitterEmbedOptions): Promise<any> {
   return await res.json()
 }
 
-export async function fetchTwitterEmbed(options: TwitterEmbedOptions): Promise<any> {
+export async function fetchTwitterEmbed(options: TwitterEmbedOptions): Promise<TwitterEmbedData | null> {
   const finalOptions = { ...DEFAULT_OPTIONS, ...options }
   const optsString = JSON.stringify(finalOptions)
   try {
@@ -54,7 +68,7 @@ export async function fetchTwitterEmbed(options: TwitterEmbedOptions): Promise<a
       data = await getTweet(finalOptions)
       twitterCache.set(optsString, data, data.cache_age)
     }
-    return data
+    return data as TwitterEmbedData
   } catch (exception) {
     console.error(exception)
     return null
