@@ -38,7 +38,10 @@ export const TwitterEmbed: React.FC<{
 
   useEffect(() => {
     if (contentRef.current && window.twttr) {
-      setTimeout(() => window.twttr.widgets.load(contentRef.current), 2000)
+      // There's a race condition where the content returned by oEmbed needs to be inserted into the page, after which
+      // the twitter JS will load it and render it as an embed instead of just a blockquote. Providing this timeout
+      // helps to make sure the JS has actually loaded.
+      setTimeout(() => window.twttr.widgets.load(contentRef.current), 1000)
     }
   }, [content])
 

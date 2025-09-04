@@ -1,5 +1,7 @@
 'use server'
 
+import NodeCache from 'node-cache'
+
 export interface TwitterEmbedOptions {
   url: string,
   maxwidth?: number,
@@ -20,25 +22,38 @@ const DEFAULT_OPTIONS: TwitterEmbedOptions = {
   theme: 'light'
 }
 
-export async function fetchTwitterEmbed(options: TwitterEmbedOptions): Promise<any> {
-  const finalOptions = { ...DEFAULT_OPTIONS, ...options }
+const twitterCache = new NodeCache()
+
+async function getTweet(options: TwitterEmbedOptions): Promise<any> {
   const queryParams = new URLSearchParams({
     url: options.url,
-    maxwidth: finalOptions.maxwidth!.toString(),
-    hide_media: String(finalOptions.hide_media!),
-    hide_thread: String(finalOptions.hide_thread!),
-    align: finalOptions.align!,
-    lang: finalOptions.lang!,
-    theme: finalOptions.theme!,
+    maxwidth: options.maxwidth!.toString(),
+    hide_media: String(options.hide_media!),
+    hide_thread: String(options.hide_thread!),
+    align: options.align!,
+    lang: options.lang!,
+    theme: options.theme!,
   })
   const oembedUrl = `https://publish.twitter.com/oembed?${queryParams.toString()}`
+  const res = await fetch(oembedUrl)
+  if (!res.ok) {
+    throw new Error(`Unable to fetch tweet: ${options.url}`)
+  }
+  return await res.json()
+}
+
+export async function fetchTwitterEmbed(options: TwitterEmbedOptions): Promise<any> {
+  const finalOptions = { ...DEFAULT_OPTIONS, ...options }
+  const optsString = JSON.stringify(finalOptions)
   try {
-    const res = await fetch(oembedUrl);
-    if (!res.ok) {
-      console.error(`Unable to fetch tweet: ${options.url}`)
-      return null
+    let data
+    if (twitterCache.has(optsString)) {
+      data = twitterCache.get(optsString)
+    } else {
+      data = await getTweet(finalOptions)
+      twitterCache.set(optsString, data, data.cache_age)
     }
-    return await res.json()
+    return data
   } catch (exception) {
     console.error(exception)
     return null
