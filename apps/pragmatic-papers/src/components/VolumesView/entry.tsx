@@ -9,7 +9,6 @@ import type { Volume } from '@/payload-types'
 import { formatWithOptions } from 'date-fns/fp'
 import { enUS } from 'date-fns/locale'
 
-import { SquiggleStatic } from '@/components/ui/squiggle'
 import { toRoman } from '@/utilities/toRoman'
 
 // import { Media } from '@/components/Media'
@@ -46,24 +45,23 @@ export const Entry: React.FC<{
             {publishedAt ? dateToString(Date.parse(publishedAt)) : ''}
           </span>
         </div>
+        {titleToUse && (
+          <h3 className="my-6 text-center">
+            <Link
+              className="text-xl md:text-3xl font-bold group-hover:text-brandLight transition-colors"
+              href={href}
+              ref={link.ref}
+            >
+              {titleToUse}
+            </Link>
+          </h3>
+        )}
         <div className="text-justify">
-          {titleToUse && (
-            <h3 className="my-6">
-              <Link
-                className="text-xl md:text-3xl font-bold group-hover:text-brandLight transition-colors"
-                href={href}
-                ref={link.ref}
-              >
-                {titleToUse}
-              </Link>
-            </h3>
-          )}
           {description && (
             <div className="my-3 text-sm md:text-base text-muted-foreground">
               {description && <p>{sanitizedDescription}</p>}
             </div>
           )}
-          <SquiggleStatic />
         </div>
       </div>
     </article>

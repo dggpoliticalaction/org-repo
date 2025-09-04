@@ -17,7 +17,7 @@ export const ArticleCard: React.FC<{
   relationTo: 'articles'
   title?: string
 }> = (props) => {
-  const { card, link } = useClickableCard({})
+  const { card, link } = useClickableCard<HTMLDivElement>({})
   const { className, doc, relationTo, title: titleFromProps } = props
 
   const { slug, meta, title } = doc || {}
@@ -28,35 +28,47 @@ export const ArticleCard: React.FC<{
   const href = `/${relationTo}/${slug}`
 
   return (
-    <div className="rounded-lg border border-border overflow-hidden h-full">
+    <div className="rounded-lg overflow-hidden h-full">
       <article
-        className={cn('relative flex flex-col h-full hover:cursor-pointer', className)}
+        className={cn('flex flex-row sm:flex-col h-full hover:cursor-pointer', className)}
         ref={card.ref}
       >
-        <div className="relative w-full max-h-[300px] aspect-[4/3] overflow-hidden">
+        <div
+          className="
+          rounded-lg
+          overflow-hidden
+          flex
+          flex-col
+          justify-center
+          flex-shrink-0
+          basis-1/4
+          min-w-24
+          sm:basis-auto
+          sm:min-w-0
+          sm:max-h-[300px]
+        "
+        >
           {metaImage && typeof metaImage !== 'string' && (
             <Media
               resource={metaImage}
-              className="h-full w-full"
-              imgClassName="object-cover h-full w-full"
+              className="aspect-[4/3] sm:aspect-square w-full"
+              imgClassName="object-cover h-full w-full rounded-lg"
               size="square"
             />
           )}
         </div>
-        <div className="flex flex-col flex-grow p-4 bg-card">
+        <div className="flex flex-col p-4 flex-grow basis-3/4 sm:basis-auto">
           {titleToUse && (
-            <div className="prose">
-              <h3 className="line-clamp-4">
-                <Link className="not-prose hover:underline" href={href} ref={link.ref}>
-                  {titleToUse}
-                </Link>
-              </h3>
+            <div className="font-sans font-extrabold text-xl pb-1 line-clamp-4">
+              <Link className="hover:text-brand transition-colors" href={href} ref={link.ref}>
+                {titleToUse}
+              </Link>
             </div>
           )}
           {description && (
-            <div className="mt-2">
-              <p className="text-sm text-muted-foreground line-clamp-5">{sanitizedDescription}</p>
-            </div>
+            <p className="text-sm text-muted-foreground pt-1 line-clamp-2 sm:line-clamp-5">
+              {sanitizedDescription}
+            </p>
           )}
         </div>
       </article>

@@ -1,6 +1,7 @@
 import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import {
+  AlignFeature,
   BlockquoteFeature,
   BlocksFeature,
   ChecklistFeature,
@@ -93,6 +94,7 @@ export const Articles: CollectionConfig = {
                 features: ({ rootFeatures }) => {
                   return [
                     ...rootFeatures,
+                    AlignFeature(),
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
                     BlocksFeature({
                       blocks: [
