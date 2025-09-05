@@ -27,7 +27,6 @@ export const TwitterEmbed: React.FC<{
       hide_media: props.hideMedia,
       hide_thread: props.hideThread,
       align: props.align,
-      lang: props.lang,
       maxwidth: props.maxWidth,
       theme: theme as ('light' | 'dark')
     })
