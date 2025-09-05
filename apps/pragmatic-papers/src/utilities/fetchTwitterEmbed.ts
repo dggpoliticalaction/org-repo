@@ -8,7 +8,6 @@ export interface TwitterEmbedOptions {
   hide_media?: boolean,
   hide_thread?: boolean,
   align?: 'left' | 'right' | 'center' | 'none',
-  lang?: string,
   theme?: 'light' | 'dark'
 }
 
@@ -18,7 +17,6 @@ const DEFAULT_OPTIONS: TwitterEmbedOptions = {
   hide_media: false,
   hide_thread: false,
   align: 'none',
-  lang: 'en',
   theme: 'light'
 }
 
@@ -45,7 +43,6 @@ async function getTweet(options: TwitterEmbedOptions): Promise<TwitterEmbedData>
     hide_media: String(options.hide_media!),
     hide_thread: String(options.hide_thread!),
     align: options.align!,
-    lang: options.lang!,
     theme: options.theme!,
     dnt: 'true',
   })

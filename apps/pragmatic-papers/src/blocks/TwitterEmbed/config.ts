@@ -29,20 +29,5 @@ export const TwitterEmbed: Block = {
       ],
       defaultValue: 'none'
     },
-    {
-      name: 'lang',
-      type: 'text',
-      maxLength: 2,
-      defaultValue: 'en',
-      required: true
-    },
-    {
-      name: 'maxWidth',
-      type: 'number',
-      min: 220,
-      max: 550,
-      defaultValue: 550,
-      required: true
-    },
   ]
 }

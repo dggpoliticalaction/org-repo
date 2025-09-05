@@ -10,11 +10,9 @@ export const TwitterEmbedBlock: React.FC<Props> = (props) => {
     <div>
       <TwitterEmbed
         url={props.url}
-        maxWidth={props.maxWidth}
         hideMedia={props.hideMedia || false}
         hideThread={props.hideThread || false}
-        align={props.align || 'none'}
-        lang={props.lang} />
+        align={props.align || 'none'} />
     </div>
   )
 }

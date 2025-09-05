@@ -1840,8 +1840,6 @@ export interface TwitterEmbedBlock {
   hideMedia?: boolean | null;
   hideThread?: boolean | null;
   align?: ('none' | 'left' | 'center' | 'right') | null;
-  lang: string;
-  maxWidth: number;
   id?: string | null;
   blockName?: string | null;
   blockType: 'twitterEmbed';
