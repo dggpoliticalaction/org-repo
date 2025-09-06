@@ -3,6 +3,9 @@ import type { Block } from 'payload'
 export const SquiggleRule: Block = {
   slug: 'squiggleRule',
   interfaceName: 'SquiggleRuleBlock',
+  admin: {
+    disableBlockName: true,
+  },
   fields: [
     {
       name: 'variant',

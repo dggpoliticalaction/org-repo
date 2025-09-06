@@ -76,6 +76,7 @@ export default buildConfig({
   globals: [Header, Footer],
   plugins: [...plugins],
   secret: process.env.PAYLOAD_SECRET,
+  // @ts-expect-error payload's SharpDependency typing mismatches sharp's types in TS 5.7
   sharp,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
