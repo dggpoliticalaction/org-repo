@@ -1839,7 +1839,6 @@ export interface TwitterEmbedBlock {
   url: string;
   hideMedia?: boolean | null;
   hideThread?: boolean | null;
-  align?: ('none' | 'left' | 'center' | 'right') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'twitterEmbed';

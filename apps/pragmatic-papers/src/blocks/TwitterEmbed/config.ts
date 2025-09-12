@@ -18,16 +18,5 @@ export const TwitterEmbed: Block = {
       type: 'checkbox',
       
     },
-    {
-      name: 'align',
-      type: 'radio',
-      options: [
-        { label: 'None', value: 'none' },
-        { label: 'Left', value: 'left' },
-        { label: 'Center', value: 'center' },
-        { label: 'Right', value: 'right' },
-      ],
-      defaultValue: 'none'
-    },
   ]
 }
