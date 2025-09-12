@@ -20,24 +20,27 @@ import type {
   SquiggleRuleBlock as SquiggleRuleBlockProps,
   MediaBlock as MediaBlockProps,
   TwitterEmbedBlock as TwitterEmbedBlockProps,
+  RedditEmbedBlock as RedditEmbedBlockProps,
 } from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { cn } from '@/utilities/ui'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import { TwitterEmbedBlock } from '@/blocks/TwitterEmbed/Component'
+import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
 
 type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-      | CTABlockProps
-      | MediaBlockProps
-      | BannerBlockProps
-      | CodeBlockProps
-      | MathBlockProps
-      | SquiggleRuleBlockProps
-      | TwitterEmbedBlockProps
-    >
+    | CTABlockProps
+    | MediaBlockProps
+    | BannerBlockProps
+    | CodeBlockProps
+    | MathBlockProps
+    | SquiggleRuleBlockProps
+    | TwitterEmbedBlockProps
+    | RedditEmbedBlockProps
+  >
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
@@ -70,6 +73,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     ),
     squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
     twitterEmbed: ({ node }) => <TwitterEmbedBlock {...node.fields} />,
+    redditEmbed: ({ node }) => <RedditEmbedBlock {...node.fields} />,
   },
   inlineBlocks: {
     inlineMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
