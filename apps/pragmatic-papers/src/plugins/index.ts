@@ -10,8 +10,18 @@ import { s3Storage } from '@payloadcms/storage-s3'
 
 import type { Article, Volume, Page } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import { toRoman } from '@/utilities/toRoman'
 
-const generateTitle: GenerateTitle<Volume | Article | Page> = ({ doc }) => {
+function isVolume(obj: Volume | Article | Page): obj is Volume {
+  return (obj as Volume).volumeNumber !== undefined
+}
+
+export const generateTitle: GenerateTitle<Volume | Article | Page> = ({ doc }) => {
+  if (isVolume(doc)) {
+    return doc?.volumeNumber
+      ? `Volume ${toRoman(doc.volumeNumber)} | Pragmatic Papers`
+      : 'Pragmatic Papers'
+  }
   return doc?.title ? `${doc.title} | Pragmatic Papers` : 'Pragmatic Papers'
 }
 
