@@ -12,7 +12,7 @@ import { ArticleHero } from '@/heros/ArticleHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import RichText from '@/components/RichText'
+import { RenderArticleBlocks } from '@/blocks/RenderArticleBlocks'
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -37,6 +37,9 @@ export async function generateStaticParams(): Promise<{ slug: string | null | un
 interface Args {
   params: Promise<{
     slug?: string
+  }>
+  searchParams: Promise<{
+    p?: string
   }>
 }
 
@@ -87,7 +90,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
       <ArticleHero article={article} />
 
-      <RichText className="" data={article.content} enableGutter={false} />
+      <RenderArticleBlocks blocks={article.layout} />
     </article>
   )
 }

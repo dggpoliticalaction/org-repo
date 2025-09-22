@@ -20,6 +20,9 @@ import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { SquiggleRule } from '../../blocks/SquiggleRule/config'
+import { VolumeIntroduction } from '@/blocks/VolumeIntroduction/config'
+import { EditorsNote } from '@/blocks/EditorsNote/config'
+import { ArticleCardsGrid } from '@/blocks/ArticleCardsGrid/config'
 import { editor } from '@/access/editor'
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import {
@@ -89,6 +92,28 @@ export const Volumes: CollectionConfig = {
               required: true,
             },
             {
+              name: 'introduction',
+              type: 'richText',
+              editor: lexicalEditor({
+                features: ({ rootFeatures }) => {
+                  return [
+                    ...rootFeatures,
+                    AlignFeature(),
+                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+                    BlocksFeature({ blocks: [Banner, Code, MediaBlock, SquiggleRule] }),
+                    FixedToolbarFeature(),
+                    InlineToolbarFeature(),
+                    HorizontalRuleFeature(),
+                    UnorderedListFeature(),
+                    OrderedListFeature(),
+                    IndentFeature(),
+                    BlockquoteFeature(),
+                  ]
+                },
+              }),
+              label: 'Introduction',
+            },
+            {
               name: 'editorsNote',
               type: 'richText',
               editor: lexicalEditor({
@@ -150,6 +175,18 @@ export const Volumes: CollectionConfig = {
               titlePath: 'meta.title',
               descriptionPath: 'meta.description',
             }),
+          ],
+        },
+        {
+          name: 'layout',
+          label: 'Layout',
+          fields: [
+            {
+              type: 'blocks',
+              name: 'content',
+              blocks: [VolumeIntroduction, EditorsNote, ArticleCardsGrid, SquiggleRule],
+              required: true,
+            },
           ],
         },
       ],

@@ -35,7 +35,7 @@ export const ArticleHero: React.FC<{
             <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
           </div>
         )}
-        <Squiggle className="h-6 mx-auto max-w-xs" />
+        <Squiggle className="mx-auto max-w-xs" />
       </div>
     </div>
   )

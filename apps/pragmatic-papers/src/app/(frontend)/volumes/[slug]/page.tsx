@@ -9,11 +9,8 @@ import React, { cache } from 'react'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import RichText from '@/components/RichText'
-import { formatDateTime } from '@/utilities/formatDateTime'
-import { ArticleCard } from '@/components/ArticleCard'
-import { toRoman } from '@/utilities/toRoman'
-import { Squiggle } from '@/components/ui/squiggle'
+import { VolumeHero } from '@/heros/VolumeHero'
+import { RenderVolumeBlocks } from '@/blocks/RenderVolumeBlocks'
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -79,51 +76,19 @@ export default async function VolumePage({
   const volume = await queryVolumeBySlug({ slug })
 
   if (!volume) return <PayloadRedirects url={url} />
-  const { publishedAt, editorsNote, articles } = volume
-  if (articles?.filter((article) => typeof article === 'number')?.length ?? 0 > 0) {
-    console.error('Fetching volume with unfetched articles', slug)
-  }
-  const actualArticles = articles?.filter((article) => typeof article !== 'number')
 
   return (
-    <div className="pb-16 max-w-3xl px-4 mx-auto">
+    <article className="pb-16 max-w-3xl mx-auto px-4">
       <PageClient />
 
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
-      <div className="relative flex items-end">
-        <div className="container pb-8 text-center">
-          <div>
-            <div>
-              <h1 className="mb-6 text-3xl md:text-5xl lg:text-6xl">{`Volume ${toRoman(Number(volume.slug))}`}</h1>
-            </div>
 
-            <div className="flex flex-col md:flex-row gap-4 md:gap-16 justify-center">
-              {publishedAt && (
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm">Date Published</p>
-                  <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      {editorsNote && (
-        <div className="w-full container">
-          <RichText className="w-full" enableGutter={false} data={editorsNote} />
-        </div>
-      )}
-      <Squiggle className="w-1/2 h-6 mx-auto" />
-      <div className="flex flex-col items-center gap-4 pt-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-          {actualArticles?.map((article) => (
-            <ArticleCard key={article.id} doc={article} relationTo="articles" />
-          ))}
-        </div>
-      </div>
-    </div>
+      <VolumeHero volume={volume} />
+
+      <RenderVolumeBlocks blocks={volume.layout} volume={volume} />
+    </article>
   )
 }
