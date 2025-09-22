@@ -33,6 +33,7 @@ import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { revalidateArticle, revalidateDelete } from './hooks/revalidateVolumes'
 import { checkArticles } from './hooks/checkArticles'
 import { pushToWebhooks } from './hooks/pushToWebhooks'
+import { setDefaultSeoTitle } from './hooks/seoTitle'
 
 export const Volumes: CollectionConfig = {
   slug: 'volumes',
@@ -179,6 +180,7 @@ export const Volumes: CollectionConfig = {
   hooks: {
     afterChange: [revalidateArticle, pushToWebhooks],
     afterDelete: [revalidateDelete],
+    beforeChange: [setDefaultSeoTitle],
   },
   versions: {
     drafts: {
