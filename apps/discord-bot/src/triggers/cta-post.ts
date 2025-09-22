@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
-import { ChannelType, type PublicThreadChannel, ThreadAutoArchiveDuration, type Message, MessageFlags } from "discord.js";
+import { ChannelType, type PublicThreadChannel, ThreadAutoArchiveDuration, type Message, MessageFlags, MessageType } from "discord.js";
 import { type Trigger } from "./trigger";
-import { type EventData } from "../models/internal-models";
 import { BarController, Colors, BarElement, CategoryScale, Chart, LinearScale, PieController, ArcElement, Legend, Title } from "chart.js";
 import { Canvas } from "canvas";
 import { writeFile } from "node:fs";
@@ -34,15 +33,37 @@ export class CTAPostTrigger implements Trigger {
         return false
     }
 
-    public async execute(msg: Message, data: EventData): Promise<void> {
+    public async execute(msg: Message): Promise<void> {
+        if (msg === undefined) {
+            return
+        }
+
         if (msg.channel.type === ChannelType.GuildText) {
+            if (msg.hasThread) {
+                const thread = await this.activeCTAThread(msg)
+                if (thread != undefined) {
+                    console.log("active thread found... starting CTA reaction collector...")
+                    this.startCTAReactionCollector(msg, thread)
+                }
+                return
+            }
+
             const thread = await this.createCTAThread(msg)
             if (thread) {
                 this.startCTAReactionCollector(msg, thread)
             }
-
-            console.log(`Data: ${data}`)
             return
+        }
+    }
+
+    private async getRoleReactions(msg: Message, rr): Promise<void> {
+        console.log(rr)
+        console.log(msg)
+    }
+
+    private async activeCTAThread(msg: Message): Promise<PublicThreadChannel | undefined> {
+        if (msg.hasThread && msg.thread?.type === ChannelType.PublicThread && !msg.thread?.archived) {
+            return msg.thread;
         }
     }
 

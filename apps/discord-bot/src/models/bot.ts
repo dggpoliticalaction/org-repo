@@ -1,6 +1,7 @@
 import {
   AutocompleteInteraction,
   ButtonInteraction,
+  ChannelType,
   type Client,
   CommandInteraction,
   Events,
@@ -26,11 +27,15 @@ import {
 } from '../events/index.js'
 import { type JobService, Logger } from '../services/index.js'
 import { PartialUtils } from '../utils/index.js'
+import { CTAPostTrigger } from '../triggers/cta-post.js'
 
 const require = createRequire(import.meta.url)
 const Config = require('../../config/config.json')
 const Debug = require('../../config/debug.json')
 const Logs = require('../../lang/logs.json')
+const ctaChannelName = "call-to-action";
+const guildName = "TexasMomtears's server";
+// const guildName = "DGG Political Action"
 
 export class Bot {
   private ready = false
@@ -45,7 +50,7 @@ export class Bot {
     private buttonHandler: ButtonHandler,
     private reactionHandler: ReactionHandler,
     private jobService: JobService,
-  ) {}
+  ) { }
 
   public async start(): Promise<void> {
     this.registerListeners()
@@ -90,6 +95,20 @@ export class Bot {
 
     this.ready = true
     Logger.info(Logs.info.clientReady)
+
+    const ctaChannel = this.client.guilds.cache.find(dggPol => dggPol.name === guildName)?.channels.cache.find(ctaChan => ctaChan?.name === ctaChannelName);
+
+    if (ctaChannel?.type === ChannelType.GuildText) {
+      // eslint-disable-next-line no-console
+      console.log("bot started... checking for cta message...");
+      const ctaPostTrigger = new CTAPostTrigger();
+
+      ctaChannel.messages.fetch().then(msgs => {
+        msgs.forEach(msg => {
+          ctaPostTrigger.execute(msg)
+        })
+      })
+    }
   }
 
   private onShardReady(shardId: number, _unavailableGuilds: Set<string>): void {
