@@ -1,5 +1,7 @@
 'use server'
 
+import NodeCache from 'node-cache'
+
 export interface RedditEmbedOptions {
   url: string
 }
@@ -8,6 +10,8 @@ interface RedditEmbedData {
   title: string,
   html: string
 }
+
+const redditCache = new NodeCache()
 
 async function getPost(options: RedditEmbedOptions): Promise<RedditEmbedData> {
   const queryParams = new URLSearchParams({
@@ -22,8 +26,15 @@ async function getPost(options: RedditEmbedOptions): Promise<RedditEmbedData> {
 }
 
 export async function fetchRedditEmbed(options: RedditEmbedOptions): Promise<RedditEmbedData | null> {
+  const optsString = JSON.stringify(options)
   try {
-    const data = await getPost(options)
+    let data
+    if (redditCache.has(optsString)) {
+      data = redditCache.get(optsString)
+    } else {
+      data = await getPost(options)
+      redditCache.set(optsString, data, 3600 * 4)
+    }
     return data as RedditEmbedData
   } catch (exception) {
     console.error(exception)
