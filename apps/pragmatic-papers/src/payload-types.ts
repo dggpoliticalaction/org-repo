@@ -1845,6 +1845,16 @@ export interface TwitterEmbedBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "YouTubeEmbedBlock".
+ */
+export interface YouTubeEmbedBlock {
+  url: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'youtubeEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "InlineMathBlock".
  */
 export interface InlineMathBlock {
