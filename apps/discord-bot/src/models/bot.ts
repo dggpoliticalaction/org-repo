@@ -87,6 +87,8 @@ export class Bot {
 
   private async onReady(): Promise<void> {
     const userTag = this.client.user?.tag
+    const d = new Date();
+
     Logger.info(Logs.info.clientLogin.replaceAll('{USER_TAG}', userTag))
 
     if (!Debug.dummyMode.enabled) {
@@ -105,7 +107,8 @@ export class Bot {
 
       ctaChannel.messages.fetch().then(msgs => {
         msgs.forEach(msg => {
-          ctaPostTrigger.execute(msg)
+          if (msg.createdAt >= d)
+            ctaPostTrigger.execute(msg)
         })
       })
     }
