@@ -51,6 +51,8 @@ export class CTAPostTrigger implements Trigger {
           // update the chart in the thread
           this.updateChart(msg, thread)
         }
+
+        return
       }
 
       // check if message created in last 2 weeks
