@@ -167,7 +167,7 @@ export class CTAPostTrigger implements Trigger {
   }
 
   private async sendChartToThread(msg: Message, thread: PublicThreadChannel, roleReactions: object): Promise<void> {
-    const pngBuffer = (await this.createChart(roleReactions)).toBuffer('image/png');
+    const pngBuffer = this.createChart(roleReactions).toBuffer('image/png');
 
     writeFile('./misc/tmp/reaction_summary.png', pngBuffer, (err) => {
       if (err) throw err;
@@ -193,7 +193,6 @@ export class CTAPostTrigger implements Trigger {
 
   private createChart(rr: object): Canvas {
 
-    console.log(`making chart from: ${rr}`)
     Chart.register(
       CategoryScale,
       PieController,
