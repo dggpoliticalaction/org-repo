@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { ChannelType, type PublicThreadChannel, ThreadAutoArchiveDuration, type Message, MessageFlags, User } from "discord.js";
+import { ChannelType, type PublicThreadChannel, ThreadAutoArchiveDuration, type Message, MessageFlags } from "discord.js";
 import { type Trigger } from "./trigger";
 import { BarController, Colors, BarElement, CategoryScale, Chart, LinearScale, PieController, ArcElement, Legend, Title } from "chart.js";
 import { Canvas } from "canvas";
@@ -106,6 +106,8 @@ export class CTAPostTrigger implements Trigger {
 
     if (msg.channel.type === ChannelType.GuildText) {
       const thread = msg.startThread({
+        // set as the title of the message
+
         name: 'CTA Completion by Region',
         autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
         reason: 'Tracking CTA participation.',
