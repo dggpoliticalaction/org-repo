@@ -41,22 +41,22 @@ export class CTAPostTrigger implements Trigger {
 
     if (msg.channel.type === ChannelType.GuildText) {
 
-      // check if message already has a thread
-      if (msg.hasThread) {
-
-        // is it active?
-        const thread = await this.activeCTAThread(msg)
-        if (thread != undefined) {
-
-          // update the chart in the thread
-          this.updateChart(msg, thread)
-        }
-
-        return
-      }
-
       // check if message created in last 2 weeks
       if (msg.createdTimestamp >= d.getDate() - 14) {
+
+        // check if message already has a thread
+        if (msg.hasThread) {
+
+          // is it active?
+          const thread = await this.activeCTAThread(msg)
+          if (thread != undefined) {
+
+            // update the chart in the thread
+            this.updateChart(msg, thread)
+          }
+
+          return
+        }
 
         // create thread and start collector
         const thread = await this.createCTAThread(msg)
