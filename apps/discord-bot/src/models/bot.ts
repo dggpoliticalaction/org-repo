@@ -34,8 +34,7 @@ const Config = require('../../config/config.json')
 const Debug = require('../../config/debug.json')
 const Logs = require('../../lang/logs.json')
 const ctaChannelName = "call-to-action";
-const guildName = "TexasMomtears's server";
-// const guildName = "DGG Political Action"
+const guildName = "DGG Political Action"
 
 export class Bot {
   private ready = false
