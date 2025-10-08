@@ -129,6 +129,9 @@
       },
       "pragPapers": {
         "title": "{{REF:links.pragPapersEmbed}}"
+      },
+      "census": {
+        "title": "{{REF:links.census}}"
       }
     },
     "validationEmbeds": {
@@ -198,7 +201,8 @@
       "info": "info",
       "test": "test",
       "rules": "rules",
-      "pragPapers": "prag-papers"
+      "pragPapers": "prag-papers",
+      "census": "census"
     },
     "userCommands": {
       "viewDateJoined": "View Date Joined"
@@ -217,7 +221,8 @@
       "info": "View bot info.",
       "test": "Run the test command.",
       "rules": "List the rules, or a specific one.",
-      "pragPapers": "Gives a link to the Pragmatic Papers website."
+      "pragPapers": "Gives a link to the Pragmatic Papers website.",
+      "census": "Gives a link to the Census form."
     },
     "argDescs": {
       "devCommand": "Command.",
@@ -317,7 +322,8 @@
       "templateEmbed": "[Discord Bot TypeScript Template]({{COM:links.template}})",
       "termsEmbed": "[View Terms of Service]({{COM:links.terms}})",
       "voteEmbed": "[Vote for {{COM:bot.name}}!]({{COM:links.vote}})",
-      "pragPapersEmbed": "[Read the Pragmatic Papers here: ]({{COM:links.pragPapers}})"
+      "pragPapersEmbed": "[Read the Pragmatic Papers here: ]({{COM:links.pragPapers}})",
+      "censusEmbed": "[Fill out the Census here: ]({{COM:links.census}})"
     }
   }
 }
