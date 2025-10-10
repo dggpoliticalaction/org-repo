@@ -3,11 +3,15 @@
 import { fetchRedditEmbed } from "@/utilities/fetchRedditEmbed"
 import { useEffect, useState } from "react"
 
+let nextId = 0
+let redditScriptLoaded = false
+
 export const RedditEmbed: React.FC<{
   url?: string
 }> = (props) => {
 
   const [content, setContent] = useState<string>('')
+  const [id] = useState<number>(() => nextId++)
 
   useEffect(() => {
     if (!props.url) return
@@ -18,12 +22,25 @@ export const RedditEmbed: React.FC<{
           setContent('Reddit post could not be loaded.')
         } else {
           setContent(res.html)
-          // have to manually load the script because the next/script will only run once
-          setTimeout(() => {
-            const script = document.createElement('script')
-            script.src = "https://embed.reddit.com/widgets.js"
-            document.body.appendChild(script)
-          }, 50)
+
+          if (!redditScriptLoaded) {
+            // Every 50ms, check if another instance has spawned (id + 1 !== nextId)
+            // If not, load the script
+            let runs = 0
+            const timeoutFunc = () => {
+              if (runs < 3) {
+                runs++
+                setTimeout(timeoutFunc, 50)
+              }
+              setTimeout(() => {
+                redditScriptLoaded = true
+                const script = document.createElement('script')
+                script.src = "https://embed.reddit.com/widgets.js"
+                document.body.appendChild(script)
+              }, 50)
+            }
+            setTimeout(timeoutFunc, 50)
+          }
         }
       })
   }, [props.url])
