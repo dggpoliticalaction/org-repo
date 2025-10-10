@@ -3,7 +3,6 @@
 import { fetchRedditEmbed } from "@/utilities/fetchRedditEmbed"
 import { useEffect, useState } from "react"
 
-let nextId = 0
 let redditScriptLoaded = false
 
 export const RedditEmbed: React.FC<{
@@ -11,7 +10,6 @@ export const RedditEmbed: React.FC<{
 }> = (props) => {
 
   const [content, setContent] = useState<string>('')
-  const [id] = useState<number>(() => nextId++)
 
   useEffect(() => {
     if (!props.url) return
