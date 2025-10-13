@@ -42,6 +42,7 @@ import { type Article } from '@/payload-types'
 import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
 import { SquiggleRule } from '@/blocks/SquiggleRule/config'
 import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
+import { RedditEmbed } from '@/blocks/RedditEmbed/config'
 export const Articles: CollectionConfig = {
   slug: 'articles',
   access: {
@@ -103,7 +104,8 @@ export const Articles: CollectionConfig = {
                         MediaBlock,
                         DisplayMathBlock,
                         SquiggleRule,
-                        TwitterEmbed
+                        TwitterEmbed,
+                        RedditEmbed
                       ],
                       inlineBlocks: [InlineMathBlock],
                     }),
