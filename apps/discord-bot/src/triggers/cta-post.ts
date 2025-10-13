@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-import { ChannelType, type PublicThreadChannel, ThreadAutoArchiveDuration, type Message, MessageFlags } from "discord.js";
+import { ChannelType, type PublicThreadChannel, ThreadAutoArchiveDuration, type Message, MessageFlags, AttachmentBuilder } from "discord.js";
 import { type Trigger } from "./trigger";
 import { BarController, Colors, BarElement, CategoryScale, Chart, LinearScale, PieController, ArcElement, Legend, Title } from "chart.js";
 import { Canvas } from "canvas";
-import { writeFile } from "node:fs";
+import { Logger } from "../services/index.js";
 
 const channelName = "call-to-action";
 const regionRoles = [
@@ -15,6 +15,7 @@ const regionRoles = [
 const finishedEmoji = '✅'
 const oneHour = 3_600_000
 const d = new Date();
+const activeCollectors = new Map();
 
 export class CTAPostTrigger implements Trigger {
   requireGuild: boolean;
@@ -34,43 +35,48 @@ export class CTAPostTrigger implements Trigger {
   }
 
   public async execute(msg: Message): Promise<void> {
+    Logger.info(`execute() [START]: ${msg.id}`)
 
     if (msg === undefined) {
       return
     }
 
-    if (msg.channel.type === ChannelType.GuildText) {
+    if (msg.channel.type != ChannelType.GuildText) {
+      return
+    }
+    // check if message created in last month
+    if (msg.createdTimestamp >= d.getMonth() - 1) {
 
-      // check if message created in last month
-      if (msg.createdTimestamp >= d.getMonth() - 1) {
+      Logger.info("message <1 month old...")
+      // check if message already has a thread
+      if (msg.hasThread) {
 
-        // check if message already has a thread
-        if (msg.hasThread) {
+        Logger.info("message with thread...")
 
-          if (msg.thread?.archived) {
-            msg.thread.setArchived(false, "Updating chart...")
-          }
-          // is it active?
-          const thread = await this.activeCTAThread(msg)
-          if (thread != undefined) {
-
-            // update the chart in the thread
-            this.updateChart(msg, thread)
-          }
-
-          return
+        if (msg.thread?.archived) {
+          msg.thread.setArchived(false, "Updating chart...")
+        }
+        // is it active?
+        const thread = await this.activeCTAThread(msg)
+        if (thread != undefined) {
+          // update the chart in the thread
+          this.updateChart(msg, thread)
         }
 
-        // create thread and start collector
-        const thread = await this.createCTAThread(msg)
-        if (thread) {
-          this.startCTAReactionCollector(msg, thread)
-        }
+        return
+      }
+
+      // create thread and start collector
+      const thread = await this.createCTAThread(msg)
+      if (thread) {
+        this.startCTAReactionCollector(msg, thread)
       }
     }
   }
 
   private async getFinishedReactions(msg: Message): Promise<object> {
+    Logger.info(`getFinishedReactions() [START]: ${msg.id}`)
+
     const finishedReactions = msg.reactions.cache.filter(reaction => finishedEmoji === reaction.emoji.name);
     const roleReactions: { [region: string]: string[] } = {};
 
@@ -91,7 +97,7 @@ export class CTAPostTrigger implements Trigger {
           }
           if (!roleReactions[memberRegionRole]?.includes(user.id)) {
             roleReactions[memberRegionRole]?.push(user.id);
-            console.log(`Adding ${role?.first()?.name} member, ${user.displayName}`);
+            Logger.info(`Adding ${role?.first()?.name} member, ${user.displayName}`);
           }
         }
       });
@@ -100,97 +106,105 @@ export class CTAPostTrigger implements Trigger {
   }
 
   private async activeCTAThread(msg: Message): Promise<PublicThreadChannel | undefined> {
+    Logger.info(`activeCTAThread() [START]: ${msg.id}`)
     if (msg.hasThread && msg.thread?.type === ChannelType.PublicThread && !msg.thread?.archived) {
       return msg.thread;
     }
   }
 
   private async createCTAThread(msg: Message): Promise<PublicThreadChannel | undefined> {
+    Logger.info(`createCTAThread() [START]: ${msg.id}`)
 
-    if (msg.channel.type === ChannelType.GuildText) {
-      const thread = msg.startThread({
-        // set as the title of the message
-
-        name: 'CTA Completion by Region',
-        autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
-        reason: 'Tracking CTA participation.',
-      });
-
-      const threadChannel = await thread;
-      threadChannel.send({
-        content: `Mark your completion of the CTA by reacting with ${finishedEmoji}.\n\n A chart will be posted in an hour, and updated every hour until the thread is archived, showing the number of completions per region.`,
-        flags: [MessageFlags.SuppressNotifications]
-      });
-      msg.react(finishedEmoji)
-
-      return thread
+    if (msg.channel.type != ChannelType.GuildText) {
+      Logger.warn(`createCTAThread(): message type ${msg.channel.type} is not GuildText.`)
+      return undefined
     }
 
-    return undefined
+    const thread = msg.startThread({
+      // set as the title of the message
+
+      name: 'CTA Completion by Region',
+      autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
+      reason: 'Tracking CTA participation.',
+    });
+
+    const threadChannel = await thread;
+    threadChannel.send({
+      content: `Mark your completion of the CTA by reacting with ${finishedEmoji}.\n\n A chart will be posted in an hour, and updated every hour until the thread is archived, showing the number of completions per region.`,
+      flags: [MessageFlags.SuppressNotifications]
+    });
+    msg.react(finishedEmoji)
+
+    return thread
   }
 
   // start a reaction collector on the given message
   private async startCTAReactionCollector(msg: Message, thread: PublicThreadChannel): Promise<void> {
+    Logger.info(`startCTAReactionCollector() [START] ${msg.id}`)
+
     const filter = (reaction, user) => reaction.emoji.name === finishedEmoji && user.id != msg.client.user.id
     const collector = msg.createReactionCollector({ filter, time: oneHour });
-    const roleReactions = await this.getFinishedReactions(msg)
+    activeCollectors.set(msg.id, collector);
+
+    const roleReactions = await this.getFinishedReactions(msg);
 
     collector.on('collect', async (reaction, user) => {
       const member = msg.guild?.members.fetch(user.id)
-      if (member != undefined) {
 
-        console.log(`Got ${reaction.emoji.name} from ${(await member).displayName}`)
+      if (member === undefined) return
 
-        const memberRoles = (await member).roles.cache;
-        const role = memberRoles.filter(r => regionRoles.includes(r.name));
-        const memberRegionRole = role.first()?.name;
+      Logger.info(`Got ${reaction.emoji.name} from ${(await member).displayName}`)
 
-        if (memberRegionRole != undefined) {
-          if (!roleReactions[memberRegionRole]) {
-            roleReactions[memberRegionRole] = [];
-          }
-          if (!roleReactions[memberRegionRole]?.includes(user.id)) {
-            roleReactions[memberRegionRole]?.push(user.id);
-            console.log(`Adding ${role.first()?.name} member, ${user.displayName}`);
-          }
+      const memberRoles = (await member).roles.cache;
+      const role = memberRoles.filter(r => regionRoles.includes(r.name));
+      const memberRegionRole = role.first()?.name;
+
+      if (memberRegionRole != undefined) {
+        if (!roleReactions[memberRegionRole]) {
+          roleReactions[memberRegionRole] = [];
         }
-
-        this.sendChartToThread(msg, thread, roleReactions);
+        if (!roleReactions[memberRegionRole]?.includes(user.id)) {
+          roleReactions[memberRegionRole]?.push(user.id);
+          Logger.info(`Adding ${role.first()?.name} member, ${user.displayName}`);
+        }
       }
+
+      this.sendChartToThread(msg, thread, roleReactions);
     });
 
     collector.on('end', collected => {
-      console.log(`Collected ${collected.size} reactions.`);
+      Logger.info(`Collected ${collected.size} reactions.`);
+      activeCollectors.delete(msg.id)
       this.sendChartToThread(msg, thread, roleReactions);
+      this.startCTAReactionCollector(msg, thread)
     });
   }
 
   private async deleteLastChart(tc: PublicThreadChannel): Promise<void> {
-    const threadMessages = await tc.messages.fetch({ limit: 1 });
-    const latest = threadMessages.first();
-    if (latest && latest.attachments.size > 0) {
-      await latest.delete();
-    }
+    const threadMessages = await tc.messages.fetch({ limit: 100 });
+    const botId = tc.client.user.id
+    const botMsgs = threadMessages.filter(msg => msg.author.id === botId);
+
+    botMsgs.forEach(msg => {
+      if (msg.attachments.size === 0) {
+        return
+      }
+      msg.delete();
+    })
   }
 
   private async sendChartToThread(msg: Message, thread: PublicThreadChannel, roleReactions: object): Promise<void> {
-    const pngBuffer = this.createChart(roleReactions).toBuffer('image/png');
+    const pngStream = this.createChart(roleReactions).createPNGStream();
+    const attachmentBuilder = new AttachmentBuilder(pngStream);
 
-    writeFile('./misc/tmp/reaction_summary.png', pngBuffer, (err) => {
-      if (err) throw err;
-    });
-
-    (async () => {
-      const threadChannel = await thread;
-      if (!threadChannel.archived) {
-        await this.deleteLastChart(threadChannel);
-        await threadChannel.send({
-          files: ["./misc/tmp/reaction_summary.png"],
-          flags: [MessageFlags.SuppressNotifications]
-        });
-        this.startCTAReactionCollector(msg, thread);
-      }
-    })();
+    const threadChannel = thread;
+    if (!threadChannel.archived) {
+      await this.deleteLastChart(threadChannel);
+      await threadChannel.send({
+        files: [attachmentBuilder.attachment],
+        flags: [MessageFlags.SuppressNotifications]
+      });
+    }
   }
 
   private async updateChart(msg: Message<boolean>, thread: PublicThreadChannel<boolean>) {
@@ -219,7 +233,7 @@ export class CTAPostTrigger implements Trigger {
 
     const plugin = {
       id: 'customCanvasBackgroundColor',
-      beforeDraw: (chart, args, options) => {
+      beforeDraw: (chart, options) => {
         const { ctx } = chart;
         ctx.save();
         ctx.globalCompositeOperation = 'destination-over';

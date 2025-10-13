@@ -34,7 +34,8 @@ const Config = require('../../config/config.json')
 const Debug = require('../../config/debug.json')
 const Logs = require('../../lang/logs.json')
 const ctaChannelName = "call-to-action";
-const guildName = "DGG Political Action"
+// const guildName = "DGG Political Action"
+const guildName = "TexasMomtears's server"
 
 export class Bot {
   private ready = false
@@ -100,7 +101,6 @@ export class Bot {
 
     if (ctaChannel?.type === ChannelType.GuildText) {
       // eslint-disable-next-line no-console
-      console.log("bot started... checking for cta message...");
       const ctaPostTrigger = new CTAPostTrigger();
 
       ctaChannel.messages.fetch().then(msgs => {
