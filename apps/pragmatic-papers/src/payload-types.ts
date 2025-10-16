@@ -1855,6 +1855,16 @@ export interface YouTubeEmbedBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RedditEmbedBlock".
+ */
+export interface RedditEmbedBlock {
+  url: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'redditEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "InlineMathBlock".
  */
 export interface InlineMathBlock {
