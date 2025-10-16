@@ -21,6 +21,8 @@ import type {
   MediaBlock as MediaBlockProps,
   TwitterEmbedBlock as TwitterEmbedBlockProps,
   RedditEmbedBlock as RedditEmbedBlockProps,
+  FootnotesBlock as FootnotesBlockProps,
+  FootnoteSelect as FootnoteSelectProps,
 } from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
@@ -28,19 +30,22 @@ import { cn } from '@/utilities/ui'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import { TwitterEmbedBlock } from '@/blocks/TwitterEmbed/Component'
 import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
+import { FootnotesBlock } from '@/blocks/Footnotes/Component'
+import { FootnoteLink } from '@/blocks/Footnotes/FootnoteLink'
 
 type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-    | CTABlockProps
-    | MediaBlockProps
-    | BannerBlockProps
-    | CodeBlockProps
-    | MathBlockProps
-    | SquiggleRuleBlockProps
-    | TwitterEmbedBlockProps
-    | RedditEmbedBlockProps
-  >
+      | CTABlockProps
+      | MediaBlockProps
+      | BannerBlockProps
+      | CodeBlockProps
+      | MathBlockProps
+      | SquiggleRuleBlockProps
+      | TwitterEmbedBlockProps
+      | RedditEmbedBlockProps
+      | FootnotesBlockProps
+    >
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
@@ -74,10 +79,16 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
     twitterEmbed: ({ node }) => <TwitterEmbedBlock {...node.fields} />,
     redditEmbed: ({ node }) => <RedditEmbedBlock {...node.fields} />,
+    footnoteBlock: ({ node }: { node: SerializedBlockNode<FootnotesBlockProps> }) => (
+      <FootnotesBlock {...node.fields} />
+    ),
   },
   inlineBlocks: {
     inlineMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
       <MathBlock {...node.fields} />
+    ),
+    footnoteLink: ({ node }: { node: SerializedBlockNode<FootnoteSelectProps> }) => (
+      <FootnoteLink {...node.fields} />
     ),
   },
 })

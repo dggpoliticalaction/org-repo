@@ -43,6 +43,7 @@ import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
 import { SquiggleRule } from '@/blocks/SquiggleRule/config'
 import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
 import { RedditEmbed } from '@/blocks/RedditEmbed/config'
+import { Footnotes, FootnoteSelectBlock } from '@/blocks/Footnotes/config'
 export const Articles: CollectionConfig = {
   slug: 'articles',
   access: {
@@ -105,9 +106,10 @@ export const Articles: CollectionConfig = {
                         DisplayMathBlock,
                         SquiggleRule,
                         TwitterEmbed,
-                        RedditEmbed
+                        RedditEmbed,
+                        Footnotes,
                       ],
-                      inlineBlocks: [InlineMathBlock],
+                      inlineBlocks: [InlineMathBlock, FootnoteSelectBlock],
                     }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),

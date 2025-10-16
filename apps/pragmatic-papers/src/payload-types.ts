@@ -1855,6 +1855,35 @@ export interface RedditEmbedBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FootnotesBlock".
+ */
+export interface FootnotesBlock {
+  footnotes?:
+    | {
+        text?: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'footnoteBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "InlineMathBlock".
  */
 export interface InlineMathBlock {
@@ -1865,6 +1894,16 @@ export interface InlineMathBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'inlineMathBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FootnoteSelect".
+ */
+export interface FootnoteSelect {
+  footnoteId?: '' | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'footnoteLink';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
