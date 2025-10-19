@@ -1,93 +1,113 @@
 import type { Metadata } from 'next'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
 import React from 'react'
 import Link from 'next/link'
-import { Media } from '@/components/Media'
+import { getPlaceholderPosts } from '@/utilities/placeholderPosts'
+import { colors } from '@/styles/colors'
 
 export default async function HomePage() {
-  const payload = await getPayload({ config: configPromise })
-  
-  // Fetch the header global to get the logo
-  const header = await payload.findGlobal({
-    slug: 'header',
-  })
-  
-  // Fetch the 10 most recent published posts
-  const posts = await payload.find({
-    collection: 'posts',
-    limit: 10,
-    sort: '-createdAt',
-    where: {
-      _status: {
-        equals: 'published',
-      },
-    },
-  })
+  // Use placeholder posts for now - easy to swap out later
+  const posts = getPlaceholderPosts()
+
+  // Helper function to get card background color based on index
+  const getCardColor = (index: number) => {
+    const colorPattern = [colors.brand.red, colors.brand.white, colors.brand.blue]
+    return colorPattern[index % 3]
+  }
+
+  // Helper function to get text color based on background
+  const getTextColor = (index: number) => {
+    const colorIndex = index % 3
+    return colorIndex === 1 ? 'text-black' : 'text-white' // White bg gets black text
+  }
 
   return (
-    <div className="pt-16 pb-24">
-      {/* Hero Section with Logo and Org Name */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex flex-col items-center text-center space-y-4">
-          {header.logo && typeof header.logo !== 'string' && (
-            <div className="w-48 h-auto">
-              <Media resource={header.logo} />
-            </div>
-          )}
-          <h1 className="text-4xl font-bold">DGG Political Action</h1>
-        </div>
-      </section>
-
-      {/* Mission Statement */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
-          <p className="text-lg leading-relaxed">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor 
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute 
-            irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla 
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia 
-            deserunt mollit anim id est laborum.
+    <div className="min-h-screen">
+      {/* Hero Section with Mission Statement */}
+      <section 
+        className="py-24 px-4"
+        style={{ backgroundColor: colors.brand.blue }}
+      >
+        <div className="container mx-auto max-w-4xl text-center">
+          <h1 
+            className="text-5xl md:text-7xl font-bold mb-8 tracking-wider"
+            style={{ 
+              fontFamily: 'var(--font-departure-mono), monospace',
+              color: colors.brand.white 
+            }}
+          >
+            Our Mission Statement
+          </h1>
+          <p 
+            className="text-lg md:text-xl leading-relaxed"
+            style={{ 
+              fontFamily: 'var(--font-apple-ny), Georgia, serif',
+              color: colors.brand.white 
+            }}
+          >
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis at mauris 
+            non velit semper malesuada sed vel nunc. Cras vel lorem non neque 
+            dapibus porta.
           </p>
         </div>
       </section>
 
-      {/* Latest News/Events/Highlights */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8">Latest Highlights</h2>
-          
-          {posts.docs && posts.docs.length > 0 ? (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {posts.docs.map((post) => (
-                <article key={post.id} className="border rounded-lg p-6 hover:shadow-lg transition-shadow">
-                  <h3 className="text-xl font-semibold mb-2">
-                    <Link href={`/posts/${post.slug}`} className="hover:underline">
-                      {post.title}
-                    </Link>
-                  </h3>
-                  
-                  {post.meta?.description && (
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      {post.meta.description}
+      {/* Latest News Banner */}
+      <section className="relative py-8 overflow-hidden" style={{ backgroundColor: colors.brand.red }}>
+        {/* Left chevron */}
+        <div 
+          className="absolute left-0 top-0 bottom-0 w-24"
+          style={{
+            backgroundColor: colors.brand.red,
+            clipPath: 'polygon(0 0, 100% 50%, 0 100%)',
+          }}
+        />
+        
+        {/* Right chevron */}
+        <div 
+          className="absolute right-0 top-0 bottom-0 w-24"
+          style={{
+            backgroundColor: colors.brand.red,
+            clipPath: 'polygon(100% 0, 0 50%, 100% 100%)',
+          }}
+        />
+
+        <h2 
+          className="text-4xl md:text-5xl font-bold text-center tracking-wider"
+          style={{ 
+            fontFamily: 'var(--font-departure-mono), monospace',
+            color: colors.brand.white 
+          }}
+        >
+          Latest News and Events
+        </h2>
+      </section>
+
+      {/* Posts Grid */}
+      <section className="py-16 px-4">
+        <div className="container mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {posts.map((post, index) => {
+              const bgColor = getCardColor(index)
+              const textColorClass = getTextColor(index)
+              
+              return (
+                <article 
+                  key={post.id}
+                  className={`p-8 min-h-[250px] flex items-center justify-center border-4 border-black ${textColorClass}`}
+                  style={{ backgroundColor: bgColor }}
+                >
+                  <Link href={`/posts/${post.slug}`} className="hover:underline">
+                    <p 
+                      className="text-lg font-semibold"
+                      style={{ fontFamily: 'var(--font-apple-ny), Georgia, serif' }}
+                    >
+                      {post.excerpt}
                     </p>
-                  )}
-                  
-                  <div className="text-sm text-gray-500">
-                    {new Date(post.createdAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </div>
+                  </Link>
                 </article>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-600">No posts available yet.</p>
-          )}
+              )
+            })}
+          </div>
         </div>
       </section>
     </div>
