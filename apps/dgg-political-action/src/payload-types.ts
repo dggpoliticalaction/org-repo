@@ -1542,6 +1542,18 @@ export interface Header {
    * Upload a logo image to display in the header
    */
   logo?: (number | null) | Media;
+  /**
+   * Organization name to display in the header
+   */
+  organizationName?: string | null;
+  /**
+   * Enable sticky header that stays at the top when scrolling
+   */
+  stickyHeader?: boolean | null;
+  /**
+   * Discord invite link (leave empty to link to homepage)
+   */
+  discordLink?: string | null;
   navItems?:
     | {
         link: {
@@ -1600,6 +1612,9 @@ export interface Footer {
  */
 export interface HeaderSelect<T extends boolean = true> {
   logo?: T;
+  organizationName?: T;
+  stickyHeader?: T;
+  discordLink?: T;
   navItems?:
     | T
     | {
