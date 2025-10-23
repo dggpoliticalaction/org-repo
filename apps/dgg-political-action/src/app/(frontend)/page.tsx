@@ -73,7 +73,7 @@ export default async function HomePage() {
       </section>
 
       {/* Latest News Banner */}
-      <section className="relative py-8 overflow-hidden" style={{ backgroundColor: colors.brand.red }}>
+      <section className="relative py-8 overflow-hidden" style={{ backgroundColor: colors.brand.red }}>              
         {/* Left chevron */}
         <div 
           className="absolute left-0 top-0 bottom-0 w-24"
@@ -111,6 +111,9 @@ export default async function HomePage() {
               {posts.map((post, index) => {
                 const bgColor = getCardColor(index)
                 const textColorClass = getTextColor(index)
+
+                //hacky, relies on ordering of getCardColor, works for now
+                const isWhiteCard = index % 3 === 1 
                 
                 // Get post excerpt from meta description or truncate content
                 const excerpt = post.meta?.description || 
@@ -119,7 +122,7 @@ export default async function HomePage() {
                 return (
                   <article 
                     key={post.id}
-                    className={`p-8 min-h-[250px] flex items-center justify-center border-4 border-black ${textColorClass}`}
+                    className={`p-8 min-h-[250px] flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${textColorClass} ${isWhiteCard ? 'border border-black' : ''}`}
                     style={{ backgroundColor: bgColor }}
                   >
                     <Link href={`/posts/${post.slug}`} className="hover:underline">
