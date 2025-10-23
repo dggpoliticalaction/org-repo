@@ -1,6 +1,6 @@
 import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
-import { MediaCollageBlock } from '@/blocks/MediaCollageBlock/Component'
+import { MediaCollageBlock } from '@/blocks/MediaCollageBlock/component'
 import type {
   DefaultNodeTypes,
   SerializedBlockNode,
