@@ -1,12 +1,35 @@
 import type { Metadata } from 'next'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 import React from 'react'
 import Link from 'next/link'
-import { getPlaceholderPosts } from '@/utilities/placeholderPosts'
 import { colors } from '@/styles/colors'
 
 export default async function HomePage() {
-  // Use placeholder posts for now - easy to swap out later
-  const posts = getPlaceholderPosts()
+  const payload = await getPayload({ config: configPromise })
+  
+  // Fetch homepage settings
+  const homepageSettings = await payload.findGlobal({
+    slug: 'homepage-settings',
+  })
+
+  const numberOfPosts = homepageSettings?.numberOfPosts || 12
+  const missionStatement = homepageSettings?.missionStatement || 
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis at mauris non velit semper malesuada sed vel nunc. Cras vel lorem non neque dapibus porta.'
+
+  // Fetch real posts from the Posts collection
+  const postsResult = await payload.find({
+    collection: 'posts',
+    limit: numberOfPosts,
+    sort: '-createdAt',
+    where: {
+      _status: {
+        equals: 'published',
+      },
+    },
+  })
+
+  const posts = postsResult.docs
 
   // Helper function to get card background color based on index
   const getCardColor = (index: number) => {
@@ -38,15 +61,13 @@ export default async function HomePage() {
             Our Mission Statement
           </h1>
           <p 
-            className="text-lg md:text-xl leading-relaxed"
+            className="text-lg md:text-xl leading-relaxed whitespace-pre-wrap"
             style={{ 
               fontFamily: 'var(--font-apple-ny), Georgia, serif',
               color: colors.brand.white 
             }}
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis at mauris 
-            non velit semper malesuada sed vel nunc. Cras vel lorem non neque 
-            dapibus porta.
+            {missionStatement}
           </p>
         </div>
       </section>
@@ -85,29 +106,41 @@ export default async function HomePage() {
       {/* Posts Grid */}
       <section className="py-16 px-4">
         <div className="container mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {posts.map((post, index) => {
-              const bgColor = getCardColor(index)
-              const textColorClass = getTextColor(index)
-              
-              return (
-                <article 
-                  key={post.id}
-                  className={`p-8 min-h-[250px] flex items-center justify-center border-4 border-black ${textColorClass}`}
-                  style={{ backgroundColor: bgColor }}
-                >
-                  <Link href={`/posts/${post.slug}`} className="hover:underline">
-                    <p 
-                      className="text-lg font-semibold"
-                      style={{ fontFamily: 'var(--font-apple-ny), Georgia, serif' }}
-                    >
-                      {post.excerpt}
-                    </p>
-                  </Link>
-                </article>
-              )
-            })}
-          </div>
+          {posts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {posts.map((post, index) => {
+                const bgColor = getCardColor(index)
+                const textColorClass = getTextColor(index)
+                
+                // Get post excerpt from meta description or truncate content
+                const excerpt = post.meta?.description || 
+                  (typeof post.title === 'string' ? post.title : 'Read more...')
+                
+                return (
+                  <article 
+                    key={post.id}
+                    className={`p-8 min-h-[250px] flex items-center justify-center border-4 border-black ${textColorClass}`}
+                    style={{ backgroundColor: bgColor }}
+                  >
+                    <Link href={`/posts/${post.slug}`} className="hover:underline">
+                      <p 
+                        className="text-lg font-semibold"
+                        style={{ fontFamily: 'var(--font-apple-ny), Georgia, serif' }}
+                      >
+                        {excerpt}
+                      </p>
+                    </Link>
+                  </article>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-lg text-gray-600 dark:text-gray-400">
+                No posts available yet. Create some posts in the admin panel!
+              </p>
+            </div>
+          )}
         </div>
       </section>
     </div>
