@@ -23,7 +23,7 @@ export const ArticleHero: React.FC<{
           resource={heroImage}
         />
       )}
-      <div className="container z-10 relative pb-4 flex-col dark:text-white">
+      <div className="z-10 relative pb-4 flex-col dark:text-white">
         <h1 className="mb-6 text-4xl text-center font-bold">{title}</h1>
         {hasAuthors && (
           <div className="text-center text-lg">
@@ -35,7 +35,7 @@ export const ArticleHero: React.FC<{
             <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
           </div>
         )}
-        <Squiggle className="w-1/2 h-6 mx-auto" />
+        <Squiggle className="h-6 mx-auto max-w-xs" />
       </div>
     </div>
   )

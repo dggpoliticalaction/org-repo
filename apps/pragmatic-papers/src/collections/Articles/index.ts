@@ -1,6 +1,7 @@
 import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import {
+  AlignFeature,
   BlockquoteFeature,
   BlocksFeature,
   ChecklistFeature,
@@ -40,6 +41,10 @@ import { writer } from '@/access/writer'
 import { editorFieldLevel } from '@/access/editor'
 import { type Article } from '@/payload-types'
 import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
+import { SquiggleRule } from '@/blocks/SquiggleRule/config'
+import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
+import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
+import { RedditEmbed } from '@/blocks/RedditEmbed/config'
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
@@ -93,9 +98,20 @@ export const Articles: CollectionConfig = {
                 features: ({ rootFeatures }) => {
                   return [
                     ...rootFeatures,
+                    AlignFeature(),
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
                     BlocksFeature({
-                      blocks: [Banner, Code, MediaBlock, MediaCollageBlock, DisplayMathBlock],
+                      blocks: [
+                        Banner,
+                        Code,
+                        MediaBlock,
+                        DisplayMathBlock,
+                        SquiggleRule,
+                        TwitterEmbed,
+                        YouTubeEmbed,
+                        RedditEmbed,
+                        MediaCollageBlock
+                      ],
                       inlineBlocks: [InlineMathBlock],
                     }),
                     FixedToolbarFeature(),

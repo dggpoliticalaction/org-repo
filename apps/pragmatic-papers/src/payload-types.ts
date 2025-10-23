@@ -1836,6 +1836,49 @@ export interface DisplayMathBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SquiggleRuleBlock".
+ */
+export interface SquiggleRuleBlock {
+  variant: 'animated' | 'static';
+  size?: ('small' | 'medium' | 'large' | 'full') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'squiggleRule';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TwitterEmbedBlock".
+ */
+export interface TwitterEmbedBlock {
+  url: string;
+  hideMedia?: boolean | null;
+  hideThread?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'twitterEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "YouTubeEmbedBlock".
+ */
+export interface YouTubeEmbedBlock {
+  url: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'youtubeEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RedditEmbedBlock".
+ */
+export interface RedditEmbedBlock {
+  url: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'redditEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "InlineMathBlock".
  */
 export interface InlineMathBlock {
