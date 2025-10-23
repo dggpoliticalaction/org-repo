@@ -10,6 +10,7 @@ import {
   PragPapersCommand,
   RulesCommand,
   TestCommand,
+  CensusCommand,
 } from './commands/chat/index.js'
 import {
   ChatCommandMetadata,
@@ -70,6 +71,7 @@ async function start(): Promise<void> {
     new TestCommand(),
     new RulesCommand(),
     new PragPapersCommand(),
+    new CensusCommand(),
 
     // Message Context Commands
     new ViewDateSent(),
