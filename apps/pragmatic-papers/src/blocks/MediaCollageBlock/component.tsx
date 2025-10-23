@@ -32,9 +32,35 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
 
   if (layout === 'carousel') {
     const image = images[current]?.media
+    // Touch event handlers for swipe
+    let touchStartX = 0
+    let touchEndX = 0
+    const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+      const touch = e.changedTouches?.[0]
+      if (touch) {
+        touchStartX = touch.screenX
+      }
+    }
+    const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+      const touch = e.changedTouches?.[0]
+      if (touch) {
+        touchEndX = touch.screenX
+        if (touchEndX - touchStartX > 50) {
+          // Swipe right
+          setCurrent((c) => (c === 0 ? images.length - 1 : c - 1))
+        } else if (touchStartX - touchEndX > 50) {
+          // Swipe left
+          setCurrent((c) => (c === images.length - 1 ? 0 : c + 1))
+        }
+      }
+    }
     return (
       <figure className={figureClass}>
-        <div className="relative flex justify-center">
+        <div
+          className="relative flex justify-center"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <Media resource={image} imgClassName={imgClassName} />
           <button
             onClick={() => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1))}
