@@ -64,17 +64,45 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
           <Media resource={image} imgClassName={imgClassName} />
           <button
             onClick={() => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1))}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white dark:bg-black border border-border rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-primary/80 dark:hover:bg-primary/80 transition-colors z-10"
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white border border-border rounded-full w-8 h-8 flex items-center justify-center shadow z-10"
             aria-label="Previous image"
           >
-            &#8592;
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 22 22"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M13.5 16L8.5 11L13.5 6"
+                stroke="black"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
           <button
             onClick={() => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1))}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white dark:bg-black border border-border rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-primary/80 dark:hover:bg-primary/80 transition-colors z-10"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white border border-border rounded-full w-8 h-8 flex items-center justify-center shadow z-10"
             aria-label="Next image"
           >
-            &#8594;
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 22 22"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M8.5 6L13.5 11L8.5 16"
+                stroke="black"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
         </div>
         <div className="flex justify-center mt-2 gap-2">
