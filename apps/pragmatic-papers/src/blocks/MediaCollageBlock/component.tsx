@@ -61,7 +61,7 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <Media resource={image} imgClassName={imgClassName} />
+          <Media resource={image} imgClassName={imgClassName} enableModal />
           <button
             onClick={() => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1))}
             className="absolute left-2 top-1/2 -translate-y-1/2 bg-white border border-border rounded-full w-8 h-8 flex items-center justify-center shadow z-10"
@@ -136,7 +136,7 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
       <div className="grid grid-cols-2 gap-4">
         {images.map((img, idx) => (
           <div key={idx} className="flex flex-col items-center">
-            <Media resource={img.media} imgClassName={imgClassName} />
+            <Media resource={img.media} imgClassName={imgClassName} enableModal />
             {img.media?.caption && (
               <figcaption className={captionClassName}>
                 <RichText
