@@ -16,24 +16,23 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
     <nav className="flex gap-6 items-center">
       {navItems.map(({ link }, i) => {
         return (
-          <CMSLink 
-            key={i} 
-            {...link} 
+          <CMSLink
+            key={i}
+            {...link}
             appearance="link"
-            className="font-medium hover:opacity-70 transition-opacity"
-            style={{ fontFamily: 'var(--font-departure-mono), monospace' }}
+            className="font-medium hover:opacity-70 transition-opacity font-mono"
           />
         )
       })}
-      
+
       {/* Discord Button */}
-      <Link 
+      <Link
         href={discordLink}
         className="px-6 py-2 rounded font-medium hover:opacity-90 transition-opacity"
-        style={{ 
+        style={{
           backgroundColor: colors.brand.red,
           color: colors.brand.white,
-          fontFamily: 'var(--font-departure-mono), monospace'
+          fontFamily: 'var(--font-departure-mono), monospace',
         }}
       >
         Join the discord
