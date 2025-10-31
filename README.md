@@ -46,6 +46,7 @@ pnpm dev
 ### Run an application
 
 To run or develop a single application:
+
 - you can navigate to a specific application's directory and run as usual
   ```
   cd apps/pragmatic-papers

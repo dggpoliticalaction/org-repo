@@ -18,9 +18,9 @@ export function validateEnv(): void {
       throw new Error(`Missing required environment variable: ${envVar}`)
     }
   }
- 
+
   const snowflakePattern = /^\d{17,19}$/
-  const developerIds = process.env.DISCORD_BOT_DEVELOPER_IDS.split(',').map(id => id.trim())
+  const developerIds = process.env.DISCORD_BOT_DEVELOPER_IDS.split(',').map((id) => id.trim())
   if (developerIds.length === 0) {
     throw new Error('DISCORD_BOT_DEVELOPER_IDS must contain at least one ID')
   }
@@ -31,9 +31,8 @@ export function validateEnv(): void {
   }
 }
 
-
 validateEnv()
 
 export function getDeveloperIds(): string[] {
-  return process.env.DISCORD_BOT_DEVELOPER_IDS.split(',').map(id => id.trim())
-} 
+  return process.env.DISCORD_BOT_DEVELOPER_IDS.split(',').map((id) => id.trim())
+}

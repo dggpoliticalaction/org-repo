@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import {
+  AlignFeature,
   BlockquoteFeature,
   BlocksFeature,
   FixedToolbarFeature,
@@ -18,6 +19,7 @@ import { numberSlugField } from '@/fields/numberSlug'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { SquiggleRule } from '../../blocks/SquiggleRule/config'
 import { editor } from '@/access/editor'
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import {
@@ -31,6 +33,7 @@ import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { revalidateArticle, revalidateDelete } from './hooks/revalidateVolumes'
 import { checkArticles } from './hooks/checkArticles'
 import { pushToWebhooks } from './hooks/pushToWebhooks'
+import { setDefaultSeoTitle } from './hooks/seoTitle'
 
 export const Volumes: CollectionConfig = {
   slug: 'volumes',
@@ -92,8 +95,9 @@ export const Volumes: CollectionConfig = {
                 features: ({ rootFeatures }) => {
                   return [
                     ...rootFeatures,
+                    AlignFeature(),
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
+                    BlocksFeature({ blocks: [Banner, Code, MediaBlock, SquiggleRule] }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
@@ -176,6 +180,7 @@ export const Volumes: CollectionConfig = {
   hooks: {
     afterChange: [revalidateArticle, pushToWebhooks],
     afterDelete: [revalidateDelete],
+    beforeChange: [setDefaultSeoTitle],
   },
   versions: {
     drafts: {
