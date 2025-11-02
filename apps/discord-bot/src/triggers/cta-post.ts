@@ -16,6 +16,7 @@ const finishedEmoji = '✅'
 const oneHour = 3_600_000
 const d = new Date();
 const activeCollectors = new Map();
+const chanThreadsByMsg = new Map();
 
 export class CTAPostTrigger implements Trigger {
   requireGuild: boolean;
@@ -36,7 +37,6 @@ export class CTAPostTrigger implements Trigger {
 
   public async execute(msg: Message): Promise<void> {
     Logger.info(`execute() [START]: ${msg.id}`)
-
     if (msg === undefined) {
       return
     }
