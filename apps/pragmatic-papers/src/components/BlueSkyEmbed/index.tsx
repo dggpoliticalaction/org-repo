@@ -15,6 +15,7 @@ export const BlueSkyEmbed: React.FC<{
 
   useEffect(() => {
     if (!props.url) return
+    if (typeof document === 'undefined') return
 
     const theme = document.getElementsByTagName('html')[0]?.getAttribute('data-theme') ?? 'dark'
 

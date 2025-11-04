@@ -1,3 +1,4 @@
+import React from 'react'
 import { BlueSkyEmbed } from '@/components/BlueSkyEmbed'
 import type { BlueSkyEmbedBlock as BlueSkyEmbedBlockProps } from 'src/payload-types'
 
