@@ -23,7 +23,7 @@ interface BlueSkyEmbedData {
   version: string
 }
 
-const blueSkyCache = new NodeCache()
+const blueSkyCache = new NodeCache({ stdTTL: 3600 * 4, checkperiod: 600 })
 
 async function getBlueSkyPost(options: BlueSkyEmbedOptions): Promise<BlueSkyEmbedData> {
   const queryParams = new URLSearchParams({
@@ -57,7 +57,7 @@ export async function fetchBlueSkyEmbed(
       data = blueSkyCache.get(optsString)
     } else {
       data = await getBlueSkyPost(finalOptions)
-      blueSkyCache.set(optsString, data, 3600 * 4) // Cache for 4 hours
+      blueSkyCache.set(optsString, data)
     }
     return data as BlueSkyEmbedData
   } catch (exception) {
