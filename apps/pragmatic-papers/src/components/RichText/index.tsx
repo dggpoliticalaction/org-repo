@@ -20,6 +20,7 @@ import type {
   SquiggleRuleBlock as SquiggleRuleBlockProps,
   MediaBlock as MediaBlockProps,
   TwitterEmbedBlock as TwitterEmbedBlockProps,
+  YouTubeEmbedBlock as YouTubeEmbedBlockProps,
   RedditEmbedBlock as RedditEmbedBlockProps,
 } from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
@@ -27,6 +28,7 @@ import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { cn } from '@/utilities/ui'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import { TwitterEmbedBlock } from '@/blocks/TwitterEmbed/Component'
+import { YouTubeEmbedBlock } from '@/blocks/YouTubeEmbed/Component'
 import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
 
 type NodeTypes =
@@ -39,6 +41,7 @@ type NodeTypes =
     | MathBlockProps
     | SquiggleRuleBlockProps
     | TwitterEmbedBlockProps
+    | YouTubeEmbedBlockProps
     | RedditEmbedBlockProps
   >
 
@@ -73,6 +76,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     ),
     squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
     twitterEmbed: ({ node }) => <TwitterEmbedBlock {...node.fields} />,
+    youtubeEmbed: ({ node }) => <YouTubeEmbedBlock {...node.fields} />,
     redditEmbed: ({ node }) => <RedditEmbedBlock {...node.fields} />,
   },
   inlineBlocks: {
