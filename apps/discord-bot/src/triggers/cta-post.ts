@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { ChannelType, type PublicThreadChannel, ThreadAutoArchiveDuration, type Message, MessageFlags, AttachmentBuilder } from "discord.js";
+import { ChannelType, type PublicThreadChannel, ThreadAutoArchiveDuration, Message, MessageFlags, AttachmentBuilder, GuildBasedChannel } from "discord.js";
 import { type Trigger } from "./trigger";
 import { BarController, Colors, BarElement, CategoryScale, Chart, LinearScale, PieController, ArcElement, Legend, Title } from "chart.js";
 import { Canvas } from "canvas";
@@ -16,10 +16,12 @@ const finishedEmoji = '✅'
 const oneHour = 3_600_000
 const d = new Date();
 const activeCollectors = new Map();
-const chanThreadsByMsg = new Map();
+let chanThreadsByMsg = new Map();
 
 export class CTAPostTrigger implements Trigger {
   requireGuild: boolean;
+  chanThreadsByMsg = new Map();
+
   public triggered(msg: Message): boolean {
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const ctaChannel = msg.guild?.channels.cache.find(ctaChannel => ctaChannel?.name === channelName)
@@ -44,33 +46,25 @@ export class CTAPostTrigger implements Trigger {
     if (msg.channel.type != ChannelType.GuildText) {
       return
     }
-    // check if message created in last month
-    if (msg.createdTimestamp >= d.getMonth() - 1) {
 
-      Logger.info("message <1 month old...")
-      // check if message already has a thread
-      if (msg.hasThread) {
+    // check if message already has a thread
+    if (chanThreadsByMsg.has(msg.id)) {
+      Logger.info("message with thread...");
 
-        Logger.info("message with thread...")
+      const foundThread = chanThreadsByMsg.get(msg.id);
 
-        if (msg.thread?.archived) {
-          msg.thread.setArchived(false, "Updating chart...")
-        }
-        // is it active?
-        const thread = await this.activeCTAThread(msg)
-        if (thread != undefined) {
-          // update the chart in the thread
-          this.updateChart(msg, thread)
-        }
-
-        return
+      if (foundThread.archived) {
+        foundThread.setArchived(false, "Updating chart...");
       }
+      // update the chart in the thread
+      await this.updateChart(msg, foundThread)
+      return
+    }
 
-      // create thread and start collector
-      const thread = await this.createCTAThread(msg)
-      if (thread) {
-        this.startCTAReactionCollector(msg, thread)
-      }
+    // create thread and start collector
+    const thread = await this.createCTAThread(msg)
+    if (thread) {
+      await this.startCTAReactionCollector(msg, thread)
     }
   }
 
@@ -80,29 +74,49 @@ export class CTAPostTrigger implements Trigger {
     const finishedReactions = msg.reactions.cache.filter(reaction => finishedEmoji === reaction.emoji.name);
     const roleReactions: { [region: string]: string[] } = {};
 
-    finishedReactions.forEach(async (reaction) => {
+    for (const reaction of finishedReactions.values()) {
       const users = await reaction.users.fetch();
-      users.forEach(async (user) => {
+
+      for (const user of users.values()) {
         if (user.id === msg.client.user.id) {
-          return;
+          continue;
         }
-        const member = msg.guild?.members.fetch(user.id);
-        const memberRoles = (await member)?.roles.cache;
+        const member = await msg.guild?.members.fetch(user.id);
+        const memberRoles = member?.roles.cache;
         const role = memberRoles?.filter(r => regionRoles.includes(r.name));
         const memberRegionRole = role?.first()?.name;
 
-        if (memberRegionRole != undefined) {
-          if (!roleReactions[memberRegionRole]) {
-            roleReactions[memberRegionRole] = [];
-          }
-          if (!roleReactions[memberRegionRole]?.includes(user.id)) {
-            roleReactions[memberRegionRole]?.push(user.id);
-            Logger.info(`Adding ${role?.first()?.name} member, ${user.displayName}`);
-          }
+        if (memberRegionRole === undefined) {
+          continue;
         }
-      });
-    });
+
+        if (!roleReactions[memberRegionRole]) {
+          roleReactions[memberRegionRole] = [];
+        }
+        if (!roleReactions[memberRegionRole]?.includes(user.id)) {
+          roleReactions[memberRegionRole]?.push(user.id);
+          Logger.info(`Adding ${role?.first()?.name} member, ${user.displayName}`);
+        }
+      }
+    }
     return roleReactions;
+  }
+
+  public async getChannelThreads(chan: GuildBasedChannel | undefined): Promise<void> {
+    Logger.info(`chanThreadsByMsg BEFORE: ${chanThreadsByMsg.size}`);
+    if (chan === undefined) {
+      return
+    }
+
+    if (chan.type != ChannelType.GuildText) {
+      return
+    }
+
+    const activeThreads = await chan.threads.fetch();
+    const archivedThreads = await chan.threads.fetchArchived({ fetchAll: true });
+
+    chanThreadsByMsg = new Map([...activeThreads.threads.entries(), ...archivedThreads.threads.entries()]);
+    Logger.info(`chanThreadsByMsg AFTER: ${chanThreadsByMsg.size}`);
   }
 
   private async activeCTAThread(msg: Message): Promise<PublicThreadChannel | undefined> {
@@ -169,13 +183,13 @@ export class CTAPostTrigger implements Trigger {
         }
       }
 
-      this.sendChartToThread(msg, thread, roleReactions);
+      this.sendChartToThread(thread, roleReactions);
     });
 
     collector.on('end', collected => {
       Logger.info(`Collected ${collected.size} reactions.`);
       activeCollectors.delete(msg.id)
-      this.sendChartToThread(msg, thread, roleReactions);
+      this.sendChartToThread(thread, roleReactions);
       this.startCTAReactionCollector(msg, thread)
     });
   }
@@ -193,7 +207,7 @@ export class CTAPostTrigger implements Trigger {
     })
   }
 
-  private async sendChartToThread(msg: Message, thread: PublicThreadChannel, roleReactions: object): Promise<void> {
+  private async sendChartToThread(thread: PublicThreadChannel, roleReactions: object): Promise<void> {
     const pngStream = this.createChart(roleReactions).createPNGStream();
     const attachmentBuilder = new AttachmentBuilder(pngStream);
 
@@ -207,9 +221,8 @@ export class CTAPostTrigger implements Trigger {
     }
   }
 
-  private async updateChart(msg: Message<boolean>, thread: PublicThreadChannel<boolean>) {
-    const roleReactions = await this.getFinishedReactions(msg);
-    this.sendChartToThread(msg, thread, roleReactions);
+  private async updateChart(msg: Message<boolean>, thread: PublicThreadChannel<boolean>): Promise<void> {
+    await this.sendChartToThread(thread, (await this.getFinishedReactions(msg)));
   }
 
   private createChart(rr: object): Canvas {
