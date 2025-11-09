@@ -101,7 +101,6 @@ export class Bot {
     const d = new Date();
 
     if (ctaChannel?.type === ChannelType.GuildText) {
-      // eslint-disable-next-line no-console
       const ctaPostTrigger = new CTAPostTrigger();
       await ctaPostTrigger.getChannelThreads(ctaChannel);
 

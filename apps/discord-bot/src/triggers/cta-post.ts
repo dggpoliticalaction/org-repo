@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-import { ChannelType, type PublicThreadChannel, ThreadAutoArchiveDuration, Message, MessageFlags, AttachmentBuilder, GuildBasedChannel } from "discord.js";
+import { ChannelType, type PublicThreadChannel, ThreadAutoArchiveDuration, MessageFlags, AttachmentBuilder, type Message, type GuildBasedChannel } from "discord.js";
 import { type Trigger } from "./trigger";
 import { BarController, Colors, BarElement, CategoryScale, Chart, LinearScale, PieController, ArcElement, Legend, Title } from "chart.js";
 import { Canvas } from "canvas";
@@ -14,7 +13,6 @@ const regionRoles = [
 ]
 const finishedEmoji = '✅'
 const oneHour = 3_600_000
-const d = new Date();
 const activeCollectors = new Map();
 let chanThreadsByMsg = new Map();
 
