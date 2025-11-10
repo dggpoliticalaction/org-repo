@@ -9,7 +9,8 @@ const regionRoles = [
   'Midwest Squad',
   'South Squad',
   'Northeast Squad',
-  'West Coast Squad'
+  'West Coast Squad',
+  'International Squad'
 ]
 const finishedEmoji = '✅'
 const oneHour = 3_600_000
@@ -41,7 +42,7 @@ export class CTAPostTrigger implements Trigger {
       return
     }
 
-    if (msg.channel.type != ChannelType.GuildText) {
+    if (msg.channel.type != ChannelType.GuildAnnouncement) {
       return
     }
 
@@ -106,7 +107,7 @@ export class CTAPostTrigger implements Trigger {
       return
     }
 
-    if (chan.type != ChannelType.GuildText) {
+    if (chan.type != ChannelType.GuildAnnouncement) {
       return
     }
 
@@ -127,8 +128,8 @@ export class CTAPostTrigger implements Trigger {
   private async createCTAThread(msg: Message): Promise<PublicThreadChannel | undefined> {
     Logger.info(`createCTAThread() [START]: ${msg.id}`)
 
-    if (msg.channel.type != ChannelType.GuildText) {
-      Logger.warn(`createCTAThread(): message type ${msg.channel.type} is not GuildText.`)
+    if (msg.channel.type != ChannelType.GuildAnnouncement) {
+      Logger.warn(`createCTAThread(): message type ${msg.channel.type} is not GuildAnnouncement.`)
       return undefined
     }
 
