@@ -34,8 +34,8 @@ const Config = require('../../config/config.json')
 const Debug = require('../../config/debug.json')
 const Logs = require('../../lang/logs.json')
 const ctaChannelName = "call-to-action";
-// const guildName = "DGG Political Action"
-const guildName = "TexasMomtears's server"
+const guildName = "DGG Political Action"
+// const guildName = "TexasMomtears's server"
 
 export class Bot {
   private ready = false
@@ -100,7 +100,7 @@ export class Bot {
     const ctaChannel = this.client.guilds.cache.find(dggPol => dggPol.name === guildName)?.channels.cache.find(ctaChan => ctaChan?.name === ctaChannelName);
     const d = new Date();
 
-    if (ctaChannel?.type === ChannelType.GuildText) {
+    if (ctaChannel?.type === ChannelType.GuildAnnouncement) {
       const ctaPostTrigger = new CTAPostTrigger();
       await ctaPostTrigger.getChannelThreads(ctaChannel);
 
