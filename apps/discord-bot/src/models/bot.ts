@@ -35,7 +35,6 @@ const Debug = require('../../config/debug.json')
 const Logs = require('../../lang/logs.json')
 const ctaChannelName = "call-to-action";
 const guildName = "DGG Political Action"
-// const guildName = "TexasMomtears's server"
 
 export class Bot {
   private ready = false
@@ -104,7 +103,7 @@ export class Bot {
       const ctaPostTrigger = new CTAPostTrigger();
       await ctaPostTrigger.getChannelThreads(ctaChannel);
 
-      // fetch oll CTA Channel messages
+      // fetch all CTA Channel messages
       // for each that is less than a month old
       // execute the ctaPostTrigger
       ctaChannel.messages.fetch().then(msgs => {
