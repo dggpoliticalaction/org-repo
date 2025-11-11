@@ -37,7 +37,7 @@ export class CTAPostTrigger implements Trigger {
   }
 
   public async execute(msg: Message): Promise<void> {
-    Logger.info(`execute() [START]: ${msg.id}`)
+    Logger.info(`execute() [START]: ${msg.id} `)
     if (msg === undefined) {
       return
     }
