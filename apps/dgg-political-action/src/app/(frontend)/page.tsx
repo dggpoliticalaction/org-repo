@@ -5,7 +5,7 @@ import React from 'react'
 import Link from 'next/link'
 import { colors } from '@/styles/colors'
 
-export default async function HomePage() {
+export default async function HomePage(): Promise<React.JSX.Element> {
   const payload = await getPayload({ config: configPromise })
   
   // Fetch homepage settings

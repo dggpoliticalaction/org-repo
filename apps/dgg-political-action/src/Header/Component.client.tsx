@@ -8,7 +8,6 @@ import type { Header } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 import { HeaderNav } from './Nav'
-import { colors } from '@/styles/colors'
 
 interface HeaderClientProps {
   data: Header
