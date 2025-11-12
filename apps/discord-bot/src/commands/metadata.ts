@@ -91,6 +91,14 @@ export const ChatCommandMetadata: {
     description_localizations: Lang.getRefLocalizationMap('commandDescs.pragPapers'),
     default_member_permissions: undefined,
   },
+  CENSUS: {
+    type: ApplicationCommandType.ChatInput,
+    name: Lang.getRef('chatCommands.census', Language.Default),
+    name_localizations: Lang.getRefLocalizationMap('chatCommands.census'),
+    description: Lang.getRef('commandDescs.census', Language.Default),
+    description_localizations: Lang.getRefLocalizationMap('commandDescs.census'),
+    default_member_permissions: undefined,
+  },
 }
 
 export const MessageCommandMetadata: {
