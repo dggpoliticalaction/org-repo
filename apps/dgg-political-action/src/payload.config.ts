@@ -1,7 +1,8 @@
 // storage-adapter-import-placeholder
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 
-import sharp from 'sharp' // sharp-import
+import sharp from 'sharp'
+// import { buildConfig, type SharpDependency } from 'payload'
 import path from 'path'
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { buildConfig, PayloadRequest } from 'payload'
@@ -73,7 +74,7 @@ export default buildConfig({
     // storage-adapter-placeholder
   ],
   secret: process.env.PAYLOAD_SECRET,
-  sharp,
+  sharp: (sharp as unknown) as any,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
