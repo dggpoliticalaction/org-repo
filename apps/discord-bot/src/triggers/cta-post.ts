@@ -267,6 +267,10 @@ export class CTAPostTrigger implements Trigger {
             'rgb(228, 27, 50)',
             'rgb(255, 255, 255)',
             'rgb(23, 25, 77)',
+            'rgb(59, 158, 255)',
+            'rgb(200, 200, 200)',
+            'rgb(173, 20, 36)',
+            'rgb(71, 76, 170)',
           ],
           borderColor: [
             'rgb(0,0,0)',
