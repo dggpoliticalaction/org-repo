@@ -1,5 +1,6 @@
 import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { MediaCollageBlock } from '@/blocks/MediaCollageBlock/component'
 import type {
   DefaultNodeTypes,
   SerializedBlockNode,
@@ -68,6 +69,9 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
         enableGutter={false}
         disableInnerContainer
       />
+    ),
+    mediaCollage: ({ node }: { node: SerializedBlockNode }) => (
+      <MediaCollageBlock {...node.fields} />
     ),
     code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
     cta: ({ node }) => <CallToActionBlock {...node.fields} />,
