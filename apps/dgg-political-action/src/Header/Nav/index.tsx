@@ -21,7 +21,6 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             {...link} 
             appearance="link"
             className="font-medium hover:opacity-70 transition-opacity"
-            style={{ fontFamily: 'var(--font-departure-mono), monospace' }}
           />
         )
       })}
