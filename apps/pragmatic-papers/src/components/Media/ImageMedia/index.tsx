@@ -3,11 +3,12 @@
 import type { StaticImageData } from 'next/image'
 
 import { cn } from '@/utilities/ui'
-import React from 'react'
+import React, { useState } from 'react'
 
 import type { Props as MediaProps } from '../types'
 
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { ImageModal } from '@/components/ImageModal'
 
 export const ImageMedia: React.FC<MediaProps> = (props) => {
   const {
@@ -19,7 +20,10 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     src: srcFromProps,
     loading: loadingFromProps,
     size,
+    enableModal = false,
   } = props
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   let width: number | undefined = srcFromProps?.width
   let height: number | undefined = srcFromProps?.height
@@ -70,39 +74,57 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
 
+  const handleClick = () => {
+    if (enableModal && resource && typeof resource === 'object') {
+      setIsModalOpen(true)
+    }
+  }
+
   // NOTE: this is used by the browser to determine which image to download at different screen sizes
 
   return (
-    <picture className={cn(pictureClassName)}>
-      {resource &&
-        !size &&
-        typeof resource === 'object' &&
-        resource.sizes &&
-        Object.values(resource.sizes)
-          .filter(
-            (resourceSize) =>
-              resourceSize.width &&
-              resourceSize !== resource.sizes?.square &&
-              resourceSize !== resource.sizes?.og,
-          )
-          .map((resourceSize) => (
-            <source
-              key={resourceSize.url}
-              srcSet={getMediaUrl(resourceSize.url?.replace(/ /g, '%20'), resource.updatedAt)}
-              media={`(max-width: ${resourceSize.width}px)`}
-              type={resourceSize.mimeType ?? ''}
-              width={resourceSize.width!}
-              height={resourceSize.height!}
-            />
-          ))}
-      <img
-        alt={alt}
-        className={cn(imgClassName)}
-        loading={loading}
-        width={width}
-        height={height}
-        src={typeof src === 'object' ? src.src : src}
-      />
-    </picture>
+    <>
+      {enableModal && resource && typeof resource === 'object' && (
+        <ImageModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          resource={resource}
+        />
+      )}
+      <picture
+        className={cn(pictureClassName, enableModal && 'cursor-pointer')}
+        onClick={handleClick}
+      >
+        {resource &&
+          !size &&
+          typeof resource === 'object' &&
+          resource.sizes &&
+          Object.values(resource.sizes)
+            .filter(
+              (resourceSize) =>
+                resourceSize.width &&
+                resourceSize !== resource.sizes?.square &&
+                resourceSize !== resource.sizes?.og,
+            )
+            .map((resourceSize) => (
+              <source
+                key={resourceSize.url}
+                srcSet={getMediaUrl(resourceSize.url?.replace(/ /g, '%20'), resource.updatedAt)}
+                media={`(max-width: ${resourceSize.width}px)`}
+                type={resourceSize.mimeType ?? ''}
+                width={resourceSize.width!}
+                height={resourceSize.height!}
+              />
+            ))}
+        <img
+          alt={alt}
+          className={cn(imgClassName)}
+          loading={loading}
+          width={width}
+          height={height}
+          src={typeof src === 'object' ? src.src : src}
+        />
+      </picture>
+    </>
   )
 }
