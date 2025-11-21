@@ -22,6 +22,7 @@ import type {
   TwitterEmbedBlock as TwitterEmbedBlockProps,
   YouTubeEmbedBlock as YouTubeEmbedBlockProps,
   RedditEmbedBlock as RedditEmbedBlockProps,
+  BlueSkyEmbedBlock as BlueSkyEmbedBlockProps,
 } from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
@@ -30,20 +31,22 @@ import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import { TwitterEmbedBlock } from '@/blocks/TwitterEmbed/Component'
 import { YouTubeEmbedBlock } from '@/blocks/YouTubeEmbed/Component'
 import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
+import { BlueSkyEmbedBlock } from '@/blocks/BlueSkyEmbed/Component'
 
 type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-    | CTABlockProps
-    | MediaBlockProps
-    | BannerBlockProps
-    | CodeBlockProps
-    | MathBlockProps
-    | SquiggleRuleBlockProps
-    | TwitterEmbedBlockProps
-    | YouTubeEmbedBlockProps
-    | RedditEmbedBlockProps
-  >
+      | CTABlockProps
+      | MediaBlockProps
+      | BannerBlockProps
+      | CodeBlockProps
+      | MathBlockProps
+      | SquiggleRuleBlockProps
+      | TwitterEmbedBlockProps
+      | YouTubeEmbedBlockProps
+      | RedditEmbedBlockProps
+      | BlueSkyEmbedBlockProps
+    >
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
@@ -78,6 +81,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     twitterEmbed: ({ node }) => <TwitterEmbedBlock {...node.fields} />,
     youtubeEmbed: ({ node }) => <YouTubeEmbedBlock {...node.fields} />,
     redditEmbed: ({ node }) => <RedditEmbedBlock {...node.fields} />,
+    blueSkyEmbed: ({ node }) => <BlueSkyEmbedBlock {...node.fields} />,
   },
   inlineBlocks: {
     inlineMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
