@@ -2,7 +2,6 @@
 
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
-import Script from 'next/script'
 
 import { fetchBlueSkyEmbed } from '@/utilities/fetchBlueSkyEmbed'
 
