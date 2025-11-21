@@ -28,13 +28,17 @@ export const BlueSkyEmbed: React.FC<{
         setContent('Bluesky post could not be loaded.')
       } else {
         setContent(res.html)
+
+        const script = document.createElement('script')
+        script.src = 'https://embed.bsky.app/static/embed.js'
+        script.async = true
+        document.body.appendChild(script)
       }
     })
   }, [props])
 
   return (
     <div>
-      <Script src="https://embed.bsky.app/static/embed.js" />
       {/* This shouldn't be dangerous as the HTML is coming from Payload after it's retrieved from the Bluesky oEmbed API. */}
       {/* eslint-disable-next-line react/no-danger */}
       <div dangerouslySetInnerHTML={{ __html: content }} ref={contentRef} />
