@@ -1872,6 +1872,15 @@ export interface BlueSkyEmbedBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'blueSkyEmbed';
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TikTokEmbedBlock".
+ */
+export interface TikTokEmbedBlock {
+  url: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'tiktokEmbed';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
