@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@payloadcms/admin-bar": "3.43.0",
-    "@payloadcms/live-preview-react": "3.43.0",
+    "@payloadcms/live-preview-react": "3.64.0",
     "@payloadcms/next": "3.43.0",
     "@payloadcms/payload-cloud": "3.43.0",
     "@payloadcms/plugin-form-builder": "3.43.0",
