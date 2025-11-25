@@ -29,7 +29,7 @@
     "@payloadcms/admin-bar": "3.46.0",
     "@payloadcms/db-postgres": "3.46.0",
     "@payloadcms/db-sqlite": "3.46.0",
-    "@payloadcms/live-preview-react": "3.46.0",
+    "@payloadcms/live-preview-react": "3.64.0",
     "@payloadcms/next": "3.46.0",
     "@payloadcms/plugin-form-builder": "3.46.0",
     "@payloadcms/plugin-nested-docs": "3.46.0",
