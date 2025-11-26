@@ -4,6 +4,7 @@ import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 
 import { fetchBlueSkyEmbed } from '@/utilities/fetchBlueSkyEmbed'
+import { sanitizeHtml } from '@/utilities/sanitizeHtml'
 
 export const BlueSkyEmbed: React.FC<{
   url?: string
@@ -26,7 +27,7 @@ export const BlueSkyEmbed: React.FC<{
       if (!res) {
         setContent('Bluesky post could not be loaded.')
       } else {
-        setContent(res.html)
+        setContent(sanitizeHtml(res.html))
 
         const script = document.createElement('script')
         script.src = 'https://embed.bsky.app/static/embed.js'
@@ -38,7 +39,7 @@ export const BlueSkyEmbed: React.FC<{
 
   return (
     <div>
-      {/* This shouldn't be dangerous as the HTML is coming from Payload after it's retrieved from the Bluesky oEmbed API. */}
+      {/* HTML is sanitized with DOMPurify before insertion */}
       {/* eslint-disable-next-line react/no-danger */}
       <div dangerouslySetInnerHTML={{ __html: content }} ref={contentRef} />
     </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { fetchTikTokEmbed } from '@/utilities/fetchTikTokEmbed'
+import { sanitizeHtml } from '@/utilities/sanitizeHtml'
 import { useEffect, useState, useRef } from 'react'
 
 // Track if the TikTok script has been loaded globally
@@ -20,7 +21,7 @@ export const TikTokEmbed: React.FC<{
       if (!res) {
         setContent('TikTok video could not be loaded.')
       } else {
-        setContent(res.html)
+        setContent(sanitizeHtml(res.html))
       }
     })
   }, [props.url])
@@ -62,7 +63,7 @@ export const TikTokEmbed: React.FC<{
 
   return (
     <div ref={containerRef}>
-      {/* This shouldn't be dangerous as the HTML is coming from Payload after it's retrieved from the TikTok oEmbed API. */}
+      {/* HTML is sanitized with DOMPurify before insertion */}
       {/* eslint-disable-next-line react/no-danger */}
       <div dangerouslySetInnerHTML={{ __html: content }} />
     </div>
