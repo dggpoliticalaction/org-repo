@@ -7,13 +7,7 @@ import { TwitterEmbed } from '@/components/TwitterEmbed'
 import { YouTubeEmbed } from '@/components/YouTubeEmbed'
 import type { SocialEmbedBlock as SocialEmbedBlockProps } from '@/payload-types'
 
-type Props = {
-  url?: string
-  hideMedia?: boolean | null
-  hideThread?: boolean | null
-} & SocialEmbedBlockProps
-
-export const SocialEmbedBlock: React.FC<Props> = (props) => {
+export const SocialEmbedBlock: React.FC<SocialEmbedBlockProps> = (props) => {
   if (!props.url) {
     return null
   }

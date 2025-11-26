@@ -1,5 +1,10 @@
 export type SocialPlatform = 'twitter' | 'youtube' | 'reddit' | 'bluesky' | 'tiktok' | 'unknown'
 
+// Regex patterns for validating subdomains
+// Only allow alphanumeric characters and hyphens as subdomain parts
+const REDDIT_SUBDOMAIN_PATTERN = /^[a-z0-9-]+\.reddit\.com$/
+const BLUESKY_SUBDOMAIN_PATTERN = /^[a-z0-9-]+\.bsky\.app$/
+
 /**
  * Detects the social media platform from a URL
  * @param url - The URL to analyze
@@ -32,18 +37,24 @@ export function detectSocialPlatform(url: string): SocialPlatform {
       return 'youtube'
     }
 
-    // Reddit
+    // Reddit - explicitly list known subdomains or validate pattern
     if (
       hostname === 'reddit.com' ||
       hostname === 'www.reddit.com' ||
       hostname === 'old.reddit.com' ||
-      hostname.endsWith('.reddit.com')
+      hostname === 'new.reddit.com' ||
+      hostname === 'np.reddit.com' ||
+      REDDIT_SUBDOMAIN_PATTERN.test(hostname)
     ) {
       return 'reddit'
     }
 
-    // BlueSky
-    if (hostname === 'bsky.app' || hostname === 'www.bsky.app' || hostname.endsWith('.bsky.app')) {
+    // BlueSky - explicitly list known domains or validate pattern
+    if (
+      hostname === 'bsky.app' ||
+      hostname === 'www.bsky.app' ||
+      BLUESKY_SUBDOMAIN_PATTERN.test(hostname)
+    ) {
       return 'bluesky'
     }
 
