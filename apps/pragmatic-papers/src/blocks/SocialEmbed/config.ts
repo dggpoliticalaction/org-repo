@@ -1,4 +1,5 @@
 import type { Block } from 'payload'
+import { detectSocialPlatform } from '@/utilities/detectSocialPlatform'
 
 export const SocialEmbed: Block = {
   slug: 'socialEmbed',
@@ -26,8 +27,7 @@ export const SocialEmbed: Block = {
         description: 'Only applies to Twitter/X embeds',
         condition: (_: Record<string, unknown>, siblingData: Record<string, unknown>): boolean => {
           if (!siblingData?.url) return false
-          const url = (siblingData.url as string).toLowerCase()
-          return url.includes('twitter.com') || url.includes('x.com')
+          return detectSocialPlatform(siblingData.url as string) === 'twitter'
         },
       },
     },
@@ -39,8 +39,7 @@ export const SocialEmbed: Block = {
         description: 'Only applies to Twitter/X embeds',
         condition: (_: Record<string, unknown>, siblingData: Record<string, unknown>): boolean => {
           if (!siblingData?.url) return false
-          const url = (siblingData.url as string).toLowerCase()
-          return url.includes('twitter.com') || url.includes('x.com')
+          return detectSocialPlatform(siblingData.url as string) === 'twitter'
         },
       },
     },
