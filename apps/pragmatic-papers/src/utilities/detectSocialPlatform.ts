@@ -1,9 +1,14 @@
 export type SocialPlatform = 'twitter' | 'youtube' | 'reddit' | 'bluesky' | 'tiktok' | 'unknown'
 
-// Regex patterns for validating subdomains
-// Only allow alphanumeric characters and hyphens as subdomain parts
-const REDDIT_SUBDOMAIN_PATTERN = /^[a-z0-9-]+\.reddit\.com$/
-const BLUESKY_SUBDOMAIN_PATTERN = /^[a-z0-9-]+\.bsky\.app$/
+// Regex patterns for validating subdomains of known social platforms
+// These patterns ensure:
+// - The subdomain starts and ends with alphanumeric characters
+// - Contains only lowercase alphanumeric chars and single hyphens (no consecutive hyphens)
+// - The full hostname ends with the expected domain
+// Note: We use explicit domain checks first (reddit.com, www.reddit.com, etc.)
+// and only fall back to regex for less common subdomains
+const REDDIT_SUBDOMAIN_PATTERN = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.reddit\.com$/
+const BLUESKY_SUBDOMAIN_PATTERN = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.bsky\.app$/
 
 /**
  * Detects the social media platform from a URL

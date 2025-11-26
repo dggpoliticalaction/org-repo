@@ -34,8 +34,12 @@ export const SocialEmbedBlock: React.FC<SocialEmbedBlockProps> = (props) => {
       return <TikTokEmbed url={props.url} />
     default:
       return (
-        <div className="text-gray-500">
-          Unsupported URL. Please use a link from Twitter/X, YouTube, Reddit, BlueSky, or TikTok.
+        <div
+          className="p-4 border border-gray-300 rounded bg-gray-50 dark:bg-gray-800 dark:border-gray-600"
+          role="alert"
+        >
+          <span className="font-medium">⚠️ Unsupported URL:</span> Please use a link from Twitter/X,
+          YouTube, Reddit, BlueSky, or TikTok.
         </div>
       )
   }
