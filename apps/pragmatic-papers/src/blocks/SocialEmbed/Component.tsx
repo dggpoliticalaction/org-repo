@@ -5,7 +5,7 @@ import { RedditEmbed } from '@/components/RedditEmbed'
 import { TikTokEmbed } from '@/components/TikTokEmbed'
 import { TwitterEmbed } from '@/components/TwitterEmbed'
 import { YouTubeEmbed } from '@/components/YouTubeEmbed'
-import type { SocialEmbedBlock as SocialEmbedBlockProps } from 'src/payload-types'
+import type { SocialEmbedBlock as SocialEmbedBlockProps } from '@/payload-types'
 
 type Props = {
   url?: string

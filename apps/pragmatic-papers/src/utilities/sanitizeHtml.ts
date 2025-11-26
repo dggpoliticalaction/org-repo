@@ -1,19 +1,20 @@
 import DOMPurify from 'dompurify'
 
 /**
- * Sanitizes HTML content using DOMPurify to prevent XSS attacks
+ * Sanitizes HTML content using DOMPurify to prevent XSS attacks.
+ * This utility is designed for use in client-side components ('use client').
  * @param html - The raw HTML string to sanitize
  * @returns The sanitized HTML string
  */
 export function sanitizeHtml(html: string): string {
   if (typeof window === 'undefined') {
-    // Server-side: return empty string as DOMPurify needs a DOM
-    // The HTML will be sanitized on the client side when it renders
-    return html
+    // Server-side: return empty string since DOMPurify requires DOM
+    // Client components will re-render on the client where sanitization occurs
+    return ''
   }
 
   return DOMPurify.sanitize(html, {
-    ADD_TAGS: ['iframe', 'blockquote', 'script'],
+    ADD_TAGS: ['iframe', 'blockquote'],
     ADD_ATTR: [
       'allow',
       'allowfullscreen',
@@ -28,7 +29,6 @@ export function sanitizeHtml(html: string): string {
       'data-width',
       'data-bluesky-uri',
       'data-bluesky-cid',
-      'sandbox',
       'data-embed-height',
       'data-embed-created-ts',
       'data-author',
