@@ -24,7 +24,6 @@ export const SocialEmbed: Block = {
       type: 'checkbox',
       label: 'Hide Media',
       admin: {
-        description: 'Only applies to Twitter/X embeds',
         condition: (_: Record<string, unknown>, siblingData: Record<string, unknown>): boolean => {
           if (!siblingData?.url) return false
           return detectSocialPlatform(siblingData.url as string) === 'twitter'
@@ -36,7 +35,6 @@ export const SocialEmbed: Block = {
       type: 'checkbox',
       label: 'Hide Thread',
       admin: {
-        description: 'Only applies to Twitter/X embeds',
         condition: (_: Record<string, unknown>, siblingData: Record<string, unknown>): boolean => {
           if (!siblingData?.url) return false
           return detectSocialPlatform(siblingData.url as string) === 'twitter'
