@@ -1885,6 +1885,18 @@ export interface TikTokEmbedBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SocialEmbedBlock".
+ */
+export interface SocialEmbedBlock {
+  url: string;
+  hideMedia?: boolean | null;
+  hideThread?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'socialEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "InlineMathBlock".
  */
 export interface InlineMathBlock {

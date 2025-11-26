@@ -1,18 +1,19 @@
 'use client'
 
-import type React from 'react';
+import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
-import Script from 'next/script';
+import Script from 'next/script'
 
-import { fetchTwitterEmbed } from '@/utilities/fetchTwitterEmbed';
+import { fetchTwitterEmbed } from '@/utilities/fetchTwitterEmbed'
+import { sanitizeHtml } from '@/utilities/sanitizeHtml'
 
 export const TwitterEmbed: React.FC<{
-  url?: string,
-  hideMedia?: boolean,
-  hideThread?: boolean,
-  align?: ('none' | 'left' | 'center' | 'right') | undefined,
-  lang?: string | undefined,
-  maxWidth?: number | undefined,
+  url?: string
+  hideMedia?: boolean
+  hideThread?: boolean
+  align?: ('none' | 'left' | 'center' | 'right') | undefined
+  lang?: string | undefined
+  maxWidth?: number | undefined
 }> = (props) => {
   const [content, setContent] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
@@ -28,15 +29,14 @@ export const TwitterEmbed: React.FC<{
       hide_thread: props.hideThread,
       align: props.align,
       maxwidth: props.maxWidth,
-      theme: theme as ('light' | 'dark')
+      theme: theme as 'light' | 'dark',
+    }).then((res) => {
+      if (!res) {
+        setContent('X post could not be loaded.')
+      } else {
+        setContent(sanitizeHtml(res.html))
+      }
     })
-      .then(res => {
-        if (!res) {
-          setContent('X post could not be loaded.')
-        } else {
-          setContent(res.html)
-        }
-      })
   }, [props])
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export const TwitterEmbed: React.FC<{
   return (
     <div>
       <Script src="https://platform.twitter.com/widgets.js" />
-      {/* This shouldn't be dangerous as the HTML is coming from Payload after it's retrieved from the X oEmbed API. */}
+      {/* HTML is sanitized with DOMPurify before insertion */}
       {/* eslint-disable-next-line react/no-danger */}
       <div dangerouslySetInnerHTML={{ __html: content }} ref={contentRef} />
     </div>
