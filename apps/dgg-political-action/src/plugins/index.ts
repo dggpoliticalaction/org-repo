@@ -7,6 +7,7 @@ import { searchPlugin } from '@payloadcms/plugin-search'
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
+import { sendToButtondown } from '@/hooks/sendToButtondown'
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -81,6 +82,11 @@ export const plugins: Plugin[] = [
           }
           return field
         })
+      },
+    },
+    formSubmissionOverrides: {
+      hooks: {
+        afterChange: [sendToButtondown],
       },
     },
   }),
