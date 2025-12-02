@@ -25,12 +25,14 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
+  const isPayloadResource = resource && typeof resource === 'object'
+
   let width: number | undefined = srcFromProps?.width
   let height: number | undefined = srcFromProps?.height
   let alt = altFromProps
   let src: StaticImageData | string = srcFromProps || ''
 
-  if (!src && resource && typeof resource === 'object') {
+  if (!src && isPayloadResource) {
     const { alt: altFromResource, height: fullHeight, width: fullWidth } = resource
 
     width = fullWidth!
@@ -75,7 +77,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
 
   const handleClick = () => {
-    if (enableModal && resource && typeof resource === 'object') {
+    if (enableModal && isPayloadResource) {
       setIsModalOpen(true)
     }
   }
@@ -84,7 +86,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
   return (
     <>
-      {enableModal && resource && typeof resource === 'object' && (
+      {enableModal && isPayloadResource && (
         <ImageModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -95,9 +97,8 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         className={cn(pictureClassName, enableModal && 'cursor-pointer')}
         onClick={handleClick}
       >
-        {resource &&
+        {isPayloadResource &&
           !size &&
-          typeof resource === 'object' &&
           resource.sizes &&
           Object.values(resource.sizes)
             .filter(
