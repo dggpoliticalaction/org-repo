@@ -18,6 +18,7 @@ import { getServerSideURL } from './utilities/getURL'
 import { Articles } from './collections/Articles'
 import { Volumes } from './collections/Volumes'
 import { Webhooks } from './collections/Webhooks'
+import { Comments } from './collections/Comments'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -71,7 +72,7 @@ export default buildConfig({
             url: process.env.DATABASE_URI || '',
           },
         }),
-  collections: [Pages, Articles, Volumes, Media, Categories, Users, Webhooks],
+  collections: [Pages, Articles, Volumes, Media, Categories, Users, Comments, Webhooks],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [...plugins],

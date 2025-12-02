@@ -1,0 +1,54 @@
+.comment-form {
+  padding: 1.5rem;
+  background: hsl(var(--card));
+  border-radius: 0.5rem;
+  border: 1px solid hsl(var(--border));
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .form-field {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .error {
+      display: block;
+      color: hsl(var(--destructive));
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+  }
+
+  .comment-success {
+    padding: 1rem;
+    background: hsl(142.1 76.2% 36.3% / 0.1);
+    border: 1px solid hsl(142.1 76.2% 36.3%);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    color: hsl(142.1 76.2% 36.3%);
+  }
+
+  .comment-error {
+    padding: 1rem;
+    background: hsl(var(--destructive) / 0.1);
+    border: 1px solid hsl(var(--destructive));
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    color: hsl(var(--destructive));
+  }
+}
+
+.comment-form-disabled {
+  padding: 1.5rem;
+  background: hsl(var(--muted));
+  border-radius: 0.5rem;
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+}
