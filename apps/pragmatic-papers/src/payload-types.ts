@@ -73,6 +73,7 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    comments: Comment;
     webhooks: Webhook;
     redirects: Redirect;
     forms: Form;
@@ -90,6 +91,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    comments: CommentsSelect<false> | CommentsSelect<true>;
     webhooks: WebhooksSelect<false> | WebhooksSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -289,6 +291,10 @@ export interface Article {
   };
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
+  /**
+   * Enable or disable comments for this article
+   */
+  commentsEnabled?: boolean | null;
   createdBy?: (number | null) | User;
   populatedAuthors?:
     | {
@@ -808,6 +814,39 @@ export interface Category {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments".
+ */
+export interface Comment {
+  id: number;
+  /**
+   * Comment content (max 2000 characters)
+   */
+  content: string;
+  /**
+   * The article this comment belongs to
+   */
+  article: number | Article;
+  /**
+   * Authenticated user who wrote this comment
+   */
+  author?: (number | null) | User;
+  /**
+   * Name for anonymous commenter
+   */
+  authorName?: string | null;
+  /**
+   * Email for anonymous commenter
+   */
+  authorEmail?: string | null;
+  /**
+   * Moderation status of this comment
+   */
+  status?: ('approved' | 'pending' | 'rejected') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "webhooks".
  */
 export interface Webhook {
@@ -997,6 +1036,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
+      } | null)
+    | ({
+        relationTo: 'comments';
+        value: number | Comment;
       } | null)
     | ({
         relationTo: 'webhooks';
@@ -1211,6 +1254,7 @@ export interface ArticlesSelect<T extends boolean = true> {
       };
   publishedAt?: T;
   authors?: T;
+  commentsEnabled?: T;
   createdBy?: T;
   populatedAuthors?:
     | T
@@ -1386,6 +1430,20 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments_select".
+ */
+export interface CommentsSelect<T extends boolean = true> {
+  content?: T;
+  article?: T;
+  author?: T;
+  authorName?: T;
+  authorEmail?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

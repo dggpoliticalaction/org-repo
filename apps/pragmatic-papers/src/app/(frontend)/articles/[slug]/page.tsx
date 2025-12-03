@@ -13,6 +13,8 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
+import { Comments } from '@/components/Comments'
+import { getMeUser } from '@/utilities/getMeUser'
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -76,6 +78,16 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
+  // Check if user is authenticated
+  let isAuthenticated = false
+  try {
+    await getMeUser()
+    isAuthenticated = true
+  } catch {
+    // User is not authenticated
+    isAuthenticated = false
+  }
+
   return (
     <article className="pb-16 max-w-3xl m-auto p-5">
       <PageClient />
@@ -88,6 +100,11 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
       <ArticleHero article={article} />
 
       <RichText className="" data={article.content} enableGutter={false} />
+
+      {/* Comments Section */}
+      {article.commentsEnabled && (
+        <Comments articleId={String(article.id)} isAuthenticated={isAuthenticated} />
+      )}
     </article>
   )
 }
