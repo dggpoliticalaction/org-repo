@@ -1,12 +1,21 @@
+# Nixpacks configuration for pragmatic-papers in a monorepo
+# IMPORTANT: In Coolify, set Base Directory to "." (monorepo root)
+
+[variables]
+NIXPACKS_PNPM_VERSION = "10"
+
 [phases.setup]
-nixPkgs = ['pnpm']
+nixPkgs = ['pnpm', 'nodejs_22']
 aptPkgs = ['build-essential']
 
 [phases.install]
-cmds = ["pnpm install --frozen-lockfile --prod"]
+# Install dependencies from monorepo root
+cmds = ["pnpm install --frozen-lockfile"]
 
 [phases.build]
-cmds = ["pnpm build"]
+# Build the specific app using pnpm workspace filter
+cmds = ["pnpm --filter pragmatic-papers build"]
 
 [start]
-cmd = "pnpm start"
+# Start the app using pnpm (simpler and more reliable)
+cmd = "pnpm --filter pragmatic-papers start"
