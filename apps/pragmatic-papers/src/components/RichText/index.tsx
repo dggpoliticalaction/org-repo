@@ -24,6 +24,7 @@ import type {
   RedditEmbedBlock as RedditEmbedBlockProps,
   BlueSkyEmbedBlock as BlueSkyEmbedBlockProps,
   TikTokEmbedBlock as TikTokEmbedBlockProps,
+  SocialEmbedBlock as SocialEmbedBlockProps,
 } from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
@@ -34,22 +35,24 @@ import { YouTubeEmbedBlock } from '@/blocks/YouTubeEmbed/Component'
 import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
 import { BlueSkyEmbedBlock } from '@/blocks/BlueSkyEmbed/Component'
 import { TikTokEmbedBlock } from '@/blocks/TikTokEmbed/Component'
+import { SocialEmbedBlock } from '@/blocks/SocialEmbed/Component'
 
 type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-      | CTABlockProps
-      | MediaBlockProps
-      | BannerBlockProps
-      | CodeBlockProps
-      | MathBlockProps
-      | SquiggleRuleBlockProps
-      | TwitterEmbedBlockProps
-      | YouTubeEmbedBlockProps
-      | RedditEmbedBlockProps
-      | BlueSkyEmbedBlockProps
-      | TikTokEmbedBlockProps
-    >
+    | CTABlockProps
+    | MediaBlockProps
+    | BannerBlockProps
+    | CodeBlockProps
+    | MathBlockProps
+    | SquiggleRuleBlockProps
+    | TwitterEmbedBlockProps
+    | YouTubeEmbedBlockProps
+    | RedditEmbedBlockProps
+    | BlueSkyEmbedBlockProps
+    | TikTokEmbedBlockProps
+    | SocialEmbedBlockProps
+  >
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
@@ -81,6 +84,8 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       <MathBlock {...node.fields} />
     ),
     squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
+    socialEmbed: ({ node }) => <SocialEmbedBlock {...node.fields} />,
+    // Legacy block types for backward compatibility with existing content
     twitterEmbed: ({ node }) => <TwitterEmbedBlock {...node.fields} />,
     youtubeEmbed: ({ node }) => <YouTubeEmbedBlock {...node.fields} />,
     redditEmbed: ({ node }) => <RedditEmbedBlock {...node.fields} />,
