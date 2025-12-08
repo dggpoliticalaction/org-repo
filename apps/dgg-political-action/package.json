@@ -20,7 +20,7 @@
     "check-types": "cross-env NODE_OPTIONS=--no-deprecation tsc --noEmit"
   },
   "dependencies": {
-    "@payloadcms/admin-bar": "3.43.0",
+    "@payloadcms/admin-bar": "3.67.0",
     "@payloadcms/db-sqlite": "3.66.0",
     "@payloadcms/live-preview-react": "3.64.0",
     "@payloadcms/next": "3.43.0",
