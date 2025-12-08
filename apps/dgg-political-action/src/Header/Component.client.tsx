@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 
 import type { Header } from '@/payload-types'
 
-import { Logo } from '@/components/Logo/Logo'
+import { Media } from '@/components/Media'
 import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
@@ -29,13 +29,33 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [headerTheme])
 
+  const stickyClass = data.stickyHeader ? 'sticky top-0 z-50' : 'relative z-20'
+
   return (
-    <header className="container relative z-20   " {...(theme ? { 'data-theme': theme } : {})}>
-      <div className="py-8 flex justify-between">
-        <Link href="/">
-          <Logo loading="eager" priority="high" className="invert dark:invert-0" />
-        </Link>
-        <HeaderNav data={data} />
+    <header 
+      className={`${stickyClass} bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800`}
+      {...(theme ? { 'data-theme': theme } : {})}
+    >
+      <div className="container mx-auto px-4">
+        <div className="py-4 flex justify-between items-center">
+          {/* Left side - Logo and Org Name */}
+          <Link href="/" className="flex items-center gap-4">
+            {data.logo && typeof data.logo !== 'string' && (
+              <div className="w-12 h-12">
+                <Media resource={data.logo} />
+              </div>
+            )}
+            <span 
+              className="text-xl font-bold"
+              style={{ fontFamily: 'var(--font-departure-mono), monospace' }}
+            >
+              {data.organizationName || 'DGG Political Action'}
+            </span>
+          </Link>
+
+          {/* Right side - Nav */}
+          <HeaderNav data={data} />
+        </div>
       </div>
     </header>
   )

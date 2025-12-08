@@ -10,6 +10,40 @@ export const Header: GlobalConfig = {
   },
   fields: [
     {
+      name: 'logo',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        description: 'Upload a logo image to display in the header',
+      },
+    },
+    {
+      name: 'organizationName',
+      type: 'text',
+      required: false,
+      defaultValue: 'DGG Political Action',
+      admin: {
+        description: 'Organization name to display in the header',
+      },
+    },
+    {
+      name: 'stickyHeader',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Enable sticky header that stays at the top when scrolling',
+      },
+    },
+    {
+      name: 'discordLink',
+      type: 'text',
+      required: false,
+      admin: {
+        description: 'Discord invite link (leave empty to link to homepage)',
+      },
+    },
+    {
       name: 'navItems',
       type: 'array',
       fields: [
