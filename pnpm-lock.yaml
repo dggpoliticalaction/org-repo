@@ -27,8 +27,8 @@ importers:
   apps/dgg-political-action:
     dependencies:
       '@payloadcms/admin-bar':
-        specifier: 3.43.0
-        version: 3.43.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 3.67.0
+        version: 3.67.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@payloadcms/db-sqlite':
         specifier: 3.66.0
         version: 3.66.0(@types/pg@8.10.2)(payload@3.43.0(graphql@16.12.0)(typescript@5.7.3))(pg@8.16.3)
@@ -287,8 +287,8 @@ importers:
         specifier: ^15.3.6
         version: 15.3.6(next@15.4.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.77.4))(react@19.1.0)
       '@payloadcms/admin-bar':
-        specifier: 3.46.0
-        version: 3.46.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 3.67.0
+        version: 3.67.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@payloadcms/db-postgres':
         specifier: 3.46.0
         version: 3.46.0(@libsql/client@0.14.0)(payload@3.46.0(graphql@16.12.0)(typescript@5.7.3))
@@ -2316,17 +2316,11 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@payloadcms/admin-bar@3.43.0':
-    resolution: {integrity: sha512-lImJJg/LiCVVW3vIbiTXO5nvYT+12tj/kKo+KVszatAmpmQShxXt8v/aVqPt4c6G8uCsug7i9e52BCdAp89L0Q==}
+  '@payloadcms/admin-bar@3.67.0':
+    resolution: {integrity: sha512-oYu7ULROSbIT2WYhTWgMVKf4kI45whVen0JEJa5rLT4cy9HnOYwc1rFC3h44kI5r4fQqrYPpeB1/zfsUjJoyfw==}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
-  '@payloadcms/admin-bar@3.46.0':
-    resolution: {integrity: sha512-OvhH3eoyN8rN1HADohl/JeJFAWBcFaYR1qxV64Whs/M9iG78ZUEbmIJPe8JGzT1QX/aQ/MKN9ndpHcwiqWC11g==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.1 || ^19.1.2 || ^19.2.1
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.1 || ^19.1.2 || ^19.2.1
 
   '@payloadcms/db-postgres@3.46.0':
     resolution: {integrity: sha512-R7obhQun7WJ+P6RgEjlAY0y7vXTrhcyJ94FZ2/Yjbe+Av1lXpNJZhmJTtV/ALYH1mFLACxM59VWm6Gs9cOwcRg==}
@@ -10295,12 +10289,7 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.19.1
 
-  '@payloadcms/admin-bar@3.43.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-
-  '@payloadcms/admin-bar@3.46.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@payloadcms/admin-bar@3.67.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
