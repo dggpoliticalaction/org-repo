@@ -1809,6 +1809,20 @@ export interface CodeBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaCollageBlock".
+ */
+export interface MediaCollageBlock {
+  images: {
+    media: number | Media;
+    id?: string | null;
+  }[];
+  layout: 'grid' | 'carousel';
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaCollage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "DisplayMathBlock".
  */
 export interface DisplayMathBlock {
