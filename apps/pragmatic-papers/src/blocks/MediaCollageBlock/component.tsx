@@ -6,7 +6,8 @@ import { Media } from '../../components/Media'
 import type { Media as MediaType } from '@/payload-types'
 
 interface CollageImage {
-  media: MediaType
+  media: number | MediaType
+  id?: string | null
 }
 
 interface MediaCollageBlockProps {
@@ -31,7 +32,8 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
   if (!images.length) return null
 
   if (layout === 'carousel') {
-    const image = images[current]?.media
+    const imageData = images[current]
+    const image = typeof imageData?.media === 'number' ? null : imageData?.media
     // Touch event handlers for swipe
     let touchStartX = 0
     let touchEndX = 0
@@ -134,21 +136,25 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
   return (
     <figure className={figureClass}>
       <div className="grid grid-cols-2 gap-4">
-        {images.map((img, idx) => (
-          <div key={idx} className="flex flex-col items-center">
-            <Media resource={img.media} imgClassName={imgClassName} enableModal />
-            {img.media?.caption && (
-              <figcaption className={captionClassName}>
-                <RichText
-                  data={img.media.caption}
-                  enableGutter={false}
-                  enableProse={false}
-                  className="text-[0.95rem] text-muted-foreground not-prose"
-                />
-              </figcaption>
-            )}
-          </div>
-        ))}
+        {images.map((img, idx) => {
+          const media = typeof img.media === 'number' ? null : img.media
+          if (!media) return null
+          return (
+            <div key={idx} className="flex flex-col items-center">
+              <Media resource={media} imgClassName={imgClassName} enableModal />
+              {media.caption && (
+                <figcaption className={captionClassName}>
+                  <RichText
+                    data={media.caption}
+                    enableGutter={false}
+                    enableProse={false}
+                    className="text-[0.95rem] text-muted-foreground not-prose"
+                  />
+                </figcaption>
+              )}
+            </div>
+          )
+        })}
       </div>
     </figure>
   )
