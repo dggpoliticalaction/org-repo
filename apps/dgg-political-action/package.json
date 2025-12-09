@@ -21,7 +21,8 @@
   },
   "dependencies": {
     "@payloadcms/admin-bar": "3.43.0",
-    "@payloadcms/live-preview-react": "3.43.0",
+    "@payloadcms/db-sqlite": "3.43.0",
+    "@payloadcms/live-preview-react": "3.64.0",
     "@payloadcms/next": "3.43.0",
     "@payloadcms/payload-cloud": "3.43.0",
     "@payloadcms/plugin-form-builder": "3.43.0",
@@ -39,9 +40,9 @@
     "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
     "geist": "^1.3.0",
-    "graphql": "^16.8.2",
+    "graphql": "^16.12.0",
     "lucide-react": "^0.378.0",
-    "next": "15.3.0",
+    "next": "15.4.8",
     "next-sitemap": "^4.2.3",
     "payload": "3.43.0",
     "prism-react-renderer": "^2.3.1",
@@ -50,8 +51,7 @@
     "react-hook-form": "7.45.4",
     "sharp": "0.32.6",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7",
-    "@payloadcms/db-sqlite": "3.43.0"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
@@ -61,7 +61,7 @@
     "@types/node": "22.5.4",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.2",
-    "autoprefixer": "^10.4.19",
+    "autoprefixer": "^10.4.22",
     "copyfiles": "^2.4.1",
     "eslint": "^9.16.0",
     "postcss": "^8.4.38",

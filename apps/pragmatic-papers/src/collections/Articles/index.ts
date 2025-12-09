@@ -45,6 +45,8 @@ import { SquiggleRule } from '@/blocks/SquiggleRule/config'
 import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
 import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
 import { RedditEmbed } from '@/blocks/RedditEmbed/config'
+import { BlueSkyEmbed } from '@/blocks/BlueSkyEmbed/config'
+import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
@@ -105,12 +107,14 @@ export const Articles: CollectionConfig = {
                         Banner,
                         Code,
                         MediaBlock,
+                        MediaCollageBlock,
                         DisplayMathBlock,
                         SquiggleRule,
                         TwitterEmbed,
                         YouTubeEmbed,
                         RedditEmbed,
-                        MediaCollageBlock
+                        BlueSkyEmbed,
+                        TikTokEmbed,
                       ],
                       inlineBlocks: [InlineMathBlock],
                     }),
