@@ -20,6 +20,7 @@ import type {
   CallToActionBlock as CTABlockProps,
   SquiggleRuleBlock as SquiggleRuleBlockProps,
   MediaBlock as MediaBlockProps,
+  MediaCollageBlock as MediaCollageBlockProps,
   TwitterEmbedBlock as TwitterEmbedBlockProps,
   YouTubeEmbedBlock as YouTubeEmbedBlockProps,
   RedditEmbedBlock as RedditEmbedBlockProps,
@@ -41,6 +42,7 @@ type NodeTypes =
   | SerializedBlockNode<
       | CTABlockProps
       | MediaBlockProps
+      | MediaCollageBlockProps
       | BannerBlockProps
       | CodeBlockProps
       | MathBlockProps
@@ -76,7 +78,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
         disableInnerContainer
       />
     ),
-    mediaCollage: ({ node }: { node: SerializedBlockNode }) => (
+    mediaCollage: ({ node }: { node: SerializedBlockNode<MediaCollageBlockProps> }) => (
       <MediaCollageBlock {...node.fields} />
     ),
     code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
