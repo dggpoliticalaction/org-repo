@@ -7,6 +7,7 @@ import type { Post } from '@/payload-types'
 import { Card } from '../../components/Card'
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
+import type { DefaultTypedEditorState } from 'node_modules/@payloadcms/richtext-lexical/dist/nodeTypes'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type RelatedPostsProps = {
@@ -20,7 +21,7 @@ export const RelatedPosts: React.FC<RelatedPostsProps> = (props) => {
 
   return (
     <div className={clsx('lg:container', className)}>
-      {introContent && <RichText data={introContent} enableGutter={false} />}
+      {introContent && <RichText data={introContent as unknown as DefaultTypedEditorState} enableGutter={false} />}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-stretch">
         {docs?.map((doc, index) => {
