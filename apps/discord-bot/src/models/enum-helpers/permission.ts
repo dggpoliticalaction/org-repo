@@ -8,7 +8,7 @@ interface PermissionData {
 
 export class Permission {
   public static Data: {
-    [key in PermissionsString]: PermissionData
+    [key in PermissionsString]: PermissionData | undefined
   } = {
     AddReactions: {
       displayName(langCode: Locale): string {
@@ -260,5 +260,15 @@ export class Permission {
         return Lang.getRef('permissions.ViewGuildInsights', langCode)
       },
     },
+    PinMessages: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.PinMessages', langCode)
+      },
+    },
+    BypassSlowmode: {
+      displayName(langCode: Locale): string {
+        return Lang.getRef('permissions.BypassSlowmode', langCode)
+      },
+    }
   }
 }
