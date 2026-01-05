@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { colorPicker } from '@/fields/colorPicker'
 import { link } from '@/fields/link'
 import { revalidateHeader } from './hooks/revalidateHeader'
 
@@ -24,6 +25,30 @@ export const Header: GlobalConfig = {
           RowLabel: '@/Header/RowLabel#RowLabel',
         },
       },
+    },
+    {
+      name: 'callToActionButton',
+      label: 'Call to Action Button',
+      type: 'group',
+      fields: [
+        {
+          name: 'enabled',
+          label: 'Enable Call to Action Button',
+          type: 'checkbox',
+          defaultValue: false,
+        },
+        link({
+          appearances: false,
+          // disableLabel: true,
+        }),
+        {
+          type: 'row',
+          fields: [
+            colorPicker({ overrides: { name: 'backgroundColor', label: 'Background Color' } }),
+            colorPicker({ overrides: { name: 'textColor', label: 'Text Color' } }),
+          ],
+        },
+      ],
     },
   ],
   hooks: {

@@ -7,8 +7,10 @@ import React, { useEffect, useState } from 'react'
 import type { Header } from '@/payload-types'
 
 import { Logo } from '@/components/Logo/Logo'
-import { HeaderNav } from './Nav'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/utilities/ui'
+import { ExternalLink } from 'lucide-react'
+import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
   data: Header
@@ -31,12 +33,42 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   }, [headerTheme])
 
   return (
-    <header className="flex flex-col my-6 items-center" {...(theme ? { 'data-theme': theme } : {})}>
-      <Link href="/">
-        <Logo loading="eager" priority="high" />
-      </Link>
-      <div className={cn('flex justify-between', !data.navItems ? 'py-8' : '')}>
-        <HeaderNav data={data} />
+    <header
+      className="container grid md:grid-cols-3 gap-4 my-6 items-center"
+      {...(theme ? { 'data-theme': theme } : {})}
+    >
+      <div className="hidden lg:block" />
+      <div className="flex justify-center md:col-span-2 lg:col-span-1">
+        <Link href="/">
+          <Logo loading="eager" priority="high" />
+        </Link>
+        <div className={cn('flex justify-between', !data.navItems ? 'py-8' : '')}>
+          <HeaderNav data={data} />
+        </div>
+      </div>
+      <div className="col-span-1 justify-end hidden md:flex">
+        {data.callToActionButton?.enabled && (
+          <Button
+            type="button"
+            variant="default"
+            style={{
+              backgroundColor: data.callToActionButton?.backgroundColor || '#000000',
+              color: data.callToActionButton?.textColor || '#ffffff',
+            }}
+            className="hidden md:flex font-bold hover:opacity-80 transition-opacity duration-300 items-center gap-2 w-fit"
+            asChild
+          >
+            <Link
+              href={data.callToActionButton?.link?.url || '/'}
+              target={data.callToActionButton?.link?.newTab ? '_blank' : '_self'}
+              aria-label={data.callToActionButton?.link?.label}
+              rel={data.callToActionButton?.link?.newTab ? 'noopener noreferrer' : undefined}
+            >
+              {data.callToActionButton?.link?.label}
+              <ExternalLink className="w-4 h-4" />
+            </Link>
+          </Button>
+        )}
       </div>
     </header>
   )
