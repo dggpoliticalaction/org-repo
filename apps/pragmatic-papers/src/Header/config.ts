@@ -39,7 +39,6 @@ export const Header: GlobalConfig = {
         },
         link({
           appearances: false,
-          // disableLabel: true,
         }),
         {
           type: 'row',
