@@ -37,7 +37,7 @@ The Digital Ground Game (DGG) Political Action website template built with [Payl
 1. Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/dggpoliticalaction/org-repo.git
 cd apps/dgg-political-action
 ```
 
@@ -62,7 +62,7 @@ The application will be available at:
 - Frontend: http://localhost:3000
 - Admin Panel: http://localhost:3000/admin
 
-2. Navigate to http://localhost:3000/admin and create your first user account.
+2. Navigate to the Admin Panel and create your first user account.
 
 3. Once logged into the admin panel, click the seed button on the dashboard home screen to populate the database with sample content, including posts, pages, and media.
 
@@ -112,38 +112,7 @@ Docker can be useful in the following scenarios:
 
 ### Development with Docker Compose
 
-The project includes a `docker-compose.yml` file, but it's currently configured for MongoDB. Since this project uses SQLite by default, you have two options:
-
-**Option 1: Use SQLite (Recommended for development)**
-
-Update `docker-compose.yml` to remove the MongoDB dependency:
-
-```yaml
-version: '3'
-
-services:
-  payload:
-    image: node:22-alpine
-    ports:
-      - '3000:3000'
-    volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "pnpm install && pnpm dev"
-    env_file:
-      - .env
-```
-
-Then run:
-
-```bash
-docker-compose up
-```
-
-**Option 2: Use MongoDB with Docker**
-
-If you want to use MongoDB instead of SQLite, keep the current `docker-compose.yml` and update your Payload config to use the MongoDB adapter.
+The project includes a `docker-compose.yml` file, but it's currently configured for MongoDB. Since this project uses SQLite by default, you have to update your Payload config to use the MongoDB adapter.
 
 ### Production Docker
 
@@ -156,8 +125,6 @@ docker build -t dgg-political-action .
 # Run the container
 docker run -p 3000:3000 --env-file .env dgg-political-action
 ```
-
-**Note**: For production Docker builds, ensure `output: 'standalone'` is set in `next.config.js` (this is typically handled automatically by the Dockerfile).
 
 ### Local Development (Recommended)
 
