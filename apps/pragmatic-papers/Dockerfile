@@ -67,7 +67,13 @@ RUN set -e; \
                 echo "Creating \`pnpm-lock.yaml\` via pnpm..." && \
                 LOCKFILE_NAME="pnpm-lock.yaml" && \
                 #corepack enable pnpm && pnpm install  --prod --ignore-workspace --lockfile-only ; \
-                corepack enable pnpm && pnpm install  --prod --ignore-workspace ; \
+                corepack enable pnpm ;\
+                 if [ -n "$DEBUG" ] && [ "$DEBUG" = "true" ] ; then  \
+                    pnpm config get all ; \
+                    pnpm install --ignore-workspace ; \
+                  else \
+                    pnpm install --prod --ignore-workspace ; \
+                fi; \
           else \
             echo "Unsupported package manager: $PACKAGE_MANAGER" >&2 ; \
             exit 1; \
@@ -101,6 +107,8 @@ COPY . .
 
 # Set the debug env variable to true to enable debug logs
 ENV DEBUG="true"
+ENV NEXT_CLI_BUNDLER=webpack
+ENV NEXT_DISABLE_TURBOPACK=1
 ENV PACKAGE_MANAGER="pnpm"
 
 # Next.js collects completely anonymous telemetry data about general usage.
@@ -116,6 +124,9 @@ RUN \
   overall_success="true" ; \
   failed_info=""; \
   failed_build_commands=""; \
+  if [ -n "$DEBUG" ] && [ "$DEBUG" = "true" ] ; then  \
+    echo "Building with ${PACKAGE_MANAGER}..." >&2; \
+  fi; \
   if [ -f yarn.lock ] && [ "$PACKAGE_MANAGER" = "yarn" ] ;  then \
     yarn run build; \
     if [ $? -ne 0 ] ; then overall_success="false"  &&  \
@@ -131,6 +142,17 @@ RUN \
     if [ $? -ne 0 ] ; then overall_success="false" &&  \
     failed_build_commands="$failed_build_commands, pnpm"; fi; \
   fi; \
+  if [ -n "$DEBUG" ] && [ "$DEBUG" = "true" ] ; then  \
+    echo "Build step completed with overall success status: $overall_success" >&2; \
+    echo "CWD after build:" >&2; \
+    pwd && ls -alh; \
+    if [ -d ./.next ] ; then \
+      echo ".next folder:" >&2; \
+      ls -alh ./.next >&2; \
+    else \
+      echo "No .next folder found" >&2; \
+    fi; \
+  fi; \
   if [ "$overall_success" == "false" ] ; then \
     echo "Build failed running the following command(s): ${failed_build_commands:2}.  \
     Please check the logs for more details."  \
@@ -143,8 +165,7 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs ; \
     mkdir .next && chown nextjs:nodejs .next

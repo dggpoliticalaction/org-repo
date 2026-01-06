@@ -34,19 +34,21 @@ export const nextJsConfig = [
       "react/prop-types": "off",
       "react/display-name": "off",
       "react/jsx-boolean-value": ["error", "never"],
-      "react/jsx-curly-spacing": ["error", { "when": "never" }],
+      "react/jsx-curly-spacing": ["error", { when: "never" }],
       "react/jsx-equals-spacing": ["error", "never"],
       "react/jsx-indent": ["error", 2],
       "react/jsx-indent-props": ["error", 2],
-      "react/jsx-key": "error",
       "react/jsx-no-duplicate-props": "error",
       "react/jsx-no-undef": "error",
-      "react/jsx-tag-spacing": ["error", {
-        "closingSlash": "never",
-        "beforeSelfClosing": "always",
-        "afterOpening": "never",
-        "beforeClosing": "never"
-      }],
+      "react/jsx-tag-spacing": [
+        "error",
+        {
+          closingSlash: "never",
+          beforeSelfClosing: "always",
+          afterOpening: "never",
+          beforeClosing: "never",
+        },
+      ],
       "react/jsx-uses-react": "error",
       "react/jsx-uses-vars": "error",
       "react/no-danger": "warn",
@@ -58,43 +60,41 @@ export const nextJsConfig = [
       "react/prefer-es6-class": "error",
       "react/prefer-stateless-function": "warn",
       "react/self-closing-comp": "error",
-      "react/sort-comp": ["error", {
-        "order": [
-          "static-methods",
-          "lifecycle",
-          "everything-else",
-          "render"
-        ],
-        "groups": {
-          "lifecycle": [
-            "displayName",
-            "propTypes",
-            "contextTypes",
-            "childContextTypes",
-            "mixins",
-            "statics",
-            "defaultProps",
-            "constructor",
-            "getDefaultProps",
-            "state",
-            "getInitialState",
-            "getChildContext",
-            "getDerivedStateFromProps",
-            "componentWillMount",
-            "UNSAFE_componentWillMount",
-            "componentDidMount",
-            "componentWillReceiveProps",
-            "UNSAFE_componentWillReceiveProps",
-            "shouldComponentUpdate",
-            "componentWillUpdate",
-            "UNSAFE_componentWillUpdate",
-            "getSnapshotBeforeUpdate",
-            "componentDidUpdate",
-            "componentDidCatch",
-            "componentWillUnmount"
-          ]
-        }
-      }],
+      "react/sort-comp": [
+        "error",
+        {
+          order: ["static-methods", "lifecycle", "everything-else", "render"],
+          groups: {
+            lifecycle: [
+              "displayName",
+              "propTypes",
+              "contextTypes",
+              "childContextTypes",
+              "mixins",
+              "statics",
+              "defaultProps",
+              "constructor",
+              "getDefaultProps",
+              "state",
+              "getInitialState",
+              "getChildContext",
+              "getDerivedStateFromProps",
+              "componentWillMount",
+              "UNSAFE_componentWillMount",
+              "componentDidMount",
+              "componentWillReceiveProps",
+              "UNSAFE_componentWillReceiveProps",
+              "shouldComponentUpdate",
+              "componentWillUpdate",
+              "UNSAFE_componentWillUpdate",
+              "getSnapshotBeforeUpdate",
+              "componentDidUpdate",
+              "componentDidCatch",
+              "componentWillUnmount",
+            ],
+          },
+        },
+      ],
     },
   },
   {
@@ -115,3 +115,11 @@ export const nextJsConfig = [
     },
   },
 ];
+
+
+/** @type {import("next").NextConfig} */
+const nextConfig = {
+  output: "standalone",
+};
+
+export default nextConfig;
