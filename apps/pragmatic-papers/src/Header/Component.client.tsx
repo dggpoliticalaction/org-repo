@@ -61,7 +61,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
             <Link
               href={data.callToActionButton?.link?.url || '/'}
               target={data.callToActionButton?.link?.newTab ? '_blank' : '_self'}
-              aria-label={data.callToActionButton?.link?.label}
+              aria-label={`Link to ${data.callToActionButton?.link?.label}`}
               rel={data.callToActionButton?.link?.newTab ? 'noopener noreferrer' : undefined}
             >
               {data.callToActionButton?.link?.label}
