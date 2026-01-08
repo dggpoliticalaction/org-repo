@@ -95,6 +95,42 @@ Alternatively, you can use [Docker](https://www.docker.com) to spin up this temp
 
 That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
 
+### Analytics
+
+Pragmatic Papers is using Google Analytics for tracking. Users can opt-in for tracking if they would like.
+
+#### Tags & Hooks
+
+- Client-side hooks or components should check consent via `usePrivacyAnalytics` before tracking.
+- Use the `pushAnalyticsEvent` helper to send events into the GTM `dataLayer`.
+
+Ex:
+
+```ts
+const { shouldTrack } = usePrivacyAnalytics()
+
+const trackVolumeClick = () => {
+  if (!shouldTrack || !slug) return
+  pushAnalyticsEvent('volume_click', {
+    slug,
+    title: titleToUse,
+    volumeNumber,
+    source: 'front_page',
+  })
+}
+```
+
+These tags will appear in tagmanager and tagassistant when debugging.
+
+#### Server side analytics
+
+- server container `analytics.pragmaticpapers.com`
+
+#### References
+
+- https://developers.google.com/tag-platform/tag-manager/server-side/intro
+- https://stape.io/helpdesk/documentation/create-server-container-in-google-tag-manager
+
 ### Seed
 
 To seed the database with a few pages, articles, and projects you can click the 'seed database' link from the admin panel.
