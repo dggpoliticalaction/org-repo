@@ -7,9 +7,8 @@ import React, { useEffect, useState } from 'react'
 import type { Header } from '@/payload-types'
 
 import { Logo } from '@/components/Logo/Logo'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/utilities/ui'
-import { ExternalLink } from 'lucide-react'
+import { ActionButton } from './ActionButton/Component'
 import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
@@ -47,28 +46,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
         </div>
       </div>
       <div className="col-span-1 justify-end hidden md:flex">
-        {data.callToActionButton?.enabled && (
-          <Button
-            type="button"
-            variant="default"
-            style={{
-              backgroundColor: data.callToActionButton?.backgroundColor || '#000000',
-              color: data.callToActionButton?.textColor || '#ffffff',
-            }}
-            className="hidden md:flex font-bold hover:opacity-80 transition-opacity duration-300 items-center gap-2 w-fit"
-            asChild
-          >
-            <Link
-              href={data.callToActionButton?.link?.url || '/'}
-              target={data.callToActionButton?.link?.newTab ? '_blank' : '_self'}
-              aria-label={`Link to ${data.callToActionButton?.link?.label}`}
-              rel={data.callToActionButton?.link?.newTab ? 'noopener noreferrer' : undefined}
-            >
-              {data.callToActionButton?.link?.label}
-              <ExternalLink className="w-4 h-4" />
-            </Link>
-          </Button>
-        )}
+        <ActionButton {...data.actionButton} />
       </div>
     </header>
   )

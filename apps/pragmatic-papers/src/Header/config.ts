@@ -27,21 +27,30 @@ export const Header: GlobalConfig = {
       },
     },
     {
-      name: 'callToActionButton',
-      label: 'Call to Action Button',
+      name: 'actionButton',
+      label: 'Action Button',
       type: 'group',
       fields: [
         {
           name: 'enabled',
-          label: 'Enable Call to Action Button',
+          label: 'Enable Button',
           type: 'checkbox',
           defaultValue: false,
+          required: true,
         },
         link({
           appearances: false,
+          overrides: {
+            admin: {
+              condition: (_data, siblingData) => Boolean(siblingData?.enabled),
+            },
+          },
         }),
         {
           type: 'row',
+          admin: {
+            condition: (_data, siblingData) => Boolean(siblingData?.enabled),
+          },
           fields: [
             colorPicker({ overrides: { name: 'backgroundColor', label: 'Background Color' } }),
             colorPicker({ overrides: { name: 'textColor', label: 'Text Color' } }),

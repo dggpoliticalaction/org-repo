@@ -1687,9 +1687,9 @@ export interface Header {
         id?: string | null;
       }[]
     | null;
-  callToActionButton: {
-    enabled?: boolean | null;
-    link: {
+  actionButton: {
+    enabled: boolean;
+    link?: {
       type?: ('reference' | 'custom') | null;
       newTab?: boolean | null;
       reference?:
@@ -1772,7 +1772,7 @@ export interface HeaderSelect<T extends boolean = true> {
             };
         id?: T;
       };
-  callToActionButton?:
+  actionButton?:
     | T
     | {
         enabled?: T;
