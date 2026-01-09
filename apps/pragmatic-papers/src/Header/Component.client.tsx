@@ -6,9 +6,10 @@ import React, { useEffect, useState } from 'react'
 
 import type { Header } from '@/payload-types'
 
+import { OffCanvasBlock } from '@/blocks/OffCanvas/Component'
 import { Logo } from '@/components/Logo/Logo'
+import { TextSearch } from 'lucide-react'
 import { HeaderNav } from './Nav'
-import { cn } from '@/utilities/ui'
 
 interface HeaderClientProps {
   data: Header
@@ -31,12 +32,17 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   }, [headerTheme])
 
   return (
-    <header className="flex flex-col my-6 items-center" {...(theme ? { 'data-theme': theme } : {})}>
+    <header
+      className="my-6 grid grid-cols-3 items-center gap-4 px-4 md:px-8"
+      {...(theme ? { 'data-theme': theme } : {})}
+    >
+      <HeaderNav data={data} />
       <Link href="/">
         <Logo loading="eager" priority="high" />
       </Link>
-      <div className={cn('flex justify-between', !data.navItems ? 'py-8' : '')}>
-        <HeaderNav data={data} />
+      <div className="row flex gap-4 justify-self-end">
+        <Link href="/admin">Log In</Link>
+        <OffCanvasBlock label="Menu" icon={<TextSearch className="h-5 w-5" />} />
       </div>
     </header>
   )
