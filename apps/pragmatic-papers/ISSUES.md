@@ -11,19 +11,21 @@
 
 We need to do a Header Refresh al la Foreign Affairs complete with a few different tasks.
 
-- [P1] Create **Header Block**: `OffCanvasBlock` in `./src/Header/OffCanvasBlock/index.tsx`. Use shadcn `Sheet`
-- [P1] Add a second Nav to the Global Header (Responsively).
-- [P1] Add the OffCanvasBlock to the Global Header (Responsively).
-<!-- - [P2] Find/Create Stacked SVG of Pragmatic Papers Logo -->
-- [P2] Create sticky header on scroll
+- Create **Header Block**: `OffCanvasBlock` in `./src/Header/OffCanvasBlock/index.tsx`. Use shadcn `Sheet`
+- Add a second Nav to the Global Header (Responsively). Add the OffCanvasBlock to the Global Header (Responsively). Create sticky header on scroll
+- Find/Create Stacked SVG of Pragmatic Papers Logo
 
-## Lighthouse Score:
+## Accessibility:
 
 I want to improve our accessibility by maxing out our Lighthouse Score.
 
 - [P1] Accessibility: [Heading elements are not in a sequentially-descending order](https://dequeuniversity.com/rules/axe/4.11/heading-order)
 - [P1] Accessibility: [Document does not have a main landmark](https://dequeuniversity.com/rules/axe/4.11/landmark-one-main)
 - [P2] Performance: Header svg image doesn't have width and height set.
+
+## Performance
+
+The default theme handling in this payload template is leaving a lot to be desired. Crazy useEffects everywhere that we need to scrap. Want to research replacing the current implementation with the standard way using session storage/media-prefers.
 
 ## Future Research:
 
