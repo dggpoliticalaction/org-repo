@@ -10,7 +10,7 @@ export const OffCanvasBlock: React.FC<OffCanvasBlockProps> = ({ label, icon }) =
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="link" size="sm" className="gap-2">
           <span className="sr-only md:not-sr-only">{label}</span>
           {icon}
         </Button>
