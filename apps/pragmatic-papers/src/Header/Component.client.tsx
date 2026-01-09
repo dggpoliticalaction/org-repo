@@ -1,21 +1,13 @@
 'use client'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
-import type { Header } from '@/payload-types'
-
-import { OffCanvasBlock } from '@/blocks/OffCanvas/Component'
-import { Logo } from '@/components/Logo/Logo'
-import { TextSearch } from 'lucide-react'
-import { HeaderNav } from './Nav'
-
 interface HeaderClientProps {
-  data: Header
+  children: React.ReactNode
 }
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
+export const HeaderClient: React.FC<HeaderClientProps> = ({ children }) => {
   /* Storing the value in a useState to avoid hydration errors */
   const [theme, setTheme] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
@@ -33,17 +25,10 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
 
   return (
     <header
-      className="my-6 grid grid-cols-3 items-center gap-4 px-4 md:px-8"
+      className="sticky top-0 z-10 grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b-2 border-border bg-background px-4 py-6 md:px-6"
       {...(theme ? { 'data-theme': theme } : {})}
     >
-      <HeaderNav data={data} />
-      <Link href="/">
-        <Logo loading="eager" priority="high" />
-      </Link>
-      <div className="row flex gap-4 justify-self-end">
-        <Link href="/admin">Log In</Link>
-        <OffCanvasBlock label="Menu" icon={<TextSearch className="h-5 w-5" />} />
-      </div>
+      {children}
     </header>
   )
 }
