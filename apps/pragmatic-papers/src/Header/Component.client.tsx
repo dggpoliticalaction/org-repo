@@ -1,6 +1,5 @@
 'use client'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import type { Header } from '@/payload-types'
@@ -11,10 +10,10 @@ import { ActionButton } from './ActionButton/Component'
 import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
-  data: Header
+  children: React.ReactNode
 }
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
+export const HeaderClient: React.FC<HeaderClientProps> = ({ children }) => {
   /* Storing the value in a useState to avoid hydration errors */
   const [theme, setTheme] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
@@ -32,21 +31,10 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
 
   return (
     <header
-      className="container my-6 grid items-center gap-4 md:grid-cols-3"
+      className="sticky top-0 z-10 grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b-2 border-border bg-background px-4 py-6 md:px-6"
       {...(theme ? { 'data-theme': theme } : {})}
     >
-      <div className="hidden lg:block" />
-      <div className="flex justify-center md:col-span-2 lg:col-span-1">
-        <Link href="/">
-          <Logo loading="eager" priority="high" />
-        </Link>
-        <div className={cn('flex justify-between', !data.navItems ? 'py-8' : '')}>
-          <HeaderNav data={data} />
-        </div>
-      </div>
-      <div className="col-span-1 hidden justify-end md:flex">
-        <ActionButton {...data.actionButton} />
-      </div>
+      {children}
     </header>
   )
 }
