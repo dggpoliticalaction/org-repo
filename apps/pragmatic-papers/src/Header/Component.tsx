@@ -6,6 +6,7 @@ import { getCachedGlobal } from '@/utilities/getGlobals'
 import { TextSearch } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
+import { HeaderClient } from './Component.client'
 
 export async function Header(): Promise<React.JSX.Element> {
   const { primaryMenu, secondaryMenu }: Header = await getCachedGlobal('header', 1)()
