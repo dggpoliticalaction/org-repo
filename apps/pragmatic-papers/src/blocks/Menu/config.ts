@@ -1,11 +1,10 @@
 import { link } from '@/fields/link'
-import deepMerge from '@/utilities/deepMerge'
 import type { ArrayField, Field } from 'payload'
 
-type MenuType = Pick<ArrayField, 'name' | 'label' | 'labels'> & { overrides?: Partial<Field> }
+type MenuType = Pick<ArrayField, 'name' | 'label' | 'labels'>
 
-export const menu = ({ name, label, labels, overrides = {} }: MenuType): Field => {
-  const result: Field = {
+export const menu = ({ name, label, labels }: MenuType): Field => {
+  return {
     name,
     type: 'array',
     label,
@@ -19,6 +18,4 @@ export const menu = ({ name, label, labels, overrides = {} }: MenuType): Field =
       },
     },
   }
-
-  return deepMerge(result, overrides)
 }
