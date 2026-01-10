@@ -11,6 +11,12 @@ interface Props {
   theme?: 'light' | 'dark' | null
 }
 
+/** Legacy Logo component for Pragmatic Papers
+ * Only used for the footer.
+ * Will be replaced with the new logo component
+ * @deprecated
+ */
+
 export const Logo = (props: Props): React.ReactElement => {
   const { loading: loadingFromProps, priority: priorityFromProps, className, size, theme } = props
 
@@ -26,7 +32,7 @@ export const Logo = (props: Props): React.ReactElement => {
         fetchPriority={priority}
         decoding="async"
         className={clsx(
-          'w-full h-auto',
+          'h-auto w-full',
           size
             ? {
                 'max-w-xs': size === 'xs',
@@ -48,7 +54,7 @@ export const Logo = (props: Props): React.ReactElement => {
         fetchPriority={priority}
         decoding="async"
         className={clsx(
-          'w-full h-auto',
+          'h-auto w-full',
           size
             ? {
                 'max-w-xs': size === 'xs',
@@ -72,7 +78,7 @@ export const Logo = (props: Props): React.ReactElement => {
         fetchPriority={priority}
         decoding="async"
         className={clsx(
-          'w-full h-auto hidden dark:block',
+          'hidden h-auto w-full dark:block',
           size
             ? {
                 'max-w-xs': size === 'xs',
@@ -91,7 +97,7 @@ export const Logo = (props: Props): React.ReactElement => {
         fetchPriority={priority}
         decoding="async"
         className={clsx(
-          'w-full h-auto block dark:hidden',
+          'block h-auto w-full dark:hidden',
           size
             ? {
                 'max-w-xs': size === 'xs',
