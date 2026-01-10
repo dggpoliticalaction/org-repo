@@ -41,9 +41,7 @@ export class CTAPostTrigger implements Trigger {
   chanThreadsByMsg = new Map()
 
   public triggered(msg: Message): boolean {
-    const ctaChannel = msg.guild?.channels.cache.find(
-      (ctaChannel) => ctaChannel?.name === channelName,
-    )
+    const ctaChannel = msg.guild?.channels.cache.find((chan) => chan?.name === channelName)
     // check cta channel exists
     if (ctaChannel !== undefined) {
       // check message came from cta channel
