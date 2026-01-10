@@ -3,36 +3,25 @@
     "displayEmbeds": {
       "welcome": {
         "title": "Thank you for using {{COM:bot.name}}!",
-        "description": [
-          "{{REF:bot.description}}"
-        ],
+        "description": ["{{REF:bot.description}}"],
         "fields": [
           {
             "name": "Important {{REF:fields.commands}}",
-            "value": [
-              "{{CMD_LINK_HELP}} - {{REF:commandDescs.help}}"
-            ]
+            "value": ["{{CMD_LINK_HELP}} - {{REF:commandDescs.help}}"]
           },
           {
             "name": "{{REF:fields.links}}",
-            "value": [
-              "{{REF:links.docsEmbed}}",
-              "{{REF:links.supportEmbed}}"
-            ]
+            "value": ["{{REF:links.docsEmbed}}", "{{REF:links.supportEmbed}}"]
           }
         ]
       },
       "helpContactSupport": {
         "title": "Help - {{REF:helpOptions.contactSupport}}",
-        "description": [
-          "Have a question or feedback? Join our support server at the link below!"
-        ],
+        "description": ["Have a question or feedback? Join our support server at the link below!"],
         "fields": [
           {
             "name": "{{REF:fields.links}}",
-            "value": [
-              "{{REF:links.supportEmbed}}"
-            ]
+            "value": ["{{REF:links.supportEmbed}}"]
           }
         ]
       },
@@ -56,10 +45,7 @@
           },
           {
             "name": "{{REF:fields.links}}",
-            "value": [
-              "{{REF:links.docsEmbed}}",
-              "{{REF:links.supportEmbed}}"
-            ]
+            "value": ["{{REF:links.docsEmbed}}", "{{REF:links.supportEmbed}}"]
           }
         ]
       },
@@ -94,9 +80,7 @@
           },
           {
             "name": "Created With",
-            "value": [
-              "{{REF:links.templateEmbed}}"
-            ]
+            "value": ["{{REF:links.templateEmbed}}"]
           }
         ]
       },
