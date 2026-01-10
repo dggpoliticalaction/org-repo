@@ -19,7 +19,7 @@ export const ActionButton: React.FC<Header['actionButton']> = ({
         backgroundColor: backgroundColor || '#000000',
         color: textColor || '#ffffff',
       }}
-      className="hidden md:flex font-bold hover:opacity-80 transition-opacity duration-300 items-center gap-2 w-fit"
+      className="hidden w-fit items-center gap-2 font-bold transition-opacity duration-300 hover:opacity-80 md:flex"
       asChild
     >
       <Link
@@ -29,7 +29,7 @@ export const ActionButton: React.FC<Header['actionButton']> = ({
         rel={link?.newTab ? 'noopener noreferrer' : undefined}
       >
         {link?.label || 'Invalid Link'}
-        <ExternalLink className="w-4 h-4" />
+        <ExternalLink className="h-4 w-4" />
       </Link>
     </Button>
   )

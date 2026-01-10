@@ -33,7 +33,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
 
   return (
     <header
-      className="container grid md:grid-cols-3 gap-4 my-6 items-center"
+      className="container my-6 grid items-center gap-4 md:grid-cols-3"
       {...(theme ? { 'data-theme': theme } : {})}
     >
       <div className="hidden lg:block" />
@@ -45,7 +45,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
           <HeaderNav data={data} />
         </div>
       </div>
-      <div className="col-span-1 justify-end hidden md:flex">
+      <div className="col-span-1 hidden justify-end md:flex">
         <ActionButton {...data.actionButton} />
       </div>
     </header>
