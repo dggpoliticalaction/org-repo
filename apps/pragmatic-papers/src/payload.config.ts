@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
+import sharp from 'sharp'
 
 import path from 'path'
 import { buildConfig, type PayloadRequest } from 'payload'
@@ -75,6 +76,7 @@ export default buildConfig({
   globals: [Header, Footer],
   plugins: [...plugins],
   secret: process.env.PAYLOAD_SECRET,
+  sharp,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
