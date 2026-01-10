@@ -94,7 +94,7 @@ async function start(): Promise<void> {
   // Triggers
   const triggers: Trigger[] = [
     // TODO: Add new triggers here
-    new CTAPostTrigger()
+    new CTAPostTrigger(),
   ]
 
   // Event handlers
