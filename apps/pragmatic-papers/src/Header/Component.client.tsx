@@ -4,10 +4,17 @@ import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 interface HeaderClientProps {
+  className?: string
   children: React.ReactNode
 }
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ children }) => {
+/**
+ * This themeing code is  needs to be removed once we have a proper themeing system in place.
+ * Causing unnecessary re-renders.
+ * Theme should be set in the body instead.
+ * @deprecated
+ */
+export const HeaderClient: React.FC<HeaderClientProps> = ({ children, className }) => {
   /* Storing the value in a useState to avoid hydration errors */
   const [theme, setTheme] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
@@ -24,10 +31,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ children }) => {
   }, [headerTheme])
 
   return (
-    <header
-      className="sticky top-0 z-10 grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b-2 border-border bg-background px-4 py-6 md:px-6"
-      {...(theme ? { 'data-theme': theme } : {})}
-    >
+    <header className={className} {...(theme ? { 'data-theme': theme } : {})}>
       {children}
     </header>
   )
