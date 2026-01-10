@@ -1,0 +1,280 @@
+name: Preview Deployments
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  check-labels:
+    name: Check PR Labels
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    outputs:
+      pragmatic-papers: ${{ steps.check.outputs.pragmatic-papers }}
+      dggp-website: ${{ steps.check.outputs.dggp-website }}
+      discord-bot: ${{ steps.check.outputs.discord-bot }}
+      has-deployment-label: ${{ steps.check.outputs.has-deployment-label }}
+
+    steps:
+      - name: Check labels
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = context.payload.pull_request.labels.map(l => l.name);
+
+            const hasPragmaticPapers = labels.includes('pragmatic-papers');
+            const hasDggpWebsite = labels.includes('dggp-website');
+            const hasDiscordBot = labels.includes('discord-bot');
+            const hasAnyDeploymentLabel = hasPragmaticPapers || hasDggpWebsite || hasDiscordBot;
+
+            core.setOutput('pragmatic-papers', hasPragmaticPapers);
+            core.setOutput('dggp-website', hasDggpWebsite);
+            core.setOutput('discord-bot', hasDiscordBot);
+            core.setOutput('has-deployment-label', hasAnyDeploymentLabel);
+
+            console.log('Labels found:', {
+              'pragmatic-papers': hasPragmaticPapers,
+              'dggp-website': hasDggpWebsite,
+              'discord-bot': hasDiscordBot
+            });
+
+  prompt-for-labels:
+    name: Prompt for Preview Deployment
+    runs-on: ubuntu-latest
+    needs: check-labels
+    if: |
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'opened' || github.event.action == 'reopened') &&
+      needs.check-labels.outputs.has-deployment-label == 'false'
+
+    steps:
+      - name: Post comment prompting for labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+
+            // Check if we've already posted this prompt
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('Preview Deployment')
+            );
+
+            if (!botComment) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: `## 🚀 Preview Deployment
+
+            Would you like to deploy a preview for this PR?
+
+            Add one or more of these labels to trigger preview deployments:
+            - \`pragmatic-papers\` - Deploy Pragmatic Papers
+            - \`dggp-website\` - Deploy DGGP Website
+            - \`discord-bot\` - Deploy Discord Bot
+
+            Preview deployments will be automatically built with development/debug symbols for easier debugging.
+
+            _Note: Only build what you need to save resources and time!_`
+              });
+            }
+
+  deploy-pragmatic-papers:
+    name: Deploy Pragmatic Papers Preview
+    needs: check-labels
+    if: |
+      github.event_name == 'pull_request' &&
+      needs.check-labels.outputs.pragmatic-papers == 'true'
+    uses: ./.github/workflows/build-and-deploy.yml
+    with:
+      app-name: "pragmatic-papers"
+      app-path: "apps/pragmatic-papers"
+      environment: "preview"
+      deployment-type: "preview"
+      pr-number: "${{ github.event.pull_request.number }}"
+    secrets:
+      COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+      COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+      COOLIFY_APP_UUID: ${{ secrets.COOLIFY_PRAGMATIC_PAPERS_UUID }}
+      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_PRAGMATIC_PAPERS }}
+      DATABASE_URI: ${{ secrets.PRAGMATIC_PAPERS_STAGING_DATABASE_URI }}
+      PAYLOAD_SECRET: ${{ secrets.PRAGMATIC_PAPERS_PAYLOAD_SECRET }}
+      S3_REGION: ${{ secrets.PRAGMATIC_PAPERS_STAGING_S3_REGION }}
+      S3_BUCKET: ${{ secrets.PRAGMATIC_PAPERS_STAGING_S3_BUCKET }}
+      S3_ACCESS_KEY_ID: ${{ secrets.PRAGMATIC_PAPERS_STAGING_S3_ACCESS_KEY_ID }}
+      S3_SECRET_ACCESS_KEY: ${{ secrets.PRAGMATIC_PAPERS_STAGING_S3_SECRET_ACCESS_KEY }}
+      S3_ENDPOINT: ${{ secrets.PRAGMATIC_PAPERS_STAGING_S3_ENDPOINT }}
+
+  deploy-dggp-website:
+    name: Deploy DGGP Website Preview
+    needs: check-labels
+    if: |
+      github.event_name == 'pull_request' &&
+      needs.check-labels.outputs.dggp-website == 'true'
+    uses: ./.github/workflows/build-and-deploy.yml
+    with:
+      app-name: "dgg-political-action"
+      app-path: "apps/dgg-political-action"
+      environment: "preview"
+      deployment-type: "preview"
+      pr-number: "${{ github.event.pull_request.number }}"
+    secrets:
+      COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+      COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+      COOLIFY_APP_UUID: ${{ secrets.COOLIFY_DGGP_WEBSITE_UUID }}
+      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_DGGP_WEBSITE }}
+      DATABASE_URI: ${{ secrets.DGGP_WEBSITE_STAGING_DATABASE_URI }}
+      PAYLOAD_SECRET: ${{ secrets.DGGP_WEBSITE_PAYLOAD_SECRET }}
+
+  deploy-discord-bot:
+    name: Deploy Discord Bot Preview
+    needs: check-labels
+    if: |
+      github.event_name == 'pull_request' &&
+      needs.check-labels.outputs.discord-bot == 'true'
+    uses: ./.github/workflows/build-and-deploy.yml
+    with:
+      app-name: "discord-bot"
+      app-path: "apps/discord-bot"
+      environment: "preview"
+      deployment-type: "preview"
+      pr-number: "${{ github.event.pull_request.number }}"
+    secrets:
+      COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+      COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+      COOLIFY_APP_UUID: ${{ secrets.COOLIFY_DISCORD_BOT_UUID }}
+      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_DISCORD_BOT }}
+
+  update-pr-comment:
+    name: Update PR Comment
+    runs-on: ubuntu-latest
+    needs:
+      - check-labels
+      - deploy-pragmatic-papers
+      - deploy-dggp-website
+      - deploy-discord-bot
+    if: |
+      always() &&
+      github.event_name == 'pull_request' &&
+      needs.check-labels.outputs.has-deployment-label == 'true'
+
+    steps:
+      - name: Update or create deployment comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+
+            // Get all comments
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            // Find existing deployment status comment
+            const deploymentComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('## 📦 Preview Deployments')
+            );
+
+            // Build deployment status table
+            let commentBody = `## 📦 Preview Deployments\n\n`;
+            commentBody += `| Application | Status | Preview URL | Logs |\n`;
+            commentBody += `|------------|--------|-------------|------|\n`;
+
+            const deployments = [
+              {
+                name: 'Pragmatic Papers',
+                jobResult: '${{ needs.deploy-pragmatic-papers.result }}',
+                url: '${{ needs.deploy-pragmatic-papers.outputs.deployment-url }}',
+                uuid: '${{ needs.deploy-pragmatic-papers.outputs.deployment-uuid }}',
+                enabled: '${{ needs.check-labels.outputs.pragmatic-papers }}' === 'true'
+              },
+              {
+                name: 'DGGP Website',
+                jobResult: '${{ needs.deploy-dggp-website.result }}',
+                url: '${{ needs.deploy-dggp-website.outputs.deployment-url }}',
+                uuid: '${{ needs.deploy-dggp-website.outputs.deployment-uuid }}',
+                enabled: '${{ needs.check-labels.outputs.dggp-website }}' === 'true'
+              },
+              {
+                name: 'Discord Bot',
+                jobResult: '${{ needs.deploy-discord-bot.result }}',
+                url: '${{ needs.deploy-discord-bot.outputs.deployment-url }}',
+                uuid: '${{ needs.deploy-discord-bot.outputs.deployment-uuid }}',
+                enabled: '${{ needs.check-labels.outputs.discord-bot }}' === 'true'
+              }
+            ];
+
+            for (const deployment of deployments) {
+              if (!deployment.enabled) continue;
+
+              let statusEmoji = '⏳';
+              let statusText = 'Pending';
+
+              if (deployment.jobResult === 'success') {
+                statusEmoji = '✅';
+                statusText = 'Success';
+              } else if (deployment.jobResult === 'failure') {
+                statusEmoji = '❌';
+                statusText = 'Failed';
+              } else if (deployment.jobResult === 'cancelled') {
+                statusEmoji = '⚠️';
+                statusText = 'Cancelled';
+              } else if (deployment.jobResult === 'skipped') {
+                statusEmoji = '⏭️';
+                statusText = 'Skipped';
+              }
+
+              const previewUrl = deployment.url ? `[Open Preview](${deployment.url})` : '-';
+              const logsUrl = deployment.uuid
+                ? `[View Logs](${{ secrets.COOLIFY_API_URL }}/deployment/${deployment.uuid})`
+                : `[Workflow Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
+
+              commentBody += `| ${deployment.name} | ${statusEmoji} ${statusText} | ${previewUrl} | ${logsUrl} |\n`;
+            }
+
+            commentBody += `\n---\n`;
+            commentBody += `_Preview deployments are built with development mode and debug symbols enabled._\n`;
+            commentBody += `_Last updated: ${new Date().toISOString()}_`;
+
+            if (deploymentComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: deploymentComment.id,
+                body: commentBody
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: commentBody
+              });
+            }

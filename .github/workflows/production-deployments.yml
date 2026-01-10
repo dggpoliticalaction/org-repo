@@ -1,0 +1,200 @@
+name: Production Deployments
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  detect-changes:
+    name: Detect Changed Applications
+    runs-on: ubuntu-latest
+    outputs:
+      pragmatic-papers: ${{ steps.filter.outputs.pragmatic-papers }}
+      dggp-website: ${{ steps.filter.outputs.dggp-website }}
+      discord-bot: ${{ steps.filter.outputs.discord-bot }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for changes
+        id: filter
+        run: |
+          # Get the list of changed files since last push to main
+          if [ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]; then
+            # First push to main branch, deploy everything
+            echo "pragmatic-papers=true" >> $GITHUB_OUTPUT
+            echo "dggp-website=true" >> $GITHUB_OUTPUT
+            echo "discord-bot=true" >> $GITHUB_OUTPUT
+          else
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+
+            # Check for changes in each app
+            if echo "$CHANGED_FILES" | grep -q "^apps/pragmatic-papers/"; then
+              echo "pragmatic-papers=true" >> $GITHUB_OUTPUT
+            else
+              echo "pragmatic-papers=false" >> $GITHUB_OUTPUT
+            fi
+
+            if echo "$CHANGED_FILES" | grep -q "^apps/dgg-political-action/"; then
+              echo "dggp-website=true" >> $GITHUB_OUTPUT
+            else
+              echo "dggp-website=false" >> $GITHUB_OUTPUT
+            fi
+
+            if echo "$CHANGED_FILES" | grep -q "^apps/discord-bot/"; then
+              echo "discord-bot=true" >> $GITHUB_OUTPUT
+            else
+              echo "discord-bot=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+  deploy-pragmatic-papers:
+    name: Deploy Pragmatic Papers to Production
+    needs: detect-changes
+    if: needs.detect-changes.outputs.pragmatic-papers == 'true'
+    uses: ./.github/workflows/build-and-deploy.yml
+    with:
+      app-name: "pragmatic-papers"
+      app-path: "apps/pragmatic-papers"
+      environment: "production"
+      deployment-type: "production"
+      force-rebuild: false
+    secrets:
+      COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+      COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+      COOLIFY_APP_UUID: ${{ secrets.COOLIFY_PRAGMATIC_PAPERS_PRODUCTION_UUID }}
+      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_PRAGMATIC_PAPERS }}
+      DATABASE_URI: ${{ secrets.PRAGMATIC_PAPERS_PRODUCTION_DATABASE_URI }}
+      PAYLOAD_SECRET: ${{ secrets.PRAGMATIC_PAPERS_PAYLOAD_SECRET }}
+      S3_REGION: ${{ secrets.PRAGMATIC_PAPERS_PRODUCTION_S3_REGION }}
+      S3_BUCKET: ${{ secrets.PRAGMATIC_PAPERS_PRODUCTION_S3_BUCKET }}
+      S3_ACCESS_KEY_ID: ${{ secrets.PRAGMATIC_PAPERS_PRODUCTION_S3_ACCESS_KEY_ID }}
+      S3_SECRET_ACCESS_KEY: ${{ secrets.PRAGMATIC_PAPERS_PRODUCTION_S3_SECRET_ACCESS_KEY }}
+      S3_ENDPOINT: ${{ secrets.PRAGMATIC_PAPERS_PRODUCTION_S3_ENDPOINT }}
+
+  deploy-dggp-website:
+    name: Deploy DGGP Website to Production
+    needs: detect-changes
+    if: needs.detect-changes.outputs.dggp-website == 'true'
+    uses: ./.github/workflows/build-and-deploy.yml
+    with:
+      app-name: "dgg-political-action"
+      app-path: "apps/dgg-political-action"
+      environment: "production"
+      deployment-type: "production"
+      force-rebuild: false
+    secrets:
+      COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+      COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+      COOLIFY_APP_UUID: ${{ secrets.COOLIFY_DGGP_WEBSITE_PRODUCTION_UUID }}
+      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_DGGP_WEBSITE }}
+      DATABASE_URI: ${{ secrets.DGGP_WEBSITE_PRODUCTION_DATABASE_URI }}
+      PAYLOAD_SECRET: ${{ secrets.DGGP_WEBSITE_PAYLOAD_SECRET }}
+
+  deploy-discord-bot:
+    name: Deploy Discord Bot to Production
+    needs: detect-changes
+    if: needs.detect-changes.outputs.discord-bot == 'true'
+    uses: ./.github/workflows/build-and-deploy.yml
+    with:
+      app-name: "discord-bot"
+      app-path: "apps/discord-bot"
+      environment: "production"
+      deployment-type: "production"
+      force-rebuild: false
+    secrets:
+      COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+      COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+      COOLIFY_APP_UUID: ${{ secrets.COOLIFY_DISCORD_BOT_PRODUCTION_UUID }}
+      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_DISCORD_BOT }}
+
+  deployment-summary:
+    name: Deployment Summary
+    runs-on: ubuntu-latest
+    needs:
+      - detect-changes
+      - deploy-pragmatic-papers
+      - deploy-dggp-website
+      - deploy-discord-bot
+    if: always()
+
+    steps:
+      - name: Create deployment summary
+        run: |
+          echo "# 🚀 Production Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** main" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Deployment Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Application | Status | Changes Detected | Deployment URL |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|--------|------------------|----------------|" >> $GITHUB_STEP_SUMMARY
+
+          # Pragmatic Papers
+          PP_STATUS="${{ needs.deploy-pragmatic-papers.result }}"
+          PP_CHANGES="${{ needs.detect-changes.outputs.pragmatic-papers }}"
+          PP_URL="${{ needs.deploy-pragmatic-papers.outputs.deployment-url }}"
+          if [ "$PP_CHANGES" == "true" ]; then
+            if [ "$PP_STATUS" == "success" ]; then
+              echo "| Pragmatic Papers | ✅ Success | Yes | ${PP_URL:-N/A} |" >> $GITHUB_STEP_SUMMARY
+            elif [ "$PP_STATUS" == "failure" ]; then
+              echo "| Pragmatic Papers | ❌ Failed | Yes | - |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| Pragmatic Papers | ⚠️ $PP_STATUS | Yes | - |" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "| Pragmatic Papers | ⏭️ Skipped | No | - |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # DGGP Website
+          DGGP_STATUS="${{ needs.deploy-dggp-website.result }}"
+          DGGP_CHANGES="${{ needs.detect-changes.outputs.dggp-website }}"
+          DGGP_URL="${{ needs.deploy-dggp-website.outputs.deployment-url }}"
+          if [ "$DGGP_CHANGES" == "true" ]; then
+            if [ "$DGGP_STATUS" == "success" ]; then
+              echo "| DGGP Website | ✅ Success | Yes | ${DGGP_URL:-N/A} |" >> $GITHUB_STEP_SUMMARY
+            elif [ "$DGGP_STATUS" == "failure" ]; then
+              echo "| DGGP Website | ❌ Failed | Yes | - |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| DGGP Website | ⚠️ $DGGP_STATUS | Yes | - |" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "| DGGP Website | ⏭️ Skipped | No | - |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Discord Bot
+          BOT_STATUS="${{ needs.deploy-discord-bot.result }}"
+          BOT_CHANGES="${{ needs.detect-changes.outputs.discord-bot }}"
+          BOT_URL="${{ needs.deploy-discord-bot.outputs.deployment-url }}"
+          if [ "$BOT_CHANGES" == "true" ]; then
+            if [ "$BOT_STATUS" == "success" ]; then
+              echo "| Discord Bot | ✅ Success | Yes | ${BOT_URL:-N/A} |" >> $GITHUB_STEP_SUMMARY
+            elif [ "$BOT_STATUS" == "failure" ]; then
+              echo "| Discord Bot | ❌ Failed | Yes | - |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| Discord Bot | ⚠️ $BOT_STATUS | Yes | - |" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "| Discord Bot | ⏭️ Skipped | No | - |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "_Production deployments are built in production mode with optimizations enabled._" >> $GITHUB_STEP_SUMMARY

@@ -1,71 +1,133 @@
-# To use this Dockerfile, you have to set `output: 'standalone'` in your next.config.js file.
-# From https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
+# Dockerfile for Pragmatic Papers (Next.js + Payload CMS)
+# Optimized for pnpm monorepo with Turbo
 
-FROM node:22.12.0-alpine AS base
+ARG NODE_VERSION=24.12.0
 
-# Install dependencies only when needed
-FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+# ============================================
+# Base stage - setup pnpm and dependencies
+# ============================================
+FROM node:${NODE_VERSION}-alpine AS base
+
+# Install dependencies for native modules
 RUN apk add --no-cache libc6-compat
+
+# Enable pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+# ============================================
+# Pruner stage - prune monorepo to this app
+# ============================================
+FROM base AS pruner
 
+# Install turbo globally
+RUN pnpm add -g turbo
 
-# Rebuild the source code only when needed
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Copy entire monorepo
 COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
+# Prune the monorepo to just this app and its dependencies
+RUN turbo prune pragmatic-papers --docker
 
-RUN \
-  if [ -f yarn.lock ]; then yarn run build; \
-  elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+# ============================================
+# Dependencies stage - install dependencies
+# ============================================
+FROM base AS deps
 
-# Production image, copy all the files and run next
-FROM base AS runner
+# Copy pruned lockfile and package.json files
+COPY --from=pruner /app/out/json/ .
+COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=pruner /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
+
+# Install dependencies with frozen lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
+
+# ============================================
+# Builder stage - build the application
+# ============================================
+FROM base AS builder
+
+ARG NODE_ENV=production
+ARG BUILD_ENV=production
+ARG DATABASE_URI
+ARG PAYLOAD_SECRET
+ARG S3_REGION
+ARG S3_BUCKET
+ARG S3_ACCESS_KEY_ID
+ARG S3_SECRET_ACCESS_KEY
+ARG S3_ENDPOINT
+
 WORKDIR /app
 
-ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
+# Copy dependencies
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/packages ./packages
+COPY --from=deps /app/apps/pragmatic-papers/node_modules ./apps/pragmatic-papers/node_modules
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Copy pruned source code
+COPY --from=pruner /app/out/full/ .
 
-# Remove this line if you do not have this folder
-COPY --from=builder /app/public ./public
+# Copy turbo config
+COPY turbo.json turbo.json
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+# Set build environment
+ENV NODE_ENV=${NODE_ENV}
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV DATABASE_URI=${DATABASE_URI}
+ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
+ENV S3_REGION=${S3_REGION}
+ENV S3_BUCKET=${S3_BUCKET}
+ENV S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+ENV S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
+ENV S3_ENDPOINT=${S3_ENDPOINT}
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Run migrations and build using Turbo (uses the "ci" script which runs migrations + build)
+WORKDIR /app/apps/pragmatic-papers
+RUN pnpm run ci
 
+# ============================================
+# Runner stage - production runtime
+# ============================================
+FROM node:${NODE_VERSION}-alpine AS runner
+
+WORKDIR /app
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Set production environment
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Copy public assets
+COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./public
+
+# Copy standalone build (Next.js outputs this when output: 'standalone' is set)
+COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./apps/pragmatic-papers/.next/static
+
+# Switch to non-root user
 USER nextjs
 
+# Expose port
 EXPOSE 3000
 
-ENV PORT 3000
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
-# server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD HOSTNAME="0.0.0.0" node server.js
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start the application (server.js is created by Next.js standalone build)
+CMD ["node", "apps/pragmatic-papers/server.js"]

@@ -1,0 +1,340 @@
+name: Build and Deploy to Coolify
+
+on:
+  workflow_call:
+    inputs:
+      app-name:
+        description: "Application name to build"
+        required: true
+        type: string
+      app-path:
+        description: "Path to the application"
+        required: true
+        type: string
+      dockerfile-path:
+        description: "Path to Dockerfile relative to app directory"
+        required: false
+        type: string
+        default: "Dockerfile"
+      environment:
+        description: "Deployment environment (preview, staging, production)"
+        required: true
+        type: string
+      deployment-type:
+        description: "Type of deployment (preview, staging, production)"
+        required: true
+        type: string
+      pr-number:
+        description: "Pull request number (for preview deployments)"
+        required: false
+        type: string
+      force-rebuild:
+        description: "Force rebuild even if no changes detected"
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      COOLIFY_API_TOKEN:
+        description: "Coolify API token"
+        required: true
+      COOLIFY_API_URL:
+        description: "Coolify API base URL"
+        required: true
+      COOLIFY_APP_UUID:
+        description: "Coolify application UUID"
+        required: true
+      DOCKER_REGISTRY:
+        description: "Docker registry URL (e.g., ghcr.io, docker.io)"
+        required: true
+      DOCKER_USERNAME:
+        description: "Docker registry username"
+        required: true
+      DOCKER_PASSWORD:
+        description: "Docker registry password/token"
+        required: true
+      DOCKER_IMAGE_NAME:
+        description: "Docker image name (e.g., org/app-name)"
+        required: true
+      DATABASE_URI:
+        description: "Database URI for build-time access (migrations, static generation)"
+        required: false
+      PAYLOAD_SECRET:
+        description: "Payload CMS secret"
+        required: false
+      S3_REGION:
+        description: "S3 region"
+        required: false
+      S3_BUCKET:
+        description: "S3 bucket name"
+        required: false
+      S3_ACCESS_KEY_ID:
+        description: "S3 access key ID"
+        required: false
+      S3_SECRET_ACCESS_KEY:
+        description: "S3 secret access key"
+        required: false
+      S3_ENDPOINT:
+        description: "S3 endpoint URL"
+        required: false
+    outputs:
+      deployment-uuid:
+        description: "UUID of the Coolify deployment"
+        value: ${{ jobs.deploy.outputs.deployment-uuid }}
+      deployment-url:
+        description: "URL of the deployed application"
+        value: ${{ jobs.deploy.outputs.deployment-url }}
+      deployment-status:
+        description: "Status of the deployment"
+        value: ${{ jobs.deploy.outputs.deployment-status }}
+      image-tag:
+        description: "Docker image tag that was built"
+        value: ${{ jobs.build.outputs.image-tag }}
+
+jobs:
+  build:
+    name: Build ${{ inputs.app-name }}
+    runs-on: ubuntu-latest
+    outputs:
+      should-deploy: ${{ steps.check-changes.outputs.should-deploy }}
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if [ "${{ inputs.force-rebuild }}" == "true" ]; then
+            echo "Force rebuild enabled"
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # For PR deployments, check if this app was modified
+          if [ "${{ inputs.deployment-type }}" == "preview" ]; then
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+            if echo "$CHANGED_FILES" | grep -q "^${{ inputs.app-path }}/"; then
+              echo "Changes detected in ${{ inputs.app-name }}"
+              echo "should-deploy=true" >> $GITHUB_OUTPUT
+            else
+              echo "No changes detected in ${{ inputs.app-name }}"
+              echo "should-deploy=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            # For staging and production, check for changes since last push
+            if [ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]; then
+              # First push to branch, deploy
+              echo "should-deploy=true" >> $GITHUB_OUTPUT
+            else
+              CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+              if echo "$CHANGED_FILES" | grep -q "^${{ inputs.app-path }}/"; then
+                echo "Changes detected in ${{ inputs.app-name }}"
+                echo "should-deploy=true" >> $GITHUB_OUTPUT
+              else
+                echo "No changes detected in ${{ inputs.app-name }}"
+                echo "should-deploy=false" >> $GITHUB_OUTPUT
+              fi
+            fi
+          fi
+
+      - name: Set up Docker Buildx
+        if: steps.check-changes.outputs.should-deploy == 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Registry
+        if: steps.check-changes.outputs.should-deploy == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract Docker metadata
+        if: steps.check-changes.outputs.should-deploy == 'true'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE_NAME }}
+          tags: |
+            # For preview deployments - use PR number
+            type=raw,value=pr-${{ inputs.pr-number }},enable=${{ inputs.deployment-type == 'preview' }}
+            # For staging - use 'staging' and commit SHA
+            type=raw,value=staging,enable=${{ inputs.deployment-type == 'staging' }}
+            type=raw,value=staging-${{ github.sha }},enable=${{ inputs.deployment-type == 'staging' }}
+            # For production - use 'latest', 'production', and commit SHA
+            type=raw,value=latest,enable=${{ inputs.deployment-type == 'production' }}
+            type=raw,value=production,enable=${{ inputs.deployment-type == 'production' }}
+            type=raw,value=production-${{ github.sha }},enable=${{ inputs.deployment-type == 'production' }}
+            # Always tag with commit SHA for traceability
+            type=sha,prefix=${{ inputs.environment }}-
+          labels: |
+            org.opencontainers.image.title=${{ inputs.app-name }}
+            org.opencontainers.image.description=${{ inputs.app-name }} - ${{ inputs.environment }}
+            org.opencontainers.image.vendor=Your Organization
+
+      - name: Build and push Docker image
+        if: steps.check-changes.outputs.should-deploy == 'true'
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ${{ inputs.app-path }}/${{ inputs.dockerfile-path }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ inputs.app-name }}-${{ inputs.environment }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.app-name }}-${{ inputs.environment }}
+          build-args: |
+            NODE_ENV=${{ inputs.environment == 'production' && 'production' || 'development' }}
+            APP_NAME=${{ inputs.app-name }}
+            BUILD_ENV=${{ inputs.environment }}
+            DATABASE_URI=${{ secrets.DATABASE_URI }}
+            PAYLOAD_SECRET=${{ secrets.PAYLOAD_SECRET }}
+            S3_REGION=${{ secrets.S3_REGION }}
+            S3_BUCKET=${{ secrets.S3_BUCKET }}
+            S3_ACCESS_KEY_ID=${{ secrets.S3_ACCESS_KEY_ID }}
+            S3_SECRET_ACCESS_KEY=${{ secrets.S3_SECRET_ACCESS_KEY }}
+            S3_ENDPOINT=${{ secrets.S3_ENDPOINT }}
+          platforms: linux/amd64
+          secrets: |
+            DATABASE_URI=${{ secrets.DATABASE_URI }}
+            PAYLOAD_SECRET=${{ secrets.PAYLOAD_SECRET }}
+
+      - name: Output build information
+        if: steps.check-changes.outputs.should-deploy == 'true'
+        run: |
+          echo "### Docker Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Application:** ${{ inputs.app-name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image Digest:** ${{ steps.build.outputs.digest }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Tags:**" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+  deploy:
+    name: Deploy to Coolify
+    runs-on: ubuntu-latest
+    needs: build
+    if: needs.build.outputs.should-deploy == 'true'
+    outputs:
+      deployment-uuid: ${{ steps.trigger-deployment.outputs.deployment-uuid }}
+      deployment-url: ${{ steps.get-status.outputs.deployment-url }}
+      deployment-status: ${{ steps.get-status.outputs.status }}
+
+    steps:
+      - name: Extract primary image tag
+        id: extract-tag
+        run: |
+          # Get the first tag from the metadata output
+          FULL_TAGS="${{ needs.build.outputs.image-tag }}"
+          PRIMARY_TAG=$(echo "$FULL_TAGS" | head -n1)
+          echo "primary-tag=$PRIMARY_TAG" >> $GITHUB_OUTPUT
+          echo "Using image tag: $PRIMARY_TAG"
+
+      - name: Trigger Coolify deployment
+        id: trigger-deployment
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.COOLIFY_API_URL }}/api/v1/deploy" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "uuid": "${{ secrets.COOLIFY_APP_UUID }}",
+              "force": ${{ inputs.force-rebuild }},
+              "commit": "${{ github.sha }}",
+              "pull_request_id": ${{ inputs.pr-number || 'null' }},
+              "docker_image": "${{ steps.extract-tag.outputs.primary-tag }}"
+            }')
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            DEPLOYMENT_UUID=$(echo "$BODY" | jq -r '.deployment_uuid // .uuid // ""')
+            echo "Deployment triggered successfully"
+            echo "deployment-uuid=$DEPLOYMENT_UUID" >> $GITHUB_OUTPUT
+            echo "Deployment UUID: $DEPLOYMENT_UUID"
+          else
+            echo "Failed to trigger deployment. HTTP code: $HTTP_CODE"
+            echo "Response: $BODY"
+            exit 1
+          fi
+
+      - name: Wait for deployment to start
+        run: sleep 10
+
+      - name: Monitor deployment status
+        id: get-status
+        run: |
+          DEPLOYMENT_UUID="${{ steps.trigger-deployment.outputs.deployment-uuid }}"
+          MAX_RETRIES=60
+          RETRY_COUNT=0
+
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            RESPONSE=$(curl -s \
+              "${{ secrets.COOLIFY_API_URL }}/api/v1/deployments/$DEPLOYMENT_UUID" \
+              -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}")
+
+            STATUS=$(echo "$RESPONSE" | jq -r '.status // "unknown"')
+            DEPLOYMENT_URL=$(echo "$RESPONSE" | jq -r '.deployment_url // ""')
+
+            echo "Deployment status: $STATUS"
+
+            case "$STATUS" in
+              "finished"|"success")
+                echo "Deployment successful!"
+                echo "status=success" >> $GITHUB_OUTPUT
+                echo "deployment-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+                exit 0
+                ;;
+              "failed"|"error")
+                echo "Deployment failed!"
+                echo "status=failed" >> $GITHUB_OUTPUT
+
+                # Fetch logs for debugging
+                LOGS=$(curl -s \
+                  "${{ secrets.COOLIFY_API_URL }}/api/v1/deployments/$DEPLOYMENT_UUID/logs" \
+                  -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}" | jq -r '.logs // "No logs available"')
+
+                echo "Deployment logs:"
+                echo "$LOGS"
+                exit 1
+                ;;
+              "in_progress"|"running"|"pending")
+                echo "Deployment in progress, waiting..."
+                sleep 10
+                RETRY_COUNT=$((RETRY_COUNT + 1))
+                ;;
+              *)
+                echo "Unknown status: $STATUS"
+                sleep 10
+                RETRY_COUNT=$((RETRY_COUNT + 1))
+                ;;
+            esac
+          done
+
+          echo "Deployment timeout - status check exceeded maximum retries"
+          echo "status=timeout" >> $GITHUB_OUTPUT
+          exit 1
+
+      - name: Output deployment information
+        if: always()
+        run: |
+          echo "### Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Application:** ${{ inputs.app-name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Docker Image:** ${{ steps.extract-tag.outputs.primary-tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployment UUID:** ${{ steps.trigger-deployment.outputs.deployment-uuid }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ${{ steps.get-status.outputs.status }}" >> $GITHUB_STEP_SUMMARY
+
+          if [ -n "${{ steps.get-status.outputs.deployment-url }}" ]; then
+            echo "- **URL:** ${{ steps.get-status.outputs.deployment-url }}" >> $GITHUB_STEP_SUMMARY
+          fi
