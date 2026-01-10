@@ -16,6 +16,9 @@ type Props = {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const generatePreviewPath = ({ collection, slug }: Props) => {
+    if (slug === undefined || slug === null) {
+    return null
+  }
   const encodedParams = new URLSearchParams({
     slug,
     collection,
