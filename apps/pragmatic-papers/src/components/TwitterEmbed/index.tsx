@@ -1,18 +1,18 @@
 'use client'
 
-import type React from 'react';
+import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
-import Script from 'next/script';
+import Script from 'next/script'
 
-import { fetchTwitterEmbed } from '@/utilities/fetchTwitterEmbed';
+import { fetchTwitterEmbed } from '@/utilities/fetchTwitterEmbed'
 
 export const TwitterEmbed: React.FC<{
-  url?: string,
-  hideMedia?: boolean,
-  hideThread?: boolean,
-  align?: ('none' | 'left' | 'center' | 'right') | undefined,
-  lang?: string | undefined,
-  maxWidth?: number | undefined,
+  url?: string
+  hideMedia?: boolean
+  hideThread?: boolean
+  align?: ('none' | 'left' | 'center' | 'right') | undefined
+  lang?: string | undefined
+  maxWidth?: number | undefined
 }> = (props) => {
   const [content, setContent] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
@@ -28,15 +28,14 @@ export const TwitterEmbed: React.FC<{
       hide_thread: props.hideThread,
       align: props.align,
       maxwidth: props.maxWidth,
-      theme: theme as ('light' | 'dark')
+      theme: theme as 'light' | 'dark',
+    }).then((res) => {
+      if (!res) {
+        setContent('X post could not be loaded.')
+      } else {
+        setContent(res.html)
+      }
     })
-      .then(res => {
-        if (!res) {
-          setContent('X post could not be loaded.')
-        } else {
-          setContent(res.html)
-        }
-      })
   }, [props])
 
   useEffect(() => {
