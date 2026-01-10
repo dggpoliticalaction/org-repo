@@ -269,6 +269,6 @@ export class Permission {
       displayName(langCode: Locale): string {
         return Lang.getRef('permissions.BypassSlowmode', langCode)
       },
-    }
+    },
   }
 }

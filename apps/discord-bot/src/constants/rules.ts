@@ -26,7 +26,7 @@ export class Rules {
     {
       title: 'Meme Responsibly; No Bigotry',
       description:
-        '* Edgy humor is allowed if it’s genuinely funny and not mean-spirited. \n' + 
+        '* Edgy humor is allowed if it’s genuinely funny and not mean-spirited. \n' +
         '* Bigotry is not allowed. If your jokes drift into hateful territory, expect moderation. Explicit hateful or racist remarks will be punished harshly.',
     },
     {
@@ -46,8 +46,7 @@ export class Rules {
     },
     {
       title: 'No Sexual Comments About Women',
-      description:
-        '* These types of comments should be entirely avoided',
+      description: '* These types of comments should be entirely avoided',
     },
     {
       title: 'Attack Arguments, Not Attributes',
@@ -67,26 +66,26 @@ export class Rules {
     {
       title: 'Respect the Moderators',
       description:
-        '* Use <@&1385638258272108755> or <@575252669443211264> for help.\n' + 
+        '* Use <@&1385638258272108755> or <@575252669443211264> for help.\n' +
         '* No ghost-pinging, meme-pinging, blocking moderators\n' +
-        '* Do not harass users for reporting issues.\n' + 
-        '* If a moderator behaves inappropriately, contact <@764253906736906271> .\n' + 
+        '* Do not harass users for reporting issues.\n' +
+        '* If a moderator behaves inappropriately, contact <@764253906736906271> .\n' +
         '* If the Head Moderator is the issue, contact <@623632405315452929> .\n',
     },
     {
       title: 'Follow Text Channel Rules',
       description:
-        '* No spam, including intentionally loud audio.\n' + 
+        '* No spam, including intentionally loud audio.\n' +
         '* Follow any channel-specific rules in pinned messages.',
     },
     {
       title: 'Follow Voice Channel Rules',
       description:
-        '* No mic spam, screaming, or interrupting others.\n' + 
-        '* No NSFW content.\n' + 
-        '* Moderators have priority when moderation is required.\n' + 
-        '* No voice changers or TTS unless approved.\n' + 
+        '* No mic spam, screaming, or interrupting others.\n' +
+        '* No NSFW content.\n' +
+        '* Moderators have priority when moderation is required.\n' +
+        '* No voice changers or TTS unless approved.\n' +
         '* Recording/streaming is prohibited except by the Events team when permission was granted in advance by speakers.',
     },
-  ];  
-};
+  ]
+}
