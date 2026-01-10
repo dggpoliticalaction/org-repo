@@ -11,6 +11,12 @@ interface Props {
   theme?: 'light' | 'dark' | null
 }
 
+/** Legacy Logo component for Pragmatic Papers
+ * Only used for the footer.
+ * Will be replaced with the new logo component
+ * @deprecated
+ */
+
 export const Logo = (props: Props): React.ReactElement => {
   const { loading: loadingFromProps, priority: priorityFromProps, className, size, theme } = props
 
