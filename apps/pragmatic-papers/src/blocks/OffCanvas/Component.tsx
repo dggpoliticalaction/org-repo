@@ -18,7 +18,7 @@ export const OffCanvasBlock: React.FC<OffCanvasBlockProps> = ({ label, icon }) =
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="link" size="clear" className="items-center gap-2">
-          <span className="sr-only md:not-sr-only">{label}</span>
+          <span>{label}</span>
           {icon}
         </Button>
       </SheetTrigger>
