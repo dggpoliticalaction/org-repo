@@ -31,7 +31,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   }, [headerTheme])
 
   return (
-    <header className="flex flex-col my-6 items-center" {...(theme ? { 'data-theme': theme } : {})}>
+    <header className="my-6 flex flex-col items-center" {...(theme ? { 'data-theme': theme } : {})}>
       <Link href="/">
         <Logo loading="eager" priority="high" />
       </Link>
