@@ -1,4 +1,4 @@
-import { RedditEmbed } from "@/components/RedditEmbed";
+import { RedditEmbed } from '@/components/RedditEmbed'
 import type { RedditEmbedBlock as RedditEmbedBlockProps } from 'src/payload-types'
 
 type Props = {
@@ -6,7 +6,5 @@ type Props = {
 } & RedditEmbedBlockProps
 
 export const RedditEmbedBlock: React.FC<Props> = (props) => {
-  return (
-    <RedditEmbed url={props.url} />
-  )
+  return <RedditEmbed url={props.url} />
 }

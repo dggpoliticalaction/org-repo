@@ -11,6 +11,7 @@ export const TwitterEmbedBlock: React.FC<Props> = (props) => {
       url={props.url}
       hideMedia={props.hideMedia || false}
       hideThread={props.hideThread || false}
-      align="center" />
+      align="center"
+    />
   )
 }

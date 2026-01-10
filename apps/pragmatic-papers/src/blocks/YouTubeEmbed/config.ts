@@ -9,5 +9,5 @@ export const YouTubeEmbed: Block = {
       type: 'text',
       required: true,
     },
-  ]
+  ],
 }

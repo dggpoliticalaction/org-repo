@@ -16,8 +16,7 @@
   padding: 0px 16px !important;
 }
 
-html[data-theme="dark"] {
-
+html[data-theme='dark'] {
   .lexical-table-cell-header-1 {
     color: white;
   }
@@ -29,11 +28,9 @@ html[data-theme="dark"] {
   .lexical-table-row:hover {
     background-color: rgb(20, 20, 20);
   }
-
 }
 
-html[data-theme="light"] {
-
+html[data-theme='light'] {
   .lexical-table-cell-header-0 {
     color: rgb(54, 54, 54);
   }
@@ -41,5 +38,4 @@ html[data-theme="light"] {
   .lexical-table-row:hover {
     background-color: rgb(245, 245, 245);
   }
-
 }
