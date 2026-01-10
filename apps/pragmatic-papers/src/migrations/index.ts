@@ -8,6 +8,7 @@ import * as migration_20250708_042411_update_media_image_sizes from './20250708_
 import * as migration_20250708_212941_remove_medium_compat_size from './20250708_212941_remove_medium_compat_size';
 import * as migration_20250726_210541_implement_webhooks from './20250726_210541_implement_webhooks';
 import * as migration_20260109_081334_upgrade_payload_3_70_0 from './20260109_081334_upgrade_payload_3_70_0';
+import * as migration_20260110_021152_discord_header_button from './20260110_021152_discord_header_button';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20260109_081334_upgrade_payload_3_70_0.up,
     down: migration_20260109_081334_upgrade_payload_3_70_0.down,
-    name: '20260109_081334_upgrade_payload_3_70_0'
+    name: '20260109_081334_upgrade_payload_3_70_0',
+  },
+  {
+    up: migration_20260110_021152_discord_header_button.up,
+    down: migration_20260110_021152_discord_header_button.down,
+    name: '20260110_021152_discord_header_button'
   },
 ];
