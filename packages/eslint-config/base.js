@@ -52,7 +52,13 @@ export const config = [
     },
   },
   {
-    ignores: ["dist/**", "node_modules/**", ".next/**", "out/**"],
+    ignores: [
+      "dist/**",
+      "node_modules/**",
+      ".next/**",
+      "out/**",
+      "**/next-env.d.ts",
+    ],
   },
   // Prettier config must be last to disable conflicting rules
   eslintConfigPrettier,

@@ -18,6 +18,7 @@ export const nextJsConfig = [
       ...pluginReact.configs.flat.recommended.languageOptions,
       globals: {
         ...globals.serviceworker,
+        ...globals.browser,
       },
     },
     settings: { react: { version: "detect" } },
@@ -94,6 +95,28 @@ export const nextJsConfig = [
     },
     rules: {
       ...pluginReactHooks.configs.recommended.rules,
+    },
+  },
+  // Add Node.js globals for config files (next.config.js, redirects.js, etc.)
+  {
+    files: [
+      "**/*.config.js",
+      "**/*.config.cjs",
+      "**/*.config.mjs",
+      "**/redirects.js",
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      // Relax TypeScript rules for config files
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-shadow": "off",
+      "no-constant-binary-expression": "off",
+      // Allow Next.js private env vars in config files
+      "turbo/no-undeclared-env-vars": "off",
     },
   },
   // Prettier config must be last to disable conflicting rules
