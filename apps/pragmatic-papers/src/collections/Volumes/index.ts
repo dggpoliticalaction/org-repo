@@ -119,6 +119,7 @@ export const Volumes: CollectionConfig = {
                 description: 'Select and order articles for this volume',
                 allowCreate: false,
                 isSortable: true,
+                sortOptions: '-publishedAt',
               },
               validate: checkArticles,
             },

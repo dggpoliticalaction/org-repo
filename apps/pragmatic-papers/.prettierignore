@@ -1,4 +1,5 @@
 **/payload-types.ts
+**/migrations/**
 .tmp
 **/.git
 **/.hg
@@ -11,4 +12,3 @@
 **/temp
 **/docs/**
 tsconfig.json
-

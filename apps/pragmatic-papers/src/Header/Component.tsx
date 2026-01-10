@@ -1,7 +1,6 @@
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import React from 'react'
 import { HeaderClient } from './Component.client'
-
 import { MenuBlock } from '@/blocks/Menu/Component'
 import { OffCanvasBlock } from '@/blocks/OffCanvas/Component'
 import { Logo } from '@/components/Logo/Logo'
