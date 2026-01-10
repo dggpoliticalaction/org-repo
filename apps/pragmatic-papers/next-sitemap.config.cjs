@@ -8,7 +8,14 @@ const SITE_URL =
 module.exports = {
   siteUrl: SITE_URL,
   generateRobotsTxt: true,
-  exclude: ['/articles-sitemap.xml', '/pages-sitemap.xml', '/volumes-sitemap.xml', '/*', '/volumes/*', '/articles/*'],
+  exclude: [
+    '/articles-sitemap.xml',
+    '/pages-sitemap.xml',
+    '/volumes-sitemap.xml',
+    '/*',
+    '/volumes/*',
+    '/articles/*',
+  ],
   robotsTxtOptions: {
     policies: [
       {
@@ -16,6 +23,10 @@ module.exports = {
         disallow: '/admin/*',
       },
     ],
-    additionalSitemaps: [`${SITE_URL}/pages-sitemap.xml`, `${SITE_URL}/articles-sitemap.xml`, `${SITE_URL}/volumes-sitemap.xml`],
+    additionalSitemaps: [
+      `${SITE_URL}/pages-sitemap.xml`,
+      `${SITE_URL}/articles-sitemap.xml`,
+      `${SITE_URL}/volumes-sitemap.xml`,
+    ],
   },
 }
