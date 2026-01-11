@@ -22,7 +22,7 @@ const menuVariants = cva('flex items-center gap-3 text-sm', {
 interface MenuBlockProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof menuVariants> {
-  menu: MenuBlockType
+  menu?: MenuBlockType
   renderBefore?: React.ReactNode
   renderAfter?: React.ReactNode
 }
@@ -61,6 +61,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
   renderAfter,
   ...props
 }) => {
+  if (!menu) return null
   return (
     <nav className={cn(menuVariants({ variant }), className)} {...props}>
       {renderBefore}
