@@ -4,6 +4,8 @@ import { createUsers } from './users'
 import { createArticles } from './articles'
 import { createVolumes } from './volumes'
 import { createMedia } from './media'
+import { createPages } from './pages'
+import { createMenus } from './menus'
 
 export const seed = async (payload: Payload): Promise<void> => {
   // Delete all content before seeding
@@ -99,5 +101,15 @@ export const seed = async (payload: Payload): Promise<void> => {
   await payload.create({
     collection: 'pages',
     data: homeStatic,
+  })
+
+  // Create pages for menus
+  const { aboutPage, contactPage, privacyPolicyPage, termsOfUsePage } = await createPages(payload)
+
+  await createMenus(payload, {
+    aboutPage,
+    contactPage,
+    privacyPolicyPage,
+    termsOfUsePage,
   })
 }
