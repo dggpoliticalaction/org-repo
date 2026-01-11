@@ -1,3 +1,2 @@
-export * from './PrivacyAnalyticsContext'
-export * from './GoogleAnalyticsPP'
+export * from './PrivacyContext'
 export * from './GoogleTagManager'

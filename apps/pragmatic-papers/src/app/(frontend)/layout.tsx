@@ -12,11 +12,7 @@ import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
-import {
-  GoogleAnalyticsPP,
-  GoogleTagManager,
-  PrivacyAnalyticsProvider,
-} from '@/providers/PrivacyAnalytics'
+import { GoogleTagManager, PrivacyProvider } from '@/providers/PrivacyAnalytics'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { cookies, draftMode } from 'next/headers'
 
@@ -56,7 +52,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       lang="en"
       suppressHydrationWarning
     >
-      <PrivacyAnalyticsProvider initialConsent={initialConsent}>
+      <PrivacyProvider initialConsent={initialConsent}>
         <head>
           <InitTheme />
           <link href="/manifest.json" rel="manifest" />
@@ -75,7 +71,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             title="Pragmatic Papers - Volumes RSS Feed"
             type="application/rss+xml"
           />
-          <GoogleAnalyticsPP />
         </head>
         <body>
           <GoogleTagManager />
@@ -92,7 +87,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <PrivacyBanner />
           </Providers>
         </body>
-      </PrivacyAnalyticsProvider>
+      </PrivacyProvider>
     </html>
   )
 }

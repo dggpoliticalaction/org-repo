@@ -2,8 +2,8 @@
 
 import React from 'react'
 
-import { usePrivacyAnalytics } from './PrivacyAnalyticsContext'
-import Script from 'next/dist/client/script'
+import { usePrivacyAnalytics } from './PrivacyContext'
+import Script from 'next/script'
 
 export const GoogleTagManager: React.FC = () => {
   const { shouldTrack } = usePrivacyAnalytics()
@@ -17,6 +17,7 @@ export const GoogleTagManager: React.FC = () => {
   return (
     <>
       <Script
+        id="gtm-base-snippet"
         dangerouslySetInnerHTML={{
           __html: scriptContent,
         }}

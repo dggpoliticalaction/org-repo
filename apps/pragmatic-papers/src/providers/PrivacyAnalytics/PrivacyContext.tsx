@@ -53,7 +53,7 @@ export interface PrivacyAnalyticsProviderProps {
   initialConsent?: boolean | null
 }
 
-export const PrivacyAnalyticsProvider: React.FC<PrivacyAnalyticsProviderProps> = ({
+export const PrivacyProvider: React.FC<PrivacyAnalyticsProviderProps> = ({
   children,
   initialConsent,
 }) => {
