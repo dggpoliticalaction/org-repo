@@ -16,11 +16,13 @@ export const Header: GlobalConfig = {
     menu({
       name: 'primaryMenu',
       label: 'Primary Menu',
+      maxRows: 4,
       labels: { singular: 'Menu Item', plural: 'Menu Items' },
     }),
     menu({
       name: 'secondaryMenu',
       label: 'Secondary Menu',
+      maxRows: 4,
       labels: { singular: 'Menu Item', plural: 'Menu Items' },
     }),
     {
