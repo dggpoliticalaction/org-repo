@@ -7,6 +7,34 @@
  */
 
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuBlock".
+ */
+export type MenuBlock =
+  | {
+      link: {
+        type?: ('reference' | 'custom') | null;
+        newTab?: boolean | null;
+        reference?:
+          | ({
+              relationTo: 'pages';
+              value: number | Page;
+            } | null)
+          | ({
+              relationTo: 'volumes';
+              value: number | Volume;
+            } | null)
+          | ({
+              relationTo: 'articles';
+              value: number | Article;
+            } | null);
+        url?: string | null;
+        label: string;
+      };
+      id?: string | null;
+    }[]
+  | null;
+/**
  * Supported timezones in IANA format.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1672,60 +1700,8 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'volumes';
-                value: number | Volume;
-              } | null)
-            | ({
-                relationTo: 'articles';
-                value: number | Article;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  actionButton: {
-    enabled: boolean;
-    link?: {
-      type?: ('reference' | 'custom') | null;
-      newTab?: boolean | null;
-      reference?:
-        | ({
-            relationTo: 'pages';
-            value: number | Page;
-          } | null)
-        | ({
-            relationTo: 'volumes';
-            value: number | Volume;
-          } | null)
-        | ({
-            relationTo: 'articles';
-            value: number | Article;
-          } | null);
-      url?: string | null;
-      label: string;
-    };
-    /**
-     * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-     */
-    backgroundColor?: string | null;
-    /**
-     * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-     */
-    textColor?: string | null;
-  };
+  primaryMenu?: MenuBlock;
+  secondaryMenu?: MenuBlock;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1767,39 +1743,27 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
-  actionButton?:
-    | T
-    | {
-        enabled?: T;
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        backgroundColor?: T;
-        textColor?: T;
-      };
+  primaryMenu?: T | MenuBlockSelect<T>;
+  secondaryMenu?: T | MenuBlockSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuBlock_select".
+ */
+export interface MenuBlockSelect<T extends boolean = true> {
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
