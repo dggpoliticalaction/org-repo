@@ -21,7 +21,10 @@ export async function Header(): Promise<React.JSX.Element> {
   return (
     <header className="sticky top-0 z-50 border-b-2 border-border bg-background py-6">
       <div className="container grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-        <MenuBlockOrEmpty className="justify-self-start" menu={primaryMenu} />
+        <MenuBlockOrEmpty
+          className="justify-self-start [&>*]:hidden md:[&>*]:inline-flex"
+          menu={primaryMenu}
+        />
         <Link
           href="/"
           aria-label="Link to Home"
