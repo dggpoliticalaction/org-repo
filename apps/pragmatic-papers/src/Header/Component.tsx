@@ -13,7 +13,7 @@ export async function Header(): Promise<React.JSX.Element> {
     <header className="sticky top-0 z-50 grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b-2 border-border bg-background px-4 py-6 md:px-6">
       <MenuBlock menu={primaryMenu} />
       <Link href="/" aria-label="Link to Home" className="inline-flex items-center justify-center">
-        <Logo love />
+        <Logo love aria-hidden="true" />
       </Link>
       <MenuBlock
         className="justify-self-end"
