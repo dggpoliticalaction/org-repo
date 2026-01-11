@@ -7,7 +7,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { cn } from '@/utilities/ui'
 import { X } from 'lucide-react'
 
 interface OffCanvasBlockProps extends React.HTMLAttributes<HTMLDivElement> {
