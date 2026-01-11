@@ -17,7 +17,7 @@ type Props = {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const generatePreviewPath = ({ collection, slug }: Props) => {
   // Allow empty strings, e.g. for the homepage
-    if (slug === undefined || slug === null) {
+  if (slug === undefined || slug === null) {
     return null
   }
   // Encode to support slugs with special characters

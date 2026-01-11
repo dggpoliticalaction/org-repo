@@ -39,7 +39,7 @@ export const Pages: CollectionConfig<'pages'> = {
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
-      url: ({ data, req }) => 
+      url: ({ data, req }) =>
         generatePreviewPath({
           slug: data?.slug,
           collection: 'pages',
