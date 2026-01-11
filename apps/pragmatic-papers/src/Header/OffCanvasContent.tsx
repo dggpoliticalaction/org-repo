@@ -10,7 +10,7 @@ import { Copyright } from './Copyright'
 const OffCanvasHeader: React.FC = () => {
   return (
     <div className="my-6 flex text-left">
-      <Logo variant="stacked" />
+      <Logo variant="stacked" love />
     </div>
   )
 }
@@ -33,7 +33,7 @@ export async function OffCanvasContent(): Promise<React.JSX.Element> {
       <div className="flex flex-col flex-wrap items-start gap-3 sm:flex-row sm:items-end">
         <Logo variant="stacked" love />
         <MenuBlock menu={navItems} />
-        <Copyright />
+        <Copyright className="text-sm">Pragmatic Papers</Copyright>
       </div>
     </OffCanvasBlock>
   )

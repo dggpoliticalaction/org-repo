@@ -1,5 +1,13 @@
 'use client'
 
-export const Copyright: React.FC = () => {
-  return <div>&copy; {new Date().getFullYear()} Pragmatic Papers</div>
+export const Copyright: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+  children,
+  className,
+  ...props
+}) => {
+  return (
+    <div className={className}>
+      &copy; {new Date().getFullYear()} {children}
+    </div>
+  )
 }

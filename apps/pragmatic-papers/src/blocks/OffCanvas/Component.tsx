@@ -31,7 +31,7 @@ export const OffCanvasBlock: React.FC<OffCanvasBlockProps> = ({
           {icon}
         </Button>
       </SheetTrigger>
-      <SheetContent className={cn('w-screen sm:max-w-full', className)} hideClose>
+      <SheetContent className={className} hideClose>
         <SheetHeader>
           <SheetTitle className="sr-only">{label}</SheetTitle>
           {header}
