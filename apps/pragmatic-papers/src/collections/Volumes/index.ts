@@ -47,19 +47,16 @@ export const Volumes: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'volumeNumber', 'publishedAt', 'description'],
     livePreview: {
-      url: ({ data, req }) => {
-        const path = generatePreviewPath({
-          slug: typeof data?.slug === 'string' ? data.slug : '',
+      url: ({ data, req }) => 
+        generatePreviewPath({
+          slug: data?.slug,
           collection: 'volumes',
           req,
         })
-
-        return path
-      },
     },
     preview: (data, { req }) =>
       generatePreviewPath({
-        slug: typeof data?.slug === 'string' ? data.slug : '',
+        slug: data?.slug as string,
         collection: 'volumes',
         req,
       }),
