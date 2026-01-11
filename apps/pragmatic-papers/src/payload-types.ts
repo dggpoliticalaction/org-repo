@@ -1702,6 +1702,36 @@ export interface Header {
   id: number;
   primaryMenu?: MenuBlock;
   secondaryMenu?: MenuBlock;
+  actionButton: {
+    enabled: boolean;
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'volumes';
+            value: number | Volume;
+          } | null)
+        | ({
+            relationTo: 'articles';
+            value: number | Article;
+          } | null);
+      url?: string | null;
+      label: string;
+    };
+    /**
+     * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
+     */
+    backgroundColor?: string | null;
+    /**
+     * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
+     */
+    textColor?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1745,6 +1775,22 @@ export interface Footer {
 export interface HeaderSelect<T extends boolean = true> {
   primaryMenu?: T | MenuBlockSelect<T>;
   secondaryMenu?: T | MenuBlockSelect<T>;
+  actionButton?:
+    | T
+    | {
+        enabled?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        backgroundColor?: T;
+        textColor?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
