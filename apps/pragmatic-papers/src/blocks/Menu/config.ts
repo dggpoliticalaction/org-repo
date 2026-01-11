@@ -12,6 +12,7 @@ export const menu = ({ name, label, labels }: MenuType): Field => {
     interfaceName: 'MenuBlock',
     fields: [link({ appearances: false })],
     admin: {
+      initCollapsed: true,
       components: {
         RowLabel: '@/blocks/Menu/RowLabel#RowLabel',
       },
