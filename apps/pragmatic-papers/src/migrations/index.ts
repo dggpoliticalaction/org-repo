@@ -9,6 +9,7 @@ import * as migration_20250708_212941_remove_medium_compat_size from './20250708
 import * as migration_20250726_210541_implement_webhooks from './20250726_210541_implement_webhooks';
 import * as migration_20260109_081334_upgrade_payload_3_70_0 from './20260109_081334_upgrade_payload_3_70_0';
 import * as migration_20260110_021152_discord_header_button from './20260110_021152_discord_header_button';
+import * as migration_20260111_055750_slug_field_update from './20260111_055750_slug_field_update';
 
 export const migrations = [
   {
@@ -64,6 +65,11 @@ export const migrations = [
   {
     up: migration_20260110_021152_discord_header_button.up,
     down: migration_20260110_021152_discord_header_button.down,
-    name: '20260110_021152_discord_header_button'
+    name: '20260110_021152_discord_header_button',
+  },
+  {
+    up: migration_20260111_055750_slug_field_update.up,
+    down: migration_20260111_055750_slug_field_update.down,
+    name: '20260111_055750_slug_field_update'
   },
 ];
