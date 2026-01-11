@@ -6,15 +6,15 @@ import { CMSLink } from '@/components/Link'
 import { cn } from '@/utilities/ui'
 import { type VariantProps, cva } from 'class-variance-authority'
 
-const menuVariants = cva('flex items-center gap-3 text-sm', {
+const menuVariants = cva('flex items-center text-sm', {
   defaultVariants: {
     variant: 'responsive',
   },
   variants: {
     variant: {
-      inline: 'flex-row',
-      stacked: 'flex-col items-start',
-      responsive: 'flex-col md:flex-row',
+      inline: 'flex-row gap-3',
+      stacked: 'flex-col items-start gap-2',
+      responsive: 'flex-col md:flex-row gap-2 md:gap-3',
     },
   },
 })

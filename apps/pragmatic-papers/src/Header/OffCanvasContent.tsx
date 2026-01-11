@@ -5,10 +5,11 @@ import { MenuBlock } from '@/blocks/Menu/Component'
 import type { Footer, Header } from '@/payload-types'
 import { Logo } from '@/components/Logo'
 import { ActionButton } from './ActionButton/Component'
+import { Copyright } from './Copyright'
 
 const OffCanvasHeader: React.FC = () => {
   return (
-    <div className="flex text-left">
+    <div className="my-6 flex text-left">
       <Logo variant="stacked" />
     </div>
   )
@@ -20,16 +21,19 @@ export async function OffCanvasContent(): Promise<React.JSX.Element> {
   return (
     <OffCanvasBlock
       label="Menu"
+      className="flex min-h-screen flex-col gap-3"
       icon={<TextSearch className="h-5 w-5" />}
       header={<OffCanvasHeader />}
     >
-      <div className="grid flex-1 grid-cols-1 md:grid-cols-2">
+      <div className="flex flex-1 flex-col gap-2">
         <MenuBlock menu={primaryMenu} variant="stacked" />
         <MenuBlock menu={secondaryMenu} variant="stacked" />
         <ActionButton {...actionButton} />
       </div>
-      <div>
-        <MenuBlock menu={navItems} variant="stacked" />
+      <div className="flex flex-col flex-wrap items-start gap-3 sm:flex-row sm:items-end">
+        <Logo variant="stacked" love />
+        <MenuBlock menu={navItems} />
+        <Copyright />
       </div>
     </OffCanvasBlock>
   )

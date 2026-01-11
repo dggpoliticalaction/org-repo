@@ -19,7 +19,7 @@ export const ActionButton: React.FC<Header['actionButton']> = ({
         backgroundColor: backgroundColor || '#000000',
         color: textColor || '#ffffff',
       }}
-      className="hidden w-fit items-center gap-2 font-bold transition-opacity duration-300 hover:opacity-80 md:flex"
+      className="w-fit items-center gap-2 font-bold transition-opacity duration-300 hover:opacity-80"
       asChild
     >
       <Link

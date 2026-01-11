@@ -7,6 +7,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import { cn } from '@/utilities/ui'
 import { X } from 'lucide-react'
 
 interface OffCanvasBlockProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -16,6 +17,7 @@ interface OffCanvasBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const OffCanvasBlock: React.FC<OffCanvasBlockProps> = ({
+  className,
   label,
   icon,
   children,
@@ -29,7 +31,7 @@ export const OffCanvasBlock: React.FC<OffCanvasBlockProps> = ({
           {icon}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-screen sm:max-w-full" hideClose>
+      <SheetContent className={cn('w-screen sm:max-w-full', className)} hideClose>
         <SheetHeader>
           <SheetTitle className="sr-only">{label}</SheetTitle>
           {header}
