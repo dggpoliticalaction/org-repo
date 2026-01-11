@@ -1,4 +1,4 @@
-import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig, UIField } from 'payload'
 
 import {
   AlignFeature,
@@ -46,6 +46,9 @@ import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
 import { RedditEmbed } from '@/blocks/RedditEmbed/config'
 import { BlueSkyEmbed } from '@/blocks/BlueSkyEmbed/config'
 import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
+import PageResourceTracker from '@/components/PageResourceTracker'
+
+type UIFieldComponent = NonNullable<UIField['admin']['components']>['Field']
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
@@ -195,6 +198,16 @@ export const Articles: CollectionConfig = {
       },
       hasMany: true,
       relationTo: 'users',
+    },
+    {
+      name: 'resourceTracker',
+      type: 'ui',
+      admin: {
+        position: 'sidebar',
+        components: {
+          Field: PageResourceTracker as unknown as UIFieldComponent,
+        },
+      },
     },
     {
       name: 'createdBy',
