@@ -6,7 +6,7 @@ export const Copyright: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   ...props
 }) => {
   return (
-    <div className={className}>
+    <div className={className} {...props}>
       &copy; {new Date().getFullYear()} {children}
     </div>
   )
