@@ -61,7 +61,7 @@ export class CommandUtils {
         intr,
         Lang.getEmbed('validationEmbeds.missingClientPerms', data.lang, {
           PERMISSIONS: command.requireClientPerms
-            .map((perm) => `**${Permission.Data[perm].displayName(data.lang)}**`)
+            .map((perm) => `**${Permission.Data[perm]?.displayName(data.lang)}**`)
             .join(', '),
         }),
       )
