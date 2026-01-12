@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import type { Payload } from 'payload'
+import type { Article } from '@/payload-types'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
@@ -14,6 +16,15 @@ import { formatDateTime } from '@/utilities/formatDateTime'
 import { ArticleCard } from '@/components/ArticleCard'
 import { toRoman } from '@/utilities/toRoman'
 import { Squiggle } from '@/components/ui/squiggle'
+
+interface AuthorDoc {
+  id: string | number
+  name?: string | null
+  slug?: string | null
+  affiliation?: string | null
+}
+
+type VolumeArticleRef = number | Article
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -44,7 +55,7 @@ interface Args {
 const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
 
-  const payload = await getPayload({ config: configPromise })
+  const payload: Payload = await getPayload({ config: configPromise })
 
   const result = await payload.find({
     collection: 'volumes',
@@ -63,6 +74,32 @@ const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
   return result.docs?.[0] || null
 })
 
+const queryAuthorsByUserIds = cache(
+  async ({ userIds }: { userIds: (string | number)[] }): Promise<AuthorDoc[]> => {
+    if (!userIds.length) return []
+
+    const { isEnabled: draft } = await draftMode()
+
+    const payload = await getPayload({ config: configPromise })
+
+    const result = await payload.find({
+      collection: 'authors',
+      draft,
+      limit: 100,
+      overrideAccess: draft,
+      pagination: false,
+      where: {
+        user: {
+          in: userIds,
+        },
+      },
+      depth: 1,
+    })
+
+    return (result.docs ?? []) as AuthorDoc[]
+  },
+)
+
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
   const volume = await queryVolumeBySlug({ slug })
@@ -80,10 +117,28 @@ export default async function VolumePage({
 
   if (!volume) return <PayloadRedirects url={url} />
   const { publishedAt, editorsNote, articles } = volume
-  if (articles?.filter((article) => typeof article === 'number')?.length ?? 0 > 0) {
+  if (
+    articles?.filter((article: VolumeArticleRef) => typeof article === 'number')?.length ??
+    0 > 0
+  ) {
     console.error('Fetching volume with unfetched articles', slug)
   }
-  const actualArticles = articles?.filter((article) => typeof article !== 'number')
+  const actualArticles = articles?.filter(
+    (article: VolumeArticleRef): article is Article => typeof article !== 'number',
+  )
+
+  const authorIdSet = new Set<string | number>()
+  actualArticles?.forEach((article) => {
+    const articleAuthors = article?.authors || []
+    articleAuthors.forEach((authorRef) => {
+      const id = typeof authorRef === 'object' && authorRef !== null ? authorRef.id : authorRef
+      if (id != null) {
+        authorIdSet.add(id)
+      }
+    })
+  })
+
+  const volumeAuthors = await queryAuthorsByUserIds({ userIds: Array.from(authorIdSet) })
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-16">
@@ -124,6 +179,37 @@ export default async function VolumePage({
           ))}
         </div>
       </div>
+      {volumeAuthors.length > 0 && (
+        <section aria-label="Volume authors" className="mt-10 border-t pt-8">
+          <h2 className="mb-4 text-xl font-semibold">
+            Meet the Author{volumeAuthors.length > 1 ? 's' : ''}
+          </h2>
+          <div className="-mx-4 overflow-x-auto pb-2">
+            <div className="flex gap-4 px-4">
+              {volumeAuthors.map((author) => (
+                <div
+                  key={author.id}
+                  className="min-w-[220px] max-w-xs flex-1 rounded-lg border bg-card p-4 text-center"
+                >
+                  {author.slug ? (
+                    <a
+                      href={`/authors/${author.slug}`}
+                      className="text-base font-semibold text-foreground transition-colors hover:text-brand"
+                    >
+                      {author.name}
+                    </a>
+                  ) : (
+                    <p className="text-base font-semibold">{author.name}</p>
+                  )}
+                  {author.affiliation && (
+                    <p className="mt-1 text-xs text-muted-foreground">{author.affiliation}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   )
 }
