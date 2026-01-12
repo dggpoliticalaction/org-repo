@@ -1,8 +1,10 @@
 'use server'
 
+import type { User } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { AUTH_COOKIE_KEY } from './constants'
 import { redirectToDashboard } from './utils'
 
 export async function login(formData: FormData): Promise<void> {
@@ -28,7 +30,6 @@ export async function login(formData: FormData): Promise<void> {
     const data = await response.json()
 
     if (!response.ok) {
-      // Handle different error cases
       let errorMessage = 'Invalid email or password'
       if (data.errors) {
         const errorMessages = data.errors.map((err: { message: string }) => err.message)
@@ -39,10 +40,9 @@ export async function login(formData: FormData): Promise<void> {
       redirect('/login?error=' + encodeURIComponent(errorMessage))
     }
 
-    // Set the token cookie
     if (data.token) {
       const cookieStore = await cookies()
-      cookieStore.set('payload-token', data.token, {
+      cookieStore.set(AUTH_COOKIE_KEY, data.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',

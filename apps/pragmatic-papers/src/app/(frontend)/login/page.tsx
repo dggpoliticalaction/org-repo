@@ -2,6 +2,7 @@ import type { User } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { cookies } from 'next/headers'
 import React from 'react'
+import { AUTH_COOKIE_KEY } from './constants'
 import { LoginForm } from './LoginForm'
 import { redirectToDashboard } from './utils'
 
@@ -20,7 +21,7 @@ interface AuthResponse {
 
 export default async function Login({ searchParams }: LoginProps): Promise<React.ReactElement> {
   const cookieStore = await cookies()
-  const token = cookieStore.get('payload-token')?.value
+  const token = cookieStore.get(AUTH_COOKIE_KEY)?.value
 
   // If user is already logged in, redirect to home
   if (token) {

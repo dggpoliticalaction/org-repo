@@ -1,1 +1,1 @@
-export const AUTH_COOKIE_NAME = 'payload-token'
+export const AUTH_COOKIE_KEY = 'payload-token' as const
