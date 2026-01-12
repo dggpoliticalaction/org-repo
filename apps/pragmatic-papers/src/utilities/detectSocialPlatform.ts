@@ -1,81 +1,103 @@
 export type SocialPlatform = 'twitter' | 'youtube' | 'reddit' | 'bluesky' | 'tiktok' | 'unknown'
 
-// Regex patterns for validating subdomains of known social platforms
-// These patterns ensure:
-// - The subdomain starts and ends with alphanumeric characters
-// - Contains only lowercase alphanumeric chars and single hyphens (no consecutive hyphens)
-// - The full hostname ends with the expected domain
-// Note: We use explicit domain checks first (reddit.com, www.reddit.com, etc.)
-// and only fall back to regex for less common subdomains
-const REDDIT_SUBDOMAIN_PATTERN = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.reddit\.com$/
-const BLUESKY_SUBDOMAIN_PATTERN = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.bsky\.app$/
+interface DomainRule {
+  root: string
+  subdomains?: readonly string[]
+}
+
+interface PlatformRule {
+  platform: Exclude<SocialPlatform, 'unknown'>
+  domains: readonly DomainRule[]
+}
+
+const RULES: readonly PlatformRule[] = [
+  {
+    platform: 'twitter',
+    domains: [{ root: 'twitter.com', subdomains: ['www', 'mobile'] }],
+  },
+  {
+    platform: 'youtube',
+    domains: [{ root: 'youtube.com', subdomains: ['www', 'm'] }, { root: 'youtu.be' }],
+  },
+  {
+    platform: 'bluesky',
+    domains: [{ root: 'bsky.app', subdomains: ['www'] }],
+  },
+  {
+    platform: 'reddit',
+    domains: [{ root: 'reddit.com', subdomains: ['www', 'old', 'new', 'np', 'amp'] }],
+  },
+  {
+    platform: 'tiktok',
+    domains: [{ root: 'tiktok.com', subdomains: ['www', 'm'] }],
+  },
+] as const
+
+function normalizeHost(host: string): string {
+  return host.trim().toLowerCase()
+}
+
+const ACCEPTED_PROTOCOLS = ['http:', 'https:'] as const
+
+type AcceptedProtocol = (typeof ACCEPTED_PROTOCOLS)[number]
 
 /**
- * Detects the social media platform from a URL
- * @param url - The URL to analyze
- * @returns The detected platform or 'unknown' if not recognized
+ * Parses a given string and returns a URL object if the string is a valid,
+ * accepted URL. Only URLs with 'http:' or 'https:' protocols are allowed.
+ *
+ * @param input - The string to attempt to parse as a URL.
+ * @returns A URL object if parsing is successful and protocol is accepted; otherwise, null.
  */
-export function detectSocialPlatform(url: string): SocialPlatform {
-  if (!url) return 'unknown'
+function parseURL(input: string): URL | null {
+  const str = input.trim()
+  if (!str) return null
+  if (!URL.canParse(str)) return null
 
-  try {
-    const urlObj = new URL(url)
-    const hostname = urlObj.hostname.toLowerCase()
+  const url = URL.parse(str)
+  if (!url) return null
+  if (!ACCEPTED_PROTOCOLS.includes(url.protocol as AcceptedProtocol)) return null
 
-    // Twitter/X
-    if (
-      hostname === 'twitter.com' ||
-      hostname === 'www.twitter.com' ||
-      hostname === 'x.com' ||
-      hostname === 'www.x.com'
-    ) {
-      return 'twitter'
+  return url
+}
+
+/**
+ * A read-only map of normalized hostnames to their associated social platforms,
+ * excluding the 'unknown' platform.
+ *
+ * This map is built from the RULES constant, which contains platform-specific
+ * domain rules listing the root domains and accepted subdomains for each social
+ * platform. Each entry in the map represents either a root domain (e.g., 'twitter.com')
+ * or a subdomain-root combination (e.g., 'www.twitter.com'), matched in lowercase,
+ * and points to its corresponding platform (e.g., 'twitter').
+ *
+ * This structure enables fast lookup of a platform based on a given, normalized hostname.
+ */
+const HOSTNAMES: ReadonlyMap<string, Exclude<SocialPlatform, 'unknown'>> = (() => {
+  const map = new Map<string, Exclude<SocialPlatform, 'unknown'>>()
+
+  for (const rule of RULES) {
+    for (const domain of rule.domains) {
+      const root = normalizeHost(domain.root)
+      map.set(root, rule.platform)
+
+      for (const sub of domain.subdomains ?? []) {
+        map.set(`${normalizeHost(sub)}.${root}`, rule.platform)
+      }
     }
-
-    // YouTube
-    if (
-      hostname === 'youtube.com' ||
-      hostname === 'www.youtube.com' ||
-      hostname === 'youtu.be' ||
-      hostname === 'm.youtube.com'
-    ) {
-      return 'youtube'
-    }
-
-    // Reddit - explicitly list known subdomains or validate pattern
-    if (
-      hostname === 'reddit.com' ||
-      hostname === 'www.reddit.com' ||
-      hostname === 'old.reddit.com' ||
-      hostname === 'new.reddit.com' ||
-      hostname === 'np.reddit.com' ||
-      REDDIT_SUBDOMAIN_PATTERN.test(hostname)
-    ) {
-      return 'reddit'
-    }
-
-    // BlueSky - explicitly list known domains or validate pattern
-    if (
-      hostname === 'bsky.app' ||
-      hostname === 'www.bsky.app' ||
-      BLUESKY_SUBDOMAIN_PATTERN.test(hostname)
-    ) {
-      return 'bluesky'
-    }
-
-    // TikTok
-    if (
-      hostname === 'tiktok.com' ||
-      hostname === 'www.tiktok.com' ||
-      hostname === 'm.tiktok.com' ||
-      hostname === 'vm.tiktok.com'
-    ) {
-      return 'tiktok'
-    }
-
-    return 'unknown'
-  } catch {
-    // Invalid URL
-    return 'unknown'
   }
+
+  return map
+})()
+
+/**
+ * Detects the social media platform from a given input string.
+ *
+ * @param input - The input string to analyze.
+ * @returns The detected platform or 'unknown' if not recognized.
+ */
+export function detectSocialPlatform(input: string): SocialPlatform {
+  const url = parseURL(input)
+  if (!url) return 'unknown'
+  const host = normalizeHost(url.hostname)
+  return HOSTNAMES.get(host) ?? 'unknown'
 }
