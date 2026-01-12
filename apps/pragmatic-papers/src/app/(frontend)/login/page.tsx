@@ -1,10 +1,9 @@
-import { isUser, isWriter } from '@/access/checkRole'
 import type { User } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 import React from 'react'
 import { LoginForm } from './LoginForm'
+import { redirectToDashboard } from './utils'
 
 interface LoginProps {
   searchParams: Promise<{ error?: string }>
@@ -33,13 +32,7 @@ export default async function Login({ searchParams }: LoginProps): Promise<React
 
     const { user } = (await response.json()) as AuthResponse
 
-    if (user && isWriter(user)) {
-      redirect('/admin')
-    }
-
-    if (user && isUser(user)) {
-      redirect('/')
-    }
+    redirectToDashboard(user)
   }
 
   const params = await searchParams

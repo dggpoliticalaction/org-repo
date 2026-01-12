@@ -3,6 +3,7 @@
 import { getServerSideURL } from '@/utilities/getURL'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { redirectToDashboard } from './utils'
 
 export async function login(formData: FormData): Promise<void> {
   const email = formData.get('email') as string
@@ -48,11 +49,10 @@ export async function login(formData: FormData): Promise<void> {
         path: '/',
       })
     }
-
-    // Redirect on success
-    redirect('/')
   } catch (error) {
     console.error('Login error:', error)
     redirect('/login?error=' + encodeURIComponent('Failed to login. Please try again.'))
   }
+
+  redirectToDashboard()
 }
