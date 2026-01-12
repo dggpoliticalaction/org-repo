@@ -7,6 +7,12 @@ import type { TextFieldClientComponent } from 'payload'
 import { useEffect, useState } from 'react'
 import './URLField.scss'
 
+/**
+ * A custom TextField component for validating social media URLs.
+ *
+ * This field provides real-time social link validation and feedback for admins.
+ * Visual feedback is provided with a check or error icon beside the input.
+ */
 export const URLField: TextFieldClientComponent = ({ path, ...props }) => {
   const { value } = useField<string>({ path })
   const debouncedValue = useDebounce(value || '', 500)
@@ -18,7 +24,7 @@ export const URLField: TextFieldClientComponent = ({ path, ...props }) => {
     }
 
     const platform = detectSocialPlatform(debouncedValue)
-    setIsValid(platform !== 'unknown')
+    setIsValid(platform !== null)
   }, [debouncedValue])
 
   return (

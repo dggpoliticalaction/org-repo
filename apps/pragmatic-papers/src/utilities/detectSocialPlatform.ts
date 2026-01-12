@@ -1,4 +1,4 @@
-export type SocialPlatform = 'twitter' | 'youtube' | 'reddit' | 'bluesky' | 'tiktok' | 'unknown'
+export type SocialPlatform = 'twitter' | 'youtube' | 'reddit' | 'bluesky' | 'tiktok'
 
 interface DomainRule {
   root: string
@@ -6,7 +6,7 @@ interface DomainRule {
 }
 
 interface PlatformRule {
-  platform: Exclude<SocialPlatform, 'unknown'>
+  platform: SocialPlatform
   domains: readonly DomainRule[]
 }
 
@@ -61,8 +61,7 @@ function parseURL(input: string): URL | null {
 }
 
 /**
- * A read-only map of normalized hostnames to their associated social platforms,
- * excluding the 'unknown' platform.
+ * A read-only map of normalized hostnames to their associated social platforms.
  *
  * This map is built from the RULES constant, which contains platform-specific
  * domain rules listing the root domains and accepted subdomains for each social
@@ -72,8 +71,8 @@ function parseURL(input: string): URL | null {
  *
  * This structure enables fast lookup of a platform based on a given, normalized hostname.
  */
-const HOSTNAMES: ReadonlyMap<string, Exclude<SocialPlatform, 'unknown'>> = (() => {
-  const map = new Map<string, Exclude<SocialPlatform, 'unknown'>>()
+const HOSTNAMES: ReadonlyMap<string, SocialPlatform> = (() => {
+  const map = new Map<string, SocialPlatform>()
 
   for (const rule of RULES) {
     for (const domain of rule.domains) {
@@ -93,11 +92,11 @@ const HOSTNAMES: ReadonlyMap<string, Exclude<SocialPlatform, 'unknown'>> = (() =
  * Detects the social media platform from a given input string.
  *
  * @param input - The input string to analyze.
- * @returns The detected platform or 'unknown' if not recognized.
+ * @returns The detected platform or null if not recognized.
  */
-export function detectSocialPlatform(input: string): SocialPlatform {
+export function detectSocialPlatform(input: string): SocialPlatform | null {
   const url = parseURL(input)
-  if (!url) return 'unknown'
+  if (!url) return null
   const host = normalizeHost(url.hostname)
-  return HOSTNAMES.get(host) ?? 'unknown'
+  return HOSTNAMES.get(host) ?? null
 }
