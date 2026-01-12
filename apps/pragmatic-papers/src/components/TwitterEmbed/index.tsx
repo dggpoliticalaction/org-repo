@@ -7,6 +7,11 @@ import { useEffect, useRef, useState } from 'react'
 import { fetchTwitterEmbed } from '@/utilities/fetchTwitterEmbed'
 import { sanitizeHtml } from '@/utilities/sanitizeHtml'
 
+/**
+ * Twitter embed component.
+ * @param props - The props for the Twitter embed component.
+ * @returns The Twitter embed component.
+ */
 export const TwitterEmbed: React.FC<{
   url?: string
   hideMedia?: boolean | null
@@ -27,7 +32,7 @@ export const TwitterEmbed: React.FC<{
       url: props.url,
       hide_media: props.hideMedia ?? false,
       hide_thread: props.hideThread ?? false,
-      align: props.align,
+      align: props.align || 'center',
       maxwidth: props.maxWidth,
       theme: theme as 'light' | 'dark',
     }).then((res) => {
