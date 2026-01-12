@@ -8,6 +8,11 @@ import { sanitizeHtml } from '@/utilities/sanitizeHtml'
 
 import './index.scss'
 
+/**
+ * YouTube embed component.
+ * @param props - The props for the YouTube embed component.
+ * @returns The YouTube embed component.
+ */
 export const YouTubeEmbed: React.FC<{
   url?: string
   maxWidth?: number

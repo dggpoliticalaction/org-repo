@@ -19,5 +19,5 @@ export const SocialEmbedBlock: React.FC<SocialEmbedBlockProps> = (props) => {
   const platform = detectSocialPlatform(props.url)
   if (!platform) return null
   const EmbedComponent = EMBEDS[platform]
-  return <EmbedComponent {...props} />
+  return EmbedComponent ? <EmbedComponent {...props} /> : null
 }

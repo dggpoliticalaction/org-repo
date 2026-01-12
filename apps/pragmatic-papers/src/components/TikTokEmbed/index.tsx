@@ -2,12 +2,17 @@
 
 import { fetchTikTokEmbed } from '@/utilities/fetchTikTokEmbed'
 import { sanitizeHtml } from '@/utilities/sanitizeHtml'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // Track if the TikTok script has been loaded globally
 let tiktokScriptLoaded = false
 let tiktokScriptLoading = false
 
+/**
+ * TikTok embed component.
+ * @param props - The props for the TikTok embed component.
+ * @returns The TikTok embed component.
+ */
 export const TikTokEmbed: React.FC<{
   url?: string
 }> = (props) => {

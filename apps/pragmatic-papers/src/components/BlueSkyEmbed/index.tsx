@@ -6,6 +6,11 @@ import { useEffect, useRef, useState } from 'react'
 import { fetchBlueSkyEmbed } from '@/utilities/fetchBlueSkyEmbed'
 import { sanitizeHtml } from '@/utilities/sanitizeHtml'
 
+/**
+ * Bluesky embed component.
+ * @param props - The props for the Bluesky embed component.
+ * @returns The Bluesky embed component.
+ */
 export const BlueSkyEmbed: React.FC<{
   url?: string
   maxWidth?: number | undefined

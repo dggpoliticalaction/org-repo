@@ -6,6 +6,11 @@ import { useEffect, useState } from 'react'
 
 let redditScriptLoaded = false
 
+/**
+ * Reddit embed component.
+ * @param props - The props for the Reddit embed component.
+ * @returns The Reddit embed component.
+ */
 export const RedditEmbed: React.FC<{
   url?: string
 }> = (props) => {
