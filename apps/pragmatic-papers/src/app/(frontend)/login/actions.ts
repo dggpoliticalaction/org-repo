@@ -11,10 +11,13 @@ interface ErrorResponse {
   errors?: { message: string }[]
 }
 
-interface LoginResponse {
-  token: string
-  user: User
+interface AuthResponse {
+  message: string;
+  user: User;
+  token: string;
+  exp: number;
 }
+type LoginResponse = AuthResponse | ErrorResponse
 
 export async function login(formData: FormData): Promise<void> {
   const email = formData.get('email')
@@ -36,7 +39,7 @@ export async function login(formData: FormData): Promise<void> {
       }),
     })
 
-    const data = await response.json()
+    const data = await response.json() as LoginResponse
 
     if (!response.ok) {
       let errorMessage = 'Invalid email or password'
