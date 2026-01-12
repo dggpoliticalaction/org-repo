@@ -1912,61 +1912,12 @@ export interface SquiggleRuleBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "TwitterEmbedBlock".
- */
-export interface TwitterEmbedBlock {
-  url: string;
-  hideMedia?: boolean | null;
-  hideThread?: boolean | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'twitterEmbed';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "YouTubeEmbedBlock".
- */
-export interface YouTubeEmbedBlock {
-  url: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'youtubeEmbed';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "RedditEmbedBlock".
- */
-export interface RedditEmbedBlock {
-  url: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'redditEmbed';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "BlueSkyEmbedBlock".
- */
-export interface BlueSkyEmbedBlock {
-  url: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'blueSkyEmbed';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "TikTokEmbedBlock".
- */
-export interface TikTokEmbedBlock {
-  url: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'tiktokEmbed';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "SocialEmbedBlock".
  */
 export interface SocialEmbedBlock {
+  /**
+   * Enter a URL from Twitter/X, YouTube, Reddit, BlueSky, or TikTok. The platform will be automatically detected.
+   */
   url: string;
   hideMedia?: boolean | null;
   hideThread?: boolean | null;
