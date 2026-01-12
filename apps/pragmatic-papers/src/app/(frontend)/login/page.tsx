@@ -1,3 +1,4 @@
+import type { User } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -8,19 +9,28 @@ interface LoginProps {
   searchParams: Promise<{ error?: string }>
 }
 
+interface AuthResponse {
+  user: User
+  collection: 'users'
+  strategy: 'local-jwt'
+  exp: number
+  token: string
+  message: string
+}
+
 export default async function Login({ searchParams }: LoginProps): Promise<React.ReactElement> {
   const cookieStore = await cookies()
   const token = cookieStore.get('payload-token')?.value
 
   // If user is already logged in, redirect to home
   if (token) {
-    const meUserReq = await fetch(`${getServerSideURL()}/api/users/me`, {
+    const meUserReq = (await fetch(`${getServerSideURL()}/api/users/me`, {
       headers: {
         Authorization: `JWT ${token}`,
       },
-    })
+    })) as unknown as AuthResponse
 
-    if (meUserReq.ok) {
+    if (!meUserReq.user) {
       redirect('/')
     }
   }
