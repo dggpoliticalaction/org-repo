@@ -23,7 +23,6 @@ export default async function Login({ searchParams }: LoginProps): Promise<React
   const cookieStore = await cookies()
   const token = cookieStore.get(AUTH_COOKIE_KEY)?.value
 
-  // If user is already logged in, redirect to home
   if (token) {
     const response = await fetch(`${getServerSideURL()}/api/users/me`, {
       headers: {
