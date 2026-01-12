@@ -1,3 +1,4 @@
+import { isUser, isWriter } from '@/access/checkRole'
 import type { User } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { cookies } from 'next/headers'
@@ -32,7 +33,11 @@ export default async function Login({ searchParams }: LoginProps): Promise<React
 
     const { user } = (await response.json()) as AuthResponse
 
-    if (user) {
+    if (user && isWriter(user)) {
+      redirect('/admin')
+    }
+
+    if (user && isUser(user)) {
       redirect('/')
     }
   }
@@ -41,7 +46,7 @@ export default async function Login({ searchParams }: LoginProps): Promise<React
   const error = params.error ? decodeURIComponent(params.error) : null
 
   return (
-    <div className="flex items-center justify-center px-4">
+    <div className="flex flex-1 items-center justify-center px-4">
       <LoginForm error={error} />
     </div>
   )
