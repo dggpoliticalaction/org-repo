@@ -1,5 +1,3 @@
-'use client'
-
 export const Copyright: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   children,
   className,
