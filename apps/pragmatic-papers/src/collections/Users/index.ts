@@ -12,11 +12,12 @@ import {
 } from '@payloadcms/richtext-lexical'
 import { admin, adminFieldLevel } from '@/access/admins'
 import { adminOrSelf } from '@/access/adminOrSelf'
+import { writerFieldLevel } from '@/access/writer'
 
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
-    admin: authenticated,
+    admin: writerFieldLevel,
     create: admin,
     delete: admin,
     read: authenticated,
