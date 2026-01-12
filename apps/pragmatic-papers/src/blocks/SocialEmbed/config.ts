@@ -1,12 +1,12 @@
-import type { Block } from 'payload'
 import { detectSocialPlatform } from '@/utilities/detectSocialPlatform'
+import type { Block } from 'payload'
 
 export const SocialEmbed: Block = {
   slug: 'socialEmbed',
   interfaceName: 'SocialEmbedBlock',
   labels: {
-    singular: 'Social Media Embed',
-    plural: 'Social Media Embeds',
+    singular: 'Social Embed',
+    plural: 'Social Embeds',
   },
   fields: [
     {
@@ -15,8 +15,12 @@ export const SocialEmbed: Block = {
       required: true,
       label: 'URL',
       admin: {
-        description:
-          'Enter a URL from Twitter/X, YouTube, Reddit, BlueSky, or TikTok. The platform will be automatically detected.',
+        description: 'Paste a Twitter/X, YouTube, Reddit, BlueSky, or TikTok URL.',
+        components: {
+          Field: {
+            path: '@/blocks/SocialEmbed/URLField#URLField',
+          },
+        },
       },
     },
     {

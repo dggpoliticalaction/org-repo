@@ -1916,7 +1916,7 @@ export interface SquiggleRuleBlock {
  */
 export interface SocialEmbedBlock {
   /**
-   * Enter a URL from Twitter/X, YouTube, Reddit, BlueSky, or TikTok. The platform will be automatically detected.
+   * Paste a Twitter/X, YouTube, Reddit, BlueSky, or TikTok URL.
    */
   url: string;
   hideMedia?: boolean | null;
