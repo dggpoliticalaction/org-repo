@@ -10,6 +10,7 @@ import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Users } from './collections/Users'
+import { Authors } from './collections/Authors'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
@@ -71,7 +72,7 @@ export default buildConfig({
             url: process.env.DATABASE_URI || '',
           },
         }),
-  collections: [Pages, Articles, Volumes, Media, Categories, Users, Webhooks],
+  collections: [Pages, Articles, Volumes, Media, Categories, Users, Authors, Webhooks],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [...plugins],
