@@ -7,9 +7,18 @@ import { redirect } from 'next/navigation'
 import { AUTH_COOKIE_KEY } from './constants'
 import { redirectToDashboard } from './utils'
 
+interface ErrorResponse {
+  errors?: { message: string }[]
+}
+
+interface LoginResponse {
+  token: string
+  user: User
+}
+
 export async function login(formData: FormData): Promise<void> {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
+  const email = formData.get('email')
+  const password = formData.get('password')
 
   if (!email || !password) {
     redirect('/login?error=' + encodeURIComponent('Email and password are required'))
