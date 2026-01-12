@@ -27,7 +27,7 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
   },
   publishedAt: '2025-07-09T07:54:37.358Z',
   slug: 'home',
-  slugLock: true,
+  generateSlug: true,
   updatedAt: '2025-07-13T23:32:37.273Z',
   createdAt: '2025-07-09T07:54:36.604Z',
   _status: 'published',
