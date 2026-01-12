@@ -1,5 +1,12 @@
+'use client'
+
+import { useEffect } from 'react'
 import { logout } from './actions'
 
-export default async function LogoutPage(): Promise<void> {
-  await logout()
+export default function LogoutPage(): void {
+  useEffect(() => {
+    logout()
+  }, [])
+
+  return
 }
