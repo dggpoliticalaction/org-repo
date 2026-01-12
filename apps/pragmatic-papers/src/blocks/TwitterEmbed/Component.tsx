@@ -1,11 +1,7 @@
 import { TwitterEmbed } from '@/components/TwitterEmbed'
-import type { TwitterEmbedBlock as TwitterEmbedBlockProps } from 'src/payload-types'
+import type { SocialEmbedBlock as SocialEmbedBlockProps } from '@/payload-types'
 
-type Props = {
-  url?: string
-} & TwitterEmbedBlockProps
-
-export const TwitterEmbedBlock: React.FC<Props> = (props) => {
+export const TwitterEmbedBlock: React.FC<SocialEmbedBlockProps> = (props) => {
   return (
     <TwitterEmbed
       url={props.url}

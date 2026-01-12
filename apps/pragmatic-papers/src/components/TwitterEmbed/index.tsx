@@ -1,16 +1,16 @@
 'use client'
 
+import Script from 'next/script'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
-import Script from 'next/script'
 
 import { fetchTwitterEmbed } from '@/utilities/fetchTwitterEmbed'
 import { sanitizeHtml } from '@/utilities/sanitizeHtml'
 
 export const TwitterEmbed: React.FC<{
   url?: string
-  hideMedia?: boolean
-  hideThread?: boolean
+  hideMedia?: boolean | null
+  hideThread?: boolean | null
   align?: ('none' | 'left' | 'center' | 'right') | undefined
   lang?: string | undefined
   maxWidth?: number | undefined
@@ -25,8 +25,8 @@ export const TwitterEmbed: React.FC<{
 
     fetchTwitterEmbed({
       url: props.url,
-      hide_media: props.hideMedia,
-      hide_thread: props.hideThread,
+      hide_media: props.hideMedia ?? false,
+      hide_thread: props.hideThread ?? false,
       align: props.align,
       maxwidth: props.maxWidth,
       theme: theme as 'light' | 'dark',

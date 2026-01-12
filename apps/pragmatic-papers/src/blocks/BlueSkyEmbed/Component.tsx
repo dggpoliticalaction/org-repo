@@ -1,15 +1,7 @@
-import React from 'react'
 import { BlueSkyEmbed } from '@/components/BlueSkyEmbed'
-import type { BlueSkyEmbedBlock as BlueSkyEmbedBlockProps } from 'src/payload-types'
+import type { SocialEmbedBlock as SocialEmbedBlockProps } from '@/payload-types'
+import React from 'react'
 
-type Props = {
-  url?: string
-} & BlueSkyEmbedBlockProps
-
-export const BlueSkyEmbedBlock: React.FC<Props> = (props) => {
-  if (!props.url) {
-    return null
-  }
-
-  return <BlueSkyEmbed url={props.url} />
+export const BlueSkyEmbedBlock: React.FC<SocialEmbedBlockProps> = (props) => {
+  return <BlueSkyEmbed {...props} />
 }

@@ -1,58 +1,48 @@
-import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
 import type {
   DefaultNodeTypes,
+  DefaultTypedEditorState,
   SerializedBlockNode,
   SerializedLinkNode,
-  DefaultTypedEditorState,
 } from '@payloadcms/richtext-lexical'
 import {
+  RichText as ConvertRichText,
   type JSXConvertersFunction,
   LinkJSXConverter,
-  RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
 
 import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
 
+import { BannerBlock } from '@/blocks/Banner/Component'
+import { BlueSkyEmbedBlock } from '@/blocks/BlueSkyEmbed/Component'
+import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
+import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
+import { SocialEmbedBlock } from '@/blocks/SocialEmbed/Component'
+import { TikTokEmbedBlock } from '@/blocks/TikTokEmbed/Component'
+import { TwitterEmbedBlock } from '@/blocks/TwitterEmbed/Component'
+import { YouTubeEmbedBlock } from '@/blocks/YouTubeEmbed/Component'
 import type {
   BannerBlock as BannerBlockProps,
   CallToActionBlock as CTABlockProps,
-  SquiggleRuleBlock as SquiggleRuleBlockProps,
   MediaBlock as MediaBlockProps,
-  TwitterEmbedBlock as TwitterEmbedBlockProps,
-  YouTubeEmbedBlock as YouTubeEmbedBlockProps,
-  RedditEmbedBlock as RedditEmbedBlockProps,
-  BlueSkyEmbedBlock as BlueSkyEmbedBlockProps,
-  TikTokEmbedBlock as TikTokEmbedBlockProps,
   SocialEmbedBlock as SocialEmbedBlockProps,
+  SquiggleRuleBlock as SquiggleRuleBlockProps,
 } from '@/payload-types'
-import { BannerBlock } from '@/blocks/Banner/Component'
-import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { cn } from '@/utilities/ui'
-import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
-import { TwitterEmbedBlock } from '@/blocks/TwitterEmbed/Component'
-import { YouTubeEmbedBlock } from '@/blocks/YouTubeEmbed/Component'
-import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
-import { BlueSkyEmbedBlock } from '@/blocks/BlueSkyEmbed/Component'
-import { TikTokEmbedBlock } from '@/blocks/TikTokEmbed/Component'
-import { SocialEmbedBlock } from '@/blocks/SocialEmbed/Component'
 
 type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-    | CTABlockProps
-    | MediaBlockProps
-    | BannerBlockProps
-    | CodeBlockProps
-    | MathBlockProps
-    | SquiggleRuleBlockProps
-    | TwitterEmbedBlockProps
-    | YouTubeEmbedBlockProps
-    | RedditEmbedBlockProps
-    | BlueSkyEmbedBlockProps
-    | TikTokEmbedBlockProps
-    | SocialEmbedBlockProps
-  >
+      | CTABlockProps
+      | MediaBlockProps
+      | BannerBlockProps
+      | CodeBlockProps
+      | MathBlockProps
+      | SquiggleRuleBlockProps
+      | SocialEmbedBlockProps
+    >
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
@@ -86,11 +76,21 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
     socialEmbed: ({ node }) => <SocialEmbedBlock {...node.fields} />,
     // Legacy block types for backward compatibility with existing content
-    twitterEmbed: ({ node }) => <TwitterEmbedBlock {...node.fields} />,
-    youtubeEmbed: ({ node }) => <YouTubeEmbedBlock {...node.fields} />,
-    redditEmbed: ({ node }) => <RedditEmbedBlock {...node.fields} />,
-    blueSkyEmbed: ({ node }) => <BlueSkyEmbedBlock {...node.fields} />,
-    tiktokEmbed: ({ node }) => <TikTokEmbedBlock {...node.fields} />,
+    twitterEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+      <TwitterEmbedBlock {...node.fields} />
+    ),
+    youtubeEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+      <YouTubeEmbedBlock {...node.fields} />
+    ),
+    redditEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+      <RedditEmbedBlock {...node.fields} />
+    ),
+    blueSkyEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+      <BlueSkyEmbedBlock {...node.fields} />
+    ),
+    tiktokEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+      <TikTokEmbedBlock {...node.fields} />
+    ),
   },
   inlineBlocks: {
     inlineMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (

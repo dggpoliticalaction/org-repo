@@ -1,14 +1,6 @@
 import { YouTubeEmbed } from '@/components/YouTubeEmbed'
-import type { YouTubeEmbedBlock as YouTubeEmbedBlockProps } from 'src/payload-types'
+import type { SocialEmbedBlock as SocialEmbedBlockProps } from '@/payload-types'
 
-type Props = {
-  url?: string
-} & YouTubeEmbedBlockProps
-
-export const YouTubeEmbedBlock: React.FC<Props> = (props) => {
-  if (!props.url) {
-    return null
-  }
-
-  return <YouTubeEmbed url={props.url} />
+export const YouTubeEmbedBlock: React.FC<SocialEmbedBlockProps> = (props) => {
+  return <YouTubeEmbed {...props} />
 }
