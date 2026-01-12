@@ -10,7 +10,7 @@ interface LoginProps {
 }
 
 interface AuthResponse {
-  user: User
+  user: User | null
   collection: 'users'
   strategy: 'local-jwt'
   exp: number
@@ -24,13 +24,15 @@ export default async function Login({ searchParams }: LoginProps): Promise<React
 
   // If user is already logged in, redirect to home
   if (token) {
-    const meUserReq = (await fetch(`${getServerSideURL()}/api/users/me`, {
+    const response = await fetch(`${getServerSideURL()}/api/users/me`, {
       headers: {
         Authorization: `JWT ${token}`,
       },
-    })) as unknown as AuthResponse
+    })
 
-    if (!meUserReq.user) {
+    const { user } = (await response.json()) as AuthResponse
+
+    if (user) {
       redirect('/')
     }
   }
@@ -39,7 +41,7 @@ export default async function Login({ searchParams }: LoginProps): Promise<React
   const error = params.error ? decodeURIComponent(params.error) : null
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="flex items-center justify-center px-4">
       <LoginForm error={error} />
     </div>
   )
