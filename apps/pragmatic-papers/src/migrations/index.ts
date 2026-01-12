@@ -10,6 +10,7 @@ import * as migration_20250726_210541_implement_webhooks from './20250726_210541
 import * as migration_20260109_081334_upgrade_payload_3_70_0 from './20260109_081334_upgrade_payload_3_70_0';
 import * as migration_20260110_021152_discord_header_button from './20260110_021152_discord_header_button';
 import * as migration_20260111_055750_slug_field_update from './20260111_055750_slug_field_update';
+import * as migration_20260111_090000_add_user_debug_tools_flag from './20260111_090000_add_user_debug_tools_flag';
 
 export const migrations = [
   {
@@ -71,5 +72,10 @@ export const migrations = [
     up: migration_20260111_055750_slug_field_update.up,
     down: migration_20260111_055750_slug_field_update.down,
     name: '20260111_055750_slug_field_update'
+  },
+  {
+    up: migration_20260111_090000_add_user_debug_tools_flag.up,
+    down: migration_20260111_090000_add_user_debug_tools_flag.down,
+    name: '20260111_090000_add_user_debug_tools_flag',
   },
 ];

@@ -81,6 +81,22 @@ export const Users: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'debugToolsEnabled',
+      type: 'checkbox',
+      label: 'Enable debug tools in admin',
+      defaultValue: false,
+      saveToJWT: true,
+      admin: {
+        position: 'sidebar',
+        description:
+          'When enabled, shows additional debugging UI components (e.g. article size tracker).',
+        condition: (data) => Boolean((data as { id?: string | number } | null | undefined)?.id),
+      },
+      access: {
+        update: adminFieldLevel,
+      },
+    },
   ],
   timestamps: true,
 }

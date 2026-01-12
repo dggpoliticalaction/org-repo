@@ -1,7 +1,7 @@
 'use client'
 
 import { Banner } from '@payloadcms/ui/elements/Banner'
-import { useFormFields } from '@payloadcms/ui'
+import { useAuth, useFormFields } from '@payloadcms/ui'
 import React from 'react'
 
 const barClass = 'page-resource-tracker'
@@ -14,9 +14,18 @@ const SOFT_LIMIT_BYTES = 900_000
 type PageResourceTrackerProps = Record<string, unknown>
 
 const PageResourceTracker: React.FC<PageResourceTrackerProps> = (_props) => {
+  const { user } = useAuth()
   const { contentField } = useFormFields(([fields]) => ({
     contentField: fields?.content,
   })) as { contentField?: { value?: unknown; initialValue?: unknown } }
+
+  const debugToolsEnabled = Boolean(
+    (user as { debugToolsEnabled?: boolean } | null | undefined)?.debugToolsEnabled,
+  )
+
+  if (!debugToolsEnabled) {
+    return null
+  }
 
   let bytesLabel = '0.0 kB'
   let percent = 0
