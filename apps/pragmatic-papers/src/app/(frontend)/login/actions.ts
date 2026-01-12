@@ -4,6 +4,7 @@ import { Users } from '@/collections/Users'
 import config from '@payload-config'
 import { login as payloadLogin } from '@payloadcms/next/auth'
 import { redirect } from 'next/navigation'
+import { redirectToDashboard } from './utils'
 
 export async function login(formData: FormData): Promise<void> {
   const email = String(formData.get('email'))
@@ -27,5 +28,5 @@ export async function login(formData: FormData): Promise<void> {
     redirect('/login?error=' + encodeURIComponent('Failed to login. Please try again.'))
   }
 
-  redirect('/')
+  redirectToDashboard()
 }
