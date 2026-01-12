@@ -13,5 +13,5 @@ export const isWriter = (user: User): boolean => {
 }
 
 export const isUser = (user: User): boolean => {
-  return user.role === 'user'
+  return user.role === 'member'
 }

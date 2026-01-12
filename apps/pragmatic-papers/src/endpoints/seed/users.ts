@@ -6,6 +6,7 @@ interface Users {
   editor: User
   writer1: User
   writer2: User
+  member: User
 }
 
 export const createUsers = async (payload: Payload): Promise<Users> => {
@@ -113,5 +114,15 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
     },
   })
 
-  return { admin, editor, writer1, writer2 }
+  const member = await payload.create({
+    collection: 'users',
+    data: {
+      email: 'member@example.com',
+      password: 'password123',
+      name: 'John Member',
+      role: 'member',
+    },
+  })
+
+  return { admin, editor, writer1, writer2, member }
 }

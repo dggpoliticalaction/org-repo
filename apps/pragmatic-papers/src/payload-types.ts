@@ -426,7 +426,7 @@ export interface User {
     };
     [k: string]: unknown;
   } | null;
-  role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'user') | null;
+  role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'member') | null;
   updatedAt: string;
   createdAt: string;
   email: string;

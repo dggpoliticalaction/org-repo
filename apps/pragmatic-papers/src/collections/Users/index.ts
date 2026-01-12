@@ -77,8 +77,8 @@ export const Users: CollectionConfig = {
           value: 'writer',
         },
         {
-          label: 'User',
-          value: 'user',
+          label: 'Member',
+          value: 'member',
         },
       ],
     },
