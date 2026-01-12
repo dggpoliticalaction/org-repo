@@ -16,6 +16,20 @@ interface LoginFormProps {
   error?: string | null
 }
 
+/**
+ * LoginForm component renders a login form styled with Card components.
+ *
+ * Props:
+ * - error (string | null, optional): If provided, displays an error message above the form.
+ *
+ * The form collects email and password and submits them to the server using the `login` action.
+ * On submission, it triggers authentication logic on the server.
+ *
+ * UI Features:
+ * - Custom error message display for failed login attempts.
+ * - Accessible labels for email and password fields.
+ * - Styled submit button.
+ */
 export function LoginForm({ error }: LoginFormProps): React.ReactElement {
   return (
     <Card className="w-full max-w-md">
@@ -26,7 +40,9 @@ export function LoginForm({ error }: LoginFormProps): React.ReactElement {
       <form action={login}>
         <CardContent className="space-y-4">
           {error && (
-            <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">{error}</div>
+            <div className="rounded-md bg-destructive p-3 text-sm text-destructive-foreground">
+              {error}
+            </div>
           )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>

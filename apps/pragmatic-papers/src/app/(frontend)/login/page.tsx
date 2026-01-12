@@ -19,6 +19,16 @@ interface AuthResponse {
   message: string
 }
 
+/**
+ * Login page for the application.
+ *
+ * - If the user is already authenticated (cookie exists and valid), they are redirected to the dashboard.
+ * - Otherwise, renders the LoginForm component.
+ * - Displays error messages passed via search params.
+ *
+ * Components:
+ * - LoginForm: Handles email/password submission and displays errors.
+ */
 export default async function Login({ searchParams }: LoginProps): Promise<React.ReactElement> {
   const cookieStore = await cookies()
   const token = cookieStore.get(AUTH_COOKIE_KEY)?.value
