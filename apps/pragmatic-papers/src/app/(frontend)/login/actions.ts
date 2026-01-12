@@ -12,11 +12,12 @@ interface ErrorResponse {
 }
 
 interface AuthResponse {
-  message: string;
-  user: User;
-  token: string;
-  exp: number;
+  message: string
+  user: User
+  token: string
+  exp: number
 }
+
 type LoginResponse = AuthResponse | ErrorResponse
 
 export async function login(formData: FormData): Promise<void> {
@@ -39,20 +40,20 @@ export async function login(formData: FormData): Promise<void> {
       }),
     })
 
-    const data = await response.json() as LoginResponse
+    const data = (await response.json()) as LoginResponse
 
     if (!response.ok) {
       let errorMessage = 'Invalid email or password'
-      if (data.errors) {
+      if ('errors' in data && data.errors) {
         const errorMessages = data.errors.map((err: { message: string }) => err.message)
         errorMessage = errorMessages.join(', ')
-      } else if (data.message) {
+      } else if ('message' in data) {
         errorMessage = data.message
       }
       redirect('/login?error=' + encodeURIComponent(errorMessage))
     }
 
-    if (data.token) {
+    if ('token' in data) {
       const cookieStore = await cookies()
       cookieStore.set(AUTH_COOKIE_KEY, data.token, {
         httpOnly: true,
