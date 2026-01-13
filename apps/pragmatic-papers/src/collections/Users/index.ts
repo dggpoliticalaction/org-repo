@@ -14,6 +14,7 @@ import { admin, adminFieldLevel } from '@/access/admins'
 import { adminOrSelf } from '@/access/adminOrSelf'
 import type { User } from '@/payload-types'
 import { authorSlugFromNameAndId } from '@/utilities/authorSlug'
+import { link } from '@/fields/link'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -21,7 +22,6 @@ export const Users: CollectionConfig = {
     admin: authenticated,
     create: admin,
     delete: admin,
-    //read: () => true,
     read: authenticated,
     update: adminOrSelf,
   },
@@ -43,8 +43,6 @@ export const Users: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Slug used for the public author URL, e.g. /authors/jane-doe',
-        // Only show when editing an existing user (not on create-first-user or new-user forms)
-        // In the admin UI, `id` will be present when editing an existing document.
         condition: ({ id }) => Boolean(id),
       },
     },
@@ -72,7 +70,6 @@ export const Users: CollectionConfig = {
       relationTo: 'media',
       required: false,
       admin: {
-        // Only editable when editing an existing user
         condition: ({ id }) => Boolean(id),
       },
     },
@@ -86,23 +83,18 @@ export const Users: CollectionConfig = {
     },
     {
       name: 'socialLinks',
+      label: 'Social Links',
       type: 'array',
       required: false,
+      maxRows: 6,
       admin: {
         description: 'Optional social or personal links for this author.',
         condition: ({ id }) => Boolean(id),
       },
       fields: [
-        {
-          name: 'label',
-          type: 'text',
-          required: false,
-        },
-        {
-          name: 'url',
-          type: 'text',
-          required: true,
-        },
+        link({
+          appearances: false,
+        }),
       ],
     },
     {

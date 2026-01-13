@@ -437,8 +437,25 @@ export interface User {
    */
   socialLinks?:
     | {
-        label?: string | null;
-        url: string;
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'volumes';
+                value: number | Volume;
+              } | null)
+            | ({
+                relationTo: 'articles';
+                value: number | Article;
+              } | null);
+          url?: string | null;
+          label: string;
+        };
         id?: string | null;
       }[]
     | null;
@@ -1416,8 +1433,15 @@ export interface UsersSelect<T extends boolean = true> {
   socialLinks?:
     | T
     | {
-        label?: T;
-        url?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
         id?: T;
       };
   role?: T;

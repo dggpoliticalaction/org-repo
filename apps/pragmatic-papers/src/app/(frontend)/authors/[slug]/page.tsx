@@ -16,6 +16,16 @@ import RichText from '@/components/RichText'
 import { ArticleCard, type CardPostData } from '@/components/ArticleCard'
 import { authorSlugFromUser } from '@/utilities/authorSlug'
 
+interface UserSocialLinkEntry {
+  id?: string | null
+  link?: {
+    id?: string | null
+    type?: 'reference' | 'custom' | null
+    url?: string | null
+    label?: string | null
+  } | null
+}
+
 function normalizeExternalUrl(url: string): string {
   const trimmed = url.trim()
   // If it already has a scheme like http:, https:, mailto:, etc., leave it
@@ -222,17 +232,31 @@ export default async function AuthorPage({
             aria-label="Author social links"
             className="mt-4 flex flex-wrap justify-center gap-3"
           >
-            {user.socialLinks.map((link) => (
-              <Link
-                key={link.id ?? link.url}
-                href={normalizeExternalUrl(link.url)}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="text-sm text-brand underline-offset-2 hover:underline"
-              >
-                {link.label || link.url}
-              </Link>
-            ))}
+            {user.socialLinks.map((item) => {
+              const entry = item as unknown as UserSocialLinkEntry
+              const linkGroup = entry.link ?? undefined
+
+              if (!linkGroup) return null
+
+              const href =
+                linkGroup.type === 'custom' && linkGroup.url
+                  ? normalizeExternalUrl(linkGroup.url)
+                  : undefined
+
+              if (!href) return null
+
+              return (
+                <Link
+                  key={linkGroup.id ?? linkGroup.url ?? href}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-sm text-brand underline-offset-2 hover:underline"
+                >
+                  {linkGroup.label || linkGroup.url || href}
+                </Link>
+              )
+            })}
           </nav>
         )}
       </header>
