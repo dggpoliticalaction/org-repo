@@ -183,15 +183,6 @@ jobs:
             org.opencontainers.image.description=${{ inputs.app-name }} - ${{ inputs.environment }}
             org.opencontainers.image.vendor=Your Organization
 
-      - name: Debug secrets availability
-        run: |
-          echo "=== Checking secrets availability ==="
-          echo "DOCKER_REGISTRY is set: ${{ secrets.DOCKER_REGISTRY != '' }}"
-          echo "DOCKER_IMAGE_NAME is set: ${{ secrets.DOCKER_IMAGE_NAME != '' }}"
-          echo "Deployment type: ${{ inputs.deployment-type }}"
-          echo "PR number: ${{ inputs.pr-number }}"
-          echo "Should deploy: ${{ steps.check-changes.outputs.should-deploy }}"
-
       - name: Build and push Docker image
         if: steps.check-changes.outputs.should-deploy == 'true'
         id: build-step
@@ -227,10 +218,6 @@ jobs:
           # Extract the primary tag based on deployment type
           # NOTE: We only output the TAG, not the full image path
           # The full path contains secrets which get redacted in job outputs
-          echo "DEBUG: Deployment Type: ${{ inputs.deployment-type }}"
-          echo "DEBUG: PR Number: ${{ inputs.pr-number }}"
-          echo "DEBUG: should-deploy value: '${{ steps.check-changes.outputs.should-deploy }}'"
-
           if [ "${{ inputs.deployment-type }}" == "preview" ]; then
             TAG="pr-${{ inputs.pr-number }}"
           elif [ "${{ inputs.deployment-type }}" == "staging" ]; then
@@ -240,18 +227,7 @@ jobs:
           fi
 
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
-          echo "Primary tag (output): ${TAG}"
-          echo "Note: Full image path will be reconstructed in deploy job"
-
-      - name: Verify primary tag output was set
-        run: |
-          echo "DEBUG: Verifying step outputs after primary-tag step"
-          echo "DEBUG: tag output value: '${{ steps.primary-tag.outputs.tag }}'"
-          if [ -z "${{ steps.primary-tag.outputs.tag }}" ]; then
-            echo "ERROR: tag output is EMPTY!"
-          else
-            echo "SUCCESS: tag output is set correctly"
-          fi
+          echo "Image tag: ${TAG}"
 
       - name: Output build information
         if: steps.check-changes.outputs.should-deploy == 'true'
@@ -267,22 +243,6 @@ jobs:
           echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
-      - name: Final verification of job outputs (runs at end of build job)
-        if: always()
-        run: |
-          echo "=== FINAL JOB OUTPUT VERIFICATION ==="
-          echo "This step runs at the END of the build job to verify outputs are set"
-          echo ""
-          echo "Step outputs:"
-          echo "  check-changes.should-deploy: '${{ steps.check-changes.outputs.should-deploy }}'"
-          echo "  primary-tag.tag: '${{ steps.primary-tag.outputs.tag }}'"
-          echo "  build-step.digest: '${{ steps.build-step.outputs.digest }}'"
-          echo ""
-          echo "These will become job outputs:"
-          echo "  jobs.build.outputs.should-deploy: ${{ steps.check-changes.outputs.should-deploy }}"
-          echo "  jobs.build.outputs.image-tag: ${{ steps.primary-tag.outputs.tag }}"
-          echo "  jobs.build.outputs.image-digest: ${{ steps.build-step.outputs.digest }}"
-
   deploy:
     name: Deploy to Coolify
     runs-on: ubuntu-latest
@@ -295,23 +255,6 @@ jobs:
       deployment-status: ${{ steps.get-status.outputs.status }}
 
     steps:
-      - name: Debug - Check received job outputs
-        run: |
-          echo "=== DEPLOY JOB - RECEIVED OUTPUTS FROM BUILD JOB ==="
-          echo "This step runs at the START of the deploy job"
-          echo ""
-          echo "Received job outputs from build job:"
-          echo "  needs.build.outputs.should-deploy: '${{ needs.build.outputs.should-deploy }}'"
-          echo "  needs.build.outputs.image-tag: '${{ needs.build.outputs.image-tag }}'"
-          echo "  needs.build.outputs.image-digest: '${{ needs.build.outputs.image-digest }}'"
-          echo ""
-          echo "Testing if image-tag is empty:"
-          if [ -z "${{ needs.build.outputs.image-tag }}" ]; then
-            echo "  RESULT: image-tag IS EMPTY (this is the problem!)"
-          else
-            echo "  RESULT: image-tag is set to: ${{ needs.build.outputs.image-tag }}"
-          fi
-
       - name: Update application with new Docker image
         id: update-application
         run: |
@@ -320,25 +263,9 @@ jobs:
           IMAGE_TAG="${{ needs.build.outputs.image-tag }}"
           REGISTRY="${{ secrets.DOCKER_REGISTRY }}"
           IMAGE_NAME="${{ secrets.DOCKER_IMAGE_NAME }}"
-
-          echo "DEBUG: Received tag from build job: '$IMAGE_TAG'"
-          echo "DEBUG: Should deploy: ${{ needs.build.outputs.should-deploy }}"
-          echo "DEBUG: All build outputs:"
-          echo "  should-deploy: '${{ needs.build.outputs.should-deploy }}'"
-          echo "  image-tag: '${{ needs.build.outputs.image-tag }}'"
-          echo "  image-digest: '${{ needs.build.outputs.image-digest }}'"
-
-          if [ -z "$IMAGE_TAG" ]; then
-            echo "Error: Image tag is empty!"
-            echo "This likely means the 'Set primary tag output' step was skipped."
-            echo "Check that should-deploy == 'true' (string comparison)"
-            exit 1
-          fi
-
           FULL_IMAGE="${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
 
-          echo "Full image: $FULL_IMAGE"
-          echo "Updating application with image tag: $IMAGE_TAG"
+          echo "Updating application with image: $FULL_IMAGE"
 
           RESPONSE=$(curl -s -w "\n%{http_code}" -X PATCH \
             "${{ secrets.COOLIFY_API_URL }}/api/v1/applications/${{ secrets.COOLIFY_APP_UUID }}" \
