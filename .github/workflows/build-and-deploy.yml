@@ -183,6 +183,15 @@ jobs:
             org.opencontainers.image.description=${{ inputs.app-name }} - ${{ inputs.environment }}
             org.opencontainers.image.vendor=Your Organization
 
+      - name: Debug secrets availability
+        run: |
+          echo "=== Checking secrets availability ==="
+          echo "DOCKER_REGISTRY is set: ${{ secrets.DOCKER_REGISTRY != '' }}"
+          echo "DOCKER_IMAGE_NAME is set: ${{ secrets.DOCKER_IMAGE_NAME != '' }}"
+          echo "Deployment type: ${{ inputs.deployment-type }}"
+          echo "PR number: ${{ inputs.pr-number }}"
+          echo "Should deploy: ${{ steps.check-changes.outputs.should-deploy }}"
+
       - name: Build and push Docker image
         if: steps.check-changes.outputs.should-deploy == 'true'
         id: build-step
