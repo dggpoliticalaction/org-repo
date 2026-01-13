@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth'
 import { createAuthMiddleware } from 'better-auth/api'
 import { nextCookies } from 'better-auth/next-js'
+import Database from 'better-sqlite3'
 
 export type Provider = 'discord' | 'google'
 
@@ -21,9 +22,11 @@ function getProvider(params: Record<string, string>) {
   return isProvider(provider) ? provider : undefined
 }
 
+const db = new Database(process.env.DATABASE_URI.split(':')[1]) // remove `file:` from env var string
+
 export const auth = betterAuth({
   baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
-  // database: new Database(process.env.DATABASE_URI),
+  database: db,
   socialProviders: {
     discord: {
       clientId: process.env.OAUTH_DISCORD_CLIENT_ID,
@@ -32,23 +35,18 @@ export const auth = betterAuth({
   },
   hooks: {
     after: createAuthMiddleware(async ({ path, params, ...ctx }) => {
+      const newSession = ctx.context.newSession
+      if (!newSession) return
       if (path.startsWith('/callback')) {
         const provider = getProvider(params)
-        console.log('provider', provider)
         if (!provider) return
+        console.log('ctx', ctx)
         return
       }
     }),
   },
   plugins: [nextCookies()],
 })
-
-// async function getConnectionId(headers: Headers) {
-//   const accounts = await auth.api.accountInfo({
-//     headers,
-//   })
-//   return accounts?.user.id.toString()
-// }
 
 // async function findConnection(payload: Payload, provider: string, providerAccountId: string) {
 //   const connection = await payload.find({

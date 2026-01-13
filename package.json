@@ -26,6 +26,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "better-sqlite3",
       "canvas",
       "core-js-pure",
       "esbuild",
