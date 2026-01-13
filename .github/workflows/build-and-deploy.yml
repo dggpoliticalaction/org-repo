@@ -103,8 +103,8 @@ jobs:
     environment: ${{ inputs.environment }}
     outputs:
       should-deploy: ${{ steps.check-changes.outputs.should-deploy }}
-      image-tag: ${{ steps.set-primary-tag.outputs.primary-tag }}
-      image-digest: ${{ steps.build.outputs.digest }}
+      image-tag: ${{ steps.primary-tag.outputs.primary-tag }}
+      image-digest: ${{ steps.build-step.outputs.digest }}
 
     steps:
       - name: Checkout code
@@ -183,34 +183,9 @@ jobs:
             org.opencontainers.image.description=${{ inputs.app-name }} - ${{ inputs.environment }}
             org.opencontainers.image.vendor=Your Organization
 
-      - name: Set primary Docker image tag
-        id: set-primary-tag
-        run: |
-          # Extract the primary tag based on deployment type
-          REGISTRY="${{ secrets.DOCKER_REGISTRY }}"
-          IMAGE_NAME="${{ secrets.DOCKER_IMAGE_NAME }}"
-
-          echo "DEBUG: Registry: $REGISTRY"
-          echo "DEBUG: Image Name: $IMAGE_NAME"
-          echo "DEBUG: Deployment Type: ${{ inputs.deployment-type }}"
-          echo "DEBUG: PR Number: ${{ inputs.pr-number }}"
-
-          if [ "${{ inputs.deployment-type }}" == "preview" ]; then
-            TAG="pr-${{ inputs.pr-number }}"
-          elif [ "${{ inputs.deployment-type }}" == "staging" ]; then
-            TAG="staging"
-          else
-            TAG="latest"
-          fi
-
-          PRIMARY_TAG="${REGISTRY}/${IMAGE_NAME}:${TAG}"
-          echo "primary-tag=${PRIMARY_TAG}" >> $GITHUB_OUTPUT
-          echo "Primary tag: ${PRIMARY_TAG}"
-          echo "DEBUG: Output set to GITHUB_OUTPUT"
-
       - name: Build and push Docker image
         if: steps.check-changes.outputs.should-deploy == 'true'
-        id: build
+        id: build-step
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -236,6 +211,32 @@ jobs:
           secrets: |
             DATABASE_URI=${{ secrets.DATABASE_URI }}
             PAYLOAD_SECRET=${{ secrets.PAYLOAD_SECRET }}
+
+      - name: Set primary tag output
+        if: steps.check-changes.outputs.should-deploy == 'true'
+        id: primary-tag
+        run: |
+          # Extract the primary tag based on deployment type
+          REGISTRY="${{ secrets.DOCKER_REGISTRY }}"
+          IMAGE_NAME="${{ secrets.DOCKER_IMAGE_NAME }}"
+
+          echo "DEBUG: Registry: $REGISTRY"
+          echo "DEBUG: Image Name: $IMAGE_NAME"
+          echo "DEBUG: Deployment Type: ${{ inputs.deployment-type }}"
+          echo "DEBUG: PR Number: ${{ inputs.pr-number }}"
+
+          if [ "${{ inputs.deployment-type }}" == "preview" ]; then
+            TAG="pr-${{ inputs.pr-number }}"
+          elif [ "${{ inputs.deployment-type }}" == "staging" ]; then
+            TAG="staging"
+          else
+            TAG="latest"
+          fi
+
+          PRIMARY_TAG="${REGISTRY}/${IMAGE_NAME}:${TAG}"
+          echo "primary-tag=${PRIMARY_TAG}" >> $GITHUB_OUTPUT
+          echo "Primary tag: ${PRIMARY_TAG}"
+          echo "DEBUG: Output set to GITHUB_OUTPUT"
 
       - name: Output build information
         if: steps.check-changes.outputs.should-deploy == 'true'
