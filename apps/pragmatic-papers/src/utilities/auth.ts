@@ -13,11 +13,11 @@ export const auth = betterAuth({
 
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
-      console.log('auth.ts', JSON.stringify(ctx, null, 2))
+      console.log('auth.ts')
       if (ctx.path.startsWith('/sign-up')) {
         const newSession = ctx.context.newSession
         if (newSession) {
-          console.log('newSession', JSON.stringify(newSession, null, 2))
+          console.log('newSession')
           // payload
           const payload = await getPayload({ config })
           const user = await payload.create({
@@ -33,7 +33,7 @@ export const auth = betterAuth({
               // },
             },
           })
-          console.log('user', JSON.stringify(user, null, 2))
+          console.log('user')
         }
       }
     }),
