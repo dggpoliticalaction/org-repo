@@ -5,6 +5,7 @@ import { nextCookies } from 'better-auth/next-js'
 import { getPayload } from 'payload'
 
 export const auth = betterAuth({
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
   socialProviders: {
     discord: {
       clientId: process.env.OAUTH_DISCORD_CLIENT_ID,
@@ -14,27 +15,34 @@ export const auth = betterAuth({
 
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
-      console.log('auth.ts', ctx)
-      if (ctx.path.startsWith('/sign-up')) {
+      if (ctx.path.startsWith('/sign-in')) {
         const newSession = ctx.context.newSession
         if (newSession) {
-          console.log('newSession')
-          // payload
           const payload = await getPayload({ config })
+
+          const { docs: existingUsers } = await payload.find({
+            collection: 'users',
+            where: { email: { equals: newSession.user.email } },
+            limit: 1,
+          })
+
+          if (existingUsers.length > 0) return
+
           const user = await payload.create({
             collection: 'users',
             data: {
               name: newSession.user.name,
               email: newSession.user.email,
               role: 'user',
-              // oauth: {
-              //   provider: newSession.provider,
-              //   providerAccountId: newSession.providerAccountId,
-              //   picture: newSession.user.image,
-              // },
+              oauth: {
+                provider: newSession.user.provider,
+                providerAccountId: newSession.user.id,
+                picture: newSession.user.image,
+              },
             },
           })
-          console.log('user')
+
+          console.log('new user', user)
         }
       }
     }),

@@ -2,9 +2,10 @@
 
 import { Users } from '@/collections/Users'
 import type { User } from '@/payload-types'
-import { authClient } from '@/utilities/auth-client'
+import { auth } from '@/utilities/auth'
 import config from '@payload-config'
 import { login as payloadLogin } from '@payloadcms/next/auth'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { redirectToDashboard } from './utils'
 
@@ -48,70 +49,26 @@ export async function login(formData: FormData): Promise<void> {
   redirectToDashboard(user)
 }
 
-type Provider = 'discord'
+type Provider = 'discord' | 'google'
 
-interface DiscordConfig {
-  callbackURL: string
-}
-
-type Config = DiscordConfig // future configs
-
-const PROVIDERS: Record<Provider, Config> = {
-  discord: {
-    callbackURL: '/',
-  },
-  // future providers
-} as const
-
-interface AuthError {
-  code?: string | undefined
-  message?: string | undefined
-}
-
-interface AuthData {
-  redirect: boolean
-  url: string
-}
-
-interface AuthDataWithToken {
-  redirect: boolean
-  token: string
-  url: undefined
-  user: {
-    id: string
-    createdAt: Date
-    updatedAt: Date
-    email: string
-    emailVerified: boolean
-    name: string
-    image?: string | null | undefined | undefined
-  }
-}
-
-type AuthResponse = AuthData | AuthDataWithToken | AuthError
-
-// export async function signin(provider: Provider): Promise<void> {
-//   const settings = PROVIDERS[provider]
-//   const data = await authClient.signIn.social({
-//     provider: 'discord',
-//     ...settings,
-//   })
-// }
-
-export async function discordLogin(): Promise<void> {
-  // const settings = PROVIDERS['discord']
-  const { data, error } = await authClient.signIn.social({
-    provider: 'discord',
+export async function signInSocial(provider: Provider): Promise<void> {
+  const response = await auth.api.signInSocial({
+    headers: await headers(),
+    body: {
+      provider,
+    },
+    returnHeaders: true,
   })
 
-  if (error) throw error
-  if (!data?.url) throw new Error('No OAuth redirect URL')
-
-  redirect(data.url)
+  const location = response.headers.get('location')
+  if (!location) throw new Error('No OAuth redirect URL')
+  redirect(location)
 }
 
-// export async function requireSession() {
-//   const session = await auth.api.getSession({ headers: await headers() })
-//   if (!session) throw new Error('Unauthorized')
-//   return session
-// }
+export async function discordLogin(): Promise<void> {
+  return signInSocial('discord')
+}
+
+export async function googleLogin(): Promise<void> {
+  return signInSocial('google')
+}
