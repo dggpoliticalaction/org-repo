@@ -100,13 +100,14 @@ type AuthResponse = AuthData | AuthDataWithToken | AuthError
 
 export async function discordLogin(): Promise<void> {
   // const settings = PROVIDERS['discord']
-  const { data } = await authClient.signIn.social({
+  const { data, error } = await authClient.signIn.social({
     provider: 'discord',
   })
 
-  if (data?.url) {
-    redirect(data.url)
-  }
+  if (error) throw error
+  if (!data?.url) throw new Error('No OAuth redirect URL')
+
+  redirect(data.url)
 }
 
 // export async function requireSession() {
