@@ -35,11 +35,18 @@ export const Users: CollectionConfig = {
         authenticate: betterAuthStrategy,
       },
     ],
+    disableLocalStrategy: true,
   },
   fields: [
     {
       name: 'name',
       type: 'text',
+    },
+    {
+      name: 'email',
+      type: 'email',
+      required: true,
+      unique: true,
     },
     {
       name: 'biography',
