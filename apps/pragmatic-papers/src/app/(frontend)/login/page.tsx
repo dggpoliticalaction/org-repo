@@ -1,9 +1,10 @@
+import { Button } from '@/components/ui/button'
 import type { User } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { cookies } from 'next/headers'
 import React from 'react'
+import { discordLogin } from './actions'
 import { AUTH_COOKIE_KEY } from './constants'
-import { LoginForm } from './LoginForm'
 import { redirectToDashboard } from './utils'
 
 interface LoginProps {
@@ -50,7 +51,10 @@ export default async function Login({ searchParams }: LoginProps): Promise<React
 
   return (
     <div className="flex flex-1 items-center justify-center px-4">
-      <LoginForm error={error} />
+      {/* <LoginForm error={error} /> */}
+      <form action={discordLogin}>
+        <Button type="submit">Continue with Discord</Button>
+      </form>
     </div>
   )
 }
