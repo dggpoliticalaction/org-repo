@@ -2,10 +2,10 @@
 
 import { Users } from '@/collections/Users'
 import type { User } from '@/payload-types'
-import { auth, LAST_PROVIDER_COOKIE, type Provider } from '@/utilities/auth'
+import { auth, type Provider } from '@/utilities/auth'
 import config from '@payload-config'
 import { login as payloadLogin } from '@payloadcms/next/auth'
-import { cookies, headers } from 'next/headers'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { redirectToDashboard } from './utils'
 
@@ -53,15 +53,6 @@ export async function defaultLogin(formData: FormData): Promise<void> {
 }
 
 export async function signInSocial(provider: Provider): Promise<void> {
-  const jar = await cookies()
-  jar.set(LAST_PROVIDER_COOKIE, provider, {
-    path: '/',
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 5, // 5 min
-  })
-
   const response = await auth.api.signInSocial({
     headers: await headers(),
     body: {

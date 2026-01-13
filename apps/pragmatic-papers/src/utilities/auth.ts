@@ -4,6 +4,11 @@ import { nextCookies } from 'better-auth/next-js'
 
 export type Provider = 'discord' | 'google'
 
+function isProvider(provider?: string): provider is Provider {
+  if (!provider) return false
+  return provider === 'discord' || provider === 'google'
+}
+
 export interface OAuthEntry {
   provider: string
   providerAccountId: string
@@ -11,7 +16,10 @@ export interface OAuthEntry {
   id?: string | null
 }
 
-export const LAST_PROVIDER_COOKIE = 'better-auth.last_provider'
+function getProvider(params: Record<string, string>) {
+  const provider = params.id
+  return isProvider(provider) ? provider : undefined
+}
 
 export const auth = betterAuth({
   baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
@@ -23,41 +31,17 @@ export const auth = betterAuth({
     },
   },
   hooks: {
-    after: createAuthMiddleware(async ({ body, path, ...ctx }) => {
+    after: createAuthMiddleware(async ({ path, params, ...ctx }) => {
       if (path.startsWith('/callback')) {
-        console.log('callback ctx', ctx)
-        return
-      }
-
-      if (path === '/sign-in/social') {
-        // resolve provider account id
-        // find or create user
-        // create connection with user reference
-        console.log('path', path)
-        console.log('body', body)
+        const provider = getProvider(params)
+        console.log('provider', provider)
+        if (!provider) return
         return
       }
     }),
   },
   plugins: [nextCookies()],
 })
-
-// async function checkAdminUI(headers: Headers) {
-//   const accept = headers.get('accept') ?? ''
-//   const referer = headers.get('referer') ?? ''
-//   const secFetchDest = headers.get('sec-fetch-dest') ?? ''
-//   return accept.includes('text/html') && (referer.includes('/admin') || secFetchDest === 'document')
-// }
-
-/**
- * Is this the best way to get the provider name?
- */
-// async function getProviderCookie(headers: Headers) {
-//   const cookieHeader = headers.get('cookie')
-//   if (!cookieHeader) return undefined
-//   const match = cookieHeader.match(new RegExp(`(?:^|; )${name}=([^;]*)`))
-//   return match && match.length ? decodeURIComponent(match[1] ?? '') : undefined
-// }
 
 // async function getConnectionId(headers: Headers) {
 //   const accounts = await auth.api.accountInfo({
