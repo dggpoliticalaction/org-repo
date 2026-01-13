@@ -94,6 +94,7 @@ jobs:
 
   deploy-pragmatic-papers:
     name: Deploy Pragmatic Papers Preview
+    environment: Preview
     needs: check-labels
     if: |
       github.event_name == 'pull_request' &&
@@ -103,27 +104,14 @@ jobs:
       app-name: "pragmatic-papers"
       app-path: "apps/pragmatic-papers"
       dockerfile-path: "dockerfiles/PragmaticPapers.Dockerfile"
-      environment: "Preview"
+      environment: "preview"
       deployment-type: "preview"
       pr-number: "${{ github.event.pull_request.number }}"
-    secrets:
-      COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
-      COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
-      COOLIFY_APP_UUID: ${{ secrets.COOLIFY_PRAGMATIC_PAPERS_UUID }}
-      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_PRAGMATIC_PAPERS }}
-      DATABASE_URI: ${{ secrets.PRAGMATIC_PAPERS_STAGING_DATABASE_URI }}
-      PAYLOAD_SECRET: ${{ secrets.PRAGMATIC_PAPERS_PAYLOAD_SECRET }}
-      S3_REGION: ${{ secrets.PRAGMATIC_PAPERS_STAGING_S3_REGION }}
-      S3_BUCKET: ${{ secrets.PRAGMATIC_PAPERS_STAGING_S3_BUCKET }}
-      S3_ACCESS_KEY_ID: ${{ secrets.PRAGMATIC_PAPERS_STAGING_S3_ACCESS_KEY_ID }}
-      S3_SECRET_ACCESS_KEY: ${{ secrets.PRAGMATIC_PAPERS_STAGING_S3_SECRET_ACCESS_KEY }}
-      S3_ENDPOINT: ${{ secrets.PRAGMATIC_PAPERS_STAGING_S3_ENDPOINT }}
+    secrets: inherit
 
   deploy-dggp-website:
     name: Deploy DGGP Website Preview
+    environment: Preview
     needs: check-labels
     if: |
       github.event_name == 'pull_request' &&
@@ -133,22 +121,14 @@ jobs:
       app-name: "dgg-political-action"
       app-path: "apps/dgg-political-action"
       dockerfile-path: "dockerfiles/DigitalGroundGame.Dockerfile"
-      environment: "Preview"
+      environment: "preview"
       deployment-type: "preview"
       pr-number: "${{ github.event.pull_request.number }}"
-    secrets:
-      COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
-      COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
-      COOLIFY_APP_UUID: ${{ secrets.COOLIFY_DGGP_WEBSITE_UUID }}
-      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_DGGP_WEBSITE }}
-      DATABASE_URI: ${{ secrets.DGGP_WEBSITE_STAGING_DATABASE_URI }}
-      PAYLOAD_SECRET: ${{ secrets.DGGP_WEBSITE_PAYLOAD_SECRET }}
+    secrets: inherit
 
   deploy-discord-bot:
     name: Deploy Discord Bot Preview
+    environment: Preview
     needs: check-labels
     if: |
       github.event_name == 'pull_request' &&
@@ -158,17 +138,10 @@ jobs:
       app-name: "discord-bot"
       app-path: "apps/discord-bot"
       dockerfile-path: "dockerfiles/DiscordBot.Dockerfile"
-      environment: "Preview"
+      environment: "preview"
       deployment-type: "preview"
       pr-number: "${{ github.event.pull_request.number }}"
-    secrets:
-      COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
-      COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
-      COOLIFY_APP_UUID: ${{ secrets.COOLIFY_DISCORD_BOT_UUID }}
-      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_DISCORD_BOT }}
+    secrets: inherit
 
   update-pr-comment:
     name: Update PR Comment
