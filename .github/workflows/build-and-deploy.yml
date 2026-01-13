@@ -79,6 +79,9 @@ on:
       SERVER_DOMAIN:
         description: "Server domain for NEXT_PUBLIC_SERVER_URL"
         required: false
+      NEXT_PUBLIC_SUPABASE_URL:
+        description: "Next.js public Supabase URL"
+        required: false
     outputs:
       deployment-uuid:
         description: "UUID of the Coolify deployment"
