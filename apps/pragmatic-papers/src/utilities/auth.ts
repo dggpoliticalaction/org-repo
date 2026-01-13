@@ -1,8 +1,17 @@
-import config from '@payload-config'
 import { betterAuth } from 'better-auth'
-import { createAuthMiddleware } from 'better-auth/api'
 import { nextCookies } from 'better-auth/next-js'
-import { getPayload } from 'payload'
+import { type AuthStrategyFunctionArgs, type AuthStrategyResult } from 'payload'
+
+export type Provider = 'discord' | 'google'
+
+export interface OAuthEntry {
+  provider: string
+  providerAccountId: string
+  picture?: string | null
+  id?: string | null
+}
+
+export const LAST_PROVIDER_COOKIE = 'better-auth.last_provider'
 
 export const auth = betterAuth({
   baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
@@ -12,40 +21,95 @@ export const auth = betterAuth({
       clientSecret: process.env.OAUTH_DISCORD_CLIENT_SECRET,
     },
   },
-
-  hooks: {
-    after: createAuthMiddleware(async (ctx) => {
-      if (ctx.path.startsWith('/sign-in')) {
-        const newSession = ctx.context.newSession
-        if (newSession) {
-          const payload = await getPayload({ config })
-
-          const { docs: existingUsers } = await payload.find({
-            collection: 'users',
-            where: { email: { equals: newSession.user.email } },
-            limit: 1,
-          })
-
-          if (existingUsers.length > 0) return
-
-          const user = await payload.create({
-            collection: 'users',
-            data: {
-              name: newSession.user.name,
-              email: newSession.user.email,
-              role: 'user',
-              oauth: {
-                provider: newSession.user.provider,
-                providerAccountId: newSession.user.id,
-                picture: newSession.user.image,
-              },
-            },
-          })
-
-          console.log('new user', user)
-        }
-      }
-    }),
-  },
   plugins: [nextCookies()],
 })
+
+/**
+ * Extracts the value of a cookie with the given name from a cookie header string.
+ *
+ * @param cookieHeader - The raw "cookie" header string from an HTTP request.
+ * @param name - The name of the cookie to retrieve.
+ * @returns The decoded cookie value if found, or null if not present.
+ *
+ * Example:
+ *   getCookieValue("foo=bar; baz=qux", "baz") // returns "qux"
+ */
+function getCookieValue(cookieHeader: string, name: string): string | null {
+  const match = cookieHeader.match(new RegExp(`(?:^|; )${name}=([^;]*)`))
+  return match && match.length ? decodeURIComponent(match[1] ?? '') : null
+}
+
+export const betterAuthStrategy = async ({
+  payload,
+  headers,
+}: AuthStrategyFunctionArgs): Promise<AuthStrategyResult> => {
+  const session = await auth.api.getSession({
+    headers,
+  })
+
+  const email = session?.user?.email
+  if (!email) return { user: null }
+
+  const cookieHeader = headers.get('cookie') ?? ''
+  const provider = getCookieValue(cookieHeader, LAST_PROVIDER_COOKIE) ?? 'unknown'
+  const picture = session.user.image ?? undefined
+
+  const accounts = await auth.api.accountInfo({
+    headers,
+  })
+
+  const providerAccountId = accounts ? accounts.user.id.toString() : session.user.id.toString()
+
+  try {
+    const found = await payload.find({
+      collection: 'users',
+      where: { email: { equals: email } },
+      limit: 1,
+      overrideAccess: true,
+    })
+
+    let foundUser = found.docs?.[0]
+
+    if (!foundUser) {
+      foundUser = await payload.create({
+        collection: 'users',
+        data: {
+          email,
+          name: session.user.name ?? undefined,
+          role: 'user',
+          oauth: [
+            {
+              provider,
+              providerAccountId,
+              picture,
+            },
+          ],
+        },
+      })
+    } else {
+      const existingOauth = foundUser.oauth || []
+      foundUser = await payload.update({
+        collection: 'users',
+        id: foundUser.id,
+        data: {
+          oauth: [
+            ...existingOauth.filter((oauth) => oauth.provider !== provider),
+            {
+              provider,
+              providerAccountId,
+              picture,
+            },
+          ],
+        },
+        overrideAccess: true,
+      })
+    }
+
+    return {
+      user: foundUser ? { ...foundUser, collection: 'users' } : null,
+    }
+  } catch (error) {
+    console.error('error', error)
+    return { user: null }
+  }
+}

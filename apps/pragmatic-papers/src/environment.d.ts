@@ -7,7 +7,6 @@ declare global {
       VERCEL_PROJECT_PRODUCTION_URL: string
       OAUTH_DISCORD_CLIENT_ID: string
       OAUTH_DISCORD_CLIENT_SECRET: string
-      OAUTH_DISCORD_CALLBACK_URL: string
     }
   }
 }

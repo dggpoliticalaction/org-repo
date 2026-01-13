@@ -1,7 +1,10 @@
 import { Button } from '@/components/ui/button'
 import type { User } from '@/payload-types'
+import { auth } from '@/utilities/auth'
 import { getServerSideURL } from '@/utilities/getURL'
-import { cookies } from 'next/headers'
+import config from '@payload-config'
+import { cookies, headers } from 'next/headers'
+import { getPayload } from 'payload'
 import React from 'react'
 import { discordLogin } from './actions'
 import { AUTH_COOKIE_KEY } from './constants'
@@ -31,6 +34,21 @@ interface AuthResponse {
  * - LoginForm: Handles email/password submission and displays errors.
  */
 export default async function Login({ searchParams }: LoginProps): Promise<React.ReactElement> {
+  const session = await auth.api.getSession({ headers: await headers() })
+
+  if (session) {
+    const payload = await getPayload({ config })
+    const {
+      docs: [user],
+    } = await payload.find({
+      collection: 'users',
+      where: { email: { equals: session.user.email } },
+    })
+    if (user) {
+      redirectToDashboard(user)
+    }
+  }
+
   const cookieStore = await cookies()
   const token = cookieStore.get(AUTH_COOKIE_KEY)?.value
 
