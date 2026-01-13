@@ -1,6 +1,7 @@
 import config from '@payload-config'
 import { betterAuth } from 'better-auth'
 import { createAuthMiddleware } from 'better-auth/api'
+import { nextCookies } from 'better-auth/next-js'
 import { getPayload } from 'payload'
 
 export const auth = betterAuth({
@@ -13,7 +14,7 @@ export const auth = betterAuth({
 
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
-      console.log('auth.ts')
+      console.log('auth.ts', ctx)
       if (ctx.path.startsWith('/sign-up')) {
         const newSession = ctx.context.newSession
         if (newSession) {
@@ -38,4 +39,5 @@ export const auth = betterAuth({
       }
     }),
   },
+  plugins: [nextCookies()],
 })
