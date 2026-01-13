@@ -94,7 +94,6 @@ jobs:
 
   deploy-pragmatic-papers:
     name: Deploy Pragmatic Papers Preview
-    environment: Preview
     needs: check-labels
     if: |
       github.event_name == 'pull_request' &&
@@ -111,7 +110,6 @@ jobs:
 
   deploy-dggp-website:
     name: Deploy DGGP Website Preview
-    environment: Preview
     needs: check-labels
     if: |
       github.event_name == 'pull_request' &&
@@ -128,7 +126,6 @@ jobs:
 
   deploy-discord-bot:
     name: Deploy Discord Bot Preview
-    environment: Preview
     needs: check-labels
     if: |
       github.event_name == 'pull_request' &&

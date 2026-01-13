@@ -94,6 +94,7 @@ jobs:
   build:
     name: Build ${{ inputs.app-name }}
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     outputs:
       should-deploy: ${{ steps.check-changes.outputs.should-deploy }}
       image-tag: ${{ steps.meta.outputs.tags }}
@@ -221,6 +222,7 @@ jobs:
   deploy:
     name: Deploy to Coolify
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     needs: build
     if: needs.build.outputs.should-deploy == 'true'
     outputs:
