@@ -233,6 +233,7 @@ jobs:
           echo "DEBUG: Deployment Type: ${{ inputs.deployment-type }}"
           echo "DEBUG: PR Number: ${{ inputs.pr-number }}"
           echo "DEBUG: should-deploy value: '${{ steps.check-changes.outputs.should-deploy }}'"
+          echo "DEBUG: GITHUB_OUTPUT file: $GITHUB_OUTPUT"
 
           if [ "${{ inputs.deployment-type }}" == "preview" ]; then
             TAG="pr-${{ inputs.pr-number }}"
@@ -243,9 +244,22 @@ jobs:
           fi
 
           PRIMARY_TAG="${REGISTRY}/${IMAGE_NAME}:${TAG}"
+          echo "DEBUG: About to write primary-tag=${PRIMARY_TAG}"
           echo "primary-tag=${PRIMARY_TAG}" >> $GITHUB_OUTPUT
+          echo "DEBUG: Write completed, verifying..."
+          cat $GITHUB_OUTPUT
+          echo "DEBUG: Contents of GITHUB_OUTPUT file shown above"
           echo "Primary tag: ${PRIMARY_TAG}"
-          echo "DEBUG: Output set to GITHUB_OUTPUT"
+
+      - name: Verify primary tag output was set
+        run: |
+          echo "DEBUG: Verifying step outputs after primary-tag step"
+          echo "DEBUG: primary-tag output value: '${{ steps.primary-tag.outputs.primary-tag }}'"
+          if [ -z "${{ steps.primary-tag.outputs.primary-tag }}" ]; then
+            echo "ERROR: primary-tag output is EMPTY!"
+          else
+            echo "SUCCESS: primary-tag output is set correctly"
+          fi
 
       - name: Output build information
         if: steps.check-changes.outputs.should-deploy == 'true'
