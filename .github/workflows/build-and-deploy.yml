@@ -266,7 +266,10 @@ jobs:
           FULL_IMAGE="${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
 
           echo "Updating application with image: $FULL_IMAGE"
+          echo "API URL: ${{ secrets.COOLIFY_API_URL }}/api/v1/applications/${{ secrets.COOLIFY_APP_UUID }}"
 
+          # Run curl with error handling
+          set +e  # Don't exit on error
           RESPONSE=$(curl -s -w "\n%{http_code}" -X PATCH \
             "${{ secrets.COOLIFY_API_URL }}/api/v1/applications/${{ secrets.COOLIFY_APP_UUID }}" \
             -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}" \
@@ -274,16 +277,30 @@ jobs:
             -d "{
               \"docker_registry_image_tag\": \"$IMAGE_TAG\"
             }")
+          CURL_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+
+          if [ $CURL_EXIT_CODE -ne 0 ]; then
+            echo "Error: curl command failed with exit code $CURL_EXIT_CODE"
+            case $CURL_EXIT_CODE in
+              6) echo "Could not resolve host. Check COOLIFY_API_URL secret." ;;
+              7) echo "Failed to connect to host." ;;
+              28) echo "Connection timeout." ;;
+              *) echo "Unknown curl error." ;;
+            esac
+            exit $CURL_EXIT_CODE
+          fi
 
           HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
           BODY=$(echo "$RESPONSE" | sed '$d')
 
+          echo "HTTP Status Code: $HTTP_CODE"
+          echo "Response Body: $BODY"
+
           if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
             echo "Application updated successfully"
-            echo "Response: $BODY"
           else
             echo "Failed to update application. HTTP code: $HTTP_CODE"
-            echo "Response: $BODY"
             exit 1
           fi
 
