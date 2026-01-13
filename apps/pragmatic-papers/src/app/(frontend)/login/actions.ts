@@ -89,16 +89,17 @@ interface AuthDataWithToken {
 
 type AuthResponse = AuthData | AuthDataWithToken | AuthError
 
-export async function signin(provider: Provider): Promise<void> {
+export async function signin(provider: Provider): Promise<AuthResponse> {
   const settings = PROVIDERS[provider]
 
-  console.log('provider', provider, settings)
-  // if (!settings) {
-  //   return {
-  //     code: 'provider_not_found',
-  //     message: 'Provider not found',
-  //   }
-  // }
+  if (!settings) {
+    return {
+      code: 'provider_not_found',
+      message: 'Provider not found',
+    }
+  }
+
+  redirect(settings.callbackURL)
 
   // const data = await authClient.signIn.social({
   //   provider,
