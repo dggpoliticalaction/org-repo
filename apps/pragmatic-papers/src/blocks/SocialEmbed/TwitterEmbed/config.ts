@@ -1,6 +1,11 @@
 import type { Block } from 'payload'
 
-export const TwitterEmbed: Block = {
+/**
+ * Legacy config for Twitter embeds.
+ * @deprecated Use the SocialEmbed block instead.
+ * @see SocialEmbedBlock
+ */
+export const LegacyTwitterEmbed: Block = {
   slug: 'twitterEmbed',
   interfaceName: 'TwitterEmbedBlock',
   fields: [

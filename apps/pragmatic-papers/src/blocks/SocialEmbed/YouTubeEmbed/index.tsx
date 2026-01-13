@@ -13,7 +13,7 @@ import './index.scss'
  * @param props - The props for the YouTube embed component.
  * @returns The YouTube embed component.
  */
-export const YouTubeEmbed: React.FC<{
+export const YouTubeEmbedBlock: React.FC<{
   url?: string
   maxWidth?: number
   maxHeight?: number

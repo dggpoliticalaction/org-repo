@@ -13,7 +13,7 @@ let tiktokScriptLoading = false
  * @param props - The props for the TikTok embed component.
  * @returns The TikTok embed component.
  */
-export const TikTokEmbed: React.FC<{
+export const TikTokEmbedBlock: React.FC<{
   url?: string
 }> = (props) => {
   const [content, setContent] = useState<string>('')

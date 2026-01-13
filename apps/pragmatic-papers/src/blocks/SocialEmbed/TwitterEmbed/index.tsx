@@ -12,7 +12,7 @@ import { sanitizeHtml } from '@/utilities/sanitizeHtml'
  * @param props - The props for the Twitter embed component.
  * @returns The Twitter embed component.
  */
-export const TwitterEmbed: React.FC<{
+export const TwitterEmbedBlock: React.FC<{
   url?: string
   hideMedia?: boolean | null
   hideThread?: boolean | null

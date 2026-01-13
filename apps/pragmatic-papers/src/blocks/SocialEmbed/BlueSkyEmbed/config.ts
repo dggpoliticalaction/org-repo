@@ -1,6 +1,11 @@
 import type { Block } from 'payload'
 
-export const BlueSkyEmbed: Block = {
+/**
+ * Legacy config for Bluesky embeds.
+ * @deprecated Use the SocialEmbed block instead.
+ * @see SocialEmbedBlock
+ */
+export const LegacyBlueSkyEmbed: Block = {
   slug: 'blueSkyEmbed',
   interfaceName: 'BlueSkyEmbedBlock',
   fields: [

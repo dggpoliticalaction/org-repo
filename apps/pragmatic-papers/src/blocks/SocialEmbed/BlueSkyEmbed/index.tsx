@@ -11,7 +11,7 @@ import { sanitizeHtml } from '@/utilities/sanitizeHtml'
  * @param props - The props for the Bluesky embed component.
  * @returns The Bluesky embed component.
  */
-export const BlueSkyEmbed: React.FC<{
+export const BlueSkyEmbedBlock: React.FC<{
   url?: string
   maxWidth?: number | undefined
 }> = (props) => {

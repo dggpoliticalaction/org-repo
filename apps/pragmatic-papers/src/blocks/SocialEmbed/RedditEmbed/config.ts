@@ -1,6 +1,11 @@
 import type { Block } from 'payload'
 
-export const RedditEmbed: Block = {
+/**
+ * Legacy config for Reddit embeds.
+ * @deprecated Use the SocialEmbed block instead.
+ * @see SocialEmbedBlock
+ */
+export const LegacyRedditEmbed: Block = {
   slug: 'redditEmbed',
   interfaceName: 'RedditEmbedBlock',
   fields: [

@@ -15,14 +15,16 @@ import {
 import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
 
 import { BannerBlock } from '@/blocks/Banner/Component'
-import { BlueSkyEmbedBlock } from '@/blocks/BlueSkyEmbed/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
-import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
-import { SocialEmbedBlock } from '@/blocks/SocialEmbed/Component'
-import { TikTokEmbedBlock } from '@/blocks/TikTokEmbed/Component'
-import { TwitterEmbedBlock } from '@/blocks/TwitterEmbed/Component'
-import { YouTubeEmbedBlock } from '@/blocks/YouTubeEmbed/Component'
+import {
+  BlueSkyEmbedBlock,
+  RedditEmbedBlock,
+  SocialEmbedBlock,
+  TikTokEmbedBlock,
+  TwitterEmbedBlock,
+  YouTubeEmbedBlock,
+} from '@/blocks/SocialEmbed'
 import type {
   BannerBlock as BannerBlockProps,
   CallToActionBlock as CTABlockProps,

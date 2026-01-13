@@ -1,6 +1,11 @@
 import type { Block } from 'payload'
 
-export const YouTubeEmbed: Block = {
+/**
+ * Legacy config for YouTube embeds.
+ * @deprecated Use the SocialEmbed block instead.
+ * @see SocialEmbedBlock
+ */
+export const LegacyYouTubeEmbed: Block = {
   slug: 'youtubeEmbed',
   interfaceName: 'YouTubeEmbedBlock',
   fields: [

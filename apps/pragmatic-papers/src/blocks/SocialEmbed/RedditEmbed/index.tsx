@@ -11,7 +11,7 @@ let redditScriptLoaded = false
  * @param props - The props for the Reddit embed component.
  * @returns The Reddit embed component.
  */
-export const RedditEmbed: React.FC<{
+export const RedditEmbedBlock: React.FC<{
   url?: string
 }> = (props) => {
   const [content, setContent] = useState<string>('')
