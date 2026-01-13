@@ -23,12 +23,20 @@ export const auth = betterAuth({
     },
   },
   hooks: {
-    after: createAuthMiddleware(async (ctx) => {
-      console.log('ctx after', ctx)
-      // resolve provider account id
-      // find or create user
-      // create connection with user reference
-      return ctx
+    after: createAuthMiddleware(async ({ body, path, ...ctx }) => {
+      if (path.startsWith('/callback')) {
+        console.log('callback ctx', ctx)
+        return
+      }
+
+      if (path === '/sign-in/social') {
+        // resolve provider account id
+        // find or create user
+        // create connection with user reference
+        console.log('path', path)
+        console.log('body', body)
+        return
+      }
     }),
   },
   plugins: [nextCookies()],
