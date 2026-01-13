@@ -58,7 +58,7 @@ type Config = DiscordConfig // future configs
 
 const PROVIDERS: Record<Provider, Config> = {
   discord: {
-    callbackURL: process.env.OAUTH_DISCORD_CALLBACK_URL,
+    callbackURL: '/',
   },
   // future providers
 } as const
@@ -99,9 +99,15 @@ type AuthResponse = AuthData | AuthDataWithToken | AuthError
 // }
 
 export async function discordLogin(): Promise<void> {
-  const settings = PROVIDERS['discord']
+  // const settings = PROVIDERS['discord']
   const data = await authClient.signIn.social({
     provider: 'discord',
-    ...settings,
   })
+  console.log('discordLogin', JSON.stringify(data, null, 2))
 }
+
+// export async function requireSession() {
+//   const session = await auth.api.getSession({ headers: await headers() })
+//   if (!session) throw new Error('Unauthorized')
+//   return session
+// }
