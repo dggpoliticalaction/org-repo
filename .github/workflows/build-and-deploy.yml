@@ -76,6 +76,9 @@ on:
       S3_ENDPOINT:
         description: "S3 endpoint URL"
         required: false
+      SERVER_DOMAIN:
+        description: "Server domain for NEXT_PUBLIC_SERVER_URL"
+        required: false
     outputs:
       deployment-uuid:
         description: "UUID of the Coolify deployment"
