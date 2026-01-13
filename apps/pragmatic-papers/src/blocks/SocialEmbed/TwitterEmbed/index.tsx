@@ -1,64 +1,44 @@
 'use client'
 
+import type { SocialEmbedBlock } from '@/payload-types'
 import Script from 'next/script'
-import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 
-import { fetchTwitterEmbed } from '@/utilities/fetchTwitterEmbed'
-import { sanitizeHtml } from '@/utilities/sanitizeHtml'
-
-/**
- * Twitter embed component.
- * @param props - The props for the Twitter embed component.
- * @returns The Twitter embed component.
- */
-export const TwitterEmbedBlock: React.FC<{
-  url?: string
-  hideMedia?: boolean | null
-  hideThread?: boolean | null
-  align?: ('none' | 'left' | 'center' | 'right') | undefined
-  lang?: string | undefined
-  maxWidth?: number | undefined
-}> = (props) => {
-  const [content, setContent] = useState<string>('')
-  const contentRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!props.url) return
-
-    const theme = document.getElementsByTagName('html')[0]?.getAttribute('data-theme') ?? 'dark'
-
-    fetchTwitterEmbed({
-      url: props.url,
-      hide_media: props.hideMedia ?? false,
-      hide_thread: props.hideThread ?? false,
-      align: props.align || 'center',
-      maxwidth: props.maxWidth,
-      theme: theme as 'light' | 'dark',
-    }).then((res) => {
-      if (!res) {
-        setContent('X post could not be loaded.')
-      } else {
-        setContent(sanitizeHtml(res.html))
-      }
-    })
-  }, [props])
-
-  useEffect(() => {
-    if (contentRef.current && window.twttr) {
-      // There's a race condition where the content returned by oEmbed needs to be inserted into the page, after which
-      // the twitter JS will load it and render it as an embed instead of just a blockquote. Providing this timeout
-      // helps to make sure the JS has actually loaded.
-      setTimeout(() => window.twttr.widgets.load(contentRef.current), 1000)
+declare global {
+  interface Window {
+    twttr?: {
+      widgets: { load: (element?: HTMLElement) => void }
     }
-  }, [content])
+  }
+}
+
+export const TwitterEmbedBlock: React.FC<SocialEmbedBlock> = ({ url, hideMedia, hideThread }) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    if (!ready || !ref.current) return
+    window.twttr?.widgets.load(ref.current)
+  }, [ready])
+
+  const params = new URLSearchParams()
+  if (hideMedia) params.set('hide_media', 'true')
+  if (hideThread) params.set('hide_thread', 'true')
+  const href = params.toString() ? `${url}?${params}` : url
 
   return (
-    <div>
-      <Script src="https://platform.twitter.com/widgets.js" />
-      {/* HTML is sanitized with DOMPurify before insertion */}
-      {/* eslint-disable-next-line react/no-danger */}
-      <div dangerouslySetInnerHTML={{ __html: content }} ref={contentRef} />
+    <div className="flex justify-center">
+      <Script
+        src="https://platform.twitter.com/widgets.js"
+        strategy="afterInteractive"
+        onLoad={() => setReady(true)}
+      />
+      <div ref={ref} className="min-h-[200px] w-full max-w-[550px]">
+        <blockquote className="twitter-tweet">
+          <p>View this tweet on X:</p>
+          <a href={href} target="_blank" rel="noopener noreferrer" />
+        </blockquote>
+      </div>
     </div>
   )
 }

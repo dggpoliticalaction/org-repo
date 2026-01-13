@@ -17,11 +17,6 @@ const SOCIAL_MEDIA_URLS = [
     url: 'https://www.twitter.com/example/status/1234567890',
     label: 'Twitter (www.twitter.com)',
   },
-  {
-    platform: 'twitter',
-    url: 'https://mobile.twitter.com/example/status/1234567890',
-    label: 'Twitter (mobile.twitter.com)',
-  },
 
   // YouTube variations
   {
