@@ -1,16 +1,13 @@
 import { Button } from '@/components/ui/button'
-import { auth } from '@/utilities/auth'
-import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
 import React from 'react'
 import { discordLogin } from './actions'
 
 export default async function Login(): Promise<React.ReactElement> {
-  const session = await auth.api.getSession({ headers: await headers() })
+  // const session = await auth.api.getSession({ headers: await headers() })
 
-  if (session) {
-    redirect('/')
-  }
+  // if (session) {
+  //   redirect('/')
+  // }
 
   return (
     <div className="flex flex-1 items-center justify-center px-4">
