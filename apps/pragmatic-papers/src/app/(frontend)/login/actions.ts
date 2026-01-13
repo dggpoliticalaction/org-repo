@@ -100,10 +100,13 @@ type AuthResponse = AuthData | AuthDataWithToken | AuthError
 
 export async function discordLogin(): Promise<void> {
   // const settings = PROVIDERS['discord']
-  const data = await authClient.signIn.social({
+  const { data } = await authClient.signIn.social({
     provider: 'discord',
   })
-  console.log('discordLogin', JSON.stringify(data, null, 2))
+
+  if (data?.url) {
+    redirect(data.url)
+  }
 }
 
 // export async function requireSession() {
