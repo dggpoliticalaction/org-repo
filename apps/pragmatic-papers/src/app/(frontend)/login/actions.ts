@@ -2,6 +2,7 @@
 
 import { Users } from '@/collections/Users'
 import type { User } from '@/payload-types'
+import { authClient } from '@/utilities/auth-client'
 import config from '@payload-config'
 import { login as payloadLogin } from '@payloadcms/next/auth'
 import { redirect } from 'next/navigation'
@@ -89,36 +90,18 @@ interface AuthDataWithToken {
 
 type AuthResponse = AuthData | AuthDataWithToken | AuthError
 
-export async function signin(provider: Provider): Promise<AuthResponse> {
-  const settings = PROVIDERS[provider]
-
-  if (!settings) {
-    return {
-      code: 'provider_not_found',
-      message: 'Provider not found',
-    }
-  }
-
-  redirect(settings.callbackURL)
-
-  // const data = await authClient.signIn.social({
-  //   provider,
-  //   ...settings,
-  // })
-
-  // sync payload
-  // const user = await payload.find({
-  //   collection: Users.slug as 'users',
-  //   where: {
-  //     email: data.user.email,
-  //   },
-  // })
-
-  // return data as unknown as AuthResponse
-}
+// export async function signin(provider: Provider): Promise<void> {
+//   const settings = PROVIDERS[provider]
+//   const data = await authClient.signIn.social({
+//     provider: 'discord',
+//     ...settings,
+//   })
+// }
 
 export async function discordLogin(): Promise<void> {
-  await signin('discord')
-  // console.log(JSON.stringify(data, null, 2))
-  // redirectToDashboard()
+  const settings = PROVIDERS['discord']
+  const data = await authClient.signIn.social({
+    provider: 'discord',
+    ...settings,
+  })
 }
