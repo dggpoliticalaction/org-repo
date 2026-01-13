@@ -103,7 +103,7 @@ jobs:
     environment: ${{ inputs.environment }}
     outputs:
       should-deploy: ${{ steps.check-changes.outputs.should-deploy }}
-      image-tag: ${{ steps.primary-tag.outputs.primary-tag }}
+      image-tag: ${{ steps.primary-tag.outputs.tag }}
       image-digest: ${{ steps.build-step.outputs.digest }}
 
     steps:
@@ -225,15 +225,11 @@ jobs:
         id: primary-tag
         run: |
           # Extract the primary tag based on deployment type
-          REGISTRY="${{ secrets.DOCKER_REGISTRY }}"
-          IMAGE_NAME="${{ secrets.DOCKER_IMAGE_NAME }}"
-
-          echo "DEBUG: Registry: $REGISTRY"
-          echo "DEBUG: Image Name: $IMAGE_NAME"
+          # NOTE: We only output the TAG, not the full image path
+          # The full path contains secrets which get redacted in job outputs
           echo "DEBUG: Deployment Type: ${{ inputs.deployment-type }}"
           echo "DEBUG: PR Number: ${{ inputs.pr-number }}"
           echo "DEBUG: should-deploy value: '${{ steps.check-changes.outputs.should-deploy }}'"
-          echo "DEBUG: GITHUB_OUTPUT file: $GITHUB_OUTPUT"
 
           if [ "${{ inputs.deployment-type }}" == "preview" ]; then
             TAG="pr-${{ inputs.pr-number }}"
@@ -243,22 +239,18 @@ jobs:
             TAG="latest"
           fi
 
-          PRIMARY_TAG="${REGISTRY}/${IMAGE_NAME}:${TAG}"
-          echo "DEBUG: About to write primary-tag=${PRIMARY_TAG}"
-          echo "primary-tag=${PRIMARY_TAG}" >> $GITHUB_OUTPUT
-          echo "DEBUG: Write completed, verifying..."
-          cat $GITHUB_OUTPUT
-          echo "DEBUG: Contents of GITHUB_OUTPUT file shown above"
-          echo "Primary tag: ${PRIMARY_TAG}"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "Primary tag (output): ${TAG}"
+          echo "Note: Full image path will be reconstructed in deploy job"
 
       - name: Verify primary tag output was set
         run: |
           echo "DEBUG: Verifying step outputs after primary-tag step"
-          echo "DEBUG: primary-tag output value: '${{ steps.primary-tag.outputs.primary-tag }}'"
-          if [ -z "${{ steps.primary-tag.outputs.primary-tag }}" ]; then
-            echo "ERROR: primary-tag output is EMPTY!"
+          echo "DEBUG: tag output value: '${{ steps.primary-tag.outputs.tag }}'"
+          if [ -z "${{ steps.primary-tag.outputs.tag }}" ]; then
+            echo "ERROR: tag output is EMPTY!"
           else
-            echo "SUCCESS: primary-tag output is set correctly"
+            echo "SUCCESS: tag output is set correctly"
           fi
 
       - name: Output build information
@@ -283,12 +275,12 @@ jobs:
           echo ""
           echo "Step outputs:"
           echo "  check-changes.should-deploy: '${{ steps.check-changes.outputs.should-deploy }}'"
-          echo "  primary-tag.primary-tag: '${{ steps.primary-tag.outputs.primary-tag }}'"
+          echo "  primary-tag.tag: '${{ steps.primary-tag.outputs.tag }}'"
           echo "  build-step.digest: '${{ steps.build-step.outputs.digest }}'"
           echo ""
           echo "These will become job outputs:"
           echo "  jobs.build.outputs.should-deploy: ${{ steps.check-changes.outputs.should-deploy }}"
-          echo "  jobs.build.outputs.image-tag: ${{ steps.primary-tag.outputs.primary-tag }}"
+          echo "  jobs.build.outputs.image-tag: ${{ steps.primary-tag.outputs.tag }}"
           echo "  jobs.build.outputs.image-digest: ${{ steps.build-step.outputs.digest }}"
 
   deploy:
@@ -323,24 +315,27 @@ jobs:
       - name: Update application with new Docker image
         id: update-application
         run: |
-          # Extract just the image name and tag from the full registry path
-          FULL_IMAGE="${{ needs.build.outputs.image-tag }}"
+          # Reconstruct full image path from secrets and tag
+          # Tag comes from build job output (doesn't contain secrets)
+          IMAGE_TAG="${{ needs.build.outputs.image-tag }}"
+          REGISTRY="${{ secrets.DOCKER_REGISTRY }}"
+          IMAGE_NAME="${{ secrets.DOCKER_IMAGE_NAME }}"
 
-          echo "DEBUG: Received image tag from build job: '$FULL_IMAGE'"
+          echo "DEBUG: Received tag from build job: '$IMAGE_TAG'"
           echo "DEBUG: Should deploy: ${{ needs.build.outputs.should-deploy }}"
           echo "DEBUG: All build outputs:"
           echo "  should-deploy: '${{ needs.build.outputs.should-deploy }}'"
           echo "  image-tag: '${{ needs.build.outputs.image-tag }}'"
           echo "  image-digest: '${{ needs.build.outputs.image-digest }}'"
 
-          if [ -z "$FULL_IMAGE" ]; then
+          if [ -z "$IMAGE_TAG" ]; then
             echo "Error: Image tag is empty!"
             echo "This likely means the 'Set primary tag output' step was skipped."
             echo "Check that should-deploy == 'true' (string comparison)"
             exit 1
           fi
 
-          IMAGE_TAG=$(echo "$FULL_IMAGE" | awk -F: '{print $NF}')
+          FULL_IMAGE="${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
 
           echo "Full image: $FULL_IMAGE"
           echo "Updating application with image tag: $IMAGE_TAG"
