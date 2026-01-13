@@ -266,12 +266,30 @@ jobs:
           FULL_IMAGE="${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
 
           echo "Updating application with image: $FULL_IMAGE"
-          echo "API URL: ${{ secrets.COOLIFY_API_URL }}/api/v1/applications/${{ secrets.COOLIFY_APP_UUID }}"
+
+          # Debug URL components
+          API_URL="${{ secrets.COOLIFY_API_URL }}"
+          APP_UUID="${{ secrets.COOLIFY_APP_UUID }}"
+          FULL_URL="${API_URL}/api/v1/applications/${APP_UUID}"
+
+          echo "Debug URL components:"
+          echo "  API_URL length: ${#API_URL}"
+          echo "  API_URL (first 20 chars): ${API_URL:0:20}"
+          echo "  APP_UUID length: ${#APP_UUID}"
+          echo "  Full URL length: ${#FULL_URL}"
+          echo "  Testing DNS resolution..."
+
+          # Extract hostname from URL for DNS test
+          HOSTNAME=$(echo "$API_URL" | sed -e 's|^[^/]*//||' -e 's|/.*$||')
+          echo "  Hostname: $HOSTNAME"
+          if command -v nslookup &> /dev/null; then
+            nslookup "$HOSTNAME" || echo "DNS lookup failed"
+          fi
 
           # Run curl with error handling
           set +e  # Don't exit on error
           RESPONSE=$(curl -s -w "\n%{http_code}" -X PATCH \
-            "${{ secrets.COOLIFY_API_URL }}/api/v1/applications/${{ secrets.COOLIFY_APP_UUID }}" \
+            "${FULL_URL}" \
             -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d "{
