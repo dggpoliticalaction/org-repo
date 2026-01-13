@@ -43,6 +43,15 @@ export const betterAuthStrategy = async ({
   payload,
   headers,
 }: AuthStrategyFunctionArgs): Promise<AuthStrategyResult> => {
+  const accept = headers.get('accept') ?? ''
+  const referer = headers.get('referer') ?? ''
+  const secFetchDest = headers.get('sec-fetch-dest') ?? ''
+
+  const isAdminUI =
+    accept.includes('text/html') && (referer.includes('/admin') || secFetchDest === 'document')
+
+  if (isAdminUI) return { user: null }
+
   const session = await auth.api.getSession({
     headers,
   })
@@ -85,8 +94,9 @@ export const betterAuthStrategy = async ({
             },
           ],
         },
+        overrideAccess: true,
       })
-    } else {
+    } else if (provider !== 'unknown') {
       const existingOauth = foundUser.oauth || []
       foundUser = await payload.update({
         collection: 'users',

@@ -9,7 +9,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import React from 'react'
-import { login } from './actions'
+import { defaultLogin } from './actions'
 import { SubmitButton } from './SubmitButton'
 
 interface LoginFormProps {
@@ -37,7 +37,7 @@ export function LoginForm({ error }: LoginFormProps): React.ReactElement {
         <CardTitle>Login</CardTitle>
         <CardDescription>Enter your credentials to access your account</CardDescription>
       </CardHeader>
-      <form action={login}>
+      <form action={defaultLogin}>
         <CardContent className="space-y-4">
           {error && (
             <div className="rounded-md bg-destructive p-3 text-sm text-destructive-foreground">
