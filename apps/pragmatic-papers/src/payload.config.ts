@@ -70,6 +70,7 @@ export default buildConfig({
           client: {
             url: process.env.DATABASE_URI || '',
           },
+          push: false,
         }),
   collections: [Pages, Articles, Volumes, Media, Categories, Users, Webhooks],
   cors: [getServerSideURL()].filter(Boolean),
