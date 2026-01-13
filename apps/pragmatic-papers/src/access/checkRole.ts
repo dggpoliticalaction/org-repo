@@ -11,3 +11,7 @@ export const isEditor = (user: User): boolean => {
 export const isWriter = (user: User): boolean => {
   return user.role === 'writer' || isEditor(user)
 }
+
+export const isUser = (user: User): boolean => {
+  return user.role === 'user'
+}

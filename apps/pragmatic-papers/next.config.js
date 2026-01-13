@@ -1,6 +1,3 @@
-/* eslint-disable no-constant-binary-expression */
-/* eslint-disable no-undef */
-/* eslint-disable turbo/no-undeclared-env-vars */
 import { withPayload } from '@payloadcms/next/withPayload'
 
 import redirects from './redirects.js'

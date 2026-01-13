@@ -1,23 +1,23 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
+import sharp from 'sharp'
 
-import sharp from 'sharp' // sharp-import
 import path from 'path'
-import { buildConfig, type PayloadRequest } from 'payload'
+import { buildConfig, type PayloadRequest, type SharpDependency } from 'payload'
 import { fileURLToPath } from 'url'
 
+import { defaultLexical } from '@/fields/defaultLexical'
+import { Articles } from './collections/Articles'
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Users } from './collections/Users'
+import { Volumes } from './collections/Volumes'
+import { Webhooks } from './collections/Webhooks'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
-import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
-import { Articles } from './collections/Articles'
-import { Volumes } from './collections/Volumes'
-import { Webhooks } from './collections/Webhooks'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -33,7 +33,7 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    user: Users.slug,
+    user: 'users',
     livePreview: {
       breakpoints: [
         {
@@ -76,7 +76,7 @@ export default buildConfig({
   globals: [Header, Footer],
   plugins: [...plugins],
   secret: process.env.PAYLOAD_SECRET,
-  sharp,
+  sharp: sharp as unknown as SharpDependency,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

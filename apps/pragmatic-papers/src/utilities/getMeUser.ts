@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
+import { AUTH_COOKIE_KEY } from '@/app/(frontend)/login/constants'
 import type { User } from '../payload-types'
 import { getClientSideURL } from './getURL'
 
@@ -13,7 +14,7 @@ export const getMeUser = async (args?: {
 }> => {
   const { nullUserRedirect, validUserRedirect } = args || {}
   const cookieStore = await cookies()
-  const token = cookieStore.get('payload-token')?.value
+  const token = cookieStore.get(AUTH_COOKIE_KEY)?.value
 
   const meUserReq = await fetch(`${getClientSideURL()}/api/users/me`, {
     headers: {
