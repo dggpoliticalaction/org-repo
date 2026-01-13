@@ -103,7 +103,7 @@ jobs:
     environment: ${{ inputs.environment }}
     outputs:
       should-deploy: ${{ steps.check-changes.outputs.should-deploy }}
-      image-tag: ${{ steps.meta.outputs.tags }}
+      image-tag: ${{ steps.set-primary-tag.outputs.primary-tag }}
       image-digest: ${{ steps.build.outputs.digest }}
 
     steps:
@@ -183,6 +183,26 @@ jobs:
             org.opencontainers.image.description=${{ inputs.app-name }} - ${{ inputs.environment }}
             org.opencontainers.image.vendor=Your Organization
 
+      - name: Set primary Docker image tag
+        if: steps.check-changes.outputs.should-deploy == 'true'
+        id: set-primary-tag
+        run: |
+          # Extract the primary tag based on deployment type
+          REGISTRY="${{ secrets.DOCKER_REGISTRY }}"
+          IMAGE_NAME="${{ secrets.DOCKER_IMAGE_NAME }}"
+
+          if [ "${{ inputs.deployment-type }}" == "preview" ]; then
+            TAG="pr-${{ inputs.pr-number }}"
+          elif [ "${{ inputs.deployment-type }}" == "staging" ]; then
+            TAG="staging"
+          else
+            TAG="latest"
+          fi
+
+          PRIMARY_TAG="${REGISTRY}/${IMAGE_NAME}:${TAG}"
+          echo "primary-tag=${PRIMARY_TAG}" >> $GITHUB_OUTPUT
+          echo "Primary tag: ${PRIMARY_TAG}"
+
       - name: Build and push Docker image
         if: steps.check-changes.outputs.should-deploy == 'true'
         id: build
@@ -238,20 +258,11 @@ jobs:
       deployment-status: ${{ steps.get-status.outputs.status }}
 
     steps:
-      - name: Extract primary image tag
-        id: extract-tag
-        run: |
-          # Get the first tag from the metadata output
-          FULL_TAGS="${{ needs.build.outputs.image-tag }}"
-          PRIMARY_TAG=$(echo "$FULL_TAGS" | head -n1)
-          echo "primary-tag=$PRIMARY_TAG" >> $GITHUB_OUTPUT
-          echo "Using image tag: $PRIMARY_TAG"
-
       - name: Update application with new Docker image
         id: update-application
         run: |
           # Extract just the image name and tag from the full registry path
-          FULL_IMAGE="${{ steps.extract-tag.outputs.primary-tag }}"
+          FULL_IMAGE="${{ needs.build.outputs.image-tag }}"
           IMAGE_TAG=$(echo "$FULL_IMAGE" | awk -F: '{print $NF}')
 
           echo "Updating application with image tag: $IMAGE_TAG"
