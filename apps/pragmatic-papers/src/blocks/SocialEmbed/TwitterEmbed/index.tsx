@@ -48,7 +48,7 @@ export const TwitterEmbedBlock: React.FC<SocialEmbedBlock> = ({ url, hideMedia, 
       <div
         ref={ref}
         className={cn(
-          'min-h-[200px] w-full max-w-[550px] transition-opacity duration-300 ease-in-out',
+          'min-h-60 w-full max-w-lg transition-opacity duration-300 ease-in-out',
           loaded ? 'opacity-100' : 'opacity-0',
         )}
       >
