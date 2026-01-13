@@ -1,7 +1,7 @@
 # Dockerfile for Pragmatic Papers (Next.js + Payload CMS)
 # Optimized for pnpm monorepo with Turbo
 
-ARG NODE_VERSION=24.12.0
+ARG NODE_VERSION=22.21.1
 
 # ============================================
 # Base stage - setup pnpm and dependencies
@@ -51,6 +51,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 # ============================================
 FROM base AS builder
 
+ARG NODE_ENV=production
 ARG BUILD_ENV=production
 ARG DATABASE_URI
 ARG PAYLOAD_SECRET
@@ -73,7 +74,8 @@ COPY --from=pruner /app/out/full/ .
 # Copy turbo config
 COPY turbo.json turbo.json
 
-# Set build environment (NODE_ENV is set by the ci script)
+# Set build environment
+ENV NODE_ENV=${NODE_ENV}
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URI=${DATABASE_URI}
 ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
