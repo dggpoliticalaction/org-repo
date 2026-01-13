@@ -222,7 +222,6 @@ jobs:
             PAYLOAD_SECRET=${{ secrets.PAYLOAD_SECRET }}
 
       - name: Set primary tag output
-        if: steps.check-changes.outputs.should-deploy == 'true'
         id: primary-tag
         run: |
           # Extract the primary tag based on deployment type
@@ -233,6 +232,7 @@ jobs:
           echo "DEBUG: Image Name: $IMAGE_NAME"
           echo "DEBUG: Deployment Type: ${{ inputs.deployment-type }}"
           echo "DEBUG: PR Number: ${{ inputs.pr-number }}"
+          echo "DEBUG: should-deploy value: '${{ steps.check-changes.outputs.should-deploy }}'"
 
           if [ "${{ inputs.deployment-type }}" == "preview" ]; then
             TAG="pr-${{ inputs.pr-number }}"
@@ -281,13 +281,15 @@ jobs:
 
           echo "DEBUG: Received image tag from build job: '$FULL_IMAGE'"
           echo "DEBUG: Should deploy: ${{ needs.build.outputs.should-deploy }}"
+          echo "DEBUG: All build outputs:"
+          echo "  should-deploy: '${{ needs.build.outputs.should-deploy }}'"
+          echo "  image-tag: '${{ needs.build.outputs.image-tag }}'"
+          echo "  image-digest: '${{ needs.build.outputs.image-digest }}'"
 
           if [ -z "$FULL_IMAGE" ]; then
             echo "Error: Image tag is empty!"
-            echo "Build job outputs:"
-            echo "  should-deploy: ${{ needs.build.outputs.should-deploy }}"
-            echo "  image-tag: '${{ needs.build.outputs.image-tag }}'"
-            echo "  image-digest: ${{ needs.build.outputs.image-digest }}"
+            echo "This likely means the 'Set primary tag output' step was skipped."
+            echo "Check that should-deploy == 'true' (string comparison)"
             exit 1
           fi
 
