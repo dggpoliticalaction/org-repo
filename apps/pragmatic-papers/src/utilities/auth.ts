@@ -76,7 +76,7 @@ export const betterAuthStrategy = async ({
         data: {
           email,
           name: session.user.name ?? undefined,
-          role: 'user',
+          role: email === process.env.DEV_ADMIN_EMAIL ? 'admin' : 'user',
           oauth: [
             {
               provider,
