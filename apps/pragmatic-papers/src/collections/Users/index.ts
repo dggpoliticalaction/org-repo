@@ -3,7 +3,6 @@ import type { CollectionConfig } from 'payload'
 import { adminOrSelf } from '@/access/adminOrSelf'
 import { admin, adminFieldLevel } from '@/access/admins'
 import { writerFieldLevel } from '@/access/writer'
-import { betterAuthStrategy } from '@/utilities/auth'
 import {
   FixedToolbarFeature,
   HeadingFeature,
@@ -28,14 +27,7 @@ export const Users: CollectionConfig = {
     defaultColumns: ['name', 'role', 'email'],
     useAsTitle: 'name',
   },
-  auth: {
-    strategies: [
-      {
-        name: 'better-auth',
-        authenticate: betterAuthStrategy,
-      },
-    ],
-  },
+  auth: true,
   fields: [
     {
       name: 'name',
