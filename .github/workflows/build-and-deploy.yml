@@ -190,7 +190,6 @@ jobs:
           cache-from: type=gha,scope=${{ inputs.app-name }}-${{ inputs.environment }}
           cache-to: type=gha,mode=max,scope=${{ inputs.app-name }}-${{ inputs.environment }}
           build-args: |
-            NODE_ENV=${{ inputs.environment == 'production' && 'production' || 'development' }}
             APP_NAME=${{ inputs.app-name }}
             BUILD_ENV=${{ inputs.environment }}
             DATABASE_URI=${{ secrets.DATABASE_URI }}
