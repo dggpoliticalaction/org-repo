@@ -11,13 +11,7 @@ export const auth = betterAuth({
 
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
-      if (ctx.path.startsWith('/sign-in/social')) {
-        const newSession = ctx.context.newSession
-        if (newSession) {
-          console.log('newSession', JSON.stringify(newSession, null, 2))
-          // payload
-        }
-      }
+      console.log('auth.ts', JSON.stringify(ctx, null, 2))
     }),
   },
 })

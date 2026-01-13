@@ -48,8 +48,66 @@ export async function login(formData: FormData): Promise<void> {
   redirectToDashboard(user)
 }
 
+type Provider = 'discord'
+
+interface DiscordConfig {
+  callbackURL: string
+}
+
+type Config = DiscordConfig // future configs
+
+const PROVIDERS: Record<Provider, Config> = {
+  discord: {
+    callbackURL: '/',
+  },
+  // future providers
+} as const
+
+interface AuthError {
+  code?: string | undefined
+  message?: string | undefined
+}
+
+interface AuthData {
+  redirect: boolean
+  url: string
+}
+
+interface AuthDataWithToken {
+  redirect: boolean
+  token: string
+  url: undefined
+  user: {
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    email: string
+    emailVerified: boolean
+    name: string
+    image?: string | null | undefined | undefined
+  }
+}
+
+type AuthResponse = AuthData | AuthDataWithToken | AuthError
+
+// export async function signin(provider: Provider): Promise<void> {
+//   const settings = PROVIDERS[provider]
+//   const data = await authClient.signIn.social({
+//     provider: 'discord',
+//     ...settings,
+//   })
+// }
+
 export async function discordLogin(): Promise<void> {
-  await authClient.signIn.social({
+  // const settings = PROVIDERS['discord']
+  const data = await authClient.signIn.social({
     provider: 'discord',
   })
+  console.log('discordLogin', JSON.stringify(data, null, 2))
 }
+
+// export async function requireSession() {
+//   const session = await auth.api.getSession({ headers: await headers() })
+//   if (!session) throw new Error('Unauthorized')
+//   return session
+// }
