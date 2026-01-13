@@ -4,7 +4,6 @@ import { createUsers } from './users'
 import { createArticles } from './articles'
 import { createVolumes } from './volumes'
 import { createMedia } from './media'
-import { createAuthors } from './authors'
 
 export const seed = async (payload: Payload): Promise<void> => {
   // Delete all content before seeding
@@ -42,16 +41,9 @@ export const seed = async (payload: Payload): Promise<void> => {
     where: {},
   })
 
-  await payload.delete({
-    collection: 'authors',
-    where: {},
-  })
-
   // Begin seeding
 
   const { writer1, writer2 } = await createUsers(payload)
-
-  await createAuthors(payload, [writer1, writer2])
 
   const { mediaDocs } = await createMedia(payload)
 

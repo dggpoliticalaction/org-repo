@@ -5,42 +5,16 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
 
-import type { Article as ArticleType, Author as AuthorType, Media as MediaType } from '@/payload-types'
+import type { Article as ArticleType, Media, User, Volume } from '@/payload-types'
 
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
-import { Media } from '@/components/Media'
 import { ArticleCard, type CardPostData } from '@/components/ArticleCard'
-
-interface AuthorDoc {
-  id: string | number
-  name?: AuthorType['name'] | null
-  slug?: AuthorType['slug'] | null
-  affiliation?: AuthorType['affiliation']
-  biography?: AuthorType['biography']
-  profileImage?: AuthorType['profileImage']
-  socialLinks?: AuthorType['socialLinks']
-  user?: AuthorType['user'] | { id: string | number }
-}
-
-interface ArticleDoc {
-  id: number
-  title?: string | null
-  slug?: string | null
-  meta?: {
-    description?: string | null
-    image?: unknown
-  } | null
-}
-
-interface VolumeDoc {
-  id: number
-  slug?: string | null
-  title?: string | null
-  articles?: (number | { id: number })[] | null
-}
+import { authorSlugFromUser } from '@/utilities/authorSlug'
 
 function normalizeExternalUrl(url: string): string {
   const trimmed = url.trim()
@@ -52,18 +26,21 @@ function normalizeExternalUrl(url: string): string {
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
-  const authors = await payload.find({
-    collection: 'authors',
+  const users = await payload.find({
+    collection: 'users',
     draft: false,
     limit: 1000,
-    overrideAccess: false,
+    overrideAccess: true,
     pagination: false,
-    select: {
-      slug: true,
+    where: {
+      role: {
+        in: ['writer', 'editor', 'chief-editor', 'admin'],
+      },
     },
   })
 
-  const params = authors.docs.map(({ slug }) => {
+  const params = (users.docs as User[]).map((user) => {
+    const slug = user.authorSlug || authorSlugFromUser(user)
     return { slug }
   })
 
@@ -76,32 +53,43 @@ interface Args {
   }>
 }
 
-const queryAuthorBySlug = cache(
-  async ({ slug }: { slug: string }): Promise<AuthorDoc | null> => {
-    const { isEnabled: draft } = await draftMode()
+const queryUserBySlug = cache(async ({ slug }: { slug: string }): Promise<User | null> => {
+  const { isEnabled: draft } = await draftMode()
 
-    const payload = await getPayload({ config: configPromise })
+  const payload = await getPayload({ config: configPromise })
 
-    const result = (await payload.find({
-      collection: 'authors',
-      draft,
-      limit: 1,
-      overrideAccess: draft,
-      pagination: false,
-      where: {
-        slug: {
-          equals: slug,
+  const result = (await payload.find({
+    collection: 'users',
+    draft,
+    limit: 1,
+    overrideAccess: true,
+    pagination: false,
+    where: {
+      and: [
+        {
+          role: {
+            in: ['writer', 'editor', 'chief-editor', 'admin'],
+          },
         },
-      },
-      depth: 1,
-    })) as { docs: AuthorDoc[] }
+        {
+          authorSlug: {
+            equals: slug,
+          },
+        },
+      ],
+    },
+    depth: 1,
+  })) as { docs: User[] }
 
-    return result.docs?.[0] || null
-  },
-)
+  // Fallback in case older users are missing authorSlug
+  const match =
+    result.docs[0] || result.docs.find((user) => authorSlugFromUser(user) === slug) || null
+
+  return match
+})
 
 const queryArticlesByAuthor = cache(
-  async ({ userId }: { userId: string | number }): Promise<ArticleDoc[]> => {
+  async ({ userId }: { userId: string | number }): Promise<ArticleType[]> => {
     const { isEnabled: draft } = await draftMode()
 
     const payload = await getPayload({ config: configPromise })
@@ -118,14 +106,14 @@ const queryArticlesByAuthor = cache(
         },
       },
       depth: 2,
-    })) as { docs: ArticleDoc[] }
+    })) as { docs: ArticleType[] }
 
     return result.docs || []
   },
 )
 
 const queryVolumesForArticles = cache(
-  async ({ articleIds }: { articleIds: (string | number)[] }): Promise<VolumeDoc[]> => {
+  async ({ articleIds }: { articleIds: (string | number)[] }): Promise<Volume[]> => {
     if (!articleIds.length) return []
 
     const { isEnabled: draft } = await draftMode()
@@ -144,7 +132,7 @@ const queryVolumesForArticles = cache(
         },
       },
       depth: 0,
-    })) as { docs: VolumeDoc[] }
+    })) as { docs: Volume[] }
 
     return result.docs || []
   },
@@ -152,14 +140,12 @@ const queryVolumesForArticles = cache(
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
-  const author = await queryAuthorBySlug({ slug })
+  const user = await queryUserBySlug({ slug })
 
-  const name = author?.name || 'Author'
+  const name = user?.name || user?.email || 'Author'
   const title = `${name} — Pragmatic Papers`
 
-  const description =
-    (typeof author?.biography === 'string' && author.biography) ||
-    (author?.affiliation ? `${name} — ${author.affiliation}` : undefined)
+  const description = (typeof user?.biography === 'string' && user.biography) || undefined
 
   return {
     title,
@@ -178,21 +164,15 @@ export default async function AuthorPage({
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   const url = '/authors/' + slug
-  const author = await queryAuthorBySlug({ slug })
+  const user = await queryUserBySlug({ slug })
 
-  if (!author) return <PayloadRedirects url={url} />
+  if (!user) return <PayloadRedirects url={url} />
 
-  const userField = author.user
-  const userId =
-    typeof userField === 'object' && userField !== null
-      ? userField.id
-      : (userField as string | number | undefined)
-
-  const articles = userId ? await queryArticlesByAuthor({ userId }) : []
+  const articles = await queryArticlesByAuthor({ userId: user.id })
   const articleIds = articles.map((article) => article.id).filter(Boolean)
   const volumes = await queryVolumesForArticles({ articleIds })
 
-  const volumeByArticleId = new Map<number, VolumeDoc>()
+  const volumeByArticleId = new Map<number, Volume>()
 
   for (const volume of volumes) {
     const volumeArticles = volume.articles || []
@@ -207,8 +187,11 @@ export default async function AuthorPage({
     }
   }
 
-  const hasProfileImage = !!author.profileImage && typeof author.profileImage === 'object'
-  const hasBiography = !!author.biography
+  const hasBiography = !!user.biography
+
+  const profile = user.profileImage
+  const profileDoc = profile && typeof profile === 'object' ? (profile as Media) : undefined
+  const profileSrc = profileDoc?.sizes?.square?.url || profileDoc?.url || undefined
 
   return (
     <article className="m-auto max-w-3xl px-4 pb-16 pt-8">
@@ -220,28 +203,27 @@ export default async function AuthorPage({
       {draft && <LivePreviewListener />}
 
       <header className="mb-10 flex flex-col items-center text-center">
-        {hasProfileImage && (
+        {profileSrc && (
           <div className="mb-6 h-32 w-32 overflow-hidden rounded-full border border-border">
-            <Media
-              resource={author.profileImage as MediaType}
-              className="h-full w-full"
-              imgClassName="h-full w-full object-cover"
-              size="square"
+            <Image
+              src={profileSrc}
+              alt={profileDoc?.alt || user.name || user.email || 'Author avatar'}
+              width={128}
+              height={128}
+              className="h-full w-full object-cover"
             />
           </div>
         )}
-        <h1 className="mb-2 text-3xl font-bold md:text-4xl">{author.name}</h1>
-        {author.affiliation && (
-          <p className="text-sm text-muted-foreground">{author.affiliation}</p>
-        )}
+        <h1 className="mb-2 text-3xl font-bold md:text-4xl">{user.name || user.email}</h1>
+        {user.affiliation && <p className="text-sm text-muted-foreground">{user.affiliation}</p>}
 
-        {author.socialLinks && author.socialLinks.length > 0 && (
+        {user.socialLinks && user.socialLinks.length > 0 && (
           <nav
             aria-label="Author social links"
             className="mt-4 flex flex-wrap justify-center gap-3"
           >
-            {author.socialLinks.map((link) => (
-              <a
+            {user.socialLinks.map((link) => (
+              <Link
                 key={link.id ?? link.url}
                 href={normalizeExternalUrl(link.url)}
                 target="_blank"
@@ -249,7 +231,7 @@ export default async function AuthorPage({
                 className="text-sm text-brand underline-offset-2 hover:underline"
               >
                 {link.label || link.url}
-              </a>
+              </Link>
             ))}
           </nav>
         )}
@@ -257,10 +239,7 @@ export default async function AuthorPage({
 
       {hasBiography && (
         <section className="mb-10" aria-label="Author biography">
-          <RichText
-            enableGutter={false}
-            data={author.biography as ArticleType['content']}
-          />
+          <RichText enableGutter={false} data={user.biography as ArticleType['content']} />
         </section>
       )}
 
@@ -290,9 +269,9 @@ export default async function AuthorPage({
                     {volumeForArticle && volumeHref && (
                       <p className="px-4 pb-3 text-xs text-muted-foreground">
                         Volume{' '}
-                        <a href={volumeHref} className="underline-offset-2 hover:underline">
+                        <Link href={volumeHref} className="underline-offset-2 hover:underline">
                           {volumeForArticle.title ?? volumeForArticle.slug}
-                        </a>
+                        </Link>
                       </p>
                     )}
                   </div>

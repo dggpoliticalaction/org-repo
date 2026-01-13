@@ -73,7 +73,6 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
-    authors: Author;
     webhooks: Webhook;
     redirects: Redirect;
     forms: Form;
@@ -92,7 +91,6 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
-    authors: AuthorsSelect<false> | AuthorsSelect<true>;
     webhooks: WebhooksSelect<false> | WebhooksSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -413,6 +411,10 @@ export interface Media {
 export interface User {
   id: number;
   name?: string | null;
+  /**
+   * Slug used for the public author URL, e.g. /authors/jane-doe
+   */
+  authorSlug?: string | null;
   biography?: {
     root: {
       type: string;
@@ -428,6 +430,18 @@ export interface User {
     };
     [k: string]: unknown;
   } | null;
+  profileImage?: (number | null) | Media;
+  affiliation?: string | null;
+  /**
+   * Optional social or personal links for this author.
+   */
+  socialLinks?:
+    | {
+        label?: string | null;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'user') | null;
   updatedAt: string;
   createdAt: string;
@@ -822,51 +836,6 @@ export interface Category {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "authors".
- */
-export interface Author {
-  id: number;
-  name: string;
-  /**
-   * Used for the public URL, e.g. /authors/jane-doe
-   */
-  slug: string;
-  /**
-   * Link to the underlying user account. Used to look up authored articles.
-   */
-  user: number | User;
-  profileImage?: (number | null) | Media;
-  affiliation?: string | null;
-  biography?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Optional social or personal links for this author.
-   */
-  socialLinks?:
-    | {
-        label?: string | null;
-        url: string;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "webhooks".
  */
 export interface Webhook {
@@ -1073,10 +1042,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
-      } | null)
-    | ({
-        relationTo: 'authors';
-        value: number | Author;
       } | null)
     | ({
         relationTo: 'webhooks';
@@ -1444,7 +1409,17 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  authorSlug?: T;
   biography?: T;
+  profileImage?: T;
+  affiliation?: T;
+  socialLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
   role?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1462,27 +1437,6 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "authors_select".
- */
-export interface AuthorsSelect<T extends boolean = true> {
-  name?: T;
-  slug?: T;
-  user?: T;
-  profileImage?: T;
-  affiliation?: T;
-  biography?: T;
-  socialLinks?:
-    | T
-    | {
-        label?: T;
-        url?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

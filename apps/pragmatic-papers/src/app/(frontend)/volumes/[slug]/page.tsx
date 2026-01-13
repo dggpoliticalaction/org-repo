@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import type { Payload } from 'payload'
 import type { Article } from '@/payload-types'
 
+import Link from 'next/link'
+
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -16,13 +18,7 @@ import { formatDateTime } from '@/utilities/formatDateTime'
 import { ArticleCard } from '@/components/ArticleCard'
 import { toRoman } from '@/utilities/toRoman'
 import { Squiggle } from '@/components/ui/squiggle'
-
-interface AuthorDoc {
-  id: string | number
-  name?: string | null
-  slug?: string | null
-  affiliation?: string | null
-}
+import { authorSlugFromNameAndId } from '@/utilities/authorSlug'
 
 type VolumeArticleRef = number | Article
 
@@ -74,32 +70,6 @@ const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
   return result.docs?.[0] || null
 })
 
-const queryAuthorsByUserIds = cache(
-  async ({ userIds }: { userIds: (string | number)[] }): Promise<AuthorDoc[]> => {
-    if (!userIds.length) return []
-
-    const { isEnabled: draft } = await draftMode()
-
-    const payload = await getPayload({ config: configPromise })
-
-    const result = await payload.find({
-      collection: 'authors',
-      draft,
-      limit: 100,
-      overrideAccess: draft,
-      pagination: false,
-      where: {
-        user: {
-          in: userIds,
-        },
-      },
-      depth: 1,
-    })
-
-    return (result.docs ?? []) as AuthorDoc[]
-  },
-)
-
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
   const volume = await queryVolumeBySlug({ slug })
@@ -127,18 +97,28 @@ export default async function VolumePage({
     (article: VolumeArticleRef): article is Article => typeof article !== 'number',
   )
 
-  const authorIdSet = new Set<string | number>()
+  interface VolumeAuthor {
+    id: string | number
+    name?: string | null
+    slug: string
+  }
+
+  const volumeAuthorMap = new Map<string | number, VolumeAuthor>()
   actualArticles?.forEach((article) => {
-    const articleAuthors = article?.authors || []
-    articleAuthors.forEach((authorRef) => {
-      const id = typeof authorRef === 'object' && authorRef !== null ? authorRef.id : authorRef
-      if (id != null) {
-        authorIdSet.add(id)
-      }
+    const populated = article.populatedAuthors || []
+    populated.forEach((author) => {
+      if (!author?.id) return
+      if (volumeAuthorMap.has(author.id)) return
+      const authorSlug = authorSlugFromNameAndId(author.name ?? null, author.id)
+      volumeAuthorMap.set(author.id, {
+        id: author.id,
+        name: author.name,
+        slug: authorSlug,
+      })
     })
   })
 
-  const volumeAuthors = await queryAuthorsByUserIds({ userIds: Array.from(authorIdSet) })
+  const volumeAuthors = Array.from(volumeAuthorMap.values())
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-16">
@@ -191,19 +171,12 @@ export default async function VolumePage({
                   key={author.id}
                   className="min-w-[220px] max-w-xs flex-1 rounded-lg border bg-card p-4 text-center"
                 >
-                  {author.slug ? (
-                    <a
-                      href={`/authors/${author.slug}`}
-                      className="text-base font-semibold text-foreground transition-colors hover:text-brand"
-                    >
-                      {author.name}
-                    </a>
-                  ) : (
-                    <p className="text-base font-semibold">{author.name}</p>
-                  )}
-                  {author.affiliation && (
-                    <p className="mt-1 text-xs text-muted-foreground">{author.affiliation}</p>
-                  )}
+                  <Link
+                    href={`/authors/${author.slug}`}
+                    className="text-base font-semibold text-foreground transition-colors hover:text-brand"
+                  >
+                    {author.name}
+                  </Link>
                 </div>
               ))}
             </div>

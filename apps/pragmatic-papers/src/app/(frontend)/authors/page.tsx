@@ -4,20 +4,14 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
 
-import type { Author as AuthorType, Media as MediaType } from '@/payload-types'
+import type { Media, User } from '@/payload-types'
+import { isWriter } from '@/access/checkRole'
 
 import PageClient from './page.client'
-import { Media } from '@/components/Media'
-
-interface AuthorListDoc {
-  id: string | number
-  name?: AuthorType['name'] | null
-  slug?: AuthorType['slug'] | null
-  affiliation?: AuthorType['affiliation']
-  biography?: AuthorType['biography']
-  profileImage?: AuthorType['profileImage']
-}
+import { authorSlugFromUser } from '@/utilities/authorSlug'
 
 export const metadata: Metadata = {
   title: 'Authors — Pragmatic Papers',
@@ -29,20 +23,29 @@ export const metadata: Metadata = {
   },
 }
 
-async function queryAuthors(): Promise<AuthorListDoc[]> {
+async function queryAuthors(): Promise<User[]> {
   const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config: configPromise })
 
   const result = (await payload.find({
-    collection: 'authors',
+    collection: 'users',
     draft,
     limit: 1000,
-    overrideAccess: draft,
+    overrideAccess: true,
     pagination: false,
     sort: 'name',
-  })) as { docs: AuthorListDoc[] }
+    depth: 1,
+  })) as { docs: User[] }
 
-  return result.docs || []
+  const docs = (result.docs || []) as User[]
+  return docs.filter((user) => {
+    if (!isWriter(user)) return false
+
+    // Always include writers; for editor/chief-editor/admin require an explicit authorSlug
+    if (user.role === 'writer') return true
+
+    return Boolean(user.authorSlug)
+  })
 }
 
 export default async function AuthorsIndexPage(): Promise<React.ReactNode> {
@@ -63,36 +66,42 @@ export default async function AuthorsIndexPage(): Promise<React.ReactNode> {
         <p className="text-sm text-muted-foreground">No authors available yet.</p>
       ) : (
         <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {authors.map((author) => (
-            <li
-              key={author.id}
-              className="flex flex-col items-center rounded-lg border bg-card p-4 text-center"
-            >
-              {!!author.profileImage && typeof author.profileImage === 'object' && (
-                <div className="mb-3 h-20 w-20 overflow-hidden rounded-full border border-border">
-                  <Media
-                    resource={author.profileImage as MediaType}
-                    className="h-full w-full"
-                    imgClassName="h-full w-full object-cover"
-                    size="square"
-                  />
-                </div>
-              )}
-              {author.slug ? (
-                <a
-                  href={`/authors/${author.slug}`}
+          {authors.map((author) => {
+            const slug = author.authorSlug || authorSlugFromUser(author)
+
+            const profile = author.profileImage
+            const profileDoc =
+              profile && typeof profile === 'object' ? (profile as Media) : undefined
+            const profileSrc = profileDoc?.sizes?.square?.url || profileDoc?.url || undefined
+
+            return (
+              <li
+                key={author.id}
+                className="flex flex-col items-center rounded-lg border bg-card p-4 text-center"
+              >
+                {profileSrc && (
+                  <div className="mb-3 h-20 w-20 overflow-hidden rounded-full border border-border">
+                    <Image
+                      src={profileSrc}
+                      alt={profileDoc?.alt || author.name || author.email || 'Author avatar'}
+                      width={80}
+                      height={80}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                )}
+                <Link
+                  href={`/authors/${slug}`}
                   className="text-base font-semibold text-foreground transition-colors hover:text-brand"
                 >
-                  {author.name}
-                </a>
-              ) : (
-                <p className="text-base font-semibold">{author.name}</p>
-              )}
-              {author.affiliation && (
-                <p className="mt-1 text-xs text-muted-foreground">{author.affiliation}</p>
-              )}
-            </li>
-          ))}
+                  {author.name || author.email}
+                </Link>
+                {author.affiliation && (
+                  <p className="mt-1 text-xs text-muted-foreground">{author.affiliation}</p>
+                )}
+              </li>
+            )
+          })}
         </ul>
       )}
     </article>
