@@ -207,7 +207,7 @@ jobs:
             S3_ENDPOINT=${{ secrets.S3_ENDPOINT }}
             NEXT_PUBLIC_SERVER_URL=https://${{ inputs.pr-number }}.${{ secrets.SERVER_DOMAIN }}
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           secrets: |
             DATABASE_URI=${{ secrets.DATABASE_URI }}
             PAYLOAD_SECRET=${{ secrets.PAYLOAD_SECRET }}
