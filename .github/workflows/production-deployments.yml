@@ -63,6 +63,7 @@ jobs:
     with:
       app-name: "pragmatic-papers"
       app-path: "apps/pragmatic-papers"
+      dockerfile-path: "dockerfiles/PragmaticPapers.Dockerfile"
       environment: "production"
       deployment-type: "production"
       force-rebuild: false
@@ -90,6 +91,7 @@ jobs:
     with:
       app-name: "dgg-political-action"
       app-path: "apps/dgg-political-action"
+      dockerfile-path: "dockerfiles/DigitalGroundGame.Dockerfile"
       environment: "production"
       deployment-type: "production"
       force-rebuild: false
@@ -112,6 +114,7 @@ jobs:
     with:
       app-name: "discord-bot"
       app-path: "apps/discord-bot"
+      dockerfile-path: "dockerfiles/DiscordBot.Dockerfile"
       environment: "production"
       deployment-type: "production"
       force-rebuild: false

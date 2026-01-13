@@ -12,10 +12,10 @@ on:
         required: true
         type: string
       dockerfile-path:
-        description: "Path to Dockerfile relative to app directory"
+        description: "Path to Dockerfile from project root"
         required: false
         type: string
-        default: "Dockerfile"
+        default: ""
       environment:
         description: "Deployment environment (preview, staging, production)"
         required: true
@@ -182,7 +182,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ${{ inputs.app-path }}/${{ inputs.dockerfile-path }}
+          file: ${{ inputs.dockerfile-path }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
