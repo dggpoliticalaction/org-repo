@@ -275,6 +275,22 @@ jobs:
           echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
+      - name: Final verification of job outputs (runs at end of build job)
+        if: always()
+        run: |
+          echo "=== FINAL JOB OUTPUT VERIFICATION ==="
+          echo "This step runs at the END of the build job to verify outputs are set"
+          echo ""
+          echo "Step outputs:"
+          echo "  check-changes.should-deploy: '${{ steps.check-changes.outputs.should-deploy }}'"
+          echo "  primary-tag.primary-tag: '${{ steps.primary-tag.outputs.primary-tag }}'"
+          echo "  build-step.digest: '${{ steps.build-step.outputs.digest }}'"
+          echo ""
+          echo "These will become job outputs:"
+          echo "  jobs.build.outputs.should-deploy: ${{ steps.check-changes.outputs.should-deploy }}"
+          echo "  jobs.build.outputs.image-tag: ${{ steps.primary-tag.outputs.primary-tag }}"
+          echo "  jobs.build.outputs.image-digest: ${{ steps.build-step.outputs.digest }}"
+
   deploy:
     name: Deploy to Coolify
     runs-on: ubuntu-latest
@@ -287,6 +303,23 @@ jobs:
       deployment-status: ${{ steps.get-status.outputs.status }}
 
     steps:
+      - name: Debug - Check received job outputs
+        run: |
+          echo "=== DEPLOY JOB - RECEIVED OUTPUTS FROM BUILD JOB ==="
+          echo "This step runs at the START of the deploy job"
+          echo ""
+          echo "Received job outputs from build job:"
+          echo "  needs.build.outputs.should-deploy: '${{ needs.build.outputs.should-deploy }}'"
+          echo "  needs.build.outputs.image-tag: '${{ needs.build.outputs.image-tag }}'"
+          echo "  needs.build.outputs.image-digest: '${{ needs.build.outputs.image-digest }}'"
+          echo ""
+          echo "Testing if image-tag is empty:"
+          if [ -z "${{ needs.build.outputs.image-tag }}" ]; then
+            echo "  RESULT: image-tag IS EMPTY (this is the problem!)"
+          else
+            echo "  RESULT: image-tag is set to: ${{ needs.build.outputs.image-tag }}"
+          fi
+
       - name: Update application with new Docker image
         id: update-application
         run: |
