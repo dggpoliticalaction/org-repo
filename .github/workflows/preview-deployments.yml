@@ -30,9 +30,9 @@ jobs:
           script: |
             const labels = context.payload.pull_request.labels.map(l => l.name);
 
-            const hasPragmaticPapers = labels.includes('pragmatic-papers');
-            const hasDggpWebsite = labels.includes('dggp-website');
-            const hasDiscordBot = labels.includes('discord-bot');
+            const hasPragmaticPapers = labels.includes('pragmatic papers');
+            const hasDggpWebsite = labels.includes('dggp website');
+            const hasDiscordBot = labels.includes('discord bot');
             const hasAnyDeploymentLabel = hasPragmaticPapers || hasDggpWebsite || hasDiscordBot;
 
             core.setOutput('pragmatic-papers', hasPragmaticPapers);
@@ -41,9 +41,9 @@ jobs:
             core.setOutput('has-deployment-label', hasAnyDeploymentLabel);
 
             console.log('Labels found:', {
-              'pragmatic-papers': hasPragmaticPapers,
-              'dggp-website': hasDggpWebsite,
-              'discord-bot': hasDiscordBot
+              'pragmatic papers': hasPragmaticPapers,
+              'dggp website': hasDggpWebsite,
+              'discord bot': hasDiscordBot
             });
 
   prompt-for-labels:
@@ -82,9 +82,9 @@ jobs:
             Would you like to deploy a preview for this PR?
 
             Add one or more of these labels to trigger preview deployments:
-            - \`pragmatic-papers\` - Deploy Pragmatic Papers
-            - \`dggp-website\` - Deploy DGGP Website
-            - \`discord-bot\` - Deploy Discord Bot
+            - \`pragmatic papers\` - Deploy Pragmatic Papers
+            - \`dggp website\` - Deploy DGGP Website
+            - \`discord bot\` - Deploy Discord Bot
 
             Preview deployments will be automatically built with development/debug symbols for easier debugging.
 
