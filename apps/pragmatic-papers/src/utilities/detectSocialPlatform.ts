@@ -21,7 +21,7 @@ const RULES: readonly PlatformRule[] = [
   },
   {
     platform: 'bluesky',
-    domains: [{ root: 'bsky.app', subdomains: ['www'] }],
+    domains: [{ root: 'bsky.app' }],
   },
   {
     platform: 'reddit',

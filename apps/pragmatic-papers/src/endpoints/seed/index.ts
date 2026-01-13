@@ -1,9 +1,10 @@
 import type { Payload } from 'payload'
-import { homeStatic } from './home-static'
-import { createUsers } from './users'
 import { createArticles } from './articles'
-import { createVolumes } from './volumes'
+import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from './blocks/socialEmbed'
+import { homeStatic } from './home-static'
 import { createMedia } from './media'
+import { createUsers } from './users'
+import { createVolumes } from './volumes'
 
 export const seed = async (payload: Payload): Promise<void> => {
   // Delete all content before seeding
@@ -100,4 +101,7 @@ export const seed = async (payload: Payload): Promise<void> => {
     collection: 'pages',
     data: homeStatic,
   })
+
+  await createSocialEmbedArticle(payload, writer1)
+  await createLegacySocialEmbedArticle(payload, writer1)
 }
