@@ -247,20 +247,43 @@ jobs:
           echo "primary-tag=$PRIMARY_TAG" >> $GITHUB_OUTPUT
           echo "Using image tag: $PRIMARY_TAG"
 
+      - name: Update application with new Docker image
+        id: update-application
+        run: |
+          # Extract just the image name and tag from the full registry path
+          FULL_IMAGE="${{ steps.extract-tag.outputs.primary-tag }}"
+          IMAGE_TAG=$(echo "$FULL_IMAGE" | awk -F: '{print $NF}')
+
+          echo "Updating application with image tag: $IMAGE_TAG"
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X PATCH \
+            "${{ secrets.COOLIFY_API_URL }}/api/v1/applications/${{ secrets.COOLIFY_APP_UUID }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"docker_registry_image_tag\": \"$IMAGE_TAG\"
+            }")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "Application updated successfully"
+            echo "Response: $BODY"
+          else
+            echo "Failed to update application. HTTP code: $HTTP_CODE"
+            echo "Response: $BODY"
+            exit 1
+          fi
+
       - name: Trigger Coolify deployment
         id: trigger-deployment
         run: |
+          echo "Restarting application to deploy new image..."
+
           RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
-            "${{ secrets.COOLIFY_API_URL }}/api/v1/deploy" \
-            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "uuid": "${{ secrets.COOLIFY_APP_UUID }}",
-              "force": ${{ inputs.force-rebuild }},
-              "commit": "${{ github.sha }}",
-              "pull_request_id": ${{ inputs.pr-number || 'null' }},
-              "docker_image": "${{ steps.extract-tag.outputs.primary-tag }}"
-            }')
+            "${{ secrets.COOLIFY_API_URL }}/api/v1/applications/${{ secrets.COOLIFY_APP_UUID }}/restart" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}")
 
           HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
           BODY=$(echo "$RESPONSE" | sed '$d')
