@@ -184,12 +184,16 @@ jobs:
             org.opencontainers.image.vendor=Your Organization
 
       - name: Set primary Docker image tag
-        if: steps.check-changes.outputs.should-deploy == 'true'
         id: set-primary-tag
         run: |
           # Extract the primary tag based on deployment type
           REGISTRY="${{ secrets.DOCKER_REGISTRY }}"
           IMAGE_NAME="${{ secrets.DOCKER_IMAGE_NAME }}"
+
+          echo "DEBUG: Registry: $REGISTRY"
+          echo "DEBUG: Image Name: $IMAGE_NAME"
+          echo "DEBUG: Deployment Type: ${{ inputs.deployment-type }}"
+          echo "DEBUG: PR Number: ${{ inputs.pr-number }}"
 
           if [ "${{ inputs.deployment-type }}" == "preview" ]; then
             TAG="pr-${{ inputs.pr-number }}"
@@ -202,6 +206,7 @@ jobs:
           PRIMARY_TAG="${REGISTRY}/${IMAGE_NAME}:${TAG}"
           echo "primary-tag=${PRIMARY_TAG}" >> $GITHUB_OUTPUT
           echo "Primary tag: ${PRIMARY_TAG}"
+          echo "DEBUG: Output set to GITHUB_OUTPUT"
 
       - name: Build and push Docker image
         if: steps.check-changes.outputs.should-deploy == 'true'
@@ -263,8 +268,22 @@ jobs:
         run: |
           # Extract just the image name and tag from the full registry path
           FULL_IMAGE="${{ needs.build.outputs.image-tag }}"
+
+          echo "DEBUG: Received image tag from build job: '$FULL_IMAGE'"
+          echo "DEBUG: Should deploy: ${{ needs.build.outputs.should-deploy }}"
+
+          if [ -z "$FULL_IMAGE" ]; then
+            echo "Error: Image tag is empty!"
+            echo "Build job outputs:"
+            echo "  should-deploy: ${{ needs.build.outputs.should-deploy }}"
+            echo "  image-tag: '${{ needs.build.outputs.image-tag }}'"
+            echo "  image-digest: ${{ needs.build.outputs.image-digest }}"
+            exit 1
+          fi
+
           IMAGE_TAG=$(echo "$FULL_IMAGE" | awk -F: '{print $NF}')
 
+          echo "Full image: $FULL_IMAGE"
           echo "Updating application with image tag: $IMAGE_TAG"
 
           RESPONSE=$(curl -s -w "\n%{http_code}" -X PATCH \
