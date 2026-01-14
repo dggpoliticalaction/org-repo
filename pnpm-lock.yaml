@@ -29,9 +29,9 @@ importers:
       '@payloadcms/admin-bar':
         specifier: ^3.70.0
         version: 3.70.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@payloadcms/db-sqlite':
+      '@payloadcms/db-postgres':
         specifier: ^3.70.0
-        version: 3.70.0(@types/pg@8.10.2)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))(pg@8.16.3)
+        version: 3.70.0(@libsql/client@0.14.0)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))
       '@payloadcms/live-preview-react':
         specifier: ^3.70.0
         version: 3.70.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -10308,6 +10308,49 @@ snapshots:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
+  '@payloadcms/db-postgres@3.70.0(@libsql/client@0.14.0)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))':
+    dependencies:
+      '@payloadcms/drizzle': 3.70.0(@libsql/client@0.14.0)(@types/pg@8.10.2)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))(pg@8.16.3)
+      '@types/pg': 8.10.2
+      console-table-printer: 2.12.1
+      drizzle-kit: 0.31.7
+      drizzle-orm: 0.44.7(@libsql/client@0.14.0)(@types/pg@8.10.2)(pg@8.16.3)
+      payload: 3.70.0(graphql@16.12.0)(typescript@5.7.3)
+      pg: 8.16.3
+      prompts: 2.4.2
+      to-snake-case: 1.0.0
+      uuid: 10.0.0
+    transitivePeerDependencies:
+      - '@aws-sdk/client-rds-data'
+      - '@cloudflare/workers-types'
+      - '@electric-sql/pglite'
+      - '@libsql/client'
+      - '@libsql/client-wasm'
+      - '@neondatabase/serverless'
+      - '@op-engineering/op-sqlite'
+      - '@opentelemetry/api'
+      - '@planetscale/database'
+      - '@prisma/client'
+      - '@tidbcloud/serverless'
+      - '@types/better-sqlite3'
+      - '@types/sql.js'
+      - '@upstash/redis'
+      - '@vercel/postgres'
+      - '@xata.io/client'
+      - better-sqlite3
+      - bun-types
+      - expo-sqlite
+      - gel
+      - knex
+      - kysely
+      - mysql2
+      - pg-native
+      - postgres
+      - prisma
+      - sql.js
+      - sqlite3
+      - supports-color
+
   '@payloadcms/db-postgres@3.70.0(@libsql/client@0.14.0)(payload@3.70.0(graphql@16.12.0)(typescript@5.9.3))':
     dependencies:
       '@payloadcms/drizzle': 3.70.0(@libsql/client@0.14.0)(@types/pg@8.10.2)(payload@3.70.0(graphql@16.12.0)(typescript@5.9.3))(pg@8.16.3)
@@ -10350,50 +10393,6 @@ snapshots:
       - sql.js
       - sqlite3
       - supports-color
-
-  '@payloadcms/db-sqlite@3.70.0(@types/pg@8.10.2)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))(pg@8.16.3)':
-    dependencies:
-      '@libsql/client': 0.14.0
-      '@payloadcms/drizzle': 3.70.0(@libsql/client@0.14.0)(@types/pg@8.10.2)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))(pg@8.16.3)
-      console-table-printer: 2.12.1
-      drizzle-kit: 0.31.7
-      drizzle-orm: 0.44.7(@libsql/client@0.14.0)(@types/pg@8.10.2)(pg@8.16.3)
-      payload: 3.70.0(graphql@16.12.0)(typescript@5.7.3)
-      prompts: 2.4.2
-      to-snake-case: 1.0.0
-      uuid: 9.0.0
-    transitivePeerDependencies:
-      - '@aws-sdk/client-rds-data'
-      - '@cloudflare/workers-types'
-      - '@electric-sql/pglite'
-      - '@libsql/client-wasm'
-      - '@neondatabase/serverless'
-      - '@op-engineering/op-sqlite'
-      - '@opentelemetry/api'
-      - '@planetscale/database'
-      - '@prisma/client'
-      - '@tidbcloud/serverless'
-      - '@types/better-sqlite3'
-      - '@types/pg'
-      - '@types/sql.js'
-      - '@upstash/redis'
-      - '@vercel/postgres'
-      - '@xata.io/client'
-      - better-sqlite3
-      - bufferutil
-      - bun-types
-      - expo-sqlite
-      - gel
-      - knex
-      - kysely
-      - mysql2
-      - pg
-      - postgres
-      - prisma
-      - sql.js
-      - sqlite3
-      - supports-color
-      - utf-8-validate
 
   '@payloadcms/db-sqlite@3.70.0(@types/pg@8.10.2)(payload@3.70.0(graphql@16.12.0)(typescript@5.9.3))(pg@8.16.3)':
     dependencies:
@@ -10975,7 +10974,7 @@ snapshots:
 
   '@pm2/pm2-version-check@1.0.4':
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -12338,7 +12337,7 @@ snapshots:
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 22.15.3
+      '@types/node': 22.16.2
 
   '@types/hast@3.0.4':
     dependencies:
@@ -12442,7 +12441,7 @@ snapshots:
 
   '@types/through@0.0.33':
     dependencies:
-      '@types/node': 22.15.3
+      '@types/node': 22.16.2
 
   '@types/tinycolor2@1.4.6': {}
 
@@ -12456,7 +12455,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 24.0.11
+      '@types/node': 22.16.2
 
   '@typescript-eslint/eslint-plugin@8.34.0(@typescript-eslint/parser@8.34.0(eslint@9.29.0(jiti@1.21.7))(typescript@5.8.2))(eslint@9.29.0(jiti@1.21.7))(typescript@5.8.2)':
     dependencies:
