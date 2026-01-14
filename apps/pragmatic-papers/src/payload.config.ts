@@ -80,6 +80,18 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  endpoints: [
+    {
+      path: '/health',
+      method: 'get',
+      handler: async () => {
+        return Response.json({
+          status: 'ok',
+          timestamp: new Date().toISOString(),
+        })
+      },
+    },
+  ],
   jobs: {
     access: {
       run: ({ req }: { req: PayloadRequest }): boolean => {
