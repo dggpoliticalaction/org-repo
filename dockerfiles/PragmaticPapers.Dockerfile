@@ -88,7 +88,7 @@ ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
 ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
 
 # Build using turbo (includes migrations and build via "ci" script)
-RUN turbo run ci --filter=pragmatic-papers
+RUN pnpm turbo run ci --filter=pragmatic-papers
 
 # ============================================
 # Runner stage - minimal production runtime
