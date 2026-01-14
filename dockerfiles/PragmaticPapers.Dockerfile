@@ -33,9 +33,9 @@ COPY . .
 RUN turbo prune pragmatic-papers --docker
 
 # ============================================
-# Dependencies stage - install dependencies
+# Builder stage - build the application
 # ============================================
-FROM base AS deps
+FROM base AS builder
 
 # Copy pruned lockfile and package.json files
 COPY --from=pruner /app/out/json/ .
@@ -43,11 +43,6 @@ COPY --from=pruner /app/out/json/ .
 # Install dependencies with frozen lockfile
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install
-
-# ============================================
-# Builder stage - build the application
-# ============================================
-FROM base AS builder
 
 ARG NODE_ENV=production
 ARG BUILD_ENV=production
