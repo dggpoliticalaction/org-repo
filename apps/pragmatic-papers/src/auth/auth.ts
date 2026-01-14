@@ -1,16 +1,21 @@
-import { USERS_DB_PK } from '@/collections/Users'
 import type { User } from '@/payload-types'
-import { getPayloadClient } from '@/utilities/getPayloadClient'
-import { sqlitePathFromUri } from '@/utilities/sqlitePathFromUri'
-import { betterAuth, BetterAuthOptions, type OAuthProvider } from 'better-auth'
+import { betterAuth, type BetterAuthOptions, type OAuthProvider } from 'better-auth'
 import { createAuthMiddleware } from 'better-auth/api'
 import { nextCookies } from 'better-auth/next-js'
 import Database from 'better-sqlite3'
-import { Result } from 'node_modules/payload/dist/auth/operations/login'
+import type { Result } from 'node_modules/payload/dist/auth/operations/login'
+import { getPayload } from 'payload'
+import config from '@payload-config'
+
+// supports: file:./data/app.db  |  file:/absolute/path/app.db
+export function sqlitePathFromUri(uri: string): string {
+  if (uri.startsWith('file:')) return uri.slice('file:'.length)
+  return uri
+}
 
 const database = new Database(sqlitePathFromUri(process.env.DATABASE_URI))
 
-const payload = await getPayloadClient()
+const payload = await getPayload({ config })
 
 export type Provider = 'discord' | 'google'
 
@@ -32,7 +37,7 @@ async function fineUserByBetterAuthId(betterAuthId: string): Promise<User | unde
   const {
     docs: [foundUser],
   } = await payload.find({
-    collection: USERS_DB_PK,
+    collection: 'users',
     where: { betterAuthId: { equals: betterAuthId } },
     limit: 1,
   })
@@ -53,7 +58,7 @@ async function findUserByEmail(email: string): Promise<User | undefined> {
 
 async function createUser(name: string, email: string): Promise<User> {
   return payload.create({
-    collection: USERS_DB_PK,
+    collection: 'users',
     data: { name, email, role: 'user' },
     overrideAccess: true,
   })
@@ -71,7 +76,7 @@ async function loginUser({ email, password }: User): Promise<
   } & Result
 > {
   if (!password) throw new Error('Password is required')
-  return payload.login({ collection: USERS_DB_PK, data: { email, password } })
+  return payload.login({ collection: 'users', data: { email, password } })
 }
 
 export const authConfig: BetterAuthOptions = {

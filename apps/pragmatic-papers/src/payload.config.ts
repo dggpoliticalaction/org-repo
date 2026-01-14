@@ -16,6 +16,9 @@ import path from 'path'
 import { buildConfig, type PayloadRequest, type SharpDependency } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
+import { Sessions } from './collections/Auth/Sessions'
+import { Accounts } from './collections/Auth/Accounts'
+import { Verifications } from './collections/Auth/Verifications'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -32,6 +35,14 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     user: Users.slug,
+    routes: {
+      login: "/auth/sign-in",
+      createFirstUser: "/auth/sign-up",
+      forgot: "/auth/forgot-password",
+      reset: "/auth/reset-password",
+      logout: "/auth/sign-out",
+      // account: "/auth/settings" // Optional if you want to change Payload's account setting page in the admin dashboard
+    },
     livePreview: {
       breakpoints: [
         {
@@ -69,7 +80,20 @@ export default buildConfig({
             url: process.env.DATABASE_URI || '',
           },
         }),
-  collections: [Pages, Articles, Volumes, Media, Categories, Users, Webhooks],
+  collections: [
+    // Auth
+    Users,
+    Sessions,
+    Accounts,
+    Verifications,
+    // Content
+    Pages,
+    Articles,
+    Volumes,
+    Media,
+    Categories,
+    Webhooks,
+  ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [...plugins],

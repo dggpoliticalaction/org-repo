@@ -54,3 +54,6 @@ devenv.local.nix
 
 # act files
 .actrc
+
+# prettier
+.prettierrc.local.json
