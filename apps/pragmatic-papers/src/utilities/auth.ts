@@ -1,7 +1,10 @@
+import { sqlitePathFromUri } from '@/utilities/sqlitePathFromUri'
 import { betterAuth } from 'better-auth'
 import { createAuthMiddleware } from 'better-auth/api'
 import { nextCookies } from 'better-auth/next-js'
 import Database from 'better-sqlite3'
+
+const database = new Database(sqlitePathFromUri(process.env.DATABASE_URI))
 
 export type Provider = 'discord' | 'google'
 
@@ -10,23 +13,18 @@ function isProvider(provider?: string): provider is Provider {
   return provider === 'discord' || provider === 'google'
 }
 
-export interface OAuthEntry {
-  provider: string
-  providerAccountId: string
-  picture?: string | null
-  id?: string | null
-}
-
 function getProvider(params: Record<string, string>) {
   const provider = params.id
   return isProvider(provider) ? provider : undefined
 }
 
-const db = new Database(process.env.DATABASE_URI.split(':')[1]) // remove `file:` from env var string
+function getAccountId(provider: Provider, accounts: Array<any>) {
+  return accounts.find((account) => account.provider === provider)?.providerAccountId
+}
 
 export const auth = betterAuth({
   baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
-  database: db,
+  database,
   socialProviders: {
     discord: {
       clientId: process.env.OAUTH_DISCORD_CLIENT_ID,
@@ -40,6 +38,8 @@ export const auth = betterAuth({
       if (path.startsWith('/callback')) {
         const provider = getProvider(params)
         if (!provider) return
+        // const accountId = getAccountId(provider, ctx.context.accounts)
+        // if (!accountId) return
         console.log('ctx', ctx)
         return
       }

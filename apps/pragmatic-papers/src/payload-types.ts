@@ -427,14 +427,6 @@ export interface User {
     [k: string]: unknown;
   } | null;
   role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'user') | null;
-  oauth?:
-    | {
-        provider: string;
-        providerAccountId: string;
-        picture?: string | null;
-        id?: string | null;
-      }[]
-    | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -1403,14 +1395,6 @@ export interface UsersSelect<T extends boolean = true> {
   name?: T;
   biography?: T;
   role?: T;
-  oauth?:
-    | T
-    | {
-        provider?: T;
-        providerAccountId?: T;
-        picture?: T;
-        id?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;

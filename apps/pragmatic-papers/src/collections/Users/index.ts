@@ -14,8 +14,10 @@ import {
 } from '@payloadcms/richtext-lexical'
 import { authenticated } from '../../access/authenticated'
 
+export const USERS_DB_PK = 'users' as const
+
 export const Users: CollectionConfig = {
-  slug: 'users',
+  slug: USERS_DB_PK,
   access: {
     admin: writerFieldLevel,
     create: admin,
@@ -81,16 +83,6 @@ export const Users: CollectionConfig = {
           value: 'user',
         },
       ],
-    },
-    {
-      name: 'oauth',
-      type: 'array',
-      fields: [
-        { name: 'provider', type: 'text', required: true },
-        { name: 'providerAccountId', type: 'text', index: true, required: true },
-        { name: 'picture', type: 'text' },
-      ],
-      required: false,
     },
   ],
   timestamps: true,
