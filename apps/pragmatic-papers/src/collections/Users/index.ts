@@ -1,6 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
-import { authenticated } from '../../access/authenticated'
+import { adminOrSelf } from '@/access/adminOrSelf'
+import { admin, adminFieldLevel } from '@/access/admins'
+import { writerFieldLevel } from '@/access/writer'
 import {
   FixedToolbarFeature,
   HeadingFeature,
@@ -10,13 +12,14 @@ import {
   OrderedListFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-import { admin, adminFieldLevel } from '@/access/admins'
-import { adminOrSelf } from '@/access/adminOrSelf'
+import { authenticated } from '../../access/authenticated'
+
+export const USERS_DB_PK = 'users' as const
 
 export const Users: CollectionConfig = {
-  slug: 'users',
+  slug: USERS_DB_PK,
   access: {
-    admin: authenticated,
+    admin: writerFieldLevel,
     create: admin,
     delete: admin,
     read: authenticated,

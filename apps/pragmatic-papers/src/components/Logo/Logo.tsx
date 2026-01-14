@@ -26,7 +26,7 @@ export const Logo = (props: Props): React.ReactElement => {
         fetchPriority={priority}
         decoding="async"
         className={clsx(
-          'w-full h-auto',
+          'h-auto w-full',
           size
             ? {
                 'max-w-xs': size === 'xs',
@@ -48,7 +48,7 @@ export const Logo = (props: Props): React.ReactElement => {
         fetchPriority={priority}
         decoding="async"
         className={clsx(
-          'w-full h-auto',
+          'h-auto w-full',
           size
             ? {
                 'max-w-xs': size === 'xs',
@@ -72,7 +72,7 @@ export const Logo = (props: Props): React.ReactElement => {
         fetchPriority={priority}
         decoding="async"
         className={clsx(
-          'w-full h-auto hidden dark:block',
+          'hidden h-auto w-full dark:block',
           size
             ? {
                 'max-w-xs': size === 'xs',
@@ -91,7 +91,7 @@ export const Logo = (props: Props): React.ReactElement => {
         fetchPriority={priority}
         decoding="async"
         className={clsx(
-          'w-full h-auto block dark:hidden',
+          'block h-auto w-full dark:hidden',
           size
             ? {
                 'max-w-xs': size === 'xs',
