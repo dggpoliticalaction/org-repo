@@ -1,13 +1,6 @@
 import { adminOrSelf } from '@/access/adminOrSelf'
 import { admin, adminFieldLevel } from '@/access/admins'
-import type {
-  AuthStrategyFunctionArgs,
-  AuthStrategyResult,
-  CollectionConfig,
-  PayloadRequest,
-} from 'payload'
-// import { writerFieldLevel } from '@/access/writer'
-import { writerFieldLevel } from '@/access/writer'
+import { authenticated } from '@/access/authenticated'
 import { auth } from '@/auth/auth'
 import {
   FixedToolbarFeature,
@@ -18,30 +11,31 @@ import {
   OrderedListFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-import { authenticated } from '../../access/authenticated'
+import type {
+  AuthStrategyFunctionArgs,
+  AuthStrategyResult,
+  CollectionConfig,
+  PayloadRequest,
+} from 'payload'
 
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
-    admin: writerFieldLevel,
-    // admin: async ({ req }) => {
-    //   const { success } = await auth.api.userHasPermission({
-    //     // Only available when you setup the admin plugin
-    //     body: {
-    //       permissions: {
-    //         adminDashboard: ['read'],
-    //       },
-    //       userId: req.user?.id.toString(),
-    //     },
-    //   })
+    admin: async ({ req }) => {
+      const { success } = await auth.api.userHasPermission({
+        // Only available when you setup the admin plugin
+        body: {
+          permissions: {
+            adminDashboard: ['read'],
+          },
+          userId: req.user?.id.toString(),
+        },
+      })
 
-    //   // console.log('success', success)
-    //   // console.log('req.user', req.user)
+      const isAllowed = typeof success === 'boolean' ? success : false
 
-    //   const isAllowed = typeof success === 'boolean' ? success : false
-
-    //   return isAllowed
-    // },
+      return isAllowed
+    },
     create: admin,
     delete: admin,
     read: authenticated,
