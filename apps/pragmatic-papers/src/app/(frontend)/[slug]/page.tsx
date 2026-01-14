@@ -73,7 +73,7 @@ export default async function Page({
   const { hero, layout } = page
 
   return (
-    <article className="m-auto max-w-3xl pb-24">
+    <article className="max-w-3xl">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 

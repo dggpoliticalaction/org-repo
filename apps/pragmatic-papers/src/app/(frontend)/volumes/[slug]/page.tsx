@@ -83,13 +83,13 @@ export default async function VolumePage({
   const actualArticles = articles?.filter((article) => typeof article !== 'number')
 
   return (
-    <div className="mx-auto max-w-3xl px-4 pb-16">
+    <div className="max-w-3xl">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
       <div className="relative flex items-end">
-        <div className="container mx-auto pb-8 text-center">
+        <div className="container mx-auto p-4 pb-8 text-center md:p-6">
           <div>
             <div>
               <h1 className="mb-6 text-3xl md:text-5xl lg:text-6xl">{`Volume ${toRoman(Number(volume.slug))}`}</h1>
@@ -107,7 +107,7 @@ export default async function VolumePage({
         </div>
       </div>
       {editorsNote && (
-        <div className="container mx-auto w-full">
+        <div className="container mx-auto w-full p-4 md:p-6">
           <RichText className="w-full" enableGutter={false} data={editorsNote} />
         </div>
       )}

@@ -10,7 +10,7 @@ export async function Header(): Promise<React.ReactNode> {
   const header: Header = await getCachedGlobal('header', 1)()
   const { actionButton, navItems } = header
   return (
-    <header className="container my-6 grid items-center gap-4 md:grid-cols-3">
+    <header className="container my-6 grid items-center gap-4 p-4 md:grid-cols-3 md:p-6">
       <div className="hidden lg:block" />
       <div className="flex justify-center md:col-span-2 lg:col-span-1">
         <Link href="/">

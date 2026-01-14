@@ -64,7 +64,7 @@ export default async function RootLayout({
           type="application/rss+xml"
         />
       </head>
-      <body>
+      <body className="flex min-h-screen flex-col items-center">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -77,7 +77,9 @@ export default async function RootLayout({
             }}
           />
           <Header />
-          {children}
+          <main className="container flex flex-1 items-center justify-center gap-3 px-4 md:p-6">
+            {children}
+          </main>
           <Footer />
           <GoogleAnalytics gaId="G-PXK2QL92HV" />
         </ThemeProvider>

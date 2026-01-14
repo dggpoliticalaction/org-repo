@@ -1,39 +1,37 @@
-import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
-import { MediaBlock } from '@/blocks/MediaBlock/Component'
-import type {
-  DefaultNodeTypes,
-  SerializedBlockNode,
-  SerializedLinkNode,
-  DefaultTypedEditorState,
-} from '@payloadcms/richtext-lexical'
-import {
-  type JSXConvertersFunction,
-  LinkJSXConverter,
-  RichText as ConvertRichText,
-} from '@payloadcms/richtext-lexical/react'
-
-import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
-
-import type {
-  BannerBlock as BannerBlockProps,
-  CallToActionBlock as CTABlockProps,
-  SquiggleRuleBlock as SquiggleRuleBlockProps,
-  MediaBlock as MediaBlockProps,
-  TwitterEmbedBlock as TwitterEmbedBlockProps,
-  YouTubeEmbedBlock as YouTubeEmbedBlockProps,
-  RedditEmbedBlock as RedditEmbedBlockProps,
-  BlueSkyEmbedBlock as BlueSkyEmbedBlockProps,
-  TikTokEmbedBlock as TikTokEmbedBlockProps,
-} from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
+import { BlueSkyEmbedBlock } from '@/blocks/BlueSkyEmbed/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
-import { cn } from '@/utilities/ui'
+import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
+import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
+import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
+import { TikTokEmbedBlock } from '@/blocks/TikTokEmbed/Component'
 import { TwitterEmbedBlock } from '@/blocks/TwitterEmbed/Component'
 import { YouTubeEmbedBlock } from '@/blocks/YouTubeEmbed/Component'
-import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
-import { BlueSkyEmbedBlock } from '@/blocks/BlueSkyEmbed/Component'
-import { TikTokEmbedBlock } from '@/blocks/TikTokEmbed/Component'
+import type {
+  BannerBlock as BannerBlockProps,
+  BlueSkyEmbedBlock as BlueSkyEmbedBlockProps,
+  CallToActionBlock as CTABlockProps,
+  MediaBlock as MediaBlockProps,
+  RedditEmbedBlock as RedditEmbedBlockProps,
+  SquiggleRuleBlock as SquiggleRuleBlockProps,
+  TikTokEmbedBlock as TikTokEmbedBlockProps,
+  TwitterEmbedBlock as TwitterEmbedBlockProps,
+  YouTubeEmbedBlock as YouTubeEmbedBlockProps,
+} from '@/payload-types'
+import { cn } from '@/utilities/ui'
+import type {
+  DefaultNodeTypes,
+  DefaultTypedEditorState,
+  SerializedBlockNode,
+  SerializedLinkNode,
+} from '@payloadcms/richtext-lexical'
+import {
+  RichText as ConvertRichText,
+  type JSXConvertersFunction,
+  LinkJSXConverter,
+} from '@payloadcms/richtext-lexical/react'
 
 type NodeTypes =
   | DefaultNodeTypes

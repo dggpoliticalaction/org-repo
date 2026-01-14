@@ -59,7 +59,7 @@ export const VolumeViewBlock: React.FC<
         )}
         <VolumesView volumes={volumes.docs} />
 
-        <div className="container mx-auto mt-6 mb-8">
+        <div className="container mx-auto mt-6 mb-8 p-4 md:p-6">
           <PageRange
             collection="volumes"
             currentPage={volumes.page}
@@ -68,7 +68,7 @@ export const VolumeViewBlock: React.FC<
           />
         </div>
 
-        <div className="container mx-auto">
+        <div className="container mx-auto p-4 md:p-6">
           {volumes.totalPages > 1 && volumes.page && (
             <PaginationVolumes page={volumes.page} totalPages={volumes.totalPages} />
           )}
@@ -84,7 +84,7 @@ export const VolumeViewBlock: React.FC<
       return (
         <div className="my-4" id={`block-${id}`}>
           {introContent && (
-            <div className="container mx-auto mb-16">
+            <div className="container mx-auto mb-16 p-4 md:p-6">
               <RichText className="ms-0 max-w-3xl" data={introContent} enableGutter={false} />
             </div>
           )}

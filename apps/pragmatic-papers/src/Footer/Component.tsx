@@ -11,8 +11,8 @@ export async function Footer(): Promise<React.ReactNode> {
   const navItems = footerData?.navItems || []
 
   return (
-    <footer className="border-border mt-auto border-t text-black dark:text-white">
-      <div className="container mx-auto flex flex-col gap-8 py-8 md:flex-row md:justify-between">
+    <footer className="border-border mt-16 flex w-full justify-center border-t text-black dark:text-white">
+      <div className="container flex flex-col gap-8 py-8 md:flex-row md:justify-between">
         <Link className="flex items-center" href="/">
           <Logo size="xs" />
         </Link>

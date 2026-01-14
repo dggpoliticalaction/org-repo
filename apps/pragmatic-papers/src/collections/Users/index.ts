@@ -1,12 +1,14 @@
+import { adminOrSelf } from '@/access/adminOrSelf'
+import { admin, adminFieldLevel } from '@/access/admins'
 import type {
   AuthStrategyFunctionArgs,
   AuthStrategyResult,
   CollectionConfig,
   PayloadRequest,
 } from 'payload'
-import { adminOrSelf } from '@/access/adminOrSelf'
-import { admin, adminFieldLevel } from '@/access/admins'
 // import { writerFieldLevel } from '@/access/writer'
+import { writerFieldLevel } from '@/access/writer'
+import { auth } from '@/auth/auth'
 import {
   FixedToolbarFeature,
   HeadingFeature,
@@ -17,8 +19,6 @@ import {
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
 import { authenticated } from '../../access/authenticated'
-import { auth } from '@/auth/auth'
-import { writerFieldLevel } from '@/access/writer'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -203,5 +203,4 @@ export const Users: CollectionConfig = {
       },
     },
   ],
-  timestamps: true,
 }
