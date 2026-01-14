@@ -1,4 +1,7 @@
 import { Articles } from '@/collections/Articles'
+import { Accounts } from '@/collections/Auth/Accounts'
+import { Sessions } from '@/collections/Auth/Sessions'
+import { Verifications } from '@/collections/Auth/Verifications'
 import { Categories } from '@/collections/Categories'
 import { Media } from '@/collections/Media'
 import { Pages } from '@/collections/Pages'
@@ -16,9 +19,6 @@ import path from 'path'
 import { buildConfig, type PayloadRequest, type SharpDependency } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
-import { Sessions } from './collections/Auth/Sessions'
-import { Accounts } from './collections/Auth/Accounts'
-import { Verifications } from './collections/Auth/Verifications'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)

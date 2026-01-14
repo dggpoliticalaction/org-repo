@@ -6,12 +6,11 @@ import type { ServerFunctionClient } from 'payload'
 import { handleServerFunctions, RootLayout } from '@payloadcms/next/layouts'
 import React from 'react'
 
-import { importMap } from './admin/importMap.js'
-import './custom.scss'
+import { importMap } from '../importMap.js'
+import '../../custom.scss'
 import { MathJaxContext } from 'better-react-mathjax'
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type Args = {
+interface Args {
   children: React.ReactNode
 }
 
@@ -24,8 +23,7 @@ const serverFunction: ServerFunctionClient = async function (args) {
   })
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const Layout = ({ children }: Args) => (
+const Layout = ({ children }: Args): React.ReactNode => (
   <RootLayout config={config} importMap={importMap} serverFunction={serverFunction}>
     <MathJaxContext>{children}</MathJaxContext>
   </RootLayout>
