@@ -93,6 +93,16 @@ ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
 WORKDIR /app/apps/pragmatic-papers
 RUN pnpm run ci
 
+# Debug: List standalone output structure
+RUN echo "=== Standalone build structure ===" && \
+    ls -la .next/standalone/ && \
+    echo "=== Checking for server.js ===" && \
+    find .next/standalone -name "server.js" -type f && \
+    echo "=== Standalone apps directory ===" && \
+    ls -la .next/standalone/apps/ 2>/dev/null || echo "No apps directory in standalone" && \
+    echo "=== Standalone apps/pragmatic-papers ===" && \
+    ls -la .next/standalone/apps/pragmatic-papers/ 2>/dev/null || echo "No apps/pragmatic-papers in standalone"
+
 # ============================================
 # Runner stage - production runtime
 # ============================================
@@ -123,6 +133,16 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/stati
 # Copy public assets
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
 
+# Debug: Verify what was copied to runner
+RUN echo "=== Runner /app structure ===" && \
+    ls -la /app/ && \
+    echo "=== Looking for server.js ===" && \
+    find /app -name "server.js" -type f && \
+    echo "=== /app/apps structure ===" && \
+    ls -la /app/apps/ 2>/dev/null || echo "No /app/apps directory" && \
+    echo "=== /app/apps/pragmatic-papers structure ===" && \
+    ls -la /app/apps/pragmatic-papers/ 2>/dev/null || echo "No /app/apps/pragmatic-papers directory"
+
 # Switch to non-root user
 USER nextjs
 
@@ -136,5 +156,6 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start the application (server.js is created by Next.js standalone build in the monorepo structure)
-CMD ["node", "apps/pragmatic-papers/server.js"]
+# Start the application (server.js location varies based on standalone output structure)
+# Try the most likely location first, with fallback
+CMD ["sh", "-c", "if [ -f server.js ]; then exec node server.js; elif [ -f apps/pragmatic-papers/server.js ]; then exec node apps/pragmatic-papers/server.js; else echo 'ERROR: server.js not found' && ls -la /app && find /app -name 'server.js' -type f && exit 1; fi"]
