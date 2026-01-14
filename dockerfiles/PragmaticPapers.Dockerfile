@@ -117,6 +117,8 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
+WORKDIR /app/apps/pragmatic-papers
+
 # Start the application (server.js location varies based on standalone output structure)
 # Try the most likely location first, with fallback
 CMD ["node", "server.js"]
