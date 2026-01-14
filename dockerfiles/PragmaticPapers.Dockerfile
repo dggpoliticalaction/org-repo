@@ -113,12 +113,10 @@ ENV HOSTNAME="0.0.0.0"
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Copy public assets
-COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./public
-
 # Copy standalone build (Next.js outputs this when output: 'standalone' is set)
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./apps/pragmatic-papers/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
 
 # Switch to non-root user
 USER nextjs
@@ -134,4 +132,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 ENTRYPOINT ["dumb-init", "--"]
 
 # Start the application (server.js is created by Next.js standalone build)
-CMD ["node", "apps/pragmatic-papers/server.js"]
+CMD ["node", "server.js"]
