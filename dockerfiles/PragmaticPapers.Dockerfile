@@ -124,7 +124,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./ap
 # Switch to non-root user
 USER nextjs
 
-# Expose port
+# Expose portdf
 EXPOSE 3000
 
 # Health check
