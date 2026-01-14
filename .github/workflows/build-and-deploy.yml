@@ -256,6 +256,7 @@ jobs:
 
     steps:
       - name: Update application with new Docker image
+        if: inputs.deployment-type != 'preview'
         id: update-application
         run: |
           # Reconstruct full image path from secrets and tag
@@ -308,7 +309,36 @@ jobs:
             exit 1
           fi
 
-      - name: Trigger Coolify deployment
+      - name: Trigger Coolify deployment (Preview)
+        if: inputs.deployment-type == 'preview'
+        id: trigger-preview-deployment
+        run: |
+          echo "Triggering preview deployment for PR #${{ inputs.pr-number }}..."
+
+          # Use Coolify's preview deployment endpoint with PR parameter
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET \
+            "${{ secrets.COOLIFY_API_URL }}/api/v1/deploy?uuid=${{ secrets.COOLIFY_APP_UUID }}&pr=${{ inputs.pr-number }}&force=true" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          echo "HTTP Status Code: $HTTP_CODE"
+          echo "Response Body: $BODY"
+
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            DEPLOYMENT_UUID=$(echo "$BODY" | jq -r '.deployments[0].deployment_uuid // .deployment_uuid // ""')
+            echo "Preview deployment triggered successfully"
+            echo "deployment-uuid=$DEPLOYMENT_UUID" >> $GITHUB_OUTPUT
+            echo "Deployment UUID: $DEPLOYMENT_UUID"
+          else
+            echo "Failed to trigger preview deployment. HTTP code: $HTTP_CODE"
+            echo "Response: $BODY"
+            exit 1
+          fi
+
+      - name: Trigger Coolify deployment (Staging/Production)
+        if: inputs.deployment-type != 'preview'
         id: trigger-deployment
         run: |
           echo "Restarting application to deploy new image..."
@@ -337,7 +367,8 @@ jobs:
       - name: Monitor deployment status
         id: get-status
         run: |
-          DEPLOYMENT_UUID="${{ steps.trigger-deployment.outputs.deployment-uuid }}"
+          # Get deployment UUID from either preview or regular deployment
+          DEPLOYMENT_UUID="${{ steps.trigger-preview-deployment.outputs.deployment-uuid || steps.trigger-deployment.outputs.deployment-uuid }}"
           MAX_RETRIES=60
           RETRY_COUNT=0
 
@@ -395,9 +426,14 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Application:** ${{ inputs.app-name }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Docker Image:** ${{ steps.extract-tag.outputs.primary-tag }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Deployment UUID:** ${{ steps.trigger-deployment.outputs.deployment-uuid }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployment Type:** ${{ inputs.deployment-type }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Docker Image:** ${{ needs.build.outputs.image-tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployment UUID:** ${{ steps.trigger-preview-deployment.outputs.deployment-uuid || steps.trigger-deployment.outputs.deployment-uuid }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Status:** ${{ steps.get-status.outputs.status }}" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ inputs.deployment-type }}" == "preview" ]; then
+            echo "- **Pull Request:** #${{ inputs.pr-number }}" >> $GITHUB_STEP_SUMMARY
+          fi
 
           if [ -n "${{ steps.get-status.outputs.deployment-url }}" ]; then
             echo "- **URL:** ${{ steps.get-status.outputs.deployment-url }}" >> $GITHUB_STEP_SUMMARY

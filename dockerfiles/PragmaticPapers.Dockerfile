@@ -114,8 +114,13 @@ RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
 # Copy standalone build (Next.js outputs this when output: 'standalone' is set)
+# The standalone build includes server.js and minimal node_modules at the root
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/standalone ./
+
+# Copy static files (not included in standalone)
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./apps/pragmatic-papers/.next/static
+
+# Copy public assets
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
 
 # Switch to non-root user
@@ -131,5 +136,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start the application (server.js is created by Next.js standalone build)
-CMD ["node", "server.js"]
+# Start the application (server.js is created by Next.js standalone build in the monorepo structure)
+CMD ["node", "apps/pragmatic-papers/server.js"]
