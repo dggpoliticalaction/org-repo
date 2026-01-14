@@ -1,0 +1,113 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store
+
+# Testing
+coverage
+.nyc_output
+*.test.ts
+*.test.tsx
+*.test.js
+*.test.jsx
+*.spec.ts
+*.spec.tsx
+*.spec.js
+*.spec.jsx
+**/__tests__/**
+**/__mocks__/**
+
+# Next.js
+.next/
+out/
+build
+dist
+
+# Production
+*.local
+
+# Misc
+.DS_Store
+*.pem
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# Typescript
+*.tsbuildinfo
+
+# Git
+.git
+.gitignore
+.gitattributes
+.github
+
+# Documentation
+README.md
+CHANGELOG.md
+LICENSE
+*.md
+!package.md
+
+# CI/CD
+.gitlab-ci.yml
+.travis.yml
+.circleci
+azure-pipelines.yml
+Jenkinsfile
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+*.Dockerfile
+
+# Turborepo
+.turbo
+
+# Payload CMS
+.payload
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+.project
+.settings/
+.classpath
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Logs
+logs
+*.log
+
+# Other apps in monorepo (exclude everything except what's needed)
+apps/*
+!apps/pragmatic-papers
+
+# Other packages in monorepo
+packages/*

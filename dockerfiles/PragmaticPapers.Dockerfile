@@ -1,5 +1,6 @@
 # Dockerfile for Pragmatic Papers (Next.js + Payload CMS)
-# Optimized for pnpm monorepo with Turbo
+# Optimized for pnpm monorepo with Turborepo
+# Based on official Turborepo and Next.js Docker deployment guides
 
 ARG NODE_VERSION=22.21.1
 
@@ -8,12 +9,10 @@ ARG NODE_VERSION=22.21.1
 # ============================================
 FROM node:${NODE_VERSION}-alpine AS base
 
-# Install dependencies for native modules
+# Install dependencies for native modules (required for sharp and other native deps)
 RUN apk add --no-cache libc6-compat
 
-# Enable pnpm
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+# Enable pnpm via corepack
 RUN corepack enable
 
 WORKDIR /app
@@ -24,26 +23,45 @@ WORKDIR /app
 FROM base AS pruner
 
 # Install turbo globally
-RUN pnpm add -g turbo
+RUN npm install -g turbo
 
 # Copy entire monorepo
 COPY . .
 
 # Prune the monorepo to just this app and its dependencies
+# This creates /app/out/json (package.json files) and /app/out/full (source code)
 RUN turbo prune pragmatic-papers --docker
+
+# ============================================
+# Installer stage - install dependencies only
+# ============================================
+FROM base AS installer
+
+WORKDIR /app
+
+# Copy pruned lockfile and package.json files from pruner
+COPY --from=pruner /app/out/json/ .
+COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+
+# Install dependencies with frozen lockfile
+# Using cache mount for pnpm store to speed up builds
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
 
 # ============================================
 # Builder stage - build the application
 # ============================================
 FROM base AS builder
 
-# Copy pruned lockfile and package.json files
-COPY --from=pruner /app/out/json/ .
+WORKDIR /app
 
-# Install dependencies with frozen lockfile
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install
+# Copy installed node_modules from installer
+COPY --from=installer /app/ .
 
+# Copy pruned source code from pruner
+COPY --from=pruner /app/out/full/ .
+
+# Accept build arguments for environment variables
 ARG NODE_ENV=production
 ARG BUILD_ENV=production
 ARG DATABASE_URI
@@ -56,12 +74,7 @@ ARG S3_ENDPOINT
 ARG NEXT_PUBLIC_SERVER_URL
 ARG NEXT_PUBLIC_SUPABASE_URL
 
-WORKDIR /app
-
-# Copy pruned source code
-COPY --from=pruner /app/out/full/ .
-
-# Set build environment
+# Set environment variables for build
 ENV NODE_ENV=${NODE_ENV}
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URI=${DATABASE_URI}
@@ -74,12 +87,11 @@ ENV S3_ENDPOINT=${S3_ENDPOINT}
 ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
 ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
 
-# Run migrations and build using Turbo (uses the "ci" script which runs migrations + build)
-WORKDIR /app/apps/pragmatic-papers
-RUN pnpm run ci
+# Build using turbo (includes migrations and build via "ci" script)
+RUN turbo run ci --filter=pragmatic-papers
 
 # ============================================
-# Runner stage - production runtime
+# Runner stage - minimal production runtime
 # ============================================
 FROM node:${NODE_VERSION}-alpine AS runner
 
@@ -94,14 +106,19 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Create non-root user
+# Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Copy standalone build (Next.js outputs this when output: 'standalone' is set)
-# The standalone build includes server.js and minimal node_modules at the root
+# Copy standalone build output from builder
+# The standalone build includes a minimal server.js and only necessary node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/standalone ./
+
+# Copy static assets (required for standalone mode)
+# These are not included in standalone by default as they should be served by CDN
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./apps/pragmatic-papers/.next/static
+
+# Copy public folder (images, fonts, etc.)
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
 
 # Switch to non-root user
@@ -114,11 +131,9 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
-# Use dumb-init to handle signals properly
+# Use dumb-init to handle signals properly (SIGTERM, etc.)
 ENTRYPOINT ["dumb-init", "--"]
 
-WORKDIR /app/apps/pragmatic-papers
-
-# Start the application (server.js location varies based on standalone output structure)
-# Try the most likely location first, with fallback
-CMD ["node", "server.js"]
+# Start the standalone Next.js server
+# The server.js is located at the root of the standalone output
+CMD ["node", "apps/pragmatic-papers/server.js"]
