@@ -1,11 +1,12 @@
+import { ac, admin, chiefEditor, editor, user, writer } from '@/auth/permissions'
+import { db } from '@/db'
 import * as schema from '@/payload-generated-schema'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { admin as adminPlugin } from 'better-auth/plugins'
-import { user, admin, ac, chiefEditor, editor, writer } from '@/auth/permissions'
-import { db } from '@/db'
 
 export const auth = betterAuth({
+  // baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
   database: drizzleAdapter(db, {
     provider: 'sqlite',
     schema,
@@ -42,16 +43,12 @@ export const auth = betterAuth({
   session: {
     modelName: 'user_sessions',
   },
-
-  /* Go ahead and adjust your Better Auth as needed like adding social providers */
-  // socialProviders: {
-  //   google: {
-  //     clientId: process.env.GOOGLE_PROVIDER_CLIENT_ID,
-  //     clientSecret: process.env.GOOGLE_PROVIDER_CLIENT_SECRET,
-  //   },
-  // },
-
-  /* And even plugins works too */
+  socialProviders: {
+    discord: {
+      clientId: process.env.OAUTH_DISCORD_CLIENT_ID,
+      clientSecret: process.env.OAUTH_DISCORD_CLIENT_SECRET,
+    },
+  },
   plugins: [
     adminPlugin({
       ac,

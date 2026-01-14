@@ -1,15 +1,15 @@
 'use client'
 import type { FormFieldBlock, Form as FormType } from '@payloadcms/plugin-form-builder/types'
 
-import { useRouter } from 'next/navigation'
-import React, { useCallback, useState } from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
 import RichText from '@/components/RichText'
 import { Button } from '@/components/ui/button'
-import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
-import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
+import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
+import { useRouter } from 'next/navigation'
+import React, { useCallback, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { fields } from './fields'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type FormBlockType = {
@@ -115,7 +115,7 @@ export const FormBlock: React.FC<
   )
 
   return (
-    <div className="container lg:max-w-3xl">
+    <div className="container mx-auto lg:max-w-3xl">
       {enableIntro && introContent && !hasSubmitted && (
         <RichText
           className="mb-8 lg:mb-12"
@@ -123,7 +123,7 @@ export const FormBlock: React.FC<
           enableGutter={false}
         />
       )}
-      <div className="rounded-[0.8rem] border border-border p-4 lg:p-6">
+      <div className="border-border rounded-[0.8rem] border p-4 lg:p-6">
         <FormProvider {...formMethods}>
           {!isLoading && hasSubmitted && confirmationType === 'message' && (
             <RichText data={confirmationMessage} />

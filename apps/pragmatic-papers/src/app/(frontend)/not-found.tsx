@@ -1,12 +1,10 @@
 import Link from 'next/link'
-import React from 'react'
 
 import { Button } from '@/components/ui/button'
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function NotFound() {
+export default function NotFound(): React.ReactNode {
   return (
-    <div className="container py-28">
+    <div className="container mx-auto py-28">
       <div className="prose max-w-none">
         <h1 style={{ marginBottom: 0 }}>404</h1>
         <p className="mb-4">This page could not be found.</p>

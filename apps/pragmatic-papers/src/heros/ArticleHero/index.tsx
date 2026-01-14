@@ -1,10 +1,9 @@
-import React from 'react'
-
-import type { Article } from '@/payload-types'
+import { ImageMedia } from '@/components/Link/Media/ImageMedia'
 import { Squiggle } from '@/components/ui/squiggle'
+import type { Article } from '@/payload-types'
 import { formatAuthors } from '@/utilities/formatAuthors'
 import { formatDateTime } from '@/utilities/formatDateTime'
-import { ImageMedia } from '@/components/Media/ImageMedia'
+import React from 'react'
 
 export const ArticleHero: React.FC<{
   article: Article

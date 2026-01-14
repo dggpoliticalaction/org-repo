@@ -1,19 +1,16 @@
-import type { Metadata } from 'next'
-
-import { PayloadRedirects } from '@/components/PayloadRedirects'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
-import React, { cache } from 'react'
-
-import { generateMeta } from '@/utilities/generateMeta'
-import PageClient from './page.client'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import RichText from '@/components/RichText'
-import { formatDateTime } from '@/utilities/formatDateTime'
 import { ArticleCard } from '@/components/ArticleCard'
-import { toRoman } from '@/utilities/toRoman'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PayloadRedirects } from '@/components/PayloadRedirects'
+import RichText from '@/components/RichText'
 import { Squiggle } from '@/components/ui/squiggle'
+import { formatDateTime } from '@/utilities/formatDateTime'
+import { generateMeta } from '@/utilities/generateMeta'
+import { toRoman } from '@/utilities/toRoman'
+import configPromise from '@payload-config'
+import type { Metadata } from 'next'
+import { draftMode } from 'next/headers'
+import { getPayload } from 'payload'
+import React, { cache } from 'react'
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -87,14 +84,12 @@ export default async function VolumePage({
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-16">
-      <PageClient />
-
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
       <div className="relative flex items-end">
-        <div className="container pb-8 text-center">
+        <div className="container mx-auto pb-8 text-center">
           <div>
             <div>
               <h1 className="mb-6 text-3xl md:text-5xl lg:text-6xl">{`Volume ${toRoman(Number(volume.slug))}`}</h1>
@@ -112,7 +107,7 @@ export default async function VolumePage({
         </div>
       </div>
       {editorsNote && (
-        <div className="container w-full">
+        <div className="container mx-auto w-full">
           <RichText className="w-full" enableGutter={false} data={editorsNote} />
         </div>
       )}

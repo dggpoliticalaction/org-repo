@@ -1,24 +1,18 @@
-import type { Metadata } from 'next'
-
-import { cn } from '@/utilities/ui'
-import { GeistMono } from 'geist/font/mono'
-import { GeistSans } from 'geist/font/sans'
-import { Source_Serif_4 } from 'next/font/google'
-import React from 'react'
-
 import { AdminBar } from '@/components/AdminBar'
+import { ThemeProvider } from '@/components/Providers/ThemeProvider'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
-import { Providers } from '@/providers'
-import { InitTheme } from '@/providers/Theme/InitTheme'
-import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { draftMode } from 'next/headers'
-import { GoogleAnalytics } from '@next/third-parties/google'
-
-import './globals.css'
+import '@/styles/globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
-
-import { Open_Sans } from 'next/font/google'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { cn } from '@/utilities/ui'
+import { GoogleAnalytics } from '@next/third-parties/google'
+import { GeistMono } from 'geist/font/mono'
+import { GeistSans } from 'geist/font/sans'
+import type { Metadata } from 'next'
+import { Open_Sans, Source_Serif_4 } from 'next/font/google'
+import { draftMode } from 'next/headers'
+import React from 'react'
 
 const sourceSerif4 = Source_Serif_4({
   variable: '--font-serif',
@@ -29,8 +23,16 @@ const openSans = Open_Sans({
   subsets: ['latin'],
 })
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
+  openGraph: mergeOpenGraph(),
+}
+
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}): Promise<React.ReactNode> {
   const { isEnabled } = await draftMode()
 
   return (
@@ -45,7 +47,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       suppressHydrationWarning
     >
       <head>
-        <InitTheme />
         <link href="/manifest.json" rel="manifest" />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
@@ -64,24 +65,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
       </head>
       <body>
-        <Providers>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <AdminBar
             adminBarProps={{
               preview: isEnabled,
             }}
           />
-
           <Header />
           {children}
           <Footer />
           <GoogleAnalytics gaId="G-PXK2QL92HV" />
-        </Providers>
+        </ThemeProvider>
       </body>
     </html>
   )
-}
-
-export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  openGraph: mergeOpenGraph(),
 }

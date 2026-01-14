@@ -1,12 +1,12 @@
 import type { StaticImageData } from 'next/image'
 
+import RichText from '@/components/RichText'
 import { cn } from '@/utilities/ui'
 import React from 'react'
-import RichText from '@/components/RichText'
 
 import type { MediaBlock as MediaBlockProps } from '@/payload-types'
 
-import { Media } from '../../components/Media'
+import { Media } from '../../components/Link/Media'
 
 type Props = MediaBlockProps & {
   breakout?: boolean
@@ -63,7 +63,7 @@ export const MediaBlock: React.FC<Props> = (props) => {
             data={caption}
             enableGutter={false}
             enableProse={false}
-            className="not-prose text-[0.95rem] text-muted-foreground"
+            className="not-prose text-muted-foreground text-[0.95rem]"
           />
         </figcaption>
       )}

@@ -1,7 +1,7 @@
 import { Providers } from "@/components/Providers";
-import type { ReactNode } from "react";
+import "@/styles/globals.css";
 import { ThemeProvider } from "next-themes";
-import "@/app/(frontend)/globals.css";
+import type { ReactNode } from "react";
 
 export interface LayoutProps {
   children: ReactNode;

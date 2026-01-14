@@ -1,13 +1,13 @@
-import type { VolumeView as VolumeBlockProps, Volume } from '@/payload-types'
+import type { Volume, VolumeView as VolumeBlockProps } from '@/payload-types'
 
+import RichText from '@/components/RichText'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
-import RichText from '@/components/RichText'
 
-import { VolumesView } from '@/components/VolumesView'
 import { PageRange } from '@/components/PageRange'
 import { PaginationVolumes } from '@/components/PaginationVolumes'
+import { VolumesView } from '@/components/VolumesView'
 
 export const VolumeViewBlock: React.FC<
   VolumeBlockProps & {
@@ -59,7 +59,7 @@ export const VolumeViewBlock: React.FC<
         )}
         <VolumesView volumes={volumes.docs} />
 
-        <div className="container mb-8 mt-6">
+        <div className="container mx-auto mt-6 mb-8">
           <PageRange
             collection="volumes"
             currentPage={volumes.page}
@@ -68,7 +68,7 @@ export const VolumeViewBlock: React.FC<
           />
         </div>
 
-        <div className="container">
+        <div className="container mx-auto">
           {volumes.totalPages > 1 && volumes.page && (
             <PaginationVolumes page={volumes.page} totalPages={volumes.totalPages} />
           )}
@@ -84,7 +84,7 @@ export const VolumeViewBlock: React.FC<
       return (
         <div className="my-4" id={`block-${id}`}>
           {introContent && (
-            <div className="container mb-16">
+            <div className="container mx-auto mb-16">
               <RichText className="ms-0 max-w-3xl" data={introContent} enableGutter={false} />
             </div>
           )}
