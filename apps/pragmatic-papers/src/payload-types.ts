@@ -67,12 +67,15 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    users: User;
+    'user-sessions': UserSession;
+    'user-accounts': UserAccount;
+    'user-verifications': UserVerification;
     pages: Page;
     articles: Article;
     volumes: Volume;
     media: Media;
     categories: Category;
-    users: User;
     webhooks: Webhook;
     redirects: Redirect;
     forms: Form;
@@ -85,12 +88,15 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    users: UsersSelect<false> | UsersSelect<true>;
+    'user-sessions': UserSessionsSelect<false> | UserSessionsSelect<true>;
+    'user-accounts': UserAccountsSelect<false> | UserAccountsSelect<true>;
+    'user-verifications': UserVerificationsSelect<false> | UserVerificationsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     volumes: VolumesSelect<false> | VolumesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
-    users: UsersSelect<false> | UsersSelect<true>;
     webhooks: WebhooksSelect<false> | WebhooksSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -148,6 +154,99 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name?: string | null;
+  email: string;
+  emailVerified: boolean;
+  image?: string | null;
+  biography?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * The user's role. Defaults to 'user'.
+   */
+  role: 'admin' | 'chief-editor' | 'editor' | 'writer' | 'user';
+  /**
+   * Indicates whether the user is banned.
+   */
+  banned: boolean;
+  /**
+   * The reason for the user's ban.
+   */
+  banReason?: string | null;
+  /**
+   * The date when the user's ban will expire.
+   */
+  banExpires?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "user-sessions".
+ */
+export interface UserSession {
+  id: number;
+  userId: number | User;
+  token: string;
+  expiresAt: string;
+  ipAddress?: string | null;
+  userAgent?: string | null;
+  /**
+   * The ID of the admin that is impersonating this session.
+   */
+  impersonatedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "user-accounts".
+ */
+export interface UserAccount {
+  id: number;
+  userId: number | User;
+  accountId: string;
+  providerId: string;
+  accessToken?: string | null;
+  refreshToken?: string | null;
+  accessTokenExpiresAt?: string | null;
+  refreshTokenExpiresAt?: string | null;
+  scope?: string | null;
+  idToken?: string | null;
+  password?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "user-verifications".
+ */
+export interface UserVerification {
+  id: number;
+  identifier: string;
+  value: string;
+  expiresAt: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
 export interface Page {
@@ -193,7 +292,7 @@ export interface Page {
             /**
              * Choose how the link should be rendered.
              */
-            appearance?: ('default' | 'outline-solid') | null;
+            appearance?: ('default' | 'outline') | null;
           };
           id?: string | null;
         }[]
@@ -406,47 +505,6 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  name?: string | null;
-  biography?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'user') | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
@@ -488,7 +546,7 @@ export interface CallToActionBlock {
           /**
            * Choose how the link should be rendered.
            */
-          appearance?: ('default' | 'outline-solid') | null;
+          appearance?: ('default' | 'outline') | null;
         };
         id?: string | null;
       }[]
@@ -542,7 +600,7 @@ export interface ContentBlock {
           /**
            * Choose how the link should be rendered.
            */
-          appearance?: ('default' | 'outline-solid') | null;
+          appearance?: ('default' | 'outline') | null;
         };
         id?: string | null;
       }[]
@@ -1004,6 +1062,22 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null)
+    | ({
+        relationTo: 'user-sessions';
+        value: number | UserSession;
+      } | null)
+    | ({
+        relationTo: 'user-accounts';
+        value: number | UserAccount;
+      } | null)
+    | ({
+        relationTo: 'user-verifications';
+        value: number | UserVerification;
+      } | null)
+    | ({
         relationTo: 'pages';
         value: number | Page;
       } | null)
@@ -1022,10 +1096,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'categories';
         value: number | Category;
-      } | null)
-    | ({
-        relationTo: 'users';
-        value: number | User;
       } | null)
     | ({
         relationTo: 'webhooks';
@@ -1084,6 +1154,66 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  emailVerified?: T;
+  image?: T;
+  biography?: T;
+  role?: T;
+  banned?: T;
+  banReason?: T;
+  banExpires?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "user-sessions_select".
+ */
+export interface UserSessionsSelect<T extends boolean = true> {
+  userId?: T;
+  token?: T;
+  expiresAt?: T;
+  ipAddress?: T;
+  userAgent?: T;
+  impersonatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "user-accounts_select".
+ */
+export interface UserAccountsSelect<T extends boolean = true> {
+  userId?: T;
+  accountId?: T;
+  providerId?: T;
+  accessToken?: T;
+  refreshToken?: T;
+  accessTokenExpiresAt?: T;
+  refreshTokenExpiresAt?: T;
+  scope?: T;
+  idToken?: T;
+  password?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "user-verifications_select".
+ */
+export interface UserVerificationsSelect<T extends boolean = true> {
+  identifier?: T;
+  value?: T;
+  expiresAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1386,31 +1516,6 @@ export interface CategoriesSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
- */
-export interface UsersSelect<T extends boolean = true> {
-  name?: T;
-  biography?: T;
-  role?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
-    | T
-    | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
-      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

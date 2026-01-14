@@ -1,113 +1,67 @@
-import type { User } from '@/payload-types'
-import { betterAuth, type BetterAuthOptions, type OAuthProvider } from 'better-auth'
-import { createAuthMiddleware } from 'better-auth/api'
-import { nextCookies } from 'better-auth/next-js'
-import Database from 'better-sqlite3'
-import type { Result } from 'node_modules/payload/dist/auth/operations/login'
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import * as schema from '@/payload-generated-schema'
+import { betterAuth } from 'better-auth'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { admin as adminPlugin } from 'better-auth/plugins'
+import { user, admin, ac, chiefEditor, editor, writer } from '@/auth/permissions'
+import { db } from '@/db'
 
-// supports: file:./data/app.db  |  file:/absolute/path/app.db
-export function sqlitePathFromUri(uri: string): string {
-  if (uri.startsWith('file:')) return uri.slice('file:'.length)
-  return uri
-}
-
-const database = new Database(sqlitePathFromUri(process.env.DATABASE_URI))
-
-const payload = await getPayload({ config })
-
-export type Provider = 'discord' | 'google'
-
-function isProvider(provider?: string): provider is Provider {
-  if (!provider) return false
-  return provider === 'discord' || provider === 'google'
-}
-
-function getProvider(params: Record<string, string>) {
-  const provider = params.id
-  return isProvider(provider) ? provider : undefined
-}
-
-function getAccountId(provider: Provider, accounts: OAuthProvider[]) {
-  return accounts.find((account) => account.id === provider)?.options?.clientId
-}
-
-async function fineUserByBetterAuthId(betterAuthId: string): Promise<User | undefined> {
-  const {
-    docs: [foundUser],
-  } = await payload.find({
-    collection: 'users',
-    where: { betterAuthId: { equals: betterAuthId } },
-    limit: 1,
-  })
-  return foundUser
-}
-
-async function findUserByEmail(email: string): Promise<User | undefined> {
-  const {
-    docs: [foundUser],
-  } = await payload.find({
-    collection: 'users',
-    where: { email: { equals: email } },
-    limit: 1,
-    overrideAccess: true,
-  })
-  return foundUser
-}
-
-async function createUser(name: string, email: string): Promise<User> {
-  return payload.create({
-    collection: 'users',
-    data: { name, email, role: 'user' },
-    overrideAccess: true,
-  })
-}
-
-async function findOrCreateUser(name: string, email: string): Promise<User> {
-  const foundUser = await findUserByEmail(email)
-  if (foundUser) return foundUser
-  return createUser(name, email)
-}
-
-async function loginUser({ email, password }: User): Promise<
-  {
-    user: User
-  } & Result
-> {
-  if (!password) throw new Error('Password is required')
-  return payload.login({ collection: 'users', data: { email, password } })
-}
-
-export const authConfig: BetterAuthOptions = {
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
-  database,
-  socialProviders: {
-    discord: {
-      clientId: process.env.OAUTH_DISCORD_CLIENT_ID,
-      clientSecret: process.env.OAUTH_DISCORD_CLIENT_SECRET,
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: 'sqlite',
+    schema,
+    usePlural: false, // Should be false when having custom table name mapping as outlined below
+  }),
+  advanced: {
+    database: {
+      generateId: false, // Should be false since we'll let Payload generate the ids
     },
   },
-  hooks: {
-    after: createAuthMiddleware(async ({ path, params, ...ctx }) => {
-      if (path.startsWith('/callback')) {
-        const provider = getProvider(params)
-        if (!provider) return
-        const accountId = getAccountId(provider, ctx.context.socialProviders)
-        const session = ctx.context.newSession
-        if (!session) return
-        const { name, email, emailVerified } = session.user
-        if (!emailVerified) return
-        const user = await findOrCreateUser(name, email)
-        console.log('user', user)
-        if (!user || !user.password) return
-        const result = await loginUser(user)
-        console.log('result', result)
-        return
-      }
-    }),
+  emailAndPassword: {
+    enabled: true,
   },
-  plugins: [nextCookies()],
-}
 
-export const auth = betterAuth(authConfig)
+  /* 
+  If needed, you can map the core schemas to the drizzle schema table names. When doing this, make sure to 
+  set usePlural to false to avoid errors like users table being searched as userss. You only ever need to
+  manually map when you use a different slug for the 4 core collections. For example your Users collections slug
+  is students, so you should set the user modelName to students.
+  */
+  user: {
+    modelName: 'users',
+  },
+  account: {
+    modelName: 'user_accounts',
+    accountLinking: {
+      allowDifferentEmails: true,
+      enabled: true,
+    },
+  },
+  verification: {
+    modelName: 'user_verifications',
+  },
+  session: {
+    modelName: 'user_sessions',
+  },
+
+  /* Go ahead and adjust your Better Auth as needed like adding social providers */
+  // socialProviders: {
+  //   google: {
+  //     clientId: process.env.GOOGLE_PROVIDER_CLIENT_ID,
+  //     clientSecret: process.env.GOOGLE_PROVIDER_CLIENT_SECRET,
+  //   },
+  // },
+
+  /* And even plugins works too */
+  plugins: [
+    adminPlugin({
+      ac,
+      roles: {
+        admin,
+        chiefEditor,
+        editor,
+        writer,
+        user,
+      },
+    }),
+  ],
+})

@@ -1,7 +1,12 @@
-import type { CollectionConfig } from 'payload'
+import type {
+  AuthStrategyFunctionArgs,
+  AuthStrategyResult,
+  CollectionConfig,
+  PayloadRequest,
+} from 'payload'
 import { adminOrSelf } from '@/access/adminOrSelf'
 import { admin, adminFieldLevel } from '@/access/admins'
-import { writerFieldLevel } from '@/access/writer'
+// import { writerFieldLevel } from '@/access/writer'
 import {
   FixedToolbarFeature,
   HeadingFeature,
@@ -13,26 +18,29 @@ import {
 } from '@payloadcms/richtext-lexical'
 import { authenticated } from '../../access/authenticated'
 import { auth } from '@/auth/auth'
+import { writerFieldLevel } from '@/access/writer'
 
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
     admin: writerFieldLevel,
-    // TODO
-    // async ({ req }) => {
+    // admin: async ({ req }) => {
     //   const { success } = await auth.api.userHasPermission({
     //     // Only available when you setup the admin plugin
     //     body: {
     //       permissions: {
-    //         adminDashboard: ["read"],
+    //         adminDashboard: ['read'],
     //       },
-    //       userId: req.user?.id,
+    //       userId: req.user?.id.toString(),
     //     },
-    //   });
+    //   })
 
-    //   const isAllowed = typeof success === "boolean" ? success : false;
+    //   // console.log('success', success)
+    //   // console.log('req.user', req.user)
 
-    //   return isAllowed;
+    //   const isAllowed = typeof success === 'boolean' ? success : false
+
+    //   return isAllowed
     // },
     create: admin,
     delete: admin,
@@ -48,7 +56,10 @@ export const Users: CollectionConfig = {
     strategies: [
       {
         name: 'better-auth',
-        authenticate: async ({ headers, payload }) => {
+        authenticate: async ({
+          headers,
+          payload,
+        }: AuthStrategyFunctionArgs): Promise<AuthStrategyResult> => {
           try {
             const userSession = await auth.api.getSession({ headers })
 
@@ -77,7 +88,7 @@ export const Users: CollectionConfig = {
     {
       path: '/logout',
       method: 'post',
-      handler: async (req): Promise<Response> => {
+      handler: async (req: PayloadRequest): Promise<Response> => {
         await auth.api.signOut({
           headers: req.headers,
         })
