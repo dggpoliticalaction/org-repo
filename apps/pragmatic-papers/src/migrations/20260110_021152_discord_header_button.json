@@ -9866,7 +9866,7 @@
       "schema": "public",
       "values": [
         "default",
-        "outline"
+        "outline-solid"
       ]
     },
     "public.enum_pages_blocks_cta_links_link_type": {
@@ -9882,7 +9882,7 @@
       "schema": "public",
       "values": [
         "default",
-        "outline"
+        "outline-solid"
       ]
     },
     "public.enum_pages_blocks_content_columns_size": {
@@ -9908,7 +9908,7 @@
       "schema": "public",
       "values": [
         "default",
-        "outline"
+        "outline-solid"
       ]
     },
     "public.enum_pages_blocks_volume_view_populate_by": {
@@ -9958,7 +9958,7 @@
       "schema": "public",
       "values": [
         "default",
-        "outline"
+        "outline-solid"
       ]
     },
     "public.enum__pages_v_blocks_cta_links_link_type": {
@@ -9974,7 +9974,7 @@
       "schema": "public",
       "values": [
         "default",
-        "outline"
+        "outline-solid"
       ]
     },
     "public.enum__pages_v_blocks_content_columns_size": {
@@ -10000,7 +10000,7 @@
       "schema": "public",
       "values": [
         "default",
-        "outline"
+        "outline-solid"
       ]
     },
     "public.enum__pages_v_blocks_volume_view_populate_by": {

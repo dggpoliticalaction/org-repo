@@ -9813,7 +9813,7 @@
     "public.enum_pages_hero_links_link_appearance": {
       "name": "enum_pages_hero_links_link_appearance",
       "schema": "public",
-      "values": ["default", "outline"]
+      "values": ["default", "outline-solid"]
     },
     "public.enum_pages_blocks_cta_links_link_type": {
       "name": "enum_pages_blocks_cta_links_link_type",
@@ -9823,7 +9823,7 @@
     "public.enum_pages_blocks_cta_links_link_appearance": {
       "name": "enum_pages_blocks_cta_links_link_appearance",
       "schema": "public",
-      "values": ["default", "outline"]
+      "values": ["default", "outline-solid"]
     },
     "public.enum_pages_blocks_content_columns_size": {
       "name": "enum_pages_blocks_content_columns_size",
@@ -9838,7 +9838,7 @@
     "public.enum_pages_blocks_content_columns_link_appearance": {
       "name": "enum_pages_blocks_content_columns_link_appearance",
       "schema": "public",
-      "values": ["default", "outline"]
+      "values": ["default", "outline-solid"]
     },
     "public.enum_pages_blocks_volume_view_populate_by": {
       "name": "enum_pages_blocks_volume_view_populate_by",
@@ -9868,7 +9868,7 @@
     "public.enum__pages_v_version_hero_links_link_appearance": {
       "name": "enum__pages_v_version_hero_links_link_appearance",
       "schema": "public",
-      "values": ["default", "outline"]
+      "values": ["default", "outline-solid"]
     },
     "public.enum__pages_v_blocks_cta_links_link_type": {
       "name": "enum__pages_v_blocks_cta_links_link_type",
@@ -9878,7 +9878,7 @@
     "public.enum__pages_v_blocks_cta_links_link_appearance": {
       "name": "enum__pages_v_blocks_cta_links_link_appearance",
       "schema": "public",
-      "values": ["default", "outline"]
+      "values": ["default", "outline-solid"]
     },
     "public.enum__pages_v_blocks_content_columns_size": {
       "name": "enum__pages_v_blocks_content_columns_size",
@@ -9893,7 +9893,7 @@
     "public.enum__pages_v_blocks_content_columns_link_appearance": {
       "name": "enum__pages_v_blocks_content_columns_link_appearance",
       "schema": "public",
-      "values": ["default", "outline"]
+      "values": ["default", "outline-solid"]
     },
     "public.enum__pages_v_blocks_volume_view_populate_by": {
       "name": "enum__pages_v_blocks_volume_view_populate_by",
