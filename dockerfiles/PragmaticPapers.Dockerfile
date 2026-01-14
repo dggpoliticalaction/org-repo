@@ -39,12 +39,10 @@ FROM base AS deps
 
 # Copy pruned lockfile and package.json files
 COPY --from=pruner /app/out/json/ .
-COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=pruner /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 
 # Install dependencies with frozen lockfile
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile
+    pnpm install
 
 # ============================================
 # Builder stage - build the application
@@ -65,16 +63,8 @@ ARG NEXT_PUBLIC_SUPABASE_URL
 
 WORKDIR /app
 
-# Copy dependencies
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/packages ./packages
-COPY --from=deps /app/apps/pragmatic-papers/node_modules ./apps/pragmatic-papers/node_modules
-
 # Copy pruned source code
 COPY --from=pruner /app/out/full/ .
-
-# Copy turbo config
-COPY turbo.json turbo.json
 
 # Set build environment
 ENV NODE_ENV=${NODE_ENV}
@@ -92,20 +82,6 @@ ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
 # Run migrations and build using Turbo (uses the "ci" script which runs migrations + build)
 WORKDIR /app/apps/pragmatic-papers
 RUN pnpm run ci
-
-# Debug: List standalone output structure
-RUN echo "=== Standalone build structure ===" && \
-    ls -la .next/standalone/ && \
-    echo "=== Checking for server.js ===" && \
-    find .next/standalone -name "server.js" -type f && \
-    echo "=== Standalone package.json ===" && \
-    cat .next/standalone/package.json && \
-    echo "=== Standalone node_modules ===" && \
-    ls .next/standalone/node_modules/ && \
-    echo "=== Checking for 'next' in node_modules ===" && \
-    ls -la .next/standalone/node_modules/next/ 2>/dev/null || echo "No 'next' module in standalone node_modules" && \
-    echo "=== Full .next directory structure ===" && \
-    ls -la .next/
 
 # ============================================
 # Runner stage - production runtime
@@ -130,24 +106,8 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Copy standalone build (Next.js outputs this when output: 'standalone' is set)
 # The standalone build includes server.js and minimal node_modules at the root
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/standalone ./
-
-# Copy the complete .next directory from build (includes static and other necessary files)
-COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./.next/static
-
-# Copy public assets to the expected location
-COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./public
-
-# Debug: Verify what was copied to runner
-RUN echo "=== Runner /app structure ===" && \
-    ls -la /app/ && \
-    echo "=== Looking for server.js ===" && \
-    find /app -name "server.js" -type f && \
-    echo "=== /app/node_modules ===" && \
-    ls /app/node_modules/ && \
-    echo "=== Checking for 'next' in runner node_modules ===" && \
-    ls -la /app/node_modules/next/ 2>/dev/null || echo "No 'next' in /app/node_modules" && \
-    echo "=== Runner package.json ===" && \
-    cat /app/package.json
+COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./apps/pragmatic-papers/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
 
 # Switch to non-root user
 USER nextjs
@@ -164,4 +124,4 @@ ENTRYPOINT ["dumb-init", "--"]
 
 # Start the application (server.js location varies based on standalone output structure)
 # Try the most likely location first, with fallback
-CMD ["sh", "-c", "if [ -f server.js ]; then exec node server.js; elif [ -f apps/pragmatic-papers/server.js ]; then exec node apps/pragmatic-papers/server.js; else echo 'ERROR: server.js not found' && ls -la /app && find /app -name 'server.js' -type f && exit 1; fi"]
+CMD ["node", "server.js"]
