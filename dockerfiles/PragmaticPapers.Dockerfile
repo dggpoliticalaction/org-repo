@@ -98,10 +98,14 @@ RUN echo "=== Standalone build structure ===" && \
     ls -la .next/standalone/ && \
     echo "=== Checking for server.js ===" && \
     find .next/standalone -name "server.js" -type f && \
-    echo "=== Standalone apps directory ===" && \
-    ls -la .next/standalone/apps/ 2>/dev/null || echo "No apps directory in standalone" && \
-    echo "=== Standalone apps/pragmatic-papers ===" && \
-    ls -la .next/standalone/apps/pragmatic-papers/ 2>/dev/null || echo "No apps/pragmatic-papers in standalone"
+    echo "=== Standalone package.json ===" && \
+    cat .next/standalone/package.json && \
+    echo "=== Standalone node_modules ===" && \
+    ls .next/standalone/node_modules/ && \
+    echo "=== Checking for 'next' in node_modules ===" && \
+    ls -la .next/standalone/node_modules/next/ 2>/dev/null || echo "No 'next' module in standalone node_modules" && \
+    echo "=== Full .next directory structure ===" && \
+    ls -la .next/
 
 # ============================================
 # Runner stage - production runtime
@@ -127,21 +131,23 @@ RUN addgroup --system --gid 1001 nodejs && \
 # The standalone build includes server.js and minimal node_modules at the root
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/standalone ./
 
-# Copy static files (not included in standalone)
-COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./apps/pragmatic-papers/.next/static
+# Copy the complete .next directory from build (includes static and other necessary files)
+COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./.next/static
 
-# Copy public assets
-COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
+# Copy public assets to the expected location
+COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./public
 
 # Debug: Verify what was copied to runner
 RUN echo "=== Runner /app structure ===" && \
     ls -la /app/ && \
     echo "=== Looking for server.js ===" && \
     find /app -name "server.js" -type f && \
-    echo "=== /app/apps structure ===" && \
-    ls -la /app/apps/ 2>/dev/null || echo "No /app/apps directory" && \
-    echo "=== /app/apps/pragmatic-papers structure ===" && \
-    ls -la /app/apps/pragmatic-papers/ 2>/dev/null || echo "No /app/apps/pragmatic-papers directory"
+    echo "=== /app/node_modules ===" && \
+    ls /app/node_modules/ && \
+    echo "=== Checking for 'next' in runner node_modules ===" && \
+    ls -la /app/node_modules/next/ 2>/dev/null || echo "No 'next' in /app/node_modules" && \
+    echo "=== Runner package.json ===" && \
+    cat /app/package.json
 
 # Switch to non-root user
 USER nextjs
