@@ -1,5 +1,5 @@
-import { Providers } from "@/providers";
-import { ReactNode } from "react";
+import { Providers } from "@/components/Providers";
+import type { ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 import "@/styles/globals.css";
 
@@ -7,7 +7,7 @@ export interface LayoutProps {
   children: ReactNode;
 }
 
-const Layout = ({ children }: LayoutProps) => {
+const Layout = ({ children }: LayoutProps): React.ReactNode => {
   return (
     <html suppressHydrationWarning>
       <body className="flex items-center justify-center h-screen">
@@ -17,9 +17,9 @@ const Layout = ({ children }: LayoutProps) => {
           disableTransitionOnChange
           enableSystem
         >
-          {/* <Providers> */}
+          <Providers>
             {children}
-            {/* </Providers> */}
+          </Providers>
         </ThemeProvider>
       </body>
     </html>
