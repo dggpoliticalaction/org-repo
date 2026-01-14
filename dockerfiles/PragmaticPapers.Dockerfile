@@ -106,6 +106,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
+# Enable Next.js logging
+ENV NEXT_PRIVATE_DEBUG_CACHE=1
+
+# Force all logs to stdout/stderr for Docker
+ENV FORCE_COLOR=0
+
 # Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
@@ -121,6 +127,21 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/stati
 # Copy public folder (images, fonts, etc.)
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
 
+# Create startup script with logging
+RUN echo '#!/bin/sh' > /app/start.sh && \
+    echo 'echo "========================================="' >> /app/start.sh && \
+    echo 'echo "Starting Pragmatic Papers Application"' >> /app/start.sh && \
+    echo 'echo "========================================="' >> /app/start.sh && \
+    echo 'echo "Node version: $(node --version)"' >> /app/start.sh && \
+    echo 'echo "Environment: $NODE_ENV"' >> /app/start.sh && \
+    echo 'echo "Port: $PORT"' >> /app/start.sh && \
+    echo 'echo "Hostname: $HOSTNAME"' >> /app/start.sh && \
+    echo 'echo "========================================="' >> /app/start.sh && \
+    echo 'echo "Starting Next.js server..."' >> /app/start.sh && \
+    echo 'exec node --trace-warnings apps/pragmatic-papers/server.js' >> /app/start.sh && \
+    chmod +x /app/start.sh && \
+    chown nextjs:nodejs /app/start.sh
+
 # Switch to non-root user
 USER nextjs
 
@@ -130,6 +151,5 @@ EXPOSE 3000
 # Use dumb-init to handle signals properly (SIGTERM, etc.)
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start the standalone Next.js server
-# The server.js is located at the root of the standalone output
-CMD ["node", "apps/pragmatic-papers/server.js"]
+# Start using the startup script for better log visibility
+CMD ["/app/start.sh"]
