@@ -37,20 +37,25 @@ pnpm build
 ### Develop
 
 To develop all apps and packages, run the following command:
-
 ```
-cd my-turborepo
 pnpm dev
+```
+To end docker containers, run the following command:
+```
+pnpm dev:down
 ```
 
 ### Run an application
 
 To run or develop a single application:
+(requires docker)
 
 - you can navigate to a specific application's directory and run as usual
   ```
   cd apps/pragmatic-papers
   pnpm dev
+
+  pnpm dev:down
   ```
 - or, you can filter turborepo tasks
   ```
