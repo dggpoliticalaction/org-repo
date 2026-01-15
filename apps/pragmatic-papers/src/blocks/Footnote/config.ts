@@ -12,6 +12,14 @@ export const FootnoteBlock: Block = {
         description: 'Footnote text.',
       },
     },
+    {
+      name: 'index',
+      type: 'number',
+      admin: {
+        description: 'Auto-generated on save.',
+        readOnly: true,
+      },
+    },
   ],
   graphQL: {
     singularName: 'FootnoteBlock',

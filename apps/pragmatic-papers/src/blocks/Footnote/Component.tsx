@@ -4,6 +4,7 @@ import { cn } from '@/utilities/ui'
 
 export interface FootnoteBlockProps {
   id?: string
+  index?: number
   note: string
   blockType: 'footnote'
 }
@@ -14,7 +15,7 @@ type FootnoteInlineProps = FootnoteBlockProps & {
 }
 
 export const FootnoteBlock: React.FC<FootnoteInlineProps> = ({ note, index, className }) => {
-  if (!note || !index) return null
+  if (!note || typeof index !== 'number') return null
 
   const displayMarker = String(index)
   const targetId = `footnote-${index}`
@@ -22,13 +23,13 @@ export const FootnoteBlock: React.FC<FootnoteInlineProps> = ({ note, index, clas
 
   return (
     <sup
-      className={cn('footnote', className)}
+      className={cn(className)}
       title={note}
       aria-label={`Footnote: ${note}`}
       id={referenceId}
     >
       {targetId ? (
-        <a className="footnote-link text-brand no-underline shadow-none" href={`#${targetId}`}>
+        <a className="text-brand no-underline shadow-none" href={`#${targetId}`}>
           {displayMarker}
         </a>
       ) : (

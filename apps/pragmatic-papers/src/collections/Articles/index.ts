@@ -18,6 +18,7 @@ import {
   SuperscriptFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
+import type { SerializedEditorState, SerializedLexicalNode } from '@payloadcms/richtext-lexical/lexical'
 
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { Banner } from '@/blocks/Banner/config'
@@ -47,6 +48,36 @@ import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
 import { RedditEmbed } from '@/blocks/RedditEmbed/config'
 import { BlueSkyEmbed } from '@/blocks/BlueSkyEmbed/config'
 import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
+
+const setFootnoteIndices = (editorState?: SerializedEditorState | null): void => {
+  if (!editorState || typeof editorState !== 'object') return
+
+  let footnoteIndex = 0
+
+  const visitNode = (node: SerializedLexicalNode) => {
+    if (!node || typeof node !== 'object') return
+
+    if (node.type === 'inlineBlock') {
+      const inlineNode = node as SerializedLexicalNode & {
+        fields?: { blockType?: string; index?: number }
+      }
+
+      if (inlineNode.fields?.blockType === 'footnote') {
+        footnoteIndex += 1
+        inlineNode.fields.index = footnoteIndex
+      }
+    }
+
+    if ('children' in node && Array.isArray(node.children)) {
+      node.children.forEach((child: SerializedLexicalNode) => visitNode(child))
+    }
+  }
+
+  const rootChildren = editorState.root?.children
+  if (Array.isArray(rootChildren)) {
+    rootChildren.forEach((child: SerializedLexicalNode) => visitNode(child))
+  }
+}
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
@@ -245,6 +276,11 @@ export const Articles: CollectionConfig = {
             return data
           }
         }
+      },
+      (args: Parameters<CollectionBeforeChangeHook<Article>>[0]): Partial<Article> | void => {
+        const { data } = args
+        setFootnoteIndices(data?.content as SerializedEditorState)
+        return data
       },
     ],
     afterChange: [revalidateArticle],

@@ -57,6 +57,7 @@ type NodeTypes =
 
 interface FootnoteEntry {
   id: string
+  index: number
   note: string
 }
 
@@ -81,9 +82,10 @@ const collectFootnotes = (data: DefaultTypedEditorState | null | undefined): Foo
       const inlineNode = node as SerializedInlineBlockNode<FootnoteBlockProps>
       const { fields } = inlineNode
 
-      if (fields?.blockType === 'footnote' && fields.note) {
+      if (fields?.blockType === 'footnote' && fields.note && typeof fields.index === 'number') {
         notes.push({
           id: fields.id,
+          index: fields.index,
           note: fields.note,
         })
       }
@@ -99,46 +101,42 @@ const collectFootnotes = (data: DefaultTypedEditorState | null | undefined): Foo
   return notes
 }
 
-const buildJSXConverters = (
-  footnoteOrderById: Map<string, number>,
-): JSXConvertersFunction<NodeTypes> => {
-  return ({ defaultConverters }) => ({
-    ...defaultConverters,
-    ...LinkJSXConverter({ internalDocToHref }),
-    blocks: {
-      banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
-      mediaBlock: ({ node }) => (
-        <MediaBlock
-          className="col-span-3 col-start-1"
-          imgClassName="m-0"
-          {...node.fields}
-          captionClassName="mx-auto max-w-[48rem]"
-          enableGutter={false}
-          disableInnerContainer
-        />
-      ),
-      code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
-      cta: ({ node }) => <CallToActionBlock {...node.fields} />,
-      displayMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
-        <MathBlock {...node.fields} />
-      ),
-      squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
-      twitterEmbed: ({ node }) => <TwitterEmbedBlock {...node.fields} />,
-      youtubeEmbed: ({ node }) => <YouTubeEmbedBlock {...node.fields} />,
-      redditEmbed: ({ node }) => <RedditEmbedBlock {...node.fields} />,
-      blueSkyEmbed: ({ node }) => <BlueSkyEmbedBlock {...node.fields} />,
-      tiktokEmbed: ({ node }) => <TikTokEmbedBlock {...node.fields} />,
-    },
-    inlineBlocks: {
-      inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode<MathBlockProps> }) => (
-        <MathBlock {...node.fields} />
-      ),
-      footnote: ({ node }: { node: SerializedInlineBlockNode<FootnoteBlockProps> }) => (
-        <FootnoteBlock {...node.fields} index={footnoteOrderById.get(node.fields.id)} />
-      ),
-    },
-  })
-}
+const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
+  ...defaultConverters,
+  ...LinkJSXConverter({ internalDocToHref }),
+  blocks: {
+    banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
+    mediaBlock: ({ node }) => (
+      <MediaBlock
+        className="col-span-3 col-start-1"
+        imgClassName="m-0"
+        {...node.fields}
+        captionClassName="mx-auto max-w-[48rem]"
+        enableGutter={false}
+        disableInnerContainer
+      />
+    ),
+    code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
+    cta: ({ node }) => <CallToActionBlock {...node.fields} />,
+    displayMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
+      <MathBlock {...node.fields} />
+    ),
+    squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
+    twitterEmbed: ({ node }) => <TwitterEmbedBlock {...node.fields} />,
+    youtubeEmbed: ({ node }) => <YouTubeEmbedBlock {...node.fields} />,
+    redditEmbed: ({ node }) => <RedditEmbedBlock {...node.fields} />,
+    blueSkyEmbed: ({ node }) => <BlueSkyEmbedBlock {...node.fields} />,
+    tiktokEmbed: ({ node }) => <TikTokEmbedBlock {...node.fields} />,
+  },
+  inlineBlocks: {
+    inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode<MathBlockProps> }) => (
+      <MathBlock {...node.fields} />
+    ),
+    footnote: ({ node }: { node: SerializedInlineBlockNode<FootnoteBlockProps> }) => (
+      <FootnoteBlock {...node.fields} index={node.fields.index} />
+    ),
+  },
+})
 
 type Props = {
   data: DefaultTypedEditorState
@@ -150,7 +148,6 @@ type Props = {
 export default function RichText(props: Props) {
   const { className, enableProse = true, enableGutter = true, data, ...rest } = props
   const footnotes = collectFootnotes(data)
-  const footnoteOrderById = new Map(footnotes.map((footnote, index) => [footnote.id, index + 1]))
   return (
     <div
       className={cn(
@@ -164,16 +161,12 @@ export default function RichText(props: Props) {
       )}
       {...rest}
     >
-      <ConvertRichText
-        converters={buildJSXConverters(footnoteOrderById)}
-        data={data}
-        disableContainer
-      />
+      <ConvertRichText converters={jsxConverters} data={data} disableContainer />
       {footnotes.length > 0 ? (
         <section className="footnotes mt-6 border-t border-border pt-4">
           <ol className="list-decimal pl-4">
             {footnotes.map((footnote) => {
-              const footnoteNumber = footnoteOrderById.get(footnote.id)
+              const footnoteNumber = footnote.index
 
               return (
                 <li key={footnote.id} id={`footnote-${footnoteNumber}`}>

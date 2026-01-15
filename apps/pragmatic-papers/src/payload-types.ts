@@ -1984,6 +1984,10 @@ export interface FootnoteBlock {
    * Footnote text.
    */
   note: string;
+  /**
+   * Auto-generated on save.
+   */
+  index?: number | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'footnote';
