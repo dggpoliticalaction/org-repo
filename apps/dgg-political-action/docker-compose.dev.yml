@@ -14,4 +14,4 @@ services:
 
 volumes:
   dgg_political_action_postgres_data:
-    external: true
+    name: dgg_political_action_postgres_data
