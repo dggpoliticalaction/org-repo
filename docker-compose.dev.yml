@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: pragmatic-papers
     ports:
-      - "5432:5432"
+      - "9000:5432"
     volumes:
       - pragmatic_papers_postgres_data:/var/lib/postgresql/data
 
@@ -23,7 +23,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: dgg-political-action
     ports:
-      - "5433:5432"
+      - "9009:5432" #its over nine thousand!
     volumes:
       - dgg_political_action_postgres_data:/var/lib/postgresql/data
 
