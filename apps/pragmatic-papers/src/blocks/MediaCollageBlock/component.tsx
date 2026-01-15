@@ -59,14 +59,20 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
     return (
       <figure className={figureClass}>
         <div
-          className="relative flex justify-center"
+          className="relative flex justify-center bg-zinc-100/50 dark:bg-zinc-900/50 rounded-[0.8rem] h-[350px] md:h-[550px] overflow-hidden"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <Media resource={image} imgClassName={imgClassName} enableModal />
+          <Media
+            resource={image}
+            imgClassName={cn(imgClassName, 'w-auto h-auto max-w-full max-h-full object-contain')}
+            className="w-full h-full flex items-center justify-center p-4"
+            pictureClassName="w-full h-full flex items-center justify-center"
+            enableModal
+          />
           <button
             onClick={() => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1))}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white border border-border rounded-full w-8 h-8 flex items-center justify-center shadow z-10"
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white border border-border rounded-full w-8 h-8 flex items-center justify-center shadow z-10 hover:bg-zinc-100 transition-colors"
             aria-label="Previous image"
           >
             <svg
@@ -87,7 +93,7 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
           </button>
           <button
             onClick={() => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1))}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white border border-border rounded-full w-8 h-8 flex items-center justify-center shadow z-10"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white border border-border rounded-full w-8 h-8 flex items-center justify-center shadow z-10 hover:bg-zinc-100 transition-colors"
             aria-label="Next image"
           >
             <svg
