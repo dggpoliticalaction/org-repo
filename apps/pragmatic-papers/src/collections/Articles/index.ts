@@ -18,7 +18,10 @@ import {
   SuperscriptFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-import type { SerializedEditorState, SerializedLexicalNode } from '@payloadcms/richtext-lexical/lexical'
+import type {
+  SerializedEditorState,
+  SerializedLexicalNode,
+} from '@payloadcms/richtext-lexical/lexical'
 
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { Banner } from '@/blocks/Banner/config'
@@ -49,7 +52,7 @@ import { RedditEmbed } from '@/blocks/RedditEmbed/config'
 import { BlueSkyEmbed } from '@/blocks/BlueSkyEmbed/config'
 import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
 
-type FootnoteItem = {
+interface FootnoteItem {
   index: number
   note: string
 }
