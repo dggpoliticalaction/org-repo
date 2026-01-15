@@ -5,7 +5,7 @@
     "build": "turbo run build",
     "dev:start": "turbo run dev:start --ui=stream",
     "dev:stop": "turbo run dev:stop --ui=stream",
-    "dev:clear-db": "turbo run dev:clear-db",
+    "dev:clear-db": "turbo run dev:stop --ui=stream && turbo run dev:clear-db --ui=stream",
     "dev": "pnpm dev:start && turbo run dev",
     "lint": "turbo run lint",
     "lint:ci": "turbo run lint -- --max-warnings 0",
