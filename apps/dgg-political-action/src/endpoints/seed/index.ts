@@ -2,6 +2,7 @@ import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from '
 
 import { contactForm as contactFormData } from './contact-form'
 import { contact as contactPageData } from './contact-page'
+import { aboutPage } from './about-page'
 import { home } from './home'
 import { image1 } from './image-1'
 import { image2 } from './image-2'
@@ -20,6 +21,26 @@ const collections: CollectionSlug[] = [
   'search',
 ]
 const globals: GlobalSlug[] = ['header', 'footer']
+
+async function fetchFileByURL(url: string): Promise<File> {
+  const res = await fetch(url, {
+    credentials: 'include',
+    method: 'GET',
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch file from ${url}, status: ${res.status}`)
+  }
+
+  const data = await res.arrayBuffer()
+
+  return {
+    name: url.split('/').pop() || `file-${Date.now()}`,
+    data: Buffer.from(data),
+    mimetype: `image/${url.split('.').pop()}`,
+    size: data.byteLength,
+  }
+}
 
 // Next.js revalidation errors are normal when seeding the database without a server running
 // i.e. running `yarn seed` locally instead of using the admin UI within an active app
@@ -81,19 +102,15 @@ export const seed = async ({
   payload.logger.info(`— Seeding media...`)
 
   const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post1.webp',
     ),
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post2.webp',
     ),
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post3.webp',
     ),
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-hero1.webp',
     ),
@@ -141,7 +158,7 @@ export const seed = async ({
         ],
       },
     }),
-
+    
     payload.create({
       collection: 'categories',
       data: {
@@ -237,7 +254,12 @@ export const seed = async ({
     },
     data: post3({ heroImage: image3Doc, blockImage: image1Doc, author: demoAuthor }),
   })
-
+  const imageMyContributorBuffer = await fetchFileByURL('https://cdn.iai.tv/assets/Uploads/_resampled/FillWzQwMCwzNjBd/Steven-Bonnell-Destiny-.webp')
+  const imageMyContributorDoc = await payload.create({
+  collection: 'media',
+  data: { alt: 'Destiny' },
+  file: imageMyContributorBuffer,
+  })
   // update each post with related posts
   await payload.update({
     id: post1Doc.id,
@@ -271,7 +293,7 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding pages...`)
 
-  const [_, contactPage] = await Promise.all([
+  const [_, contactPage, aboutPageDoc] = await Promise.all([
     payload.create({
       collection: 'pages',
       depth: 0,
@@ -281,6 +303,11 @@ export const seed = async ({
       collection: 'pages',
       depth: 0,
       data: contactPageData({ contactForm: contactForm }),
+    }),
+    payload.create({
+      collection: 'pages',
+      depth: 0,
+      data: aboutPage({ contributorImage: imageMyContributorDoc}),
     }),
   ])
 
@@ -296,6 +323,16 @@ export const seed = async ({
               type: 'custom',
               label: 'Posts',
               url: '/posts',
+            },
+          },
+          {
+            link: {
+              type: 'reference',
+              label: 'About',
+              reference: {
+                relationTo: 'pages',
+                value: aboutPageDoc.id,
+              },
             },
           },
           {
@@ -344,24 +381,4 @@ export const seed = async ({
   ])
 
   payload.logger.info('Seeded database successfully!')
-}
-
-async function fetchFileByURL(url: string): Promise<File> {
-  const res = await fetch(url, {
-    credentials: 'include',
-    method: 'GET',
-  })
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch file from ${url}, status: ${res.status}`)
-  }
-
-  const data = await res.arrayBuffer()
-
-  return {
-    name: url.split('/').pop() || `file-${Date.now()}`,
-    data: Buffer.from(data),
-    mimetype: `image/${url.split('.').pop()}`,
-    size: data.byteLength,
-  }
 }
