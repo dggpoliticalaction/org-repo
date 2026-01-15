@@ -1,0 +1,16 @@
+services:
+  postgres-dgg-political-action:
+    container_name: dgg-political-action-postgres-dev
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dgg-political-action
+    ports:
+      - "9009:5432" #its over nine thousand!
+    volumes:
+      - dgg_political_action_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  dgg_political_action_postgres_data:
