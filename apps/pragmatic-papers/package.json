@@ -12,8 +12,10 @@
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "ii": "cross-env NODE_OPTIONS=--no-deprecation pnpm --ignore-workspace install",
-    "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
-    "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation next lint --fix",
+    "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
+    "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation eslint --fix .",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
@@ -61,7 +63,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.60.0",
-    "sharp": "^0.32.6",
+    "sharp": "^0.34.5",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7"
   },
@@ -80,7 +82,8 @@
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "eslint-config-next": "^15.5.9"
   },
   "engines": {
     "node": ">=22",

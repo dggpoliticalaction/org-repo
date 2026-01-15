@@ -4,6 +4,10 @@ import { MenuBlock as MenuBlockType } from '@/payload-types'
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { RowLabelProps, useRowLabel } from '@payloadcms/ui'
 
+/**
+ * No longer used.
+ * @deprecated
+ */
 export const RowLabel: React.FC<RowLabelProps> = () => {
   const data = useRowLabel<NonNullable<MenuBlockType>[number]>()
 

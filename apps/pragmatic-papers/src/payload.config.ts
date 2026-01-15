@@ -1,8 +1,9 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
+import sharp from 'sharp'
 
 import path from 'path'
-import { buildConfig, type PayloadRequest } from 'payload'
+import { buildConfig, type PayloadRequest, type SharpDependency } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
@@ -75,9 +76,22 @@ export default buildConfig({
   globals: [Header, Footer],
   plugins: [...plugins],
   secret: process.env.PAYLOAD_SECRET,
+  sharp: sharp as unknown as SharpDependency,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  endpoints: [
+    {
+      path: '/health',
+      method: 'get',
+      handler: async () => {
+        return Response.json({
+          status: 'ok',
+          timestamp: new Date().toISOString(),
+        })
+      },
+    },
+  ],
   jobs: {
     access: {
       run: ({ req }: { req: PayloadRequest }): boolean => {

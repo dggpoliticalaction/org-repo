@@ -1,8 +1,8 @@
 import js from "@eslint/js";
-import eslintConfigPrettier from "eslint-config-prettier";
 import turboPlugin from "eslint-plugin-turbo";
 import tseslint from "typescript-eslint";
 import onlyWarn from "eslint-plugin-only-warn";
+import eslintConfigPrettier from "eslint-config-prettier";
 
 /**
  * A shared ESLint configuration for the repository.
@@ -11,7 +11,6 @@ import onlyWarn from "eslint-plugin-only-warn";
  * */
 export const config = [
   js.configs.recommended,
-  eslintConfigPrettier,
   ...tseslint.configs.recommended,
   {
     plugins: {
@@ -19,10 +18,6 @@ export const config = [
     },
     rules: {
       "turbo/no-undeclared-env-vars": "warn",
-      // Enforce consistent code style
-      quotes: ["error", "single", { avoidEscape: true }],
-      semi: ["error", "always"],
-      "comma-dangle": ["error", "always-multiline"],
       // Allow console.warn and console.error until we set up something like sentry
       "no-console": ["warn", { allow: ["warn", "error"] }],
       "no-debugger": ["warn"],
@@ -49,19 +44,6 @@ export const config = [
       "@typescript-eslint/no-var-requires": "error",
       "@typescript-eslint/prefer-ts-expect-error": "error",
       "prefer-const": ["error"],
-      "object-curly-spacing": ["error", "always"],
-      "array-bracket-spacing": ["error", "never"],
-      indent: ["error", 2, { SwitchCase: 1 }],
-      "max-len": [
-        "error",
-        {
-          code: 100,
-          ignoreUrls: true,
-          ignoreStrings: true,
-          ignoreTemplateLiterals: true,
-          ignoreRegExpLiterals: true,
-        },
-      ],
     },
   },
   {
@@ -70,6 +52,14 @@ export const config = [
     },
   },
   {
-    ignores: ["dist/**", "node_modules/**", ".next/**", "out/**"],
+    ignores: [
+      "dist/**",
+      "node_modules/**",
+      ".next/**",
+      "out/**",
+      "**/next-env.d.ts",
+    ],
   },
+  // Prettier config must be last to disable conflicting rules
+  eslintConfigPrettier,
 ];

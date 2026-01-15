@@ -7,6 +7,34 @@
  */
 
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuBlock".
+ */
+export type MenuBlock =
+  | {
+      link: {
+        type?: ('reference' | 'custom') | null;
+        newTab?: boolean | null;
+        reference?:
+          | ({
+              relationTo: 'pages';
+              value: number | Page;
+            } | null)
+          | ({
+              relationTo: 'volumes';
+              value: number | Volume;
+            } | null)
+          | ({
+              relationTo: 'articles';
+              value: number | Article;
+            } | null);
+        url?: string | null;
+        label: string;
+      };
+      id?: string | null;
+    }[]
+  | null;
+/**
  * Supported timezones in IANA format.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -210,8 +238,11 @@ export interface Page {
     description?: string | null;
   };
   publishedAt?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -299,8 +330,11 @@ export interface Article {
         name?: string | null;
       }[]
     | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -795,8 +829,11 @@ export interface Form {
 export interface Category {
   id: number;
   title: string;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   parent?: (number | null) | Category;
   breadcrumbs?:
     | {
@@ -1121,8 +1158,8 @@ export interface PagesSelect<T extends boolean = true> {
         description?: T;
       };
   publishedAt?: T;
+  generateSlug?: T;
   slug?: T;
-  slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1234,8 +1271,8 @@ export interface ArticlesSelect<T extends boolean = true> {
         id?: T;
         name?: T;
       };
+  generateSlug?: T;
   slug?: T;
-  slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1364,8 +1401,8 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface CategoriesSelect<T extends boolean = true> {
   title?: T;
+  generateSlug?: T;
   slug?: T;
-  slugLock?: T;
   parent?: T;
   breadcrumbs?:
     | T
@@ -1663,30 +1700,8 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'volumes';
-                value: number | Volume;
-              } | null)
-            | ({
-                relationTo: 'articles';
-                value: number | Article;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
+  primaryMenu?: MenuBlock;
+  secondaryMenu?: MenuBlock;
   actionButton: {
     enabled: boolean;
     link?: {
@@ -1758,20 +1773,8 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
+  primaryMenu?: T | MenuBlockSelect<T>;
+  secondaryMenu?: T | MenuBlockSelect<T>;
   actionButton?:
     | T
     | {
@@ -1791,6 +1794,22 @@ export interface HeaderSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuBlock_select".
+ */
+export interface MenuBlockSelect<T extends boolean = true> {
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
