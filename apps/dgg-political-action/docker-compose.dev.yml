@@ -8,9 +8,10 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: dgg-political-action
     ports:
-      - "9009:5432" #its over nine thousand!
+      - '9009:5432' #its over nine thousand!
     volumes:
       - dgg_political_action_postgres_data:/var/lib/postgresql/data
 
 volumes:
   dgg_political_action_postgres_data:
+    external: true
