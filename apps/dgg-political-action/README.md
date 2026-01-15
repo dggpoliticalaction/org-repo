@@ -236,13 +236,11 @@ The database starts empty. After creating your first admin user, you need to see
 4. Register your block in the appropriate collection:
 
    **For Pages (Layout Builder blocks):**
-
    - Import your block config in `src/collections/Pages/index.ts`
    - Add it to the `blocks` array in the `layout` field
    - Example: `blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock]`
 
    **For Posts (Lexical Rich Text blocks):**
-
    - Import your block config in `src/collections/Posts/index.ts`
    - Add it to the `BlocksFeature` in the `lexicalEditor` configuration
    - Example: `BlocksFeature({ blocks: [Banner, Code, MediaBlock] })`
