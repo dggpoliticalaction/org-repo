@@ -4,7 +4,6 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "dev:down": "turbo run dev:down",
     "db:reset": "node scripts/reset-db.js",
     "lint": "turbo run lint",
     "lint:ci": "turbo run lint -- --max-warnings 0",

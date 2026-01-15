@@ -36,8 +36,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "check-types": "tsc --noEmit",
-    "dev:down": "docker compose --file ../../docker-compose.dev.yml down"
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@discordjs/rest": "^2.5.1",
