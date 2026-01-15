@@ -313,8 +313,14 @@ export const Articles: CollectionConfig = {
         }
       },
       (args: Parameters<CollectionBeforeChangeHook<Article>>[0]): Partial<Article> | void => {
-        const { data } = args
-        if (data?.content) {
+        const { data, req } = args
+        const autosaveQuery = req?.query?.autosave
+        const isAutosave =
+          autosaveQuery === true ||
+          autosaveQuery === 'true' ||
+          autosaveQuery === 1 ||
+          autosaveQuery === '1'
+        if (!isAutosave && data?.content) {
           const dataWithFootnotes = data as Partial<Article> & {
             footnotes?: FootnoteItem[]
           }
