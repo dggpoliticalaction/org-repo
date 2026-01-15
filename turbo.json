@@ -39,12 +39,21 @@
     "check-types": {
       "dependsOn": ["^check-types"]
     },
-    "dev": {
+    "dev:start": {
       "cache": false,
       "persistent": true
     },
-    "dev:down": {
-      "cache": false
+    "dev:stop": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev:clear-db": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
     },
     "ci": {
       "dependsOn": ["^ci"],

@@ -1,19 +1,4 @@
-version: "3.8"
-
 services:
-  postgres-pragmatic-papers:
-    container_name: pragmatic-papers-postgres-dev
-    image: postgres:15-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: pragmatic-papers
-    ports:
-      - "9000:5432"
-    volumes:
-      - pragmatic_papers_postgres_data:/var/lib/postgresql/data
-
   postgres-dgg-political-action:
     container_name: dgg-political-action-postgres-dev
     image: postgres:15-alpine
@@ -28,5 +13,4 @@ services:
       - dgg_political_action_postgres_data:/var/lib/postgresql/data
 
 volumes:
-  pragmatic_papers_postgres_data:
   dgg_political_action_postgres_data:
