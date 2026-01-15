@@ -35,14 +35,14 @@ pnpm build
 ```
 
 ### Develop
-
-To develop all apps and packages, run the following command:
+To develop all apps and packages, run the following command in root.
 ```
+docker compose -f docker-compose.dev.yaml up -d
 pnpm dev
 ```
-To end docker containers, run the following command:
+To stop all docker dev containers Run`
 ```
-pnpm dev:down
+docker compose -f docker-compose.dev.yaml down
 ```
 
 ### Run an application
@@ -54,8 +54,6 @@ To run or develop a single application:
   ```
   cd apps/pragmatic-papers
   pnpm dev
-
-  pnpm dev:down
   ```
 - or, you can filter turborepo tasks
   ```
