@@ -8,35 +8,21 @@ import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import React, { useState } from 'react'
 import './index.scss'
 
-const collectionLabels = {
-  articles: {
-    plural: 'Articles',
-    singular: 'Article',
-  },
-  categories: {
-    plural: 'Categories',
-    singular: 'Category',
-  },
-  pages: {
-    plural: 'Pages',
-    singular: 'Page',
-  },
-  users: {
-    plural: 'Users',
-    singular: 'User',
-  },
-  volumes: {
-    plural: 'Volumes',
-    singular: 'Volume',
-  },
-}
+const collectionLabels = new Map([
+  ['articles', { plural: 'Articles', singular: 'Article' }],
+  ['categories', { plural: 'Categories', singular: 'Category' }],
+  ['pages', { plural: 'Pages', singular: 'Page' }],
+  ['users', { plural: 'Users', singular: 'User' }],
+  ['volumes', { plural: 'Volumes', singular: 'Volume' }],
+])
 
 export const AdminBar: React.FC<PayloadAdminBarProps> = ({ ...props }) => {
-  const segments = useSelectedLayoutSegments()
+  const [_, collectionSlug] = useSelectedLayoutSegments()
   const [show, setShow] = useState(false)
-  const collection = (
-    collectionLabels[segments?.[1] as keyof typeof collectionLabels] ? segments[1] : 'pages'
-  ) as keyof typeof collectionLabels
+  const collectionLabel = collectionLabels.get(collectionSlug as string) || {
+    plural: 'Pages',
+    singular: 'Page',
+  }
   const router = useRouter()
 
   const onAuthChange = React.useCallback((user: PayloadMeUser) => {
@@ -61,10 +47,10 @@ export const AdminBar: React.FC<PayloadAdminBarProps> = ({ ...props }) => {
             user: '',
           }}
           cmsURL={getClientSideURL()}
-          collectionSlug={collection}
+          collectionSlug={collectionSlug || 'pages'}
           collectionLabels={{
-            plural: collectionLabels[collection]?.plural || 'Pages',
-            singular: collectionLabels[collection]?.singular || 'Page',
+            plural: collectionLabel.plural || 'Pages',
+            singular: collectionLabel.singular || 'Page',
           }}
           logo={<span>Dashboard</span>}
           onAuthChange={onAuthChange}
