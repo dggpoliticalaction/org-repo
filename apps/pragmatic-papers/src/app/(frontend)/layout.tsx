@@ -71,11 +71,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AdminBar
-            adminBarProps={{
-              preview: isEnabled,
-            }}
-          />
+          <AdminBar preview={isEnabled} />
           <Header />
           <main className="container flex flex-1 items-center justify-center gap-3 px-4 md:p-6">
             {children}

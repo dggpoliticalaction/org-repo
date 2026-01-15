@@ -1,9 +1,8 @@
 import type { Payload } from 'payload'
-import { homeStatic } from './home-static'
-import { createUsers } from './users'
 import { createArticles } from './articles'
-import { createVolumes } from './volumes'
+import { homeStatic } from './home-static'
 import { createMedia } from './media'
+import { createVolumes } from './volumes'
 
 export const seed = async (payload: Payload): Promise<void> => {
   // Delete all content before seeding
@@ -43,13 +42,13 @@ export const seed = async (payload: Payload): Promise<void> => {
 
   // Begin seeding
 
-  const { writer1, writer2 } = await createUsers(payload)
+  // const { writer1, writer2 } = await createUsers(payload)
 
   const { mediaDocs } = await createMedia(payload)
 
   const articleResults = await createArticles(
     payload,
-    [writer1, writer2],
+    // [writer1, writer2],
     [
       {
         volumeNumber: 1,

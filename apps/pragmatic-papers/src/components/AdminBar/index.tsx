@@ -1,31 +1,37 @@
 'use client'
 
-import type { PayloadAdminBarProps, PayloadMeUser } from '@payloadcms/admin-bar'
-
+import { getClientSideURL } from '@/utilities/getURL'
 import { cn } from '@/utilities/ui'
+import type { PayloadAdminBarProps, PayloadMeUser } from '@payloadcms/admin-bar'
 import { PayloadAdminBar } from '@payloadcms/admin-bar'
 import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import React, { useState } from 'react'
-
 import './index.scss'
 
-import { getClientSideURL } from '@/utilities/getURL'
-
-const baseClass = 'admin-bar'
-
 const collectionLabels = {
+  articles: {
+    plural: 'Articles',
+    singular: 'Article',
+  },
+  categories: {
+    plural: 'Categories',
+    singular: 'Category',
+  },
   pages: {
     plural: 'Pages',
     singular: 'Page',
   },
+  users: {
+    plural: 'Users',
+    singular: 'User',
+  },
+  volumes: {
+    plural: 'Volumes',
+    singular: 'Volume',
+  },
 }
 
-const Title: React.FC = () => <span>Dashboard</span>
-
-export const AdminBar: React.FC<{
-  adminBarProps?: PayloadAdminBarProps
-}> = (props) => {
-  const { adminBarProps } = props || {}
+export const AdminBar: React.FC<PayloadAdminBarProps> = ({ ...props }) => {
   const segments = useSelectedLayoutSegments()
   const [show, setShow] = useState(false)
   const collection = (
@@ -39,19 +45,20 @@ export const AdminBar: React.FC<{
 
   return (
     <div
-      className={cn(baseClass, 'bg-black py-2 text-white', {
-        block: show,
-        hidden: !show,
-      })}
+      className={cn(
+        'admin-bar',
+        'bg-background flex w-full justify-center py-2',
+        show ? 'block' : 'hidden',
+      )}
     >
-      <div className="container mx-auto p-4 md:p-6">
+      <div className="container p-4 md:p-6">
         <PayloadAdminBar
-          {...adminBarProps}
-          className="py-2 text-white"
+          {...props}
+          className="text-foreground! py-2"
           classNames={{
-            controls: 'font-medium text-white',
-            logo: 'text-white',
-            user: 'text-white',
+            controls: 'font-medium',
+            logo: '',
+            user: '',
           }}
           cmsURL={getClientSideURL()}
           collectionSlug={collection}
@@ -59,7 +66,7 @@ export const AdminBar: React.FC<{
             plural: collectionLabels[collection]?.plural || 'Pages',
             singular: collectionLabels[collection]?.singular || 'Page',
           }}
-          logo={<Title />}
+          logo={<span>Dashboard</span>}
           onAuthChange={onAuthChange}
           onPreviewExit={() => {
             fetch('/next/exit-preview').then(() => {

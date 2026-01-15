@@ -8,7 +8,7 @@ import { admin as adminPlugin } from 'better-auth/plugins'
 export const auth = betterAuth({
   // baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
   database: drizzleAdapter(db, {
-    provider: 'sqlite',
+    provider: 'pg',
     schema,
     usePlural: false, // Should be false when having custom table name mapping as outlined below
   }),
