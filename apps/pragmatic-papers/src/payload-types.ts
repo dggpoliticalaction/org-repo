@@ -302,6 +302,13 @@ export interface Article {
         name?: string | null;
       }[]
     | null;
+  footnotes?:
+    | {
+        index?: number | null;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -1242,6 +1249,13 @@ export interface ArticlesSelect<T extends boolean = true> {
     | {
         id?: T;
         name?: T;
+      };
+  footnotes?:
+    | T
+    | {
+        index?: T;
+        note?: T;
+        id?: T;
       };
   generateSlug?: T;
   slug?: T;

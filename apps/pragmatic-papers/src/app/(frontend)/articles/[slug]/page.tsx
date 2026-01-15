@@ -76,6 +76,10 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
+  const articleFootnotes = (
+    article as Article & { footnotes?: Array<{ index: number; note: string }> }
+  ).footnotes
+
   return (
     <article className="m-auto max-w-3xl p-5 pb-16">
       <PageClient />
@@ -87,7 +91,12 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
       <ArticleHero article={article} />
 
-      <RichText className="" data={article.content} enableGutter={false} />
+      <RichText
+        className=""
+        data={article.content}
+        enableGutter={false}
+        footnotes={articleFootnotes}
+      />
     </article>
   )
 }

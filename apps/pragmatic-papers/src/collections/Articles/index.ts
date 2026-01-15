@@ -49,22 +49,34 @@ import { RedditEmbed } from '@/blocks/RedditEmbed/config'
 import { BlueSkyEmbed } from '@/blocks/BlueSkyEmbed/config'
 import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
 
-const setFootnoteIndices = (editorState?: SerializedEditorState | null): void => {
-  if (!editorState || typeof editorState !== 'object') return
+type FootnoteItem = {
+  index: number
+  note: string
+}
+
+const applyFootnoteIndicesAndCollect = (
+  editorState?: SerializedEditorState | null,
+): FootnoteItem[] => {
+  if (!editorState || typeof editorState !== 'object') return []
 
   let footnoteIndex = 0
+  const footnotes: FootnoteItem[] = []
 
   const visitNode = (node: SerializedLexicalNode) => {
     if (!node || typeof node !== 'object') return
 
     if (node.type === 'inlineBlock') {
       const inlineNode = node as SerializedLexicalNode & {
-        fields?: { blockType?: string; index?: number }
+        fields?: { blockType?: string; index?: number; note?: string }
       }
 
-      if (inlineNode.fields?.blockType === 'footnote') {
+      if (inlineNode.fields?.blockType === 'footnote' && inlineNode.fields.note) {
         footnoteIndex += 1
         inlineNode.fields.index = footnoteIndex
+        footnotes.push({
+          index: footnoteIndex,
+          note: inlineNode.fields.note,
+        })
       }
     }
 
@@ -77,6 +89,8 @@ const setFootnoteIndices = (editorState?: SerializedEditorState | null): void =>
   if (Array.isArray(rootChildren)) {
     rootChildren.forEach((child: SerializedLexicalNode) => visitNode(child))
   }
+
+  return footnotes
 }
 
 export const Articles: CollectionConfig = {
@@ -264,6 +278,27 @@ export const Articles: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'footnotes',
+      type: 'array',
+      access: {
+        update: () => false,
+      },
+      admin: {
+        readOnly: true,
+        hidden: true,
+      },
+      fields: [
+        {
+          name: 'index',
+          type: 'number',
+        },
+        {
+          name: 'note',
+          type: 'textarea',
+        },
+      ],
+    },
     slugField(),
   ],
   hooks: {
@@ -279,7 +314,14 @@ export const Articles: CollectionConfig = {
       },
       (args: Parameters<CollectionBeforeChangeHook<Article>>[0]): Partial<Article> | void => {
         const { data } = args
-        setFootnoteIndices(data?.content as SerializedEditorState)
+        if (data?.content) {
+          const dataWithFootnotes = data as Partial<Article> & {
+            footnotes?: FootnoteItem[]
+          }
+          dataWithFootnotes.footnotes = applyFootnoteIndicesAndCollect(
+            data.content as SerializedEditorState,
+          )
+        }
         return data
       },
     ],

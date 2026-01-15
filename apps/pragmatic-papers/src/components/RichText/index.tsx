@@ -12,7 +12,6 @@ import {
   LinkJSXConverter,
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
-import type { SerializedLexicalNode } from '@payloadcms/richtext-lexical/lexical'
 
 import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
 
@@ -56,7 +55,6 @@ type NodeTypes =
   | SerializedInlineBlockNode<MathBlockProps | FootnoteBlockProps>
 
 interface FootnoteEntry {
-  id: string
   index: number
   note: string
 }
@@ -68,37 +66,6 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   }
   const slug = value.slug
   return relationTo === 'articles' ? `/articles/${slug}` : `/${slug}`
-}
-
-const collectFootnotes = (data: DefaultTypedEditorState | null | undefined): FootnoteEntry[] => {
-  if (!data?.root?.children?.length) return []
-
-  const notes: FootnoteEntry[] = []
-
-  const visitNode = (node: SerializedLexicalNode) => {
-    if (!node || typeof node !== 'object') return
-
-    if (node.type === 'inlineBlock') {
-      const inlineNode = node as SerializedInlineBlockNode<FootnoteBlockProps>
-      const { fields } = inlineNode
-
-      if (fields?.blockType === 'footnote' && fields.note && typeof fields.index === 'number') {
-        notes.push({
-          id: fields.id,
-          index: fields.index,
-          note: fields.note,
-        })
-      }
-    }
-
-    if ('children' in node && Array.isArray(node.children)) {
-      node.children.forEach((child: SerializedLexicalNode) => visitNode(child))
-    }
-  }
-
-  data.root.children.forEach((child: SerializedLexicalNode) => visitNode(child))
-
-  return notes
 }
 
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
@@ -142,12 +109,13 @@ type Props = {
   data: DefaultTypedEditorState
   enableGutter?: boolean
   enableProse?: boolean
+  footnotes?: FootnoteEntry[]
 } & React.HTMLAttributes<HTMLDivElement>
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function RichText(props: Props) {
-  const { className, enableProse = true, enableGutter = true, data, ...rest } = props
-  const footnotes = collectFootnotes(data)
+  const { className, enableProse = true, enableGutter = true, data, footnotes, ...rest } = props
+  const orderedFootnotes = footnotes ?? []
   return (
     <div
       className={cn(
@@ -162,14 +130,14 @@ export default function RichText(props: Props) {
       {...rest}
     >
       <ConvertRichText converters={jsxConverters} data={data} disableContainer />
-      {footnotes.length > 0 ? (
+      {orderedFootnotes.length > 0 ? (
         <section className="footnotes mt-6 border-t border-border pt-4">
           <ol className="list-decimal pl-4">
-            {footnotes.map((footnote) => {
+            {orderedFootnotes.map((footnote) => {
               const footnoteNumber = footnote.index
 
               return (
-                <li key={footnote.id} id={`footnote-${footnoteNumber}`}>
+                <li key={footnoteNumber} id={`footnote-${footnoteNumber}`}>
                   {footnote.note}{' '}
                   <a
                     href={`#footnote-ref-${footnoteNumber}`}
