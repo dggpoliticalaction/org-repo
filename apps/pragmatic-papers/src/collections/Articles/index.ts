@@ -40,6 +40,7 @@ import { writer } from '@/access/writer'
 import { editorFieldLevel } from '@/access/editor'
 import { type Article } from '@/payload-types'
 import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
+import { FootnoteBlock } from '@/blocks/Footnote/config'
 import { SquiggleRule } from '@/blocks/SquiggleRule/config'
 import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
 import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
@@ -111,7 +112,7 @@ export const Articles: CollectionConfig = {
                         BlueSkyEmbed,
                         TikTokEmbed,
                       ],
-                      inlineBlocks: [InlineMathBlock],
+                      inlineBlocks: [InlineMathBlock, FootnoteBlock],
                     }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),

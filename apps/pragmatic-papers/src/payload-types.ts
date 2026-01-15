@@ -1977,6 +1977,19 @@ export interface InlineMathBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FootnoteBlock".
+ */
+export interface FootnoteBlock {
+  /**
+   * Footnote text.
+   */
+  note: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'footnote';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
 export interface Auth {
