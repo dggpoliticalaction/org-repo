@@ -39,7 +39,19 @@
     "check-types": {
       "dependsOn": ["^check-types"]
     },
+    "dev:install": {
+      "cache": false,
+      "persistent": true
+    },
     "dev:start": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev:db": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev:next": {
       "cache": false,
       "persistent": true
     },
