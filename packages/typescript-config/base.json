@@ -19,6 +19,6 @@
     "noImplicitOverride": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
-    "sourceMap": true,
+    "sourceMap": true
   }
 }
