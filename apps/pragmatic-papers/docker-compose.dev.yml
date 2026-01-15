@@ -14,4 +14,4 @@ services:
 
 volumes:
   pragmatic_papers_postgres_data:
-    external: true
+    name: pragmatic_papers_postgres_data
