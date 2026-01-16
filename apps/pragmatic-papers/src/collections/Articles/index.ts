@@ -24,7 +24,7 @@ import { Banner } from '@/blocks/Banner/config'
 import { Code } from '@/blocks/Code/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 
-import { slugField } from '@/fields/slug'
+import { slugField } from 'payload'
 import { revalidateArticle, revalidateDelete } from './hooks/revalidateArticle'
 import { populateAuthors } from './hooks/populateAuthors'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
@@ -58,19 +58,16 @@ export const Articles: CollectionConfig = {
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
-      url: ({ data, req }) => {
-        const path = generatePreviewPath({
-          slug: typeof data?.slug === 'string' ? data.slug : '',
+      url: ({ data, req }) =>
+        generatePreviewPath({
+          slug: data?.slug,
           collection: 'articles',
           req,
-        })
-
-        return path
-      },
+        }),
     },
     preview: (data, { req }) =>
       generatePreviewPath({
-        slug: typeof data?.slug === 'string' ? data.slug : '',
+        slug: data?.slug as string,
         collection: 'articles',
         req,
       }),
@@ -235,7 +232,7 @@ export const Articles: CollectionConfig = {
         },
       ],
     },
-    ...slugField(),
+    slugField(),
   ],
   hooks: {
     beforeChange: [

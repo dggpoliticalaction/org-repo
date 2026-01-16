@@ -210,8 +210,11 @@ export interface Page {
     description?: string | null;
   };
   publishedAt?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -299,8 +302,11 @@ export interface Article {
         name?: string | null;
       }[]
     | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -795,8 +801,11 @@ export interface Form {
 export interface Category {
   id: number;
   title: string;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   parent?: (number | null) | Category;
   breadcrumbs?:
     | {
@@ -1121,8 +1130,8 @@ export interface PagesSelect<T extends boolean = true> {
         description?: T;
       };
   publishedAt?: T;
+  generateSlug?: T;
   slug?: T;
-  slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1234,8 +1243,8 @@ export interface ArticlesSelect<T extends boolean = true> {
         id?: T;
         name?: T;
       };
+  generateSlug?: T;
   slug?: T;
-  slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1364,8 +1373,8 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface CategoriesSelect<T extends boolean = true> {
   title?: T;
+  generateSlug?: T;
   slug?: T;
-  slugLock?: T;
   parent?: T;
   breadcrumbs?:
     | T
@@ -1687,6 +1696,36 @@ export interface Header {
         id?: string | null;
       }[]
     | null;
+  actionButton: {
+    enabled: boolean;
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'volumes';
+            value: number | Volume;
+          } | null)
+        | ({
+            relationTo: 'articles';
+            value: number | Article;
+          } | null);
+      url?: string | null;
+      label: string;
+    };
+    /**
+     * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
+     */
+    backgroundColor?: string | null;
+    /**
+     * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
+     */
+    textColor?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1741,6 +1780,22 @@ export interface HeaderSelect<T extends boolean = true> {
               label?: T;
             };
         id?: T;
+      };
+  actionButton?:
+    | T
+    | {
+        enabled?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        backgroundColor?: T;
+        textColor?: T;
       };
   updatedAt?: T;
   createdAt?: T;

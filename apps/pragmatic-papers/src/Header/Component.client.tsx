@@ -7,8 +7,9 @@ import React, { useEffect, useState } from 'react'
 import type { Header } from '@/payload-types'
 
 import { Logo } from '@/components/Logo/Logo'
-import { HeaderNav } from './Nav'
 import { cn } from '@/utilities/ui'
+import { ActionButton } from './ActionButton/Component'
+import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
   data: Header
@@ -31,12 +32,21 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   }, [headerTheme])
 
   return (
-    <header className="flex flex-col my-6 items-center" {...(theme ? { 'data-theme': theme } : {})}>
-      <Link href="/">
-        <Logo loading="eager" priority="high" />
-      </Link>
-      <div className={cn('flex justify-between', !data.navItems ? 'py-8' : '')}>
-        <HeaderNav data={data} />
+    <header
+      className="container my-6 grid items-center gap-4 md:grid-cols-3"
+      {...(theme ? { 'data-theme': theme } : {})}
+    >
+      <div className="hidden lg:block" />
+      <div className="flex justify-center md:col-span-2 lg:col-span-1">
+        <Link href="/">
+          <Logo loading="eager" priority="high" />
+        </Link>
+        <div className={cn('flex justify-between', !data.navItems ? 'py-8' : '')}>
+          <HeaderNav data={data} />
+        </div>
+      </div>
+      <div className="col-span-1 hidden justify-end md:flex">
+        <ActionButton {...data.actionButton} />
       </div>
     </header>
   )
