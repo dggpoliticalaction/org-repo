@@ -53,7 +53,7 @@
     "dev:db-down": {
       "cache": false
     },
-    "dev:db:nuke": {
+    "dev:db-nuke": {
       "cache": false
     },
     "dev": {
