@@ -35,20 +35,17 @@ pnpm build
 ```
 
 ### Develop
-To develop all apps and packages, run the following command in root.
+
+To develop all apps and packages, run the following command:
+
 ```
-docker compose -f docker-compose.dev.yaml up -d
+cd my-turborepo
 pnpm dev
-```
-To stop all docker dev containers Run`
-```
-docker compose -f docker-compose.dev.yaml down
 ```
 
 ### Run an application
 
 To run or develop a single application:
-(requires docker)
 
 - you can navigate to a specific application's directory and run as usual
   ```

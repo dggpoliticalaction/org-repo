@@ -3,10 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev:start": "turbo run dev:start",
-    "dev:stop": "turbo run dev:stop",
-    "dev:clear-db": "turbo run dev:clear-db",
-    "dev": "pnpm dev:start && turbo run dev",
+    "dev": "turbo run dev",
     "lint": "turbo run lint",
     "lint:ci": "turbo run lint -- --max-warnings 0",
     "lint:fix": "turbo run lint -- --fix",

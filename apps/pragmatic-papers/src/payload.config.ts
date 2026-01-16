@@ -14,6 +14,7 @@ import { Header } from '@/Header/config'
 import { plugins } from '@/plugins'
 import { getServerSideURL } from '@/utilities/getURL'
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import path from 'path'
 import { buildConfig, type PayloadRequest, type SharpDependency } from 'payload'
 import sharp from 'sharp'
@@ -67,11 +68,18 @@ export default buildConfig({
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
-  db: postgresAdapter({
-    pool: {
-      connectionString: process.env.DATABASE_URI,
-    },
-  }),
+  db:
+    process.env.NODE_ENV === 'production'
+      ? postgresAdapter({
+          pool: {
+            connectionString: process.env.DATABASE_URI || '',
+          },
+        })
+      : sqliteAdapter({
+          client: {
+            url: process.env.DATABASE_URI || '',
+          },
+        }),
   collections: [
     // Auth
     Users,
@@ -94,18 +102,6 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  endpoints: [
-    {
-      path: '/health',
-      method: 'get',
-      handler: async () => {
-        return Response.json({
-          status: 'ok',
-          timestamp: new Date().toISOString(),
-        })
-      },
-    },
-  ],
   jobs: {
     access: {
       run: ({ req }: { req: PayloadRequest }): boolean => {

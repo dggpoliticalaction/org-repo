@@ -7,10 +7,7 @@
   "scripts": {
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
-    "dev:start": "docker compose -f docker-compose.dev.yml up -d",
-    "dev:stop": "docker compose -f docker-compose.dev.yml down",
-    "dev:clear-db": "docker volume ls -q | grep -q '^dgg_political_action_postgres_data$' && docker volume rm dgg_political_action_postgres_data",
-    "dev": "cross-env NODE_OPTIONS=--no-deprecation pnpm dev:start && next dev",
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
@@ -26,7 +23,7 @@
   },
   "dependencies": {
     "@payloadcms/admin-bar": "^3.70.0",
-    "@payloadcms/db-postgres": "^3.70.0",
+    "@payloadcms/db-sqlite": "^3.70.0",
     "@payloadcms/live-preview-react": "^3.70.0",
     "@payloadcms/next": "^3.70.0",
     "@payloadcms/payload-cloud": "^3.70.0",
