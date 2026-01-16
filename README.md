@@ -26,7 +26,6 @@ This repo has some additional tools:
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
 
-## Development
 
 ### Requirements
 ```
@@ -41,12 +40,20 @@ pnpm install
 ```
 
 
-### Running a development environment
-To start all the applications in development mode, run:
+### Quick Start 
+1. First [clone the repo](#clone) if you have not done so already and change directory into org-repo
+```
+cd org-repo
+```
+2. copy the example .env files 
+```
+cp apps/pragmatic-papers/.env.example apps/pragmatic-papers/.env && cp apps/dgg-political-action/.env.example apps/dgg-political-action/.env
+```
+3. Start dev environment 
 ```
 pnpm dev
 ```
-The `dev` script will first install the dependencies, then start the docker containers, and then start the development servers for all applications.
+4. open `http://localhost:8000` or `http://localhost:8000`
 
 > [!TIP] 
 > You can also start a single application by running pnpm dev in the applications root directory.
