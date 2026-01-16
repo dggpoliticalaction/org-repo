@@ -1,23 +1,20 @@
+import { Articles } from '@/collections/Articles'
+import { Categories } from '@/collections/Categories'
+import { Media } from '@/collections/Media'
+import { Pages } from '@/collections/Pages'
+import { Users } from '@/collections/Users'
+import { Volumes } from '@/collections/Volumes'
+import { Webhooks } from '@/collections/Webhooks'
+import { defaultLexical } from '@/fields/defaultLexical'
+import { Footer } from '@/Footer/config'
+import { Header } from '@/Header/config'
+import { plugins } from '@/plugins'
+import { getServerSideURL } from '@/utilities/getURL'
 import { postgresAdapter } from '@payloadcms/db-postgres'
-
-import sharp from 'sharp'
-
 import path from 'path'
 import { buildConfig, type PayloadRequest, type SharpDependency } from 'payload'
+import sharp from 'sharp'
 import { fileURLToPath } from 'url'
-
-import { Categories } from './collections/Categories'
-import { Media } from './collections/Media'
-import { Pages } from './collections/Pages'
-import { Users } from './collections/Users'
-import { Footer } from './Footer/config'
-import { Header } from './Header/config'
-import { plugins } from './plugins'
-import { defaultLexical } from '@/fields/defaultLexical'
-import { getServerSideURL } from './utilities/getURL'
-import { Articles } from './collections/Articles'
-import { Volumes } from './collections/Volumes'
-import { Webhooks } from './collections/Webhooks'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -61,7 +58,7 @@ export default buildConfig({
   editor: defaultLexical,
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI || '',
+      connectionString: process.env.DATABASE_URI,
     },
   }),
   collections: [Pages, Articles, Volumes, Media, Categories, Users, Webhooks],
