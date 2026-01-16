@@ -2,6 +2,9 @@ services:
   postgres-pragmatic-papers:
     container_name: pragmatic-papers-postgres-dev
     image: postgres:15-alpine
+    ### Because of how payload works, this outputs way too many logs to be of any use.
+    ### log_statment options are none (off), ddl, mod, and all (all statements). ddl logs all data definition statements
+    command: -c log_statement=none
     restart: always
     environment:
       POSTGRES_USER: postgres

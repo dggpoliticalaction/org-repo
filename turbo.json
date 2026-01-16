@@ -42,11 +42,16 @@
     "dev:install": {
       "cache": false
     },
-    "dev:db": {
+    "dev:db-init": {
       "cache": false
     },
+    "dev:db-logs": {
+      "dependsOn": ["dev:db-init"],
+      "cache": false,
+      "persistent": true
+    },
     "dev:next": {
-      "dependsOn": ["^dev:install", "^dev:db"],
+      "dependsOn": ["dev:install", "dev:db-init"],
       "cache": false,
       "persistent": true
     },
@@ -54,9 +59,11 @@
       "cache": false
     },
     "dev:db-nuke": {
-      "cache": false
+      "cache": false,
+      "interactive": true
     },
     "dev": {
+      "dependsOn": ["dev:db-logs", "dev:next"],
       "cache": false,
       "persistent": true
     },
