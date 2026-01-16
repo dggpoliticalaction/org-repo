@@ -42,8 +42,11 @@ export const Users: CollectionConfig = {
       required: false,
       admin: {
         position: 'sidebar',
+        // Admin accounts are never treated as authors; this slug only applies to
+        // writer/editor accounts that should have a public /authors/{slug} page.
         description: 'Slug used for the public author URL, e.g. /authors/jane-doe',
-        condition: ({ id }) => Boolean(id),
+        // Only non-admins can have an author slug
+        condition: ({ id, role }) => Boolean(id) && role !== 'admin',
       },
     },
     {
@@ -138,8 +141,15 @@ export const Users: CollectionConfig = {
         if (!data) return data
 
         const userData = data as Partial<User>
+
+        // Admin accounts should never have an author slug exposed
+        if (userData.role === 'admin') {
+          userData.authorSlug = null
+          return userData
+        }
+
         // Only auto-generate an author slug for writers; for other roles
-        // (admin, chief-editor, editor, user) the slug should be explicitly set.
+        // (chief-editor, editor, user) the slug should be explicitly set.
         if (userData.role === 'writer') {
           if (!userData.authorSlug || typeof userData.authorSlug !== 'string') {
             const slug = authorSlugFromNameAndId(

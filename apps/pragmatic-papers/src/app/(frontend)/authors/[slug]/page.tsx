@@ -25,12 +25,19 @@ interface UserSocialLinkEntry {
   } | null
 }
 
-function normalizeExternalUrl(url: string): string {
-  const trimmed = url.trim()
-  // If it already has a scheme like http:, https:, mailto:, etc., leave it
-  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) return trimmed
-  // Otherwise, treat as web URL and prefix https://
-  return `https://${trimmed.replace(/^\/+/, '')}`
+function normalizeExternalUrl(raw: string): string | null {
+  const trimmed = raw.trim()
+  if (!trimmed) return null
+  if (typeof URL !== 'undefined' && URL.canParse?.(trimmed)) {
+    return trimmed
+  }
+  const prefixed = `https://${trimmed.replace(/^\/+/, '')}`
+  if (typeof URL !== 'undefined' && URL.canParse?.(prefixed)) {
+    return prefixed
+  }
+
+  // As a final fallback in non-supporting environments, return the raw value
+  return trimmed
 }
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
@@ -43,15 +50,24 @@ export async function generateStaticParams(): Promise<{ slug: string | null | un
     pagination: false,
     where: {
       role: {
-        in: ['writer', 'editor', 'chief-editor', 'admin'],
+        in: ['writer', 'editor', 'chief-editor'],
       },
     },
   })
 
-  const params = (users.docs as User[]).map((user) => {
-    const slug = user.authorSlug || authorSlugFromUser(user)
-    return { slug }
-  })
+  const docs = (users.docs as User[]) || []
+
+  const params = docs
+    .filter((user) => {
+      // Admin accounts are never exposed as authors; writers always get a page,
+      // and editors/chief-editors require an explicit authorSlug.
+      if (user.role === 'writer') return true
+      return Boolean(user.authorSlug)
+    })
+    .map((user) => {
+      const slug = user.authorSlug || authorSlugFromUser(user)
+      return { slug }
+    })
 
   return params
 }
@@ -77,7 +93,7 @@ const queryUserBySlug = cache(async ({ slug }: { slug: string }): Promise<User |
       and: [
         {
           role: {
-            in: ['writer', 'editor', 'chief-editor', 'admin'],
+            in: ['writer', 'editor', 'chief-editor'],
           },
         },
         {
@@ -235,23 +251,26 @@ export default async function AuthorPage({
 
               if (!linkGroup) return null
 
-              const href =
+              const normalized =
                 linkGroup.type === 'custom' && linkGroup.url
                   ? normalizeExternalUrl(linkGroup.url)
-                  : undefined
+                  : null
 
-              if (!href) return null
+              if (!normalized) return null
+
+              const label = linkGroup.label || linkGroup.url || normalized
 
               return (
-                <Link
-                  key={linkGroup.id ?? linkGroup.url ?? href}
-                  href={href}
+                <a
+                  key={linkGroup.id ?? linkGroup.url ?? normalized}
+                  href={normalized}
                   target="_blank"
                   rel="noreferrer noopener"
                   className="text-sm text-brand underline-offset-2 hover:underline"
+                  aria-label={label ? `${label} (opens in a new tab)` : 'External author link'}
                 >
-                  {linkGroup.label || linkGroup.url || href}
-                </Link>
+                  {label}
+                </a>
               )
             })}
           </nav>

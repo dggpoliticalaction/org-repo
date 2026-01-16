@@ -5,10 +5,8 @@ import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React from 'react'
 
-import type { Media, User } from '@/payload-types'
-import { isWriter } from '@/access/checkRole'
-
-import { authorSlugFromUser } from '@/utilities/authorSlug'
+import type { User } from '@/payload-types'
+import { isWriter, isAdmin } from '@/access/checkRole'
 import { AuthorList } from '@/components/Authors/AuthorList'
 
 export const metadata: Metadata = {
@@ -37,9 +35,12 @@ async function queryAuthors(): Promise<User[]> {
 
   const docs = (result.docs || []) as User[]
   return docs.filter((user) => {
+    // Never expose admins on the public authors list
+    if (isAdmin(user)) return false
+
     if (!isWriter(user)) return false
 
-    // Always include writers; for editor/chief-editor/admin require an explicit authorSlug
+    // Writers and editors can appear as authors; editors require an explicit slug
     if (user.role === 'writer') return true
 
     return Boolean(user.authorSlug)

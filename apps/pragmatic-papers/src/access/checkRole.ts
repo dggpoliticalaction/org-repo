@@ -1,5 +1,7 @@
 import type { User } from '@/payload-types'
 
+// Role helpers shared across the app. Note that for public author pages
+// and author listings we never treat admin accounts as authors.
 export const isAdmin = (user: User): boolean => {
   return user.role === 'admin' || user.role === 'chief-editor'
 }

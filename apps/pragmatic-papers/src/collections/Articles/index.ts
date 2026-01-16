@@ -195,6 +195,20 @@ export const Articles: CollectionConfig = {
       },
       hasMany: true,
       relationTo: 'users',
+      filterOptions: ({ relationTo }) => {
+        // Only non-admin users (writers, editors, chief-editors, regular users) can be
+        // selected as article authors. Admin accounts are kept private and should not
+        // appear in author pickers.
+        if (relationTo === 'users') {
+          return {
+            role: {
+              not_equals: 'admin',
+            },
+          }
+        }
+
+        return true
+      },
     },
     {
       name: 'createdBy',
