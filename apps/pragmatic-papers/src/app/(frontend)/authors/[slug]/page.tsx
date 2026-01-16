@@ -10,7 +10,6 @@ import Image from 'next/image'
 
 import type { Article as ArticleType, Media, User, Volume } from '@/payload-types'
 
-import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
 import { ArticleCard, type CardPostData } from '@/components/ArticleCard'
@@ -205,8 +204,6 @@ export default async function AuthorPage({
 
   return (
     <article className="m-auto max-w-3xl px-4 pb-16 pt-8">
-      <PageClient />
-
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
