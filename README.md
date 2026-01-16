@@ -55,13 +55,10 @@ pnpm dev
 ```
 5. Use a browser to view the applications,
 
-```
-http://localhost:8000
-```
+  - pragmatic papers : `http://localhost:8000`
+  
+  - dgg-political-action:`http://localhost:8888`
 
-```
-http://localhost:8000
-```
 
 > [!TIP] 
 > You can also start a single application by running `pnpm dev` in the applications root directory.
