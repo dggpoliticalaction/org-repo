@@ -46,7 +46,7 @@ To start all the applications in development mode, run:
 ```
 pnpm dev
 ```
-The `dev` script will first run `dev:start` to ensure the docker containers are running, and then start the development servers for all applications.
+The `dev` script will first install the dependencies, then start the docker containers, and then start the development servers for all applications.
 
 > [!TIP] 
 > You can also start a single application by running pnpm dev in the applications root directory.
@@ -60,8 +60,8 @@ Here are the most important scripts available in the root `package.json`:
 
 - `pnpm build`: Build all applications.
 - `pnpm dev`: Start all applications in development mode.
-- `pnpm dev:start`: Start the development docker containers.
-- `pnpm dev:stop`: Stop the development docker containers.
+- `pnpm dev:db`: Start the development docker containers.
+- `pnpm dev:db-down`: Stop the development docker containers.
 - `pnpm dev:clear-db`: Stop the containers and remove the database volumes.
 - `pnpm lint`: Lint all applications.
 - `pnpm format`: Format all applications.
