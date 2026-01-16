@@ -8,10 +8,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: pragmatic-papers
     ports:
-      - '9000:5432'
+      - "9000:5432"
     volumes:
       - pragmatic_papers_postgres_data:/var/lib/postgresql/data
 
 volumes:
   pragmatic_papers_postgres_data:
-    name: pragmatic_papers_postgres_data
