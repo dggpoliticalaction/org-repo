@@ -40,22 +40,17 @@
       "dependsOn": ["^check-types"]
     },
     "dev:install": {
-      "cache": false,
-      "persistent": true
-    },
-    "dev:start": {
-      "cache": false,
-      "persistent": true
+      "cache": true
     },
     "dev:db": {
-      "cache": false,
-      "persistent": true
+      "cache": false
     },
     "dev:next": {
+      "dependsOn": ["^dev:install", "^dev:db"],
       "cache": false,
       "persistent": true
     },
-    "dev:stop": {
+    "dev:db-down": {
       "cache": false,
       "persistent": true
     },
