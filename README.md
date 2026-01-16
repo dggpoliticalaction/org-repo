@@ -69,6 +69,15 @@ http://localhost:8000
 > cd apps/pragmatic-papers/
 > pnpm dev
 > ```
+
+> [!NOTE] 
+> **Dev:Migrations**
+>
+> You do not need to run migrations against your development database, because Drizzle will have already pushed your changes to your database for you.
+>
+>Payload uses Drizzle ORM's powerful push mode to automatically sync data changes to your database for you while in development mode. By default, this is enabled and is the suggested workflow to using Postgres and Payload while doing local development.
+>[Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)
+
 ### Development Scripts
 
 Here are the most important scripts available in the root `package.json`:
@@ -83,5 +92,9 @@ Here are the most important scripts available in the root `package.json`:
 - `pnpm check-types`: Run typescript to check for type errors.
 - `pnpm ci`: A script for running in a CI environment.
 
+### Production Migrations
+- Migrations will be required for non-development database environments.
+
 ## Useful Links
- - [Payload Documentation](https://payloadcms.com/docs/getting-started/what-is-payload)
+  - [Payload Documentation](https://payloadcms.com/docs/getting-started/what-is-payload)
+    - [Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)

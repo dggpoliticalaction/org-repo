@@ -21,7 +21,7 @@
     "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation eslint --fix .",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "check-types": "cross-env NODE_OPTIONS=--no-deprecation tsc --noEmit"
