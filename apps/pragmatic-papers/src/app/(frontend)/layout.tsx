@@ -75,7 +75,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Header />
           {children}
           <Footer />
-          {googleAnalyticsId ? <GoogleAnalytics gaId={googleAnalyticsId} /> : null}
+          <GoogleAnalytics gaId={googleAnalyticsId} />
         </Providers>
       </body>
     </html>
