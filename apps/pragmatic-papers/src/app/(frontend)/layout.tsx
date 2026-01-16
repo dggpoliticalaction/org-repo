@@ -7,13 +7,14 @@ import { Source_Serif_4 } from 'next/font/google'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
+import { PrivacyBanner } from '@/components/PrivacyBanner'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
+import { GoogleTagManager, PrivacyProvider } from '@/providers/PrivacyAnalytics'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { draftMode } from 'next/headers'
-import { GoogleAnalytics } from '@next/third-parties/google'
+import { cookies, draftMode } from 'next/headers'
 
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -33,6 +34,13 @@ const openSans = Open_Sans({
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
 
+  const cookieStore = await cookies()
+  const consentCookie = cookieStore.get('pp_analytics_consent')?.value
+
+  let initialConsent: boolean | null = null
+  if (consentCookie === 'granted') initialConsent = true
+  if (consentCookie === 'denied') initialConsent = false
+
   return (
     <html
       className={cn(
@@ -44,39 +52,42 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       lang="en"
       suppressHydrationWarning
     >
-      <head>
-        <InitTheme />
-        <link href="/manifest.json" rel="manifest" />
-        <link href="/favicon.ico" rel="icon" sizes="32x32" />
-        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
-        <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
-        <link
-          href="/feed.articles"
-          rel="alternate"
-          title="Pragmatic Papers - Articles RSS Feed"
-          type="application/rss+xml"
-        />
-        <link
-          href="/feed.volumes"
-          rel="alternate"
-          title="Pragmatic Papers - Volumes RSS Feed"
-          type="application/rss+xml"
-        />
-      </head>
-      <body>
-        <Providers>
-          <AdminBar
-            adminBarProps={{
-              preview: isEnabled,
-            }}
+      <PrivacyProvider initialConsent={initialConsent}>
+        <head>
+          <InitTheme />
+          <link href="/manifest.json" rel="manifest" />
+          <link href="/favicon.ico" rel="icon" sizes="32x32" />
+          <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+          <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
+          <link
+            href="/feed.articles"
+            rel="alternate"
+            title="Pragmatic Papers - Articles RSS Feed"
+            type="application/rss+xml"
           />
+          <link
+            href="/feed.volumes"
+            rel="alternate"
+            title="Pragmatic Papers - Volumes RSS Feed"
+            type="application/rss+xml"
+          />
+        </head>
+        <body>
+          <GoogleTagManager />
+          <Providers>
+            <AdminBar
+              adminBarProps={{
+                preview: isEnabled,
+              }}
+            />
 
-          <Header />
-          {children}
-          <Footer />
-          <GoogleAnalytics gaId="G-PXK2QL92HV" />
-        </Providers>
-      </body>
+            <Header />
+            {children}
+            <Footer />
+            <PrivacyBanner />
+          </Providers>
+        </body>
+      </PrivacyProvider>
     </html>
   )
 }

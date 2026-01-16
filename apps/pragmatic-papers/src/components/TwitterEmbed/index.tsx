@@ -6,6 +6,16 @@ import Script from 'next/script'
 
 import { fetchTwitterEmbed } from '@/utilities/fetchTwitterEmbed'
 
+declare global {
+  interface Window {
+    twttr?: {
+      widgets: {
+        load: (element: HTMLElement | null) => void
+      }
+    }
+  }
+}
+
 export const TwitterEmbed: React.FC<{
   url?: string
   hideMedia?: boolean
@@ -39,11 +49,13 @@ export const TwitterEmbed: React.FC<{
   }, [props])
 
   useEffect(() => {
-    if (contentRef.current && window.twttr) {
+    const twttr = window.twttr
+
+    if (contentRef.current && twttr) {
       // There's a race condition where the content returned by oEmbed needs to be inserted into the page, after which
       // the twitter JS will load it and render it as an embed instead of just a blockquote. Providing this timeout
       // helps to make sure the JS has actually loaded.
-      setTimeout(() => window.twttr.widgets.load(contentRef.current), 1000)
+      setTimeout(() => twttr.widgets.load(contentRef.current), 1000)
     }
   }, [content])
 
