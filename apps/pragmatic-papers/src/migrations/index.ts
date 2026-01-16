@@ -1,81 +1,81 @@
-import * as migration_20250703_194534_init from './20250703_194534_init'
-import * as migration_20250705_042423_volume_update from './20250705_042423_volume_update'
-import * as migration_20250705_185916_add_media_access_control from './20250705_185916_add_media_access_control'
-import * as migration_20250705_213213_remove_unused_volume_relation from './20250705_213213_remove_unused_volume_relation'
-import * as migration_20250707_010714_remove_posts from './20250707_010714_remove_posts'
-import * as migration_20250708_020740_update_payload from './20250708_020740_update_payload'
-import * as migration_20250708_042411_update_media_image_sizes from './20250708_042411_update_media_image_sizes'
-import * as migration_20250708_212941_remove_medium_compat_size from './20250708_212941_remove_medium_compat_size'
-import * as migration_20250726_210541_implement_webhooks from './20250726_210541_implement_webhooks'
-import * as migration_20260109_081334_upgrade_payload_3_70_0 from './20260109_081334_upgrade_payload_3_70_0'
-import * as migration_20260110_021152_discord_header_button from './20260110_021152_discord_header_button'
-import * as migration_20260111_055750_slug_field_update from './20260111_055750_slug_field_update'
-import * as migration_20260116_080256_header_restructure from './20260116_080256_header_restructure'
+import * as migration_20250703_194534_init from "./20250703_194534_init";
+import * as migration_20250705_042423_volume_update from "./20250705_042423_volume_update";
+import * as migration_20250705_185916_add_media_access_control from "./20250705_185916_add_media_access_control";
+import * as migration_20250705_213213_remove_unused_volume_relation from "./20250705_213213_remove_unused_volume_relation";
+import * as migration_20250707_010714_remove_posts from "./20250707_010714_remove_posts";
+import * as migration_20250708_020740_update_payload from "./20250708_020740_update_payload";
+import * as migration_20250708_042411_update_media_image_sizes from "./20250708_042411_update_media_image_sizes";
+import * as migration_20250708_212941_remove_medium_compat_size from "./20250708_212941_remove_medium_compat_size";
+import * as migration_20250726_210541_implement_webhooks from "./20250726_210541_implement_webhooks";
+import * as migration_20260109_081334_upgrade_payload_3_70_0 from "./20260109_081334_upgrade_payload_3_70_0";
+import * as migration_20260110_021152_discord_header_button from "./20260110_021152_discord_header_button";
+import * as migration_20260111_055750_slug_field_update from "./20260111_055750_slug_field_update";
+import * as migration_20260116_080256_header_restructure from "./20260116_080256_header_restructure";
 
 export const migrations = [
   {
     up: migration_20250703_194534_init.up,
     down: migration_20250703_194534_init.down,
-    name: '20250703_194534_init',
+    name: "20250703_194534_init",
   },
   {
     up: migration_20250705_042423_volume_update.up,
     down: migration_20250705_042423_volume_update.down,
-    name: '20250705_042423_volume_update',
+    name: "20250705_042423_volume_update",
   },
   {
     up: migration_20250705_185916_add_media_access_control.up,
     down: migration_20250705_185916_add_media_access_control.down,
-    name: '20250705_185916_add_media_access_control',
+    name: "20250705_185916_add_media_access_control",
   },
   {
     up: migration_20250705_213213_remove_unused_volume_relation.up,
     down: migration_20250705_213213_remove_unused_volume_relation.down,
-    name: '20250705_213213_remove_unused_volume_relation',
+    name: "20250705_213213_remove_unused_volume_relation",
   },
   {
     up: migration_20250707_010714_remove_posts.up,
     down: migration_20250707_010714_remove_posts.down,
-    name: '20250707_010714_remove_posts',
+    name: "20250707_010714_remove_posts",
   },
   {
     up: migration_20250708_020740_update_payload.up,
     down: migration_20250708_020740_update_payload.down,
-    name: '20250708_020740_update_payload',
+    name: "20250708_020740_update_payload",
   },
   {
     up: migration_20250708_042411_update_media_image_sizes.up,
     down: migration_20250708_042411_update_media_image_sizes.down,
-    name: '20250708_042411_update_media_image_sizes',
+    name: "20250708_042411_update_media_image_sizes",
   },
   {
     up: migration_20250708_212941_remove_medium_compat_size.up,
     down: migration_20250708_212941_remove_medium_compat_size.down,
-    name: '20250708_212941_remove_medium_compat_size',
+    name: "20250708_212941_remove_medium_compat_size",
   },
   {
     up: migration_20250726_210541_implement_webhooks.up,
     down: migration_20250726_210541_implement_webhooks.down,
-    name: '20250726_210541_implement_webhooks',
+    name: "20250726_210541_implement_webhooks",
   },
   {
     up: migration_20260109_081334_upgrade_payload_3_70_0.up,
     down: migration_20260109_081334_upgrade_payload_3_70_0.down,
-    name: '20260109_081334_upgrade_payload_3_70_0',
+    name: "20260109_081334_upgrade_payload_3_70_0",
   },
   {
     up: migration_20260110_021152_discord_header_button.up,
     down: migration_20260110_021152_discord_header_button.down,
-    name: '20260110_021152_discord_header_button',
+    name: "20260110_021152_discord_header_button",
   },
   {
     up: migration_20260111_055750_slug_field_update.up,
     down: migration_20260111_055750_slug_field_update.down,
-    name: '20260111_055750_slug_field_update',
+    name: "20260111_055750_slug_field_update",
   },
   {
     up: migration_20260116_080256_header_restructure.up,
     down: migration_20260116_080256_header_restructure.down,
-    name: '20260116_080256_header_restructure',
+    name: "20260116_080256_header_restructure",
   },
-]
+];

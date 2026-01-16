@@ -1,4 +1,4 @@
-import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
+import { MigrateDownArgs, MigrateUpArgs, sql } from "@payloadcms/db-postgres";
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
@@ -24,7 +24,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "header_secondary_menu_parent_id_idx" ON "header_secondary_menu" USING btree ("_parent_id");
   ALTER TABLE "header_primary_menu" ADD CONSTRAINT "header_primary_menu_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."header"("id") ON DELETE cascade ON UPDATE no action;
   CREATE INDEX "header_primary_menu_order_idx" ON "header_primary_menu" USING btree ("_order");
-  CREATE INDEX "header_primary_menu_parent_id_idx" ON "header_primary_menu" USING btree ("_parent_id");`)
+  CREATE INDEX "header_primary_menu_parent_id_idx" ON "header_primary_menu" USING btree ("_parent_id");`);
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
@@ -40,5 +40,5 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "header_nav_items" ADD CONSTRAINT "header_nav_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."header"("id") ON DELETE cascade ON UPDATE no action;
   CREATE INDEX "header_nav_items_order_idx" ON "header_nav_items" USING btree ("_order");
   CREATE INDEX "header_nav_items_parent_id_idx" ON "header_nav_items" USING btree ("_parent_id");
-  DROP TYPE "public"."enum_header_secondary_menu_link_type";`)
+  DROP TYPE "public"."enum_header_secondary_menu_link_type";`);
 }
