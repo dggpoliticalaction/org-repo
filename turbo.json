@@ -40,7 +40,7 @@
       "dependsOn": ["^check-types"]
     },
     "dev:install": {
-      "cache": true
+      "cache": false
     },
     "dev:db": {
       "cache": false
@@ -51,12 +51,10 @@
       "persistent": true
     },
     "dev:db-down": {
-      "cache": false,
-      "persistent": true
+      "cache": false
     },
-    "dev:clear-db": {
-      "cache": false,
-      "persistent": true
+    "dev:db:nuke": {
+      "cache": false
     },
     "dev": {
       "cache": false,

@@ -4,7 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev:install": "turbo run dev:install",
-    "dev:clear-db": "turbo run dev:clear-db",
+    "dev:db-nuke": "turbo run dev:clear-db",
     "dev:db": "turbo run dev:db",
     "dev:db-down": "turbo run dev:db-down",
     "dev": "turbo run dev:install dev:db dev:next --parallel",
