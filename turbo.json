@@ -38,6 +38,23 @@
     "check-types": {
       "dependsOn": ["^check-types"]
     },
+    "dev:install": {
+      "cache": false
+    },
+    "dev:db": {
+      "cache": false
+    },
+    "dev:next": {
+      "dependsOn": ["^dev:install", "^dev:db"],
+      "cache": false,
+      "persistent": true
+    },
+    "dev:db-down": {
+      "cache": false
+    },
+    "dev:db-nuke": {
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "persistent": true

@@ -3,7 +3,11 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev:install": "turbo run dev:install",
+    "dev:db-nuke": "turbo run dev:db-nuke",
+    "dev:db": "turbo run dev:db",
+    "dev:db-down": "turbo run dev:db-down",
+    "dev": "turbo run dev:install dev:db dev:next",
     "lint": "turbo run lint",
     "lint:ci": "turbo run lint -- --max-warnings 0",
     "lint:fix": "turbo run lint -- --fix",

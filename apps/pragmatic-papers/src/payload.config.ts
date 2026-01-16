@@ -14,7 +14,6 @@ import { Header } from '@/Header/config'
 import { plugins } from '@/plugins'
 import { getServerSideURL } from '@/utilities/getURL'
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import path from 'path'
 import { buildConfig, type PayloadRequest, type SharpDependency } from 'payload'
 import sharp from 'sharp'
@@ -68,18 +67,6 @@ export default buildConfig({
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
-  db:
-    process.env.NODE_ENV === 'production'
-      ? postgresAdapter({
-          pool: {
-            connectionString: process.env.DATABASE_URI || '',
-          },
-        })
-      : sqliteAdapter({
-          client: {
-            url: process.env.DATABASE_URI || '',
-          },
-        }),
   collections: [
     // Auth
     Users,
@@ -94,6 +81,11 @@ export default buildConfig({
     Categories,
     Webhooks,
   ],
+  db: postgresAdapter({
+    pool: {
+      connectionString: process.env.DATABASE_URI,
+    },
+  }),
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [...plugins],
