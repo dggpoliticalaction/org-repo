@@ -31,7 +31,7 @@ importers:
         version: 3.70.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@payloadcms/db-postgres':
         specifier: ^3.70.0
-        version: 3.70.0(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))
+        version: 3.70.0(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))
       '@payloadcms/live-preview-react':
         specifier: ^3.70.0
         version: 3.70.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -285,7 +285,7 @@ importers:
     dependencies:
       '@daveyplate/better-auth-ui':
         specifier: ^3.3.15
-        version: 3.3.15(f24f6cd9f2a1cac416a78121972c7a00)
+        version: 3.3.15(f1a9f8ca669a1712372590a0d22d1111)
       '@designbycode/tailwindcss-text-stroke':
         specifier: ^1.3.0
         version: 1.3.0(tailwindcss@4.1.18)
@@ -297,7 +297,7 @@ importers:
         version: 3.70.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@payloadcms/db-postgres':
         specifier: ^3.70.0
-        version: 3.70.0(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.9.3))
+        version: 3.70.0(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.9.3))
       '@payloadcms/live-preview-react':
         specifier: ^3.70.0
         version: 3.70.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -348,7 +348,7 @@ importers:
         version: 1.2.3(@types/react@19.1.8)(react@19.2.3)
       better-auth:
         specifier: ^1.4.12
-        version: 1.4.12(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2))
+        version: 1.4.13(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2))
       better-react-mathjax:
         specifier: ^2.3.0
         version: 2.3.0(react@19.2.3)
@@ -369,7 +369,7 @@ importers:
         version: 4.1.0
       drizzle-orm:
         specifier: ^0.45.1
-        version: 0.45.1(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1)
+        version: 0.45.1(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1)
       feed:
         specifier: ^5.1.0
         version: 5.1.0
@@ -513,8 +513,8 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0(eslint@9.29.0(jiti@2.6.1))
       eslint-plugin-turbo:
-        specifier: ^2.5.0
-        version: 2.5.0(eslint@9.29.0(jiti@2.6.1))(turbo@2.7.3)
+        specifier: ^2.7.4
+        version: 2.7.4(eslint@9.29.0(jiti@2.6.1))(turbo@2.7.3)
       globals:
         specifier: ^16.2.0
         version: 16.2.0
@@ -973,8 +973,8 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@better-auth/core@1.4.12':
-    resolution: {integrity: sha512-VfqZwMAEl9rnGx092BIZ2Q5z8rt7jjN2OAbvPqehufSKZGmh8JsdtZRBMl/CHQir9bwi2Ev0UF4+7TQp+DXEMg==}
+  '@better-auth/core@1.4.13':
+    resolution: {integrity: sha512-+8OrU/9T9mkNNKCfTv9UMlNhl9qBKsXIS8d1JNrtuCkud8Ps0+jYvbBlwa90nFmDy8X96c9UIsq+eMhPs1SDXA==}
     peerDependencies:
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
@@ -983,20 +983,20 @@ packages:
       kysely: ^0.28.5
       nanostores: ^1.0.1
 
-  '@better-auth/passkey@1.4.12':
-    resolution: {integrity: sha512-1ZDkwhHSrxAU1Kn13z98QrzzGFTyMHaGKbPIzP4HAmDDhDIwLFgo2kViYzZHgWGwPM1gXYCQLfFv/NoFEdrEaA==}
+  '@better-auth/passkey@1.4.13':
+    resolution: {integrity: sha512-LvEH9mv9xqsRCE3lPl0+wGastOlbOVoTB/yQ7hoxoEQOajyeKS48pyA3uw+7jGWz+uoh3BBWgxx9Zk9N4gto1A==}
     peerDependencies:
-      '@better-auth/core': 1.4.12
+      '@better-auth/core': 1.4.13
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
-      better-auth: 1.4.12
+      better-auth: 1.4.13
       better-call: 1.1.7
       nanostores: ^1.0.1
 
-  '@better-auth/telemetry@1.4.12':
-    resolution: {integrity: sha512-4q504Og42PzkUbZjXDt+FyeYaS0WZmAlEOC3nbBCZDObTVCRUnGgJW52B2maJ7BCVvAQgBGLEeQmQzU5+63J0A==}
+  '@better-auth/telemetry@1.4.13':
+    resolution: {integrity: sha512-bH77Scx0K0lRIuRuHUUBLLMJ/rd9T2Tties1RniDLU8kclVwjboJQbfUY5FIamZwdayf2o0psNgS4rkaZUq+Qg==}
     peerDependencies:
-      '@better-auth/core': 1.4.12
+      '@better-auth/core': 1.4.13
 
   '@better-auth/utils@0.3.0':
     resolution: {integrity: sha512-W+Adw6ZA6mgvnSnhOki270rwJ42t4XzSK6YWGF//BbVXL6SwCLWfyzBc1lN2m/4RM28KubdBKQ4X5VMoLRNPQw==}
@@ -1213,6 +1213,12 @@ packages:
     cpu: [ppc64]
     os: [aix]
 
+  '@esbuild/aix-ppc64@0.25.5':
+    resolution: {integrity: sha512-9o3TMmpmftaCMepOdA5k/yDw8SfInyzWWTjYTFCX3kPSDJMROQTb8jg+h9Cnwnmm1vOzvxN7gIfB5V2ewpjtGA==}
+    engines: {node: '>=18'}
+    cpu: [ppc64]
+    os: [aix]
+
   '@esbuild/aix-ppc64@0.27.2':
     resolution: {integrity: sha512-GZMB+a0mOMZs4MpDbj8RJp4cw+w1WV5NYD6xzgvzUJ5Ek2jerwfO2eADyI6ExDSUED+1X8aMbegahsJi+8mgpw==}
     engines: {node: '>=18'}
@@ -1227,6 +1233,12 @@ packages:
 
   '@esbuild/android-arm64@0.25.12':
     resolution: {integrity: sha512-6AAmLG7zwD1Z159jCKPvAxZd4y/VTO0VkprYy+3N2FtJ8+BQWFXU+OxARIwA46c5tdD9SsKGZ/1ocqBS/gAKHg==}
+    engines: {node: '>=18'}
+    cpu: [arm64]
+    os: [android]
+
+  '@esbuild/android-arm64@0.25.5':
+    resolution: {integrity: sha512-VGzGhj4lJO+TVGV1v8ntCZWJktV7SGCs3Pn1GRWI1SBFtRALoomm8k5E9Pmwg3HOAal2VDc2F9+PM/rEY6oIDg==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [android]
@@ -1249,6 +1261,12 @@ packages:
     cpu: [arm]
     os: [android]
 
+  '@esbuild/android-arm@0.25.5':
+    resolution: {integrity: sha512-AdJKSPeEHgi7/ZhuIPtcQKr5RQdo6OO2IL87JkianiMYMPbCtot9fxPbrMiBADOWWm3T2si9stAiVsGbTQFkbA==}
+    engines: {node: '>=18'}
+    cpu: [arm]
+    os: [android]
+
   '@esbuild/android-arm@0.27.2':
     resolution: {integrity: sha512-DVNI8jlPa7Ujbr1yjU2PfUSRtAUZPG9I1RwW4F4xFB1Imiu2on0ADiI/c3td+KmDtVKNbi+nffGDQMfcIMkwIA==}
     engines: {node: '>=18'}
@@ -1263,6 +1281,12 @@ packages:
 
   '@esbuild/android-x64@0.25.12':
     resolution: {integrity: sha512-5jbb+2hhDHx5phYR2By8GTWEzn6I9UqR11Kwf22iKbNpYrsmRB18aX/9ivc5cabcUiAT/wM+YIZ6SG9QO6a8kg==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [android]
+
+  '@esbuild/android-x64@0.25.5':
+    resolution: {integrity: sha512-D2GyJT1kjvO//drbRT3Hib9XPwQeWd9vZoBJn+bu/lVsOZ13cqNdDeqIF/xQ5/VmWvMduP6AmXvylO/PIc2isw==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [android]
@@ -1285,6 +1309,12 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
+  '@esbuild/darwin-arm64@0.25.5':
+    resolution: {integrity: sha512-GtaBgammVvdF7aPIgH2jxMDdivezgFu6iKpmT+48+F8Hhg5J/sfnDieg0aeG/jfSvkYQU2/pceFPDKlqZzwnfQ==}
+    engines: {node: '>=18'}
+    cpu: [arm64]
+    os: [darwin]
+
   '@esbuild/darwin-arm64@0.27.2':
     resolution: {integrity: sha512-davCD2Zc80nzDVRwXTcQP/28fiJbcOwvdolL0sOiOsbwBa72kegmVU0Wrh1MYrbuCL98Omp5dVhQFWRKR2ZAlg==}
     engines: {node: '>=18'}
@@ -1299,6 +1329,12 @@ packages:
 
   '@esbuild/darwin-x64@0.25.12':
     resolution: {integrity: sha512-HQ9ka4Kx21qHXwtlTUVbKJOAnmG1ipXhdWTmNXiPzPfWKpXqASVcWdnf2bnL73wgjNrFXAa3yYvBSd9pzfEIpA==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@esbuild/darwin-x64@0.25.5':
+    resolution: {integrity: sha512-1iT4FVL0dJ76/q1wd7XDsXrSW+oLoquptvh4CLR4kITDtqi2e/xwXwdCVH8hVHU43wgJdsq7Gxuzcs6Iq/7bxQ==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [darwin]
@@ -1321,6 +1357,12 @@ packages:
     cpu: [arm64]
     os: [freebsd]
 
+  '@esbuild/freebsd-arm64@0.25.5':
+    resolution: {integrity: sha512-nk4tGP3JThz4La38Uy/gzyXtpkPW8zSAmoUhK9xKKXdBCzKODMc2adkB2+8om9BDYugz+uGV7sLmpTYzvmz6Sw==}
+    engines: {node: '>=18'}
+    cpu: [arm64]
+    os: [freebsd]
+
   '@esbuild/freebsd-arm64@0.27.2':
     resolution: {integrity: sha512-lS/9CN+rgqQ9czogxlMcBMGd+l8Q3Nj1MFQwBZJyoEKI50XGxwuzznYdwcav6lpOGv5BqaZXqvBSiB/kJ5op+g==}
     engines: {node: '>=18'}
@@ -1335,6 +1377,12 @@ packages:
 
   '@esbuild/freebsd-x64@0.25.12':
     resolution: {integrity: sha512-TGbO26Yw2xsHzxtbVFGEXBFH0FRAP7gtcPE7P5yP7wGy7cXK2oO7RyOhL5NLiqTlBh47XhmIUXuGciXEqYFfBQ==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [freebsd]
+
+  '@esbuild/freebsd-x64@0.25.5':
+    resolution: {integrity: sha512-PrikaNjiXdR2laW6OIjlbeuCPrPaAl0IwPIaRv+SMV8CiM8i2LqVUHFC1+8eORgWyY7yhQY+2U2fA55mBzReaw==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [freebsd]
@@ -1357,6 +1405,12 @@ packages:
     cpu: [arm64]
     os: [linux]
 
+  '@esbuild/linux-arm64@0.25.5':
+    resolution: {integrity: sha512-Z9kfb1v6ZlGbWj8EJk9T6czVEjjq2ntSYLY2cw6pAZl4oKtfgQuS4HOq41M/BcoLPzrUbNd+R4BXFyH//nHxVg==}
+    engines: {node: '>=18'}
+    cpu: [arm64]
+    os: [linux]
+
   '@esbuild/linux-arm64@0.27.2':
     resolution: {integrity: sha512-hYxN8pr66NsCCiRFkHUAsxylNOcAQaxSSkHMMjcpx0si13t1LHFphxJZUiGwojB1a/Hd5OiPIqDdXONia6bhTw==}
     engines: {node: '>=18'}
@@ -1371,6 +1425,12 @@ packages:
 
   '@esbuild/linux-arm@0.25.12':
     resolution: {integrity: sha512-lPDGyC1JPDou8kGcywY0YILzWlhhnRjdof3UlcoqYmS9El818LLfJJc3PXXgZHrHCAKs/Z2SeZtDJr5MrkxtOw==}
+    engines: {node: '>=18'}
+    cpu: [arm]
+    os: [linux]
+
+  '@esbuild/linux-arm@0.25.5':
+    resolution: {integrity: sha512-cPzojwW2okgh7ZlRpcBEtsX7WBuqbLrNXqLU89GxWbNt6uIg78ET82qifUy3W6OVww6ZWobWub5oqZOVtwolfw==}
     engines: {node: '>=18'}
     cpu: [arm]
     os: [linux]
@@ -1393,6 +1453,12 @@ packages:
     cpu: [ia32]
     os: [linux]
 
+  '@esbuild/linux-ia32@0.25.5':
+    resolution: {integrity: sha512-sQ7l00M8bSv36GLV95BVAdhJ2QsIbCuCjh/uYrWiMQSUuV+LpXwIqhgJDcvMTj+VsQmqAHL2yYaasENvJ7CDKA==}
+    engines: {node: '>=18'}
+    cpu: [ia32]
+    os: [linux]
+
   '@esbuild/linux-ia32@0.27.2':
     resolution: {integrity: sha512-MJt5BRRSScPDwG2hLelYhAAKh9imjHK5+NE/tvnRLbIqUWa+0E9N4WNMjmp/kXXPHZGqPLxggwVhz7QP8CTR8w==}
     engines: {node: '>=18'}
@@ -1407,6 +1473,12 @@ packages:
 
   '@esbuild/linux-loong64@0.25.12':
     resolution: {integrity: sha512-h///Lr5a9rib/v1GGqXVGzjL4TMvVTv+s1DPoxQdz7l/AYv6LDSxdIwzxkrPW438oUXiDtwM10o9PmwS/6Z0Ng==}
+    engines: {node: '>=18'}
+    cpu: [loong64]
+    os: [linux]
+
+  '@esbuild/linux-loong64@0.25.5':
+    resolution: {integrity: sha512-0ur7ae16hDUC4OL5iEnDb0tZHDxYmuQyhKhsPBV8f99f6Z9KQM02g33f93rNH5A30agMS46u2HP6qTdEt6Q1kg==}
     engines: {node: '>=18'}
     cpu: [loong64]
     os: [linux]
@@ -1429,6 +1501,12 @@ packages:
     cpu: [mips64el]
     os: [linux]
 
+  '@esbuild/linux-mips64el@0.25.5':
+    resolution: {integrity: sha512-kB/66P1OsHO5zLz0i6X0RxlQ+3cu0mkxS3TKFvkb5lin6uwZ/ttOkP3Z8lfR9mJOBk14ZwZ9182SIIWFGNmqmg==}
+    engines: {node: '>=18'}
+    cpu: [mips64el]
+    os: [linux]
+
   '@esbuild/linux-mips64el@0.27.2':
     resolution: {integrity: sha512-nlP2I6ArEBewvJ2gjrrkESEZkB5mIoaTswuqNFRv/WYd+ATtUpe9Y09RnJvgvdag7he0OWgEZWhviS1OTOKixw==}
     engines: {node: '>=18'}
@@ -1443,6 +1521,12 @@ packages:
 
   '@esbuild/linux-ppc64@0.25.12':
     resolution: {integrity: sha512-9meM/lRXxMi5PSUqEXRCtVjEZBGwB7P/D4yT8UG/mwIdze2aV4Vo6U5gD3+RsoHXKkHCfSxZKzmDssVlRj1QQA==}
+    engines: {node: '>=18'}
+    cpu: [ppc64]
+    os: [linux]
+
+  '@esbuild/linux-ppc64@0.25.5':
+    resolution: {integrity: sha512-UZCmJ7r9X2fe2D6jBmkLBMQetXPXIsZjQJCjgwpVDz+YMcS6oFR27alkgGv3Oqkv07bxdvw7fyB71/olceJhkQ==}
     engines: {node: '>=18'}
     cpu: [ppc64]
     os: [linux]
@@ -1465,6 +1549,12 @@ packages:
     cpu: [riscv64]
     os: [linux]
 
+  '@esbuild/linux-riscv64@0.25.5':
+    resolution: {integrity: sha512-kTxwu4mLyeOlsVIFPfQo+fQJAV9mh24xL+y+Bm6ej067sYANjyEw1dNHmvoqxJUCMnkBdKpvOn0Ahql6+4VyeA==}
+    engines: {node: '>=18'}
+    cpu: [riscv64]
+    os: [linux]
+
   '@esbuild/linux-riscv64@0.27.2':
     resolution: {integrity: sha512-B5BOmojNtUyN8AXlK0QJyvjEZkWwy/FKvakkTDCziX95AowLZKR6aCDhG7LeF7uMCXEJqwa8Bejz5LTPYm8AvA==}
     engines: {node: '>=18'}
@@ -1479,6 +1569,12 @@ packages:
 
   '@esbuild/linux-s390x@0.25.12':
     resolution: {integrity: sha512-MsKncOcgTNvdtiISc/jZs/Zf8d0cl/t3gYWX8J9ubBnVOwlk65UIEEvgBORTiljloIWnBzLs4qhzPkJcitIzIg==}
+    engines: {node: '>=18'}
+    cpu: [s390x]
+    os: [linux]
+
+  '@esbuild/linux-s390x@0.25.5':
+    resolution: {integrity: sha512-K2dSKTKfmdh78uJ3NcWFiqyRrimfdinS5ErLSn3vluHNeHVnBAFWC8a4X5N+7FgVE1EjXS1QDZbpqZBjfrqMTQ==}
     engines: {node: '>=18'}
     cpu: [s390x]
     os: [linux]
@@ -1501,6 +1597,12 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@esbuild/linux-x64@0.25.5':
+    resolution: {integrity: sha512-uhj8N2obKTE6pSZ+aMUbqq+1nXxNjZIIjCjGLfsWvVpy7gKCOL6rsY1MhRh9zLtUtAI7vpgLMK6DxjO8Qm9lJw==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [linux]
+
   '@esbuild/linux-x64@0.27.2':
     resolution: {integrity: sha512-uwp2Tip5aPmH+NRUwTcfLb+W32WXjpFejTIOWZFw/v7/KnpCDKG66u4DLcurQpiYTiYwQ9B7KOeMJvLCu/OvbA==}
     engines: {node: '>=18'}
@@ -1509,6 +1611,12 @@ packages:
 
   '@esbuild/netbsd-arm64@0.25.12':
     resolution: {integrity: sha512-xXwcTq4GhRM7J9A8Gv5boanHhRa/Q9KLVmcyXHCTaM4wKfIpWkdXiMog/KsnxzJ0A1+nD+zoecuzqPmCRyBGjg==}
+    engines: {node: '>=18'}
+    cpu: [arm64]
+    os: [netbsd]
+
+  '@esbuild/netbsd-arm64@0.25.5':
+    resolution: {integrity: sha512-pwHtMP9viAy1oHPvgxtOv+OkduK5ugofNTVDilIzBLpoWAM16r7b/mxBvfpuQDpRQFMfuVr5aLcn4yveGvBZvw==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [netbsd]
@@ -1531,6 +1639,12 @@ packages:
     cpu: [x64]
     os: [netbsd]
 
+  '@esbuild/netbsd-x64@0.25.5':
+    resolution: {integrity: sha512-WOb5fKrvVTRMfWFNCroYWWklbnXH0Q5rZppjq0vQIdlsQKuw6mdSihwSo4RV/YdQ5UCKKvBy7/0ZZYLBZKIbwQ==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [netbsd]
+
   '@esbuild/netbsd-x64@0.27.2':
     resolution: {integrity: sha512-HwGDZ0VLVBY3Y+Nw0JexZy9o/nUAWq9MlV7cahpaXKW6TOzfVno3y3/M8Ga8u8Yr7GldLOov27xiCnqRZf0tCA==}
     engines: {node: '>=18'}
@@ -1539,6 +1653,12 @@ packages:
 
   '@esbuild/openbsd-arm64@0.25.12':
     resolution: {integrity: sha512-fF96T6KsBo/pkQI950FARU9apGNTSlZGsv1jZBAlcLL1MLjLNIWPBkj5NlSz8aAzYKg+eNqknrUJ24QBybeR5A==}
+    engines: {node: '>=18'}
+    cpu: [arm64]
+    os: [openbsd]
+
+  '@esbuild/openbsd-arm64@0.25.5':
+    resolution: {integrity: sha512-7A208+uQKgTxHd0G0uqZO8UjK2R0DDb4fDmERtARjSHWxqMTye4Erz4zZafx7Di9Cv+lNHYuncAkiGFySoD+Mw==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [openbsd]
@@ -1557,6 +1677,12 @@ packages:
 
   '@esbuild/openbsd-x64@0.25.12':
     resolution: {integrity: sha512-MZyXUkZHjQxUvzK7rN8DJ3SRmrVrke8ZyRusHlP+kuwqTcfWLyqMOE3sScPPyeIXN/mDJIfGXvcMqCgYKekoQw==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [openbsd]
+
+  '@esbuild/openbsd-x64@0.25.5':
+    resolution: {integrity: sha512-G4hE405ErTWraiZ8UiSoesH8DaCsMm0Cay4fsFWOOUcz8b8rC6uCvnagr+gnioEjWn0wC+o1/TAHt+It+MpIMg==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [openbsd]
@@ -1591,6 +1717,12 @@ packages:
     cpu: [x64]
     os: [sunos]
 
+  '@esbuild/sunos-x64@0.25.5':
+    resolution: {integrity: sha512-l+azKShMy7FxzY0Rj4RCt5VD/q8mG/e+mDivgspo+yL8zW7qEwctQ6YqKX34DTEleFAvCIUviCFX1SDZRSyMQA==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [sunos]
+
   '@esbuild/sunos-x64@0.27.2':
     resolution: {integrity: sha512-kMtx1yqJHTmqaqHPAzKCAkDaKsffmXkPHThSfRwZGyuqyIeBvf08KSsYXl+abf5HDAPMJIPnbBfXvP2ZC2TfHg==}
     engines: {node: '>=18'}
@@ -1605,6 +1737,12 @@ packages:
 
   '@esbuild/win32-arm64@0.25.12':
     resolution: {integrity: sha512-rMmLrur64A7+DKlnSuwqUdRKyd3UE7oPJZmnljqEptesKM8wx9J8gx5u0+9Pq0fQQW8vqeKebwNXdfOyP+8Bsg==}
+    engines: {node: '>=18'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@esbuild/win32-arm64@0.25.5':
+    resolution: {integrity: sha512-O2S7SNZzdcFG7eFKgvwUEZ2VG9D/sn/eIiz8XRZ1Q/DO5a3s76Xv0mdBzVM5j5R639lXQmPmSo0iRpHqUUrsxw==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [win32]
@@ -1627,6 +1765,12 @@ packages:
     cpu: [ia32]
     os: [win32]
 
+  '@esbuild/win32-ia32@0.25.5':
+    resolution: {integrity: sha512-onOJ02pqs9h1iMJ1PQphR+VZv8qBMQ77Klcsqv9CNW2w6yLqoURLcgERAIurY6QE63bbLuqgP9ATqajFLK5AMQ==}
+    engines: {node: '>=18'}
+    cpu: [ia32]
+    os: [win32]
+
   '@esbuild/win32-ia32@0.27.2':
     resolution: {integrity: sha512-Iuws0kxo4yusk7sw70Xa2E2imZU5HoixzxfGCdxwBdhiDgt9vX9VUCBhqcwY7/uh//78A1hMkkROMJq9l27oLQ==}
     engines: {node: '>=18'}
@@ -1641,6 +1785,12 @@ packages:
 
   '@esbuild/win32-x64@0.25.12':
     resolution: {integrity: sha512-alJC0uCZpTFrSL0CCDjcgleBXPnCrEAhTBILpeAp7M/OFgoqtAetfBzX0xM00MUsVVPpVjlPuMbREqnZCXaTnA==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [win32]
+
+  '@esbuild/win32-x64@0.25.5':
+    resolution: {integrity: sha512-TXv6YnJ8ZMVdX+SXWVBo/0p8LTcrUYngpWjvm91TMjjBQii7Oz11Lw5lbDV5Y0TzuhSJHwiH4hEtC1I42mMS0g==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
@@ -1976,21 +2126,21 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@instantdb/core@0.22.102':
-    resolution: {integrity: sha512-5Z6FgY76JxagUmoQv4r3E+m0lHebhjgk0ipPSJcVohEYjinK2A/P9OqFD03i5AHJNWjR0hAcKt2jFIFRVGnAHQ==}
+  '@instantdb/core@0.22.105':
+    resolution: {integrity: sha512-Hq+ShLar0dPA3EcErxyBK3GGSigV8/nHgTFzEKKXcuI76eSC3eEVvYHPUdDDTSGvwzGBzHrWcCHjPeuIkykL7Q==}
 
-  '@instantdb/react-common@0.22.102':
-    resolution: {integrity: sha512-DI81MJDKj27psM0BjKr7PzYRy8W8q6fu6tbl+A651Wt/3c97ESnYCMuv/mQ1G1Xb1RMMa7Ue5l7QPjt2S1HScA==}
+  '@instantdb/react-common@0.22.105':
+    resolution: {integrity: sha512-pleEGnd8SopLM7xXWcJjqjaZCAPTjTbaOBIlkLyVNcwgBIr6U2kstp8ZeWnePM0VHGGZ/bZ2OQV3FbzMig+nrQ==}
     peerDependencies:
       react: '>=16'
 
-  '@instantdb/react@0.22.102':
-    resolution: {integrity: sha512-NCer+lkHLUeKaTMHzpX3J+6OTQ8MhPJfhJDFoPsfaBqU7h9c4VervV2RZHcd5hWii4LacFnjLJ6Cl69133woEw==}
+  '@instantdb/react@0.22.105':
+    resolution: {integrity: sha512-GE5REp1YLtCMU+IDqLUIQfcIUHM/mfUvRe/waZT/nyVQkZYNCVixzkGFV63rBpD09g49G3eU0FppmIpVs5EwgA==}
     peerDependencies:
       react: '>=16'
 
-  '@instantdb/version@0.22.102':
-    resolution: {integrity: sha512-3TK2wY0iDOdX0h2qHV9f+iM6IZdZbc2Ck7uX7KpyctzMjoa8bXbTq0PgqTSTkO2yUpw643KJ1rThz+96A6YyXg==}
+  '@instantdb/version@0.22.105':
+    resolution: {integrity: sha512-j+PpTSesnpJrJnCcKaTzGVO+zJfYCZklN0oWAMpnrY+UjEXF0rKljYiy+kOwfXVQgjZGfqdyQaq1RMqfIplh4g==}
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -2116,60 +2266,54 @@ packages:
     peerDependencies:
       yjs: '>=13.5.22'
 
-  '@libsql/client@0.17.0':
-    resolution: {integrity: sha512-TLjSU9Otdpq0SpKHl1tD1Nc9MKhrsZbCFGot3EbCxRa8m1E5R1mMwoOjKMMM31IyF7fr+hPNHLpYfwbMKNusmg==}
+  '@libsql/client@0.14.0':
+    resolution: {integrity: sha512-/9HEKfn6fwXB5aTEEoMeFh4CtG0ZzbncBb1e++OCdVpgKZ/xyMsIVYXm0w7Pv4RUel803vE6LwniB3PqD72R0Q==}
 
-  '@libsql/core@0.17.0':
-    resolution: {integrity: sha512-hnZRnJHiS+nrhHKLGYPoJbc78FE903MSDrFJTbftxo+e52X+E0Y0fHOCVYsKWcg6XgB7BbJYUrz/xEkVTSaipw==}
+  '@libsql/core@0.14.0':
+    resolution: {integrity: sha512-nhbuXf7GP3PSZgdCY2Ecj8vz187ptHlZQ0VRc751oB2C1W8jQUXKKklvt7t1LJiUTQBVJuadF628eUk+3cRi4Q==}
 
-  '@libsql/darwin-arm64@0.5.22':
-    resolution: {integrity: sha512-4B8ZlX3nIDPndfct7GNe0nI3Yw6ibocEicWdC4fvQbSs/jdq/RC2oCsoJxJ4NzXkvktX70C1J4FcmmoBy069UA==}
+  '@libsql/darwin-arm64@0.4.7':
+    resolution: {integrity: sha512-yOL742IfWUlUevnI5PdnIT4fryY3LYTdLm56bnY0wXBw7dhFcnjuA7jrH3oSVz2mjZTHujxoITgAE7V6Z+eAbg==}
     cpu: [arm64]
     os: [darwin]
 
-  '@libsql/darwin-x64@0.5.22':
-    resolution: {integrity: sha512-ny2HYWt6lFSIdNFzUFIJ04uiW6finXfMNJ7wypkAD8Pqdm6nAByO+Fdqu8t7sD0sqJGeUCiOg480icjyQ2/8VA==}
+  '@libsql/darwin-x64@0.4.7':
+    resolution: {integrity: sha512-ezc7V75+eoyyH07BO9tIyJdqXXcRfZMbKcLCeF8+qWK5nP8wWuMcfOVywecsXGRbT99zc5eNra4NEx6z5PkSsA==}
     cpu: [x64]
     os: [darwin]
 
-  '@libsql/hrana-client@0.9.0':
-    resolution: {integrity: sha512-pxQ1986AuWfPX4oXzBvLwBnfgKDE5OMhAdR/5cZmRaB4Ygz5MecQybvwZupnRz341r2CtFmbk/BhSu7k2Lm+Jw==}
+  '@libsql/hrana-client@0.7.0':
+    resolution: {integrity: sha512-OF8fFQSkbL7vJY9rfuegK1R7sPgQ6kFMkDamiEccNUvieQ+3urzfDFI616oPl8V7T9zRmnTkSjMOImYCAVRVuw==}
+
+  '@libsql/isomorphic-fetch@0.3.1':
+    resolution: {integrity: sha512-6kK3SUK5Uu56zPq/Las620n5aS9xJq+jMBcNSOmjhNf/MUvdyji4vrMTqD7ptY7/4/CAVEAYDeotUz60LNQHtw==}
+    engines: {node: '>=18.0.0'}
 
   '@libsql/isomorphic-ws@0.1.5':
     resolution: {integrity: sha512-DtLWIH29onUYR00i0GlQ3UdcTRC6EP4u9w/h9LxpUZJWRMARk6dQwZ6Jkd+QdwVpuAOrdxt18v0K2uIYR3fwFg==}
 
-  '@libsql/linux-arm-gnueabihf@0.5.22':
-    resolution: {integrity: sha512-3Uo3SoDPJe/zBnyZKosziRGtszXaEtv57raWrZIahtQDsjxBVjuzYQinCm9LRCJCUT5t2r5Z5nLDPJi2CwZVoA==}
-    cpu: [arm]
-    os: [linux]
-
-  '@libsql/linux-arm-musleabihf@0.5.22':
-    resolution: {integrity: sha512-LCsXh07jvSojTNJptT9CowOzwITznD+YFGGW+1XxUr7fS+7/ydUrpDfsMX7UqTqjm7xG17eq86VkWJgHJfvpNg==}
-    cpu: [arm]
-    os: [linux]
-
-  '@libsql/linux-arm64-gnu@0.5.22':
-    resolution: {integrity: sha512-KSdnOMy88c9mpOFKUEzPskSaF3VLflfSUCBwas/pn1/sV3pEhtMF6H8VUCd2rsedwoukeeCSEONqX7LLnQwRMA==}
+  '@libsql/linux-arm64-gnu@0.4.7':
+    resolution: {integrity: sha512-WlX2VYB5diM4kFfNaYcyhw5y+UJAI3xcMkEUJZPtRDEIu85SsSFrQ+gvoKfcVh76B//ztSeEX2wl9yrjF7BBCA==}
     cpu: [arm64]
     os: [linux]
 
-  '@libsql/linux-arm64-musl@0.5.22':
-    resolution: {integrity: sha512-mCHSMAsDTLK5YH//lcV3eFEgiR23Ym0U9oEvgZA0667gqRZg/2px+7LshDvErEKv2XZ8ixzw3p1IrBzLQHGSsw==}
+  '@libsql/linux-arm64-musl@0.4.7':
+    resolution: {integrity: sha512-6kK9xAArVRlTCpWeqnNMCoXW1pe7WITI378n4NpvU5EJ0Ok3aNTIC2nRPRjhro90QcnmLL1jPcrVwO4WD1U0xw==}
     cpu: [arm64]
     os: [linux]
 
-  '@libsql/linux-x64-gnu@0.5.22':
-    resolution: {integrity: sha512-kNBHaIkSg78Y4BqAdgjcR2mBilZXs4HYkAmi58J+4GRwDQZh5fIUWbnQvB9f95DkWUIGVeenqLRFY2pcTmlsew==}
+  '@libsql/linux-x64-gnu@0.4.7':
+    resolution: {integrity: sha512-CMnNRCmlWQqqzlTw6NeaZXzLWI8bydaXDke63JTUCvu8R+fj/ENsLrVBtPDlxQ0wGsYdXGlrUCH8Qi9gJep0yQ==}
     cpu: [x64]
     os: [linux]
 
-  '@libsql/linux-x64-musl@0.5.22':
-    resolution: {integrity: sha512-UZ4Xdxm4pu3pQXjvfJiyCzZop/9j/eA2JjmhMaAhe3EVLH2g11Fy4fwyUp9sT1QJYR1kpc2JLuybPM0kuXv/Tg==}
+  '@libsql/linux-x64-musl@0.4.7':
+    resolution: {integrity: sha512-nI6tpS1t6WzGAt1Kx1n1HsvtBbZ+jHn0m7ogNNT6pQHZQj7AFFTIMeDQw/i/Nt5H38np1GVRNsFe99eSIMs9XA==}
     cpu: [x64]
     os: [linux]
 
-  '@libsql/win32-x64-msvc@0.5.22':
-    resolution: {integrity: sha512-Fj0j8RnBpo43tVZUVoNK6BV/9AtDUM5S7DF3LB4qTYg1LMSZqi3yeCneUTLJD6XomQJlZzbI4mst89yspVSAnA==}
+  '@libsql/win32-x64-msvc@0.4.7':
+    resolution: {integrity: sha512-7pJzOWzPm6oJUxml+PCDRzYQ4A1hTMHAciTAHfFK4fkbDZX33nWPVG7Y3vqdKtslcwAzwmrNDc6sXy2nwWnbiw==}
     cpu: [x64]
     os: [win32]
 
@@ -4571,13 +4715,13 @@ packages:
     resolution: {integrity: sha512-RkaJzeJKDbaDWTIPiJwubyljaEPwpVWkm9Rt5h9Nd6h7tEXTJ3VB4qxdZBioV7JO5yLUaOKwz7vDOzlncUsegw==}
     engines: {node: '>=10.0.0'}
 
-  better-auth@1.4.12:
-    resolution: {integrity: sha512-FsFMnWgk+AGrxsIGbpWLCibgYcbm6uNhPHln3ohXFDXSRa0gk39Beuh54Q+x6ml2qYodF0snxf/tPtDpBI/JiA==}
+  better-auth@1.4.13:
+    resolution: {integrity: sha512-frGQmYT0rglidLpx91SP9n4ztaNBFGBb0JrWSdMTAHvhBkmQlUT/43e0IboMK2mPrAZFlvhdcMV8jCnqpYVE9A==}
     peerDependencies:
       '@lynx-js/react': '*'
       '@prisma/client': ^5.0.0 || ^6.0.0 || ^7.0.0
       '@sveltejs/kit': ^2.0.0
-      '@tanstack/react-start': ^1.0.0
+      '@tanstack/start-server-core': ^1.0.0
       better-sqlite3: ^12.0.0
       drizzle-kit: '>=0.31.4'
       drizzle-orm: '>=0.41.0'
@@ -4599,7 +4743,7 @@ packages:
         optional: true
       '@sveltejs/kit':
         optional: true
-      '@tanstack/react-start':
+      '@tanstack/start-server-core':
         optional: true
       better-sqlite3:
         optional: true
@@ -5000,9 +5144,6 @@ packages:
     resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
     engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
     hasBin: true
-
-  cross-fetch@4.1.0:
-    resolution: {integrity: sha512-uKm5PU+MHTootlWEY+mZ4vvXoCn4fLQxT9dSc1sXVMSFkINTJVN8cAQROpwcKm8bJ/c7rgZVIBWzH5T78sNZZw==}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -5535,6 +5676,11 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  esbuild@0.25.5:
+    resolution: {integrity: sha512-P8OtKZRv/5J5hhz0cUAdu/cLuPIKXpQl1R9pZtvmHWQvrAUVd0UNIPT4IB4W3rNOqVO0rlqHmCIbSwxh/c9yUQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   esbuild@0.27.2:
     resolution: {integrity: sha512-HyNQImnsOC7X9PMNaCIeAm4ISCQXs5a5YasTXVliKv4uuBo1dKrG0A+uQS8M5eXjVMnLg3WgXaKvprHlFJQffw==}
     engines: {node: '>=18'}
@@ -5644,8 +5790,8 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
 
-  eslint-plugin-turbo@2.5.0:
-    resolution: {integrity: sha512-qQk54MrUZv0gnpxV23sccTc+FL3UJ8q7vG7HmXuS2RP8gdjWDwI1CCJTJD8EdRIDjsMxF0xi0AKcMY0CwIlXVg==}
+  eslint-plugin-turbo@2.7.4:
+    resolution: {integrity: sha512-kye4pyGpZMJLgykeRDYTK2kpzHFw7kWlaio66Y4dL/9IMa7cIXirvvHVryV8D7ni3eOsHZYYQ9k0nADKNnecjQ==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -6642,9 +6788,9 @@ packages:
   libphonenumber-js@1.12.9:
     resolution: {integrity: sha512-VWwAdNeJgN7jFOD+wN4qx83DTPMVPPAUyx9/TUkBXKLiNkuWWk6anV0439tgdtwaJDrEdqkvdN22iA6J4bUCZg==}
 
-  libsql@0.5.22:
-    resolution: {integrity: sha512-NscWthMQt7fpU8lqd7LXMvT9pi+KhhmTHAJWUB/Lj6MWa0MKFv0F2V4C6WKKpjCVZl0VwcDz4nOI3CyaT1DDiA==}
-    cpu: [x64, arm64, wasm32, arm]
+  libsql@0.4.7:
+    resolution: {integrity: sha512-T9eIRCs6b0J1SHKYIvD8+KCJMcWZ900iZyxdnSCdqxN12Z1ijzT+jY5nrk72Jw4B0HGzms2NgpryArlJqvc3Lw==}
+    cpu: [x64, arm64, wasm32]
     os: [darwin, linux, win32]
 
   lightningcss-android-arm64@1.30.2:
@@ -10284,7 +10430,7 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@better-auth/core@1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)':
+  '@better-auth/core@1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)':
     dependencies:
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
@@ -10295,21 +10441,21 @@ snapshots:
       nanostores: 1.1.0
       zod: 4.3.5
 
-  '@better-auth/passkey@1.4.12(@better-auth/core@1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-auth@1.4.12(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2)))(better-call@1.1.7(zod@4.3.5))(nanostores@1.1.0)':
+  '@better-auth/passkey@1.4.13(@better-auth/core@1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-auth@1.4.13(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2)))(better-call@1.1.7(zod@4.3.5))(nanostores@1.1.0)':
     dependencies:
-      '@better-auth/core': 1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
+      '@better-auth/core': 1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
       '@simplewebauthn/browser': 13.2.2
       '@simplewebauthn/server': 13.2.2
-      better-auth: 1.4.12(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2))
+      better-auth: 1.4.13(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2))
       better-call: 1.1.7(zod@4.3.5)
       nanostores: 1.1.0
       zod: 4.3.5
 
-  '@better-auth/telemetry@1.4.12(@better-auth/core@1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))':
+  '@better-auth/telemetry@1.4.13(@better-auth/core@1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))':
     dependencies:
-      '@better-auth/core': 1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
+      '@better-auth/core': 1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
 
@@ -10335,23 +10481,23 @@ snapshots:
 
   '@date-fns/tz@1.2.0': {}
 
-  '@daveyplate/better-auth-tanstack@1.3.6(@tanstack/query-core@5.90.17)(@tanstack/react-query@5.90.17(react@19.2.3))(better-auth@1.4.12(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2)))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@daveyplate/better-auth-tanstack@1.3.6(@tanstack/query-core@5.90.17)(@tanstack/react-query@5.90.17(react@19.2.3))(better-auth@1.4.13(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2)))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@tanstack/query-core': 5.90.17
       '@tanstack/react-query': 5.90.17(react@19.2.3)
-      better-auth: 1.4.12(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2))
+      better-auth: 1.4.13(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2))
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
-  '@daveyplate/better-auth-ui@3.3.15(f24f6cd9f2a1cac416a78121972c7a00)':
+  '@daveyplate/better-auth-ui@3.3.15(f1a9f8ca669a1712372590a0d22d1111)':
     dependencies:
-      '@better-auth/passkey': 1.4.12(@better-auth/core@1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-auth@1.4.12(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2)))(better-call@1.1.7(zod@4.3.5))(nanostores@1.1.0)
+      '@better-auth/passkey': 1.4.13(@better-auth/core@1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-auth@1.4.13(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2)))(better-call@1.1.7(zod@4.3.5))(nanostores@1.1.0)
       '@better-fetch/fetch': 1.1.21
       '@captchafox/react': 1.10.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@daveyplate/better-auth-tanstack': 1.3.6(@tanstack/query-core@5.90.17)(@tanstack/react-query@5.90.17(react@19.2.3))(better-auth@1.4.12(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2)))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@daveyplate/better-auth-tanstack': 1.3.6(@tanstack/query-core@5.90.17)(@tanstack/react-query@5.90.17(react@19.2.3))(better-auth@1.4.13(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2)))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@hcaptcha/react-hcaptcha': 1.17.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@hookform/resolvers': 5.2.2(react-hook-form@7.60.0(react@19.2.3))
-      '@instantdb/react': 0.22.102(react@19.2.3)
+      '@instantdb/react': 0.22.105(react@19.2.3)
       '@marsidev/react-turnstile': 1.4.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@noble/hashes': 2.0.1
       '@radix-ui/react-avatar': 1.1.11(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -10373,7 +10519,7 @@ snapshots:
       '@triplit/client': 1.0.50(better-sqlite3@12.6.0)(typescript@5.9.3)
       '@triplit/react': 1.0.51(better-sqlite3@12.6.0)(react@19.2.3)(typescript@5.9.3)
       '@wojtekmaj/react-recaptcha-v3': 0.1.4(@types/react@19.1.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      better-auth: 1.4.12(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2))
+      better-auth: 1.4.13(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2))
       class-variance-authority: 0.7.1
       clsx: 2.1.1
       input-otp: 1.4.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -10608,6 +10754,9 @@ snapshots:
   '@esbuild/aix-ppc64@0.25.12':
     optional: true
 
+  '@esbuild/aix-ppc64@0.25.5':
+    optional: true
+
   '@esbuild/aix-ppc64@0.27.2':
     optional: true
 
@@ -10615,6 +10764,9 @@ snapshots:
     optional: true
 
   '@esbuild/android-arm64@0.25.12':
+    optional: true
+
+  '@esbuild/android-arm64@0.25.5':
     optional: true
 
   '@esbuild/android-arm64@0.27.2':
@@ -10626,6 +10778,9 @@ snapshots:
   '@esbuild/android-arm@0.25.12':
     optional: true
 
+  '@esbuild/android-arm@0.25.5':
+    optional: true
+
   '@esbuild/android-arm@0.27.2':
     optional: true
 
@@ -10633,6 +10788,9 @@ snapshots:
     optional: true
 
   '@esbuild/android-x64@0.25.12':
+    optional: true
+
+  '@esbuild/android-x64@0.25.5':
     optional: true
 
   '@esbuild/android-x64@0.27.2':
@@ -10644,6 +10802,9 @@ snapshots:
   '@esbuild/darwin-arm64@0.25.12':
     optional: true
 
+  '@esbuild/darwin-arm64@0.25.5':
+    optional: true
+
   '@esbuild/darwin-arm64@0.27.2':
     optional: true
 
@@ -10651,6 +10812,9 @@ snapshots:
     optional: true
 
   '@esbuild/darwin-x64@0.25.12':
+    optional: true
+
+  '@esbuild/darwin-x64@0.25.5':
     optional: true
 
   '@esbuild/darwin-x64@0.27.2':
@@ -10662,6 +10826,9 @@ snapshots:
   '@esbuild/freebsd-arm64@0.25.12':
     optional: true
 
+  '@esbuild/freebsd-arm64@0.25.5':
+    optional: true
+
   '@esbuild/freebsd-arm64@0.27.2':
     optional: true
 
@@ -10669,6 +10836,9 @@ snapshots:
     optional: true
 
   '@esbuild/freebsd-x64@0.25.12':
+    optional: true
+
+  '@esbuild/freebsd-x64@0.25.5':
     optional: true
 
   '@esbuild/freebsd-x64@0.27.2':
@@ -10680,6 +10850,9 @@ snapshots:
   '@esbuild/linux-arm64@0.25.12':
     optional: true
 
+  '@esbuild/linux-arm64@0.25.5':
+    optional: true
+
   '@esbuild/linux-arm64@0.27.2':
     optional: true
 
@@ -10687,6 +10860,9 @@ snapshots:
     optional: true
 
   '@esbuild/linux-arm@0.25.12':
+    optional: true
+
+  '@esbuild/linux-arm@0.25.5':
     optional: true
 
   '@esbuild/linux-arm@0.27.2':
@@ -10698,6 +10874,9 @@ snapshots:
   '@esbuild/linux-ia32@0.25.12':
     optional: true
 
+  '@esbuild/linux-ia32@0.25.5':
+    optional: true
+
   '@esbuild/linux-ia32@0.27.2':
     optional: true
 
@@ -10705,6 +10884,9 @@ snapshots:
     optional: true
 
   '@esbuild/linux-loong64@0.25.12':
+    optional: true
+
+  '@esbuild/linux-loong64@0.25.5':
     optional: true
 
   '@esbuild/linux-loong64@0.27.2':
@@ -10716,6 +10898,9 @@ snapshots:
   '@esbuild/linux-mips64el@0.25.12':
     optional: true
 
+  '@esbuild/linux-mips64el@0.25.5':
+    optional: true
+
   '@esbuild/linux-mips64el@0.27.2':
     optional: true
 
@@ -10723,6 +10908,9 @@ snapshots:
     optional: true
 
   '@esbuild/linux-ppc64@0.25.12':
+    optional: true
+
+  '@esbuild/linux-ppc64@0.25.5':
     optional: true
 
   '@esbuild/linux-ppc64@0.27.2':
@@ -10734,6 +10922,9 @@ snapshots:
   '@esbuild/linux-riscv64@0.25.12':
     optional: true
 
+  '@esbuild/linux-riscv64@0.25.5':
+    optional: true
+
   '@esbuild/linux-riscv64@0.27.2':
     optional: true
 
@@ -10741,6 +10932,9 @@ snapshots:
     optional: true
 
   '@esbuild/linux-s390x@0.25.12':
+    optional: true
+
+  '@esbuild/linux-s390x@0.25.5':
     optional: true
 
   '@esbuild/linux-s390x@0.27.2':
@@ -10752,10 +10946,16 @@ snapshots:
   '@esbuild/linux-x64@0.25.12':
     optional: true
 
+  '@esbuild/linux-x64@0.25.5':
+    optional: true
+
   '@esbuild/linux-x64@0.27.2':
     optional: true
 
   '@esbuild/netbsd-arm64@0.25.12':
+    optional: true
+
+  '@esbuild/netbsd-arm64@0.25.5':
     optional: true
 
   '@esbuild/netbsd-arm64@0.27.2':
@@ -10767,10 +10967,16 @@ snapshots:
   '@esbuild/netbsd-x64@0.25.12':
     optional: true
 
+  '@esbuild/netbsd-x64@0.25.5':
+    optional: true
+
   '@esbuild/netbsd-x64@0.27.2':
     optional: true
 
   '@esbuild/openbsd-arm64@0.25.12':
+    optional: true
+
+  '@esbuild/openbsd-arm64@0.25.5':
     optional: true
 
   '@esbuild/openbsd-arm64@0.27.2':
@@ -10780,6 +10986,9 @@ snapshots:
     optional: true
 
   '@esbuild/openbsd-x64@0.25.12':
+    optional: true
+
+  '@esbuild/openbsd-x64@0.25.5':
     optional: true
 
   '@esbuild/openbsd-x64@0.27.2':
@@ -10797,6 +11006,9 @@ snapshots:
   '@esbuild/sunos-x64@0.25.12':
     optional: true
 
+  '@esbuild/sunos-x64@0.25.5':
+    optional: true
+
   '@esbuild/sunos-x64@0.27.2':
     optional: true
 
@@ -10804,6 +11016,9 @@ snapshots:
     optional: true
 
   '@esbuild/win32-arm64@0.25.12':
+    optional: true
+
+  '@esbuild/win32-arm64@0.25.5':
     optional: true
 
   '@esbuild/win32-arm64@0.27.2':
@@ -10815,6 +11030,9 @@ snapshots:
   '@esbuild/win32-ia32@0.25.12':
     optional: true
 
+  '@esbuild/win32-ia32@0.25.5':
+    optional: true
+
   '@esbuild/win32-ia32@0.27.2':
     optional: true
 
@@ -10822,6 +11040,9 @@ snapshots:
     optional: true
 
   '@esbuild/win32-x64@0.25.12':
+    optional: true
+
+  '@esbuild/win32-x64@0.25.5':
     optional: true
 
   '@esbuild/win32-x64@0.27.2':
@@ -11137,27 +11358,27 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@instantdb/core@0.22.102':
+  '@instantdb/core@0.22.105':
     dependencies:
-      '@instantdb/version': 0.22.102
+      '@instantdb/version': 0.22.105
       mutative: 1.3.0
       uuid: 11.1.0
 
-  '@instantdb/react-common@0.22.102(react@19.2.3)':
+  '@instantdb/react-common@0.22.105(react@19.2.3)':
     dependencies:
-      '@instantdb/core': 0.22.102
-      '@instantdb/version': 0.22.102
+      '@instantdb/core': 0.22.105
+      '@instantdb/version': 0.22.105
       react: 19.2.3
 
-  '@instantdb/react@0.22.102(react@19.2.3)':
+  '@instantdb/react@0.22.105(react@19.2.3)':
     dependencies:
-      '@instantdb/core': 0.22.102
-      '@instantdb/react-common': 0.22.102(react@19.2.3)
-      '@instantdb/version': 0.22.102
+      '@instantdb/core': 0.22.105
+      '@instantdb/react-common': 0.22.105(react@19.2.3)
+      '@instantdb/version': 0.22.105
       eventsource: 4.1.0
       react: 19.2.3
 
-  '@instantdb/version@0.22.102': {}
+  '@instantdb/version@0.22.105': {}
 
   '@isaacs/cliui@8.0.2':
     dependencies:
@@ -11365,40 +11586,41 @@ snapshots:
       lexical: 0.35.0
       yjs: 13.6.28
 
-  '@libsql/client@0.17.0':
+  '@libsql/client@0.14.0':
     dependencies:
-      '@libsql/core': 0.17.0
-      '@libsql/hrana-client': 0.9.0
+      '@libsql/core': 0.14.0
+      '@libsql/hrana-client': 0.7.0
       js-base64: 3.7.8
-      libsql: 0.5.22
+      libsql: 0.4.7
       promise-limit: 2.7.0
     transitivePeerDependencies:
       - bufferutil
-      - encoding
       - utf-8-validate
     optional: true
 
-  '@libsql/core@0.17.0':
+  '@libsql/core@0.14.0':
     dependencies:
       js-base64: 3.7.8
     optional: true
 
-  '@libsql/darwin-arm64@0.5.22':
+  '@libsql/darwin-arm64@0.4.7':
     optional: true
 
-  '@libsql/darwin-x64@0.5.22':
+  '@libsql/darwin-x64@0.4.7':
     optional: true
 
-  '@libsql/hrana-client@0.9.0':
+  '@libsql/hrana-client@0.7.0':
     dependencies:
+      '@libsql/isomorphic-fetch': 0.3.1
       '@libsql/isomorphic-ws': 0.1.5
-      cross-fetch: 4.1.0
       js-base64: 3.7.8
       node-fetch: 3.3.2
     transitivePeerDependencies:
       - bufferutil
-      - encoding
       - utf-8-validate
+    optional: true
+
+  '@libsql/isomorphic-fetch@0.3.1':
     optional: true
 
   '@libsql/isomorphic-ws@0.1.5':
@@ -11410,25 +11632,19 @@ snapshots:
       - utf-8-validate
     optional: true
 
-  '@libsql/linux-arm-gnueabihf@0.5.22':
+  '@libsql/linux-arm64-gnu@0.4.7':
     optional: true
 
-  '@libsql/linux-arm-musleabihf@0.5.22':
+  '@libsql/linux-arm64-musl@0.4.7':
     optional: true
 
-  '@libsql/linux-arm64-gnu@0.5.22':
+  '@libsql/linux-x64-gnu@0.4.7':
     optional: true
 
-  '@libsql/linux-arm64-musl@0.5.22':
+  '@libsql/linux-x64-musl@0.4.7':
     optional: true
 
-  '@libsql/linux-x64-gnu@0.5.22':
-    optional: true
-
-  '@libsql/linux-x64-musl@0.5.22':
-    optional: true
-
-  '@libsql/win32-x64-msvc@0.5.22':
+  '@libsql/win32-x64-msvc@0.4.7':
     optional: true
 
   '@marsidev/react-turnstile@1.4.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
@@ -11522,13 +11738,13 @@ snapshots:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
-  '@payloadcms/db-postgres@3.70.0(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))':
+  '@payloadcms/db-postgres@3.70.0(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))':
     dependencies:
-      '@payloadcms/drizzle': 3.70.0(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))(pg@8.16.3)
+      '@payloadcms/drizzle': 3.70.0(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))(pg@8.16.3)
       '@types/pg': 8.10.2
       console-table-printer: 2.12.1
       drizzle-kit: 0.31.7
-      drizzle-orm: 0.44.7(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.16.3)
+      drizzle-orm: 0.44.7(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.16.3)
       payload: 3.70.0(graphql@16.12.0)(typescript@5.7.3)
       pg: 8.16.3
       prompts: 2.4.2
@@ -11565,13 +11781,13 @@ snapshots:
       - sqlite3
       - supports-color
 
-  '@payloadcms/db-postgres@3.70.0(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.9.3))':
+  '@payloadcms/db-postgres@3.70.0(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.9.3))':
     dependencies:
-      '@payloadcms/drizzle': 3.70.0(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.9.3))(pg@8.16.3)
+      '@payloadcms/drizzle': 3.70.0(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.9.3))(pg@8.16.3)
       '@types/pg': 8.10.2
       console-table-printer: 2.12.1
       drizzle-kit: 0.31.7
-      drizzle-orm: 0.44.7(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.16.3)
+      drizzle-orm: 0.44.7(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.16.3)
       payload: 3.70.0(graphql@16.12.0)(typescript@5.9.3)
       pg: 8.16.3
       prompts: 2.4.2
@@ -11608,11 +11824,11 @@ snapshots:
       - sqlite3
       - supports-color
 
-  '@payloadcms/drizzle@3.70.0(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))(pg@8.16.3)':
+  '@payloadcms/drizzle@3.70.0(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.7.3))(pg@8.16.3)':
     dependencies:
       console-table-printer: 2.12.1
       dequal: 2.0.3
-      drizzle-orm: 0.44.7(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.16.3)
+      drizzle-orm: 0.44.7(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.16.3)
       payload: 3.70.0(graphql@16.12.0)(typescript@5.7.3)
       prompts: 2.4.2
       to-snake-case: 1.0.0
@@ -11648,11 +11864,11 @@ snapshots:
       - sql.js
       - sqlite3
 
-  '@payloadcms/drizzle@3.70.0(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.9.3))(pg@8.16.3)':
+  '@payloadcms/drizzle@3.70.0(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(payload@3.70.0(graphql@16.12.0)(typescript@5.9.3))(pg@8.16.3)':
     dependencies:
       console-table-printer: 2.12.1
       dequal: 2.0.3
-      drizzle-orm: 0.44.7(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.16.3)
+      drizzle-orm: 0.44.7(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.16.3)
       payload: 3.70.0(graphql@16.12.0)(typescript@5.9.3)
       prompts: 2.4.2
       to-snake-case: 1.0.0
@@ -13993,7 +14209,7 @@ snapshots:
 
   '@types/busboy@1.5.4':
     dependencies:
-      '@types/node': 22.16.2
+      '@types/node': 22.5.4
 
   '@types/chai@5.2.2':
     dependencies:
@@ -14629,7 +14845,7 @@ snapshots:
   '@vitest/snapshot@3.2.4':
     dependencies:
       '@vitest/pretty-format': 3.2.4
-      magic-string: 0.30.21
+      magic-string: 0.30.17
       pathe: 2.0.3
 
   '@vitest/spy@3.2.4':
@@ -14926,10 +15142,10 @@ snapshots:
 
   basic-ftp@5.1.0: {}
 
-  better-auth@1.4.12(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2)):
+  better-auth@1.4.13(better-sqlite3@12.6.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1))(next@15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(pg@8.17.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2)):
     dependencies:
-      '@better-auth/core': 1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
-      '@better-auth/telemetry': 1.4.12(@better-auth/core@1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))
+      '@better-auth/core': 1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
+      '@better-auth/telemetry': 1.4.13(@better-auth/core@1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
       '@noble/ciphers': 2.1.1
@@ -14943,7 +15159,7 @@ snapshots:
     optionalDependencies:
       better-sqlite3: 12.6.0
       drizzle-kit: 0.31.8
-      drizzle-orm: 0.45.1(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1)
+      drizzle-orm: 0.45.1(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1)
       next: 15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4)
       pg: 8.17.1
       react: 19.2.3
@@ -15338,13 +15554,6 @@ snapshots:
     dependencies:
       cross-spawn: 7.0.6
 
-  cross-fetch@4.1.0:
-    dependencies:
-      node-fetch: 2.7.0
-    transitivePeerDependencies:
-      - encoding
-    optional: true
-
   cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
@@ -15576,18 +15785,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.7(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.16.3):
+  drizzle-orm@0.44.7(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.10.2)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.16.3):
     optionalDependencies:
-      '@libsql/client': 0.17.0
+      '@libsql/client': 0.14.0
       '@types/better-sqlite3': 7.6.13
       '@types/pg': 8.10.2
       better-sqlite3: 12.6.0
       kysely: 0.28.9
       pg: 8.16.3
 
-  drizzle-orm@0.45.1(@libsql/client@0.17.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1):
+  drizzle-orm@0.45.1(@libsql/client@0.14.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.0)(kysely@0.28.9)(pg@8.17.1):
     optionalDependencies:
-      '@libsql/client': 0.17.0
+      '@libsql/client': 0.14.0
       '@types/better-sqlite3': 7.6.13
       '@types/pg': 8.16.0
       better-sqlite3: 12.6.0
@@ -15857,6 +16066,34 @@ snapshots:
       '@esbuild/win32-arm64': 0.25.12
       '@esbuild/win32-ia32': 0.25.12
       '@esbuild/win32-x64': 0.25.12
+
+  esbuild@0.25.5:
+    optionalDependencies:
+      '@esbuild/aix-ppc64': 0.25.5
+      '@esbuild/android-arm': 0.25.5
+      '@esbuild/android-arm64': 0.25.5
+      '@esbuild/android-x64': 0.25.5
+      '@esbuild/darwin-arm64': 0.25.5
+      '@esbuild/darwin-x64': 0.25.5
+      '@esbuild/freebsd-arm64': 0.25.5
+      '@esbuild/freebsd-x64': 0.25.5
+      '@esbuild/linux-arm': 0.25.5
+      '@esbuild/linux-arm64': 0.25.5
+      '@esbuild/linux-ia32': 0.25.5
+      '@esbuild/linux-loong64': 0.25.5
+      '@esbuild/linux-mips64el': 0.25.5
+      '@esbuild/linux-ppc64': 0.25.5
+      '@esbuild/linux-riscv64': 0.25.5
+      '@esbuild/linux-s390x': 0.25.5
+      '@esbuild/linux-x64': 0.25.5
+      '@esbuild/netbsd-arm64': 0.25.5
+      '@esbuild/netbsd-x64': 0.25.5
+      '@esbuild/openbsd-arm64': 0.25.5
+      '@esbuild/openbsd-x64': 0.25.5
+      '@esbuild/sunos-x64': 0.25.5
+      '@esbuild/win32-arm64': 0.25.5
+      '@esbuild/win32-ia32': 0.25.5
+      '@esbuild/win32-x64': 0.25.5
 
   esbuild@0.27.2:
     optionalDependencies:
@@ -16222,7 +16459,7 @@ snapshots:
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
 
-  eslint-plugin-turbo@2.5.0(eslint@9.29.0(jiti@2.6.1))(turbo@2.7.3):
+  eslint-plugin-turbo@2.7.4(eslint@9.29.0(jiti@2.6.1))(turbo@2.7.3):
     dependencies:
       dotenv: 16.0.3
       eslint: 9.29.0(jiti@2.6.1)
@@ -17366,20 +17603,18 @@ snapshots:
 
   libphonenumber-js@1.12.9: {}
 
-  libsql@0.5.22:
+  libsql@0.4.7:
     dependencies:
       '@neon-rs/load': 0.0.4
       detect-libc: 2.0.2
     optionalDependencies:
-      '@libsql/darwin-arm64': 0.5.22
-      '@libsql/darwin-x64': 0.5.22
-      '@libsql/linux-arm-gnueabihf': 0.5.22
-      '@libsql/linux-arm-musleabihf': 0.5.22
-      '@libsql/linux-arm64-gnu': 0.5.22
-      '@libsql/linux-arm64-musl': 0.5.22
-      '@libsql/linux-x64-gnu': 0.5.22
-      '@libsql/linux-x64-musl': 0.5.22
-      '@libsql/win32-x64-msvc': 0.5.22
+      '@libsql/darwin-arm64': 0.4.7
+      '@libsql/darwin-x64': 0.4.7
+      '@libsql/linux-arm64-gnu': 0.4.7
+      '@libsql/linux-arm64-musl': 0.4.7
+      '@libsql/linux-x64-gnu': 0.4.7
+      '@libsql/linux-x64-musl': 0.4.7
+      '@libsql/win32-x64-msvc': 0.4.7
     optional: true
 
   lightningcss-android-arm64@1.30.2:
@@ -18648,7 +18883,7 @@ snapshots:
   proxy-agent@6.4.0:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.3
+      debug: 4.4.1
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
       lru-cache: 7.18.3
@@ -18963,7 +19198,7 @@ snapshots:
 
   require-in-the-middle@5.2.0:
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.1
       module-details-from-path: 1.0.4
       resolve: 1.22.11
     transitivePeerDependencies:
@@ -19784,7 +20019,7 @@ snapshots:
   tsx@4.20.3:
     dependencies:
       esbuild: 0.25.12
-      get-tsconfig: 4.13.0
+      get-tsconfig: 4.8.1
     optionalDependencies:
       fsevents: 2.3.3
 
@@ -20155,7 +20390,7 @@ snapshots:
 
   vite@7.0.3(@types/node@22.16.2)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:
-      esbuild: 0.25.12
+      esbuild: 0.25.5
       fdir: 6.4.6(picomatch@4.0.2)
       picomatch: 4.0.2
       postcss: 8.5.6
@@ -20173,7 +20408,7 @@ snapshots:
 
   vite@7.0.3(@types/node@24.0.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:
-      esbuild: 0.25.12
+      esbuild: 0.25.5
       fdir: 6.4.6(picomatch@4.0.2)
       picomatch: 4.0.2
       postcss: 8.5.6
