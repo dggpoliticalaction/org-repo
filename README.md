@@ -62,7 +62,7 @@ Here are the most important scripts available in the root `package.json`:
 - `pnpm dev`: Start all applications in development mode.
 - `pnpm dev:db`: Start the development docker containers.
 - `pnpm dev:db-down`: Stop the development docker containers.
-- `pnpm dev:clear-db`: Stop the containers and remove the database volumes.
+- `pnpm dev:db-nuke`: Stop the containers and remove the database volumes.
 - `pnpm lint`: Lint all applications.
 - `pnpm format`: Format all applications.
 - `pnpm check-types`: Run typescript to check for type errors.
