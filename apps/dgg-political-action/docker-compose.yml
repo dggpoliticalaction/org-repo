@@ -1,31 +1,17 @@
-version: '3'
-
 services:
-  payload:
-    image: node:18-alpine
+  postgres-dgg-political-action:
+    container_name: dgg-political-action-postgres-dev
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dgg-political-action
     ports:
-      - '3000:3000'
+      - '9009:5432' #its over nine thousand!
     volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "yarn install && yarn dev"
-    depends_on:
-      - mongo
-    env_file:
-      - .env
-
-  mongo:
-    image: mongo:latest
-    ports:
-      - '27017:27017'
-    command:
-      - --storageEngine=wiredTiger
-    volumes:
-      - data:/data/db
-    logging:
-      driver: none
+      - dgg_political_action_postgres_data:/var/lib/postgresql/data
 
 volumes:
-  data:
-  node_modules:
+  dgg_political_action_postgres_data:
+    name: dgg_political_action_postgres_data
