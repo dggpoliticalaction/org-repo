@@ -34,29 +34,37 @@ Node.js version 20.9.0+
 pnpm
 ```
 
-This repository uses `pnpm` as a package manager. To get started, install the dependencies:
+### Quick Start 
+
+1. First [clone the repo](#clone) if you have not done so already and then change directory into org-repo.
+```
+git clone https://github.com/dggpoliticalaction/org-repo.git
+cd org-repo
+```
+2. This repository uses `pnpm` as a package manager. install the dependencies:
 ```
 pnpm install
 ```
-
-
-### Quick Start 
-1. First [clone the repo](#clone) if you have not done so already and change directory into org-repo
-```
-cd org-repo
-```
-2. copy the example .env files 
+3. copy the example .env files 
 ```
 cp apps/pragmatic-papers/.env.example apps/pragmatic-papers/.env && cp apps/dgg-political-action/.env.example apps/dgg-political-action/.env
 ```
-3. Start dev environment 
+4. Start dev environment 
 ```
 pnpm dev
 ```
-4. open `http://localhost:8000` or `http://localhost:8000`
+5. Use a browser to view the applications,
+
+```
+http://localhost:8000
+```
+
+```
+http://localhost:8000
+```
 
 > [!TIP] 
-> You can also start a single application by running pnpm dev in the applications root directory.
+> You can also start a single application by running `pnpm dev` in the applications root directory.
 > ```
 > cd apps/pragmatic-papers/
 > pnpm dev
