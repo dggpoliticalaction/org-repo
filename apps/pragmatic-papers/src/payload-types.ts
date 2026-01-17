@@ -7,6 +7,28 @@
  */
 
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Footnotes".
+ */
+export type Footnotes =
+  | {
+      /**
+       * Footnote text.
+       */
+      note: string;
+      /**
+       * Auto-generated on save.
+       */
+      index?: number | null;
+      /**
+       * Optionally add a source link to the footnote.
+       */
+      attributionEnabled: boolean;
+      link?: LinkField;
+      id?: string | null;
+    }[]
+  | null;
+/**
  * Supported timezones in IANA format.
  *
  * This interface was referenced by `Config`'s JSON-Schema
