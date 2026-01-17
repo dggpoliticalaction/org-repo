@@ -1,31 +1,28 @@
-import { NextResponse } from 'next/server'
-import type { PayloadRequest } from 'payload'
+import { type NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import { seed } from '@/endpoints/seed'
 import { isAdmin } from '@/access/checkRole'
 import type { User } from '@/payload-types'
 import configPromise from '@payload-config'
 
-export async function POST(
-  req: Request & {
-    cookies: {
-      get: (name: string) => {
-        value: string
-      }
-    }
-  },
-): Promise<NextResponse> {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     if (process.env.NODE_ENV === 'production') {
       return NextResponse.json({ error: 'Seeding is not allowed in production' }, { status: 403 })
     }
 
     const payload = await getPayload({ config: configPromise })
-    const { user } = await payload.auth({
-      req: req as unknown as PayloadRequest,
-      headers: req.headers,
-    })
+    const token = request.cookies.get('payload-token')?.value
+     if (!token) {
+       return NextResponse.json({ error: 'Missing payload-token' }, { status: 401 })
+     }
+     const authArgs: Parameters<typeof payload.auth>[0] = {
+       headers: new Headers({
+       cookie: request.headers.get('cookie') ?? `payload-token=${token}`,
+       }),
+     }
 
+    const { user } = await payload.auth(authArgs)
     if (!user || !isAdmin(user as User)) {
       return NextResponse.json(
         { error: 'Unauthorized. Only admins can seed the database.' },

@@ -2,11 +2,10 @@ import type { Metadata } from 'next'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
-
-import type { Article } from '@/payload-types'
 
 import { ArticleHero } from '@/heros/ArticleHero'
 import { generateMeta } from '@/utilities/generateMeta'
@@ -27,11 +26,9 @@ export async function generateStaticParams(): Promise<{ slug: string | null | un
     },
   })
 
-  const params = articles.docs.map(({ slug }) => {
+  return articles.docs.map(({ slug }) => {
     return { slug }
   })
-
-  return params
 }
 
 interface Args {
@@ -68,11 +65,15 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   return generateMeta({ doc: article })
 }
 
-export default async function Article({ params: paramsPromise }: Args): Promise<React.ReactNode> {
+export default async function Article({ params: paramsPromise }: Readonly<Args>): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   const url = '/articles/' + slug
   const article = await queryArticleBySlug({ slug })
+
+  if (!article) return <PayloadRedirects url={url} />
+
+  const typedContent = article.content as unknown as DefaultTypedEditorState
 
   if (!article) return <PayloadRedirects url={url} />
 
@@ -87,7 +88,9 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
       <ArticleHero article={article} />
 
-      <RichText className="" data={article.content} enableGutter={false} />
+      <RichText className=""
+        data={typedContent}
+        enableGutter={false} />
     </article>
   )
 }

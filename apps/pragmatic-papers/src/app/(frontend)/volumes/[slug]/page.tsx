@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -28,11 +29,9 @@ export async function generateStaticParams(): Promise<{ slug: string | null | un
     },
   })
 
-  const params = volumes.docs.map(({ slug }) => {
+  return volumes.docs.map(({ slug }) => {
     return { slug }
   })
-
-  return params
 }
 
 interface Args {
@@ -70,9 +69,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   return generateMeta({ doc: volume })
 }
 
-export default async function VolumePage({
-  params: paramsPromise,
-}: Args): Promise<React.ReactNode> {
+export default async function VolumePage({ params: paramsPromise }: Readonly<Args>): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   const url = '/volumes/' + slug
@@ -80,6 +77,7 @@ export default async function VolumePage({
 
   if (!volume) return <PayloadRedirects url={url} />
   const { publishedAt, editorsNote, articles } = volume
+  const typedEditorsNote = editorsNote as unknown as DefaultTypedEditorState
   if (articles?.filter((article) => typeof article === 'number')?.length ?? 0 > 0) {
     console.error('Fetching volume with unfetched articles', slug)
   }
@@ -113,7 +111,7 @@ export default async function VolumePage({
       </div>
       {editorsNote && (
         <div className="w-full container">
-          <RichText className="w-full" enableGutter={false} data={editorsNote} />
+          <RichText className="w-full" data={typedEditorsNote} enableGutter={false} />
         </div>
       )}
       <Squiggle className="w-1/2 h-6 mx-auto" />

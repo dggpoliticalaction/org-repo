@@ -1,5 +1,5 @@
 import { Feed } from 'feed'
-import { type Article, type Media, type Volume } from '../payload-types'
+import { type Article, type Media, type Volume } from '@/payload-types'
 import { getServerSideURL } from './getURL'
 import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 
@@ -104,7 +104,7 @@ export const generateArticleFeed = (articles: Article[]): string => {
         extensions: [
           {
             name: 'updated',
-            objects: new Date(article.updatedAt).toISOString(),
+            objects: { updatedAt: new Date(article.updatedAt).toISOString() },
           },
         ],
       })
@@ -133,7 +133,7 @@ export const generateVolumeFeed = (volumes: Volume[]): string => {
         extensions: [
           {
             name: 'updated',
-            objects: new Date(volume.updatedAt).toISOString(),
+            objects: { updatedAt: new Date(volume.updatedAt).toISOString() },
           },
         ],
         published: new Date(volume.publishedAt),

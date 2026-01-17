@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react'
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 import type { Page } from '@/payload-types'
 
@@ -34,10 +35,14 @@ export const RenderBlocks: React.FC<{
           const { blockType } = block
 
           if (blockType == 'volumeView') {
+            const introContent = (block as { introContent?: unknown })
+              .introContent as DefaultTypedEditorState | null
+
             return (
               <div className="my-4" key={index}>
                 <VolumeViewBlock
                   {...block}
+                  introContent={introContent ?? null}
                   id={block.id ?? undefined}
                   searchParamsPromise={searchParamsPromise}
                   blockType={'volumeView'}

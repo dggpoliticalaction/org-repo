@@ -1,3 +1,4 @@
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import type { VolumeView as VolumeBlockProps, Volume } from '@/payload-types'
 
 import configPromise from '@payload-config'
@@ -10,7 +11,8 @@ import { PageRange } from '@/components/PageRange'
 import { PaginationVolumes } from '@/components/PaginationVolumes'
 
 export const VolumeViewBlock: React.FC<
-  VolumeBlockProps & {
+  Omit<VolumeBlockProps, 'introContent'> & {
+    introContent?: DefaultTypedEditorState | null
     id?: string
     searchParamsPromise: Promise<{ p?: string }>
   }

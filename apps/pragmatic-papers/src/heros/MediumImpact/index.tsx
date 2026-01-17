@@ -1,26 +1,33 @@
 import React from 'react'
 
 import type { Page } from '@/payload-types'
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 
 export const MediumImpactHero: React.FC<Page['hero']> = ({ links, media, richText }) => {
+  const richTextContent = richText as DefaultTypedEditorState | null
+  const mediaCaption =
+    media && typeof media === 'object' && media.caption
+      ? (media.caption as DefaultTypedEditorState | null)
+      : null
+
   return (
     <div className="">
       <div className="container mb-8">
-        {richText && <RichText className="mb-6" data={richText} enableGutter={false} />}
+        {richTextContent && (
+          <RichText className="mb-6" data={richTextContent} enableGutter={false} />
+        )}
 
         {Array.isArray(links) && links.length > 0 && (
           <ul className="flex gap-4">
-            {links.map(({ link }, i) => {
-              return (
-                <li key={i}>
-                  <CMSLink {...link} />
-                </li>
-              )
-            })}
+            {links.map(({ link }, i) => (
+              <li key={i}>
+                <CMSLink {...link} />
+              </li>
+            ))}
           </ul>
         )}
       </div>
@@ -33,9 +40,9 @@ export const MediumImpactHero: React.FC<Page['hero']> = ({ links, media, richTex
               priority
               resource={media}
             />
-            {media?.caption && (
+            {mediaCaption && (
               <div className="mt-3">
-                <RichText data={media.caption} enableGutter={false} />
+                <RichText data={mediaCaption} enableGutter={false} />
               </div>
             )}
           </div>

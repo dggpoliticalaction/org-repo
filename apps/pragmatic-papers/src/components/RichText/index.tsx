@@ -54,7 +54,7 @@ type NodeTypes =
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
   if (typeof value !== 'object') {
-    throw new Error('Expected value to be an object')
+    throw new TypeError('Expected value to be an object')
   }
   const slug = value.slug
   return relationTo === 'articles' ? `/articles/${slug}` : `/${slug}`
@@ -64,7 +64,10 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
   blocks: {
-    banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
+    banner: ({ node }) => {
+      const content = node.fields.content as DefaultTypedEditorState | null
+      return <BannerBlock className="col-start-2 mb-4" {...node.fields} content={content} />
+    },
     mediaBlock: ({ node }) => (
       <MediaBlock
         className="col-start-1 col-span-3"
@@ -76,7 +79,10 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       />
     ),
     code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
-    cta: ({ node }) => <CallToActionBlock {...node.fields} />,
+    cta: ({ node }) => {
+      const richText = node.fields.richText as DefaultTypedEditorState | null
+      return <CallToActionBlock {...node.fields} richText={richText} />
+    },
     displayMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
       <MathBlock {...node.fields} />
     ),

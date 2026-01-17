@@ -27,15 +27,16 @@ export async function generateStaticParams() {
     },
   })
 
-  const params = pages.docs
+
+
+
+  return pages.docs
     ?.filter((doc) => {
       return doc.slug !== 'home'
     })
     .map(({ slug }) => {
       return { slug }
     })
-
-  return params
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -49,10 +50,7 @@ type Args = {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default async function Page({
-  params: paramsPromise,
-  searchParams: searchParamsPromise,
-}: Args) {
+export default async function Page({ params: paramsPromise, searchParams: searchParamsPromise }: Readonly<Args>) {
   const { isEnabled: draft } = await draftMode()
   const { slug = 'home' } = await paramsPromise
   const url = '/' + slug
@@ -116,6 +114,5 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
       },
     },
   })
-
   return result.docs?.[0] || null
 })
