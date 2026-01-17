@@ -1,41 +1,40 @@
-import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
+import { BannerBlock } from '@/blocks/Banner/Component'
+import { BlueSkyEmbedBlock } from '@/blocks/BlueSkyEmbed/Component'
+import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
+import { FootnoteBlock } from '@/blocks/Footnote/Component'
+import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
+import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
+import { TikTokEmbedBlock } from '@/blocks/TikTokEmbed/Component'
+import { TwitterEmbedBlock } from '@/blocks/TwitterEmbed/Component'
+import { YouTubeEmbedBlock } from '@/blocks/YouTubeEmbed/Component'
+import type {
+  BannerBlock as BannerBlockProps,
+  BlueSkyEmbedBlock as BlueSkyEmbedBlockProps,
+  CallToActionBlock as CTABlockProps,
+  FootnoteBlock as FootnoteBlockProps,
+  MediaBlock as MediaBlockProps,
+  RedditEmbedBlock as RedditEmbedBlockProps,
+  SquiggleRuleBlock as SquiggleRuleBlockProps,
+  TikTokEmbedBlock as TikTokEmbedBlockProps,
+  TwitterEmbedBlock as TwitterEmbedBlockProps,
+  YouTubeEmbedBlock as YouTubeEmbedBlockProps,
+} from '@/payload-types'
+import { cn } from '@/utilities/ui'
 import type {
   DefaultNodeTypes,
+  DefaultTypedEditorState,
   SerializedBlockNode,
   SerializedInlineBlockNode,
   SerializedLinkNode,
-  DefaultTypedEditorState,
 } from '@payloadcms/richtext-lexical'
 import {
+  RichText as ConvertRichText,
   type JSXConvertersFunction,
   LinkJSXConverter,
-  RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
-
-import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
-
-import type {
-  BannerBlock as BannerBlockProps,
-  CallToActionBlock as CTABlockProps,
-  SquiggleRuleBlock as SquiggleRuleBlockProps,
-  MediaBlock as MediaBlockProps,
-  TwitterEmbedBlock as TwitterEmbedBlockProps,
-  YouTubeEmbedBlock as YouTubeEmbedBlockProps,
-  RedditEmbedBlock as RedditEmbedBlockProps,
-  BlueSkyEmbedBlock as BlueSkyEmbedBlockProps,
-  TikTokEmbedBlock as TikTokEmbedBlockProps,
-} from '@/payload-types'
-import { BannerBlock } from '@/blocks/Banner/Component'
-import { CallToActionBlock } from '@/blocks/CallToAction/Component'
-import { cn } from '@/utilities/ui'
-import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
-import { FootnoteBlock, type FootnoteBlockProps } from '@/blocks/Footnote/Component'
-import { TwitterEmbedBlock } from '@/blocks/TwitterEmbed/Component'
-import { YouTubeEmbedBlock } from '@/blocks/YouTubeEmbed/Component'
-import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
-import { BlueSkyEmbedBlock } from '@/blocks/BlueSkyEmbed/Component'
-import { TikTokEmbedBlock } from '@/blocks/TikTokEmbed/Component'
 
 type NodeTypes =
   | DefaultNodeTypes
@@ -53,11 +52,6 @@ type NodeTypes =
       | TikTokEmbedBlockProps
     >
   | SerializedInlineBlockNode<MathBlockProps | FootnoteBlockProps>
-
-interface FootnoteEntry {
-  index: number
-  note: string
-}
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
@@ -99,23 +93,23 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode<MathBlockProps> }) => (
       <MathBlock {...node.fields} />
     ),
-    footnote: ({ node }: { node: SerializedInlineBlockNode<FootnoteBlockProps> }) => (
-      <FootnoteBlock {...node.fields} index={node.fields.index} />
-    ),
+    footnote: ({ node }) => <FootnoteBlock {...node.fields} />,
   },
 })
 
-type Props = {
+interface RichTextProps extends React.HTMLAttributes<HTMLDivElement> {
   data: DefaultTypedEditorState
   enableGutter?: boolean
   enableProse?: boolean
-  footnotes?: FootnoteEntry[]
-} & React.HTMLAttributes<HTMLDivElement>
+}
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function RichText(props: Props) {
-  const { className, enableProse = true, enableGutter = true, data, footnotes, ...rest } = props
-  const orderedFootnotes = footnotes ?? []
+export default function RichText({
+  className,
+  enableProse = true,
+  enableGutter = true,
+  data,
+  ...rest
+}: RichTextProps): React.ReactNode {
   return (
     <div
       className={cn(
@@ -130,27 +124,6 @@ export default function RichText(props: Props) {
       {...rest}
     >
       <ConvertRichText converters={jsxConverters} data={data} disableContainer />
-      {orderedFootnotes.length > 0 ? (
-        <section className="footnotes mt-6 border-t border-border pt-4">
-          <ol className="list-decimal pl-4">
-            {orderedFootnotes.map((footnote) => {
-              const footnoteNumber = footnote.index
-
-              return (
-                <li key={footnoteNumber} id={`footnote-${footnoteNumber}`}>
-                  {footnote.note}{' '}
-                  <a
-                    href={`#footnote-ref-${footnoteNumber}`}
-                    aria-label={`Back to footnote ${footnoteNumber}`}
-                  >
-                    ↩
-                  </a>
-                </li>
-              )
-            })}
-          </ol>
-        </section>
-      ) : null}
     </div>
   )
 }
