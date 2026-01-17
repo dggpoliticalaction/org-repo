@@ -65,7 +65,7 @@
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/typography": "^0.5.19",
     "@types/escape-html": "^1.0.4",
-    "@types/node": "22.5.4",
+    "@types/node": "25.0.9",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.2",
     "autoprefixer": "^10.4.23",
