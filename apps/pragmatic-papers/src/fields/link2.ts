@@ -1,0 +1,143 @@
+import type {
+  CheckboxField,
+  GroupField,
+  RadioField,
+  SelectField,
+  SingleRelationshipField,
+  TextField,
+} from 'payload'
+
+interface LinkFields {
+  appearance?: Partial<SelectField>
+  label?: Partial<TextField>
+  newTab?: Partial<CheckboxField>
+  reference?: Partial<SingleRelationshipField>
+  type?: Partial<RadioField>
+  url?: Partial<TextField>
+}
+
+type LinkProps = Omit<GroupField, 'fields' | 'name' | 'type' | 'interfaceName'> & {
+  component?: LinkFields
+}
+
+/**
+ * New Link Field with component overrides
+ * @param component - The component overrides
+ * @param props - The props for the base link field
+ * @returns The link field
+ */
+export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField => {
+  const {
+    type = {},
+    newTab = {},
+    reference = {},
+    url = {},
+    label = {},
+    appearance = {},
+  } = component
+  return {
+    label: 'Link',
+    ...props,
+    name: 'link',
+    type: 'group',
+    interfaceName: 'LinkField',
+    fields: [
+      {
+        type: 'row',
+        fields: [
+          {
+            label: 'Type',
+            name: 'type',
+            type: 'radio',
+            defaultValue: type.defaultValue || 'reference',
+            options: [
+              {
+                label: 'Internal link',
+                value: 'reference',
+              },
+              {
+                label: 'Custom URL',
+                value: 'custom',
+              },
+            ],
+            admin: {
+              layout: 'horizontal',
+              style: {
+                flex: 1,
+                ...type.admin?.style,
+              },
+              ...type.admin,
+            },
+          },
+          {
+            ...newTab,
+            name: 'newTab',
+            type: 'checkbox',
+            label: 'Open in new tab',
+            admin: {
+              ...newTab.admin,
+              style: {
+                flex: 1,
+                alignSelf: 'flex-end',
+                ...newTab.admin?.style,
+              },
+            },
+          },
+        ],
+      },
+      {
+        type: 'row',
+        fields: [
+          {
+            label: reference.label || 'Document to link to',
+            relationTo: ['pages', 'volumes', 'articles'],
+            name: 'reference',
+            type: 'relationship',
+            required: true,
+            admin: {
+              condition: (_, siblingData) => siblingData?.type === 'reference',
+            },
+          },
+          {
+            label: url.label || 'Custom URL',
+            name: 'url',
+            type: 'text',
+            required: true,
+            admin: {
+              condition: (_, siblingData) => siblingData?.type === 'custom',
+            },
+          },
+          {
+            label: label.label || 'Label',
+            admin: {
+              ...label.admin,
+            },
+            name: 'label',
+            type: 'text',
+            required: true,
+          },
+        ],
+      },
+      {
+        defaultValue: appearance.defaultValue || 'default',
+        options: appearance.options || [
+          {
+            label: 'Default',
+            value: 'default',
+          },
+          {
+            label: 'Outline',
+            value: 'outline',
+          },
+        ],
+        name: 'appearance',
+        type: 'select',
+        admin: {
+          description: 'Choose how the link should be rendered.',
+          hidden: true,
+          ...appearance.admin,
+        },
+      },
+    ],
+  }
+}
