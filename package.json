@@ -8,7 +8,7 @@
     "dev:db": "turbo run dev:db",
     "dev:db-down": "turbo run dev:db-down",
     "dev": "turbo run dev:install dev:db dev:next",
-    "payload": "pnpm dlx shx echo \"!!!don't use payload in root!!! \"",
+    "payload": "pnpm dlx shx echo \"!!!don't use payload in root!!!\nSwitch to an application folder and try again :) \"",
     "lint": "turbo run lint",
     "lint:ci": "turbo run lint -- --max-warnings 0",
     "lint:fix": "turbo run lint -- --fix",
