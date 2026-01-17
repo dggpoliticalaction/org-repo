@@ -1,40 +1,31 @@
+import type { FootnoteBlock as FootnoteBlockType } from '@/payload-types'
+import { cn } from '@/utilities/ui'
+import Link from 'next/link'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
-
-export interface FootnoteBlockProps {
-  id?: string
-  index?: number
-  note: string
-  blockType: 'footnote'
-}
-
-type FootnoteInlineProps = FootnoteBlockProps & {
+interface FootnoteBlockProps extends FootnoteBlockType {
   className?: string
-  index?: number
 }
 
-export const FootnoteBlock: React.FC<FootnoteInlineProps> = ({ note, index, className }) => {
+export const FootnoteBlock: React.FC<FootnoteBlockProps> = ({ note, index, className }) => {
   if (!note || typeof index !== 'number') return null
 
-  const displayMarker = String(index)
-  const targetId = `footnote-${index}`
   const referenceId = `footnote-ref-${index}`
+  const describedById = `footnote-${index}`
 
   return (
     <sup
-      className={cn(className)}
-      title={note}
-      aria-label={`Footnote: ${note}`}
       id={referenceId}
+      className={cn(className, 'not-prose px-0.5 font-mono -tracking-widest')}
+      title={`Footnote ${index}: ${note}`}
     >
-      {targetId ? (
-        <a className="text-brand no-underline shadow-none" href={`#${targetId}`}>
-          {displayMarker}
-        </a>
-      ) : (
-        displayMarker
-      )}
+      <Link
+        className="border-none font-bold text-brand/80 hover:text-brand"
+        href={`#${describedById}`}
+        aria-describedby={describedById}
+      >
+        {`[${index}]`}
+      </Link>
     </sup>
   )
 }

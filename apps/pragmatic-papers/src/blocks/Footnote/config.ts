@@ -1,26 +1,10 @@
+import { footnoteFields } from '@/fields/footnotes'
 import type { Block } from 'payload'
 
 export const FootnoteBlock: Block = {
   slug: 'footnote',
   interfaceName: 'FootnoteBlock',
-  fields: [
-    {
-      name: 'note',
-      type: 'textarea',
-      required: true,
-      admin: {
-        description: 'Footnote text.',
-      },
-    },
-    {
-      name: 'index',
-      type: 'number',
-      admin: {
-        description: 'Auto-generated on save.',
-        readOnly: true,
-      },
-    },
-  ],
+  fields: footnoteFields,
   graphQL: {
     singularName: 'FootnoteBlock',
   },

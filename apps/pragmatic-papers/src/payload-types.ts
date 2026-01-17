@@ -2024,6 +2024,11 @@ export interface FootnoteBlock {
    * Auto-generated on save.
    */
   index?: number | null;
+  /**
+   * Optionally add a source link to the footnote.
+   */
+  attributionEnabled: boolean;
+  link?: LinkField;
   id?: string | null;
   blockName?: string | null;
   blockType: 'footnote';
