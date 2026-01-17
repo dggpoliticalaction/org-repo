@@ -30,7 +30,7 @@ export const FootnoteBlock: Block = {
   },
   admin: {
     components: {
-      Label: '/blocks/Footnote/AdminComponent',
+      Label: '@/blocks/Footnote/FootnoteLabel#FootnoteLabel',
     },
   },
 }
