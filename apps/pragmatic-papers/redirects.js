@@ -13,7 +13,7 @@ const redirects = async () => {
   }
 
   const iceoutRedirect = {
-    source: '/iceout/:state',
+    source: '/iceout/:state*',
     destination: 'https://iceout.org/en/location/report',
     permanent: false,
   }
