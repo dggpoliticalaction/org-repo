@@ -1,5 +1,29 @@
-import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
-
+import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
+import { editorFieldLevel } from '@/access/editor'
+import { editorOrSelf, restrictWritersToDraftOnly } from '@/access/editorOrSelf'
+import { writer } from '@/access/writer'
+import { Banner } from '@/blocks/Banner/config'
+import { BlueSkyEmbed } from '@/blocks/BlueSkyEmbed/config'
+import { Code } from '@/blocks/Code/config'
+import { FootnoteBlock } from '@/blocks/Footnote/config'
+import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
+import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { RedditEmbed } from '@/blocks/RedditEmbed/config'
+import { SquiggleRule } from '@/blocks/SquiggleRule/config'
+import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
+import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
+import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
+import { footnotes } from '@/fields/footnotes'
+import { type Article } from '@/payload-types'
+import { generateFootnotes } from '@/utilities/generateFootnotes'
+import { generatePreviewPath } from '@/utilities/generatePreviewPath'
+import {
+  MetaDescriptionField,
+  MetaImageField,
+  MetaTitleField,
+  OverviewField,
+  PreviewField,
+} from '@payloadcms/plugin-seo/fields'
 import {
   AlignFeature,
   BlockquoteFeature,
@@ -18,83 +42,10 @@ import {
   SuperscriptFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-import type {
-  SerializedEditorState,
-  SerializedLexicalNode,
-} from '@payloadcms/richtext-lexical/lexical'
-
-import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
-import { Banner } from '@/blocks/Banner/config'
-import { Code } from '@/blocks/Code/config'
-import { MediaBlock } from '@/blocks/MediaBlock/config'
-
+import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 import { slugField } from 'payload'
-import { revalidateArticle, revalidateDelete } from './hooks/revalidateArticle'
 import { populateAuthors } from './hooks/populateAuthors'
-import { generatePreviewPath } from '@/utilities/generatePreviewPath'
-import {
-  MetaDescriptionField,
-  MetaImageField,
-  MetaTitleField,
-  OverviewField,
-  PreviewField,
-} from '@payloadcms/plugin-seo/fields'
-import { editorOrSelf, restrictWritersToDraftOnly } from '@/access/editorOrSelf'
-import { writer } from '@/access/writer'
-import { editorFieldLevel } from '@/access/editor'
-import { type Article } from '@/payload-types'
-import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
-import { FootnoteBlock } from '@/blocks/Footnote/config'
-import { SquiggleRule } from '@/blocks/SquiggleRule/config'
-import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
-import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
-import { RedditEmbed } from '@/blocks/RedditEmbed/config'
-import { BlueSkyEmbed } from '@/blocks/BlueSkyEmbed/config'
-import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
-
-interface FootnoteItem {
-  index: number
-  note: string
-}
-
-const applyFootnoteIndicesAndCollect = (
-  editorState?: SerializedEditorState | null,
-): FootnoteItem[] => {
-  if (!editorState || typeof editorState !== 'object') return []
-
-  let footnoteIndex = 0
-  const footnotes: FootnoteItem[] = []
-
-  const visitNode = (node: SerializedLexicalNode) => {
-    if (!node || typeof node !== 'object') return
-
-    if (node.type === 'inlineBlock') {
-      const inlineNode = node as SerializedLexicalNode & {
-        fields?: { blockType?: string; index?: number; note?: string }
-      }
-
-      if (inlineNode.fields?.blockType === 'footnote' && inlineNode.fields.note) {
-        footnoteIndex += 1
-        inlineNode.fields.index = footnoteIndex
-        footnotes.push({
-          index: footnoteIndex,
-          note: inlineNode.fields.note,
-        })
-      }
-    }
-
-    if ('children' in node && Array.isArray(node.children)) {
-      node.children.forEach((child: SerializedLexicalNode) => visitNode(child))
-    }
-  }
-
-  const rootChildren = editorState.root?.children
-  if (Array.isArray(rootChildren)) {
-    rootChildren.forEach((child: SerializedLexicalNode) => visitNode(child))
-  }
-
-  return footnotes
-}
+import { revalidateArticle, revalidateDelete } from './hooks/revalidateArticle'
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
@@ -281,27 +232,7 @@ export const Articles: CollectionConfig = {
         },
       ],
     },
-    {
-      name: 'footnotes',
-      type: 'array',
-      access: {
-        update: () => false,
-      },
-      admin: {
-        readOnly: true,
-        hidden: true,
-      },
-      fields: [
-        {
-          name: 'index',
-          type: 'number',
-        },
-        {
-          name: 'note',
-          type: 'textarea',
-        },
-      ],
-    },
+    footnotes(),
     slugField(),
   ],
   hooks: {
@@ -315,24 +246,7 @@ export const Articles: CollectionConfig = {
           }
         }
       },
-      (args: Parameters<CollectionBeforeChangeHook<Article>>[0]): Partial<Article> | void => {
-        const { data, req } = args
-        const autosaveQuery = req?.query?.autosave
-        const isAutosave =
-          autosaveQuery === true ||
-          autosaveQuery === 'true' ||
-          autosaveQuery === 1 ||
-          autosaveQuery === '1'
-        if (!isAutosave && data?.content) {
-          const dataWithFootnotes = data as Partial<Article> & {
-            footnotes?: FootnoteItem[]
-          }
-          dataWithFootnotes.footnotes = applyFootnoteIndicesAndCollect(
-            data.content as SerializedEditorState,
-          )
-        }
-        return data
-      },
+      generateFootnotes,
     ],
     afterChange: [revalidateArticle],
     afterRead: [populateAuthors],

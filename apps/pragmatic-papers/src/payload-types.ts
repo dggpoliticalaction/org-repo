@@ -324,13 +324,7 @@ export interface Article {
         name?: string | null;
       }[]
     | null;
-  footnotes?:
-    | {
-        index?: number | null;
-        note?: string | null;
-        id?: string | null;
-      }[]
-    | null;
+  footnotes?: Footnotes;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -473,6 +467,33 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkField".
+ */
+export interface LinkField {
+  type?: ('reference' | 'custom') | null;
+  newTab?: boolean | null;
+  reference?:
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'volumes';
+        value: number | Volume;
+      } | null)
+    | ({
+        relationTo: 'articles';
+        value: number | Article;
+      } | null);
+  url?: string | null;
+  label: string;
+  /**
+   * Choose how the link should be rendered.
+   */
+  appearance?: ('default' | 'outline') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1272,18 +1293,35 @@ export interface ArticlesSelect<T extends boolean = true> {
         id?: T;
         name?: T;
       };
-  footnotes?:
-    | T
-    | {
-        index?: T;
-        note?: T;
-        id?: T;
-      };
+  footnotes?: T | FootnotesSelect<T>;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Footnotes_select".
+ */
+export interface FootnotesSelect<T extends boolean = true> {
+  note?: T;
+  index?: T;
+  attributionEnabled?: T;
+  link?: T | LinkFieldSelect<T>;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkField_select".
+ */
+export interface LinkFieldSelect<T extends boolean = true> {
+  type?: T;
+  newTab?: T;
+  reference?: T;
+  url?: T;
+  label?: T;
+  appearance?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
