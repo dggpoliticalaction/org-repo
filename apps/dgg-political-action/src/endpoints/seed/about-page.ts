@@ -1,10 +1,15 @@
-import type { RequiredDataFromCollectionSlug } from 'payload'
+import type { RequiredDataFromCollectionSlug, Payload } from 'payload'
+import { fetchFileByURL } from './fetch-file-by-url'
 
-export const aboutPage = ({
-  contributorImage,
-}: {
-  contributorImage: any
-}): RequiredDataFromCollectionSlug<'pages'> => ({
+export const aboutPage = async (payload: Payload): Promise<RequiredDataFromCollectionSlug<'pages'>> => {
+  const imageBuffer = await fetchFileByURL('https://cdn.iai.tv/assets/Uploads/_resampled/FillWzQwMCwzNjBd/Steven-Bonnell-Destiny-.webp')
+  const contributorImage = await payload.create({
+    collection: 'media',
+    data: { alt: 'Destiny' },
+    file: imageBuffer,
+  })
+
+  return {
   slug: 'about',
   _status: 'published',
   title: 'About Us',
@@ -146,5 +151,6 @@ export const aboutPage = ({
         },
       ],
     },
-  ],
-})
+  ] as any,
+  }
+}
