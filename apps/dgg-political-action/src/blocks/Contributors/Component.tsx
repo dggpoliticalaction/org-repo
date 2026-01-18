@@ -1,26 +1,17 @@
 import React from 'react'
-import type { Page, Media as MediaType } from '@/payload-types'
+import type { ContributorsBlock as ContributorsBlockType, Media as MediaType } from '@/payload-types'
 import { Media } from '@/components/Media'
 import { Github, Twitter, Linkedin, Facebook, Instagram, Youtube, Globe } from 'lucide-react'
 
-type ContributorsBlockProps = {
-  title?: string
-  contributors: Array<{
-    name: string
-    bio?: string
-    image?: MediaType
-    socialLinks?: SocialLink[]
-    id?: string
-  }>
-}
-
-type SocialLink = {
-  platform: keyof typeof platformIcons
+interface SocialLink {
+  platform: 'github' | 'twitter' | 'linkedin' | 'facebook' | 'instagram' | 'youtube' | 'website'
   url: string
-  id?: string
+  id?: string | null
 }
 
-type Contributor = ContributorsBlockProps['contributors'][number]
+type Contributor = NonNullable<ContributorsBlockType['contributors']>[number]
+
+type ContributorsBlockProps = ContributorsBlockType
 
 const platformIcons = {
   github: Github,
