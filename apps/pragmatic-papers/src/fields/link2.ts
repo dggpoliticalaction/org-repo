@@ -114,7 +114,7 @@ export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField =
             },
             name: 'label',
             type: 'text',
-            required: true,
+            required: label.required || true,
           },
         ],
       },

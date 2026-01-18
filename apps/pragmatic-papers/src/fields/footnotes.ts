@@ -46,8 +46,9 @@ export const footnoteFields: Field[] = [
       },
       label: {
         admin: {
-          placeholder: 'https://example.com',
+          hidden: true,
         },
+        required: false,
       },
     },
   }),

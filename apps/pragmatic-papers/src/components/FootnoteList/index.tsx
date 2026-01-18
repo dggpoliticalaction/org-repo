@@ -17,19 +17,19 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
               <span id={`footnote-${index}`} className="mr-2">
                 {note}
               </span>
-              {attributionEnabled && link && link.url && link.type === 'custom' && (
+              {attributionEnabled && link?.url && link.type === 'custom' && (
                 <a
                   href={link.url}
-                  className="border-none text-brand underline shadow-none"
+                  className="text-brand underline shadow-none"
                   title={`Link to source ${link.label}`}
                 >
                   {link.url}
                 </a>
               )}
-              {attributionEnabled && link && link.url && link.type === 'reference' && (
+              {attributionEnabled && link?.url && link.type === 'reference' && (
                 <Link
                   href={`/${link.reference?.relationTo}/${typeof link.reference?.value !== 'number' ? link.reference?.value?.slug : link.reference?.value}`}
-                  className="border-none text-brand underline shadow-none"
+                  className="text-brand underline shadow-none"
                   title={`Link to source ${link.label}`}
                 >
                   {link.url}
