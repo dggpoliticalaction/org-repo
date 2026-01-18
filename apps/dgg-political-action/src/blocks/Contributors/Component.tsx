@@ -1,5 +1,5 @@
 import React from 'react'
-import type { ContributorsBlock as ContributorsBlockType, Media as MediaType } from '@/payload-types'
+import type { ContributorsBlock as ContributorsBlockType } from '@/payload-types'
 import { Media } from '@/components/Media'
 import { Github, Twitter, Linkedin, Facebook, Instagram, Youtube, Globe } from 'lucide-react'
 

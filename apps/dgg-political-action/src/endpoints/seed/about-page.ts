@@ -151,6 +151,6 @@ export const aboutPage = async (payload: Payload): Promise<RequiredDataFromColle
         },
       ],
     },
-  ] as any,
+  ],
   }
 }
