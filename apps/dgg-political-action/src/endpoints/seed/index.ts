@@ -21,6 +21,7 @@ const collections: CollectionSlug[] = [
   'search',
 ]
 const globals: GlobalSlug[] = ['header', 'footer']
+const categories = ['Technology', 'News', 'Finance', 'Design', 'Software', 'Engineering']
 
 async function fetchFileByURL(url: string): Promise<File> {
   const res = await fetch(url, {
@@ -223,6 +224,16 @@ export const seed = async ({
       },
     }),
   ])
+    categories.map((category) =>
+      payload.create({
+        collection: 'categories',
+        data: {
+          title: category,
+          slug: category,
+        },
+      }),
+    ),
+      ])
 
   payload.logger.info(`— Seeding posts...`)
 
