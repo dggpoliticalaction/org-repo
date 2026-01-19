@@ -1,4 +1,4 @@
-import type { Article, FootnoteBlock, Footnotes } from '@/payload-types'
+import type { Article, FootnoteBlock, FootnotesField } from '@/payload-types'
 import type { SerializedInlineBlockNode } from '@payloadcms/richtext-lexical'
 import type {
   SerializedEditorState,
@@ -6,11 +6,11 @@ import type {
 } from '@payloadcms/richtext-lexical/lexical'
 import type { CollectionBeforeChangeHook } from 'payload'
 
-export const collectFootnotes = (editorState?: SerializedEditorState | null): Footnotes => {
+export const collectFootnotes = (editorState?: SerializedEditorState | null): FootnotesField => {
   if (!editorState || typeof editorState !== 'object') return []
 
   let footnoteIndex = 0
-  const result: Footnotes = []
+  const result: FootnotesField = []
 
   const visitNode = (node: SerializedLexicalNode) => {
     if (!node || typeof node !== 'object') return
