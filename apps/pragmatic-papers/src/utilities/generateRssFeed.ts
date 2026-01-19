@@ -166,7 +166,7 @@ export const generateArticleFeed = (articles: Article[]): string => {
         extensions: [
           {
             name: 'updated',
-            objects: new Date(article.updatedAt).toISOString(),
+            objects: { updated: new Date(article.updatedAt).toISOString() },
           },
         ],
       })
@@ -195,7 +195,7 @@ export const generateVolumeFeed = (volumes: Volume[]): string => {
         extensions: [
           {
             name: 'updated',
-            objects: new Date(volume.updatedAt).toISOString(),
+            objects: { updated: new Date(volume.updatedAt).toISOString() },
           },
         ],
         published: new Date(volume.publishedAt),
