@@ -1,9 +1,10 @@
 import type { Payload } from 'payload'
-import { homeStatic } from './home-static'
-import { createUsers } from './users'
 import { createArticles } from './articles'
-import { createVolumes } from './volumes'
+import { createFootnotesArticle } from './features/footnotes'
+import { homeStatic } from './home-static'
 import { createMedia } from './media'
+import { createUsers } from './users'
+import { createVolumes } from './volumes'
 
 export const seed = async (payload: Payload): Promise<void> => {
   // Delete all content before seeding
@@ -94,6 +95,9 @@ export const seed = async (payload: Payload): Promise<void> => {
     ],
     mediaDocs,
   )
+
+  // Create a standalone article demonstrating the footnotes feature
+  await createFootnotesArticle(payload, [writer1, writer2], mediaDocs)
 
   // The homepage is literally a "page" in Payload.
   await payload.create({

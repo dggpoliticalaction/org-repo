@@ -1,5 +1,5 @@
-import type { Payload } from 'payload'
 import type { Media, User } from '@/payload-types'
+import type { Payload } from 'payload'
 
 interface VolumeArticlesConfig {
   volumeNumber: number
@@ -38,31 +38,31 @@ const createArticleContent = (numberOfParagraphs: number) => {
       children: Array.from({ length: numberOfParagraphs * 2 }, (_, index) => {
         return index % 2 === 0
           ? {
-              children: [
-                {
-                  detail: 0,
-                  format: 0,
-                  mode: 'normal',
-                  style: '',
-                  text: paragraphs[Math.floor(index / 2)],
-                  type: 'text',
-                  version: 1,
-                },
-              ],
-              direction: 'ltr' as const,
-              format: '' as const,
-              indent: 0,
-              type: 'paragraph',
-              version: 1,
-            }
+            children: [
+              {
+                detail: 0,
+                format: 0,
+                mode: 'normal',
+                style: '',
+                text: paragraphs[Math.floor(index / 2)],
+                type: 'text',
+                version: 1,
+              },
+            ],
+            direction: 'ltr' as const,
+            format: '' as const,
+            indent: 0,
+            type: 'paragraph',
+            version: 1,
+          }
           : {
-              children: [],
-              direction: null,
-              format: '' as const,
-              indent: 0,
-              type: 'paragraph',
-              version: 1,
-            }
+            children: [],
+            direction: null,
+            format: '' as const,
+            indent: 0,
+            type: 'paragraph',
+            version: 1,
+          }
       }),
       direction: 'ltr' as const,
       format: '' as const,
