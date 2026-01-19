@@ -7,7 +7,14 @@ import type { Block } from 'payload'
  */
 export const LegacyTikTokEmbed: Block = {
   slug: 'tiktokEmbed',
-  interfaceName: 'TikTokEmbedBlock',
+  // interfaceName: 'TikTokEmbedBlock',
+  labels: {
+    singular: 'TikTok Embed (Legacy)',
+    plural: 'TikTok Embeds (Legacy)',
+  },
+  admin: {
+    group: 'Legacy',
+  },
   fields: [
     {
       name: 'url',

@@ -7,7 +7,14 @@ import type { Block } from 'payload'
  */
 export const LegacyBlueSkyEmbed: Block = {
   slug: 'blueSkyEmbed',
-  interfaceName: 'BlueSkyEmbedBlock',
+  // interfaceName: 'BlueSkyEmbedBlock',
+  labels: {
+    singular: 'BlueSky Embed (Legacy)',
+    plural: 'BlueSky Embeds (Legacy)',
+  },
+  admin: {
+    group: 'Legacy',
+  },
   fields: [
     {
       name: 'url',

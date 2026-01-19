@@ -7,7 +7,14 @@ import type { Block } from 'payload'
  */
 export const LegacyRedditEmbed: Block = {
   slug: 'redditEmbed',
-  interfaceName: 'RedditEmbedBlock',
+  // interfaceName: 'RedditEmbedBlock',
+  labels: {
+    singular: 'Reddit Embed (Legacy)',
+    plural: 'Reddit Embeds (Legacy)',
+  },
+  admin: {
+    group: 'Legacy',
+  },
   fields: [
     {
       name: 'url',
