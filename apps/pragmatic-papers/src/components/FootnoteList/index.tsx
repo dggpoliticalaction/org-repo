@@ -1,8 +1,8 @@
-import type { FootnoteBlock } from '@/payload-types'
+import type { FootnotesField } from '@/payload-types'
 import Link from 'next/link'
 
 interface FootnoteListProps {
-  footnotes?: Pick<FootnoteBlock, 'index' | 'note' | 'attributionEnabled' | 'link'>[] | null
+  footnotes?: FootnotesField
 }
 
 export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
