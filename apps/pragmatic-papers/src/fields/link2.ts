@@ -1,10 +1,12 @@
 import type {
   CheckboxField,
   GroupField,
+  NamedGroupField,
   RadioField,
   SelectField,
   SingleRelationshipField,
   TextField,
+  TextFieldSingleValidation,
 } from 'payload'
 
 interface LinkFields {
@@ -16,7 +18,7 @@ interface LinkFields {
   url?: Partial<TextField>
 }
 
-type LinkProps = Omit<GroupField, 'fields' | 'name' | 'type' | 'interfaceName'> & {
+type LinkProps = Omit<NamedGroupField, 'fields' | 'name' | 'type' | 'interfaceName'> & {
   component?: LinkFields
 }
 
@@ -112,9 +114,12 @@ export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField =
             admin: {
               ...label.admin,
             },
+            hooks: { ...label.hooks, },
+            hasMany: false,
+            validate: label.validate as TextFieldSingleValidation,
             name: 'label',
             type: 'text',
-            required: label.required || true,
+            required: true,
           },
         ],
       },
