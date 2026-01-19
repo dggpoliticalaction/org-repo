@@ -6,7 +6,7 @@ export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searc
     doc: { relationTo: collection },
   } = searchDoc
 
-  const { slug, id, categories, title, meta } = originalDoc
+  const { slug, id, categories, resourceCategories, title, meta, description } = originalDoc
 
   const modifiedDoc: DocToSync = {
     ...searchDoc,
@@ -15,11 +15,12 @@ export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searc
       ...meta,
       title: meta?.title || title,
       image: meta?.image?.id || meta?.image,
-      description: meta?.description,
+      description: meta?.description || description,
     },
     categories: [],
   }
 
+  // Handle post categories
   if (categories && Array.isArray(categories) && categories.length > 0) {
     const populatedCategories: { id: string | number; title: string }[] = []
     for (const category of categories) {
@@ -52,6 +53,44 @@ export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searc
 
     modifiedDoc.categories = populatedCategories.map((each) => ({
       relationTo: 'categories',
+      categoryID: String(each.id),
+      title: each.title,
+    }))
+  }
+
+  // Handle resource categories
+  if (resourceCategories && Array.isArray(resourceCategories) && resourceCategories.length > 0) {
+    const populatedCategories: { id: string | number; title: string }[] = []
+    for (const category of resourceCategories) {
+      if (!category) {
+        continue
+      }
+
+      if (typeof category === 'object') {
+        populatedCategories.push(category)
+        continue
+      }
+
+      const doc = await req.payload.findByID({
+        collection: 'resource-categories',
+        id: category,
+        disableErrors: true,
+        depth: 0,
+        select: { title: true },
+        req,
+      })
+
+      if (doc !== null) {
+        populatedCategories.push(doc)
+      } else {
+        console.error(
+          `Failed. Resource category not found when syncing collection '${collection}' with id: '${id}' to search.`,
+        )
+      }
+    }
+
+    modifiedDoc.categories = populatedCategories.map((each) => ({
+      relationTo: 'resource-categories',
       categoryID: String(each.id),
       title: each.title,
     }))

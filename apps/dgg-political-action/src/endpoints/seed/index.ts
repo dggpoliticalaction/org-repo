@@ -12,9 +12,11 @@ import { post3 } from './post-3'
 
 const collections: CollectionSlug[] = [
   'categories',
+  'resource-categories',
   'media',
   'pages',
   'posts',
+  'resources',
   'forms',
   'form-submissions',
   'search',
@@ -259,6 +261,140 @@ export const seed = async ({
     },
   })
 
+  payload.logger.info(`— Seeding resource categories...`)
+
+  const [resourceCat1, resourceCat2, resourceCat3] = await Promise.all([
+    payload.create({
+      collection: 'resource-categories',
+      data: {
+        title: 'Talking Points',
+      },
+    }),
+    payload.create({
+      collection: 'resource-categories',
+      data: {
+        title: 'Policy Library',
+      },
+    }),
+    payload.create({
+      collection: 'resource-categories',
+      data: {
+        title: 'Memes & Graphics',
+      },
+    }),
+  ])
+
+  payload.logger.info(`— Seeding resources...`)
+
+  await payload.create({
+    collection: 'resources',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: {
+      title: 'Healthcare Policy Talking Points',
+      resourceType: 'document',
+      description:
+        'Key talking points for discussing healthcare policy reform. Use these points when canvassing or engaging in community discussions.',
+      resourceCategories: [resourceCat1.id, resourceCat2.id],
+      _status: 'published',
+      publishedAt: new Date().toISOString(),
+    },
+  })
+
+  await payload.create({
+    collection: 'resources',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: {
+      title: 'Climate Action Infographic',
+      resourceType: 'image',
+      description:
+        'Shareable infographic highlighting key climate action statistics and policy positions.',
+      thumbnail: image1Doc.id,
+      image: image1Doc.id,
+      resourceCategories: [resourceCat3.id],
+      _status: 'published',
+      publishedAt: new Date().toISOString(),
+    },
+  })
+
+  await payload.create({
+    collection: 'resources',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: {
+      title: 'Introduction to Civic Engagement',
+      resourceType: 'video',
+      description:
+        'A comprehensive video introduction to civic engagement and how you can make a difference in your community.',
+      videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      thumbnail: image2Doc.id,
+      resourceCategories: [resourceCat1.id],
+      _status: 'published',
+      publishedAt: new Date().toISOString(),
+    },
+  })
+
+  await payload.create({
+    collection: 'resources',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: {
+      title: 'Voter Registration Portal',
+      resourceType: 'link',
+      description:
+        'Official voter registration portal. Check your registration status or register to vote.',
+      externalUrl: 'https://vote.gov',
+      thumbnail: image3Doc.id,
+      resourceCategories: [resourceCat1.id],
+      _status: 'published',
+      publishedAt: new Date().toISOString(),
+    },
+  })
+
+  await payload.create({
+    collection: 'resources',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: {
+      title: 'Economic Policy Brief',
+      resourceType: 'document',
+      description:
+        'Detailed policy brief on economic proposals including tax reform, job creation, and wage policies.',
+      resourceCategories: [resourceCat2.id],
+      _status: 'published',
+      publishedAt: new Date().toISOString(),
+    },
+  })
+
+  await payload.create({
+    collection: 'resources',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: {
+      title: 'Social Media Shareable - Vote!',
+      resourceType: 'image',
+      description: 'Eye-catching graphic encouraging voter participation. Perfect for social media sharing.',
+      thumbnail: image2Doc.id,
+      image: image2Doc.id,
+      resourceCategories: [resourceCat3.id],
+      _status: 'published',
+      publishedAt: new Date().toISOString(),
+    },
+  })
+
   payload.logger.info(`— Seeding contact form...`)
 
   const contactForm = await payload.create({
@@ -294,6 +430,13 @@ export const seed = async ({
               type: 'custom',
               label: 'Posts',
               url: '/posts',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Resources',
+              url: '/resources',
             },
           },
           {

@@ -69,8 +69,10 @@ export interface Config {
   collections: {
     pages: Page;
     posts: Post;
+    resources: Resource;
     media: Media;
     categories: Category;
+    'resource-categories': ResourceCategory;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -85,8 +87,10 @@ export interface Config {
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    resources: ResourcesSelect<false> | ResourcesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    'resource-categories': ResourceCategoriesSelect<false> | ResourceCategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -731,6 +735,72 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources".
+ */
+export interface Resource {
+  id: number;
+  title: string;
+  resourceType: 'document' | 'image' | 'video' | 'link';
+  description?: string | null;
+  /**
+   * Optional thumbnail image for the resource card
+   */
+  thumbnail?: (number | null) | Media;
+  /**
+   * Upload the document file (PDF, DOC, etc.)
+   */
+  file?: (number | null) | Media;
+  /**
+   * Upload the image/meme
+   */
+  image?: (number | null) | Media;
+  /**
+   * YouTube or Vimeo video URL
+   */
+  videoUrl?: string | null;
+  /**
+   * External URL to link to
+   */
+  externalUrl?: string | null;
+  resourceCategories?: (number | ResourceCategory)[] | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  publishedAt?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resource-categories".
+ */
+export interface ResourceCategory {
+  id: number;
+  title: string;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  parent?: (number | null) | ResourceCategory;
+  breadcrumbs?:
+    | {
+        doc?: (number | null) | ResourceCategory;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -782,10 +852,15 @@ export interface Search {
   id: number;
   title?: string | null;
   priority?: number | null;
-  doc: {
-    relationTo: 'posts';
-    value: number | Post;
-  };
+  doc:
+    | {
+        relationTo: 'posts';
+        value: number | Post;
+      }
+    | {
+        relationTo: 'resources';
+        value: number | Resource;
+      };
   slug?: string | null;
   meta?: {
     title?: string | null;
@@ -911,12 +986,20 @@ export interface PayloadLockedDocument {
         value: number | Post;
       } | null)
     | ({
+        relationTo: 'resources';
+        value: number | Resource;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
     | ({
         relationTo: 'categories';
         value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'resource-categories';
+        value: number | ResourceCategory;
       } | null)
     | ({
         relationTo: 'users';
@@ -1152,6 +1235,34 @@ export interface PostsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources_select".
+ */
+export interface ResourcesSelect<T extends boolean = true> {
+  title?: T;
+  resourceType?: T;
+  description?: T;
+  thumbnail?: T;
+  file?: T;
+  image?: T;
+  videoUrl?: T;
+  externalUrl?: T;
+  resourceCategories?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
+  publishedAt?: T;
+  slug?: T;
+  slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
@@ -1248,6 +1359,26 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  slugLock?: T;
+  parent?: T;
+  breadcrumbs?:
+    | T
+    | {
+        doc?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resource-categories_select".
+ */
+export interface ResourceCategoriesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   slugLock?: T;
@@ -1702,6 +1833,10 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'posts';
           value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'resources';
+          value: number | Resource;
         } | null);
     global?: string | null;
     user?: (number | null) | User;
