@@ -1,7 +1,8 @@
 import { link } from '@/fields/link2'
-import type { Field } from 'payload'
+import type { Article, LinkField } from '@/payload-types'
+import type { ArrayField, Field, FieldHookArgs, TextField, ValidateOptions } from 'payload'
 
-export const footnoteFields: Field[] = [
+export const footnoteFields = (): Field[] => ([
   {
     name: 'note',
     type: 'textarea',
@@ -48,15 +49,18 @@ export const footnoteFields: Field[] = [
         admin: {
           hidden: true,
         },
-        required: false,
+        validate: (_value: string | null | undefined, { siblingData }: ValidateOptions<Article, LinkField, TextField, string>) => Boolean(siblingData?.url) || "URL is required",
+        hooks: {
+          beforeChange: [({ siblingData: { url } }: FieldHookArgs<Article, string, LinkField>) => url ?? undefined],
+        },
       },
     },
   }),
-]
+])
 
-export const footnotes = (): Field => ({
+export const footnotesField = (): ArrayField => ({
   name: 'footnotes',
-  interfaceName: 'Footnotes',
+  interfaceName: 'FootnotesField',
   type: 'array',
   access: {
     update: () => false,
@@ -65,5 +69,5 @@ export const footnotes = (): Field => ({
     readOnly: true,
     hidden: true,
   },
-  fields: footnoteFields,
+  fields: footnoteFields(),
 })

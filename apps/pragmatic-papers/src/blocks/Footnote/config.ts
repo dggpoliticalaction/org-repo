@@ -4,7 +4,7 @@ import type { Block } from 'payload'
 export const FootnoteBlock: Block = {
   slug: 'footnote',
   interfaceName: 'FootnoteBlock',
-  fields: footnoteFields,
+  fields: footnoteFields(),
   graphQL: {
     singularName: 'FootnoteBlock',
   },

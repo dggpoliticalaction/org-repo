@@ -13,7 +13,7 @@ import { SquiggleRule } from '@/blocks/SquiggleRule/config'
 import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
 import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
 import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
-import { footnotes } from '@/fields/footnotes'
+import { footnotesField } from '@/fields/footnotes'
 import { type Article } from '@/payload-types'
 import { generateFootnotes } from '@/utilities/generateFootnotes'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
@@ -232,7 +232,7 @@ export const Articles: CollectionConfig = {
         },
       ],
     },
-    footnotes(),
+    footnotesField(),
     slugField(),
   ],
   hooks: {

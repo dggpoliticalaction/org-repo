@@ -8,9 +8,9 @@
 
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Footnotes".
+ * via the `definition` "FootnotesField".
  */
-export type Footnotes =
+export type FootnotesField =
   | {
       /**
        * Footnote text.
@@ -324,7 +324,7 @@ export interface Article {
         name?: string | null;
       }[]
     | null;
-  footnotes?: Footnotes;
+  footnotes?: FootnotesField;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -1293,7 +1293,7 @@ export interface ArticlesSelect<T extends boolean = true> {
         id?: T;
         name?: T;
       };
-  footnotes?: T | FootnotesSelect<T>;
+  footnotes?: T | FootnotesFieldSelect<T>;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -1302,9 +1302,9 @@ export interface ArticlesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Footnotes_select".
+ * via the `definition` "FootnotesField_select".
  */
-export interface FootnotesSelect<T extends boolean = true> {
+export interface FootnotesFieldSelect<T extends boolean = true> {
   note?: T;
   index?: T;
   attributionEnabled?: T;
