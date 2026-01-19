@@ -13,9 +13,9 @@ import { SquiggleRule } from '@/blocks/SquiggleRule/config'
 import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
 import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
 import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
+import { generateFootnotes } from '@/collections/Articles/hooks/generateFootnotes'
 import { footnotesField } from '@/fields/footnotes'
 import { type Article } from '@/payload-types'
-import { generateFootnotes } from '@/utilities/generateFootnotes'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import {
   MetaDescriptionField,
