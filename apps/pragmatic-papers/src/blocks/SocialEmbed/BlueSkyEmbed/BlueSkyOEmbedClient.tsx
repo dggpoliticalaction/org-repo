@@ -10,29 +10,33 @@ declare global {
     }
   }
 }
+interface BlueSkyOEmbedClientProps {
+  html: string
+}
 
-export function BlueSkyOEmbedClient({ blockquote }: { blockquote: string }): React.ReactNode {
+export function BlueSkyOEmbedClient({ html }: BlueSkyOEmbedClientProps): React.ReactNode {
   const ref = useRef<HTMLDivElement>(null)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     if (!ready || !ref.current) return
 
-    if (window.bluesky?.scan) {
-      window.bluesky.scan(ref.current)
-      return
-    }
-
+    window.bluesky?.scan?.(ref.current)
   }, [ready])
 
   return (
-    <div className='flex justify-center'>
-      <Script src='https://embed.bsky.app/static/embed.js' strategy="afterInteractive" onLoad={() => setReady(true)} />
+    <div className="my-4 flex items-center justify-center">
+      <Script
+        id="bluesky-embed"
+        src="https://embed.bsky.app/static/embed.js"
+        strategy="afterInteractive"
+        onLoad={() => setReady(true)}
+      />
       <div
         ref={ref}
-        className='min-h-[171px] w-full max-w-[600px] text-white dark:text-black'
+        className="min-h-[171px] w-full max-w-[550px] [&>div]:!my-0"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: blockquote }}
+        dangerouslySetInnerHTML={{ __html: html }}
       />
     </div>
   )

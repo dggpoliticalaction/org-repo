@@ -6,6 +6,13 @@ import type { Payload } from 'payload'
  * Based on the HOSTNAMES map in detectSocialPlatform.ts
  */
 const SOCIAL_MEDIA_URLS = [
+  // BlueSky variations
+  {
+    platform: 'bluesky',
+    url: 'https://bsky.app/profile/destiny.gg/post/3lbjlth3tnc2k',
+    label: 'BlueSky (bsky.app)',
+  },
+
   // Twitter/X variations
   {
     platform: 'twitter',
@@ -68,13 +75,6 @@ const SOCIAL_MEDIA_URLS = [
     label: 'Reddit (amp.reddit.com)',
   },
 
-  // BlueSky variations
-  {
-    platform: 'bluesky',
-    url: 'https://bsky.app/profile/teddiesage.bsky.social/post/3mat2amwqlc24',
-    label: 'BlueSky (bsky.app)',
-  },
-
   // TikTok variations
   {
     platform: 'tiktok',
@@ -98,61 +98,32 @@ const SOCIAL_MEDIA_URLS = [
  * Each social media URL is embedded as a block node in the Lexical editor.
  */
 const createSocialEmbedContent = () => {
-  const children = SOCIAL_MEDIA_URLS.map((item, index) => {
-    // Create a paragraph before each embed for spacing
-    const paragraph = {
-      children: [
-        {
-          detail: 0,
-          format: 0,
-          mode: 'normal',
-          style: '',
-          text: `${item.label}:`,
-          type: 'text',
-          version: 1,
-        },
-      ],
-      direction: 'ltr' as const,
-      format: '' as const,
-      indent: 0,
-      type: 'paragraph',
-      version: 1,
-    }
-
-    // Create the social embed block
-    const block = {
-      type: 'block' as const,
-      fields: {
-        blockType: 'socialEmbed' as const,
-        url: item.url,
-        // Only include hideMedia and hideThread for Twitter
-        ...(item.platform === 'twitter' && {
-          hideMedia: false,
-          hideThread: true,
-        }),
-      },
-      format: '' as const,
-      version: 2,
-    }
-
-    // Return both paragraph and block
-    return index === 0 ? [paragraph, block] : [block]
-  }).flat()
-
-  // Add a final paragraph
-  children.push({
-    children: [],
-    direction: 'ltr' as const,
+  const blocks = SOCIAL_MEDIA_URLS.map((item) => ({
+    type: 'block' as const,
+    fields: {
+      blockType: 'socialEmbed' as const,
+      url: item.url,
+      // Only include hideMedia and hideThread for Twitter
+      ...(item.platform === 'twitter' && {
+        hideMedia: false,
+        hideThread: true,
+      }),
+    },
     format: '' as const,
-    indent: 0,
-    type: 'paragraph',
-    version: 1,
-  })
+    version: 2,
+  }))
 
   return {
     root: {
       type: 'root',
-      children,
+      children: [...blocks, {
+        children: [],
+        direction: 'ltr' as const,
+        format: '' as const,
+        indent: 0,
+        type: 'paragraph',
+        version: 1,
+      }],
       direction: 'ltr' as const,
       format: '' as const,
       indent: 0,
@@ -186,67 +157,37 @@ const getLegacyBlockType = (platform: string): string => {
  * Uses the old blockType structure (twitterEmbed, youtubeEmbed, etc.)
  */
 const createLegacySocialEmbedContent = () => {
-  const children = SOCIAL_MEDIA_URLS.map((item, index) => {
-    // Create a paragraph before each embed for spacing
-    const paragraph = {
-      children: [
-        {
-          detail: 0,
-          format: 0,
-          mode: 'normal',
-          style: '',
-          text: `Legacy ${item.label}:`,
-          type: 'text',
-          version: 1,
-        },
-      ],
-      direction: 'ltr' as const,
-      format: '' as const,
-      indent: 0,
-      type: 'paragraph',
-      version: 1,
-    }
-
-    // Create the legacy social embed block
-    const blockType = getLegacyBlockType(item.platform)
-    const block = {
-      type: 'block' as const,
-      fields: {
-        blockType: blockType as
-          | 'twitterEmbed'
-          | 'youtubeEmbed'
-          | 'redditEmbed'
-          | 'blueSkyEmbed'
-          | 'tiktokEmbed',
-        url: item.url,
-        // Only include hideMedia and hideThread for Twitter
-        ...(item.platform === 'twitter' && {
-          hideMedia: false,
-          hideThread: false,
-        }),
-      },
-      format: '' as const,
-      version: 2,
-    }
-
-    // Return both paragraph and block
-    return index === 0 ? [paragraph, block] : [block]
-  }).flat()
-
-  // Add a final paragraph
-  children.push({
-    children: [],
-    direction: 'ltr' as const,
+  const blocks = SOCIAL_MEDIA_URLS.map((item) => ({
+    type: 'block' as const,
+    fields: {
+      blockType: getLegacyBlockType(item.platform) as
+        | 'twitterEmbed'
+        | 'youtubeEmbed'
+        | 'redditEmbed'
+        | 'blueSkyEmbed'
+        | 'tiktokEmbed',
+      url: item.url,
+      // Only include hideMedia and hideThread for Twitter
+      ...(item.platform === 'twitter' && {
+        hideMedia: false,
+        hideThread: false,
+      }),
+    },
     format: '' as const,
-    indent: 0,
-    type: 'paragraph',
-    version: 1,
-  })
+    version: 2,
+  }))
 
   return {
     root: {
       type: 'root',
-      children,
+      children: [...blocks, {
+        children: [],
+        direction: 'ltr' as const,
+        format: '' as const,
+        indent: 0,
+        type: 'paragraph',
+        version: 1,
+      }],
       direction: 'ltr' as const,
       format: '' as const,
       indent: 0,

@@ -1,17 +1,11 @@
 'use server'
 
-export interface BlueskyOEmbedResponse {
-  type: 'rich'
-  version: '1.0'
-  author_name?: string
-  author_url?: string
-  provider_name: "Bluesky Social"
-  provider_url: "https://bsky.app"
-  cache_age: number
-  width: number
-  height: null
-  html: string
-}
+import { isOEmbedRich, type OEmbedRequestQuery, type OEmbedRich } from '@/blocks/SocialEmbed/oEmbed'
+import type { Prettify } from '@/utilities/prettify'
+import { failure, Result, success } from '@/utilities/results'
+import { sanitizeOEmbed } from '@/utilities/sanitizeOEmbed'
+
+export type BlueskyOEmbedResponse = Prettify<OEmbedRich & { url: string }>
 
 function isBlueskyPostUrl(str: string): boolean {
   try {
@@ -24,43 +18,33 @@ function isBlueskyPostUrl(str: string): boolean {
   }
 }
 
-function parseBlockquote(html: string): string | null {
-  const match = html.match(/<blockquote[\s\S]*?<\/blockquote>/i)
-  return match?.[0] ?? null
-}
+type BlueskyOEmbedRequestQuery = OEmbedRequestQuery
 
 export async function getBlueskyOEmbed(
-  url: string,
-  { maxWidth = 600, revalidate = 60 * 60 * 24 }: {
-    maxWidth?: number
-    revalidate?: number
-  },
-): Promise<string | null> {
-  if (!isBlueskyPostUrl(url)) return null
+  { url, maxwidth = 550 }: BlueskyOEmbedRequestQuery,
+): Promise<Result<string, Error>> {
+  if (!isBlueskyPostUrl(url)) return failure(new Error('Invalid Bluesky post URL.'))
 
   const endpoint = new URL('https://embed.bsky.app/oembed')
-  endpoint.searchParams.set('format', 'json')
-  endpoint.searchParams.set('maxwidth', String(maxWidth))
   endpoint.searchParams.set('url', url)
+  endpoint.searchParams.set('format', 'json')
+  endpoint.searchParams.set('maxwidth', String(maxwidth))
 
   try {
     const res = await fetch(endpoint, {
-      next: { revalidate },
+      next: { revalidate: 60 * 60 * 24 },
     })
 
-    if (!res.ok) return null
+    if (!res.ok) return failure(new Error('Failed to fetch Bluesky oEmbed.'))
 
-    const { html } = (await res.json()) as BlueskyOEmbedResponse
+    const response = (await res.json()) as BlueskyOEmbedResponse
 
-    const blockquote = parseBlockquote(html)
-
-    return blockquote
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error('Error fetching Bluesky OEmbed:', error.message)
-    } else {
-      console.error('Error fetching Bluesky OEmbed:', error)
+    if (!isOEmbedRich(response)) {
+      return failure(new Error('Invalid oEmbed type.'))
     }
-    return null
+
+    return success(sanitizeOEmbed(response.html))
+  } catch (error) {
+    return failure(error instanceof Error ? error : new Error(String(error)))
   }
 }

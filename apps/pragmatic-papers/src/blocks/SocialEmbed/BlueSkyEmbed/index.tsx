@@ -1,16 +1,17 @@
+import { isFailure } from '@/utilities/results'
 import { BlueSkyOEmbedClient } from './BlueSkyOEmbedClient'
 import { getBlueskyOEmbed } from './getBlueskyOEmbed'
 
 export async function BlueSkyOEmbedBlock({ url }: { url: string }): Promise<React.ReactNode> {
-  const blockquote = await getBlueskyOEmbed(url, { maxWidth: 600, revalidate: 3600 })
+  const result = await getBlueskyOEmbed({ url })
 
-  if (!blockquote) {
+  if (isFailure(result)) {
     return (
-      <a href={url} target="_blank" rel="noopener noreferrer" className="underline">
-        View on Bluesky
+      <a href={url} target="_blank" rel="noopener noreferrer" className="underline text-center w-full">
+        {result.error.message} View on Bluesky
       </a>
     )
   }
 
-  return <BlueSkyOEmbedClient blockquote={blockquote} />
+  return <BlueSkyOEmbedClient html={result.value} />
 }
