@@ -5,7 +5,7 @@ interface CreateMediaResult {
   mediaDocs: Media[]
 }
 
-async function fetchFileByURL(url: string): Promise<File> {
+export async function fetchFileByURL(url: string): Promise<File> {
   const res = await fetch(url, {
     credentials: 'include',
     method: 'GET',

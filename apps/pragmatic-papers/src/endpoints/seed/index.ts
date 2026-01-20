@@ -4,6 +4,7 @@ import { createUsers } from './users'
 import { createArticles } from './articles'
 import { createVolumes } from './volumes'
 import { createMedia } from './media'
+import { createMediaCollageArticle } from './features/mediacollage/media-collage'
 
 export const seed = async (payload: Payload): Promise<void> => {
   // Delete all content before seeding
@@ -62,6 +63,9 @@ export const seed = async (payload: Payload): Promise<void> => {
     ],
     mediaDocs,
   )
+
+  // Create the media collage demo article
+  const mediaCollageArticleId = await createMediaCollageArticle(payload, writer1)
 
   // Ensure article IDs exist
   const volume1Articles = articleResults.volume1Articles
