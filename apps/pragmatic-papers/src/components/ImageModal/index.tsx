@@ -3,7 +3,7 @@
 import React from 'react'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import type { Media as MediaType } from '@/payload-types'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import RichText from '@/components/RichText'
 
 interface ImageModalProps {
@@ -22,6 +22,8 @@ export const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, resourc
         className="max-w-[95vw] max-h-[95vh] p-4 border-0 bg-black/95"
         onPointerDownOutside={onClose}
       >
+        {/*We have to set a DialogTitle to stop a acessibility error. The image alt text seems appropriate */}
+        <DialogTitle className="sr-only">{alt}</DialogTitle> 
         <div className="flex flex-col items-center gap-3 h-full">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -29,6 +31,7 @@ export const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, resourc
             alt={alt}
             className="w-full h-auto object-contain max-h-[85vh]"
           />
+          {/*Show the caption at the bottom of the modal*/}
           {resource.caption && (
             <div className="text-center text-white/90 max-w-3xl">
               <RichText
