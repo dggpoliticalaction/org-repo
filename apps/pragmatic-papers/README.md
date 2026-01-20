@@ -99,6 +99,15 @@ That's it! The Docker instance will help you get up and running quickly while al
 
 To seed the database with a few pages, articles, and projects you can click the 'seed database' link from the admin panel.
 
+#### Creating Feature seeds
+
+To demo your feature, you may want to create a custom seeded article in /src/endpoints/seed/features
+
+Create a article in the editor, then note it's id in the url. (Ie, http://localhost:8000/admin/collections/articles/**101**)
+
+You can then grab this article as JSON by going to localhost:8000/api/articles/101
+
+This json can then be fed into an AI assistant to generate a seed file for your feature, aiding in reviewing your pull request.
 ## Production
 
 To run Payload in production, you need to build and start the Admin panel. To do so, follow these steps:
