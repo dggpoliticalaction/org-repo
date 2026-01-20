@@ -18,7 +18,7 @@ import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import {
-  BlueSkyEmbedBlock,
+  BlueSkyOEmbedBlock,
   RedditEmbedBlock,
   SocialEmbedBlock,
   TikTokEmbedBlock,
@@ -88,7 +88,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       <RedditEmbedBlock {...node.fields} />
     ),
     blueSkyEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <BlueSkyEmbedBlock {...node.fields} />
+      <BlueSkyOEmbedBlock {...node.fields} />
     ),
     tiktokEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
       <TikTokEmbedBlock {...node.fields} />

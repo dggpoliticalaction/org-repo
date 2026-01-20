@@ -1,52 +1,16 @@
-'use client'
+import { BlueSkyOEmbedClient } from './BlueSkyOEmbedClient'
+import { getBlueskyOEmbed } from './getBlueskyOEmbed'
 
-import type React from 'react'
-import { useEffect, useRef, useState } from 'react'
+export async function BlueSkyOEmbedBlock({ url }: { url: string }): Promise<React.ReactNode> {
+  const blockquote = await getBlueskyOEmbed(url, { maxWidth: 600, revalidate: 3600 })
 
-import { fetchBlueSkyEmbed } from '@/utilities/fetchBlueSkyEmbed'
-import { sanitizeHtml } from '@/utilities/sanitizeHtml'
+  if (!blockquote) {
+    return (
+      <a href={url} target="_blank" rel="noopener noreferrer" className="underline">
+        View on Bluesky
+      </a>
+    )
+  }
 
-/**
- * Bluesky embed component.
- * @param props - The props for the Bluesky embed component.
- * @returns The Bluesky embed component.
- */
-export const BlueSkyEmbedBlock: React.FC<{
-  url?: string
-  maxWidth?: number | undefined
-}> = (props) => {
-  const [content, setContent] = useState<string>('')
-  const contentRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!props.url) return
-    if (typeof document === 'undefined') return
-
-    const theme = document.getElementsByTagName('html')[0]?.getAttribute('data-theme') ?? 'light'
-
-    fetchBlueSkyEmbed({
-      url: props.url,
-      maxwidth: props.maxWidth,
-      theme: theme as 'light' | 'dark',
-    }).then((res) => {
-      if (!res) {
-        setContent('Bluesky post could not be loaded.')
-      } else {
-        setContent(sanitizeHtml(res.html))
-
-        const script = document.createElement('script')
-        script.src = 'https://embed.bsky.app/static/embed.js'
-        script.async = true
-        document.body.appendChild(script)
-      }
-    })
-  }, [props])
-
-  return (
-    <div>
-      {/* HTML is sanitized with DOMPurify before insertion */}
-      {/* eslint-disable-next-line react/no-danger */}
-      <div dangerouslySetInnerHTML={{ __html: content }} ref={contentRef} />
-    </div>
-  )
+  return <BlueSkyOEmbedClient blockquote={blockquote} />
 }
