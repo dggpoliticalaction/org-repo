@@ -1,7 +1,9 @@
-import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
+import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest } from 'payload'
 
 import { contactForm as contactFormData } from './contact-form'
 import { contact as contactPageData } from './contact-page'
+import { aboutPage } from './about-page'
+import { fetchFileByURL } from './fetch-file-by-url'
 import { home } from './home'
 import { image1 } from './image-1'
 import { image2 } from './image-2'
@@ -82,19 +84,15 @@ export const seed = async ({
   payload.logger.info(`— Seeding media...`)
 
   const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post1.webp',
     ),
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post2.webp',
     ),
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post3.webp',
     ),
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-hero1.webp',
     ),
@@ -217,6 +215,12 @@ export const seed = async ({
     }),
   ])
 
+  const aboutPageDoc = await payload.create({
+    collection: 'pages',
+    depth: 0,
+    data: await aboutPage(payload),
+  })
+
   payload.logger.info(`— Seeding globals...`)
 
   await Promise.all([
@@ -229,6 +233,16 @@ export const seed = async ({
               type: 'custom',
               label: 'Posts',
               url: '/posts',
+            },
+          },
+          {
+            link: {
+              type: 'reference',
+              label: 'About',
+              reference: {
+                relationTo: 'pages',
+                value: aboutPageDoc.id,
+              },
             },
           },
           {
@@ -277,24 +291,4 @@ export const seed = async ({
   ])
 
   payload.logger.info('Seeded database successfully!')
-}
-
-async function fetchFileByURL(url: string): Promise<File> {
-  const res = await fetch(url, {
-    credentials: 'include',
-    method: 'GET',
-  })
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch file from ${url}, status: ${res.status}`)
-  }
-
-  const data = await res.arrayBuffer()
-
-  return {
-    name: url.split('/').pop() || `file-${Date.now()}`,
-    data: Buffer.from(data),
-    mimetype: `image/${url.split('.').pop()}`,
-    size: data.byteLength,
-  }
 }
