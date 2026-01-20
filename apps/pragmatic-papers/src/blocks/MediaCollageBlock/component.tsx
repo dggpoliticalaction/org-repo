@@ -17,6 +17,42 @@ interface MediaCollageBlockProps {
   enableGutter?: boolean
 }
 
+// Reusable carousel navigation button component
+const CarouselButton: React.FC<{
+  direction: 'left' | 'right'
+  onClick: () => void
+  ariaLabel: string
+}> = ({ direction, onClick, ariaLabel }) => {
+  const isLeft = direction === 'left'
+
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        'absolute top-1/2 -translate-y-1/2 bg-white border border-border rounded-full w-8 h-8 flex items-center justify-center shadow z-10 hover:bg-zinc-100 transition-colors',
+        isLeft ? 'left-2' : 'right-2',
+      )}
+      aria-label={ariaLabel}
+    >
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 22 22"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d={isLeft ? 'M13.5 16L8.5 11L13.5 6' : 'M8.5 6L13.5 11L8.5 16'}
+          stroke="black"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </button>
+  )
+}
+
 export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
   images = [],
   layout = 'grid',
@@ -31,6 +67,7 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
 
   if (!images.length) return null
 
+  //carousel image layout
   if (layout === 'carousel') {
     const imageData = images[current]
     const image = typeof imageData?.media === 'number' ? null : imageData?.media
@@ -56,6 +93,10 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
         }
       }
     }
+
+    const goToPrevious = () => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1))
+    const goToNext = () => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1))
+
     return (
       <figure className={figureClass}>
         <div
@@ -70,48 +111,8 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
             pictureClassName="w-full h-full flex items-center justify-center"
             enableModal
           />
-          <button
-            onClick={() => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1))}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white border border-border rounded-full w-8 h-8 flex items-center justify-center shadow z-10 hover:bg-zinc-100 transition-colors"
-            aria-label="Previous image"
-          >
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 22 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M13.5 16L8.5 11L13.5 6"
-                stroke="black"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <button
-            onClick={() => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1))}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white border border-border rounded-full w-8 h-8 flex items-center justify-center shadow z-10 hover:bg-zinc-100 transition-colors"
-            aria-label="Next image"
-          >
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 22 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M8.5 6L13.5 11L8.5 16"
-                stroke="black"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
+          <CarouselButton direction="left" onClick={goToPrevious} ariaLabel="Previous image" />
+          <CarouselButton direction="right" onClick={goToNext} ariaLabel="Next image" />
         </div>
         <div className="flex justify-center mt-2 gap-2">
           {images.map((_, idx) => (
@@ -145,8 +146,14 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
         {images.map((img, idx) => {
           const media = typeof img.media === 'number' ? null : img.media
           if (!media) return null
+          const isLastOddItem = images.length % 2 !== 0 && idx === images.length - 1
           return (
-            <div key={idx} className="flex flex-col items-center">
+            <div
+              key={idx}
+              className={cn('flex flex-col items-center', {
+                'col-span-2 justify-self-center max-w-[50%]': isLastOddItem,
+              })}
+            >
               <Media resource={media} imgClassName={imgClassName} enableModal />
               {media.caption && (
                 <figcaption className={captionClassName}>

@@ -104,6 +104,7 @@ export const Articles: CollectionConfig = {
                         Banner,
                         Code,
                         MediaBlock,
+                        MediaCollageBlock,
                         DisplayMathBlock,
                         SquiggleRule,
                         TwitterEmbed,
@@ -111,7 +112,6 @@ export const Articles: CollectionConfig = {
                         RedditEmbed,
                         BlueSkyEmbed,
                         TikTokEmbed,
-                        MediaCollageBlock
                       ],
                       inlineBlocks: [InlineMathBlock],
                     }),
