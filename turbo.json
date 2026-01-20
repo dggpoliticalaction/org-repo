@@ -23,6 +23,7 @@
         "DISCORD_BOT_API_SECRET",
         "DISCORD_BOT_MASTER_API_TOKEN",
         "DISCORD_BOT_DEVELOPER_IDS",
+        "NEXT_PUBLIC_GOOGLE_ANALYTICS_ID",
         "NEXT_PUBLIC_SERVER_URL",
         "NEXT_PUBLIC_SUPABASE_URL"
       ]
@@ -38,6 +39,23 @@
     },
     "check-types": {
       "dependsOn": ["^check-types"]
+    },
+    "dev:install": {
+      "cache": false
+    },
+    "dev:db": {
+      "cache": false
+    },
+    "dev:next": {
+      "dependsOn": ["^dev:install", "^dev:db"],
+      "cache": false,
+      "persistent": true
+    },
+    "dev:db-down": {
+      "cache": false
+    },
+    "dev:db-nuke": {
+      "cache": false
     },
     "dev": {
       "cache": false,
@@ -64,6 +82,7 @@
         "DISCORD_BOT_API_SECRET",
         "DISCORD_BOT_MASTER_API_TOKEN",
         "DISCORD_BOT_DEVELOPER_IDS",
+        "NEXT_PUBLIC_GOOGLE_ANALYTICS_ID",
         "NEXT_PUBLIC_SERVER_URL",
         "NEXT_PUBLIC_SUPABASE_URL"
       ]
