@@ -65,7 +65,7 @@ export const seed = async (payload: Payload): Promise<void> => {
   )
 
   // Create the media collage demo article
-  const mediaCollageArticleId = await createMediaCollageArticle(payload, writer1, mediaDocs)
+  await createMediaCollageArticle(payload, writer1, mediaDocs)
 
   // Ensure article IDs exist
   const volume1Articles = articleResults.volume1Articles

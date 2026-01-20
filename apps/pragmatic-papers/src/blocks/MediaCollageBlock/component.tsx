@@ -84,14 +84,12 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
 }) => {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
-  const [count, setCount] = useState(0)
 
   React.useEffect(() => {
     if (!api) {
       return
     }
 
-    setCount(api.scrollSnapList().length)
     setCurrent(api.selectedScrollSnap())
 
     api.on('select', () => {

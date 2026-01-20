@@ -106,13 +106,13 @@ export const createMediaCollageArticle = async (
   
   // Process blocks in content to replace media IDs
   if (processedContent.root?.children) {
-    processedContent.root.children = processedContent.root.children.map((child: any) => {
+    processedContent.root.children = processedContent.root.children.map((child: Record<string, unknown>) => {
       if (child.type === 'block' && child.fields?.blockType === 'mediaCollage') {
         return {
           ...child,
           fields: {
             ...child.fields,
-            images: child.fields.images?.map((img: any) => ({
+            images: child.fields.images?.map((img: Record<string, unknown>) => ({
               ...img,
               media: img.media?.id ? mediaIdMap[img.media.id] || img.media.id : img.media,
             })),
