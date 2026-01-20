@@ -58,7 +58,7 @@ const CarouselCaption: React.FC<{
   const image = typeof imageData?.media === 'number' ? null : imageData?.media
 
   return (
-    <div className="h-20 overflow-hidden">
+    <div className="h-14 overflow-hidden">
       <div className="transition-opacity duration-200">
         {image?.caption && (
           <figcaption className={captionClassName}>
@@ -101,7 +101,7 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
 
   const figureClass = cn('', { container: enableGutter }, className)
   const imgClassName = 'border border-border rounded-[0.8rem]'
-  const captionClassName = 'mt-2 text-center'
+  const captionClassName = 'mt-1 text-center'
 
   if (!images.length) return null
 
@@ -144,7 +144,8 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
 
   // Grid layout
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+    <figure className={figureClass}>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4 items-start">
       {images.map((img, idx) => {
         const media = typeof img.media === 'number' ? null : img.media
         if (!media) return null
@@ -156,7 +157,6 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
               'md:col-span-2 md:max-w-[50%] md:mx-auto': isLastOddItem,
             })}
           >
-            <figure className={figureClass}>
               <Media resource={media} imgClassName={imgClassName} enableModal />
               {media.caption && (
                 <figcaption className={captionClassName}>
@@ -168,10 +168,10 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
                   />
                 </figcaption>
               )}
-            </figure>
           </div>
         )
       })}
     </div>
+      </figure>
   )
 }
