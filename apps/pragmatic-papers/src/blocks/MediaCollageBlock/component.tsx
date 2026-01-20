@@ -4,6 +4,14 @@ import { cn } from '@/utilities/ui'
 import RichText from '@/components/RichText'
 import { Media } from '../../components/Media'
 import type { Media as MediaType } from '@/payload-types'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from '@/components/ui/carousel'
 
 interface CollageImage {
   media: number | MediaType
@@ -17,116 +25,41 @@ interface MediaCollageBlockProps {
   enableGutter?: boolean
 }
 
-// Reusable carousel navigation button component
-const CarouselButton: React.FC<{
-  direction: 'left' | 'right'
-  onClick: () => void
-  ariaLabel: string
-}> = ({ direction, onClick, ariaLabel }) => {
-  const isLeft = direction === 'left'
-
+// Carousel navigation indicators
+const CarouselIndicators: React.FC<{
+  images: CollageImage[]
+  current: number
+  api?: CarouselApi
+}> = ({ images, current, api }) => {
   return (
-    <button
-      onClick={onClick}
-      className={cn(
-        'absolute top-1/2 -translate-y-1/2 bg-white border border-border rounded-full w-8 h-8 flex items-center justify-center shadow z-10 hover:bg-zinc-100 transition-colors',
-        isLeft ? 'left-2' : 'right-2',
-      )}
-      aria-label={ariaLabel}
-    >
-      <svg
-        width="22"
-        height="22"
-        viewBox="0 0 22 22"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d={isLeft ? 'M13.5 16L8.5 11L13.5 6' : 'M8.5 6L13.5 11L8.5 16'}
-          stroke="black"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+    <div className="flex justify-center mt-2 gap-2">
+      {images.map((_, idx) => (
+        <button
+          key={idx}
+          onClick={() => api?.scrollTo(idx)}
+          className={cn(
+            'inline-block w-2 h-2 rounded-full bg-muted-foreground transition-all',
+            idx === current ? 'bg-primary scale-125' : 'opacity-40',
+          )}
+          aria-label={`Go to slide ${idx + 1}`}
         />
-      </svg>
-    </button>
+      ))}
+    </div>
   )
 }
 
-// actual code for the collage/grid
-export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
-  images = [],
-  layout = 'grid',
-  className,
-  enableGutter = false,
-}) => {
-  const [current, setCurrent] = useState(0)
+// Carousel caption display
+const CarouselCaption: React.FC<{
+  images: CollageImage[]
+  current: number
+  captionClassName: string
+}> = ({ images, current, captionClassName }) => {
+  const imageData = images[current]
+  const image = typeof imageData?.media === 'number' ? null : imageData?.media
 
-  const figureClass = cn('', { container: enableGutter }, className)
-  const imgClassName = 'border border-border rounded-[0.8rem]'
-  const captionClassName = 'mt-3 text-center container'
-
-  if (!images.length) return null
-
-  //carousel image layout
-  if (layout === 'carousel') {
-    const imageData = images[current]
-    const image = typeof imageData?.media === 'number' ? null : imageData?.media
-    // Touch event handlers for swipe
-    let touchStartX = 0
-    let touchEndX = 0
-    const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-      const touch = e.changedTouches?.[0]
-      if (touch) {
-        touchStartX = touch.screenX
-      }
-    }
-    const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
-      const touch = e.changedTouches?.[0]
-      if (touch) {
-        touchEndX = touch.screenX
-        if (touchEndX - touchStartX > 50) {
-          // Swipe right
-          setCurrent((c) => (c === 0 ? images.length - 1 : c - 1))
-        } else if (touchStartX - touchEndX > 50) {
-          // Swipe left
-          setCurrent((c) => (c === images.length - 1 ? 0 : c + 1))
-        }
-      }
-    }
-    // handle switching images
-    const goToPrevious = () => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1))
-    const goToNext = () => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1))
-
-    // Render the carousel layout with the buttons
-    return (
-      <figure className={figureClass}>
-        <div
-          className="relative flex justify-center bg-zinc-100/50 dark:bg-zinc-900/50 rounded-[0.8rem] h-[350px] md:h-[550px] overflow-hidden"
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          <Media
-            resource={image}
-            imgClassName={cn(imgClassName, 'w-auto h-auto max-w-full max-h-full object-contain')}
-            className="w-full h-full flex items-center justify-center p-4"
-            pictureClassName="w-full h-full flex items-center justify-center"
-            enableModal
-          />
-          <CarouselButton direction="left" onClick={goToPrevious} ariaLabel="Previous image" />
-          <CarouselButton direction="right" onClick={goToNext} ariaLabel="Next image" />
-        </div>
-        <div className="flex justify-center mt-2 gap-2">
-          {images.map((_, idx) => (
-            <span
-              key={idx}
-              className={cn(
-                'inline-block w-2 h-2 rounded-full bg-muted-foreground transition-all',
-                idx === current ? 'bg-primary scale-125' : 'opacity-40',
-              )}
-            />
-          ))}
-        </div>
+  return (
+    <div className="h-20 overflow-hidden">
+      <div className="transition-opacity duration-200">
         {image?.caption && (
           <figcaption className={captionClassName}>
             <RichText
@@ -137,25 +70,93 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
             />
           </figcaption>
         )}
+      </div>
+    </div>
+  )
+}
+
+// actual code for the collage/grid
+export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
+  images = [],
+  layout = 'grid',
+  className,
+  enableGutter = false,
+}) => {
+  const [api, setApi] = useState<CarouselApi>()
+  const [current, setCurrent] = useState(0)
+  const [count, setCount] = useState(0)
+
+  React.useEffect(() => {
+    if (!api) {
+      return
+    }
+
+    setCount(api.scrollSnapList().length)
+    setCurrent(api.selectedScrollSnap())
+
+    api.on('select', () => {
+      setCurrent(api.selectedScrollSnap())
+    })
+  }, [api])
+
+  const figureClass = cn('', { container: enableGutter }, className)
+  const imgClassName = 'border border-border rounded-[0.8rem]'
+  const captionClassName = 'mt-2 text-center'
+
+  if (!images.length) return null
+
+  //carousel image layout
+  if (layout === 'carousel') {
+    return (
+      <figure className={figureClass}>
+        <Carousel setApi={setApi} opts={{ loop: true }}>
+          <CarouselContent>
+            {images.map((imageData, index) => {
+              const image = typeof imageData?.media === 'number' ? null : imageData?.media
+              if (!image) return null
+
+              return (
+                <CarouselItem key={index}>
+                  <div className="relative w-full aspect-video bg-zinc-100/50 dark:bg-zinc-900/50 rounded-[0.8rem]">
+                    <Media
+                      resource={image}
+                      imgClassName={cn(
+                        imgClassName,
+                        'absolute inset-0 w-full h-full object-contain',
+                      )}
+                      pictureClassName="w-full h-full"
+                      className="w-full h-full"
+                      enableModal
+                    />
+                  </div>
+                </CarouselItem>
+              )
+            })}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+        <CarouselIndicators images={images} current={current} api={api} />
+        <CarouselCaption images={images} current={current} captionClassName={captionClassName} />
       </figure>
     )
   }
 
   // Grid layout
   return (
-    <figure className={figureClass}>
-      <div className="grid grid-cols-2 gap-4">
-        {images.map((img, idx) => {
-          const media = typeof img.media === 'number' ? null : img.media
-          if (!media) return null
-          const isLastOddItem = images.length % 2 !== 0 && idx === images.length - 1
-          return (
-            <div
-              key={idx}
-              className={cn('flex flex-col items-center', {
-                'col-span-2 justify-self-center max-w-[50%]': isLastOddItem,
-              })}
-            >
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+      {images.map((img, idx) => {
+        const media = typeof img.media === 'number' ? null : img.media
+        if (!media) return null
+        const isLastOddItem = images.length % 2 !== 0 && idx === images.length - 1
+        return (
+          <div
+            key={idx}
+            className={cn({
+              'md:col-span-2 md:max-w-[50%] md:mx-auto': isLastOddItem,
+            })}
+          >
+            <figure className={figureClass}>
               <Media resource={media} imgClassName={imgClassName} enableModal />
               {media.caption && (
                 <figcaption className={captionClassName}>
@@ -167,10 +168,10 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
                   />
                 </figcaption>
               )}
-            </div>
-          )
-        })}
-      </div>
-    </figure>
+            </figure>
+          </div>
+        )
+      })}
+    </div>
   )
 }
