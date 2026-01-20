@@ -111,6 +111,7 @@ export const Articles: CollectionConfig = {
                         RedditEmbed,
                         BlueSkyEmbed,
                         TikTokEmbed,
+                        MediaCollageBlock
                       ],
                       inlineBlocks: [InlineMathBlock],
                     }),
