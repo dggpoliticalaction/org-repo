@@ -1927,6 +1927,18 @@ export interface SocialEmbedBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TwitterOEmbedBlock".
+ */
+export interface TwitterOEmbedBlock {
+  url: string;
+  hideMedia?: boolean | null;
+  hideThread?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'twitterEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "InlineMathBlock".
  */
 export interface InlineMathBlock {

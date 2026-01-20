@@ -7,7 +7,7 @@ import type { Block } from 'payload'
  */
 export const LegacyTwitterEmbed: Block = {
   slug: 'twitterEmbed',
-  // interfaceName: 'TwitterEmbedBlock',
+  interfaceName: 'TwitterOEmbedBlock',
   labels: {
     singular: 'Twitter Embed (Legacy)',
     plural: 'Twitter Embeds (Legacy)',

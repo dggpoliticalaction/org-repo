@@ -23,7 +23,7 @@ export interface OEmbedRequestQuery {
   format?: OEmbedFormat
 
   // Providers may support custom parameters.
-  [customParam: string]: string | number | undefined
+  // [customParam: string]: string | number | undefined
 }
 
 /**
@@ -32,21 +32,21 @@ export interface OEmbedRequestQuery {
  */
 export type OEmbedThumbnail =
   | {
-      thumbnail_url: string
-      thumbnail_width: number
-      thumbnail_height: number
-    }
+    thumbnail_url: string
+    thumbnail_width: number
+    thumbnail_height: number
+  }
   | {
-      thumbnail_url?: undefined
-      thumbnail_width?: undefined
-      thumbnail_height?: undefined
-    }
+    thumbnail_url?: undefined
+    thumbnail_width?: undefined
+    thumbnail_height?: undefined
+  }
 
 /**
  * Common response parameters valid for all response types.
  * Includes an index signature because providers may add fields not in the spec.
  */
-export interface OEmbedBase {
+export type OEmbedBase<Thumbnails extends boolean = false> = {
   type: OEmbedResourceType
   version: '1.0'
 
@@ -57,38 +57,49 @@ export interface OEmbedBase {
   provider_url?: string
   cache_age?: number
 
-  // allow additional provider-specific fields
-  // [key: string]: unknown;
-} // & OEmbedThumbnail;
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+} & (Thumbnails extends true ? OEmbedThumbnail : {})
 
-export type OEmbedPhoto = OEmbedBase & {
+export type OEmbedPhoto<Thumbnails extends boolean = false> = OEmbedBase<Thumbnails> & {
   type: 'photo'
   url: string
   width: number
   height: number
 }
 
-export type OEmbedVideo = OEmbedBase & {
+export type OEmbedVideo<Thumbnails extends boolean = false> = OEmbedBase<Thumbnails> & {
   type: 'video'
   html: string
   width: number
   height: number
 }
 
-export type OEmbedRich = OEmbedBase & {
+export type OEmbedRich<Thumbnails extends boolean = false> = OEmbedBase<Thumbnails> & {
   type: 'rich'
   html: string
   width: number
   height: number
 }
 
-export type OEmbedLink = OEmbedBase & {
+export type OEmbedLink<Thumbnails extends boolean = false> = OEmbedBase<Thumbnails> & {
   type: 'link'
 }
 
-export type OEmbedResponse = OEmbedPhoto | OEmbedVideo | OEmbedRich | OEmbedLink
+export type OEmbedResponse<Thumbnails extends boolean = false> =
+  | OEmbedPhoto<Thumbnails>
+  | OEmbedVideo<Thumbnails>
+  | OEmbedRich<Thumbnails>
+  | OEmbedLink<Thumbnails>
 
-export const isOEmbedPhoto = (x: OEmbedResponse): x is OEmbedPhoto => x.type === 'photo'
-export const isOEmbedVideo = (x: OEmbedResponse): x is OEmbedVideo => x.type === 'video'
-export const isOEmbedRich = (x: OEmbedResponse): x is OEmbedRich => x.type === 'rich'
-export const isOEmbedLink = (x: OEmbedResponse): x is OEmbedLink => x.type === 'link'
+export const isOEmbedPhoto = <Thumbnails extends boolean = false>(
+  x: OEmbedResponse<Thumbnails>,
+): x is OEmbedPhoto<Thumbnails> => x.type === 'photo'
+export const isOEmbedVideo = <Thumbnails extends boolean = false>(
+  x: OEmbedResponse<Thumbnails>,
+): x is OEmbedVideo<Thumbnails> => x.type === 'video'
+export const isOEmbedRich = <Thumbnails extends boolean = false>(
+  x: OEmbedResponse<Thumbnails>,
+): x is OEmbedRich<Thumbnails> => x.type === 'rich'
+export const isOEmbedLink = <Thumbnails extends boolean = false>(
+  x: OEmbedResponse<Thumbnails>,
+): x is OEmbedLink<Thumbnails> => x.type === 'link'

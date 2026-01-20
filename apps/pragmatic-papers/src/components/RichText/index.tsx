@@ -22,7 +22,7 @@ import {
   RedditEmbedBlock,
   SocialEmbedBlock,
   TikTokEmbedBlock,
-  TwitterEmbedBlock,
+  TwitterOEmbedBlock,
   YouTubeEmbedBlock,
 } from '@/blocks/SocialEmbed'
 import type {
@@ -37,14 +37,14 @@ import { cn } from '@/utilities/ui'
 type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-      | CTABlockProps
-      | MediaBlockProps
-      | BannerBlockProps
-      | CodeBlockProps
-      | MathBlockProps
-      | SquiggleRuleBlockProps
-      | SocialEmbedBlockProps
-    >
+    | CTABlockProps
+    | MediaBlockProps
+    | BannerBlockProps
+    | CodeBlockProps
+    | MathBlockProps
+    | SquiggleRuleBlockProps
+    | SocialEmbedBlockProps
+  >
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
@@ -79,7 +79,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     socialEmbed: ({ node }) => <SocialEmbedBlock {...node.fields} />,
     // Legacy block types for backward compatibility with existing content
     twitterEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <TwitterEmbedBlock {...node.fields} />
+      <TwitterOEmbedBlock {...node.fields} />
     ),
     youtubeEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
       <YouTubeEmbedBlock {...node.fields} />

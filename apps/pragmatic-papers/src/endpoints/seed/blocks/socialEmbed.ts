@@ -128,7 +128,7 @@ const createSocialEmbedContent = () => {
         // Only include hideMedia and hideThread for Twitter
         ...(item.platform === 'twitter' && {
           hideMedia: false,
-          hideThread: false,
+          hideThread: true,
         }),
       },
       format: '' as const,
