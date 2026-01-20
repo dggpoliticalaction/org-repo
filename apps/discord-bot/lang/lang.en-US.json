@@ -58,6 +58,10 @@
       "viewDateSent": {
         "description": "This message was sent on {{DATE}}!"
       },
+      "devOnboarding": {
+        "title": "About DGGP Dev Team",
+        "description": "{{CONTENT}}"
+      },
       "about": {
         "title": "{{COM:bot.name}} - About",
         "description": "{{REF:bot.description}}",
@@ -208,7 +212,8 @@
       "census": "census"
     },
     "userCommands": {
-      "viewDateJoined": "View Date Joined"
+      "viewDateJoined": "View Date Joined",
+      "sendDevOnboarding": "Send Dev Onboarding"
     },
     "messageCommands": {
       "viewDateSent": "View Date Sent"
