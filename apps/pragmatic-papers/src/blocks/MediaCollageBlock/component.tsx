@@ -53,6 +53,7 @@ const CarouselButton: React.FC<{
   )
 }
 
+// actual code for the collage/grid
 export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
   images = [],
   layout = 'grid',
@@ -93,10 +94,11 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockProps> = ({
         }
       }
     }
-
+    // handle switching images
     const goToPrevious = () => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1))
     const goToNext = () => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1))
 
+    // Render the carousel layout with the buttons
     return (
       <figure className={figureClass}>
         <div
