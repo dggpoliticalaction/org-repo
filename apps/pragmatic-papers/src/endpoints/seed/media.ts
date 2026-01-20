@@ -16,11 +16,22 @@ export async function fetchFileByURL(url: string): Promise<File> {
   }
 
   const data = await res.arrayBuffer()
+  const extension = url.split('.').pop()?.toLowerCase() || ''
+  
+  // Map file extensions to proper MIME types
+  const mimeTypeMap: Record<string, string> = {
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'png': 'image/png',
+    'webp': 'image/webp',
+    'gif': 'image/gif',
+    'svg': 'image/svg+xml',
+  }
 
   return {
     name: url.split('/').pop() || `file-${Date.now()}`,
     data: Buffer.from(data),
-    mimetype: `image/${url.split('.').pop()}`,
+    mimetype: mimeTypeMap[extension] || `image/${extension}`,
     size: data.byteLength,
   }
 }

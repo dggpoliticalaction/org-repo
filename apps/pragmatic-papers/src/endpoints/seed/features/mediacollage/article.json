@@ -810,112 +810,6 @@
                         "id": "696f0fe601402f493453df0a",
                         "images": [
                             {
-                                "id": "696f0fe73f8e6074f61e1802",
-                                "media": {
-                                    "id": 12,
-                                    "alt": "A snazzy blue jacket",
-                                    "caption": {
-                                        "root": {
-                                            "type": "root",
-                                            "format": "",
-                                            "indent": 0,
-                                            "version": 1,
-                                            "children": [
-                                                {
-                                                    "type": "paragraph",
-                                                    "format": "",
-                                                    "indent": 0,
-                                                    "version": 1,
-                                                    "children": [
-                                                        {
-                                                            "mode": "normal",
-                                                            "text": "A snazzy blue jacket",
-                                                            "type": "text",
-                                                            "style": "",
-                                                            "detail": 0,
-                                                            "format": 0,
-                                                            "version": 1
-                                                        }
-                                                    ],
-                                                    "direction": "ltr"
-                                                }
-                                            ],
-                                            "direction": "ltr"
-                                        }
-                                    },
-                                    "createdBy": null,
-                                    "updatedAt": "2026-01-20T05:13:40.511Z",
-                                    "createdAt": "2026-01-20T05:13:40.511Z",
-                                    "url": "/api/media/file/BlueCoat.jpg",
-                                    "thumbnailURL": "",
-                                    "filename": "BlueCoat.jpg",
-                                    "mimeType": "image/jpg",
-                                    "filesize": 175880,
-                                    "width": null,
-                                    "height": null,
-                                    "focalX": null,
-                                    "focalY": null,
-                                    "sizes": {
-                                        "thumbnail": {
-                                            "url": null,
-                                            "width": null,
-                                            "height": null,
-                                            "mimeType": null,
-                                            "filesize": null,
-                                            "filename": null
-                                        },
-                                        "square": {
-                                            "url": null,
-                                            "width": null,
-                                            "height": null,
-                                            "mimeType": null,
-                                            "filesize": null,
-                                            "filename": null
-                                        },
-                                        "small": {
-                                            "url": null,
-                                            "width": null,
-                                            "height": null,
-                                            "mimeType": null,
-                                            "filesize": null,
-                                            "filename": null
-                                        },
-                                        "medium": {
-                                            "url": null,
-                                            "width": null,
-                                            "height": null,
-                                            "mimeType": null,
-                                            "filesize": null,
-                                            "filename": null
-                                        },
-                                        "large": {
-                                            "url": null,
-                                            "width": null,
-                                            "height": null,
-                                            "mimeType": null,
-                                            "filesize": null,
-                                            "filename": null
-                                        },
-                                        "xlarge": {
-                                            "url": null,
-                                            "width": null,
-                                            "height": null,
-                                            "mimeType": null,
-                                            "filesize": null,
-                                            "filename": null
-                                        },
-                                        "og": {
-                                            "url": null,
-                                            "width": null,
-                                            "height": null,
-                                            "mimeType": null,
-                                            "filesize": null,
-                                            "filename": null
-                                        }
-                                    }
-                                }
-                            },
-                            {
                                 "id": "696f0fec3f8e6074f61e1804",
                                 "media": {
                                     "id": 11,
@@ -1095,6 +989,112 @@
                                             "mimeType": "image/jpeg",
                                             "filesize": 27811,
                                             "filename": "image-hero1-1-1200x630.jpg"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "id": "696f0fe73f8e6074f61e1802",
+                                "media": {
+                                    "id": 12,
+                                    "alt": "A snazzy blue jacket",
+                                    "caption": {
+                                        "root": {
+                                            "type": "root",
+                                            "format": "",
+                                            "indent": 0,
+                                            "version": 1,
+                                            "children": [
+                                                {
+                                                    "type": "paragraph",
+                                                    "format": "",
+                                                    "indent": 0,
+                                                    "version": 1,
+                                                    "children": [
+                                                        {
+                                                            "mode": "normal",
+                                                            "text": "A snazzy blue jacket",
+                                                            "type": "text",
+                                                            "style": "",
+                                                            "detail": 0,
+                                                            "format": 0,
+                                                            "version": 1
+                                                        }
+                                                    ],
+                                                    "direction": "ltr"
+                                                }
+                                            ],
+                                            "direction": "ltr"
+                                        }
+                                    },
+                                    "createdBy": null,
+                                    "updatedAt": "2026-01-20T05:13:40.511Z",
+                                    "createdAt": "2026-01-20T05:13:40.511Z",
+                                    "url": "/api/media/file/BlueCoat.jpg",
+                                    "thumbnailURL": "",
+                                    "filename": "BlueCoat.jpg",
+                                    "mimeType": "image/jpg",
+                                    "filesize": 175880,
+                                    "width": null,
+                                    "height": null,
+                                    "focalX": null,
+                                    "focalY": null,
+                                    "sizes": {
+                                        "thumbnail": {
+                                            "url": null,
+                                            "width": null,
+                                            "height": null,
+                                            "mimeType": null,
+                                            "filesize": null,
+                                            "filename": null
+                                        },
+                                        "square": {
+                                            "url": null,
+                                            "width": null,
+                                            "height": null,
+                                            "mimeType": null,
+                                            "filesize": null,
+                                            "filename": null
+                                        },
+                                        "small": {
+                                            "url": null,
+                                            "width": null,
+                                            "height": null,
+                                            "mimeType": null,
+                                            "filesize": null,
+                                            "filename": null
+                                        },
+                                        "medium": {
+                                            "url": null,
+                                            "width": null,
+                                            "height": null,
+                                            "mimeType": null,
+                                            "filesize": null,
+                                            "filename": null
+                                        },
+                                        "large": {
+                                            "url": null,
+                                            "width": null,
+                                            "height": null,
+                                            "mimeType": null,
+                                            "filesize": null,
+                                            "filename": null
+                                        },
+                                        "xlarge": {
+                                            "url": null,
+                                            "width": null,
+                                            "height": null,
+                                            "mimeType": null,
+                                            "filesize": null,
+                                            "filename": null
+                                        },
+                                        "og": {
+                                            "url": null,
+                                            "width": null,
+                                            "height": null,
+                                            "mimeType": null,
+                                            "filesize": null,
+                                            "filename": null
                                         }
                                     }
                                 }
@@ -1423,7 +1423,7 @@
                                 }
                             }
                         ],
-                        "layout": "grid",
+                        "layout": "carousel",
                         "blockName": "",
                         "blockType": "mediaCollage"
                     },

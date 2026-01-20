@@ -1,11 +1,12 @@
 import type { Payload } from 'payload'
-import type { User } from '@/payload-types'
+import type { User, Media } from '@/payload-types'
 import { fetchFileByURL } from '../../media'
 import articleData from './article.json'
     
 export const createMediaCollageArticle = async (
   payload: Payload,
   writer: User,
+  mediaDocs: Media[],
 ): Promise<number> => {
   // Fetch the two images with captions
   const [itsBadBuffer, blueCoatBuffer] = await Promise.all([
@@ -89,7 +90,13 @@ export const createMediaCollageArticle = async (
   })
 
   // Map media IDs from the exported article
+  // mediaDocs order: [image-post1, image-post2, image-post3, image-hero1]
+  // Old IDs in JSON: 7 = image-post1, 8 = image-post3, 9 = image-post2, 10 = image-hero1
   const mediaIdMap: Record<number, number> = {
+    7: mediaDocs[0]?.id ?? 0,  // image-post1
+    8: mediaDocs[2]?.id ?? 0,  // image-post3
+    9: mediaDocs[1]?.id ?? 0,  // image-post2
+    10: mediaDocs[3]?.id ?? 0, // image-hero1
     11: itsBadMedia.id,
     12: blueCoatMedia.id,
   }
@@ -138,7 +145,7 @@ export const createMediaCollageArticle = async (
       meta: {
         title: articleData.meta?.title || articleData.title,
         description: articleData.meta?.description,
-        image: articleData.meta?.image?.id ? mediaIdMap[articleData.meta.image.id] : undefined,
+        image: undefined,
       },
     },
   })
