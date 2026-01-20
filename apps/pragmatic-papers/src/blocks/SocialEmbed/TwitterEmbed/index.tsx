@@ -12,7 +12,7 @@ export async function TwitterOEmbedBlock({
 
   if (isFailure(result)) {
     return (
-      <a href={url} target="_blank" rel="noopener noreferrer" className="underline">
+      <a href={url} target="_blank" rel="noopener noreferrer" className="underline text-center w-full">
         {result.error.message} View on Twitter
       </a>
     )
