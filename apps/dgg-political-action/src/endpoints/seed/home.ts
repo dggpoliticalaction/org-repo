@@ -4,12 +4,12 @@ import type { Media } from '@/payload-types'
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type HomeArgs = {
   heroImage: Media
-  metaImage: Media
+  _metaImage: Media
 }
 
 export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> = ({
   heroImage,
-  metaImage,
+  _metaImage,
 }) => {
   return {
     slug: 'home',
@@ -42,14 +42,13 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
             {
               type: 'paragraph',
               children: [
-                
                 {
                   type: 'text',
                   detail: 0,
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: "Mission statement goes here Mission statement goes here Mission statement goes here. Mission statement goes here Mission statement goes here. Mission statement goes here Mission statement goes here Mission statement goes here.",
+                  text: 'Mission statement goes here Mission statement goes here Mission statement goes here. Mission statement goes here Mission statement goes here. Mission statement goes here Mission statement goes here Mission statement goes here.',
                   version: 1,
                 },
               ],
@@ -86,7 +85,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
                         format: 0,
                         mode: 'normal',
                         style: '',
-                        text: 'Some more content',
+                        text: 'Latest News',
                         version: 1,
                       },
                     ],
