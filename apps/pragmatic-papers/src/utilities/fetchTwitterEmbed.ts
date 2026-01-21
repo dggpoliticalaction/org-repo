@@ -49,6 +49,7 @@ interface TwitterOEmbedRequestQuery extends OEmbedRequestQuery {
   | 'zh-tw'
   theme?: 'light' | 'dark'
   dnt?: boolean
+  revalidate?: number
 }
 
 interface TwitterOEmbedResponse extends OEmbedRich {
@@ -65,6 +66,7 @@ export async function fetchTwitterEmbed({
   lang = 'en',
   theme = 'light',
   dnt = true,
+  revalidate = 60 * 60 * 24,
 }: TwitterOEmbedRequestQuery): Promise<Result<string, Error>> {
   const endpoint = new URL('https://publish.twitter.com/oembed')
   endpoint.searchParams.set('url', url)
@@ -78,7 +80,7 @@ export async function fetchTwitterEmbed({
   endpoint.searchParams.set('dnt', String(dnt))
 
   try {
-    const res = await fetch(endpoint, { next: { revalidate: 60 * 60 * 24 } })
+    const res = await fetch(endpoint, { next: { revalidate } })
 
     if (!res.ok) {
       throw new Error('Something went wrong.')

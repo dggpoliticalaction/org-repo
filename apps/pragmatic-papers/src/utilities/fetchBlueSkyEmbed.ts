@@ -18,10 +18,10 @@ function isBlueskyPostUrl(str: string): boolean {
   }
 }
 
-type BlueskyOEmbedRequestQuery = OEmbedRequestQuery
+type BlueskyOEmbedRequestQuery = OEmbedRequestQuery & { revalidate?: number }
 
 export async function fetchBlueSkyEmbed(
-  { url, maxwidth = 550 }: BlueskyOEmbedRequestQuery,
+  { url, maxwidth = 550, revalidate = 60 * 60 * 24 }: BlueskyOEmbedRequestQuery,
 ): Promise<Result<string, Error>> {
   if (!isBlueskyPostUrl(url)) return failure(new Error('Invalid Bluesky post URL.'))
 
@@ -32,7 +32,7 @@ export async function fetchBlueSkyEmbed(
 
   try {
     const res = await fetch(endpoint, {
-      next: { revalidate: 60 * 60 * 24 },
+      next: { revalidate },
     })
 
     if (!res.ok) return failure(new Error('Failed to fetch Bluesky oEmbed.'))

@@ -4,7 +4,7 @@ import { isOEmbedVideo, type OEmbedRequestQuery, type OEmbedVideo } from '@/util
 import type { Prettify } from '@/utilities/prettify'
 import { failure, type Result, success } from '@/utilities/results'
 
-type YouTubeOEmbedOptions = OEmbedRequestQuery
+type YouTubeOEmbedOptions = OEmbedRequestQuery & { revalidate?: number }
 
 type YouTubeResponse = Prettify<OEmbedVideo>
 
@@ -19,6 +19,7 @@ export async function fetchYouTubeEmbed(
 		url,
 		maxwidth = 550,
 		maxheight,
+		revalidate = 60 * 60 * 24,
 	}: YouTubeOEmbedOptions,
 ): Promise<Result<string, Error>> {
 	const endpoint = new URL('https://www.youtube.com/oembed')
@@ -28,7 +29,7 @@ export async function fetchYouTubeEmbed(
 	if (maxheight) endpoint.searchParams.set('maxheight', String(maxheight))
 
 	try {
-		const res = await fetch(endpoint, { next: { revalidate: 60 * 60 * 24 } })
+		const res = await fetch(endpoint, { next: { revalidate } })
 		if (!res.ok) throw new Error('Failed to fetch YouTube oEmbed.')
 
 		const data = (await res.json()) as YouTubeResponse

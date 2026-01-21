@@ -1,45 +1,46 @@
 'use server'
 
-import NodeCache from 'node-cache'
+import type { OEmbedRequestQuery, OEmbedRich } from '@/utilities/oEmbed'
+import type { Prettify } from '@/utilities/prettify'
+import { failure, success, type Result } from '@/utilities/results'
+import { sanitizeOEmbed } from '@/utilities/sanitizeOEmbed'
 
-export interface RedditEmbedOptions {
-  url: string
+interface RedditOEmbedOptions extends OEmbedRequestQuery {
+  parent?: boolean
+  live?: boolean
+  omitscript?: boolean
+  revalidate?: number
 }
 
-interface RedditEmbedData {
-  title: string
-  html: string
-}
-
-const redditCache = new NodeCache()
-
-async function getPost(options: RedditEmbedOptions): Promise<RedditEmbedData> {
-  const queryParams = new URLSearchParams({
-    url: options.url,
-  })
-  const oembedUrl = `https://www.reddit.com/oembed?${queryParams.toString()}`
-  const res = await fetch(oembedUrl)
-  if (!res.ok) {
-    throw new Error(`Unable to fetch Reddit post: ${options.url}`)
-  }
-  return await res.json()
-}
+type RedditResponse = Prettify<OEmbedRich<true>>
 
 export async function fetchRedditEmbed(
-  options: RedditEmbedOptions,
-): Promise<RedditEmbedData | null> {
-  const optsString = JSON.stringify(options)
+  {
+    url,
+    maxwidth = 550,
+    revalidate = 60 * 60 * 24,
+    parent = false,
+    live = false,
+    omitscript = true,
+  }: RedditOEmbedOptions,
+): Promise<Result<string, Error>> {
+  const endpoint = new URL('https://www.reddit.com/oembed')
+  endpoint.searchParams.set('url', url)
+  endpoint.searchParams.set('maxwidth', String(maxwidth))
+  endpoint.searchParams.set('parent', String(parent))
+  endpoint.searchParams.set('live', String(live))
+  endpoint.searchParams.set('omitscript', String(omitscript))
+
   try {
-    let data
-    if (redditCache.has(optsString)) {
-      data = redditCache.get(optsString)
-    } else {
-      data = await getPost(options)
-      redditCache.set(optsString, data, 3600 * 4)
-    }
-    return data as RedditEmbedData
-  } catch (exception) {
-    console.error(exception)
-    return null
+    const res = await fetch(endpoint, { next: { revalidate } })
+    if (!res.ok) throw new Error('Failed to fetch Reddit oEmbed.')
+
+    const { html } = (await res.json()) as RedditResponse
+    if (!html) throw new Error('Invalid Reddit oEmbed response.')
+
+    return success(sanitizeOEmbed(html))
+  } catch (err) {
+    console.error('Error fetching Reddit oEmbed:', err)
+    return failure(new Error('Failed to fetch Reddit oEmbed.'))
   }
 }

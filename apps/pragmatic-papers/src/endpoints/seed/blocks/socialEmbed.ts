@@ -46,33 +46,18 @@ const SOCIAL_MEDIA_URLS = [
   // Reddit variations
   {
     platform: 'reddit',
-    url: 'https://www.reddit.com/r/example/comments/abc123/test/',
-    label: 'Reddit (www.reddit.com)',
+    url: 'https://www.reddit.com/r/news/comments/jptqj9/joe_biden_elected_president_of_the_united_states/',
+    label: 'Reddit Text Link',
   },
   {
     platform: 'reddit',
-    url: 'https://reddit.com/r/example/comments/abc123/test/',
-    label: 'Reddit (reddit.com)',
+    url: 'https://www.reddit.com/r/pics/comments/5bx4bx/thanks_obama/',
+    label: 'Reddit Image',
   },
   {
     platform: 'reddit',
-    url: 'https://old.reddit.com/r/example/comments/abc123/test/',
-    label: 'Reddit (old.reddit.com)',
-  },
-  {
-    platform: 'reddit',
-    url: 'https://new.reddit.com/r/example/comments/abc123/test/',
-    label: 'Reddit (new.reddit.com)',
-  },
-  {
-    platform: 'reddit',
-    url: 'https://np.reddit.com/r/example/comments/abc123/test/',
-    label: 'Reddit (np.reddit.com)',
-  },
-  {
-    platform: 'reddit',
-    url: 'https://amp.reddit.com/r/example/comments/abc123/test/',
-    label: 'Reddit (amp.reddit.com)',
+    url: 'https://www.reddit.com/r/PublicFreakout/comments/laa59v/this_woman_from_myanmar_was_recording_her/',
+    label: 'Reddit Video',
   },
 
   // TikTok variations

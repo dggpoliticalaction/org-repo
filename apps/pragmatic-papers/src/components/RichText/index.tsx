@@ -8,7 +8,7 @@ import {
   RedditEmbedBlock,
   SocialEmbedBlock,
   TikTokEmbedBlock,
-  TwitterOEmbedBlock,
+  TwitterEmbedBlock,
   YouTubeEmbedBlock,
 } from '@/blocks/SocialEmbed'
 import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
@@ -77,7 +77,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     socialEmbed: ({ node }) => <SocialEmbedBlock {...node.fields} />,
     // Legacy block types for backward compatibility with existing content
     twitterEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <TwitterOEmbedBlock {...node.fields} />
+      <TwitterEmbedBlock {...node.fields} />
     ),
     youtubeEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
       <YouTubeEmbedBlock {...node.fields} />
