@@ -28,6 +28,7 @@ import {
 import { type JobService, Logger } from '../services/index.js'
 import { PartialUtils } from '../utils/index.js'
 import { CTAPostTrigger } from '../triggers/cta-post.js'
+import { type WebhookService } from '../services/webhook-service.js'
 
 const require = createRequire(import.meta.url)
 const Config = require('../../config/config.json')
@@ -49,6 +50,7 @@ export class Bot {
     private buttonHandler: ButtonHandler,
     private reactionHandler: ReactionHandler,
     private jobService: JobService,
+    private webhookService: WebhookService,
   ) {}
 
   public async start(): Promise<void> {
@@ -91,6 +93,7 @@ export class Bot {
 
     if (!Debug.dummyMode.enabled) {
       this.jobService.start()
+      this.webhookService.start()
     }
 
     this.ready = true

@@ -41,6 +41,9 @@ import {
 } from './services/index.js'
 import { type Trigger } from './triggers/index.js'
 import { CTAPostTrigger } from './triggers/cta-post.js'
+import { WebhookService } from './services/webhook-service.js'
+import { type Webhook } from './webhooks/webhook.js';
+import { PragmaticPapersWebhook } from './webhooks/pragmatic-papers.js'
 
 const require = createRequire(import.meta.url)
 const Config = require('../config/config.json')
@@ -111,6 +114,8 @@ async function start(): Promise<void> {
     // TODO: Add new jobs here
   ]
 
+  const webhooks: Webhook[] = [new PragmaticPapersWebhook()]
+
   // Bot
   const bot = new Bot(
     process.env.DISCORD_BOT_TOKEN,
@@ -122,6 +127,7 @@ async function start(): Promise<void> {
     buttonHandler,
     reactionHandler,
     new JobService(jobs),
+    new WebhookService(webhooks, client),
   )
 
   // Register
