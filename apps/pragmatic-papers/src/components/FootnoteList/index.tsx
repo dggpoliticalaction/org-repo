@@ -10,7 +10,7 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
   return (
     <section className="mt-4 border-t border-border pt-4">
       <h3 className="text-xl font-bold">Footnotes</h3>
-      <ol className="list-decimal pl-4">
+      <ol className="list-decimal pl-[18px]">
         {footnotes.map(({ index, note, attributionEnabled, link }) => {
           return (
             <li key={index}>
