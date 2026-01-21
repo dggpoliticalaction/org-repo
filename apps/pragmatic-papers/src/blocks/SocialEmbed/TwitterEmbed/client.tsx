@@ -13,11 +13,11 @@ declare global {
   }
 }
 
-interface TwitterOEmbedClientProps {
+interface TwitterEmbedClientProps {
   html: string
 }
 
-export function TwitterOEmbedClient({ html }: TwitterOEmbedClientProps): React.ReactNode {
+export function TwitterEmbedClient({ html }: TwitterEmbedClientProps): React.ReactNode {
   const ref = useRef<HTMLDivElement>(null)
   const [ready, setReady] = useState(false)
 

@@ -1,57 +1,44 @@
-'use server'
+"use server"
 
-import NodeCache from 'node-cache'
+import { isOEmbedVideo, type OEmbedRequestQuery, type OEmbedVideo } from '@/utilities/oEmbed'
+import type { Prettify } from '@/utilities/prettify'
+import { failure, type Result, success } from '@/utilities/results'
 
-export interface YouTubeEmbedOptions {
-  url: string
-  maxwidth?: number
-  maxheight?: number
+type YouTubeOEmbedOptions = OEmbedRequestQuery
+
+type YouTubeResponse = Prettify<OEmbedVideo>
+
+function keepOnlyIframe(html: string): string | null {
+	// Very strict: extract the first iframe and discard everything else.
+	const match = html.match(/<iframe[\s\S]*?<\/iframe>/i)
+	return match ? match[0] : null
 }
-
-interface YouTubeEmbedData {
-  html: string
-  thumbnail_url: string
-  author_name: string
-  author_url: string
-  width: number
-  height: number
-  provider_name: string
-  provider_url: string
-  type: string
-  version: string
-}
-
-const youtubeCache = new NodeCache()
 
 export async function fetchYouTubeEmbed(
-  options: YouTubeEmbedOptions,
-): Promise<YouTubeEmbedData | null> {
-  const cacheKey = JSON.stringify(options)
-  const cachedData = youtubeCache.get<YouTubeEmbedData>(cacheKey)
-  if (cachedData) {
-    return cachedData
-  }
+	{
+		url,
+		maxwidth = 550,
+		maxheight,
+	}: YouTubeOEmbedOptions,
+): Promise<Result<string, Error>> {
+	const endpoint = new URL('https://www.youtube.com/oembed')
+	endpoint.searchParams.set('url', url)
+	endpoint.searchParams.set('format', 'json')
+	endpoint.searchParams.set('maxwidth', String(maxwidth))
+	if (maxheight) endpoint.searchParams.set('maxheight', String(maxheight))
 
-  const queryParams = new URLSearchParams({
-    url: options.url,
-  })
+	try {
+		const res = await fetch(endpoint, { next: { revalidate: 60 * 60 * 24 } })
+		if (!res.ok) throw new Error('Failed to fetch YouTube oEmbed.')
 
-  if (options.maxwidth) {
-    queryParams.set('maxwidth', options.maxwidth.toString())
-  }
+		const data = (await res.json()) as YouTubeResponse
+		if (!isOEmbedVideo(data)) throw new Error('Invalid oEmbed type.')
 
-  if (options.maxheight) {
-    queryParams.set('maxheight', options.maxheight.toString())
-  }
+		const iframe = keepOnlyIframe(data.html)
+		if (!iframe) throw new Error('No iframe found.')
 
-  const oembedUrl = `https://www.youtube.com/oembed?${queryParams.toString()}`
-  const res = await fetch(oembedUrl)
-  if (!res.ok) {
-    throw new Error(
-      `Unable to fetch YouTube video: ${options.url} (status: ${res.status} ${res.statusText})`,
-    )
-  }
-  const data = (await res.json()) as YouTubeEmbedData
-  youtubeCache.set(cacheKey, data)
-  return data
+		return success(iframe)
+	} catch (error) {
+		return failure(error instanceof Error ? error : new Error(String(error)))
+	}
 }

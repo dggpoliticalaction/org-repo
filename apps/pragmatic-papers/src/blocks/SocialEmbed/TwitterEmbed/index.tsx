@@ -1,19 +1,19 @@
-import { getTwitterOEmbed } from '@/blocks/SocialEmbed/TwitterEmbed/getTwitterOEmbed'
-import { TwitterOEmbedClient } from '@/blocks/SocialEmbed/TwitterEmbed/TwitterOEmbedClient'
+import { TwitterEmbedClient } from '@/blocks/SocialEmbed/TwitterEmbed/client'
 import type { SocialEmbedBlock } from '@/payload-types'
+import { fetchTwitterEmbed } from '@/utilities/fetchTwitterEmbed'
 import { isFailure } from '@/utilities/results'
 import { EmbedError } from '../EmbedError'
 
-export async function TwitterOEmbedBlock({
+export async function TwitterEmbedBlock({
   url,
   hideMedia,
   hideThread,
 }: SocialEmbedBlock): Promise<React.ReactNode> {
-  const result = await getTwitterOEmbed({ url, hideMedia, hideThread })
+  const result = await fetchTwitterEmbed({ url, hideMedia, hideThread })
 
   if (isFailure(result)) {
     return <EmbedError url={url} message={result.error.message} platform="X.com" />
   }
 
-  return <TwitterOEmbedClient html={result.value} />
+  return <TwitterEmbedClient html={result.value} />
 }

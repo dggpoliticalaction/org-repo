@@ -1,19 +1,19 @@
 import {
-  BlueSkyOEmbedBlock,
+  BlueSkyEmbedBlock,
   RedditEmbedBlock,
   TikTokEmbedBlock,
-  TwitterOEmbedBlock,
-  YouTubeOEmbedBlock
+  TwitterEmbedBlock,
+  YouTubeEmbedBlock
 } from '@/blocks/SocialEmbed'
 import type { SocialEmbedBlock as SocialEmbedBlockProps } from '@/payload-types'
 import { detectSocialPlatform, type SocialPlatform } from '@/utilities/detectSocialPlatform'
 import React from 'react'
 
 const EMBEDS = {
-  youtube: (props: SocialEmbedBlockProps) => <YouTubeOEmbedBlock {...props} />,
-  twitter: (props: SocialEmbedBlockProps) => <TwitterOEmbedBlock {...props} />,
+  youtube: (props: SocialEmbedBlockProps) => <YouTubeEmbedBlock {...props} />,
+  twitter: (props: SocialEmbedBlockProps) => <TwitterEmbedBlock {...props} />,
   reddit: (props: SocialEmbedBlockProps) => <RedditEmbedBlock {...props} />,
-  bluesky: (props: SocialEmbedBlockProps) => <BlueSkyOEmbedBlock {...props} />,
+  bluesky: (props: SocialEmbedBlockProps) => <BlueSkyEmbedBlock {...props} />,
   tiktok: (props: SocialEmbedBlockProps) => <TikTokEmbedBlock {...props} />,
 } satisfies Record<SocialPlatform, React.FC<SocialEmbedBlockProps>>
 

@@ -4,12 +4,12 @@ import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import {
-  BlueSkyOEmbedBlock,
+  BlueSkyEmbedBlock,
   RedditEmbedBlock,
   SocialEmbedBlock,
   TikTokEmbedBlock,
   TwitterOEmbedBlock,
-  YouTubeOEmbedBlock,
+  YouTubeEmbedBlock,
 } from '@/blocks/SocialEmbed'
 import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
 import type {
@@ -80,13 +80,13 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       <TwitterOEmbedBlock {...node.fields} />
     ),
     youtubeEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <YouTubeOEmbedBlock {...node.fields} />
+      <YouTubeEmbedBlock {...node.fields} />
     ),
     redditEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
       <RedditEmbedBlock {...node.fields} />
     ),
     blueSkyEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <BlueSkyOEmbedBlock {...node.fields} />
+      <BlueSkyEmbedBlock {...node.fields} />
     ),
     tiktokEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
       <TikTokEmbedBlock {...node.fields} />

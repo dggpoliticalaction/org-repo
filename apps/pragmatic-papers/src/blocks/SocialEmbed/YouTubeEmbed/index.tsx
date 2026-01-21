@@ -1,10 +1,10 @@
 import { EmbedError } from '@/blocks/SocialEmbed/EmbedError'
-import { getYouTubeOEmbed } from '@/blocks/SocialEmbed/YouTubeEmbed/getYouTubeOEmbed'
 import type { SocialEmbedBlock } from '@/payload-types'
+import { fetchYouTubeEmbed } from '@/utilities/fetchYouTubeEmbed'
 import { isFailure } from '@/utilities/results'
 
-export async function YouTubeOEmbedBlock({ url }: SocialEmbedBlock): Promise<React.ReactNode> {
-  const result = await getYouTubeOEmbed({ url })
+export async function YouTubeEmbedBlock({ url }: SocialEmbedBlock): Promise<React.ReactNode> {
+  const result = await fetchYouTubeEmbed({ url })
 
   if (isFailure(result)) {
     return <EmbedError url={url} message={result.error.message} platform="YouTube" />

@@ -1,75 +1,97 @@
-'use server'
+"use server"
 
-import NodeCache from 'node-cache'
+import { isOEmbedRich, type OEmbedRequestQuery, type OEmbedRich } from '@/utilities/oEmbed'
+import { failure, success, type Result } from '@/utilities/results'
+import { sanitizeOEmbed } from '@/utilities/sanitizeOEmbed'
 
-export interface TwitterEmbedOptions {
-  url: string
-  maxwidth?: number
-  hide_media?: boolean
-  hide_thread?: boolean
+/**
+ * https://developer.x.com/en/docs/x-for-websites/oembed-api
+ */
+interface TwitterOEmbedRequestQuery extends OEmbedRequestQuery {
+  hideMedia?: boolean | null
+  hideThread?: boolean | null
+  omitScript?: boolean
   align?: 'left' | 'right' | 'center' | 'none'
+  lang?:
+  | 'en'
+  | 'ar'
+  | 'bn'
+  | 'cs'
+  | 'da'
+  | 'de'
+  | 'el'
+  | 'es'
+  | 'fa'
+  | 'fi'
+  | 'fil'
+  | 'fr'
+  | 'he'
+  | 'hi'
+  | 'hu'
+  | 'id'
+  | 'it'
+  | 'ja'
+  | 'ko'
+  | 'msa'
+  | 'nl'
+  | 'no'
+  | 'pl'
+  | 'pt'
+  | 'ro'
+  | 'ru'
+  | 'sv'
+  | 'th'
+  | 'tr'
+  | 'uk'
+  | 'ur'
+  | 'vi'
+  | 'zh-cn'
+  | 'zh-tw'
   theme?: 'light' | 'dark'
+  dnt?: boolean
 }
 
-const DEFAULT_OPTIONS: TwitterEmbedOptions = {
-  url: '',
-  maxwidth: 550,
-  hide_media: false,
-  hide_thread: false,
-  align: 'none',
-  theme: 'light',
-}
-
-interface TwitterEmbedData {
+interface TwitterOEmbedResponse extends OEmbedRich {
   url: string
-  author_name: string
-  author_url: string
-  html: string
-  width: number
-  height?: number
-  type: string
-  cache_age: number
-  provider_name: string
-  provider_url: string
-  version: string
 }
 
-const twitterCache = new NodeCache()
+export async function fetchTwitterEmbed({
+  url,
+  maxwidth = 550,
+  hideMedia = false,
+  hideThread = true,
+  omitScript = true,
+  align = 'none',
+  lang = 'en',
+  theme = 'light',
+  dnt = true,
+}: TwitterOEmbedRequestQuery): Promise<Result<string, Error>> {
+  const endpoint = new URL('https://publish.twitter.com/oembed')
+  endpoint.searchParams.set('url', url)
+  endpoint.searchParams.set('maxwidth', String(maxwidth))
+  endpoint.searchParams.set('hide_media', String(hideMedia))
+  endpoint.searchParams.set('hide_thread', String(hideThread))
+  endpoint.searchParams.set('omit_script', String(omitScript))
+  endpoint.searchParams.set('align', align)
+  endpoint.searchParams.set('lang', lang)
+  endpoint.searchParams.set('theme', theme)
+  endpoint.searchParams.set('dnt', String(dnt))
 
-async function getTweet(options: TwitterEmbedOptions): Promise<TwitterEmbedData> {
-  const queryParams = new URLSearchParams({
-    url: options.url,
-    maxwidth: options.maxwidth!.toString(),
-    hide_media: String(options.hide_media!),
-    hide_thread: String(options.hide_thread!),
-    align: options.align!,
-    theme: options.theme!,
-    dnt: 'true',
-  })
-  const oembedUrl = `https://publish.twitter.com/oembed?${queryParams.toString()}`
-  const res = await fetch(oembedUrl)
-  if (!res.ok) {
-    throw new Error(`Unable to fetch tweet: ${options.url}`)
-  }
-  return await res.json()
-}
-
-export async function fetchTwitterEmbed(
-  options: TwitterEmbedOptions,
-): Promise<TwitterEmbedData | null> {
-  const finalOptions = { ...DEFAULT_OPTIONS, ...options }
-  const optsString = JSON.stringify(finalOptions)
   try {
-    let data
-    if (twitterCache.has(optsString)) {
-      data = twitterCache.get(optsString)
-    } else {
-      data = await getTweet(finalOptions)
-      twitterCache.set(optsString, data, data.cache_age)
+    const res = await fetch(endpoint, { next: { revalidate: 60 * 60 * 24 } })
+
+    if (!res.ok) {
+      throw new Error('Something went wrong.')
     }
-    return data as TwitterEmbedData
-  } catch (exception) {
-    console.error(exception)
-    return null
+
+    const response = (await res.json()) as TwitterOEmbedResponse
+
+    if (!isOEmbedRich(response)) {
+      throw new Error('Invalid oEmbed type.')
+    }
+
+    return success(sanitizeOEmbed(response.html))
+  } catch (error) {
+    return failure(error instanceof Error ? error : new Error(String(error)))
   }
 }
