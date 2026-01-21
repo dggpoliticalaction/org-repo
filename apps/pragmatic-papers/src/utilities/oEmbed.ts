@@ -30,17 +30,16 @@ export interface OEmbedRequestQuery {
  * Thumbnail dependency rule from the spec:
  * if any thumbnail_* is present, all three must be present.
  */
-export type OEmbedThumbnail =
-  | {
-    thumbnail_url: string
-    thumbnail_width: number
-    thumbnail_height: number
-  }
-  | {
-    thumbnail_url?: undefined
-    thumbnail_width?: undefined
-    thumbnail_height?: undefined
-  }
+export interface OEmbedThumbnail {
+  thumbnail_url: string
+  thumbnail_width: number
+  thumbnail_height: number
+}
+// | {
+//   thumbnail_url?: undefined
+//   thumbnail_width?: undefined
+//   thumbnail_height?: undefined
+// }
 
 /**
  * Common response parameters valid for all response types.

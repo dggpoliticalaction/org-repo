@@ -1,76 +1,34 @@
-'use client'
+// src/blocks/SocialEmbed/TikTokEmbed/TikTokPlayerBlock.tsx (Server Component)
 
-import { fetchTikTokEmbed } from '@/utilities/fetchTikTokEmbed'
-import { sanitizeHtml } from '@/utilities/sanitizeHtml'
-import { useEffect, useRef, useState } from 'react'
+import { createTikTokSrc, fetchTikTokEmbed, parseTikTokPostId } from '@/utilities/fetchTikTokEmbed'
+import { isFailure } from '@/utilities/results'
+import { EmbedError } from '../EmbedError'
 
-// Track if the TikTok script has been loaded globally
-let tiktokScriptLoaded = false
-let tiktokScriptLoading = false
+export async function TikTokEmbedBlock({ url }: { url: string }): Promise<React.ReactNode> {
+  const result = await fetchTikTokEmbed(url)
 
-/**
- * TikTok embed component.
- * @param props - The props for the TikTok embed component.
- * @returns The TikTok embed component.
- */
-export const TikTokEmbedBlock: React.FC<{
-  url?: string
-}> = (props) => {
-  const [content, setContent] = useState<string>('')
-  const containerRef = useRef<HTMLDivElement>(null)
+  if (isFailure(result)) {
+    return <EmbedError url={url} message={result.error.message} platform="TikTok" />
+  }
 
-  useEffect(() => {
-    if (!props.url) return
-
-    fetchTikTokEmbed({ url: props.url }).then((res) => {
-      if (!res) {
-        setContent('TikTok video could not be loaded.')
-      } else {
-        setContent(sanitizeHtml(res.html))
-      }
-    })
-  }, [props.url])
-
-  // Load TikTok script once globally and process embeds
-  useEffect(() => {
-    if (!content || !containerRef.current) return
-
-    const loadScript = () => {
-      if (tiktokScriptLoaded) {
-        // Script already loaded, just process this embed
-        return
-      }
-
-      if (tiktokScriptLoading) {
-        // Script is loading, wait for it
-        const checkInterval = setInterval(() => {
-          if (tiktokScriptLoaded) {
-            clearInterval(checkInterval)
-          }
-        }, 100)
-        return
-      }
-
-      // Load the script for the first time
-      tiktokScriptLoading = true
-      const script = document.createElement('script')
-      script.src = 'https://www.tiktok.com/embed.js'
-      script.async = true
-      script.onload = () => {
-        tiktokScriptLoaded = true
-        tiktokScriptLoading = false
-      }
-      document.body.appendChild(script)
-    }
-
-    loadScript()
-  }, [content])
+  const postId = parseTikTokPostId(url)
+  if (!postId) {
+    return <EmbedError url={url} message="Invalid TikTok URL" platform="TikTok" />
+  }
 
   return (
-    <div ref={containerRef}>
-      {/* HTML is sanitized with DOMPurify before insertion */}
-      {/* eslint-disable-next-line react/no-danger */}
-      <div dangerouslySetInnerHTML={{ __html: content }} />
+    <div className="my-4 flex justify-center">
+      <div className="w-full max-w-[360px]">
+        <div className="relative aspect-[9/16] overflow-hidden rounded-lg shadow-xl">
+          <iframe
+            className="absolute inset-0 h-full w-full"
+            src={createTikTokSrc(postId, { autoplay: 1, loop: 1 })}
+            title="TikTok video"
+            loading="lazy"
+            allow="fullscreen"
+          />
+        </div>
+      </div>
     </div>
   )
 }
