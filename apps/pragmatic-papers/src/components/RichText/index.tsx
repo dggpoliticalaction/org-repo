@@ -1,5 +1,25 @@
+import { BannerBlock } from '@/blocks/Banner/Component'
+import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
+import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import {
+  BlueSkyOEmbedBlock,
+  RedditEmbedBlock,
+  SocialEmbedBlock,
+  TikTokEmbedBlock,
+  TwitterOEmbedBlock,
+  YouTubeOEmbedBlock,
+} from '@/blocks/SocialEmbed'
 import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
+import type {
+  BannerBlock as BannerBlockProps,
+  CallToActionBlock as CTABlockProps,
+  MediaBlock as MediaBlockProps,
+  SocialEmbedBlock as SocialEmbedBlockProps,
+  SquiggleRuleBlock as SquiggleRuleBlockProps,
+} from '@/payload-types'
+import { cn } from '@/utilities/ui'
 import type {
   DefaultNodeTypes,
   DefaultTypedEditorState,
@@ -11,28 +31,6 @@ import {
   type JSXConvertersFunction,
   LinkJSXConverter,
 } from '@payloadcms/richtext-lexical/react'
-
-import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
-
-import { BannerBlock } from '@/blocks/Banner/Component'
-import { CallToActionBlock } from '@/blocks/CallToAction/Component'
-import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
-import {
-  BlueSkyOEmbedBlock,
-  RedditEmbedBlock,
-  SocialEmbedBlock,
-  TikTokEmbedBlock,
-  TwitterOEmbedBlock,
-  YouTubeEmbedBlock,
-} from '@/blocks/SocialEmbed'
-import type {
-  BannerBlock as BannerBlockProps,
-  CallToActionBlock as CTABlockProps,
-  MediaBlock as MediaBlockProps,
-  SocialEmbedBlock as SocialEmbedBlockProps,
-  SquiggleRuleBlock as SquiggleRuleBlockProps,
-} from '@/payload-types'
-import { cn } from '@/utilities/ui'
 
 type NodeTypes =
   | DefaultNodeTypes
@@ -82,7 +80,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       <TwitterOEmbedBlock {...node.fields} />
     ),
     youtubeEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <YouTubeEmbedBlock {...node.fields} />
+      <YouTubeOEmbedBlock {...node.fields} />
     ),
     redditEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
       <RedditEmbedBlock {...node.fields} />

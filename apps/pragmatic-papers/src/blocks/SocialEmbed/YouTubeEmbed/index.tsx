@@ -1,51 +1,26 @@
-'use client'
+import { EmbedError } from '@/blocks/SocialEmbed/EmbedError'
+import { getYouTubeOEmbed } from '@/blocks/SocialEmbed/YouTubeEmbed/getYouTubeOEmbed'
+import type { SocialEmbedBlock } from '@/payload-types'
+import { isFailure } from '@/utilities/results'
 
-import type React from 'react'
-import { useEffect, useRef, useState } from 'react'
+export async function YouTubeOEmbedBlock({ url }: SocialEmbedBlock): Promise<React.ReactNode> {
+  const result = await getYouTubeOEmbed({ url })
 
-import { fetchYouTubeEmbed } from '@/utilities/fetchYouTubeEmbed'
-import { sanitizeHtml } from '@/utilities/sanitizeHtml'
-
-import './index.scss'
-
-/**
- * YouTube embed component.
- * @param props - The props for the YouTube embed component.
- * @returns The YouTube embed component.
- */
-export const YouTubeEmbedBlock: React.FC<{
-  url?: string
-  maxWidth?: number
-  maxHeight?: number
-}> = (props) => {
-  const [content, setContent] = useState<string>('')
-  const contentRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!props.url) return
-
-    fetchYouTubeEmbed({
-      url: props.url,
-      maxwidth: props.maxWidth ?? 1920,
-      maxheight: props.maxHeight,
-    }).then((res) => {
-      if (!res) {
-        setContent('YouTube video could not be loaded.')
-      } else {
-        setContent(sanitizeHtml(res.html))
-      }
-    })
-  }, [props])
+  if (isFailure(result)) {
+    return <EmbedError url={url} message={result.error.message} platform="YouTube" />
+  }
 
   return (
-    <div className="youtube-embed-container">
-      <div
-        className="youtube-embed-content"
-        ref={contentRef}
-        // HTML is sanitized with DOMPurify before insertion
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
+    <div className="my-4 flex justify-center">
+      <div className="w-full max-w-[550px]">
+        <div className="relative aspect-video">
+          <div
+            className="absolute inset-0 [&>iframe]:h-full [&>iframe]:w-full"
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{ __html: result.value }}
+          />
+        </div>
+      </div>
     </div>
   )
 }

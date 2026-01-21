@@ -2,6 +2,7 @@ import { getTwitterOEmbed } from '@/blocks/SocialEmbed/TwitterEmbed/getTwitterOE
 import { TwitterOEmbedClient } from '@/blocks/SocialEmbed/TwitterEmbed/TwitterOEmbedClient'
 import type { SocialEmbedBlock } from '@/payload-types'
 import { isFailure } from '@/utilities/results'
+import { EmbedError } from '../EmbedError'
 
 export async function TwitterOEmbedBlock({
   url,
@@ -11,11 +12,7 @@ export async function TwitterOEmbedBlock({
   const result = await getTwitterOEmbed({ url, hideMedia, hideThread })
 
   if (isFailure(result)) {
-    return (
-      <a href={url} target="_blank" rel="noopener noreferrer" className="underline text-center w-full">
-        {result.error.message} View on Twitter
-      </a>
-    )
+    return <EmbedError url={url} message={result.error.message} platform="X.com" />
   }
 
   return <TwitterOEmbedClient html={result.value} />

@@ -3,14 +3,14 @@ import {
   RedditEmbedBlock,
   TikTokEmbedBlock,
   TwitterOEmbedBlock,
-  YouTubeEmbedBlock,
+  YouTubeOEmbedBlock
 } from '@/blocks/SocialEmbed'
 import type { SocialEmbedBlock as SocialEmbedBlockProps } from '@/payload-types'
 import { detectSocialPlatform, type SocialPlatform } from '@/utilities/detectSocialPlatform'
 import React from 'react'
 
 const EMBEDS = {
-  youtube: (props: SocialEmbedBlockProps) => <YouTubeEmbedBlock {...props} />,
+  youtube: (props: SocialEmbedBlockProps) => <YouTubeOEmbedBlock {...props} />,
   twitter: (props: SocialEmbedBlockProps) => <TwitterOEmbedBlock {...props} />,
   reddit: (props: SocialEmbedBlockProps) => <RedditEmbedBlock {...props} />,
   bluesky: (props: SocialEmbedBlockProps) => <BlueSkyOEmbedBlock {...props} />,
