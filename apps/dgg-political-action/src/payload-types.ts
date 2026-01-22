@@ -194,7 +194,7 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (CallToActionBlock | ContentBlock | ContributorsBlock | MediaBlock | ArchiveBlock | FormBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -501,6 +501,31 @@ export interface ContentBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'content';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContributorsBlock".
+ */
+export interface ContributorsBlock {
+  title?: string | null;
+  contributors?:
+    | {
+        name: string;
+        bio?: string | null;
+        image?: (number | null) | Media;
+        socialLinks?:
+          | {
+              platform: 'github' | 'twitter' | 'linkedin' | 'facebook' | 'instagram' | 'youtube' | 'website';
+              url: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contributors';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1047,6 +1072,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
+        contributors?: T | ContributorsBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
@@ -1109,6 +1135,30 @@ export interface ContentBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
               appearance?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContributorsBlock_select".
+ */
+export interface ContributorsBlockSelect<T extends boolean = true> {
+  title?: T;
+  contributors?:
+    | T
+    | {
+        name?: T;
+        bio?: T;
+        image?: T;
+        socialLinks?:
+          | T
+          | {
+              platform?: T;
+              url?: T;
+              id?: T;
             };
         id?: T;
       };
