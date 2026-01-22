@@ -2,7 +2,7 @@ import { link } from '@/fields/link2'
 import type { Article, LinkField } from '@/payload-types'
 import type { ArrayField, Field, FieldHookArgs, TextField, ValidateOptions } from 'payload'
 
-export const footnoteFields = (): Field[] => ([
+export const footnoteFields = (): Field[] => [
   {
     name: 'note',
     type: 'textarea',
@@ -49,14 +49,25 @@ export const footnoteFields = (): Field[] => ([
         admin: {
           hidden: true,
         },
-        validate: (_value: string | null | undefined, { siblingData }: ValidateOptions<Article, LinkField, TextField, string>) => Boolean(siblingData?.url) || Boolean(siblingData?.reference?.value) || "URL Label is required",
+        validate: (
+          _value: string | null | undefined,
+          { siblingData }: ValidateOptions<Article, LinkField, TextField, string>,
+        ) =>
+          Boolean(siblingData?.url) ||
+          Boolean(siblingData?.reference?.value) ||
+          'URL Label is required',
         hooks: {
-          beforeChange: [({ siblingData: { url, reference } }: FieldHookArgs<Article, string, LinkField>) => url ?? typeof reference?.value === 'number' ? reference?.value : reference?.value?.id],
+          beforeChange: [
+            ({ siblingData: { url, reference } }: FieldHookArgs<Article, string, LinkField>) =>
+              (url ?? typeof reference?.value === 'number')
+                ? reference?.value
+                : reference?.value?.id,
+          ],
         },
       },
     },
   }),
-])
+]
 
 export const footnotesArrayField = (): ArrayField => ({
   name: 'footnotes',

@@ -97,7 +97,7 @@ export const seed = async (payload: Payload): Promise<void> => {
   )
 
   // Create a standalone article demonstrating the footnotes feature
-  await createFootnotesArticle(payload, [writer1, writer2], mediaDocs)
+  await createFootnotesArticle(payload, [writer1, writer2], mediaDocs, volume1Articles[0]!)
 
   // The homepage is literally a "page" in Payload.
   await payload.create({

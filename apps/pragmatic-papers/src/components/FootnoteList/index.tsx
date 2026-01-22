@@ -1,5 +1,8 @@
+import { CMSLink } from '@/components/Link/CMSLink2'
 import type { FootnotesField } from '@/payload-types'
-import Link from 'next/link'
+import { getLinkFieldUrl } from '@/utilities/getLinkFieldUrl'
+import { getClientSideURL } from '@/utilities/getURL'
+import React from 'react'
 
 interface FootnoteListProps {
   footnotes?: FootnotesField
@@ -12,28 +15,16 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
       <h3 className="text-xl font-bold">Footnotes</h3>
       <ol className="list-decimal pl-[18px]">
         {footnotes.map(({ index, note, attributionEnabled, link }) => {
+          const url = getLinkFieldUrl(link)
           return (
             <li key={index}>
               <span id={`footnote-${index}`} className="mr-2">
                 {note}
               </span>
-              {attributionEnabled && link?.url && link.type === 'custom' && (
-                <a
-                  href={link.url}
-                  className="text-brand underline shadow-none"
-                  title={`Link to source ${link.label}`}
-                >
-                  {link.url}
-                </a>
-              )}
-              {attributionEnabled && link?.url && link.type === 'reference' && (
-                <Link
-                  href={`/${link.reference?.relationTo}/${typeof link.reference?.value !== 'number' ? link.reference?.value?.slug : link.reference?.value}`}
-                  className="text-brand underline shadow-none"
-                  title={`Link to source ${link.label}`}
-                >
-                  {link.url}
-                </Link>
+              {attributionEnabled && (
+                <CMSLink link={link} aria-label={`Link to source ${link?.label}`}>
+                  {link?.type === 'reference' ? `${getClientSideURL()}${url}` : url}
+                </CMSLink>
               )}
             </li>
           )

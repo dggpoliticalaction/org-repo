@@ -114,7 +114,7 @@ export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField =
             admin: {
               ...label.admin,
             },
-            hooks: { ...label.hooks, },
+            hooks: { ...label.hooks },
             hasMany: false,
             validate: label.validate as TextFieldSingleValidation,
             name: 'label',

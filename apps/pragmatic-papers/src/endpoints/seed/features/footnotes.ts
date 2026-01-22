@@ -1,7 +1,7 @@
-import type { Media, User } from "@/payload-types"
-import type { Payload } from "payload"
+import type { Media, User } from '@/payload-types'
+import type { Payload } from 'payload'
 
-const createArticleContentWithFootnotes = () => {
+const createArticleContentWithFootnotes = (referencedArticleId: number) => {
   return {
     root: {
       type: 'root',
@@ -216,6 +216,64 @@ const createArticleContentWithFootnotes = () => {
           type: 'paragraph',
           version: 1,
         },
+        ...(referencedArticleId
+          ? [
+              {
+                children: [],
+                direction: null,
+                format: '' as const,
+                indent: 0,
+                type: 'paragraph',
+                version: 1,
+              },
+              {
+                children: [
+                  {
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'Footnotes can also link to internal references, such as other articles in the collection',
+                    type: 'text',
+                    version: 1,
+                  },
+                  {
+                    type: 'inlineBlock',
+                    fields: {
+                      blockType: 'footnote',
+                      note: 'This footnote demonstrates a reference link to another article, showing how footnotes can connect related content within the site.',
+                      attributionEnabled: true,
+                      link: {
+                        type: 'reference',
+                        reference: {
+                          relationTo: 'articles',
+                          value: referencedArticleId,
+                        },
+                        label: 'Article 1 - Volume 1',
+                        newTab: false,
+                      },
+                    },
+                    format: '',
+                    version: 1,
+                  },
+                  {
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: '. This creates a network of interconnected content that enhances the reading experience.',
+                    type: 'text',
+                    version: 1,
+                  },
+                ],
+                direction: 'ltr' as const,
+                format: '' as const,
+                indent: 0,
+                type: 'paragraph',
+                version: 1,
+              },
+            ]
+          : []),
       ],
       direction: 'ltr' as const,
       format: '' as const,
@@ -229,6 +287,7 @@ export const createFootnotesArticle = async (
   payload: Payload,
   writers: User[],
   mediaDocs: Media[],
+  referencedArticleId: number,
 ): Promise<number> => {
   if (writers.length === 0) {
     throw new Error('At least one writer is required to create articles')
@@ -243,7 +302,7 @@ export const createFootnotesArticle = async (
     collection: 'articles',
     data: {
       title: 'Demonstrating Footnotes: A Comprehensive Guide',
-      content: createArticleContentWithFootnotes(),
+      content: createArticleContentWithFootnotes(referencedArticleId),
       authors: [writer.id],
       _status: 'published',
       publishedAt: new Date().toISOString(),
