@@ -49,19 +49,20 @@ export const footnoteFields = (): Field[] => ([
         admin: {
           hidden: true,
         },
-        validate: (_value: string | null | undefined, { siblingData }: ValidateOptions<Article, LinkField, TextField, string>) => Boolean(siblingData?.url) || "URL is required",
+        validate: (_value: string | null | undefined, { siblingData }: ValidateOptions<Article, LinkField, TextField, string>) => Boolean(siblingData?.url) || Boolean(siblingData?.reference?.value) || "URL Label is required",
         hooks: {
-          beforeChange: [({ siblingData: { url } }: FieldHookArgs<Article, string, LinkField>) => url ?? undefined],
+          beforeChange: [({ siblingData: { url, reference } }: FieldHookArgs<Article, string, LinkField>) => url ?? typeof reference?.value === 'number' ? reference?.value : reference?.value?.id],
         },
       },
     },
   }),
 ])
 
-export const footnotesField = (): ArrayField => ({
+export const footnotesArrayField = (): ArrayField => ({
   name: 'footnotes',
   interfaceName: 'FootnotesField',
   type: 'array',
+  fields: footnoteFields(),
   access: {
     update: () => false,
   },
@@ -69,5 +70,4 @@ export const footnotesField = (): ArrayField => ({
     readOnly: true,
     hidden: true,
   },
-  fields: footnoteFields(),
 })

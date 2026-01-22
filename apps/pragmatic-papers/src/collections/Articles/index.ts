@@ -14,7 +14,7 @@ import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
 import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
 import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
 import { generateFootnotes } from '@/collections/Articles/hooks/generateFootnotes'
-import { footnotesField } from '@/fields/footnotes'
+import { footnotesArrayField } from '@/fields/footnotes'
 import { type Article } from '@/payload-types'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import {
@@ -232,7 +232,7 @@ export const Articles: CollectionConfig = {
         },
       ],
     },
-    footnotesField(),
+    footnotesArrayField(),
     slugField(),
   ],
   hooks: {
