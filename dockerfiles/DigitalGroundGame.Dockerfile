@@ -51,12 +51,19 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 # ============================================
 FROM base AS builder
 
+# Install PostgreSQL client for database operations
+RUN apk add --no-cache postgresql-client
+
 ARG NODE_ENV=production
 ARG BUILD_ENV=production
-ARG DATABASE_ADAPTER=sqlite
 ARG DATABASE_URI
 ARG PAYLOAD_SECRET
 ARG NEXT_PUBLIC_SERVER_URL
+
+# Database copy configuration for preview deployments
+ARG COPY_SOURCE_DATABASE=false
+ARG SOURCE_DATABASE_URI
+ARG FORCE_DATABASE_COPY=false
 
 WORKDIR /app
 
@@ -71,13 +78,25 @@ COPY --from=pruner /app/out/full/ .
 # Copy turbo config
 COPY turbo.json turbo.json
 
+# Copy database copy script
+COPY dockerfiles/scripts/copy-database.sh /usr/local/bin/copy-database.sh
+RUN chmod +x /usr/local/bin/copy-database.sh
+
 # Set build environment
 ENV NODE_ENV=${NODE_ENV}
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV DATABASE_ADAPTER=${DATABASE_ADAPTER}
+ENV DATABASE_ADAPTER=postgres
 ENV DATABASE_URI=${DATABASE_URI}
 ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
 ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
+
+# Database copy environment variables
+ENV COPY_SOURCE_DATABASE=${COPY_SOURCE_DATABASE}
+ENV SOURCE_DATABASE_URI=${SOURCE_DATABASE_URI}
+ENV FORCE_DATABASE_COPY=${FORCE_DATABASE_COPY}
+
+# Copy database before running migrations (if enabled)
+RUN /usr/local/bin/copy-database.sh
 
 # Build with migrations
 RUN pnpm turbo run ci --filter=dgg-political-action
@@ -110,11 +129,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/dgg-political-action/.next/s
 
 # Copy public folder
 COPY --from=builder --chown=nextjs:nodejs /app/apps/dgg-political-action/public ./apps/dgg-political-action/public
-
-# Create data directory for SQLite database
-RUN mkdir -p /app/apps/dgg-political-action/data && \
-    chown -R nextjs:nodejs /app/apps/dgg-political-action/data && \
-    chmod -R 755 /app/apps/dgg-political-action/data
 
 # Switch to non-root user
 USER nextjs

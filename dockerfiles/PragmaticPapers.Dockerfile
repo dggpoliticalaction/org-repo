@@ -55,16 +55,23 @@ FROM base AS builder
 
 WORKDIR /app
 
+# Install PostgreSQL client for database operations
+# Only needed if we're copying databases during build
+RUN apk add --no-cache postgresql-client
+
 # Copy installed node_modules from installer
 COPY --from=installer /app/ .
 
 # Copy pruned source code from pruner
 COPY --from=pruner /app/out/full/ .
 
+# Copy database copy script
+COPY dockerfiles/scripts/copy-database.sh /usr/local/bin/copy-database.sh
+RUN chmod +x /usr/local/bin/copy-database.sh
+
 # Accept build arguments for environment variables
 ARG NODE_ENV=production
 ARG BUILD_ENV=production
-ARG DATABASE_ADAPTER=sqlite
 ARG DATABASE_URI
 ARG PAYLOAD_SECRET
 ARG USE_LOCAL_STORAGE=false
@@ -77,10 +84,15 @@ ARG NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 ARG NEXT_PUBLIC_SERVER_URL
 ARG NEXT_PUBLIC_SUPABASE_URL
 
+# Database copy configuration for preview deployments
+ARG COPY_SOURCE_DATABASE=false
+ARG SOURCE_DATABASE_URI
+ARG FORCE_DATABASE_COPY=false
+
 # Set environment variables for build
 ENV NODE_ENV=${NODE_ENV}
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV DATABASE_ADAPTER=${DATABASE_ADAPTER}
+ENV DATABASE_ADAPTER=postgres
 ENV DATABASE_URI=${DATABASE_URI}
 ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
 ENV USE_LOCAL_STORAGE=${USE_LOCAL_STORAGE}
@@ -92,6 +104,16 @@ ENV S3_ENDPOINT=${S3_ENDPOINT}
 ENV NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=${NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}
 ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
 ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+
+# Database copy environment variables
+ENV COPY_SOURCE_DATABASE=${COPY_SOURCE_DATABASE}
+ENV SOURCE_DATABASE_URI=${SOURCE_DATABASE_URI}
+ENV FORCE_DATABASE_COPY=${FORCE_DATABASE_COPY}
+
+# Copy database before running migrations (if enabled)
+# This creates an isolated copy of the source database for preview deployments
+# to prevent schema mismatches between staging and preview environments
+RUN /usr/local/bin/copy-database.sh
 
 # Build application with migrations
 # Uses the 'ci' script which runs migrations and then builds
@@ -141,12 +163,6 @@ RUN mkdir -p /app/apps/pragmatic-papers/public/media && \
     chown -R nextjs:nodejs /app/apps/pragmatic-papers/public/media && \
     chmod -R 755 /app/apps/pragmatic-papers/public/media
 
-# Create data directory for SQLite database
-# This ensures the database file can be persisted via volume mount
-RUN mkdir -p /app/apps/pragmatic-papers/data && \
-    chown -R nextjs:nodejs /app/apps/pragmatic-papers/data && \
-    chmod -R 755 /app/apps/pragmatic-papers/data
-
 # Create startup script with logging
 RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'set -e' >> /app/start.sh && \
@@ -155,7 +171,7 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'echo "========================================="' >> /app/start.sh && \
     echo 'echo "Node version: $(node --version)"' >> /app/start.sh && \
     echo 'echo "Environment: $NODE_ENV"' >> /app/start.sh && \
-    echo 'echo "Database: $DATABASE_ADAPTER"' >> /app/start.sh && \
+    echo 'echo "Database: PostgreSQL"' >> /app/start.sh && \
     echo 'echo "Port: $PORT"' >> /app/start.sh && \
     echo 'echo "Hostname: $HOSTNAME"' >> /app/start.sh && \
     echo 'echo "Storage: $([ \"$USE_LOCAL_STORAGE\" = \"true\" ] && echo \"Local\" || echo \"S3\")"' >> /app/start.sh && \
