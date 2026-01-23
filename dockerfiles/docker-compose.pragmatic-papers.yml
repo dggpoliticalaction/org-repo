@@ -38,6 +38,9 @@ services:
       - app_network
 
   # Pragmatic Papers Application
+  # Set USE_EXPERIMENTAL_BUILD=true to build without DB connection
+  # Set USE_EXPERIMENTAL_BUILD=false to use traditional build with static generation (requires DB during build)
+  # See: https://payloadcms.com/docs/production/building-without-a-db-connection
   pragmatic-papers:
     build:
       # Context is the repo root (Coolify uses --project-directory to set this)
@@ -50,6 +53,7 @@ services:
         DATABASE_URI: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-pragmatic_papers}
         PAYLOAD_SECRET: ${PAYLOAD_SECRET}
         USE_LOCAL_STORAGE: ${USE_LOCAL_STORAGE:-false}
+        USE_EXPERIMENTAL_BUILD: ${USE_EXPERIMENTAL_BUILD:-false}
         S3_REGION: ${S3_REGION}
         S3_BUCKET: ${S3_BUCKET}
         S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
@@ -66,6 +70,10 @@ services:
       # Database
       DATABASE_URI: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-pragmatic_papers}
       PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+      # Migrations
+      # Set to 'true' to run migrations automatically on container startup
+      # Recommended when DB isn't available during build
+      RUN_MIGRATIONS_ON_STARTUP: ${RUN_MIGRATIONS_ON_STARTUP:-false}
       # Storage Configuration
       # Set USE_LOCAL_STORAGE=true to use local file storage instead of S3
       # This is recommended for staging and preview environments

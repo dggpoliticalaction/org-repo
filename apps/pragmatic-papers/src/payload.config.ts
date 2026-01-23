@@ -11,6 +11,7 @@ import { Header } from '@/Header/config'
 import { plugins } from '@/plugins'
 import { getServerSideURL } from '@/utilities/getURL'
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { migrations } from '@/migrations'
 import path from 'path'
 import { buildConfig, type PayloadRequest, type SharpDependency } from 'payload'
 import sharp from 'sharp'
@@ -60,6 +61,11 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI,
     },
+    // Run migrations at runtime when enabled (useful for Docker/Coolify where DB isn't available during build)
+    // Set RUN_MIGRATIONS_ON_STARTUP=true to enable
+    ...(process.env.RUN_MIGRATIONS_ON_STARTUP === 'true' && {
+      prodMigrations: migrations,
+    }),
   }),
   collections: [Pages, Articles, Volumes, Media, Categories, Users, Webhooks],
   cors: [getServerSideURL()].filter(Boolean),

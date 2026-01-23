@@ -67,6 +67,7 @@ ARG BUILD_ENV=production
 ARG DATABASE_URI
 ARG PAYLOAD_SECRET
 ARG USE_LOCAL_STORAGE=false
+ARG USE_EXPERIMENTAL_BUILD=false
 ARG S3_REGION
 ARG S3_BUCKET
 ARG S3_ACCESS_KEY_ID
@@ -82,6 +83,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URI=${DATABASE_URI}
 ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
 ENV USE_LOCAL_STORAGE=${USE_LOCAL_STORAGE}
+ENV USE_EXPERIMENTAL_BUILD=${USE_EXPERIMENTAL_BUILD}
 ENV S3_REGION=${S3_REGION}
 ENV S3_BUCKET=${S3_BUCKET}
 ENV S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
@@ -91,8 +93,20 @@ ENV NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=${NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}
 ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
 ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
 
-# Build using turbo (includes migrations and build via "ci" script)
-RUN pnpm turbo run ci --filter=pragmatic-papers
+# Build application
+# If USE_EXPERIMENTAL_BUILD=true, uses experimental build mode (no DB connection required)
+# If USE_EXPERIMENTAL_BUILD=false, uses traditional build (DB connection required, generates static pages)
+# See: https://payloadcms.com/docs/production/building-without-a-db-connection
+WORKDIR /app/apps/pragmatic-papers
+RUN if [ "$USE_EXPERIMENTAL_BUILD" = "true" ]; then \
+      echo "Building with experimental build mode (no DB required)..."; \
+      NODE_OPTIONS=--no-deprecation pnpm next build --experimental-build-mode compile && \
+      NODE_OPTIONS=--no-deprecation pnpm next build --experimental-build-mode generate-env; \
+    else \
+      echo "Building with traditional mode (DB connection required for SSG)..."; \
+      NODE_OPTIONS=--no-deprecation pnpm next build; \
+    fi
+WORKDIR /app
 
 # ============================================
 # Runner stage - minimal production runtime
@@ -140,6 +154,7 @@ RUN mkdir -p /app/apps/pragmatic-papers/public/media && \
 
 # Create startup script with logging
 RUN echo '#!/bin/sh' > /app/start.sh && \
+    echo 'set -e' >> /app/start.sh && \
     echo 'echo "========================================="' >> /app/start.sh && \
     echo 'echo "Starting Pragmatic Papers Application"' >> /app/start.sh && \
     echo 'echo "========================================="' >> /app/start.sh && \
@@ -147,7 +162,12 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'echo "Environment: $NODE_ENV"' >> /app/start.sh && \
     echo 'echo "Port: $PORT"' >> /app/start.sh && \
     echo 'echo "Hostname: $HOSTNAME"' >> /app/start.sh && \
+    echo 'echo "Storage: $([ \"$USE_LOCAL_STORAGE\" = \"true\" ] && echo \"Local\" || echo \"S3\")"' >> /app/start.sh && \
+    echo 'echo "Migrations on startup: $RUN_MIGRATIONS_ON_STARTUP"' >> /app/start.sh && \
     echo 'echo "========================================="' >> /app/start.sh && \
+    echo 'if [ "$RUN_MIGRATIONS_ON_STARTUP" = "true" ]; then' >> /app/start.sh && \
+    echo '  echo "Note: Payload will run migrations automatically during initialization"' >> /app/start.sh && \
+    echo 'fi' >> /app/start.sh && \
     echo 'echo "Starting Next.js server..."' >> /app/start.sh && \
     echo 'exec node --trace-warnings apps/pragmatic-papers/server.js' >> /app/start.sh && \
     chmod +x /app/start.sh && \
