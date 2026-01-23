@@ -19,6 +19,8 @@ import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 
 import { Open_Sans } from 'next/font/google'
+import { AdblockDetector } from "@/components/Adblocker";
+
 
 const sourceSerif4 = Source_Serif_4({
   variable: '--font-serif',
@@ -28,6 +30,8 @@ const sourceSerif4 = Source_Serif_4({
 const openSans = Open_Sans({
   subsets: ['latin'],
 })
+
+
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -64,18 +68,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
       </head>
       <body>
+
         <Providers>
+          <AdblockDetector />
           <AdminBar
             adminBarProps={{
               preview: isEnabled,
             }}
           />
-
           <Header />
           {children}
           <Footer />
           <GoogleAnalytics gaId="G-PXK2QL92HV" />
         </Providers>
+
       </body>
     </html>
   )
