@@ -59,7 +59,7 @@
         "description": "This message was sent on {{DATE}}!"
       },
       "devOnboarding": {
-        "title": "About DGGP Dev Team",
+        "title": "About Digital Ground Game Dev Team",
         "description": "{{CONTENT}}"
       },
       "about": {
