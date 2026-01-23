@@ -36,18 +36,32 @@ openssl rand -base64 32  # For PAYLOAD_SECRET
 
 See `.env.example` for all available options. Required configuration:
 
-**For Staging/Preview:**
+**For Staging:**
 
 ```env
+BUILD_ENV=staging
 PAYLOAD_SECRET=<generated_secret>
 NEXT_PUBLIC_SERVER_URL=https://your-domain.com
 DATABASE_URI=postgresql://postgres:<password>@postgres:5432/<dbname>
 USE_LOCAL_STORAGE=true
 ```
 
+**For Preview (with automatic database naming):**
+
+```env
+BUILD_ENV=preview
+PAYLOAD_SECRET=<generated_secret>
+NEXT_PUBLIC_SERVER_URL=https://your-domain.com
+DATABASE_URI=postgresql://postgres:<password>@postgres:5432/<dbname>
+USE_LOCAL_STORAGE=true
+# COOLIFY_FQDN is automatically set by Coolify (e.g., pr-330.pragmaticpapers.com)
+# Database name will be automatically suffixed with PR number
+```
+
 **For Production:**
 
 ```env
+BUILD_ENV=production
 PAYLOAD_SECRET=<generated_secret>
 NEXT_PUBLIC_SERVER_URL=https://your-domain.com
 DATABASE_URI=postgresql://postgres:<password>@postgres:5432/<dbname>
@@ -156,6 +170,41 @@ DATABASE_URI=postgresql://postgres:password@postgres:5432/pragmatic_papers
 - **Railway** - Developer-friendly platform
 - Or run your own PostgreSQL instance
 
+### Automatic Database Naming for Preview Deployments (Coolify)
+
+When deploying with Coolify, preview deployments automatically get unique database names based on the `COOLIFY_FQDN` environment variable.
+
+**How it works:**
+
+When `BUILD_ENV=preview` and Coolify sets `COOLIFY_FQDN` (e.g., `pr-330.pragmaticpapers.com`), the Dockerfile will:
+1. Extract the prefix (`pr-330`)
+2. Sanitize it for database naming (`pr_330`)
+3. Append it to your database name
+
+**Example:**
+
+```env
+# Your base configuration
+BUILD_ENV=preview
+DATABASE_URI=postgresql://postgres:password@db.example.com:5432/pragmatic_papers
+
+# Coolify sets this automatically for PR #330
+COOLIFY_FQDN=pr-330.pragmaticpapers.com
+
+# Result: Database name becomes "pragmatic_papers_pr_330"
+# Full URI: postgresql://postgres:password@db.example.com:5432/pragmatic_papers_pr_330
+```
+
+**Benefits:**
+- ✅ Automatic unique database per preview deployment
+- ✅ No manual configuration needed
+- ✅ Works seamlessly with database copy feature
+- ✅ Clean isolation between preview environments
+- ✅ Easy to identify which database belongs to which PR
+- ✅ Only activates for `BUILD_ENV=preview` (staging/production unaffected)
+
+**Note:** For staging and production deployments, set `BUILD_ENV` to `staging` or `production`, and the original `DATABASE_URI` will be used as-is regardless of `COOLIFY_FQDN`.
+
 ### Database Copy for Preview Deployments
 
 You can create isolated database copies for preview deployments to prevent schema mismatches between staging and preview environments. This feature is particularly useful when:
@@ -194,14 +243,25 @@ FORCE_DATABASE_COPY=false
 
 **Example Use Cases:**
 
-1. **Preview deployments in Coolify:**
+1. **Preview deployments in Coolify (with automatic naming):**
+   ```env
+   BUILD_ENV=preview
+   # Coolify automatically sets COOLIFY_FQDN=pr-330.pragmaticpapers.com
+   # Database name will become "pragmatic_papers_pr_330" automatically
+   COPY_SOURCE_DATABASE=true
+   SOURCE_DATABASE_URI=postgresql://user:pass@db.example.com:5432/pragmatic_papers_staging
+   DATABASE_URI=postgresql://user:pass@db.example.com:5432/pragmatic_papers
+   # Result: Copies staging_db to pragmatic_papers_pr_330
+   ```
+
+2. **Preview deployments (manual database name):**
    ```env
    COPY_SOURCE_DATABASE=true
    SOURCE_DATABASE_URI=postgresql://user:pass@staging-db:5432/staging_db
    DATABASE_URI=postgresql://user:pass@preview-db:5432/preview_pr_42
    ```
 
-2. **Rebuilding preview with fresh data:**
+3. **Rebuilding preview with fresh data:**
    ```env
    COPY_SOURCE_DATABASE=true
    SOURCE_DATABASE_URI=postgresql://user:pass@staging-db:5432/staging_db
@@ -214,6 +274,33 @@ FORCE_DATABASE_COPY=false
 - Database user must have permissions to create databases and copy data
 - For cross-server copies: network connectivity between servers required
 - Database must be accessible during Docker build time
+
+**Complete Coolify Preview Workflow:**
+
+When using both automatic database naming and database copying together:
+
+```env
+# Configuration for Coolify preview deployments
+BUILD_ENV=preview
+COPY_SOURCE_DATABASE=true
+SOURCE_DATABASE_URI=postgresql://user:pass@db.example.com:5432/pragmatic_papers_staging
+DATABASE_URI=postgresql://user:pass@db.example.com:5432/pragmatic_papers
+
+# Coolify automatically sets: COOLIFY_FQDN=pr-330.pragmaticpapers.com
+```
+
+**What happens:**
+1. `BUILD_ENV=preview` enables automatic database naming
+2. Coolify sets `COOLIFY_FQDN=pr-330.pragmaticpapers.com`
+3. Dockerfile modifies `DATABASE_URI` to use database name `pragmatic_papers_pr_330`
+4. Database copy script creates `pragmatic_papers_pr_330` from `pragmatic_papers_staging`
+5. Migrations run on the new isolated database
+6. Application builds and connects to `pragmatic_papers_pr_330`
+
+**Result:** Each PR gets its own isolated database copy, automatically named and seeded with fresh data from staging!
+
+**For Staging/Production:**
+Simply set `BUILD_ENV=staging` or `BUILD_ENV=production`, and the automatic naming will be skipped, using your `DATABASE_URI` exactly as configured.
 
 ## 💾 Storage Configuration (Pragmatic Papers)
 

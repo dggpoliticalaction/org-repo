@@ -60,6 +60,12 @@ ARG DATABASE_URI
 ARG PAYLOAD_SECRET
 ARG NEXT_PUBLIC_SERVER_URL
 
+# Coolify-specific configuration
+# COOLIFY_FQDN is automatically set by Coolify (e.g., "pr-330.dggpoliticalaction.com")
+# When BUILD_ENV=preview, we extract the prefix and append it to database names
+# This creates unique databases for each preview deployment (e.g., "dgg_political_action_pr_330")
+ARG COOLIFY_FQDN=
+
 # Database copy configuration for preview deployments
 ARG COPY_SOURCE_DATABASE=false
 ARG SOURCE_DATABASE_URI
@@ -78,28 +84,45 @@ COPY --from=pruner /app/out/full/ .
 # Copy turbo config
 COPY turbo.json turbo.json
 
-# Copy database copy script
+# Copy database utility scripts
+COPY dockerfiles/scripts/modify-database-uri.sh /usr/local/bin/modify-database-uri.sh
 COPY dockerfiles/scripts/copy-database.sh /usr/local/bin/copy-database.sh
-RUN chmod +x /usr/local/bin/copy-database.sh
+RUN chmod +x /usr/local/bin/modify-database-uri.sh /usr/local/bin/copy-database.sh
 
 # Set build environment
 ENV NODE_ENV=${NODE_ENV}
+ENV BUILD_ENV=${BUILD_ENV}
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_ADAPTER=postgres
 ENV DATABASE_URI=${DATABASE_URI}
 ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
 ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
 
+# Coolify-specific environment variables
+ENV COOLIFY_FQDN=${COOLIFY_FQDN}
+
 # Database copy environment variables
 ENV COPY_SOURCE_DATABASE=${COPY_SOURCE_DATABASE}
 ENV SOURCE_DATABASE_URI=${SOURCE_DATABASE_URI}
 ENV FORCE_DATABASE_COPY=${FORCE_DATABASE_COPY}
 
-# Copy database before running migrations (if enabled)
-RUN /usr/local/bin/copy-database.sh
+# Modify DATABASE_URI to include preview deployment suffix (if BUILD_ENV=preview and COOLIFY_FQDN is set)
+# and copy database before running migrations (if enabled)
+RUN /usr/local/bin/modify-database-uri.sh && \
+    if [ -f /tmp/database_uri.env ]; then \
+        . /tmp/database_uri.env && \
+        echo "DATABASE_URI=$DATABASE_URI" >> /tmp/build.env && \
+        /usr/local/bin/copy-database.sh; \
+    else \
+        echo "DATABASE_URI=$DATABASE_URI" >> /tmp/build.env && \
+        /usr/local/bin/copy-database.sh; \
+    fi
 
 # Build with migrations
-RUN pnpm turbo run ci --filter=dgg-political-action
+# Source the potentially modified DATABASE_URI before building
+RUN . /tmp/build.env && \
+    export DATABASE_URI && \
+    pnpm turbo run ci --filter=dgg-political-action
 
 # ============================================
 # Runner stage - production runtime
