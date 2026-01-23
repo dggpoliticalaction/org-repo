@@ -106,6 +106,91 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
           },
         ],
       },
+      {
+        blockName: 'Email Signup',
+        blockType: 'emailSignup',
+        enableIntro: true,
+        introContent: {
+          root: {
+            type: 'root',
+            children: [
+              {
+                type: 'heading',
+                children: [
+                  {
+                    type: 'text',
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'Stay in the loop',
+                    version: 1,
+                  },
+                ],
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                tag: 'h2',
+                version: 1,
+              },
+              {
+                type: 'paragraph',
+                children: [
+                  {
+                    type: 'text',
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'Get updates on new actions and events straight to your inbox.',
+                    version: 1,
+                  },
+                ],
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                textFormat: 0,
+                version: 1,
+              },
+            ],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
+          },
+        },
+        successMessage: {
+          root: {
+            type: 'root',
+            children: [
+              {
+                type: 'paragraph',
+                children: [
+                  {
+                    type: 'text',
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'Thanks for joining! You will hear from us soon.',
+                    version: 1,
+                  },
+                ],
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                textFormat: 0,
+                version: 1,
+              },
+            ],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
+          },
+        },
+        testMode: true,
+      },
     ],
     meta: {
       description: 'The official website of Digital Ground Game.',

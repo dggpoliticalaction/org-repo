@@ -194,7 +194,15 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | ContributorsBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (
+    | CallToActionBlock
+    | ContentBlock
+    | ContributorsBlock
+    | EmailSignupBlock
+    | MediaBlock
+    | ArchiveBlock
+    | FormBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -526,6 +534,57 @@ export interface ContributorsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'contributors';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "EmailSignupBlock".
+ */
+export interface EmailSignupBlock {
+  enableIntro?: boolean | null;
+  introContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Message shown after successful subscription
+   */
+  successMessage?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Paste the form action URL from your MailerLite embed code
+   */
+  mailerliteFormActionUrl?: string | null;
+  /**
+   * Mocks a successful submit without calling MailerLite
+   */
+  testMode?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'emailSignup';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1073,6 +1132,7 @@ export interface PagesSelect<T extends boolean = true> {
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         contributors?: T | ContributorsBlockSelect<T>;
+        emailSignup?: T | EmailSignupBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
@@ -1162,6 +1222,19 @@ export interface ContributorsBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "EmailSignupBlock_select".
+ */
+export interface EmailSignupBlockSelect<T extends boolean = true> {
+  enableIntro?: T;
+  introContent?: T;
+  successMessage?: T;
+  mailerliteFormActionUrl?: T;
+  testMode?: T;
   id?: T;
   blockName?: T;
 }
