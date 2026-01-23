@@ -48,6 +48,7 @@ services:
         BUILD_ENV: ${BUILD_ENV:-staging}
         DATABASE_URI: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-pragmatic_papers}
         PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+        USE_LOCAL_STORAGE: ${USE_LOCAL_STORAGE:-false}
         S3_REGION: ${S3_REGION}
         S3_BUCKET: ${S3_BUCKET}
         S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}

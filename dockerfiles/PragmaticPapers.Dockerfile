@@ -66,6 +66,7 @@ ARG NODE_ENV=production
 ARG BUILD_ENV=production
 ARG DATABASE_URI
 ARG PAYLOAD_SECRET
+ARG USE_LOCAL_STORAGE=false
 ARG S3_REGION
 ARG S3_BUCKET
 ARG S3_ACCESS_KEY_ID
@@ -80,6 +81,7 @@ ENV NODE_ENV=${NODE_ENV}
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URI=${DATABASE_URI}
 ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
+ENV USE_LOCAL_STORAGE=${USE_LOCAL_STORAGE}
 ENV S3_REGION=${S3_REGION}
 ENV S3_BUCKET=${S3_BUCKET}
 ENV S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
@@ -128,6 +130,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/stati
 
 # Copy public folder (images, fonts, etc.)
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
+
+# Create media directory for local storage with proper permissions
+# This directory will be used when USE_LOCAL_STORAGE=true
+# The volume mount will overlay this directory, but we create it to ensure proper ownership
+RUN mkdir -p /app/apps/pragmatic-papers/public/media && \
+    chown -R nextjs:nodejs /app/apps/pragmatic-papers/public/media && \
+    chmod -R 755 /app/apps/pragmatic-papers/public/media
 
 # Create startup script with logging
 RUN echo '#!/bin/sh' > /app/start.sh && \
