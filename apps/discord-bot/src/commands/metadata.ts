@@ -123,4 +123,11 @@ export const UserCommandMetadata: {
     default_member_permissions: undefined,
     dm_permission: true,
   },
+  SEND_DEV_ONBOARDING: {
+    type: ApplicationCommandType.User,
+    name: Lang.getRef('userCommands.sendDevOnboarding', Language.Default),
+    name_localizations: Lang.getRefLocalizationMap('userCommands.sendDevOnboarding'),
+    default_member_permissions: undefined,
+    dm_permission: true,
+  },
 }
