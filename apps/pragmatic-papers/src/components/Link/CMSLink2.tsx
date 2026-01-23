@@ -12,30 +12,21 @@ export const CMSLink: React.FC<CMSLink2Props> = ({ link, children, ...props }) =
   if (!link) return null
   const url = getLinkFieldUrl(link)
   if (!url) return null
-  return (
-    <>
-      {link.type === 'custom' && (
-        <a
-          href={url}
-          className="text-brand underline shadow-none"
-          target={link?.newTab ? '_blank' : undefined}
-          rel={link?.newTab ? 'noopener noreferrer' : undefined}
-          {...props}
-        >
-          {children || link?.label}
-        </a>
-      )}
-      {link.type === 'reference' && (
-        <Link
-          href={url}
-          className="text-brand underline shadow-none"
-          target={link?.newTab ? '_blank' : undefined}
-          rel={link?.newTab ? 'noopener noreferrer' : undefined}
-          {...props}
-        >
-          {children || link?.label}
-        </Link>
-      )}
-    </>
+  const sharedProps = {
+    className: 'text-brand underline shadow-none',
+    target: link?.newTab ? '_blank' : undefined,
+    rel: link?.newTab ? 'noopener noreferrer' : undefined,
+    ...props,
+  }
+  const content = children || link?.label
+
+  return link.type === 'custom' ? (
+    <a href={url} {...sharedProps}>
+      {content}
+    </a>
+  ) : (
+    <Link href={url} {...sharedProps}>
+      {content}
+    </Link>
   )
 }
