@@ -1,7 +1,7 @@
-# Dockerfile for DGGP Website (Next.js + Payload CMS)
+# Dockerfile for DGG Political Action (Next.js + Payload CMS)
 # Optimized for pnpm monorepo with Turbo
 
-ARG NODE_VERSION=22.12.0
+ARG NODE_VERSION=22.21.1
 
 # ============================================
 # Base stage - setup pnpm and dependencies
@@ -53,6 +53,10 @@ FROM base AS builder
 
 ARG NODE_ENV=production
 ARG BUILD_ENV=production
+ARG DATABASE_ADAPTER=sqlite
+ARG DATABASE_URI
+ARG PAYLOAD_SECRET
+ARG NEXT_PUBLIC_SERVER_URL
 
 WORKDIR /app
 
@@ -70,9 +74,13 @@ COPY turbo.json turbo.json
 # Set build environment
 ENV NODE_ENV=${NODE_ENV}
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV DATABASE_ADAPTER=${DATABASE_ADAPTER}
+ENV DATABASE_URI=${DATABASE_URI}
+ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
+ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
 
-# Build using Turbo
-RUN pnpm turbo build --filter=dgg-political-action
+# Build with migrations
+RUN pnpm turbo run ci --filter=dgg-political-action
 
 # ============================================
 # Runner stage - production runtime
@@ -94,12 +102,19 @@ ENV HOSTNAME="0.0.0.0"
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Copy public assets
-COPY --from=builder --chown=nextjs:nodejs /app/apps/dgg-political-action/public ./public
-
-# Copy standalone build (Next.js outputs this when output: 'standalone' is set)
+# Copy standalone build output from builder
 COPY --from=builder --chown=nextjs:nodejs /app/apps/dgg-political-action/.next/standalone ./
+
+# Copy static assets
 COPY --from=builder --chown=nextjs:nodejs /app/apps/dgg-political-action/.next/static ./apps/dgg-political-action/.next/static
+
+# Copy public folder
+COPY --from=builder --chown=nextjs:nodejs /app/apps/dgg-political-action/public ./apps/dgg-political-action/public
+
+# Create data directory for SQLite database
+RUN mkdir -p /app/apps/dgg-political-action/data && \
+    chown -R nextjs:nodejs /app/apps/dgg-political-action/data && \
+    chmod -R 755 /app/apps/dgg-political-action/data
 
 # Switch to non-root user
 USER nextjs
@@ -107,12 +122,8 @@ USER nextjs
 # Expose port
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
-
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
 # Start the application (server.js is created by Next.js standalone build)
-CMD ["node", "apps/dgg-political-action/server.js"]
+CMD ["node", "--trace-warnings", "apps/dgg-political-action/server.js"]
