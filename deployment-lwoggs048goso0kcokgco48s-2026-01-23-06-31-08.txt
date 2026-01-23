@@ -1,0 +1,919 @@
+2026-Jan-23 06:24:28.084701 Found a suitable build server (build-worker).
+2026-Jan-23 06:24:28.092511 Starting deployment of dggpoliticalaction/org-repo:dev to dev-worker.
+2026-Jan-23 06:24:28.930273 Preparing container with helper image: ghcr.io/coollabsio/coolify-helper:1.0.12
+2026-Jan-23 06:24:29.404200 [CMD]: docker stop -t 30 lwoggs048goso0kcokgco48s
+2026-Jan-23 06:24:29.404200 Error response from daemon: No such container: lwoggs048goso0kcokgco48s
+2026-Jan-23 06:24:29.942261 [CMD]: docker run -d --name lwoggs048goso0kcokgco48s --rm -v /root/.docker/config.json:/root/.docker/config.json:ro -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/coollabsio/coolify-helper:1.0.12
+2026-Jan-23 06:24:29.942261 4a985fcf91aa0cbf960819728cb22b9b21ad515970dc5c8f3c80b70d242eda6a
+2026-Jan-23 06:24:32.373346 [CMD]: docker exec lwoggs048goso0kcokgco48s bash -c 'GIT_SSH_COMMAND="ssh -o ConnectTimeout=30 -p 22 -o Port=22 -o LogLevel=ERROR -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git ls-remote https://x-access-token:<REDACTED>@github.com/dggpoliticalaction/org-repo.git refs/heads/dev'
+2026-Jan-23 06:24:32.373346 1f69c9e32bec967e8eb20468c71788c8943e0784 refs/heads/dev
+2026-Jan-23 06:24:32.633465 ----------------------------------------
+2026-Jan-23 06:24:32.638173 Importing dggpoliticalaction/org-repo:dev (commit sha 1f69c9e32bec967e8eb20468c71788c8943e0784) to /artifacts/lwoggs048goso0kcokgco48s.
+2026-Jan-23 06:24:33.174162 [CMD]: docker exec lwoggs048goso0kcokgco48s bash -c 'git clone --depth=1 --recurse-submodules --shallow-submodules -b 'dev' 'https://x-access-token:<REDACTED>@github.com/dggpoliticalaction/org-repo.git' '/artifacts/lwoggs048goso0kcokgco48s' && cd '/artifacts/lwoggs048goso0kcokgco48s' && if [ -f .gitmodules ]; then git submodule sync && GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git submodule update --init --recursive --depth=1; fi && cd '/artifacts/lwoggs048goso0kcokgco48s' && GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git lfs pull'
+2026-Jan-23 06:24:33.174162 Cloning into '/artifacts/lwoggs048goso0kcokgco48s'...
+2026-Jan-23 06:24:36.171315 [CMD]: docker exec lwoggs048goso0kcokgco48s bash -c 'cd /artifacts/lwoggs048goso0kcokgco48s && git log -1 1f69c9e32bec967e8eb20468c71788c8943e0784 --pretty=%B'
+2026-Jan-23 06:24:36.171315 Setup isolated database for staging and preview deployments (#330)
+2026-Jan-23 06:24:36.171315
+2026-Jan-23 06:24:36.171315 ## Context
+2026-Jan-23 06:24:36.171315
+2026-Jan-23 06:24:36.171315 <!-- Why does this PR exist? What is it fixing? What is it trying to
+2026-Jan-23 06:24:36.171315 improve? How does it do so? -->
+2026-Jan-23 06:24:36.171315
+2026-Jan-23 06:24:36.171315 ## Test Plan
+2026-Jan-23 06:24:36.171315
+2026-Jan-23 06:24:36.171315 <!-- How can someone test to ensure that your PR does what you say it
+2026-Jan-23 06:24:36.171315 does? -->
+2026-Jan-23 06:24:38.770767 [CMD]: docker exec lwoggs048goso0kcokgco48s bash -c 'cat /artifacts/lwoggs048goso0kcokgco48s/dockerfiles/PragmaticPapers.Dockerfile'
+2026-Jan-23 06:24:38.770767 # Dockerfile for Pragmatic Papers (Next.js + Payload CMS)
+2026-Jan-23 06:24:38.770767 # Optimized for pnpm monorepo with Turborepo
+2026-Jan-23 06:24:38.770767 # Based on official Turborepo and Next.js Docker deployment guides
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 ARG NODE_VERSION=22.21.1
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # ============================================
+2026-Jan-23 06:24:38.770767 # Base stage - setup pnpm and dependencies
+2026-Jan-23 06:24:38.770767 # ============================================
+2026-Jan-23 06:24:38.770767 FROM node:${NODE_VERSION}-alpine AS base
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Install dependencies for native modules (required for sharp and other native deps)
+2026-Jan-23 06:24:38.770767 RUN apk add --no-cache libc6-compat
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Enable pnpm via corepack
+2026-Jan-23 06:24:38.770767 RUN corepack enable
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 WORKDIR /app
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # ============================================
+2026-Jan-23 06:24:38.770767 # Pruner stage - prune monorepo to this app
+2026-Jan-23 06:24:38.770767 # ============================================
+2026-Jan-23 06:24:38.770767 FROM base AS pruner
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Install turbo globally
+2026-Jan-23 06:24:38.770767 RUN npm install -g turbo
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Copy entire monorepo
+2026-Jan-23 06:24:38.770767 COPY . .
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Prune the monorepo to just this app and its dependencies
+2026-Jan-23 06:24:38.770767 # This creates /app/out/json (package.json files) and /app/out/full (source code)
+2026-Jan-23 06:24:38.770767 RUN turbo prune pragmatic-papers --docker
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # ============================================
+2026-Jan-23 06:24:38.770767 # Installer stage - install dependencies only
+2026-Jan-23 06:24:38.770767 # ============================================
+2026-Jan-23 06:24:38.770767 FROM base AS installer
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 WORKDIR /app
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Copy pruned lockfile and package.json files from pruner
+2026-Jan-23 06:24:38.770767 COPY --from=pruner /app/out/json/ .
+2026-Jan-23 06:24:38.770767 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Install dependencies with frozen lockfile
+2026-Jan-23 06:24:38.770767 # Using cache mount for pnpm store to speed up builds
+2026-Jan-23 06:24:38.770767 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+2026-Jan-23 06:24:38.770767 pnpm install --frozen-lockfile
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # ============================================
+2026-Jan-23 06:24:38.770767 # Builder stage - build the application
+2026-Jan-23 06:24:38.770767 # ============================================
+2026-Jan-23 06:24:38.770767 FROM base AS builder
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 WORKDIR /app
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Install PostgreSQL client for database operations
+2026-Jan-23 06:24:38.770767 # Only needed if we're copying databases during build
+2026-Jan-23 06:24:38.770767 RUN apk add --no-cache postgresql-client
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Copy installed node_modules from installer
+2026-Jan-23 06:24:38.770767 COPY --from=installer /app/ .
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Copy pruned source code from pruner
+2026-Jan-23 06:24:38.770767 COPY --from=pruner /app/out/full/ .
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Copy database utility scripts
+2026-Jan-23 06:24:38.770767 COPY dockerfiles/scripts/modify-database-uri.sh /usr/local/bin/modify-database-uri.sh
+2026-Jan-23 06:24:38.770767 COPY dockerfiles/scripts/copy-database.sh /usr/local/bin/copy-database.sh
+2026-Jan-23 06:24:38.770767 RUN chmod +x /usr/local/bin/modify-database-uri.sh /usr/local/bin/copy-database.sh
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Accept build arguments for environment variables
+2026-Jan-23 06:24:38.770767 ARG NODE_ENV=production
+2026-Jan-23 06:24:38.770767 ARG BUILD_ENV=production
+2026-Jan-23 06:24:38.770767 ARG DATABASE_URI
+2026-Jan-23 06:24:38.770767 ARG PAYLOAD_SECRET
+2026-Jan-23 06:24:38.770767 ARG USE_LOCAL_STORAGE=false
+2026-Jan-23 06:24:38.770767 ARG S3_REGION
+2026-Jan-23 06:24:38.770767 ARG S3_BUCKET
+2026-Jan-23 06:24:38.770767 ARG S3_ACCESS_KEY_ID
+2026-Jan-23 06:24:38.770767 ARG S3_SECRET_ACCESS_KEY
+2026-Jan-23 06:24:38.770767 ARG S3_ENDPOINT
+2026-Jan-23 06:24:38.770767 ARG NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
+2026-Jan-23 06:24:38.770767 ARG NEXT_PUBLIC_SERVER_URL
+2026-Jan-23 06:24:38.770767 ARG NEXT_PUBLIC_SUPABASE_URL
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Coolify-specific configuration
+2026-Jan-23 06:24:38.770767 # COOLIFY_FQDN is automatically set by Coolify (e.g., "pr-330.pragmaticpapers.com")
+2026-Jan-23 06:24:38.770767 # When BUILD_ENV=preview, we extract the prefix and append it to database names
+2026-Jan-23 06:24:38.770767 # This creates unique databases for each preview deployment (e.g., "pragmatic_papers_pr_330")
+2026-Jan-23 06:24:38.770767 ARG COOLIFY_FQDN=
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Database copy configuration for preview deployments
+2026-Jan-23 06:24:38.770767 ARG COPY_SOURCE_DATABASE=false
+2026-Jan-23 06:24:38.770767 ARG SOURCE_DATABASE_URI
+2026-Jan-23 06:24:38.770767 ARG FORCE_DATABASE_COPY=false
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Set environment variables for build
+2026-Jan-23 06:24:38.770767 ENV NODE_ENV=${NODE_ENV}
+2026-Jan-23 06:24:38.770767 ENV BUILD_ENV=${BUILD_ENV}
+2026-Jan-23 06:24:38.770767 ENV NEXT_TELEMETRY_DISABLED=1
+2026-Jan-23 06:24:38.770767 ENV DATABASE_ADAPTER=postgres
+2026-Jan-23 06:24:38.770767 ENV DATABASE_URI=${DATABASE_URI}
+2026-Jan-23 06:24:38.770767 ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
+2026-Jan-23 06:24:38.770767 ENV USE_LOCAL_STORAGE=${USE_LOCAL_STORAGE}
+2026-Jan-23 06:24:38.770767 ENV S3_REGION=${S3_REGION}
+2026-Jan-23 06:24:38.770767 ENV S3_BUCKET=${S3_BUCKET}
+2026-Jan-23 06:24:38.770767 ENV S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+2026-Jan-23 06:24:38.770767 ENV S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
+2026-Jan-23 06:24:38.770767 ENV S3_ENDPOINT=${S3_ENDPOINT}
+2026-Jan-23 06:24:38.770767 ENV NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=${NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}
+2026-Jan-23 06:24:38.770767 ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
+2026-Jan-23 06:24:38.770767 ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Coolify-specific environment variables
+2026-Jan-23 06:24:38.770767 ENV COOLIFY_FQDN=${COOLIFY_FQDN}
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Database copy environment variables
+2026-Jan-23 06:24:38.770767 ENV COPY_SOURCE_DATABASE=${COPY_SOURCE_DATABASE}
+2026-Jan-23 06:24:38.770767 ENV SOURCE_DATABASE_URI=${SOURCE_DATABASE_URI}
+2026-Jan-23 06:24:38.770767 ENV FORCE_DATABASE_COPY=${FORCE_DATABASE_COPY}
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Modify DATABASE_URI to include preview deployment suffix (if BUILD_ENV=preview and COOLIFY_FQDN is set)
+2026-Jan-23 06:24:38.770767 # and copy database before running migrations (if enabled)
+2026-Jan-23 06:24:38.770767 # This automatically creates unique database names like "pragmatic_papers_pr_330"
+2026-Jan-23 06:24:38.770767 # and creates an isolated copy of the source database for preview deployments
+2026-Jan-23 06:24:38.770767 # to prevent schema mismatches between staging and preview environments
+2026-Jan-23 06:24:38.770767 RUN /usr/local/bin/modify-database-uri.sh && \
+2026-Jan-23 06:24:38.770767 if [ -f /tmp/database_uri.env ]; then \
+2026-Jan-23 06:24:38.770767 . /tmp/database_uri.env && \
+2026-Jan-23 06:24:38.770767 echo "DATABASE_URI=$DATABASE_URI" >> /tmp/build.env && \
+2026-Jan-23 06:24:38.770767 /usr/local/bin/copy-database.sh; \
+2026-Jan-23 06:24:38.770767 else \
+2026-Jan-23 06:24:38.770767 echo "DATABASE_URI=$DATABASE_URI" >> /tmp/build.env && \
+2026-Jan-23 06:24:38.770767 /usr/local/bin/copy-database.sh; \
+2026-Jan-23 06:24:38.770767 fi
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Build application with migrations
+2026-Jan-23 06:24:38.770767 # Uses the 'ci' script which runs migrations and then builds
+2026-Jan-23 06:24:38.770767 # Source the potentially modified DATABASE_URI before building
+2026-Jan-23 06:24:38.770767 RUN . /tmp/build.env && \
+2026-Jan-23 06:24:38.770767 export DATABASE_URI && \
+2026-Jan-23 06:24:38.770767 pnpm turbo run ci --filter=pragmatic-papers
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # ============================================
+2026-Jan-23 06:24:38.770767 # Runner stage - minimal production runtime
+2026-Jan-23 06:24:38.770767 # ============================================
+2026-Jan-23 06:24:38.770767 FROM node:${NODE_VERSION}-alpine AS runner
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 WORKDIR /app
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Install dumb-init for proper signal handling
+2026-Jan-23 06:24:38.770767 RUN apk add --no-cache dumb-init
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Set production environment
+2026-Jan-23 06:24:38.770767 ENV NODE_ENV=production
+2026-Jan-23 06:24:38.770767 ENV NEXT_TELEMETRY_DISABLED=1
+2026-Jan-23 06:24:38.770767 ENV PORT=3000
+2026-Jan-23 06:24:38.770767 ENV HOSTNAME="0.0.0.0"
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Enable Next.js logging
+2026-Jan-23 06:24:38.770767 ENV NEXT_PRIVATE_DEBUG_CACHE=1
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Force all logs to stdout/stderr for Docker
+2026-Jan-23 06:24:38.770767 ENV FORCE_COLOR=0
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Create non-root user for security
+2026-Jan-23 06:24:38.770767 RUN addgroup --system --gid 1001 nodejs && \
+2026-Jan-23 06:24:38.770767 adduser --system --uid 1001 nextjs
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Copy standalone build output from builder
+2026-Jan-23 06:24:38.770767 # The standalone build includes a minimal server.js and only necessary node_modules
+2026-Jan-23 06:24:38.770767 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/standalone ./
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Copy static assets (required for standalone mode)
+2026-Jan-23 06:24:38.770767 # These are not included in standalone by default as they should be served by CDN
+2026-Jan-23 06:24:38.770767 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./apps/pragmatic-papers/.next/static
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Copy public folder (images, fonts, etc.)
+2026-Jan-23 06:24:38.770767 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Create media directory for local storage with proper permissions
+2026-Jan-23 06:24:38.770767 # This directory will be used when USE_LOCAL_STORAGE=true
+2026-Jan-23 06:24:38.770767 # The volume mount will overlay this directory, but we create it to ensure proper ownership
+2026-Jan-23 06:24:38.770767 RUN mkdir -p /app/apps/pragmatic-papers/public/media && \
+2026-Jan-23 06:24:38.770767 chown -R nextjs:nodejs /app/apps/pragmatic-papers/public/media && \
+2026-Jan-23 06:24:38.770767 chmod -R 755 /app/apps/pragmatic-papers/public/media
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Create startup script with logging
+2026-Jan-23 06:24:38.770767 RUN echo '#!/bin/sh' > /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'set -e' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'echo "========================================="' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'echo "Starting Pragmatic Papers Application"' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'echo "========================================="' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'echo "Node version: $(node --version)"' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'echo "Environment: $NODE_ENV"' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'echo "Database: PostgreSQL"' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'echo "Port: $PORT"' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'echo "Hostname: $HOSTNAME"' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'echo "Storage: $([ \"$USE_LOCAL_STORAGE\" = \"true\" ] && echo \"Local\" || echo \"S3\")"' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'echo "========================================="' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'echo "Starting Next.js server..."' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 echo 'exec node --trace-warnings apps/pragmatic-papers/server.js' >> /app/start.sh && \
+2026-Jan-23 06:24:38.770767 chmod +x /app/start.sh && \
+2026-Jan-23 06:24:38.770767 chown nextjs:nodejs /app/start.sh
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Switch to non-root user
+2026-Jan-23 06:24:38.770767 USER nextjs
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Expose portdf
+2026-Jan-23 06:24:38.770767 EXPOSE 3000
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Use dumb-init to handle signals properly (SIGTERM, etc.)
+2026-Jan-23 06:24:38.770767 ENTRYPOINT ["dumb-init", "--"]
+2026-Jan-23 06:24:38.770767
+2026-Jan-23 06:24:38.770767 # Start using the startup script for better log visibility
+2026-Jan-23 06:24:38.770767 CMD ["/app/start.sh"]
+2026-Jan-23 06:24:39.320917 Creating build-time .env file in /artifacts (outside Docker context).
+2026-Jan-23 06:24:40.393303 [CMD]: docker exec lwoggs048goso0kcokgco48s bash -c 'cat /artifacts/build-time.env'
+2026-Jan-23 06:24:40.393303 COOLIFY_URL='https://staging.pragmaticpapers.com'
+2026-Jan-23 06:24:40.393303 COOLIFY_FQDN='staging.pragmaticpapers.com'
+2026-Jan-23 06:24:40.393303 COOLIFY_BRANCH='dev'
+2026-Jan-23 06:24:40.393303 COOLIFY_RESOURCE_UUID='bgoc40s88kwoskwwsk0cg4gw'
+2026-Jan-23 06:24:40.393303 BUILD_ENV="staging"
+2026-Jan-23 06:24:40.393303 CRON_SECRET="dnXQU4CCl5ljaA9jkpQxoNGWFrySLspgURIK5U5pXAG6GwzYjOYL2NGzO2tNm6n65gAyxzIlXW"
+2026-Jan-23 06:24:40.393303 DATABASE_URI="postgres://postgres:<REDACTED>@188.245.144.133:5432/pragmatic_papers"
+2026-Jan-23 06:24:40.393303 NEXT_PUBLIC_GOOGLE_ANALYTICS_ID="G-PXK2QL92HV"
+2026-Jan-23 06:24:40.393303 NEXT_PUBLIC_SERVER_URL="$COOLIFY_URL"
+2026-Jan-23 06:24:40.393303 PAYLOAD_SECRET="Pg9n5ed5uMvumAIV3TMp8yjxR1celQDRAa246XrX28AU47Zy0R1t48F1bFAm7cv1QnAgSCNaRO"
+2026-Jan-23 06:24:40.393303 PREVIEW_SECRET="U3so0jiW3lGADEWyHf5h9NOOyQR5uVR2FIXEki33dIv86dsCwSOQoRhkAcTTk36czHMZTSDKjP"
+2026-Jan-23 06:24:40.393303 USE_LOCAL_STORAGE="true"
+2026-Jan-23 06:24:40.422528 Skipping Dockerfile ARG injection (disabled in settings).
+2026-Jan-23 06:24:40.429916 ----------------------------------------
+2026-Jan-23 06:24:40.437549 Building docker image started.
+2026-Jan-23 06:24:40.445197 To check the current progress, click on Show Debug Logs.
+2026-Jan-23 06:24:41.488692 [CMD]: docker exec lwoggs048goso0kcokgco48s bash -c 'cat /artifacts/build.sh'
+2026-Jan-23 06:24:41.488692 cd /artifacts/lwoggs048goso0kcokgco48s && set -a && source /artifacts/build-time.env && set +a && docker build --no-cache --add-host noss8kwk0ocog0o04cwwk4g4:172.18.0.5 --add-host noss8kwk0ocog0o04cwwk4g4-proxy:172.18.0.4 --add-host pgadmin-x4s08s0ccwgkcc8k0ow4oosc:172.18.0.8 --network host -f /artifacts/lwoggs048goso0kcokgco48s/dockerfiles/PragmaticPapers.Dockerfile --build-arg COOLIFY_URL --build-arg COOLIFY_FQDN --build-arg COOLIFY_BRANCH --build-arg COOLIFY_RESOURCE_UUID --build-arg BUILD_ENV --build-arg CRON_SECRET --build-arg DATABASE_URI --build-arg NEXT_PUBLIC_GOOGLE_ANALYTICS_ID --build-arg NEXT_PUBLIC_SERVER_URL --build-arg PAYLOAD_SECRET --build-arg PREVIEW_SECRET --build-arg USE_LOCAL_STORAGE --build-arg COOLIFY_BUILD_SECRETS_HASH=8a83c0a0843d71d695a7338133713a7216ec7697b53aabc4bba721e680f6f85a --build-arg 'COOLIFY_URL' --build-arg 'COOLIFY_FQDN' --build-arg 'COOLIFY_BRANCH' --build-arg 'COOLIFY_RESOURCE_UUID' --progress plain -t registry.pragmaticpapers.com/pragmatic-papers:1f69c9e32bec967e8eb20468c71788c8943e0784 /artifacts/lwoggs048goso0kcokgco48s
+2026-Jan-23 06:24:42.650451 [CMD]: docker exec lwoggs048goso0kcokgco48s bash -c 'bash /artifacts/build.sh'
+2026-Jan-23 06:24:42.650451 #0 building with "default" instance using docker driver
+2026-Jan-23 06:24:42.650451
+2026-Jan-23 06:24:42.650451 #1 [internal] load build definition from PragmaticPapers.Dockerfile
+2026-Jan-23 06:24:42.650451 #1 transferring dockerfile: 8.02kB done
+2026-Jan-23 06:24:42.650451 #1 DONE 0.1s
+2026-Jan-23 06:24:42.650451
+2026-Jan-23 06:24:42.650451 #2 [internal] load metadata for docker.io/library/node:22.21.1-alpine
+2026-Jan-23 06:24:43.211502 #2 DONE 0.7s
+2026-Jan-23 06:24:43.334014 #3 [internal] load .dockerignore
+2026-Jan-23 06:24:43.334014 #3 transferring context: 2B done
+2026-Jan-23 06:24:43.334014 #3 DONE 0.1s
+2026-Jan-23 06:24:43.334014
+2026-Jan-23 06:24:43.334014 #4 [internal] load build context
+2026-Jan-23 06:24:43.334014 #4 DONE 0.0s
+2026-Jan-23 06:24:43.334014
+2026-Jan-23 06:24:43.334014 #5 [base 1/4] FROM docker.io/library/node:22.21.1-alpine@sha256:0340fa682d72068edf603c305bfbc10e23219fb0e40df58d9ea4d6f33a9798bf
+2026-Jan-23 06:24:43.334014 #5 resolve docker.io/library/node:22.21.1-alpine@sha256:0340fa682d72068edf603c305bfbc10e23219fb0e40df58d9ea4d6f33a9798bf 0.0s done
+2026-Jan-23 06:24:43.497614 #5 CACHED
+2026-Jan-23 06:24:43.497614
+2026-Jan-23 06:24:43.497614 #6 [runner 2/9] WORKDIR /app
+2026-Jan-23 06:24:43.497614 #6 CACHED
+2026-Jan-23 06:24:43.497614
+2026-Jan-23 06:24:43.497614 #4 [internal] load build context
+2026-Jan-23 06:24:43.782961 #4 transferring context: 7.77MB 0.2s done
+2026-Jan-23 06:24:43.782961 #4 DONE 0.3s
+2026-Jan-23 06:24:43.782961
+2026-Jan-23 06:24:43.782961 #7 [runner 3/9] RUN apk add --no-cache dumb-init
+2026-Jan-23 06:24:43.974888 #7 ...
+2026-Jan-23 06:24:43.974888
+2026-Jan-23 06:24:43.974888 #8 [base 2/4] RUN apk add --no-cache libc6-compat
+2026-Jan-23 06:24:43.974888 #8 0.538 (1/3) Installing musl-obstack (1.2.3-r2)
+2026-Jan-23 06:24:43.974888 #8 0.547 (2/3) Installing libucontext (1.3.3-r0)
+2026-Jan-23 06:24:43.974888 #8 0.551 (3/3) Installing gcompat (1.1.0-r4)
+2026-Jan-23 06:24:43.974888 #8 0.561 OK: 11.0 MiB in 21 packages
+2026-Jan-23 06:24:43.974888 #8 DONE 0.6s
+2026-Jan-23 06:24:43.974888
+2026-Jan-23 06:24:43.974888 #7 [runner 3/9] RUN apk add --no-cache dumb-init
+2026-Jan-23 06:24:43.974888 #7 0.555 (1/1) Installing dumb-init (1.2.5-r3)
+2026-Jan-23 06:24:43.974888 #7 0.564 Executing busybox-1.37.0-r30.trigger
+2026-Jan-23 06:24:43.974888 #7 0.574 OK: 10.9 MiB in 19 packages
+2026-Jan-23 06:24:44.105915 #7 DONE 0.6s
+2026-Jan-23 06:24:44.105915
+2026-Jan-23 06:24:44.105915 #9 [runner 4/9] RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+2026-Jan-23 06:24:44.105915 #9 DONE 0.1s
+2026-Jan-23 06:24:44.105915
+2026-Jan-23 06:24:44.105915 #10 [base 3/4] RUN corepack enable
+2026-Jan-23 06:24:44.264110 #10 DONE 0.2s
+2026-Jan-23 06:24:44.264110
+2026-Jan-23 06:24:44.264110 #11 [base 4/4] WORKDIR /app
+2026-Jan-23 06:24:44.264110 #11 DONE 0.1s
+2026-Jan-23 06:24:44.501169 #12 [installer 1/4] WORKDIR /app
+2026-Jan-23 06:24:44.501169 #12 DONE 0.1s
+2026-Jan-23 06:24:44.501169
+2026-Jan-23 06:24:44.501169 #13 [builder 2/9] RUN apk add --no-cache postgresql-client
+2026-Jan-23 06:24:44.828740 #13 0.479 (1/8) Installing postgresql-common (1.2-r2)
+2026-Jan-23 06:24:44.951203 #13 0.483 Executing postgresql-common-1.2-r2.pre-install
+2026-Jan-23 06:24:44.951203 #13 0.500 (2/8) Installing lz4-libs (1.10.0-r0)
+2026-Jan-23 06:24:44.951203 #13 0.507 (3/8) Installing libpq (18.1-r0)
+2026-Jan-23 06:24:44.951203 #13 0.517 (4/8) Installing ncurses-terminfo-base (6.5_p20251123-r0)
+2026-Jan-23 06:24:44.951203 #13 0.526 (5/8) Installing libncursesw (6.5_p20251123-r0)
+2026-Jan-23 06:24:44.951203 #13 0.534 (6/8) Installing readline (8.3.1-r0)
+2026-Jan-23 06:24:44.951203 #13 0.543 (7/8) Installing zstd-libs (1.5.7-r2)
+2026-Jan-23 06:24:44.951203 #13 0.557 (8/8) Installing postgresql18-client (18.1-r0)
+2026-Jan-23 06:24:44.951203 #13 0.601 Executing busybox-1.37.0-r30.trigger
+2026-Jan-23 06:24:45.058233 #13 0.608 Executing postgresql-common-1.2-r2.trigger
+2026-Jan-23 06:24:45.058233 #13 0.611 * Setting postgresql18 as the default version
+2026-Jan-23 06:24:45.058233 #13 0.708 * WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.23/main/x86_64/APKINDEX.tar.gz: No such file or directory
+2026-Jan-23 06:24:45.058233 #13 0.708 * WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.23/community/x86_64/APKINDEX.tar.gz: No such file or directory
+2026-Jan-23 06:24:45.287911 #13 0.714 OK: 16.1 MiB in 29 packages
+2026-Jan-23 06:24:45.287911 #13 DONE 0.8s
+2026-Jan-23 06:24:45.287911
+2026-Jan-23 06:24:45.287911 #14 [pruner 1/3] RUN npm install -g turbo
+2026-Jan-23 06:24:46.831951 #14 2.561
+2026-Jan-23 06:24:46.831951 #14 2.561 added 2 packages in 2s
+2026-Jan-23 06:24:46.985515 #14 2.565 npm notice
+2026-Jan-23 06:24:46.985515 #14 2.565 npm notice New major version of npm available! 10.9.4 -> 11.8.0
+2026-Jan-23 06:24:46.985515 #14 2.565 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.8.0
+2026-Jan-23 06:24:46.985515 #14 2.565 npm notice To update run: npm install -g npm@11.8.0
+2026-Jan-23 06:24:46.985515 #14 2.565 npm notice
+2026-Jan-23 06:24:47.016257 #14 DONE 2.7s
+2026-Jan-23 06:24:47.172567 #15 [pruner 2/3] COPY . .
+2026-Jan-23 06:24:47.200568 #15 DONE 0.2s
+2026-Jan-23 06:24:47.353776 #16 [pruner 3/3] RUN turbo prune pragmatic-papers --docker
+2026-Jan-23 06:24:47.402347 #16 0.198 WARNING No locally installed `turbo` found in your repository. Using globally installed version (2.7.5), which can cause unexpected behavior.
+2026-Jan-23 06:24:47.402347 #16 0.198
+2026-Jan-23 06:24:47.402347 #16 0.198 Installing the version in your repository (^2.6.2) before calling `turbo` will result in more predictable behavior across environments.
+2026-Jan-23 06:24:47.523959 #16 0.213
+2026-Jan-23 06:24:47.523959 #16 0.213 Attention:
+2026-Jan-23 06:24:47.523959 #16 0.213 Turborepo now collects completely anonymous telemetry regarding usage.
+2026-Jan-23 06:24:47.523959 #16 0.213 This information is used to shape the Turborepo roadmap and prioritize features.
+2026-Jan-23 06:24:47.523959 #16 0.213 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+2026-Jan-23 06:24:47.523959 #16 0.213 https://turborepo.dev/docs/telemetry
+2026-Jan-23 06:24:47.523959 #16 0.213
+2026-Jan-23 06:24:47.523959 #16 0.213 • turbo 2.7.5
+2026-Jan-23 06:24:47.523959 #16 0.321 Generating pruned monorepo for pragmatic-papers in /app/out
+2026-Jan-23 06:24:47.722173 #16 0.324 - Added @repo/eslint-config
+2026-Jan-23 06:24:47.722173 #16 0.325 - Added @repo/typescript-config
+2026-Jan-23 06:24:47.722173 #16 0.368 - Added pragmatic-papers
+2026-Jan-23 06:24:52.651023 #16 DONE 5.4s
+2026-Jan-23 06:24:52.767646 #17 [installer 2/4] COPY --from=pruner /app/out/json/ .
+2026-Jan-23 06:24:52.767646 #17 DONE 0.0s
+2026-Jan-23 06:24:52.981921 #18 [installer 3/4] COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+2026-Jan-23 06:24:52.981921 #18 DONE 0.1s
+2026-Jan-23 06:24:52.981921
+2026-Jan-23 06:24:52.981921 #19 [installer 4/4] RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+2026-Jan-23 06:24:53.064589 #19 0.233 ! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-10.13.1.tgz
+2026-Jan-23 06:24:54.418766 #19 1.590 Scope: all 4 workspace projects
+2026-Jan-23 06:24:54.531892 #19 1.703 Lockfile is up to date, resolution step is skipped
+2026-Jan-23 06:24:54.658212 #19 1.830 Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-Jan-23 06:24:54.892684 #19 1.914 Packages: +1022
+2026-Jan-23 06:24:54.892684 #19 1.914 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-Jan-23 06:24:54.937050 #19 2.108
+2026-Jan-23 06:24:54.937050 #19 2.108 ╭───────────────────────────────────────────────╮
+2026-Jan-23 06:24:54.937050 #19 2.108 │ │
+2026-Jan-23 06:24:54.937050 #19 2.108 │ Update available! 10.13.1 → 10.28.1. │
+2026-Jan-23 06:24:54.937050 #19 2.108 │ Changelog: https://pnpm.io/v/10.28.1 │
+2026-Jan-23 06:24:54.937050 #19 2.108 │ To update, run: corepack use pnpm@10.28.1 │
+2026-Jan-23 06:24:54.937050 #19 2.108 │ │
+2026-Jan-23 06:24:54.937050 #19 2.108 ╰───────────────────────────────────────────────╯
+2026-Jan-23 06:24:54.937050 #19 2.108
+2026-Jan-23 06:24:55.661182 #19 2.832 Progress: resolved 1022, reused 0, downloaded 67, added 24
+2026-Jan-23 06:24:56.659877 #19 3.832 Progress: resolved 1022, reused 0, downloaded 131, added 49
+2026-Jan-23 06:24:57.665536 #19 4.837 Progress: resolved 1022, reused 0, downloaded 140, added 52
+2026-Jan-23 06:24:58.668283 #19 5.838 Progress: resolved 1022, reused 0, downloaded 144, added 53
+2026-Jan-23 06:24:59.667493 #19 6.839 Progress: resolved 1022, reused 0, downloaded 197, added 78
+2026-Jan-23 06:25:00.669307 #19 7.841 Progress: resolved 1022, reused 0, downloaded 225, added 86
+2026-Jan-23 06:25:01.667387 #19 8.839 Progress: resolved 1022, reused 0, downloaded 298, added 111
+2026-Jan-23 06:25:02.671568 #19 9.841 Progress: resolved 1022, reused 0, downloaded 323, added 122
+2026-Jan-23 06:25:03.673329 #19 10.84 Progress: resolved 1022, reused 0, downloaded 407, added 160
+2026-Jan-23 06:25:04.671202 #19 11.84 Progress: resolved 1022, reused 0, downloaded 514, added 216
+2026-Jan-23 06:25:05.671236 #19 12.84 Progress: resolved 1022, reused 0, downloaded 649, added 287
+2026-Jan-23 06:25:06.672136 #19 13.84 Progress: resolved 1022, reused 0, downloaded 657, added 291
+2026-Jan-23 06:25:07.674300 #19 14.84 Progress: resolved 1022, reused 0, downloaded 774, added 345
+2026-Jan-23 06:25:08.673376 #19 15.84 Progress: resolved 1022, reused 0, downloaded 896, added 390
+2026-Jan-23 06:25:08.676916
+2026-Jan-23 06:25:09.673026 #19 16.84 Progress: resolved 1022, reused 0, downloaded 944, added 407
+2026-Jan-23 06:25:10.673292 #19 17.84 Progress: resolved 1022, reused 0, downloaded 972, added 419
+2026-Jan-23 06:25:11.673436 #19 18.85 Progress: resolved 1022, reused 0, downloaded 973, added 419
+2026-Jan-23 06:25:12.674128 #19 19.85 Progress: resolved 1022, reused 0, downloaded 998, added 427
+2026-Jan-23 06:25:13.674799 #19 20.85 Progress: resolved 1022, reused 0, downloaded 1018, added 857
+2026-Jan-23 06:25:14.498868 #19 21.67 Progress: resolved 1022, reused 0, downloaded 1018, added 1022, done
+2026-Jan-23 06:25:15.100096 #19 22.27 .../esbuild@0.18.20/node_modules/esbuild postinstall$ node install.js
+2026-Jan-23 06:25:15.200818 #19 22.27 .../esbuild@0.25.12/node_modules/esbuild postinstall$ node install.js
+2026-Jan-23 06:25:15.200818 #19 22.29 .../sharp@0.34.5/node_modules/sharp install$ node install/check.js || npm run build
+2026-Jan-23 06:25:15.200818 #19 22.33 .../esbuild@0.18.20/node_modules/esbuild postinstall: Done
+2026-Jan-23 06:25:15.200818 #19 22.35 .../esbuild@0.25.12/node_modules/esbuild postinstall: Done
+2026-Jan-23 06:25:15.200818 #19 22.37 .../sharp@0.34.5/node_modules/sharp install: Done
+2026-Jan-23 06:25:15.481923 #19 22.65
+2026-Jan-23 06:25:15.481923 #19 22.65 devDependencies:
+2026-Jan-23 06:25:15.481923 #19 22.65 + husky 9.1.7
+2026-Jan-23 06:25:15.481923 #19 22.65 + lint-staged 16.2.7
+2026-Jan-23 06:25:15.481923 #19 22.65 + prettier 3.7.4
+2026-Jan-23 06:25:15.481923 #19 22.65 + turbo 2.7.3
+2026-Jan-23 06:25:15.481923 #19 22.65 + typescript 5.9.3
+2026-Jan-23 06:25:15.481923 #19 22.65
+2026-Jan-23 06:25:15.481923 #19 22.65 ╭ Warning ─────────────────────────────────────────────────────────────────────╮
+2026-Jan-23 06:25:15.481923 #19 22.65 │ │
+2026-Jan-23 06:25:15.481923 #19 22.65 │ Ignored build scripts: unrs-resolver. │
+2026-Jan-23 06:25:15.481923 #19 22.65 │ Run "pnpm approve-builds" to pick which dependencies should be allowed │
+2026-Jan-23 06:25:15.481923 #19 22.65 │ to run scripts. │
+2026-Jan-23 06:25:15.481923 #19 22.65 │ │
+2026-Jan-23 06:25:15.481923 #19 22.65 ╰──────────────────────────────────────────────────────────────────────────────╯
+2026-Jan-23 06:25:15.481923 #19 22.65
+2026-Jan-23 06:25:15.615737 #19 22.67 . prepare$ husky
+2026-Jan-23 06:25:15.615737 #19 22.75 . prepare: .git can't be found
+2026-Jan-23 06:25:15.615737 #19 22.75 . prepare: Done
+2026-Jan-23 06:25:15.615737 #19 22.79 Done in 21.5s using pnpm v10.13.1
+2026-Jan-23 06:25:16.305801 #19 DONE 23.5s
+2026-Jan-23 06:25:26.581890 #20 [builder 3/9] COPY --from=installer /app/ .
+2026-Jan-23 06:26:04.303737 #20 DONE 37.7s
+2026-Jan-23 06:26:04.463561 #21 [builder 4/9] COPY --from=pruner /app/out/full/ .
+2026-Jan-23 06:26:05.543710 #21 DONE 1.2s
+2026-Jan-23 06:26:05.683570
+2026-Jan-23 06:26:05.687010 #22 [builder 5/9] COPY dockerfiles/scripts/modify-database-uri.sh /usr/local/bin/modify-database-uri.sh
+2026-Jan-23 06:26:05.687010 #22 DONE 0.1s
+2026-Jan-23 06:26:05.687010
+2026-Jan-23 06:26:05.687010 #23 [builder 6/9] COPY dockerfiles/scripts/copy-database.sh /usr/local/bin/copy-database.sh
+2026-Jan-23 06:26:05.687010 #23 DONE 0.1s
+2026-Jan-23 06:26:05.794272 #24 [builder 7/9] RUN chmod +x /usr/local/bin/modify-database-uri.sh /usr/local/bin/copy-database.sh
+2026-Jan-23 06:26:05.794272 #24 DONE 0.1s
+2026-Jan-23 06:26:05.905808 #25 [builder 8/9] RUN /usr/local/bin/modify-database-uri.sh && if [ -f /tmp/database_uri.env ]; then . /tmp/database_uri.env && echo "DATABASE_URI=postgres://postgres:<REDACTED>@188.245.144.133:5432/pragmatic_papers" >> /tmp/build.env && /usr/local/bin/copy-database.sh; else echo "DATABASE_URI=postgres://postgres:<REDACTED>@188.245.144.133:5432/pragmatic_papers" >> /tmp/build.env && /usr/local/bin/copy-database.sh; fi
+2026-Jan-23 06:26:05.905808 #25 0.106 ========================================
+2026-Jan-23 06:26:05.905808 #25 0.106 Database URI Modifier
+2026-Jan-23 06:26:05.905808 #25 0.106 ========================================
+2026-Jan-23 06:26:06.080368 #25 0.106 BUILD_ENV is not 'preview' (current: staging)
+2026-Jan-23 06:26:06.080368 #25 0.106 Skipping DATABASE_URI modification
+2026-Jan-23 06:26:06.080368 #25 0.106 DATABASE_URI: postgres://postgres:<REDACTED>@188.245.144.133:5432/pragmatic_papers
+2026-Jan-23 06:26:06.080368 #25 0.109 ========================================
+2026-Jan-23 06:26:06.080368 #25 0.109 Database Copy Script for Preview Builds
+2026-Jan-23 06:26:06.080368 #25 0.109 ========================================
+2026-Jan-23 06:26:06.080368 #25 0.110 Database copy is disabled (COPY_SOURCE_DATABASE != true)
+2026-Jan-23 06:26:06.084095 #25 0.110 Skipping database copy step
+2026-Jan-23 06:26:06.084095 #25 DONE 0.1s
+2026-Jan-23 06:26:06.084095
+2026-Jan-23 06:26:06.084095 #26 [builder 9/9] RUN . /tmp/build.env && export DATABASE_URI && pnpm turbo run ci --filter=pragmatic-papers
+2026-Jan-23 06:26:06.160867 #26 0.231 ! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-10.13.1.tgz
+2026-Jan-23 06:26:07.884652 #26 1.954
+2026-Jan-23 06:26:07.884652 #26 1.954 Attention:
+2026-Jan-23 06:26:07.884652 #26 1.954 Turborepo now collects completely anonymous telemetry regarding usage.
+2026-Jan-23 06:26:07.888842 #26 1.954 This information is used to shape the Turborepo roadmap and prioritize features.
+2026-Jan-23 06:26:07.888842 #26 1.954 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+2026-Jan-23 06:26:07.888842 #26 1.954 https://turborepo.com/docs/telemetry
+2026-Jan-23 06:26:07.888842 #26 1.954
+2026-Jan-23 06:26:07.888842 #26 1.955 • turbo 2.7.3
+2026-Jan-23 06:26:07.992859 #26 2.017 • Packages in scope: pragmatic-papers
+2026-Jan-23 06:26:07.992859 #26 2.017 • Running ci in 1 packages
+2026-Jan-23 06:26:07.992859 #26 2.017 • Remote caching disabled
+2026-Jan-23 06:26:07.992859 #26 2.062 pragmatic-papers:ci: cache miss, executing 7b1609ed53b36d96
+2026-Jan-23 06:26:08.378473 #26 2.448 pragmatic-papers:ci:
+2026-Jan-23 06:26:08.378473 #26 2.448 pragmatic-papers:ci: > pragmatic-papers@1.0.0 ci /app/apps/pragmatic-papers
+2026-Jan-23 06:26:08.378473 #26 2.448 pragmatic-papers:ci: > payload migrate && pnpm build
+2026-Jan-23 06:26:08.378473 #26 2.448 pragmatic-papers:ci:
+2026-Jan-23 06:26:14.673467 #26 8.744 pragmatic-papers:ci: [06:26:14] WARN: No email adapter provided. Email will be written to console. More info at https://payloadcms.com/docs/email/overview.
+2026-Jan-23 06:26:14.795580 #26 8.746 pragmatic-papers:ci: [06:26:14] INFO: Reading migration files from /app/apps/pragmatic-papers/src/migrations
+2026-Jan-23 06:26:14.795580 #26 8.866 pragmatic-papers:ci: [06:26:14] INFO: Done.
+2026-Jan-23 06:26:15.226812 #26 9.297 pragmatic-papers:ci:
+2026-Jan-23 06:26:15.233343
+2026-Jan-23 06:26:15.380034 #26 9.299 pragmatic-papers:ci: > pragmatic-papers@1.0.0 build /app/apps/pragmatic-papers
+2026-Jan-23 06:26:15.380034 #26 9.299 pragmatic-papers:ci: > cross-env NODE_OPTIONS=--no-deprecation next build
+2026-Jan-23 06:26:15.380034 #26 9.299 pragmatic-papers:ci:
+2026-Jan-23 06:26:16.705122 #26 10.77 pragmatic-papers:ci: ▲ Next.js 15.5.9
+2026-Jan-23 06:26:16.921908 #26 10.77 pragmatic-papers:ci:
+2026-Jan-23 06:26:16.921908 #26 10.84 pragmatic-papers:ci: Creating an optimized production build ...
+2026-Jan-23 06:27:14.982388 #26 69.01 pragmatic-papers:ci: ✓ Compiled successfully in 58s
+2026-Jan-23 06:27:14.982388 #26 69.01 pragmatic-papers:ci: Linting and checking validity of types ...
+2026-Jan-23 06:28:01.126477 #26 115.2 pragmatic-papers:ci:
+2026-Jan-23 06:28:01.126477 #26 115.2 pragmatic-papers:ci: ./src/providers/Theme/InitTheme/index.tsx
+2026-Jan-23 06:28:01.126477 #26 115.2 pragmatic-papers:ci: 8:5 Warning: Unused eslint-disable directive (no problems were reported from '@next/next/no-before-interactive-script-outside-document').
+2026-Jan-23 06:28:01.126477 #26 115.2 pragmatic-papers:ci:
+2026-Jan-23 06:28:01.126477 #26 115.2 pragmatic-papers:ci: info - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+2026-Jan-23 06:28:07.495154 #26 121.6 pragmatic-papers:ci: Collecting page data ...
+2026-Jan-23 06:28:13.797893 #26 127.9 pragmatic-papers:ci: Generating static pages (0/14) ...
+2026-Jan-23 06:28:15.522263 #26 129.6 pragmatic-papers:ci: Generating static pages (3/14)
+2026-Jan-23 06:28:15.526137 #26 129.6 pragmatic-papers:ci: Generating static pages (6/14)
+2026-Jan-23 06:28:15.526137 #26 129.6 pragmatic-papers:ci: Generating static pages (10/14)
+2026-Jan-23 06:28:15.676960 #26 129.6 pragmatic-papers:ci: ✓ Generating static pages (14/14)
+2026-Jan-23 06:28:16.409667 #26 130.5 pragmatic-papers:ci: Finalizing page optimization ...
+2026-Jan-23 06:28:16.409667 #26 130.5 pragmatic-papers:ci: Collecting build traces ...
+2026-Jan-23 06:28:41.206537 #26 155.3 pragmatic-papers:ci:
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: Route (app) Size First Load JS
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ┌ ƒ / 155 B 206 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ○ /_not-found 1 kB 104 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ● /[slug] 155 B 206 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ƒ /admin/[[...segments]] 153 B 773 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ƒ /api/[...slug] 179 B 104 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ƒ /api/graphql 154 B 104 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ƒ /api/graphql-playground 179 B 104 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ƒ /articles-sitemap.xml 154 B 104 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ● /articles/[slug] 2.73 kB 150 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ○ /feed.articles 154 B 104 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ○ /feed.volumes 154 B 104 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ƒ /next/exit-preview 154 B 104 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ƒ /next/preview 154 B 104 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ƒ /next/seed 154 B 104 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ƒ /pages-sitemap.xml 154 B 104 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ ƒ /volumes-sitemap.xml 154 B 104 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: └ ● /volumes/[slug] 3.82 kB 151 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: + First Load JS shared by all 103 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ chunks/2460-9eb5c3033cb75435.js 45.8 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ├ chunks/e3373488-ef87eb834481fc79.js 54.2 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: └ other shared chunks (total) 3.34 kB
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci:
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci:
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ○ (Static) prerendered as static content
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ● (SSG) prerendered as static HTML (uses generateStaticParams)
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci: ƒ (Dynamic) server-rendered on demand
+2026-Jan-23 06:28:41.336823 #26 155.3 pragmatic-papers:ci:
+2026-Jan-23 06:28:41.336823 #26 155.4 pragmatic-papers:ci:
+2026-Jan-23 06:28:41.336823 #26 155.4 pragmatic-papers:ci: > pragmatic-papers@1.0.0 postbuild /app/apps/pragmatic-papers
+2026-Jan-23 06:28:41.336823 #26 155.4 pragmatic-papers:ci: > next-sitemap --config next-sitemap.config.cjs
+2026-Jan-23 06:28:41.336823 #26 155.4 pragmatic-papers:ci:
+2026-Jan-23 06:28:41.503458 #26 155.6 pragmatic-papers:ci: ✨ [next-sitemap] Loading next-sitemap config: file:///app/apps/pragmatic-papers/next-sitemap.config.cjs
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci: ✅ [next-sitemap] Generation completed
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci: ┌───────────────┬────────┐
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci: │ (index) │ Values │
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci: ├───────────────┼────────┤
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci: │ indexSitemaps │ 1 │
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci: │ sitemaps │ 0 │
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci: └───────────────┴────────┘
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci: -----------------------------------------------------
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci: SITEMAP INDICES
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci: -----------------------------------------------------
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci:
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci: ○ https://staging.pragmaticpapers.com/sitemap.xml
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci:
+2026-Jan-23 06:28:41.672222 #26 155.6 pragmatic-papers:ci:
+2026-Jan-23 06:28:41.744254 #26 155.8
+2026-Jan-23 06:28:41.744254 #26 155.8 Tasks: 1 successful, 1 total
+2026-Jan-23 06:28:41.744254 #26 155.8 Cached: 0 cached, 1 total
+2026-Jan-23 06:28:41.744254 #26 155.8 Time: 2m33.841s
+2026-Jan-23 06:28:41.744254 #26 155.8
+2026-Jan-23 06:28:42.722759 #26 DONE 156.8s
+2026-Jan-23 06:28:43.067818 #27 [runner 5/9] COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/standalone ./
+2026-Jan-23 06:28:43.565619 #27 DONE 0.5s
+2026-Jan-23 06:28:43.721297 #28 [runner 6/9] COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./apps/pragmatic-papers/.next/static
+2026-Jan-23 06:28:43.939147 #28 DONE 0.4s
+2026-Jan-23 06:28:44.172337 #29 [runner 7/9] COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
+2026-Jan-23 06:28:44.172337 #29 DONE 0.1s
+2026-Jan-23 06:28:44.172337
+2026-Jan-23 06:28:44.172337 #30 [runner 8/9] RUN mkdir -p /app/apps/pragmatic-papers/public/media && chown -R nextjs:nodejs /app/apps/pragmatic-papers/public/media && chmod -R 755 /app/apps/pragmatic-papers/public/media
+2026-Jan-23 06:28:44.177243 #30 DONE 0.2s
+2026-Jan-23 06:28:44.322502 #31 [runner 9/9] RUN echo '#!/bin/sh' > /app/start.sh && echo 'set -e' >> /app/start.sh && echo 'echo "========================================="' >> /app/start.sh && echo 'echo "Starting Pragmatic Papers Application"' >> /app/start.sh && echo 'echo "========================================="' >> /app/start.sh && echo 'echo "Node version: $(node --version)"' >> /app/start.sh && echo 'echo "Environment: $NODE_ENV"' >> /app/start.sh && echo 'echo "Database: PostgreSQL"' >> /app/start.sh && echo 'echo "Port: $PORT"' >> /app/start.sh && echo 'echo "Hostname: $HOSTNAME"' >> /app/start.sh && echo 'echo "Storage: $([ \"$USE_LOCAL_STORAGE\" = \"true\" ] && echo \"Local\" || echo \"S3\")"' >> /app/start.sh && echo 'echo "========================================="' >> /app/start.sh && echo 'echo "Starting Next.js server..."' >> /app/start.sh && echo 'exec node --trace-warnings apps/pragmatic-papers/server.js' >> /app/start.sh && chmod +x /app/start.sh && chown nextjs:nodejs /app/start.sh
+2026-Jan-23 06:28:44.322502 #31 DONE 0.1s
+2026-Jan-23 06:28:44.486160 #32 exporting to image
+2026-Jan-23 06:28:44.486160 #32 exporting layers
+2026-Jan-23 06:28:50.433112 #32 exporting layers 6.1s done
+2026-Jan-23 06:28:50.433112 #32 exporting manifest sha256:029fd4e2432966a78db907a641a18eebe702fb1400cef655e2c2dcafb8cdb7eb
+2026-Jan-23 06:28:50.666487 #32 exporting manifest sha256:029fd4e2432966a78db907a641a18eebe702fb1400cef655e2c2dcafb8cdb7eb 0.0s done
+2026-Jan-23 06:28:50.666487 #32 exporting config sha256:1665941f4eddbdb270c8a6c92b88954043d21df43105ff12f9fc52bca5b61f6e 0.0s done
+2026-Jan-23 06:28:50.666487 #32 exporting attestation manifest sha256:8ce6d85ad09d1ed5bb47d19a15ea4952add97d679978d051abefa62e71f7891e 0.0s done
+2026-Jan-23 06:28:50.666487 #32 exporting manifest list sha256:0b64b03d4324de2c522e8a9c2cf6d36a3e1167cbcb96c6b2e35f02b1613a43a6 0.0s done
+2026-Jan-23 06:28:50.666487 #32 naming to registry.pragmaticpapers.com/pragmatic-papers:1f69c9e32bec967e8eb20468c71788c8943e0784 done
+2026-Jan-23 06:28:50.666487 #32 unpacking to registry.pragmaticpapers.com/pragmatic-papers:1f69c9e32bec967e8eb20468c71788c8943e0784
+2026-Jan-23 06:28:51.448628 #32 unpacking to registry.pragmaticpapers.com/pragmatic-papers:1f69c9e32bec967e8eb20468c71788c8943e0784 0.9s done
+2026-Jan-23 06:28:51.642336 #32 DONE 7.2s
+2026-Jan-23 06:28:51.687563 6 warnings found (use docker --debug to expand):
+2026-Jan-23 06:28:51.687563 - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "PAYLOAD_SECRET") (line 105)
+2026-Jan-23 06:28:51.692265 - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "S3_ACCESS_KEY_ID") (line 109)
+2026-Jan-23 06:28:51.692265 - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "S3_SECRET_ACCESS_KEY") (line 110)
+2026-Jan-23 06:28:51.692265 - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "PAYLOAD_SECRET") (line 77)
+2026-Jan-23 06:28:51.692265 - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "S3_ACCESS_KEY_ID") (line 81)
+2026-Jan-23 06:28:51.692265 - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "S3_SECRET_ACCESS_KEY") (line 82)
+2026-Jan-23 06:28:51.770891 Building docker image completed.
+2026-Jan-23 06:28:51.798156 Creating .env file with runtime variables for container.
+2026-Jan-23 06:28:52.909013 [CMD]: docker exec lwoggs048goso0kcokgco48s bash -c 'cat /artifacts/lwoggs048goso0kcokgco48s/.env'
+2026-Jan-23 06:28:52.909013 SOURCE_COMMIT=1f69c9e32bec967e8eb20468c71788c8943e0784
+2026-Jan-23 06:28:52.909013 COOLIFY_URL=https://staging.pragmaticpapers.com
+2026-Jan-23 06:28:52.909013 COOLIFY_FQDN=staging.pragmaticpapers.com
+2026-Jan-23 06:28:52.909013 COOLIFY_BRANCH=dev
+2026-Jan-23 06:28:52.909013 COOLIFY_RESOURCE_UUID=bgoc40s88kwoskwwsk0cg4gw
+2026-Jan-23 06:28:52.909013 COOLIFY_CONTAINER_NAME=bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:28:52.909013 BUILD_ENV=staging
+2026-Jan-23 06:28:52.909013 CRON_SECRET=dnXQU4CCl5ljaA9jkpQxoNGWFrySLspgURIK5U5pXAG6GwzYjOYL2NGzO2tNm6n65gAyxzIlXW
+2026-Jan-23 06:28:52.909013 DATABASE_URI=postgres://postgres:<REDACTED>@188.245.144.133:5432/pragmatic_papers
+2026-Jan-23 06:28:52.909013 NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-PXK2QL92HV
+2026-Jan-23 06:28:52.909013 NEXT_PUBLIC_SERVER_URL=$COOLIFY_URL
+2026-Jan-23 06:28:52.909013 PAYLOAD_SECRET=Pg9n5ed5uMvumAIV3TMp8yjxR1celQDRAa246XrX28AU47Zy0R1t48F1bFAm7cv1QnAgSCNaRO
+2026-Jan-23 06:28:52.909013 PREVIEW_SECRET=U3so0jiW3lGADEWyHf5h9NOOyQR5uVR2FIXEki33dIv86dsCwSOQoRhkAcTTk36czHMZTSDKjP
+2026-Jan-23 06:28:52.909013 USE_LOCAL_STORAGE=true
+2026-Jan-23 06:28:52.909013 PORT=3000
+2026-Jan-23 06:28:52.909013 HOST=0.0.0.0
+2026-Jan-23 06:28:54.305175 ----------------------------------------
+2026-Jan-23 06:28:54.314784 Pushing image to docker registry (registry.pragmaticpapers.com/pragmatic-papers:1f69c9e32bec967e8eb20468c71788c8943e0784).
+2026-Jan-23 06:28:55.093367 [CMD]: docker exec lwoggs048goso0kcokgco48s bash -c 'docker push registry.pragmaticpapers.com/pragmatic-papers:1f69c9e32bec967e8eb20468c71788c8943e0784'
+2026-Jan-23 06:28:55.093367 The push refers to repository [registry.pragmaticpapers.com/pragmatic-papers]
+2026-Jan-23 06:28:55.216042 1074353eec0d: Waiting
+2026-Jan-23 06:28:55.216042 1e51518bad62: Waiting
+2026-Jan-23 06:28:55.216042 df42fde70614: Waiting
+2026-Jan-23 06:28:55.216042 3a85c3143412: Waiting
+2026-Jan-23 06:28:55.216042 a8d77403ff3a: Waiting
+2026-Jan-23 06:28:55.216042 caaa3a74f9cf: Waiting
+2026-Jan-23 06:28:55.216042 d53378de7b14: Waiting
+2026-Jan-23 06:28:55.216042 6eeeb49fd220: Waiting
+2026-Jan-23 06:28:55.216042 cd788101e4d1: Waiting
+2026-Jan-23 06:28:55.216042 7dd7b303cde6: Waiting
+2026-Jan-23 06:28:55.216042 96566862d101: Waiting
+2026-Jan-23 06:28:55.216042 f790f23a4b1d: Waiting
+2026-Jan-23 06:28:55.216042 741d49252d0b: Waiting
+2026-Jan-23 06:28:55.300117 cd788101e4d1: Waiting
+2026-Jan-23 06:28:55.300117 7dd7b303cde6: Waiting
+2026-Jan-23 06:28:55.300117 96566862d101: Waiting
+2026-Jan-23 06:28:55.300117 f790f23a4b1d: Waiting
+2026-Jan-23 06:28:55.307777 741d49252d0b: Waiting
+2026-Jan-23 06:28:55.307777 1074353eec0d: Waiting
+2026-Jan-23 06:28:55.307777 1e51518bad62: Waiting
+2026-Jan-23 06:28:55.307777 df42fde70614: Waiting
+2026-Jan-23 06:28:55.307777 3a85c3143412: Waiting
+2026-Jan-23 06:28:55.307777 a8d77403ff3a: Waiting
+2026-Jan-23 06:28:55.307777 caaa3a74f9cf: Waiting
+2026-Jan-23 06:28:55.307777 d53378de7b14: Waiting
+2026-Jan-23 06:28:55.307777 6eeeb49fd220: Waiting
+2026-Jan-23 06:28:55.398705 caaa3a74f9cf: Waiting
+2026-Jan-23 06:28:55.404296 d53378de7b14: Waiting
+2026-Jan-23 06:28:55.404296 6eeeb49fd220: Layer already exists
+2026-Jan-23 06:28:55.404296 cd788101e4d1: Waiting
+2026-Jan-23 06:28:55.404296 7dd7b303cde6: Waiting
+2026-Jan-23 06:28:55.404296 96566862d101: Waiting
+2026-Jan-23 06:28:55.404296 f790f23a4b1d: Waiting
+2026-Jan-23 06:28:55.404296 741d49252d0b: Waiting
+2026-Jan-23 06:28:55.404296 1074353eec0d: Waiting
+2026-Jan-23 06:28:55.404296 1e51518bad62: Waiting
+2026-Jan-23 06:28:55.404296 df42fde70614: Waiting
+2026-Jan-23 06:28:55.404296 3a85c3143412: Waiting
+2026-Jan-23 06:28:55.498737 d53378de7b14: Layer already exists
+2026-Jan-23 06:28:55.498737 f790f23a4b1d: Waiting
+2026-Jan-23 06:28:55.498737 741d49252d0b: Pushed
+2026-Jan-23 06:28:55.498737 1074353eec0d: Layer already exists
+2026-Jan-23 06:28:55.498737 1e51518bad62: Layer already exists
+2026-Jan-23 06:28:55.498737 df42fde70614: Layer already exists
+2026-Jan-23 06:28:55.598937 caaa3a74f9cf: Pushed
+2026-Jan-23 06:28:55.598937 cd788101e4d1: Pushed
+2026-Jan-23 06:28:55.598937 7dd7b303cde6: Pushed
+2026-Jan-23 06:28:55.598937 f790f23a4b1d: Pushed
+2026-Jan-23 06:28:55.598937 3a85c3143412: Pushed
+2026-Jan-23 06:28:55.598937 a8d77403ff3a: Pushed
+2026-Jan-23 06:28:55.899657 96566862d101: Pushed
+2026-Jan-23 06:28:56.005295 1f69c9e32bec967e8eb20468c71788c8943e0784: digest: sha256:0b64b03d4324de2c522e8a9c2cf6d36a3e1167cbcb96c6b2e35f02b1613a43a6 size: 856
+2026-Jan-23 06:28:57.582191 ----------------------------------------
+2026-Jan-23 06:28:57.592241 Rolling update started.
+2026-Jan-23 06:28:58.690936 [CMD]: COOLIFY_URL=https://staging.pragmaticpapers.com COOLIFY_FQDN=staging.pragmaticpapers.com COOLIFY_BRANCH=dev COOLIFY_RESOURCE_UUID=bgoc40s88kwoskwwsk0cg4gw docker compose --project-name bgoc40s88kwoskwwsk0cg4gw --project-directory /data/coolify/applications/bgoc40s88kwoskwwsk0cg4gw -f /data/coolify/applications/bgoc40s88kwoskwwsk0cg4gw/docker-compose.yaml up --pull always --build -d
+2026-Jan-23 06:28:58.690936 Image registry.pragmaticpapers.com/pragmatic-papers:1f69c9e32bec967e8eb20468c71788c8943e0784 Pulling
+2026-Jan-23 06:28:59.115730 caaa3a74f9cf Pulling fs layer
+2026-Jan-23 06:28:59.115730 cd788101e4d1 Pulling fs layer
+2026-Jan-23 06:28:59.115730 7dd7b303cde6 Pulling fs layer
+2026-Jan-23 06:28:59.115730 96566862d101 Pulling fs layer
+2026-Jan-23 06:28:59.123534 3a85c3143412 Pulling fs layer
+2026-Jan-23 06:28:59.123534 a8d77403ff3a Pulling fs layer
+2026-Jan-23 06:28:59.123534 f790f23a4b1d Pulling fs layer
+2026-Jan-23 06:28:59.253033 f790f23a4b1d Download complete
+2026-Jan-23 06:28:59.259886 caaa3a74f9cf Download complete
+2026-Jan-23 06:28:59.259886 cd788101e4d1 Download complete
+2026-Jan-23 06:28:59.259886 7dd7b303cde6 Download complete
+2026-Jan-23 06:28:59.270335 cd788101e4d1 Extracting 1 s
+2026-Jan-23 06:28:59.363080 96566862d101 Downloading [=> ] 1.049MB/27.8MB
+2026-Jan-23 06:28:59.363080 3a85c3143412 Downloading [=============================> ] 1.049MB/1.763MB
+2026-Jan-23 06:28:59.363080 a8d77403ff3a Download complete
+2026-Jan-23 06:28:59.413357 cd788101e4d1 Pull complete
+2026-Jan-23 06:28:59.434243 7dd7b303cde6 Extracting 1 s
+2026-Jan-23 06:28:59.463093 96566862d101 Downloading [=====> ] 3.146MB/27.8MB
+2026-Jan-23 06:28:59.468135 3a85c3143412 Download complete
+2026-Jan-23 06:28:59.468135 741d49252d0b Download complete
+2026-Jan-23 06:28:59.490697 7dd7b303cde6 Pull complete
+2026-Jan-23 06:28:59.551535 96566862d101 Downloading [===============> ] 8.389MB/27.8MB
+2026-Jan-23 06:28:59.651855 96566862d101 Downloading [========================> ] 13.63MB/27.8MB
+2026-Jan-23 06:28:59.752615 96566862d101 Downloading [=====================================> ] 20.97MB/27.8MB
+2026-Jan-23 06:28:59.852790 96566862d101 Downloading [=================================================> ] 27.26MB/27.8MB
+2026-Jan-23 06:28:59.953862 96566862d101 Download complete
+2026-Jan-23 06:28:59.969258 96566862d101 Extracting 1 s
+2026-Jan-23 06:29:00.084585 96566862d101 Extracting 1 s
+2026-Jan-23 06:29:00.173638 96566862d101 Extracting 1 s
+2026-Jan-23 06:29:00.284378 96566862d101 Extracting 1 s
+2026-Jan-23 06:29:00.377231 96566862d101 Extracting 1 s
+2026-Jan-23 06:29:00.482775 96566862d101 Extracting 1 s
+2026-Jan-23 06:29:00.570170 96566862d101 Extracting 1 s
+2026-Jan-23 06:29:00.685567 96566862d101 Extracting 1 s
+2026-Jan-23 06:29:00.783132 96566862d101 Extracting 1 s
+2026-Jan-23 06:29:00.884807 96566862d101 Extracting 1 s
+2026-Jan-23 06:29:00.984431 96566862d101 Extracting 2 s
+2026-Jan-23 06:29:01.091064 96566862d101 Extracting 2 s
+2026-Jan-23 06:29:01.172302 96566862d101 Extracting 2 s
+2026-Jan-23 06:29:01.280344 96566862d101 Extracting 2 s
+2026-Jan-23 06:29:01.373317 96566862d101 Extracting 2 s
+2026-Jan-23 06:29:01.493395 96566862d101 Extracting 2 s
+2026-Jan-23 06:29:01.573363 96566862d101 Extracting 2 s
+2026-Jan-23 06:29:01.672164 96566862d101 Extracting 2 s
+2026-Jan-23 06:29:01.772357 3a85c3143412 Extracting 1 s
+2026-Jan-23 06:29:01.780244 96566862d101 Pull complete
+2026-Jan-23 06:29:01.890310 3a85c3143412 Extracting 1 s
+2026-Jan-23 06:29:01.957968 f790f23a4b1d Pull complete
+2026-Jan-23 06:29:01.963183 caaa3a74f9cf Pull complete
+2026-Jan-23 06:29:01.973210 a8d77403ff3a Pull complete
+2026-Jan-23 06:29:01.997094 3a85c3143412 Pull complete
+2026-Jan-23 06:29:02.039637 Image registry.pragmaticpapers.com/pragmatic-papers:1f69c9e32bec967e8eb20468c71788c8943e0784 Pulled
+2026-Jan-23 06:29:02.104590 time="2026-01-23T06:29:02Z" level=warning msg="No services to build"
+2026-Jan-23 06:29:02.126341 time="2026-01-23T06:29:02Z" level=warning msg="Found orphan containers ([bgoc40s88kwoskwwsk0cg4gw-053244311435]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up."
+2026-Jan-23 06:29:02.126341 Container bgoc40s88kwoskwwsk0cg4gw-062427527840 Creating
+2026-Jan-23 06:29:02.334841 bgoc40s88kwoskwwsk0cg4gw-062427527840 Your kernel does not support memory swappiness capabilities or the cgroup is not mounted. Memory swappiness discarded.
+2026-Jan-23 06:29:02.339717 Container bgoc40s88kwoskwwsk0cg4gw-062427527840 Created
+2026-Jan-23 06:29:02.371630 Container bgoc40s88kwoskwwsk0cg4gw-062427527840 Starting
+2026-Jan-23 06:29:02.632702 Container bgoc40s88kwoskwwsk0cg4gw-062427527840 Started
+2026-Jan-23 06:29:02.645563 New container started.
+2026-Jan-23 06:29:02.654684 Waiting for healthcheck to pass on the new container.
+2026-Jan-23 06:29:02.663578 Healthcheck URL (inside the container): GET: http://0.0.0.0:3000/api/health
+2026-Jan-23 06:29:02.672126 Waiting for the start period (5 seconds) before starting healthcheck.
+2026-Jan-23 06:29:08.213345 [CMD]: docker inspect --format='{{json .State.Health.Status}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:08.213345 "starting"
+2026-Jan-23 06:29:08.689616 [CMD]: docker inspect --format='{{json .State.Health.Log}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:08.689616 [{"Start":"2026-01-23T06:29:07.633917051Z","End":"2026-01-23T06:29:07.799549896Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"}]
+2026-Jan-23 06:29:08.699001 Attempt 1 of 10 | Healthcheck status: "starting"
+2026-Jan-23 06:29:08.710950 Healthcheck logs: /bin/sh: curl: not found
+2026-Jan-23 06:29:08.710950 wget: server returned error: HTTP/1.1 500 Internal Server Error
+2026-Jan-23 06:29:08.710950 | Return code: 1
+2026-Jan-23 06:29:14.256087 [CMD]: docker inspect --format='{{json .State.Health.Status}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:14.256087 "starting"
+2026-Jan-23 06:29:14.797586 [CMD]: docker inspect --format='{{json .State.Health.Log}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:14.797586 [{"Start":"2026-01-23T06:29:07.633917051Z","End":"2026-01-23T06:29:07.799549896Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:12.801206267Z","End":"2026-01-23T06:29:12.901712746Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"}]
+2026-Jan-23 06:29:14.804897 Attempt 2 of 10 | Healthcheck status: "starting"
+2026-Jan-23 06:29:14.815235 Healthcheck logs: /bin/sh: curl: not found
+2026-Jan-23 06:29:14.815235 wget: server returned error: HTTP/1.1 500 Internal Server Error
+2026-Jan-23 06:29:14.815235 | Return code: 1
+2026-Jan-23 06:29:20.325346 [CMD]: docker inspect --format='{{json .State.Health.Status}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:20.325346 "starting"
+2026-Jan-23 06:29:20.775565 [CMD]: docker inspect --format='{{json .State.Health.Log}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:20.775565 [{"Start":"2026-01-23T06:29:07.633917051Z","End":"2026-01-23T06:29:07.799549896Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:12.801206267Z","End":"2026-01-23T06:29:12.901712746Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:17.903226123Z","End":"2026-01-23T06:29:17.988883652Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"}]
+2026-Jan-23 06:29:20.783324 Attempt 3 of 10 | Healthcheck status: "starting"
+2026-Jan-23 06:29:20.793902 Healthcheck logs: /bin/sh: curl: not found
+2026-Jan-23 06:29:20.793902 wget: server returned error: HTTP/1.1 500 Internal Server Error
+2026-Jan-23 06:29:20.793902 | Return code: 1
+2026-Jan-23 06:29:26.334365 [CMD]: docker inspect --format='{{json .State.Health.Status}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:26.334365 "starting"
+2026-Jan-23 06:29:26.813473 [CMD]: docker inspect --format='{{json .State.Health.Log}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:26.813473 [{"Start":"2026-01-23T06:29:07.633917051Z","End":"2026-01-23T06:29:07.799549896Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:12.801206267Z","End":"2026-01-23T06:29:12.901712746Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:17.903226123Z","End":"2026-01-23T06:29:17.988883652Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:22.990874609Z","End":"2026-01-23T06:29:23.074820552Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"}]
+2026-Jan-23 06:29:26.821378 Attempt 4 of 10 | Healthcheck status: "starting"
+2026-Jan-23 06:29:26.831795 Healthcheck logs: /bin/sh: curl: not found
+2026-Jan-23 06:29:26.831795 wget: server returned error: HTTP/1.1 500 Internal Server Error
+2026-Jan-23 06:29:26.831795 | Return code: 1
+2026-Jan-23 06:29:32.319243 [CMD]: docker inspect --format='{{json .State.Health.Status}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:32.319243 "starting"
+2026-Jan-23 06:29:32.853807 [CMD]: docker inspect --format='{{json .State.Health.Log}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:32.853807 [{"Start":"2026-01-23T06:29:07.633917051Z","End":"2026-01-23T06:29:07.799549896Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:12.801206267Z","End":"2026-01-23T06:29:12.901712746Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:17.903226123Z","End":"2026-01-23T06:29:17.988883652Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:22.990874609Z","End":"2026-01-23T06:29:23.074820552Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:28.078215977Z","End":"2026-01-23T06:29:28.198765489Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"}]
+2026-Jan-23 06:29:32.861137 Attempt 5 of 10 | Healthcheck status: "starting"
+2026-Jan-23 06:29:32.870218 Healthcheck logs: /bin/sh: curl: not found
+2026-Jan-23 06:29:32.870218 wget: server returned error: HTTP/1.1 500 Internal Server Error
+2026-Jan-23 06:29:32.870218 | Return code: 1
+2026-Jan-23 06:29:38.417426 [CMD]: docker inspect --format='{{json .State.Health.Status}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:38.417426 "starting"
+2026-Jan-23 06:29:38.910884 [CMD]: docker inspect --format='{{json .State.Health.Log}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:38.910884 [{"Start":"2026-01-23T06:29:17.903226123Z","End":"2026-01-23T06:29:17.988883652Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:22.990874609Z","End":"2026-01-23T06:29:23.074820552Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:28.078215977Z","End":"2026-01-23T06:29:28.198765489Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:33.199512157Z","End":"2026-01-23T06:29:33.335622955Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:38.336718032Z","End":"2026-01-23T06:29:38.462439532Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"}]
+2026-Jan-23 06:29:38.923310 Attempt 6 of 10 | Healthcheck status: "starting"
+2026-Jan-23 06:29:38.944126 Healthcheck logs: /bin/sh: curl: not found
+2026-Jan-23 06:29:38.944126 wget: server returned error: HTTP/1.1 500 Internal Server Error
+2026-Jan-23 06:29:38.944126 | Return code: 1
+2026-Jan-23 06:29:44.483133 [CMD]: docker inspect --format='{{json .State.Health.Status}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:44.483133 "starting"
+2026-Jan-23 06:29:44.984755 [CMD]: docker inspect --format='{{json .State.Health.Log}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:44.984755 [{"Start":"2026-01-23T06:29:22.990874609Z","End":"2026-01-23T06:29:23.074820552Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:28.078215977Z","End":"2026-01-23T06:29:28.198765489Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:33.199512157Z","End":"2026-01-23T06:29:33.335622955Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:38.336718032Z","End":"2026-01-23T06:29:38.462439532Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:43.463994436Z","End":"2026-01-23T06:29:43.551173146Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"}]
+2026-Jan-23 06:29:44.993395 Attempt 7 of 10 | Healthcheck status: "starting"
+2026-Jan-23 06:29:45.005840 Healthcheck logs: /bin/sh: curl: not found
+2026-Jan-23 06:29:45.005840 wget: server returned error: HTTP/1.1 500 Internal Server Error
+2026-Jan-23 06:29:45.005840 | Return code: 1
+2026-Jan-23 06:29:50.560480 [CMD]: docker inspect --format='{{json .State.Health.Status}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:50.560480 "starting"
+2026-Jan-23 06:29:51.043196 [CMD]: docker inspect --format='{{json .State.Health.Log}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:51.043196 [{"Start":"2026-01-23T06:29:28.078215977Z","End":"2026-01-23T06:29:28.198765489Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:33.199512157Z","End":"2026-01-23T06:29:33.335622955Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:38.336718032Z","End":"2026-01-23T06:29:38.462439532Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:43.463994436Z","End":"2026-01-23T06:29:43.551173146Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:48.551872822Z","End":"2026-01-23T06:29:48.657676037Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"}]
+2026-Jan-23 06:29:51.050828 Attempt 8 of 10 | Healthcheck status: "starting"
+2026-Jan-23 06:29:51.066001 Healthcheck logs: /bin/sh: curl: not found
+2026-Jan-23 06:29:51.066001 wget: server returned error: HTTP/1.1 500 Internal Server Error
+2026-Jan-23 06:29:51.066001 | Return code: 1
+2026-Jan-23 06:29:57.114677 [CMD]: docker inspect --format='{{json .State.Health.Status}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:57.114677 "unhealthy"
+2026-Jan-23 06:29:57.587867 [CMD]: docker inspect --format='{{json .State.Health.Log}}' bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:57.587867 [{"Start":"2026-01-23T06:29:33.199512157Z","End":"2026-01-23T06:29:33.335622955Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:38.336718032Z","End":"2026-01-23T06:29:38.462439532Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:43.463994436Z","End":"2026-01-23T06:29:43.551173146Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:48.551872822Z","End":"2026-01-23T06:29:48.657676037Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"},{"Start":"2026-01-23T06:29:53.658675224Z","End":"2026-01-23T06:29:53.798010642Z","ExitCode":1,"Output":"/bin/sh: curl: not found\nwget: server returned error: HTTP/1.1 500 Internal Server Error\n"}]
+2026-Jan-23 06:29:57.594830 Attempt 9 of 10 | Healthcheck status: "unhealthy"
+2026-Jan-23 06:29:57.604942 Healthcheck logs: /bin/sh: curl: not found
+2026-Jan-23 06:29:57.604942 wget: server returned error: HTTP/1.1 500 Internal Server Error
+2026-Jan-23 06:29:57.604942 | Return code: 1
+2026-Jan-23 06:29:57.614542 New container is unhealthy.
+2026-Jan-23 06:29:57.623548 ----------------------------------------
+2026-Jan-23 06:29:57.632129 Container logs:
+2026-Jan-23 06:29:58.140459 [CMD]: docker logs -n 100 bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:58.140459 using filesystem cache handler
+2026-Jan-23 06:29:58.140459 memory store already initialized
+2026-Jan-23 06:29:58.140459 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.140459 using filesystem cache handler
+2026-Jan-23 06:29:58.140459 memory store already initialized
+2026-Jan-23 06:29:58.140459 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.140459 using filesystem cache handler
+2026-Jan-23 06:29:58.140459 memory store already initialized
+2026-Jan-23 06:29:58.147489 ⨯ [Error: Cannot find module 'libsql'
+2026-Jan-23 06:29:58.147489 Require stack:
+2026-Jan-23 06:29:58.147489 - /app/apps/pragmatic-papers/.next/server/app/(payload)/api/[...slug]/route.js
+2026-Jan-23 06:29:58.147489 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/require.js
+2026-Jan-23 06:29:58.147489 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/next-server.js
+2026-Jan-23 06:29:58.147489 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/next.js
+2026-Jan-23 06:29:58.147489 - /app/apps/pragmatic-papers/server.js] {
+2026-Jan-23 06:29:58.147489 code: 'MODULE_NOT_FOUND',
+2026-Jan-23 06:29:58.147489 requireStack: [Array]
+2026-Jan-23 06:29:58.147489 }
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.152879 use-cache: cache handlers already initialized
+2026-Jan-23 06:29:58.152879 using filesystem cache handler
+2026-Jan-23 06:29:58.152879 memory store already initialized
+2026-Jan-23 06:29:58.158675 ⨯ [Error: Cannot find module 'libsql'
+2026-Jan-23 06:29:58.158675 Require stack:
+2026-Jan-23 06:29:58.158675 - /app/apps/pragmatic-papers/.next/server/app/(payload)/api/[...slug]/route.js
+2026-Jan-23 06:29:58.158675 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/require.js
+2026-Jan-23 06:29:58.158675 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/next-server.js
+2026-Jan-23 06:29:58.158675 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/next.js
+2026-Jan-23 06:29:58.158675 - /app/apps/pragmatic-papers/server.js] {
+2026-Jan-23 06:29:58.158675 code: 'MODULE_NOT_FOUND',
+2026-Jan-23 06:29:58.158675 requireStack: [Array]
+2026-Jan-23 06:29:58.158675 }
+2026-Jan-23 06:29:58.158675 ⨯ [Error: Cannot find module 'libsql'
+2026-Jan-23 06:29:58.158675 Require stack:
+2026-Jan-23 06:29:58.158675 - /app/apps/pragmatic-papers/.next/server/app/(payload)/api/[...slug]/route.js
+2026-Jan-23 06:29:58.158675 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/require.js
+2026-Jan-23 06:29:58.158675 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/next-server.js
+2026-Jan-23 06:29:58.158675 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/next.js
+2026-Jan-23 06:29:58.158675 - /app/apps/pragmatic-papers/server.js] {
+2026-Jan-23 06:29:58.158675 code: 'MODULE_NOT_FOUND',
+2026-Jan-23 06:29:58.158675 requireStack: [Array]
+2026-Jan-23 06:29:58.158675 }
+2026-Jan-23 06:29:58.158675 ⨯ [Error: Cannot find module 'libsql'
+2026-Jan-23 06:29:58.158675 Require stack:
+2026-Jan-23 06:29:58.158675 - /app/apps/pragmatic-papers/.next/server/app/(payload)/api/[...slug]/route.js
+2026-Jan-23 06:29:58.158675 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/require.js
+2026-Jan-23 06:29:58.158675 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/next-server.js
+2026-Jan-23 06:29:58.158675 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/next.js
+2026-Jan-23 06:29:58.158675 - /app/apps/pragmatic-papers/server.js] {
+2026-Jan-23 06:29:58.158675 code: 'MODULE_NOT_FOUND',
+2026-Jan-23 06:29:58.158675 requireStack: [Array]
+2026-Jan-23 06:29:58.158675 }
+2026-Jan-23 06:29:58.158675 ⨯ [Error: Cannot find module 'libsql'
+2026-Jan-23 06:29:58.158675 Require stack:
+2026-Jan-23 06:29:58.158675 - /app/apps/pragmatic-papers/.next/server/app/(payload)/api/[...slug]/route.js
+2026-Jan-23 06:29:58.158675 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/require.js
+2026-Jan-23 06:29:58.158675 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/next-server.js
+2026-Jan-23 06:29:58.158675 - /app/node_modules/.pnpm/next@15.5.9_react-dom@19.2.3_react@19.2.3__react@19.2.3_sass@1.77.4/node_modules/next/dist/server/next.js
+2026-Jan-23 06:29:58.158675 - /app/apps/pragmatic-papers/server.js] {
+2026-Jan-23 06:29:58.158675 code: 'MODULE_NOT_FOUND',
+2026-Jan-23 06:29:58.158675 requireStack: [Array]
+2026-Jan-23 06:29:58.158675 }
+2026-Jan-23 06:29:58.164620 ----------------------------------------
+2026-Jan-23 06:29:58.174662 Removing old containers.
+2026-Jan-23 06:29:58.184810 ----------------------------------------
+2026-Jan-23 06:29:58.194890 WARNING: Dockerfile or Docker Image based deployment detected. The healthcheck needs a curl or wget command to check the health of the application. Please make sure that it is available in the image or turn off healthcheck on Coolify's UI.
+2026-Jan-23 06:29:58.207053 ----------------------------------------
+2026-Jan-23 06:29:58.221233 New container is not healthy, rolling back to the old container.
+2026-Jan-23 06:29:58.894365 [CMD]: docker stop -t 30 bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:58.894365 bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:59.422650 [CMD]: docker rm -f bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:59.422650 bgoc40s88kwoskwwsk0cg4gw-062427527840
+2026-Jan-23 06:29:59.429448 Rolling update completed.
+2026-Jan-23 06:29:59.449636 Gracefully shutting down build container: lwoggs048goso0kcokgco48s
+2026-Jan-23 06:30:00.967529 [CMD]: docker stop -t 30 lwoggs048goso0kcokgco48s
+2026-Jan-23 06:30:00.967529 lwoggs048goso0kcokgco48s
