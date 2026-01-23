@@ -36,6 +36,7 @@ const openSans = Open_Sans({
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
+  const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 
   return (
     <html
@@ -79,7 +80,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Header />
           {children}
           <Footer />
-          <GoogleAnalytics gaId="G-PXK2QL92HV" />
+          <GoogleAnalytics gaId={googleAnalyticsId} />
         </Providers>
 
       </body>

@@ -10,7 +10,5 @@ export const YouTubeEmbedBlock: React.FC<Props> = (props) => {
     return null
   }
 
-  return (
-    <YouTubeEmbed url={props.url} />
-  )
+  return <YouTubeEmbed url={props.url} />
 }

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const SITE_URL =
   process.env.NEXT_PUBLIC_SERVER_URL ||
   process.env.VERCEL_PROJECT_PRODUCTION_URL ||
@@ -8,7 +7,14 @@ const SITE_URL =
 module.exports = {
   siteUrl: SITE_URL,
   generateRobotsTxt: true,
-  exclude: ['/articles-sitemap.xml', '/pages-sitemap.xml', '/volumes-sitemap.xml', '/*', '/volumes/*', '/articles/*'],
+  exclude: [
+    '/articles-sitemap.xml',
+    '/pages-sitemap.xml',
+    '/volumes-sitemap.xml',
+    '/*',
+    '/volumes/*',
+    '/articles/*',
+  ],
   robotsTxtOptions: {
     policies: [
       {
@@ -16,6 +22,10 @@ module.exports = {
         disallow: '/admin/*',
       },
     ],
-    additionalSitemaps: [`${SITE_URL}/pages-sitemap.xml`, `${SITE_URL}/articles-sitemap.xml`, `${SITE_URL}/volumes-sitemap.xml`],
+    additionalSitemaps: [
+      `${SITE_URL}/pages-sitemap.xml`,
+      `${SITE_URL}/articles-sitemap.xml`,
+      `${SITE_URL}/volumes-sitemap.xml`,
+    ],
   },
 }
