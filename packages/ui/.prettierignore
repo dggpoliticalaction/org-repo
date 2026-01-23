@@ -1,0 +1,9 @@
+# Turbo generators
+turbo/
+
+# Build outputs
+dist/
+.turbo/
+
+# Node modules
+node_modules/

@@ -11,59 +11,88 @@ This Turborepo includes the following packages/apps:
 - `pragmatic-papers`: the Pragmatic Papers website
 - `dgg-political-action`: the DGG Political Action website
 - `discord-bot`: the DGG Political Action discord bot
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@repo/ui`: a React component library shared by the web applications
 - `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+Each package/app uses mostly [TypeScript](https://www.typescriptlang.org/).
 
 ### Utilities
 
 This repo has some additional tools:
 
+- [Turborepo](https://turbo.build/repo) for monorepo management
 - [TypeScript](https://www.typescriptlang.org/) for static type checking
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
 
-### Build
 
-To build all apps and packages, run the following command:
-
+### Requirements
 ```
-cd my-turborepo
-pnpm build
+docker
+Node.js version 20.9.0+
+pnpm
 ```
 
-### Develop
+### Quick Start 
 
-To develop all apps and packages, run the following command:
-
+1. First [clone the repo](#clone) if you have not done so already and then change directory into org-repo.
 ```
-cd my-turborepo
+git clone https://github.com/dggpoliticalaction/org-repo.git
+cd org-repo
+```
+2. This repository uses `pnpm` as a package manager. install the dependencies:
+```
+pnpm install
+```
+3. copy the example .env files 
+```
+cp apps/pragmatic-papers/.env.example apps/pragmatic-papers/.env && cp apps/dgg-political-action/.env.example apps/dgg-political-action/.env
+```
+4. Start dev environment 
+```
 pnpm dev
 ```
+5. Use a browser to view the applications,
 
-### Run an application
+  - pragmatic papers : `http://localhost:8000`
+  
+  - dgg-political-action:`http://localhost:8888`
 
-To run or develop a single application:
 
-- you can navigate to a specific application's directory and run as usual
-  ```
-  cd apps/pragmatic-papers
-  pnpm dev
-  ```
-- or, you can filter turborepo tasks
-  ```
-  turbo run pragmatic-papers#dev
-  ```
+> [!TIP] 
+> You can also start a single application by running `pnpm dev` in the applications root directory.
+> ```
+> cd apps/pragmatic-papers/
+> pnpm dev
+> ```
+
+> [!NOTE] 
+> **Dev:Migrations**
+>
+> You do not need to run migrations against your development database, because Drizzle will have already pushed your changes to your database for you.
+>
+>Payload uses Drizzle ORM's powerful push mode to automatically sync data changes to your database for you while in development mode. By default, this is enabled and is the suggested workflow to using Postgres and Payload while doing local development.
+
+### Development Scripts
+
+Here are the most important scripts available in the root `package.json`:
+
+- `pnpm build`: Build all applications.
+- `pnpm dev`: Start all applications in development mode.
+- `pnpm dev:db`: Start the development docker containers.
+- `pnpm dev:db-down`: Stop the development docker containers.
+- `pnpm dev:db-nuke`: Stop the containers and remove the database volumes.
+- `pnpm lint`: Lint all applications.
+- `pnpm format`: Format all applications.
+- `pnpm check-types`: Run typescript to check for type errors.
+- `pnpm ci`: A script for running in a CI environment.
+
+### Production Migrations
+Migrations will be required for non-development database environments.
+- Please refer to the offical [Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)
+
 
 ## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+  - [Payload Documentation](https://payloadcms.com/docs/getting-started/what-is-payload)
+    - [Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)

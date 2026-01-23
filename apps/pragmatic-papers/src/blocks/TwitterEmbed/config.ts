@@ -16,7 +16,6 @@ export const TwitterEmbed: Block = {
     {
       name: 'hideThread',
       type: 'checkbox',
-      
     },
-  ]
+  ],
 }

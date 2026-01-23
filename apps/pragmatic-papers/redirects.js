@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 const redirects = async () => {
   const internetExplorerRedirect = {
     destination: '/ie-incompatible.html',
@@ -14,7 +12,13 @@ const redirects = async () => {
     source: '/:path((?!ie-incompatible.html$).*)', // all pages except the incompatibility page
   }
 
-  const redirects = [internetExplorerRedirect]
+  const iceoutRedirect = {
+    source: '/iceout/:state*',
+    destination: 'https://iceout.org/en/location/report',
+    permanent: false,
+  }
+
+  const redirects = [internetExplorerRedirect, iceoutRedirect]
 
   return redirects
 }
