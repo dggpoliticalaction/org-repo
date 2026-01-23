@@ -136,7 +136,7 @@ export const seed = async ({
         },
       }),
     ),
-      ])
+  ])
 
   payload.logger.info(`— Seeding posts...`)
 
@@ -202,11 +202,11 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding pages...`)
 
-  const [_, contactPage] = await Promise.all([
+  const [_, _contactPage] = await Promise.all([
     payload.create({
       collection: 'pages',
       depth: 0,
-      data: home({ heroImage: imageHomeDoc, metaImage: image2Doc }),
+      data: home({ heroImage: imageHomeDoc, _metaImage: image2Doc }),
     }),
     payload.create({
       collection: 'pages',
@@ -230,28 +230,11 @@ export const seed = async ({
         navItems: [
           {
             link: {
-              type: 'custom',
-              label: 'Posts',
-              url: '/posts',
-            },
-          },
-          {
-            link: {
               type: 'reference',
               label: 'About',
               reference: {
                 relationTo: 'pages',
                 value: aboutPageDoc.id,
-              },
-            },
-          },
-          {
-            link: {
-              type: 'reference',
-              label: 'Contact',
-              reference: {
-                relationTo: 'pages',
-                value: contactPage.id,
               },
             },
           },
@@ -261,31 +244,7 @@ export const seed = async ({
     payload.updateGlobal({
       slug: 'footer',
       data: {
-        navItems: [
-          {
-            link: {
-              type: 'custom',
-              label: 'Admin',
-              url: '/admin',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Source Code',
-              newTab: true,
-              url: 'https://github.com/payloadcms/payload/tree/main/templates/website',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Payload',
-              newTab: true,
-              url: 'https://payloadcms.com/',
-            },
-          },
-        ],
+        navItems: [],
       },
     }),
   ])
