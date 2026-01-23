@@ -100,7 +100,10 @@ export const plugins: Plugin[] = [
     },
   }),
   s3Storage({
-    enabled: process.env.NODE_ENV === 'production',
+    // Enable S3 storage only when not using local storage
+    // For staging/preview: set USE_LOCAL_STORAGE=true to use local file system
+    // For production: set USE_LOCAL_STORAGE=false (or leave unset) to use S3
+    enabled: process.env.USE_LOCAL_STORAGE !== 'true',
     collections: {
       media: {
         disablePayloadAccessControl: true,
