@@ -1,8 +1,8 @@
 export class DevOnboarding {
-  public static Title = 'DGGP Developer Onboarding'
+  public static Title = 'Digital Ground Game Developer Onboarding'
 
   public static Message = `
-    So you're interested in the **DGGP dev team** — awesome! 👋
+    So you're interested in the **Digital Ground Game dev team** — awesome! 👋
 
     Here are the basics:
 
