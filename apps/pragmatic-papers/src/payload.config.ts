@@ -11,6 +11,7 @@ import { Header } from '@/Header/config'
 import { plugins } from '@/plugins'
 import { getServerSideURL } from '@/utilities/getURL'
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import path from 'path'
 import { buildConfig, type PayloadRequest, type SharpDependency } from 'payload'
 import sharp from 'sharp'
@@ -18,6 +19,22 @@ import { fileURLToPath } from 'url'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+// Database adapter selection based on environment
+// Use SQLite for staging/preview (embedded database, no separate container needed)
+// Use PostgreSQL for production (scalable, robust)
+const databaseAdapter =
+  process.env.DATABASE_ADAPTER === 'sqlite'
+    ? sqliteAdapter({
+        client: {
+          url: process.env.DATABASE_URI || 'file:./pragmatic-papers.db',
+        },
+      })
+    : postgresAdapter({
+        pool: {
+          connectionString: process.env.DATABASE_URI,
+        },
+      })
 
 export default buildConfig({
   admin: {
@@ -56,11 +73,7 @@ export default buildConfig({
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
-  db: postgresAdapter({
-    pool: {
-      connectionString: process.env.DATABASE_URI,
-    },
-  }),
+  db: databaseAdapter,
   collections: [Pages, Articles, Volumes, Media, Categories, Users, Webhooks],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
