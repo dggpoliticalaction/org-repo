@@ -60,6 +60,10 @@ PAYLOAD_SECRET=<generated_secret>
 NEXT_PUBLIC_SERVER_URL=https://your-domain.com
 
 # For Pragmatic Papers, also add:
+# Storage Configuration
+USE_LOCAL_STORAGE=true  # Set to 'true' for staging/preview, 'false' for production
+
+# S3 Storage (only required when USE_LOCAL_STORAGE=false)
 S3_REGION=us-east-1
 S3_BUCKET=your-bucket
 S3_ACCESS_KEY_ID=your-key
@@ -144,6 +148,37 @@ Both apps use conventional port 3000 since they deploy separately.
 ## 📝 Volumes
 
 - `postgres_data` - Persistent PostgreSQL storage (back up regularly)
+- `media_data` - Local media storage for Pragmatic Papers (when `USE_LOCAL_STORAGE=true`)
+
+## 💾 Storage Configuration (Pragmatic Papers)
+
+Pragmatic Papers supports two storage modes for uploaded files:
+
+### Local Storage (Recommended for Staging/Preview)
+
+```env
+USE_LOCAL_STORAGE=true
+```
+
+- Files stored in Docker volume `media_data`
+- No S3 credentials needed
+- Persists across container restarts
+- Simpler setup for non-production environments
+
+### S3 Storage (Recommended for Production)
+
+```env
+USE_LOCAL_STORAGE=false  # or leave unset
+S3_REGION=us-east-1
+S3_BUCKET=your-bucket
+S3_ACCESS_KEY_ID=your-key
+S3_SECRET_ACCESS_KEY=your-secret
+S3_ENDPOINT=https://s3.amazonaws.com
+```
+
+- Files stored in S3-compatible storage (AWS S3, Supabase Storage, etc.)
+- Better scalability and CDN integration
+- Recommended for production deployments
 
 ## 🆘 Need Help?
 
