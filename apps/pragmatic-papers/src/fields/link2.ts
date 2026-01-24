@@ -119,7 +119,7 @@ export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField =
             validate: label.validate as TextFieldSingleValidation,
             name: 'label',
             type: 'text',
-            required: true,
+            required: false,
           },
         ],
       },

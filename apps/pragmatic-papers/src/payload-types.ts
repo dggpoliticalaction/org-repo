@@ -489,7 +489,7 @@ export interface LinkField {
         value: number | Article;
       } | null);
   url?: string | null;
-  label: string;
+  label?: string | null;
   /**
    * Choose how the link should be rendered.
    */
