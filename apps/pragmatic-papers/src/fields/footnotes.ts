@@ -1,5 +1,27 @@
 import { link } from '@/fields/link2'
-import type { ArrayField, Field } from 'payload'
+import type { ArrayField, Field, FieldHook } from 'payload'
+
+const prependHttpsHook: FieldHook = ({ siblingData, value }) => {
+  if (siblingData?.type !== 'custom') {
+    return value
+  }
+
+  if (typeof value !== 'string') {
+    return value
+  }
+
+  const trimmedValue = value.trim()
+
+  if (!trimmedValue) {
+    return value
+  }
+
+  if (trimmedValue.toLowerCase().startsWith('http')) {
+    return trimmedValue
+  }
+
+  return `https://${trimmedValue}`
+}
 
 export const footnoteFields = (): Field[] => [
   {
@@ -43,6 +65,11 @@ export const footnoteFields = (): Field[] => [
       },
       newTab: {
         defaultValue: true,
+      },
+      url: {
+        hooks: {
+          beforeValidate: [prependHttpsHook],
+        },
       },
       label: {
         admin: {

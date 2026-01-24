@@ -105,8 +105,10 @@ export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField =
             name: 'url',
             type: 'text',
             required: true,
+            hooks: { ...url.hooks },
             admin: {
               condition: (_, siblingData) => siblingData?.type === 'custom',
+              ...url.admin,
             },
           },
           {
