@@ -74,6 +74,8 @@
         "S3_SECRET_ACCESS_KEY",
         "VERCEL_PROJECT_PRODUCTION_URL",
         "PREVIEW_SECRET",
+        "USE_LOCAL_STORAGE",
+        "DATABASE_ADAPTER",
         "DATABASE_URI",
         "PAYLOAD_SECRET",
         "CRON_SECRET",
