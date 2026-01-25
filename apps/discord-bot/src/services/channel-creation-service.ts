@@ -5,7 +5,7 @@ import {
   TextChannel,
   ChannelType,
   type CategoryChannel,
-  GuildChannel,
+  type GuildChannel,
   EmbedBuilder,
 } from 'discord.js'
 import { createRequire } from 'node:module'

@@ -15,7 +15,6 @@ import {
   type PartialUser,
   type RateLimitData,
   RESTEvents,
-  ThreadChannel,
   type User,
 } from 'discord.js'
 import { createRequire } from 'node:module'

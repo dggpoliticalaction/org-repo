@@ -1,4 +1,4 @@
-import { type GuildMember, type TextChannel } from 'discord.js'
+import { type GuildMember } from 'discord.js'
 import { createRequire } from 'node:module'
 
 import { ChannelCreationService } from './channel-creation-service.js'

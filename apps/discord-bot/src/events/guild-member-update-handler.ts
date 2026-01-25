@@ -4,7 +4,7 @@ import { createRequire } from 'node:module'
 
 import { type EventHandler } from './event-handler.js'
 import { Logger } from '../services/logger.js'
-import { OnboardingStateService } from '../services/onboarding-state-service.js'
+import { type OnboardingStateService } from '../services/onboarding-state-service.js'
 
 const require = createRequire(import.meta.url)
 const Config = require('../../config/config.json')
@@ -19,7 +19,7 @@ export class GuildMemberUpdateHandler implements EventHandler {
     (Config.rateLimiting.buttons?.interval ?? 30) * 1000,
   )
 
-  constructor(private onboardingStateService: OnboardingStateService) {}
+  constructor(private readonly onboardingStateService: OnboardingStateService) {}
 
   /**
    * Process a GuildMemberUpdate event.
