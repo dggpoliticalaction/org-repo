@@ -1,4 +1,4 @@
-export type ServerRole = {
+export interface ServerRole {
   id: string
   name: string
 }
