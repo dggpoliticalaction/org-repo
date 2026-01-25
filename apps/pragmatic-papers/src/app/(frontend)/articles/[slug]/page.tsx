@@ -1,18 +1,14 @@
-import type { Metadata } from 'next'
-
+import { FootnoteList } from '@/components/FootnoteList'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
-import React, { cache } from 'react'
-
-import type { Article } from '@/payload-types'
-
+import RichText from '@/components/RichText'
 import { ArticleHero } from '@/heros/ArticleHero'
 import { generateMeta } from '@/utilities/generateMeta'
-import PageClient from './page.client'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import RichText from '@/components/RichText'
+import configPromise from '@payload-config'
+import type { Metadata } from 'next'
+import { draftMode } from 'next/headers'
+import { getPayload } from 'payload'
+import React, { cache } from 'react'
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -76,10 +72,10 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
+  const { footnotes, content } = article
+
   return (
     <article className="m-auto max-w-3xl p-5 pb-16">
-      <PageClient />
-
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
@@ -87,7 +83,8 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
       <ArticleHero article={article} />
 
-      <RichText className="" data={article.content} enableGutter={false} />
+      <RichText data={content} enableGutter={false} />
+      <FootnoteList footnotes={footnotes} />
     </article>
   )
 }
