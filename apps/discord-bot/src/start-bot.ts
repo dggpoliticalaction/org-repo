@@ -25,12 +25,13 @@ import {
   CommandHandler,
   GuildJoinHandler,
   GuildLeaveHandler,
+  GuildMemberUpdateHandler,
   MessageHandler,
   ReactionHandler,
   TriggerHandler,
 } from './events/index.js'
 import { CustomClient } from './extensions/index.js'
-import { type Job } from './jobs/index.js'
+import { AutoCloseOnboardingChannelsJob, type Job } from './jobs/index.js'
 import { Bot } from './models/bot.js'
 import { type Reaction } from './reactions/index.js'
 import {
@@ -38,6 +39,7 @@ import {
   EventDataService,
   JobService,
   Logger,
+  OnboardingStateService,
 } from './services/index.js'
 import { type Trigger } from './triggers/index.js'
 import { CTAPostTrigger } from './triggers/cta-post.js'
@@ -97,9 +99,13 @@ async function start(): Promise<void> {
     new CTAPostTrigger(),
   ]
 
+  // Services
+  const onboardingStateService = new OnboardingStateService()
+
   // Event handlers
   const guildJoinHandler = new GuildJoinHandler(eventDataService)
   const guildLeaveHandler = new GuildLeaveHandler()
+  const guildMemberUpdateHandler = new GuildMemberUpdateHandler(onboardingStateService)
   const commandHandler = new CommandHandler(commands, eventDataService)
   const buttonHandler = new ButtonHandler(buttons, eventDataService)
   const triggerHandler = new TriggerHandler(triggers, eventDataService)
@@ -108,7 +114,7 @@ async function start(): Promise<void> {
 
   // Jobs
   const jobs: Job[] = [
-    // TODO: Add new jobs here
+    new AutoCloseOnboardingChannelsJob(client),
   ]
 
   // Bot
@@ -117,6 +123,7 @@ async function start(): Promise<void> {
     client,
     guildJoinHandler,
     guildLeaveHandler,
+    guildMemberUpdateHandler,
     messageHandler,
     commandHandler,
     buttonHandler,
@@ -124,7 +131,6 @@ async function start(): Promise<void> {
     new JobService(jobs),
   )
 
-  // Register
   if (process.argv[2] == 'commands') {
     try {
       const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN)
@@ -138,7 +144,7 @@ async function start(): Promise<void> {
     } catch (error) {
       Logger.error(Logs.error.commandAction, error)
     }
-    // Wait for any final logs to be written.
+
     await new Promise((resolve) => setTimeout(resolve, 1000))
     process.exit()
   }
