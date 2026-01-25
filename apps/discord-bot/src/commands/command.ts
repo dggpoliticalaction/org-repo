@@ -6,7 +6,6 @@ import {
   type PermissionsString,
 } from 'discord.js'
 import { type RateLimiter } from 'discord.js-rate-limiter'
-
 import { type EventData } from '../models/internal-models.js'
 
 export interface Command {
@@ -14,6 +13,7 @@ export interface Command {
   cooldown?: RateLimiter
   deferType: CommandDeferType
   requireClientPerms: PermissionsString[]
+  requireRoles?: string[]
   autocomplete?(
     intr: AutocompleteInteraction,
     option: AutocompleteFocusedOption,
