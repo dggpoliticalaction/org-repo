@@ -1,5 +1,5 @@
-import type { Payload } from 'payload'
 import type { Media, User } from '@/payload-types'
+import type { Payload } from 'payload'
 
 interface VolumeArticlesConfig {
   volumeNumber: number
