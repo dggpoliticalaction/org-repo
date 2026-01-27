@@ -45,7 +45,9 @@ export const seed = async ({
     globals.map((global) =>
       payload.updateGlobal({
         slug: global,
-        data: {},
+        data: {
+          navItems: [],
+        },
         depth: 0,
         context: {
           disableRevalidate: true,
