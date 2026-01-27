@@ -77,7 +77,10 @@ export const Media: CollectionConfig = {
       format: 'webp',
     },
     focalPoint: true,
-    disableLocalStorage: process.env.NODE_ENV === 'production',
+    // Disable local storage when NOT using local storage (i.e., when using S3)
+    // For staging/preview: set USE_LOCAL_STORAGE=true to enable local file system
+    // For production: set USE_LOCAL_STORAGE=false to use S3 and disable local storage
+    disableLocalStorage: process.env.USE_LOCAL_STORAGE !== 'true',
     imageSizes: [
       {
         name: 'thumbnail',

@@ -3,6 +3,5 @@
     {
       "mode": "auto"
     }
-  ],
-  "prettier.endOfLine": "auto",
+  ]
 }

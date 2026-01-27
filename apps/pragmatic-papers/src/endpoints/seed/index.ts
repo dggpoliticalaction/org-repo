@@ -1,6 +1,7 @@
 import type { Payload } from 'payload'
 import { createArticles } from './articles'
 import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from './blocks/socialEmbed'
+import { createFootnotesArticle } from './features/footnotes'
 import { homeStatic } from './home-static'
 import { createMedia } from './media'
 import { createUsers } from './users'
@@ -95,6 +96,9 @@ export const seed = async (payload: Payload): Promise<void> => {
     ],
     mediaDocs,
   )
+
+  // Create a standalone article demonstrating the footnotes feature
+  await createFootnotesArticle(payload, [writer1, writer2], mediaDocs, volume1Articles[0]!)
 
   // The homepage is literally a "page" in Payload.
   await payload.create({

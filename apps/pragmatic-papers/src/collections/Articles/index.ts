@@ -4,6 +4,7 @@ import { editorOrSelf, restrictWritersToDraftOnly } from '@/access/editorOrSelf'
 import { writer } from '@/access/writer'
 import { Banner } from '@/blocks/Banner/config'
 import { Code } from '@/blocks/Code/config'
+import { FootnoteBlock } from '@/blocks/Footnote/config'
 import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { LegacyBlueSkyEmbed } from '@/blocks/SocialEmbed/BlueSkyEmbed/config'
@@ -13,8 +14,10 @@ import { LegacyTikTokEmbed } from '@/blocks/SocialEmbed/TikTokEmbed/config'
 import { LegacyTwitterEmbed } from '@/blocks/SocialEmbed/TwitterEmbed/config'
 import { LegacyYouTubeEmbed } from '@/blocks/SocialEmbed/YouTubeEmbed/config'
 import { SquiggleRule } from '@/blocks/SquiggleRule/config'
+import { generateFootnotes } from '@/collections/Articles/hooks/generateFootnotes'
 import { populateAuthors } from '@/collections/Articles/hooks/populateAuthors'
 import { revalidateArticle, revalidateDelete } from '@/collections/Articles/hooks/revalidateArticle'
+import { footnotesArrayField } from '@/fields/footnotes'
 import { type Article } from '@/payload-types'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import {
@@ -111,7 +114,7 @@ export const Articles: CollectionConfig = {
                         LegacyBlueSkyEmbed,
                         LegacyTikTokEmbed,
                       ],
-                      inlineBlocks: [InlineMathBlock],
+                      inlineBlocks: [InlineMathBlock, FootnoteBlock],
                     }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
@@ -232,6 +235,7 @@ export const Articles: CollectionConfig = {
         },
       ],
     },
+    footnotesArrayField(),
     slugField(),
   ],
   hooks: {
@@ -245,6 +249,7 @@ export const Articles: CollectionConfig = {
           }
         }
       },
+      generateFootnotes,
     ],
     afterChange: [revalidateArticle],
     afterRead: [populateAuthors],

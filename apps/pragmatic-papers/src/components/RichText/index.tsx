@@ -1,6 +1,7 @@
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
+import { FootnoteBlock } from '@/blocks/Footnote/Component'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import {
@@ -15,6 +16,7 @@ import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
 import type {
   BannerBlock as BannerBlockProps,
   CallToActionBlock as CTABlockProps,
+  FootnoteBlock as FootnoteBlockProps,
   MediaBlock as MediaBlockProps,
   SocialEmbedBlock as SocialEmbedBlockProps,
   SquiggleRuleBlock as SquiggleRuleBlockProps,
@@ -24,6 +26,7 @@ import type {
   DefaultNodeTypes,
   DefaultTypedEditorState,
   SerializedBlockNode,
+  SerializedInlineBlockNode,
   SerializedLinkNode,
 } from '@payloadcms/richtext-lexical'
 import {
@@ -35,14 +38,14 @@ import {
 type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-    | CTABlockProps
-    | MediaBlockProps
-    | BannerBlockProps
-    | CodeBlockProps
-    | MathBlockProps
-    | SquiggleRuleBlockProps
-    | SocialEmbedBlockProps
-  >
+      | CTABlockProps
+      | MediaBlockProps
+      | BannerBlockProps
+      | CodeBlockProps
+      | MathBlockProps
+      | SquiggleRuleBlockProps
+    >
+  | SerializedInlineBlockNode<MathBlockProps | FootnoteBlockProps>
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
@@ -74,7 +77,9 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       <MathBlock {...node.fields} />
     ),
     squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
-    socialEmbed: ({ node }) => <SocialEmbedBlock {...node.fields} />,
+    socialEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+      <SocialEmbedBlock {...node.fields} />
+    ),
     // Legacy block types for backward compatibility with existing content
     twitterEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
       <TwitterEmbedBlock {...node.fields} />
@@ -93,24 +98,28 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     ),
   },
   inlineBlocks: {
-    inlineMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
+    inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode<MathBlockProps> }) => (
       <MathBlock {...node.fields} />
     ),
+    footnote: ({ node }) => <FootnoteBlock {...node.fields} />,
   },
 })
 
-type Props = {
+interface RichTextProps extends React.HTMLAttributes<HTMLDivElement> {
   data: DefaultTypedEditorState
   enableGutter?: boolean
   enableProse?: boolean
-} & React.HTMLAttributes<HTMLDivElement>
+}
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function RichText(props: Props) {
-  const { className, enableProse = true, enableGutter = true, ...rest } = props
+export default function RichText({
+  className,
+  enableProse = true,
+  enableGutter = true,
+  data,
+  ...rest
+}: RichTextProps): React.ReactNode {
   return (
-    <ConvertRichText
-      converters={jsxConverters}
+    <div
       className={cn(
         'payload-richtext',
         {
@@ -121,6 +130,8 @@ export default function RichText(props: Props) {
         className,
       )}
       {...rest}
-    />
+    >
+      <ConvertRichText converters={jsxConverters} data={data} disableContainer />
+    </div>
   )
 }
