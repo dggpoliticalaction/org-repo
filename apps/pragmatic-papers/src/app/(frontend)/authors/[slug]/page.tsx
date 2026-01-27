@@ -5,7 +5,6 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
 
 import type { Article as ArticleType, Media, User, Volume } from '@/payload-types'

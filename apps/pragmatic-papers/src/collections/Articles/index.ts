@@ -42,10 +42,21 @@ import {
   SuperscriptFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig, FieldHook } from 'payload'
 import { slugField } from 'payload'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateArticle, revalidateDelete } from './hooks/revalidateArticle'
+
+const setPublishedAtDefault: FieldHook<Article, Article['publishedAt']> = ({
+  siblingData,
+  value,
+}) => {
+  if (siblingData && siblingData._status === 'published' && !value) {
+    return new Date().toISOString()
+  }
+
+  return value
+}
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
@@ -177,13 +188,7 @@ export const Articles: CollectionConfig = {
       },
       hooks: {
         beforeChange: [
-          // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-          ({ siblingData, value }) => {
-            if (siblingData._status === 'published' && !value) {
-              return new Date()
-            }
-            return value
-          },
+          setPublishedAtDefault,
         ],
       },
     },
@@ -195,7 +200,11 @@ export const Articles: CollectionConfig = {
       },
       hasMany: true,
       relationTo: 'users',
-      filterOptions: ({ relationTo }) => {
+      filterOptions: ({
+        relationTo,
+      }: {
+        relationTo: string
+      }): boolean | { role: { not_equals: string } } => {
         // Only non-admin users (writers, editors, chief-editors, regular users) can be
         // selected as article authors. Admin accounts are kept private and should not
         // appear in author pickers.

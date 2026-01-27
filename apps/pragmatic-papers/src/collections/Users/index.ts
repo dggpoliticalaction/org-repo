@@ -13,7 +13,6 @@ import {
 import { admin, adminFieldLevel } from '@/access/admins'
 import { adminOrSelf } from '@/access/adminOrSelf'
 import type { User } from '@/payload-types'
-import { isAdmin, isWriter } from '@/access/checkRole'
 import { authorSlugFromNameAndId } from '@/utilities/authorSlug'
 import { link } from '@/fields/link'
 

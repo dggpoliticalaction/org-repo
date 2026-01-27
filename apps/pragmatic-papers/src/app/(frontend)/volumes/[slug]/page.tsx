@@ -16,7 +16,6 @@ import { formatDateTime } from '@/utilities/formatDateTime'
 import { ArticleCard } from '@/components/ArticleCard'
 import { toRoman } from '@/utilities/toRoman'
 import { Squiggle } from '@/components/ui/squiggle'
-import { authorSlugFromNameAndId } from '@/utilities/authorSlug'
 import { AuthorCard } from '@/components/Authors/AuthorCard'
 
 type VolumeArticleRef = number | Article

@@ -1,24 +1,15 @@
-import { FootnoteList } from '@/components/FootnoteList'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import RichText from '@/components/RichText'
+import { AuthorCard } from '@/components/Authors/AuthorCard'
 import { ArticleHero } from '@/heros/ArticleHero'
+import type { Article, User } from '@/payload-types'
 import { generateMeta } from '@/utilities/generateMeta'
 import configPromise from '@payload-config'
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import React, { cache } from 'react'
-
-import type { Article, User } from '@/payload-types'
-
-import { ArticleHero } from '@/heros/ArticleHero'
-import { generateMeta } from '@/utilities/generateMeta'
-import PageClient from './page.client'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import RichText from '@/components/RichText'
-import { authorSlugFromNameAndId } from '@/utilities/authorSlug'
-import { AuthorCard } from '@/components/Authors/AuthorCard'
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -109,7 +100,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   const populatedAuthors = article.populatedAuthors || []
   const authorIds = populatedAuthors
     .map((author) => author?.id)
-    .filter((id): id is string | number => id !== null && id !== undefined)
+    .filter((id): id is string => typeof id === 'string')
 
   const authors = await queryAuthorsByIds({ ids: authorIds })
 

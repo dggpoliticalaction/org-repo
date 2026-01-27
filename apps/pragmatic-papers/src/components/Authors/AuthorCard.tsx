@@ -41,7 +41,7 @@ function extractProfileImage(author: User): { src?: string; alt: string } {
 }
 
 function extractBioSnippet(author: User, maxLength = 255): string | undefined {
-  const bio = author.biography as any
+  const bio = author.biography as User['biography'] | string
   if (!bio) return undefined
 
   if (typeof bio === 'string') {
