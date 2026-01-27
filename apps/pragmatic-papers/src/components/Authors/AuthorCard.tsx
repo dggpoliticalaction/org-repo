@@ -13,15 +13,14 @@ function normalizeExternalUrl(url: string): string {
   return `https://${trimmed.replace(/^\/+/, '')}`
 }
 
-function getInitials(nameOrEmail: string): string {
-  const value = nameOrEmail.trim()
+function getInitials(name: string): string {
+  const value = name.trim()
   if (!value) return ''
 
   const parts = value.split(/\s+/).filter(Boolean)
   if (parts.length === 1) {
     const single = parts[0] ?? ''
     if (!single) return ''
-    if (single.includes('@')) return (single[0] ?? '').toUpperCase()
     return single.slice(0, 2).toUpperCase()
   }
 
@@ -36,10 +35,39 @@ function extractProfileImage(author: User): { src?: string; alt: string } {
   const profile = author.profileImage
   const profileDoc = profile && typeof profile === 'object' ? (profile as Media) : undefined
   const src = profileDoc?.sizes?.square?.url || profileDoc?.url || undefined
-  const alt =
-    profileDoc?.alt || author.name || author.email || 'Author avatar'
+  const alt = profileDoc?.alt || author.name || 'Author avatar'
 
   return { src, alt }
+}
+
+function extractBioSnippet(author: User, maxLength = 255): string | undefined {
+  const bio = author.biography as any
+  if (!bio) return undefined
+
+  if (typeof bio === 'string') {
+    const clean = bio.trim().replace(/\s+/g, ' ')
+    if (!clean) return undefined
+    return clean.length > maxLength ? `${clean.slice(0, maxLength).trimEnd()}…` : clean
+  }
+
+  const root = bio.root
+  if (!root || !Array.isArray(root.children)) return undefined
+
+  let text = ''
+
+  for (const block of root.children) {
+    if (!block || typeof block !== 'object' || !Array.isArray(block.children)) continue
+    for (const child of block.children) {
+      if (child && typeof child === 'object' && typeof child.text === 'string') {
+        text += child.text + ' '
+      }
+    }
+  }
+
+  const clean = text.trim().replace(/\s+/g, ' ')
+  if (!clean) return undefined
+
+  return clean.length > maxLength ? `${clean.slice(0, maxLength).trimEnd()}…` : clean
 }
 
 function deriveSocialLinks(author: User): {
@@ -118,11 +146,13 @@ export interface AuthorCardProps {
 
 export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
   const slug = author.authorSlug || authorSlugFromUser(author)
-  const name = author.name || author.email
+  const name = author.name || 'Author'
   const title = author.affiliation || undefined
 
   const { src: avatarUrl, alt } = extractProfileImage(author)
-  const initials = getInitials(name || author.email)
+  const initials = getInitials(name)
+
+  const bioSnippet = extractBioSnippet(author)
 
   const socialLinks = deriveSocialLinks(author)
   const hasSocialLinks = Boolean(
@@ -149,22 +179,29 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
             )}
           </div>
         </Link>
-        <div className="flex-1 space-y-1">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold text-foreground">
-                <Link
-                  href={`/authors/${slug}`}
-                  className="transition-colors hover:text-brand"
-                >
-                  {name}
-                </Link>
-              </h3>
-              {title && <p className="text-sm text-muted-foreground">{title}</p>}
+        <div className="flex h-24 flex-1 flex-col justify-between overflow-hidden">
+          <div className="min-h-0 space-y-1">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-foreground">
+                  <Link href={`/authors/${slug}`} className="transition-colors hover:text-brand">
+                    {name}
+                  </Link>
+                  {title && (
+                    <span className="ml-1 text-sm font-normal text-muted-foreground">
+                      {' - '}
+                      {title}
+                    </span>
+                  )}
+                </h3>
+              </div>
             </div>
+            {bioSnippet && (
+              <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{bioSnippet}</p>
+            )}
           </div>
           {hasSocialLinks && (
-            <div className="mt-2 flex flex-row gap-3">
+            <div className="mt-1 flex flex-row gap-3">
               {socialLinks.twitter && (
                 <a
                   href={socialLinks.twitter}

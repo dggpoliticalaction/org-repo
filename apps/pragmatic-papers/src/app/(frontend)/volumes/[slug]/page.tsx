@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
 import type { Payload } from 'payload'
-import type { Article } from '@/payload-types'
-
-import Link from 'next/link'
+import type { Article, User } from '@/payload-types'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
@@ -19,6 +17,7 @@ import { ArticleCard } from '@/components/ArticleCard'
 import { toRoman } from '@/utilities/toRoman'
 import { Squiggle } from '@/components/ui/squiggle'
 import { authorSlugFromNameAndId } from '@/utilities/authorSlug'
+import { AuthorCard } from '@/components/Authors/AuthorCard'
 
 type VolumeArticleRef = number | Article
 
@@ -70,6 +69,30 @@ const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
   return result.docs?.[0] || null
 })
 
+const queryAuthorsByIds = cache(async ({ ids }: { ids: (string | number)[] }): Promise<User[]> => {
+  const numericIds = ids
+    .map((id) => (typeof id === 'string' ? Number(id) : id))
+    .filter((id): id is number => typeof id === 'number' && !Number.isNaN(id))
+
+  if (!numericIds.length) return []
+
+  const payload = await getPayload({ config: configPromise })
+
+  const result = (await payload.find({
+    collection: 'users',
+    limit: numericIds.length,
+    pagination: false,
+    where: {
+      id: {
+        in: numericIds,
+      },
+    },
+    depth: 1,
+  })) as { docs: User[] }
+
+  return result.docs || []
+})
+
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
   const volume = await queryVolumeBySlug({ slug })
@@ -96,29 +119,16 @@ export default async function VolumePage({
   const actualArticles = articles?.filter(
     (article: VolumeArticleRef): article is Article => typeof article !== 'number',
   )
-
-  interface VolumeAuthor {
-    id: string | number
-    name?: string | null
-    slug: string
-  }
-
-  const volumeAuthorMap = new Map<string | number, VolumeAuthor>()
+  const volumeAuthorIdSet = new Set<string | number>()
   actualArticles?.forEach((article) => {
     const populated = article.populatedAuthors || []
     populated.forEach((author) => {
       if (!author?.id) return
-      if (volumeAuthorMap.has(author.id)) return
-      const authorSlug = authorSlugFromNameAndId(author.name ?? null, author.id)
-      volumeAuthorMap.set(author.id, {
-        id: author.id,
-        name: author.name,
-        slug: authorSlug,
-      })
+      volumeAuthorIdSet.add(author.id)
     })
   })
 
-  const volumeAuthors = Array.from(volumeAuthorMap.values())
+  const volumeAuthors = await queryAuthorsByIds({ ids: Array.from(volumeAuthorIdSet) })
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-16">
@@ -164,22 +174,10 @@ export default async function VolumePage({
           <h2 className="mb-4 text-xl font-semibold">
             Meet the Author{volumeAuthors.length > 1 ? 's' : ''}
           </h2>
-          <div className="-mx-4 overflow-x-auto pb-2">
-            <div className="flex gap-4 px-4">
-              {volumeAuthors.map((author) => (
-                <div
-                  key={author.id}
-                  className="min-w-[220px] max-w-xs flex-1 rounded-lg border bg-card p-4 text-center"
-                >
-                  <Link
-                    href={`/authors/${author.slug}`}
-                    className="text-base font-semibold text-foreground transition-colors hover:text-brand"
-                  >
-                    {author.name}
-                  </Link>
-                </div>
-              ))}
-            </div>
+          <div className="flex flex-col gap-4">
+            {volumeAuthors.map((author) => (
+              <AuthorCard key={author.id} author={author} />
+            ))}
           </div>
         </section>
       )}

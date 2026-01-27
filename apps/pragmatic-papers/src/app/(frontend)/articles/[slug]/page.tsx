@@ -6,17 +6,15 @@ import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
 
-import type { Article } from '@/payload-types'
+import type { Article, User } from '@/payload-types'
 
 import { ArticleHero } from '@/heros/ArticleHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
-
-import Link from 'next/link'
-
 import { authorSlugFromNameAndId } from '@/utilities/authorSlug'
+import { AuthorCard } from '@/components/Authors/AuthorCard'
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -65,6 +63,30 @@ const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
   return result.docs?.[0] || null
 })
 
+const queryAuthorsByIds = cache(async ({ ids }: { ids: (string | number)[] }): Promise<User[]> => {
+  const numericIds = ids
+    .map((id) => (typeof id === 'string' ? Number(id) : id))
+    .filter((id): id is number => typeof id === 'number' && !Number.isNaN(id))
+
+  if (!numericIds.length) return []
+
+  const payload = await getPayload({ config: configPromise })
+
+  const result = (await payload.find({
+    collection: 'users',
+    limit: numericIds.length,
+    pagination: false,
+    where: {
+      id: {
+        in: numericIds,
+      },
+    },
+    depth: 1,
+  })) as { docs: User[] }
+
+  return result.docs || []
+})
+
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
   const article = await queryArticleBySlug({ slug })
@@ -81,19 +103,11 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   if (!article) return <PayloadRedirects url={url} />
 
   const populatedAuthors = article.populatedAuthors || []
-  const authors = populatedAuthors
-    .map((author) => {
-      if (!author?.id) return null
-      const authorSlug = authorSlugFromNameAndId(author.name ?? null, author.id)
-      return {
-        id: author.id,
-        name: author.name ?? null,
-        slug: authorSlug,
-      }
-    })
-    .filter(
-      (author): author is { id: string; name: string | null; slug: string } => author !== null,
-    )
+  const authorIds = populatedAuthors
+    .map((author) => author?.id)
+    .filter((id): id is string | number => id !== null && id !== undefined)
+
+  const authors = await queryAuthorsByIds({ ids: authorIds })
 
   return (
     <article className="m-auto max-w-3xl p-5 pb-16">
@@ -113,22 +127,10 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
           <h2 className="mb-4 text-xl font-semibold">
             Meet the Author{authors.length > 1 ? 's' : ''}
           </h2>
-          <div className="-mx-4 overflow-x-auto pb-2">
-            <div className="flex gap-4 px-4">
-              {authors.map((author) => (
-                <div
-                  key={author.id}
-                  className="min-w-[220px] max-w-xs flex-1 rounded-lg border bg-card p-4 text-center"
-                >
-                  <Link
-                    href={`/authors/${author.slug}`}
-                    className="text-base font-semibold text-foreground transition-colors hover:text-brand"
-                  >
-                    {author.name}
-                  </Link>
-                </div>
-              ))}
-            </div>
+          <div className="flex flex-col gap-4">
+            {authors.map((author) => (
+              <AuthorCard key={author.id} author={author} />
+            ))}
           </div>
         </section>
       )}

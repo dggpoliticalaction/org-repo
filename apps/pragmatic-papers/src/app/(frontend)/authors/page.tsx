@@ -27,7 +27,6 @@ async function queryAuthors(): Promise<User[]> {
     collection: 'users',
     draft,
     limit: 1000,
-    overrideAccess: true,
     pagination: false,
     sort: 'name',
     depth: 1,
@@ -52,7 +51,6 @@ export default async function AuthorsIndexPage(): Promise<React.ReactNode> {
 
   return (
     <article className="m-auto max-w-3xl px-4 pb-16 pt-8">
-
       <header className="mb-8 text-center">
         <h1 className="mb-2 text-3xl font-bold md:text-4xl">Authors</h1>
         <p className="text-sm text-muted-foreground">

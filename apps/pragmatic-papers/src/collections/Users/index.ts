@@ -13,6 +13,7 @@ import {
 import { admin, adminFieldLevel } from '@/access/admins'
 import { adminOrSelf } from '@/access/adminOrSelf'
 import type { User } from '@/payload-types'
+import { isAdmin, isWriter } from '@/access/checkRole'
 import { authorSlugFromNameAndId } from '@/utilities/authorSlug'
 import { link } from '@/fields/link'
 
@@ -22,7 +23,22 @@ export const Users: CollectionConfig = {
     admin: authenticated,
     create: admin,
     delete: admin,
-    read: authenticated,
+    // Read access is split:
+    // - Authenticated users: full access (subject to field-level rules)
+    // - Public: only author-type accounts (writers, editors, chief-editors)
+    //   so that /authors pages can query without overrideAccess.
+    read: ({ req }) => {
+      const user = req.user as User | undefined
+
+      if (user) return true
+
+      return {
+        // Never expose admins as authors on public endpoints.
+        role: {
+          in: ['writer', 'editor', 'chief-editor'],
+        },
+      }
+    },
     update: adminOrSelf,
   },
   admin: {
@@ -131,6 +147,57 @@ export const Users: CollectionConfig = {
         },
       ],
     },
+    // Security-sensitive auth fields should never be exposed via public reads.
+    {
+      name: 'hash',
+      type: 'text',
+      access: {
+        read: () => false,
+      },
+      admin: {
+        disabled: true,
+      },
+    },
+    {
+      name: 'salt',
+      type: 'text',
+      access: {
+        read: () => false,
+      },
+      admin: {
+        disabled: true,
+      },
+    },
+    {
+      name: 'resetPasswordToken',
+      type: 'text',
+      access: {
+        read: () => false,
+      },
+      admin: {
+        disabled: true,
+      },
+    },
+    {
+      name: 'resetPasswordExpiration',
+      type: 'date',
+      access: {
+        read: () => false,
+      },
+      admin: {
+        disabled: true,
+      },
+    },
+    {
+      name: 'loginAttempts',
+      type: 'number',
+      access: {
+        read: () => false,
+      },
+      admin: {
+        disabled: true,
+      },
+    },
   ],
   timestamps: true,
   hooks: {
@@ -155,7 +222,6 @@ export const Users: CollectionConfig = {
             const slug = authorSlugFromNameAndId(
               (userData.name as string | null | undefined) ?? null,
               (userData.id as number | null | undefined) ?? null,
-              (userData.email as string | null | undefined) ?? null,
             )
             userData.authorSlug = slug
           }

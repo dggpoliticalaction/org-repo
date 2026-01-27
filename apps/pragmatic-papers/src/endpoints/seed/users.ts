@@ -38,6 +38,7 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
       password: 'password123',
       name: 'Writer One',
       role: 'writer',
+      authorSlug: 'writer-one',
       biography: {
         root: {
           children: [
@@ -79,6 +80,7 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
       password: 'password123',
       name: 'Writer Two',
       role: 'writer',
+      authorSlug: 'writer-two',
       biography: {
         root: {
           children: [

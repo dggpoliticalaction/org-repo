@@ -12,7 +12,7 @@ import type { Article as ArticleType, Media, User, Volume } from '@/payload-type
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
-import { ArticleCard, type CardPostData } from '@/components/ArticleCard'
+import { AuthorArticleCard } from '@/components/Articles/AuthorArticleCard'
 import { authorSlugFromUser } from '@/utilities/authorSlug'
 
 interface UserSocialLinkEntry {
@@ -87,7 +87,6 @@ const queryUserBySlug = cache(async ({ slug }: { slug: string }): Promise<User |
     collection: 'users',
     draft,
     limit: 1,
-    overrideAccess: true,
     pagination: false,
     where: {
       and: [
@@ -123,7 +122,6 @@ const queryArticlesByAuthor = cache(
       collection: 'articles',
       draft,
       limit: 1000,
-      overrideAccess: draft,
       pagination: false,
       where: {
         authors: {
@@ -167,7 +165,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = '' } = await paramsPromise
   const user = await queryUserBySlug({ slug })
 
-  const name = user?.name || user?.email || 'Author'
+  const name = user?.name || 'Author'
   const title = `${name} — Pragmatic Papers`
 
   const description = (typeof user?.biography === 'string' && user.biography) || undefined
@@ -230,14 +228,14 @@ export default async function AuthorPage({
           <div className="mb-6 h-32 w-32 overflow-hidden rounded-full border border-border">
             <Image
               src={profileSrc}
-              alt={profileDoc?.alt || user.name || user.email || 'Author avatar'}
+              alt={profileDoc?.alt || user.name || 'Author avatar'}
               width={128}
               height={128}
               className="h-full w-full object-cover"
             />
           </div>
         )}
-        <h1 className="mb-2 text-3xl font-bold md:text-4xl">{user.name || user.email}</h1>
+        <h1 className="mb-2 text-3xl font-bold md:text-4xl">{user.name || 'Author'}</h1>
         {user.affiliation && <p className="text-sm text-muted-foreground">{user.affiliation}</p>}
 
         {user.socialLinks && user.socialLinks.length > 0 && (
@@ -279,6 +277,7 @@ export default async function AuthorPage({
 
       {hasBiography && (
         <section className="mb-10" aria-label="Author biography">
+          <h2 className="mb-3 text-xl font-semibold">Bio</h2>
           <RichText enableGutter={false} data={user.biography as ArticleType['content']} />
         </section>
       )}
@@ -288,36 +287,22 @@ export default async function AuthorPage({
         {articles.length === 0 ? (
           <p className="text-sm text-muted-foreground">No articles found for this author yet.</p>
         ) : (
-          <div className="-mx-4 overflow-x-auto pb-2">
-            <div className="flex gap-4 px-4">
-              {articles.map((article) => {
-                const volumeForArticle = volumeByArticleId.get(article.id)
-                const volumeHref = volumeForArticle?.slug
-                  ? `/volumes/${volumeForArticle.slug}`
-                  : undefined
+          <div className="flex flex-col gap-4">
+            {articles.map((article) => {
+              const volumeForArticle = volumeByArticleId.get(article.id)
 
-                return (
-                  <div
-                    key={article.id}
-                    className="min-w-[260px] max-w-xs flex-1 rounded-lg border bg-card"
-                  >
-                    <ArticleCard
-                      doc={article as CardPostData}
-                      relationTo="articles"
-                      className="h-full"
-                    />
-                    {volumeForArticle && volumeHref && (
-                      <p className="px-4 pb-3 text-xs text-muted-foreground">
-                        Volume{' '}
-                        <Link href={volumeHref} className="underline-offset-2 hover:underline">
-                          {volumeForArticle.title ?? volumeForArticle.slug}
-                        </Link>
-                      </p>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
+              return (
+                <AuthorArticleCard
+                  key={article.id}
+                  article={article}
+                  volume={
+                    volumeForArticle
+                      ? { slug: volumeForArticle.slug, title: volumeForArticle.title }
+                      : null
+                  }
+                />
+              )
+            })}
           </div>
         )}
       </section>
