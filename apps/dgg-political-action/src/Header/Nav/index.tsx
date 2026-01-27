@@ -6,36 +6,19 @@ import type { Header as HeaderType } from '@/payload-types'
 
 import { CMSLink } from '@/components/Link'
 import Link from 'next/link'
-import { colors } from '@/styles/colors'
+import { SearchIcon } from 'lucide-react'
 
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   const navItems = data?.navItems || []
-  const discordLink = data?.discordLink || '/'
 
   return (
-    <nav className="flex gap-6 items-center">
+    <nav className="flex gap-3 items-center">
       {navItems.map(({ link }, i) => {
-        return (
-          <CMSLink 
-            key={i} 
-            {...link} 
-            appearance="link"
-            className="font-medium hover:opacity-70 transition-opacity"
-          />
-        )
+        return <CMSLink key={i} {...link} appearance="link" />
       })}
-      
-      {/* Discord Button */}
-      <Link 
-        href={discordLink}
-        className="px-6 py-2 rounded font-medium hover:opacity-90 transition-opacity"
-        style={{ 
-          backgroundColor: colors.brand.red,
-          color: colors.brand.white,
-          fontFamily: 'var(--font-departure-mono), monospace'
-        }}
-      >
-        Join the discord
+      <Link href="/search">
+        <span className="sr-only">Search</span>
+        <SearchIcon className="w-5 text-primary" />
       </Link>
     </nav>
   )
