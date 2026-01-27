@@ -75,5 +75,27 @@
     "rateLimit": {
       "minTimeout": 30
     }
+  },
+  "roles": {
+    "COORDINATOR": {
+      "id": "1347653968641134683",
+      "name": "Coordinator"
+    },
+    "TEAM_LEAD": {
+      "id": "1385639570007396524",
+      "name": "Team Lead"
+    },
+    "ORGANIZER": {
+      "id": "1356880811156307988",
+      "name": "Organizer"
+    },
+    "DIRECTOR": {
+      "id": "1356880586916102197",
+      "name": "Director"
+    },
+    "ADMIN": {
+      "id": "1347656064900006000",
+      "name": "Admin"
+    }
   }
 }
