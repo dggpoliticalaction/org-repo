@@ -1,4 +1,4 @@
-import { TwitterEmbed } from '@/components/TwitterEmbed'
+import { TwitterEmbed } from '@repo/ui/components/TwitterEmbed'
 import type { TwitterEmbedBlock as TwitterEmbedBlockProps } from 'src/payload-types'
 
 type Props = {

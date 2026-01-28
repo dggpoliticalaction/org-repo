@@ -68,6 +68,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@repo/ui": "workspace:*",
     "@tailwindcss/typography": "^0.5.19",
     "@types/escape-html": "^1.0.4",
     "@types/node": "22.5.4",
