@@ -1,5 +1,29 @@
-import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
-
+import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
+import { editorFieldLevel } from '@/access/editor'
+import { editorOrSelf, restrictWritersToDraftOnly } from '@/access/editorOrSelf'
+import { writer } from '@/access/writer'
+import { Banner } from '@/blocks/Banner/config'
+import { BlueSkyEmbed } from '@/blocks/BlueSkyEmbed/config'
+import { Code } from '@/blocks/Code/config'
+import { FootnoteBlock } from '@/blocks/Footnote/config'
+import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
+import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { RedditEmbed } from '@/blocks/RedditEmbed/config'
+import { SquiggleRule } from '@/blocks/SquiggleRule/config'
+import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
+import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
+import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
+import { generateFootnotes } from '@/collections/Articles/hooks/generateFootnotes'
+import { footnotesArrayField } from '@/fields/footnotes'
+import { type Article } from '@/payload-types'
+import { generatePreviewPath } from '@/utilities/generatePreviewPath'
+import {
+  MetaDescriptionField,
+  MetaImageField,
+  MetaTitleField,
+  OverviewField,
+  PreviewField,
+} from '@payloadcms/plugin-seo/fields'
 import {
   AlignFeature,
   BlockquoteFeature,
@@ -18,34 +42,10 @@ import {
   SuperscriptFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-
-import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
-import { Banner } from '@/blocks/Banner/config'
-import { Code } from '@/blocks/Code/config'
-import { MediaBlock } from '@/blocks/MediaBlock/config'
-
-import { slugField } from '@/fields/slug'
-import { revalidateArticle, revalidateDelete } from './hooks/revalidateArticle'
+import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
+import { slugField } from 'payload'
 import { populateAuthors } from './hooks/populateAuthors'
-import { generatePreviewPath } from '@/utilities/generatePreviewPath'
-import {
-  MetaDescriptionField,
-  MetaImageField,
-  MetaTitleField,
-  OverviewField,
-  PreviewField,
-} from '@payloadcms/plugin-seo/fields'
-import { editorOrSelf, restrictWritersToDraftOnly } from '@/access/editorOrSelf'
-import { writer } from '@/access/writer'
-import { editorFieldLevel } from '@/access/editor'
-import { type Article } from '@/payload-types'
-import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
-import { SquiggleRule } from '@/blocks/SquiggleRule/config'
-import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
-import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
-import { RedditEmbed } from '@/blocks/RedditEmbed/config'
-import { BlueSkyEmbed } from '@/blocks/BlueSkyEmbed/config'
-import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
+import { revalidateArticle, revalidateDelete } from './hooks/revalidateArticle'
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
@@ -58,19 +58,16 @@ export const Articles: CollectionConfig = {
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
-      url: ({ data, req }) => {
-        const path = generatePreviewPath({
-          slug: typeof data?.slug === 'string' ? data.slug : '',
+      url: ({ data, req }) =>
+        generatePreviewPath({
+          slug: data?.slug,
           collection: 'articles',
           req,
-        })
-
-        return path
-      },
+        }),
     },
     preview: (data, { req }) =>
       generatePreviewPath({
-        slug: typeof data?.slug === 'string' ? data.slug : '',
+        slug: data?.slug as string,
         collection: 'articles',
         req,
       }),
@@ -114,7 +111,7 @@ export const Articles: CollectionConfig = {
                         BlueSkyEmbed,
                         TikTokEmbed,
                       ],
-                      inlineBlocks: [InlineMathBlock],
+                      inlineBlocks: [InlineMathBlock, FootnoteBlock],
                     }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
@@ -235,7 +232,8 @@ export const Articles: CollectionConfig = {
         },
       ],
     },
-    ...slugField(),
+    footnotesArrayField(),
+    slugField(),
   ],
   hooks: {
     beforeChange: [
@@ -248,6 +246,7 @@ export const Articles: CollectionConfig = {
           }
         }
       },
+      generateFootnotes,
     ],
     afterChange: [revalidateArticle],
     afterRead: [populateAuthors],

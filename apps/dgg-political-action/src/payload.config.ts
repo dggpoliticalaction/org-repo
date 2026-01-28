@@ -1,7 +1,7 @@
 // storage-adapter-import-placeholder
+import { postgresAdapter } from '@payloadcms/db-postgres'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 
-import sharp from 'sharp' // sharp-import
 import path from 'path'
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { buildConfig, PayloadRequest } from 'payload'
@@ -20,6 +20,22 @@ import { getServerSideURL } from './utilities/getURL'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+// Database adapter selection based on environment
+// Use SQLite for staging/preview (embedded database, no separate container needed)
+// Use PostgreSQL for production (scalable, robust)
+const databaseAdapter =
+  process.env.DATABASE_ADAPTER === 'sqlite'
+    ? sqliteAdapter({
+        client: {
+          url: process.env.DATABASE_URI || 'file:./dgg-political-action.db',
+        },
+      })
+    : postgresAdapter({
+        pool: {
+          connectionString: process.env.DATABASE_URI,
+        },
+      })
 
 export default buildConfig({
   admin: {
@@ -60,11 +76,7 @@ export default buildConfig({
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
-  db: sqliteAdapter({
-    client: {
-      url: process.env.DATABASE_URI || '',
-    },
-  }),
+  db: databaseAdapter,
   collections: [Pages, Posts, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
@@ -73,7 +85,6 @@ export default buildConfig({
     // storage-adapter-placeholder
   ],
   secret: process.env.PAYLOAD_SECRET,
-  sharp,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

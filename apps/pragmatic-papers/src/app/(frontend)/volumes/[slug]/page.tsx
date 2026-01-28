@@ -86,7 +86,7 @@ export default async function VolumePage({
   const actualArticles = articles?.filter((article) => typeof article !== 'number')
 
   return (
-    <div className="pb-16 max-w-3xl px-4 mx-auto">
+    <div className="mx-auto max-w-3xl px-4 pb-16">
       <PageClient />
 
       {/* Allows redirects for valid pages too */}
@@ -100,7 +100,7 @@ export default async function VolumePage({
               <h1 className="mb-6 text-3xl md:text-5xl lg:text-6xl">{`Volume ${toRoman(Number(volume.slug))}`}</h1>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-4 md:gap-16 justify-center">
+            <div className="flex flex-col justify-center gap-4 md:flex-row md:gap-16">
               {publishedAt && (
                 <div className="flex flex-col gap-1">
                   <p className="text-sm">Date Published</p>
@@ -112,13 +112,13 @@ export default async function VolumePage({
         </div>
       </div>
       {editorsNote && (
-        <div className="w-full container">
+        <div className="container w-full">
           <RichText className="w-full" enableGutter={false} data={editorsNote} />
         </div>
       )}
-      <Squiggle className="w-1/2 h-6 mx-auto" />
+      <Squiggle className="mx-auto h-6 w-1/2" />
       <div className="flex flex-col items-center gap-4 pt-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
           {actualArticles?.map((article) => (
             <ArticleCard key={article.id} doc={article} relationTo="articles" />
           ))}

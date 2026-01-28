@@ -8,6 +8,6 @@ export const RedditEmbed: Block = {
       name: 'url',
       type: 'text',
       required: true,
-    }
-  ]
+    },
+  ],
 }

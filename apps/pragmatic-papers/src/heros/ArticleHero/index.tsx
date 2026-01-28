@@ -23,19 +23,19 @@ export const ArticleHero: React.FC<{
           resource={heroImage}
         />
       )}
-      <div className="z-10 relative pb-4 flex-col dark:text-white">
-        <h1 className="mb-6 text-4xl text-center font-bold">{title}</h1>
+      <div className="relative z-10 flex-col pb-4 dark:text-white">
+        <h1 className="mb-6 text-center text-4xl font-bold">{title}</h1>
         {hasAuthors && (
           <div className="text-center text-lg">
             <p>by {formatAuthors(populatedAuthors)}</p>
           </div>
         )}
         {publishedAt && (
-          <div className="text-sm text-center italic">
+          <div className="text-center text-sm italic">
             <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
           </div>
         )}
-        <Squiggle className="h-6 mx-auto max-w-xs" />
+        <Squiggle className="mx-auto h-6 max-w-xs" />
       </div>
     </div>
   )

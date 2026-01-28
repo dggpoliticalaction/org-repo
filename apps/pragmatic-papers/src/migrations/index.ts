@@ -1,12 +1,16 @@
-import * as migration_20250703_194534_init from './20250703_194534_init'
-import * as migration_20250705_042423_volume_update from './20250705_042423_volume_update'
-import * as migration_20250705_185916_add_media_access_control from './20250705_185916_add_media_access_control'
-import * as migration_20250705_213213_remove_unused_volume_relation from './20250705_213213_remove_unused_volume_relation'
-import * as migration_20250707_010714_remove_posts from './20250707_010714_remove_posts'
-import * as migration_20250708_020740_update_payload from './20250708_020740_update_payload'
-import * as migration_20250708_042411_update_media_image_sizes from './20250708_042411_update_media_image_sizes'
-import * as migration_20250708_212941_remove_medium_compat_size from './20250708_212941_remove_medium_compat_size'
-import * as migration_20250726_210541_implement_webhooks from './20250726_210541_implement_webhooks'
+import * as migration_20250703_194534_init from './20250703_194534_init';
+import * as migration_20250705_042423_volume_update from './20250705_042423_volume_update';
+import * as migration_20250705_185916_add_media_access_control from './20250705_185916_add_media_access_control';
+import * as migration_20250705_213213_remove_unused_volume_relation from './20250705_213213_remove_unused_volume_relation';
+import * as migration_20250707_010714_remove_posts from './20250707_010714_remove_posts';
+import * as migration_20250708_020740_update_payload from './20250708_020740_update_payload';
+import * as migration_20250708_042411_update_media_image_sizes from './20250708_042411_update_media_image_sizes';
+import * as migration_20250708_212941_remove_medium_compat_size from './20250708_212941_remove_medium_compat_size';
+import * as migration_20250726_210541_implement_webhooks from './20250726_210541_implement_webhooks';
+import * as migration_20260109_081334_upgrade_payload_3_70_0 from './20260109_081334_upgrade_payload_3_70_0';
+import * as migration_20260110_021152_discord_header_button from './20260110_021152_discord_header_button';
+import * as migration_20260111_055750_slug_field_update from './20260111_055750_slug_field_update';
+import * as migration_20260117_020339_footnotes from './20260117_020339_footnotes';
 
 export const migrations = [
   {
@@ -54,4 +58,24 @@ export const migrations = [
     down: migration_20250726_210541_implement_webhooks.down,
     name: '20250726_210541_implement_webhooks',
   },
-]
+  {
+    up: migration_20260109_081334_upgrade_payload_3_70_0.up,
+    down: migration_20260109_081334_upgrade_payload_3_70_0.down,
+    name: '20260109_081334_upgrade_payload_3_70_0',
+  },
+  {
+    up: migration_20260110_021152_discord_header_button.up,
+    down: migration_20260110_021152_discord_header_button.down,
+    name: '20260110_021152_discord_header_button',
+  },
+  {
+    up: migration_20260111_055750_slug_field_update.up,
+    down: migration_20260111_055750_slug_field_update.down,
+    name: '20260111_055750_slug_field_update',
+  },
+  {
+    up: migration_20260117_020339_footnotes.up,
+    down: migration_20260117_020339_footnotes.down,
+    name: '20260117_020339_footnotes'
+  },
+];
