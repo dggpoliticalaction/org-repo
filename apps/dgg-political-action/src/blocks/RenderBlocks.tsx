@@ -8,6 +8,7 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { ContributorsBlock } from '@/blocks/Contributors/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { DonateBlock } from '@/blocks/Donate/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -16,6 +17,7 @@ const blockComponents = {
   cta: CallToActionBlock,
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
+  donate: DonateBlock
 }
 
 export const RenderBlocks: React.FC<{
