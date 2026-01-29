@@ -29,6 +29,7 @@ import { BlocksFeatureClient as BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { default as default_80e5fdb60df5ca84bc544282529ce3be } from '../../../blocks/Math/AdminComponent'
 import { FootnoteLabel as FootnoteLabel_2845bbc260cbb0202b7c6ec591d344dc } from '@/blocks/Footnote/FootnoteLabel'
 import { AlignFeatureClient as AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { TitleFieldComponent as TitleFieldComponent_5f38144a1c30609056230d234808018e } from '@/collections/Volumes/components/TitleField'
 import { NumberSlugComponent as NumberSlugComponent_9af2be3fdd2360e76f1d8ca7ed18129c } from '@/fields/numberSlug/SlugComponent'
 import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/RowLabel'
 import { ColorPickerComponent as ColorPickerComponent_825329501481bc0e04bb53c75811d326 } from '@/fields/colorPicker/ColorPickerComponent'
@@ -70,6 +71,7 @@ export const importMap = {
   "/blocks/Math/AdminComponent#default": default_80e5fdb60df5ca84bc544282529ce3be,
   "@/blocks/Footnote/FootnoteLabel#FootnoteLabel": FootnoteLabel_2845bbc260cbb0202b7c6ec591d344dc,
   "@payloadcms/richtext-lexical/client#AlignFeatureClient": AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "@/collections/Volumes/components/TitleField#TitleFieldComponent": TitleFieldComponent_5f38144a1c30609056230d234808018e,
   "@/fields/numberSlug/SlugComponent#NumberSlugComponent": NumberSlugComponent_9af2be3fdd2360e76f1d8ca7ed18129c,
   "@/Header/RowLabel#RowLabel": RowLabel_ec255a65fa6fa8d1faeb09cf35284224,
   "@/fields/colorPicker/ColorPickerComponent#ColorPickerComponent": ColorPickerComponent_825329501481bc0e04bb53c75811d326,
