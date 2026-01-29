@@ -19,25 +19,33 @@ export function BlueSkyEmbedClient({ html }: BlueSkyEmbedClientProps): React.Rea
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
+    if (window.bluesky?.scan) setReady(true)
+  }, [])
+
+  useEffect(() => {
     if (!ready || !ref.current) return
 
-    window.bluesky?.scan?.(ref.current)
-  }, [ready])
+    const id = requestAnimationFrame(() => {
+      window.bluesky?.scan?.(ref.current!)
+    })
+
+    return () => cancelAnimationFrame(id)
+  }, [ready, html])
 
   return (
-    <div className="my-4 flex items-center justify-center">
+    <>
       <Script
-        id="bluesky-embed"
+        id="bluesky-script"
         src="https://embed.bsky.app/static/embed.js"
         strategy="afterInteractive"
-        onLoad={() => setReady(true)}
+        onReady={() => setReady(true)}
       />
       <div
         ref={ref}
-        className="min-h-[171px] w-full max-w-[550px] [&>div]:!my-0"
+        className="min-h-[171px] w-full md:w-[550px] [&>div]:!my-0"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: html }}
       />
-    </div>
+    </>
   )
 }

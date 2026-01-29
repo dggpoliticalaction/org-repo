@@ -1,5 +1,5 @@
 'use client'
-import { detectSocialPlatform } from '@/utilities/detectSocialPlatform'
+import { detectPlatform } from '@/blocks/SocialEmbed/helpers/detectPlatform'
 import { useDebounce } from '@/utilities/useDebounce'
 import { TextField, useField } from '@payloadcms/ui'
 import { CheckCircle2, XCircle } from 'lucide-react'
@@ -23,7 +23,7 @@ export const URLField: TextFieldClientComponent = ({ path, ...props }) => {
       return setIsValid(null)
     }
 
-    const platform = detectSocialPlatform(debouncedValue)
+    const platform = detectPlatform(debouncedValue)
     setIsValid(platform !== null)
   }, [debouncedValue])
 

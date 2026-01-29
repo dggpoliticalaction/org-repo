@@ -82,6 +82,11 @@ export type SupportedTimezones =
   | 'Pacific/Noumea'
   | 'Pacific/Auckland'
   | 'Pacific/Fiji';
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SocialPlatform".
+ */
+export type SocialPlatform = 'bluesky' | 'reddit' | 'tiktok' | 'twitter' | 'youtube';
 
 export interface Config {
   auth: {
@@ -1986,6 +1991,21 @@ export interface SquiggleRuleBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SocialEmbedSnapshot".
+ */
+export interface SocialEmbedSnapshot {
+  status?: ('ok' | 'not_found' | 'forbidden' | 'error') | null;
+  fetchedAt?: string | null;
+  providerName?: string | null;
+  providerURL?: string | null;
+  authorName?: string | null;
+  authorURL?: string | null;
+  title?: string | null;
+  html?: string | null;
+  thumbnailURL?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "SocialEmbedBlock".
  */
 export interface SocialEmbedBlock {
@@ -1993,6 +2013,8 @@ export interface SocialEmbedBlock {
    * Paste a Twitter/X, YouTube, Reddit, BlueSky, or TikTok URL.
    */
   url: string;
+  platform: SocialPlatform;
+  snapshot?: SocialEmbedSnapshot;
   hideMedia?: boolean | null;
   hideThread?: boolean | null;
   id?: string | null;

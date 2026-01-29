@@ -1,0 +1,77 @@
+import { type OEmbedOptionsBase, SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
+import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
+import type { OEmbedRich } from '@/blocks/SocialEmbed/helpers/oEmbed'
+import type { Prettify } from '@/utilities/prettify'
+import { failure, type Result } from '@/utilities/results'
+import sanitizeHtml from 'sanitize-html'
+
+export type BlueskyOEmbedResponse = Prettify<OEmbedRich & { url: string }>
+
+/**
+ * Bluesky oEmbed request options.
+ * Extends the base with Bluesky-specific parameters.
+ */
+export type BlueskyOEmbedOptions = OEmbedOptionsBase
+
+/**
+ * Bluesky adapter extending SocialAdapter with Bluesky-specific options and response types.
+ */
+class BlueskyAdapter extends SocialAdapter<BlueskyOEmbedOptions, BlueskyOEmbedResponse> {
+  isValidUrl(url: string): boolean {
+    try {
+      const urlObj = new URL(url)
+      if (urlObj.hostname !== 'bsky.app') return false
+      // Supported pattern: /profile/*/post/*
+      return urlObj.pathname.startsWith('/profile/') && urlObj.pathname.includes('/post/')
+    } catch {
+      return false
+    }
+  }
+
+  async getOEmbed(
+    options: BlueskyOEmbedOptions,
+    init?: RequestInit,
+  ): Promise<Result<BlueskyOEmbedResponse, Error>> {
+    const { url, maxwidth = 550 } = options
+    if (!this.isValidUrl(url)) return failure(new Error('Invalid Bluesky post URL.'))
+
+    const endpoint = new URL('https://embed.bsky.app/oembed')
+    endpoint.searchParams.set('url', url)
+    endpoint.searchParams.set('format', 'json')
+    endpoint.searchParams.set('maxwidth', String(maxwidth))
+
+    return await fetchOEmbed<BlueskyOEmbedResponse>(endpoint, init)
+  }
+
+  async sanitizeHtml(html: string): Promise<string> {
+    return sanitizeHtml(html, {
+      allowedTags: ['blockquote', 'p', 'a'],
+      allowedAttributes: {
+        blockquote: [
+          'class',
+          'data-bluesky-uri',
+          'data-bluesky-cid',
+          'data-bluesky-embed-color-mode',
+        ],
+        p: ['lang'],
+        a: ['href'],
+      },
+      allowedSchemes: ['http', 'https'],
+      // Allow data URIs on blockquote for Bluesky embeds
+      allowProtocolRelative: false,
+    })
+  }
+}
+
+export const blueskyAdapter = new BlueskyAdapter()
+
+export function fetchBlueskyOEmbed(
+  options: BlueskyOEmbedOptions,
+  init?: RequestInit,
+): Promise<Result<BlueskyOEmbedResponse, Error>> {
+  return blueskyAdapter.getOEmbed(options, init)
+}
+
+export function sanitizeBlueskyHtml(html: string): Promise<string> {
+  return blueskyAdapter.sanitizeHtml(html)
+}

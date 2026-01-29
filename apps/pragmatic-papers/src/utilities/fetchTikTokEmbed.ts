@@ -3,7 +3,6 @@ import type { Prettify } from '@/utilities/prettify'
 import { failure, success, type Result } from '@/utilities/results'
 import { sanitizeOEmbed } from './sanitizeOEmbed'
 
-
 export function parseTikTokPostId(input: string): string | null {
   if (!URL.canParse(input)) return null
   return new URL(input).pathname.match(/\/video\/(\d+)/)?.[1] ?? null
@@ -25,9 +24,7 @@ interface TikTokIFrameSettings {
   closed_caption?: 0 | 1
 }
 
-export function createTikTokSrc(
-  postId: string,
-  settings: TikTokIFrameSettings = {}): string {
+export function createTikTokSrc(postId: string, settings: TikTokIFrameSettings = {}): string {
   const {
     controls = 1,
     progress_bar = 1,
@@ -61,7 +58,7 @@ export function createTikTokSrc(
 }
 
 /**
- * Patch the TikTok URL to the correct hostname. 
+ * Patch the TikTok URL to the correct hostname.
  * Because TikTok doesn't support the `tiktok.com` hostname without a subdomain prefix in the oEmbed endpoint.
  */
 function patchTikTokUrl(url: string): string {
@@ -81,19 +78,18 @@ interface TikTokEmbedOptions {
 export async function fetchTikTokEmbed(
   url: string,
   options: TikTokEmbedOptions = {},
-): Promise<Result<{ html: string; title: string; authorName: string; }, Error>> {
+): Promise<Result<{ html: string; title: string; authorName: string }, Error>> {
   const { revalidate = 60 * 60 * 24 } = options
 
   const endpoint = new URL('https://www.tiktok.com/oembed')
   endpoint.searchParams.set('url', patchTikTokUrl(url))
 
   try {
-
     const res = await fetch(endpoint, { next: { revalidate } })
-    if (!res.ok) throw new Error("Failed to fetch TikTok oEmbed.")
+    if (!res.ok) throw new Error('Failed to fetch TikTok oEmbed.')
 
     const { html, title, author_name } = (await res.json()) as TikTokResponse
-    if (!html) throw new Error("Invalid TikTok oEmbed response.")
+    if (!html) throw new Error('Invalid TikTok oEmbed response.')
 
     return success({ html: sanitizeOEmbed(html), title, authorName: author_name })
   } catch (error) {

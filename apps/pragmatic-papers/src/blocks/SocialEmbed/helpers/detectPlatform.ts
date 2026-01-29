@@ -1,4 +1,4 @@
-export type SocialPlatform = 'twitter' | 'youtube' | 'reddit' | 'bluesky' | 'tiktok'
+import type { SocialPlatform } from '@/payload-types'
 
 interface DomainRule {
   root: string
@@ -71,7 +71,7 @@ function parseURL(input: string): URL | null {
  *
  * This structure enables fast lookup of a platform based on a given, normalized hostname.
  */
-const HOSTNAMES: ReadonlyMap<string, SocialPlatform> = (() => {
+const hostnames: ReadonlyMap<string, SocialPlatform> = (() => {
   const map = new Map<string, SocialPlatform>()
 
   for (const rule of RULES) {
@@ -94,9 +94,9 @@ const HOSTNAMES: ReadonlyMap<string, SocialPlatform> = (() => {
  * @param input - The input string to analyze.
  * @returns The detected platform or null if not recognized.
  */
-export function detectSocialPlatform(input: string): SocialPlatform | null {
+export function detectPlatform(input: string): SocialPlatform | null {
   const url = parseURL(input)
   if (!url) return null
   const host = normalizeHost(url.hostname)
-  return HOSTNAMES.get(host) ?? null
+  return hostnames.get(host) ?? null
 }
