@@ -26,7 +26,10 @@ export const generateTitle: FieldHook<Volume, string, Volume> = async ({ value, 
       where: {
         id: { in: articleIds },
       },
-      limit: articleIds.length,
+      select: {
+        id: true,
+        title: true,
+      },
       sort: '-publishedAt', // Sort by published date, newest first
     })
 
@@ -35,12 +38,10 @@ export const generateTitle: FieldHook<Volume, string, Volume> = async ({ value, 
     }
 
     // Sort articles by the order they appear in the articleIds array
-    const sortedArticles = articleIds
-      .map((id) => articles.docs.find((doc) => doc.id === id))
-      .filter(Boolean)
+    const sortedArticles = articleIds.map((id) => articles.docs.find((doc) => doc.id === id))
 
     // Generate title by joining article titles with " • "
-    const generatedTitle = sortedArticles.map((article) => article?.title ?? '').join(' • ')
+    const generatedTitle = sortedArticles.map((article) => article!.title).join(' • ')
 
     return generatedTitle
   } catch (error) {
