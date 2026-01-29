@@ -1,6 +1,6 @@
+import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
 import { createTikTokSrc, fetchTikTokEmbed, parseTikTokPostId } from '@/utilities/fetchTikTokEmbed'
 import { isFailure } from '@/utilities/results'
-import { EmbedError } from '../EmbedError'
 
 export async function TikTokEmbedBlock({ url }: { url: string }): Promise<React.ReactNode> {
   const result = await fetchTikTokEmbed(url)

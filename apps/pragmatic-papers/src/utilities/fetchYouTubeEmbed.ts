@@ -1,6 +1,10 @@
 'use server'
 
-import { isOEmbedVideo, type OEmbedRequestQuery, type OEmbedVideo } from '@/utilities/oEmbed'
+import {
+  isOEmbedVideo,
+  type OEmbedRequestQuery,
+  type OEmbedVideo,
+} from '@/blocks/SocialEmbed/helpers/oEmbed'
 import type { Prettify } from '@/utilities/prettify'
 import { failure, type Result, success } from '@/utilities/results'
 

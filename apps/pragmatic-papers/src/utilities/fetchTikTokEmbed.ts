@@ -1,7 +1,7 @@
-import type { OEmbedVideo } from '@/utilities/oEmbed'
+import type { OEmbedThumbnail, OEmbedVideo } from '@/blocks/SocialEmbed/helpers/oEmbed'
 import type { Prettify } from '@/utilities/prettify'
 import { failure, success, type Result } from '@/utilities/results'
-import { sanitizeOEmbed } from './sanitizeOEmbed'
+import { sanitizeOEmbed } from '@/utilities/sanitizeOEmbed'
 
 export function parseTikTokPostId(input: string): string | null {
   if (!URL.canParse(input)) return null
@@ -69,7 +69,7 @@ function patchTikTokUrl(url: string): string {
   return urlNext.toString()
 }
 
-type TikTokResponse = Prettify<Required<OEmbedVideo<true>>>
+type TikTokResponse = Prettify<OEmbedVideo & OEmbedThumbnail>
 
 interface TikTokEmbedOptions {
   revalidate?: number
@@ -78,7 +78,7 @@ interface TikTokEmbedOptions {
 export async function fetchTikTokEmbed(
   url: string,
   options: TikTokEmbedOptions = {},
-): Promise<Result<{ html: string; title: string; authorName: string }, Error>> {
+): Promise<Result<{ html: string }, Error>> {
   const { revalidate = 60 * 60 * 24 } = options
 
   const endpoint = new URL('https://www.tiktok.com/oembed')
@@ -88,10 +88,10 @@ export async function fetchTikTokEmbed(
     const res = await fetch(endpoint, { next: { revalidate } })
     if (!res.ok) throw new Error('Failed to fetch TikTok oEmbed.')
 
-    const { html, title, author_name } = (await res.json()) as TikTokResponse
+    const { html } = (await res.json()) as TikTokResponse
     if (!html) throw new Error('Invalid TikTok oEmbed response.')
 
-    return success({ html: sanitizeOEmbed(html), title, authorName: author_name })
+    return success({ html: sanitizeOEmbed(html) })
   } catch (error) {
     return failure(error instanceof Error ? error : new Error(String(error)))
   }
