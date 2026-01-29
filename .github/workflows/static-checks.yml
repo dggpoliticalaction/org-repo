@@ -50,9 +50,6 @@ jobs:
       with:
         node-version: 24.x
 
-    - name: Check Pragmatic Papers
-      run: pnpm --filter pragmatic-papers run migrate:create --skip-empty
-
     - name: Pragmatic Papers Migration Check
       run: |
         output=$(pnpm --filter pragmatic-papers run migrate:create --skip-empty 2>&1)
