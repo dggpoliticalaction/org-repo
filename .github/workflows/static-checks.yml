@@ -47,7 +47,9 @@ jobs:
         node-version: 24.x
 
     - name: Pragmatic Papers Migration Check
-      working-directory: ./apps/pragmatic-papers
+      working-directory: apps/pragmatic-papers
+      env:
+        PAYLOAD_CONFIG_PATH: src/payload.config.ts
       run: |
         output=$(pnpm run migrate:create --skip-empty 2>&1)
         echo "$output"
@@ -60,7 +62,9 @@ jobs:
         fi
 
     - name: DGG Political Action Migration Check
-      working-directory: ./apps/dgg-political-action
+      working-directory: apps/dgg-political-action
+      env:
+        PAYLOAD_CONFIG_PATH: src/payload.config.ts
       run: |
         output=$(pnpm run migrate:create --skip-empty 2>&1)
         echo "$output"
