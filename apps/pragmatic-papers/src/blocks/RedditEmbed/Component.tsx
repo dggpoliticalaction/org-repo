@@ -1,4 +1,4 @@
-import { RedditEmbed } from '@/components/RedditEmbed'
+import { RedditEmbed } from '@repo/ui/components/RedditEmbed'
 import type { RedditEmbedBlock as RedditEmbedBlockProps } from 'src/payload-types'
 
 type Props = {

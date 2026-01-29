@@ -1,4 +1,4 @@
-import { YouTubeEmbed } from '@/components/YouTubeEmbed'
+import { YouTubeEmbed } from '@repo/ui/components/YouTubeEmbed'
 import type { YouTubeEmbedBlock as YouTubeEmbedBlockProps } from 'src/payload-types'
 
 type Props = {

@@ -1,4 +1,4 @@
-import { TikTokEmbed } from '@/components/TikTokEmbed'
+import { TikTokEmbed } from '@repo/ui/components/TikTokEmbed'
 import type { TikTokEmbedBlock as TikTokEmbedBlockProps } from 'src/payload-types'
 
 type Props = {

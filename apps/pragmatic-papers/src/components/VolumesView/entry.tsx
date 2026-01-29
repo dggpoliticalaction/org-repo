@@ -11,8 +11,6 @@ import { enUS } from 'date-fns/locale'
 
 import { toRoman } from '@/utilities/toRoman'
 
-// import { Media } from '@/components/Media'
-
 export type EntryVolumeData = Pick<
   Volume,
   'slug' | 'description' | 'title' | 'volumeNumber' | 'publishedAt'
