@@ -38,6 +38,10 @@ jobs:
   migration-required:
     name: Migration Required
     runs-on: ubuntu-latest
+    env:
+      PAYLOAD_SECRET: PAYLOAD_SECRET
+      CRON_SECRET: CRON_SECRET
+      PREVIEW_SECRET: PREVIEW_SECRET
     steps:
     - uses: actions/checkout@v5
 
