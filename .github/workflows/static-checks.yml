@@ -47,7 +47,7 @@ jobs:
         node-version: 24.x
 
     - name: Pragmatic Papers Migration Check
-      working-directory: apps/pragmatic-papers
+      working-directory: ./apps/pragmatic-papers
       run: |
         output=$(pnpm run migrate:create --skip-empty 2>&1)
         echo "$output"
@@ -60,7 +60,7 @@ jobs:
         fi
 
     - name: DGG Political Action Migration Check
-      working-directory: apps/dgg-political-action
+      working-directory: ./apps/dgg-political-action
       run: |
         output=$(pnpm run migrate:create --skip-empty 2>&1)
         echo "$output"
