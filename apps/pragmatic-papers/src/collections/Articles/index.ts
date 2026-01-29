@@ -7,12 +7,12 @@ import { Code } from '@/blocks/Code/config'
 import { FootnoteBlock } from '@/blocks/Footnote/config'
 import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
-import { LegacyBlueSkyEmbed } from '@/blocks/SocialEmbed/BlueSkyEmbed/config'
 import { SocialEmbed } from '@/blocks/SocialEmbed/config'
-import { LegacyRedditEmbed } from '@/blocks/SocialEmbed/RedditEmbed/config'
-import { LegacyTikTokEmbed } from '@/blocks/SocialEmbed/TikTokEmbed/config'
-import { LegacyTwitterEmbed } from '@/blocks/SocialEmbed/TwitterEmbed/config'
-import { LegacyYouTubeEmbed } from '@/blocks/SocialEmbed/YouTubeEmbed/config'
+import { LegacyBlueskyEmbed } from '@/blocks/SocialEmbed/embeds/BlueskyEmbed/config'
+import { LegacyRedditEmbed } from '@/blocks/SocialEmbed/embeds/RedditEmbed/config'
+import { LegacyTikTokEmbed } from '@/blocks/SocialEmbed/embeds/TikTokEmbed/config'
+import { LegacyTwitterEmbed } from '@/blocks/SocialEmbed/embeds/TwitterEmbed/config'
+import { LegacyYouTubeEmbed } from '@/blocks/SocialEmbed/embeds/YouTubeEmbed/config'
 import { SquiggleRule } from '@/blocks/SquiggleRule/config'
 import { generateFootnotes } from '@/collections/Articles/hooks/generateFootnotes'
 import { populateAuthors } from '@/collections/Articles/hooks/populateAuthors'
@@ -108,11 +108,11 @@ export const Articles: CollectionConfig = {
                         SquiggleRule,
                         SocialEmbed,
                         // Legacy blocks for backward compatibility with existing content
+                        LegacyBlueskyEmbed,
+                        LegacyRedditEmbed,
+                        LegacyTikTokEmbed,
                         LegacyTwitterEmbed,
                         LegacyYouTubeEmbed,
-                        LegacyRedditEmbed,
-                        LegacyBlueSkyEmbed,
-                        LegacyTikTokEmbed,
                       ],
                       inlineBlocks: [InlineMathBlock, FootnoteBlock],
                     }),

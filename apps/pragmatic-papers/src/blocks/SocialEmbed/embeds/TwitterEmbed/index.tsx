@@ -1,4 +1,4 @@
-import { TwitterEmbedClient } from '@/blocks/SocialEmbed/TwitterEmbed/client'
+import { TwitterEmbedClient } from '@/blocks/SocialEmbed/embeds/TwitterEmbed/client'
 import type { SocialEmbedBlock } from '@/payload-types'
 import { fetchTwitterEmbed } from '@/utilities/fetchTwitterEmbed'
 import { isFailure } from '@/utilities/results'

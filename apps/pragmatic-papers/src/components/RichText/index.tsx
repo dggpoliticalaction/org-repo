@@ -5,7 +5,7 @@ import { FootnoteBlock } from '@/blocks/Footnote/Component'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import {
-  BlueSkyEmbedBlock,
+  BlueskyEmbedBlock,
   RedditEmbedBlock,
   SocialEmbedBlock,
   TikTokEmbedBlock,
@@ -91,7 +91,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       <RedditEmbedBlock {...node.fields} />
     ),
     blueSkyEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <BlueSkyEmbedBlock {...node.fields} />
+      <BlueskyEmbedBlock {...node.fields} />
     ),
     tiktokEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
       <TikTokEmbedBlock {...node.fields} />

@@ -1,5 +1,5 @@
 import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
-import { RedditEmbedClient } from '@/blocks/SocialEmbed/RedditEmbed/client'
+import { RedditEmbedClient } from '@/blocks/SocialEmbed/embeds/RedditEmbed/client'
 import type { SocialEmbedBlock } from '@/payload-types'
 import { fetchRedditEmbed } from '@/utilities/fetchRedditEmbed'
 import { isFailure } from '@/utilities/results'

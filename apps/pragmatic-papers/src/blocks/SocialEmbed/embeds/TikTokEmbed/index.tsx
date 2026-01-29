@@ -1,5 +1,3 @@
-// src/blocks/SocialEmbed/TikTokEmbed/TikTokPlayerBlock.tsx (Server Component)
-
 import { createTikTokSrc, fetchTikTokEmbed, parseTikTokPostId } from '@/utilities/fetchTikTokEmbed'
 import { isFailure } from '@/utilities/results'
 import { EmbedError } from '../EmbedError'

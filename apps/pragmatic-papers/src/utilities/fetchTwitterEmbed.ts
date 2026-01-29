@@ -1,6 +1,10 @@
 'use server'
 
-import { isOEmbedRich, type OEmbedRequestQuery, type OEmbedRich } from '@/utilities/oEmbed'
+import {
+  isOEmbedRich,
+  type OEmbedRequestQuery,
+  type OEmbedRich,
+} from '@/blocks/SocialEmbed/helpers/oEmbed'
 import { failure, success, type Result } from '@/utilities/results'
 import { sanitizeOEmbed } from '@/utilities/sanitizeOEmbed'
 

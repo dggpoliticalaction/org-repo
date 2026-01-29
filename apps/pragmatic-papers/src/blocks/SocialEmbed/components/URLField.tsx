@@ -1,11 +1,11 @@
 'use client'
+import '@/blocks/SocialEmbed/components/URLField.scss'
 import { detectPlatform } from '@/blocks/SocialEmbed/helpers/detectPlatform'
 import { useDebounce } from '@/utilities/useDebounce'
 import { TextField, useField } from '@payloadcms/ui'
 import { CheckCircle2, XCircle } from 'lucide-react'
 import type { TextFieldClientComponent } from 'payload'
 import { useEffect, useState } from 'react'
-import './URLField.scss'
 
 /**
  * A custom TextField component for validating social media URLs.

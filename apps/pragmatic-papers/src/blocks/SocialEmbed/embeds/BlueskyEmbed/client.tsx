@@ -10,11 +10,11 @@ declare global {
     }
   }
 }
-interface BlueSkyEmbedClientProps {
+interface BlueskyEmbedClientProps {
   html: string
 }
 
-export function BlueSkyEmbedClient({ html }: BlueSkyEmbedClientProps): React.ReactNode {
+export function BlueskyEmbedClient({ html }: BlueskyEmbedClientProps): React.ReactNode {
   const ref = useRef<HTMLDivElement>(null)
   const [ready, setReady] = useState(false)
 

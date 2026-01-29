@@ -21,7 +21,7 @@ export const SocialEmbed: Block = {
         description: 'Paste a Twitter/X, YouTube, Reddit, BlueSky, or TikTok URL.',
         components: {
           Field: {
-            path: '@/blocks/SocialEmbed/URLField#URLField',
+            path: '@/blocks/SocialEmbed/components/URLField#URLField',
           },
         },
       },

@@ -1,4 +1,4 @@
-import { EmbedError } from '@/blocks/SocialEmbed/EmbedError'
+import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
 import type { SocialEmbedBlock } from '@/payload-types'
 import { fetchYouTubeEmbed } from '@/utilities/fetchYouTubeEmbed'
 import { isFailure } from '@/utilities/results'

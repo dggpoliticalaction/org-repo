@@ -2,12 +2,12 @@ import {
   fetchBlueskyOEmbed,
   sanitizeBlueskyHtml,
 } from '@/blocks/SocialEmbed/adapters/bluesky.adapter'
-import { BlueSkyEmbedClient } from '@/blocks/SocialEmbed/BlueSkyEmbed/client'
+import { BlueskyEmbedClient } from '@/blocks/SocialEmbed/embeds/BlueskyEmbed/client'
 import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
 import type { SocialEmbedBlock } from '@/payload-types'
 import { isFailure } from '@/utilities/results'
 
-export async function BlueSkyEmbedBlock({
+export async function BlueskyEmbedBlock({
   url,
   snapshot,
 }: SocialEmbedBlock): Promise<React.ReactNode> {
@@ -20,5 +20,5 @@ export async function BlueSkyEmbedBlock({
     html = await sanitizeBlueskyHtml(result.value.html)
   }
 
-  return <BlueSkyEmbedClient html={html} />
+  return <BlueskyEmbedClient html={html} />
 }

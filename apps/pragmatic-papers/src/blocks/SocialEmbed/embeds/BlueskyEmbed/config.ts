@@ -5,12 +5,12 @@ import type { Block } from 'payload'
  * @deprecated Use the SocialEmbed block instead.
  * @see SocialEmbedBlock
  */
-export const LegacyBlueSkyEmbed: Block = {
+export const LegacyBlueskyEmbed: Block = {
   slug: 'blueSkyEmbed',
   // interfaceName: 'BlueSkyEmbedBlock',
   labels: {
-    singular: 'BlueSky Embed (Legacy)',
-    plural: 'BlueSky Embeds (Legacy)',
+    singular: 'Bluesky Embed (Legacy)',
+    plural: 'Bluesky Embeds (Legacy)',
   },
   admin: {
     group: 'Legacy',
