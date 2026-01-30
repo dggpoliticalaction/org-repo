@@ -1,3 +1,5 @@
+import { SocialAdapter, type OEmbedOptionsBase } from '@/blocks/SocialEmbed/adapters/base.adapter'
+import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
 import type { OEmbedThumbnail, OEmbedVideo } from '@/blocks/SocialEmbed/helpers/oEmbed'
 import type { Prettify } from '@/utilities/prettify'
 import { failure, success, type Result } from '@/utilities/results'
@@ -8,7 +10,7 @@ export function parseTikTokPostId(input: string): string | null {
   return new URL(input).pathname.match(/\/video\/(\d+)/)?.[1] ?? null
 }
 
-interface TikTokIFrameSettings {
+export interface TikTokIFrameSettings {
   controls?: 0 | 1
   progress_bar?: 0 | 1
   play_button?: 0 | 1
@@ -24,7 +26,7 @@ interface TikTokIFrameSettings {
   closed_caption?: 0 | 1
 }
 
-export function createTikTokSrc(postId: string, settings: TikTokIFrameSettings = {}): string {
+export function buildTikTokSrc(postId: string, settings: TikTokIFrameSettings = {}): URL {
   const {
     controls = 1,
     progress_bar = 1,
@@ -54,12 +56,12 @@ export function createTikTokSrc(postId: string, settings: TikTokIFrameSettings =
   src.searchParams.set('rel', String(rel))
   src.searchParams.set('native_context_menu', String(native_context_menu))
   src.searchParams.set('closed_caption', String(closed_caption))
-  return src.toString()
+  return src
 }
 
 /**
  * Patch the TikTok URL to the correct hostname.
- * Because TikTok doesn't support the `tiktok.com` hostname without a subdomain prefix in the oEmbed endpoint.
+ * TikTok's oEmbed endpoint requires `www.tiktok.com` rather than `tiktok.com`.
  */
 function patchTikTokUrl(url: string): string {
   const urlNext = new URL(url)
@@ -69,30 +71,55 @@ function patchTikTokUrl(url: string): string {
   return urlNext.toString()
 }
 
-type TikTokResponse = Prettify<OEmbedVideo & OEmbedThumbnail>
+export type TikTokOEmbedResponse = Prettify<OEmbedVideo & OEmbedThumbnail>
 
-interface TikTokEmbedOptions {
+export interface TikTokOEmbedOptions extends OEmbedOptionsBase {
   revalidate?: number
 }
 
-export async function fetchTikTokEmbed(
-  url: string,
-  options: TikTokEmbedOptions = {},
-): Promise<Result<{ html: string }, Error>> {
-  const { revalidate = 60 * 60 * 24 } = options
-
-  const endpoint = new URL('https://www.tiktok.com/oembed')
-  endpoint.searchParams.set('url', patchTikTokUrl(url))
-
-  try {
-    const res = await fetch(endpoint, { next: { revalidate } })
-    if (!res.ok) throw new Error('Failed to fetch TikTok oEmbed.')
-
-    const { html } = (await res.json()) as TikTokResponse
-    if (!html) throw new Error('Invalid TikTok oEmbed response.')
-
-    return success({ html: sanitizeOEmbed(html) })
-  } catch (error) {
-    return failure(error instanceof Error ? error : new Error(String(error)))
+class TikTokAdapter extends SocialAdapter<TikTokOEmbedOptions, TikTokOEmbedResponse> {
+  isValidUrl(url: string): boolean {
+    return parseTikTokPostId(url) !== null
   }
+
+  buildUrl(options: TikTokOEmbedOptions): URL {
+    const endpoint = new URL('https://www.tiktok.com/oembed')
+    endpoint.searchParams.set('url', patchTikTokUrl(options.url))
+    return endpoint
+  }
+
+  async getOEmbed(
+    options: TikTokOEmbedOptions,
+    init?: RequestInit,
+  ): Promise<Result<TikTokOEmbedResponse, Error>> {
+    if (!this.isValidUrl(options.url)) return failure(new Error('Invalid TikTok post URL.'))
+
+    const revalidate = options.revalidate ?? 60 * 60 * 24
+    const initWithCache = { ...init, next: { revalidate } } as RequestInit
+
+    const result = await fetchOEmbed<TikTokOEmbedResponse>(this.buildUrl(options), initWithCache)
+    if (!result.success) return result
+
+    const { html } = result.value
+    if (!html) return failure(new Error('Invalid TikTok oEmbed response.'))
+
+    return success({ ...result.value, html: sanitizeOEmbed(html) })
+  }
+
+  async sanitize(html: string): Promise<string> {
+    return sanitizeOEmbed(html)
+  }
+}
+
+export const tiktokAdapter = new TikTokAdapter()
+
+export function fetchTikTokOEmbed(
+  options: TikTokOEmbedOptions,
+  init?: RequestInit,
+): Promise<Result<TikTokOEmbedResponse, Error>> {
+  return tiktokAdapter.getOEmbed(options, init)
+}
+
+export function sanitizeTikTokHtml(html: string): Promise<string> {
+  return tiktokAdapter.sanitize(html)
 }
