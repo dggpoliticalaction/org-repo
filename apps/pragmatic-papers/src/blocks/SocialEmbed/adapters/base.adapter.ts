@@ -49,5 +49,5 @@ export abstract class SocialAdapter<
    * @param html - The HTML string to sanitize
    * @returns The sanitized HTML string
    */
-  abstract sanitizeHtml(html: string): Promise<string>
+  abstract sanitize(html: string): Promise<string>
 }

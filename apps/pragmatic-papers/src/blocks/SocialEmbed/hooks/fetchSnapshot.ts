@@ -61,7 +61,7 @@ export async function fetchSnapshot({
 
   let html: string | undefined
   if (isOEmbedRich(result.value)) {
-    html = await adapter.sanitizeHtml(result.value.html)
+    html = await adapter.sanitize(result.value.html)
   }
 
   let thumbnailURL: string | undefined

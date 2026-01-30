@@ -28,22 +28,24 @@ class BlueskyAdapter extends SocialAdapter<BlueskyOEmbedOptions, BlueskyOEmbedRe
     }
   }
 
-  async getOEmbed(
-    options: BlueskyOEmbedOptions,
-    init?: RequestInit,
-  ): Promise<Result<BlueskyOEmbedResponse, Error>> {
+  buildUrl(options: BlueskyOEmbedOptions): URL {
     const { url, maxwidth = 550 } = options
-    if (!this.isValidUrl(url)) return failure(new Error('Invalid Bluesky post URL.'))
-
     const endpoint = new URL('https://embed.bsky.app/oembed')
     endpoint.searchParams.set('url', url)
     endpoint.searchParams.set('format', 'json')
     endpoint.searchParams.set('maxwidth', String(maxwidth))
-
-    return await fetchOEmbed<BlueskyOEmbedResponse>(endpoint, init)
+    return endpoint
   }
 
-  async sanitizeHtml(html: string): Promise<string> {
+  async getOEmbed(
+    options: BlueskyOEmbedOptions,
+    init?: RequestInit,
+  ): Promise<Result<BlueskyOEmbedResponse, Error>> {
+    if (!this.isValidUrl(options.url)) return failure(new Error('Invalid Bluesky post URL.'))
+    return await fetchOEmbed<BlueskyOEmbedResponse>(this.buildUrl(options), init)
+  }
+
+  async sanitize(html: string): Promise<string> {
     return sanitizeHtml(html, {
       allowedTags: ['blockquote', 'p', 'a'],
       allowedAttributes: {
@@ -73,5 +75,5 @@ export function fetchBlueskyOEmbed(
 }
 
 export function sanitizeBlueskyHtml(html: string): Promise<string> {
-  return blueskyAdapter.sanitizeHtml(html)
+  return blueskyAdapter.sanitize(html)
 }

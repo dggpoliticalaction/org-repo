@@ -13,7 +13,10 @@ interface PlatformRule {
 const RULES: readonly PlatformRule[] = [
   {
     platform: 'twitter',
-    domains: [{ root: 'twitter.com', subdomains: ['www', 'mobile'] }],
+    domains: [
+      { root: 'twitter.com', subdomains: ['www', 'mobile'] },
+      { root: 'x.com', subdomains: ['www'] },
+    ],
   },
   {
     platform: 'youtube',
