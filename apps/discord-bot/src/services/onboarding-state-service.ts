@@ -32,11 +32,7 @@ export class OnboardingStateService {
    * Queue a channel creation for a member who just received a team role.
    * The channel will be created after the configured delay period.
    */
-  public queueChannelCreation(
-    member: GuildMember,
-    teamName: string,
-    roleId: string,
-  ): void {
+  public queueChannelCreation(member: GuildMember, teamName: string, roleId: string): void {
     const key = this.getKey(member.guild.id, member.id, roleId)
 
     // If already pending for this role, don't queue again
@@ -73,11 +69,7 @@ export class OnboardingStateService {
   /**
    * Cancel a pending channel creation if the role was removed during the delay period.
    */
-  public cancelPendingCreation(
-    guildId: string,
-    memberId: string,
-    roleId: string,
-  ): boolean {
+  public cancelPendingCreation(guildId: string, memberId: string, roleId: string): boolean {
     const key = this.getKey(guildId, memberId, roleId)
     const pending = this.pendingOnboardings.get(key)
 
@@ -119,11 +111,7 @@ export class OnboardingStateService {
   /**
    * Check if there's a pending creation for a specific role.
    */
-  public hasPendingCreation(
-    guildId: string,
-    memberId: string,
-    roleId: string,
-  ): boolean {
+  public hasPendingCreation(guildId: string, memberId: string, roleId: string): boolean {
     const key = this.getKey(guildId, memberId, roleId)
     return this.pendingOnboardings.has(key)
   }

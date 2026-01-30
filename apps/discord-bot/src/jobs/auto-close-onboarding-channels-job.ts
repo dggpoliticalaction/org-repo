@@ -84,9 +84,7 @@ export class AutoCloseOnboardingChannelsJob extends Job {
               })
 
               // Delete the channel
-              await textChannel.delete(
-                `Auto-closed after ${autoCloseDays} days of inactivity`,
-              )
+              await textChannel.delete(`Auto-closed after ${autoCloseDays} days of inactivity`)
 
               closedCount++
             }

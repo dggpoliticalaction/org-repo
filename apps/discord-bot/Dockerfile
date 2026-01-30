@@ -1,4 +1,9 @@
-FROM node:16
+FROM node:22
+
+ENV PNPM_HOME="/root/.local/share/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh -
 
 # Create app directory
 WORKDIR /app
@@ -7,16 +12,16 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install packages
-RUN npm install
+RUN pnpm install
 
 # Copy the app code
 COPY . .
 
 # Build the project
-RUN npm run build
+RUN pnpm run commands:register
 
 # Expose ports
 EXPOSE 3001
 
 # Run the application
-CMD [ "node", "dist/start-manager.js" ]
+CMD [ "node", "--enable-source-maps", "dist/start-manager.js" ]

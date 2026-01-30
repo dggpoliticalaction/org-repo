@@ -54,9 +54,7 @@ export class GuildMemberUpdateHandler implements EventHandler {
     // Handle added team roles - check if role matches any interest role in teams config
     for (const [roleId, role] of addedRoles) {
       // Find team name by checking if role name matches any interest role in teams config
-      const teamName = Object.keys(teams).find(
-        (team) => teams[team] === role.name,
-      )
+      const teamName = Object.keys(teams).find((team) => teams[team] === role.name)
 
       if (teamName) {
         Logger.info(
@@ -69,20 +67,14 @@ export class GuildMemberUpdateHandler implements EventHandler {
 
     // Handle removed team roles - cancel pending channel creation
     for (const [roleId, role] of removedRoles) {
-      const teamName = Object.keys(teams).find(
-        (team) => teams[team] === role.name,
-      )
+      const teamName = Object.keys(teams).find((team) => teams[team] === role.name)
 
       if (teamName) {
         Logger.info(
           `Detected team interest role removal: ${newMember.user.tag} lost "${role.name}" (team: ${teamName})`,
         )
 
-        this.onboardingStateService.cancelPendingCreation(
-          newMember.guild.id,
-          newMember.id,
-          roleId,
-        )
+        this.onboardingStateService.cancelPendingCreation(newMember.guild.id, newMember.id, roleId)
       }
     }
   }

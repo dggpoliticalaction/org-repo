@@ -14,7 +14,6 @@ import { Logger } from './index.js'
 
 const require = createRequire(import.meta.url)
 const Config = require('../../config/config.json')
-const TeamMessages = require('../../config/team-messages.json')
 
 export class ChannelCreationService {
   /**
@@ -23,10 +22,7 @@ export class ChannelCreationService {
    * @param teamName The team name to find the lead for
    * @returns The team lead member, or null if not found
    */
-  private static async findTeamLead(
-    guild: Guild,
-    teamName: string,
-  ): Promise<GuildMember | null> {
+  private static async findTeamLead(guild: Guild, teamName: string): Promise<GuildMember | null> {
     try {
       // Find the team role (e.g., "Dev Team")
       const teamRole = guild.roles.cache.find((role) => role.name === teamName)
@@ -39,12 +35,8 @@ export class ChannelCreationService {
       // Find the Team Lead role - use team-specific leadRoleName if available, otherwise fall back to global config
       const teamConfig = Config.teams?.[teamName]
       const teamLeadRoleName =
-        teamConfig?.leadRoleName ||
-        Config.onboarding?.teamLeadRoleName ||
-        'Team Lead'
-      const teamLeadRole = guild.roles.cache.find(
-        (role) => role.name === teamLeadRoleName,
-      )
+        teamConfig?.leadRoleName || Config.onboarding?.teamLeadRoleName || 'Team Lead'
+      const teamLeadRole = guild.roles.cache.find((role) => role.name === teamLeadRoleName)
 
       if (!teamLeadRole) {
         Logger.warn(`Team Lead role "${teamLeadRoleName}" not found`)
@@ -62,9 +54,7 @@ export class ChannelCreationService {
           guildMember.roles.cache.has(teamLeadRole.id) &&
           !guildMember.user.bot
         ) {
-          Logger.info(
-            `Found team lead for ${teamName}: ${guildMember.user.tag}`,
-          )
+          Logger.info(`Found team lead for ${teamName}: ${guildMember.user.tag}`)
           return guildMember
         }
       }
@@ -129,8 +119,7 @@ export class ChannelCreationService {
       // Find or create category
       const categoryName = Config.onboarding?.categoryName || 'onboarding'
       let category = guild.channels.cache.find(
-        (channel) =>
-          channel.type === ChannelType.GuildCategory && channel.name === categoryName,
+        (channel) => channel.type === ChannelType.GuildCategory && channel.name === categoryName,
       ) as CategoryChannel | undefined
 
       if (!category) {
@@ -209,31 +198,11 @@ export class ChannelCreationService {
       const teamLead = await this.findTeamLead(member.guild, teamName)
       const teamLeadMention = teamLead ? ` ${teamLead}` : ''
 
-      // Look up the message for this team
-      const message = TeamMessages[teamName] as string | undefined
-
-      if (!message) {
-        Logger.warn(
-          `No welcome message configured for team "${teamName}". Sending default message.`,
-        )
-        // Send a default welcome message
-        const defaultEmbed = new EmbedBuilder()
-          .setTitle(`Welcome to ${teamName}!`)
-          .setDescription(
-            `Hello ${member}!${teamLeadMention ? `\n\nYour team lead${teamLeadMention} will help you get started.` : ''}\n\nThank you for expressing interest in the **${teamName}** team.`,
-          )
-          .setColor(0x4caf50)
-          .setTimestamp()
-
-        await channel.send({ embeds: [defaultEmbed] })
-        return
-      }
-
-      // Send the configured welcome message as an embed
+      // Send a default welcome message
       const embed = new EmbedBuilder()
         .setTitle(`Welcome to ${teamName}!`)
         .setDescription(
-          `Hello ${member}!${teamLeadMention ? `\n\nYour team lead${teamLeadMention} will help you get started.` : ''}\n\n${message}`,
+          `Hello ${member}!${teamLeadMention ? `\n\nYour team lead${teamLeadMention} will help you get started.` : ''}\n\nThank you for expressing interest in the **${teamName}** team.`,
         )
         .setColor(0x4caf50)
         .setTimestamp()

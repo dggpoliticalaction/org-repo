@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ChannelType,
+  DiscordAPIError,
   GuildChannel,
   GuildMember,
   PermissionFlagsBits,
@@ -224,4 +225,27 @@ export function createMockCommand(overrides: any = {}): any {
     },
     ...overrides,
   }
+}
+
+/**
+ * Creates a mock DiscordAPIError that passes instanceof checks
+ */
+export function createMockDiscordAPIError(
+  code: number,
+  message: string = 'Discord API Error',
+  status: number = 404,
+  method: string = 'GET',
+  url: string = '/api',
+): any {
+  // Create an error that extends Error and has DiscordAPIError in its prototype chain
+  const error = new Error(message)
+  Object.setPrototypeOf(error, DiscordAPIError.prototype)
+
+  // Set the required properties using defineProperty to avoid getter issues
+  Object.defineProperty(error, 'code', { value: code, writable: true, configurable: true })
+  Object.defineProperty(error, 'status', { value: status, writable: true, configurable: true })
+  Object.defineProperty(error, 'method', { value: method, writable: true, configurable: true })
+  Object.defineProperty(error, 'url', { value: url, writable: true, configurable: true })
+
+  return error
 }

@@ -15,10 +15,10 @@ describe('RegexUtils', () => {
       expect(result).toBe('123456789012345678')
     })
 
-    it('should return undefined for invalid Discord ID', () => {
+    it('should return empty string for invalid Discord ID', () => {
       const input = 'User ID: 12345'
       const result = RegexUtils.discordId(input)
-      expect(result).toBeUndefined()
+      expect(result).toBe('')
     })
   })
 })

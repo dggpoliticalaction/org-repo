@@ -113,9 +113,7 @@ async function start(): Promise<void> {
   const reactionHandler = new ReactionHandler(reactions, eventDataService)
 
   // Jobs
-  const jobs: Job[] = [
-    new AutoCloseOnboardingChannelsJob(client),
-  ]
+  const jobs: Job[] = [new AutoCloseOnboardingChannelsJob(client)]
 
   // Bot
   const bot = new Bot(
