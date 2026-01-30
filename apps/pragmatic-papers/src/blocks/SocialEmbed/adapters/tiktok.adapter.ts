@@ -2,8 +2,8 @@ import { SocialAdapter, type OEmbedOptionsBase } from '@/blocks/SocialEmbed/adap
 import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
 import type { OEmbedThumbnail, OEmbedVideo } from '@/blocks/SocialEmbed/helpers/oEmbed'
 import type { Prettify } from '@/utilities/prettify'
-import { failure, success, type Result } from '@/utilities/results'
-import { sanitizeOEmbed } from '@/utilities/sanitizeOEmbed'
+import { failure, type Result } from '@/utilities/results'
+import sanitizeHtml from 'sanitize-html'
 
 export function parseTikTokPostId(input: string): string | null {
   if (!URL.canParse(input)) return null
@@ -26,7 +26,7 @@ export interface TikTokIFrameSettings {
   closed_caption?: 0 | 1
 }
 
-export function buildTikTokSrc(postId: string, settings: TikTokIFrameSettings = {}): URL {
+export function buildTikTokSrc(postId: string, settings: TikTokIFrameSettings = {}): string {
   const {
     controls = 1,
     progress_bar = 1,
@@ -56,7 +56,7 @@ export function buildTikTokSrc(postId: string, settings: TikTokIFrameSettings = 
   src.searchParams.set('rel', String(rel))
   src.searchParams.set('native_context_menu', String(native_context_menu))
   src.searchParams.set('closed_caption', String(closed_caption))
-  return src
+  return src.toString()
 }
 
 /**
@@ -93,21 +93,21 @@ class TikTokAdapter extends SocialAdapter<TikTokOEmbedOptions, TikTokOEmbedRespo
     init?: RequestInit,
   ): Promise<Result<TikTokOEmbedResponse, Error>> {
     if (!this.isValidUrl(options.url)) return failure(new Error('Invalid TikTok post URL.'))
-
-    const revalidate = options.revalidate ?? 60 * 60 * 24
-    const initWithCache = { ...init, next: { revalidate } } as RequestInit
-
-    const result = await fetchOEmbed<TikTokOEmbedResponse>(this.buildUrl(options), initWithCache)
-    if (!result.success) return result
-
-    const { html } = result.value
-    if (!html) return failure(new Error('Invalid TikTok oEmbed response.'))
-
-    return success({ ...result.value, html: sanitizeOEmbed(html) })
+    return await fetchOEmbed<TikTokOEmbedResponse>(this.buildUrl(options), init)
   }
 
   async sanitize(html: string): Promise<string> {
-    return sanitizeOEmbed(html)
+    return sanitizeHtml(html, {
+      allowedTags: ['blockquote', 'section', 'p', 'a'],
+      allowedAttributes: {
+        blockquote: ['class', 'cite', 'data-video-id', 'data-embed-from', 'style'],
+        section: [],
+        p: [],
+        a: ['target', 'title', 'href'],
+      },
+      allowedSchemes: ['http', 'https'],
+      allowProtocolRelative: false,
+    })
   }
 }
 
