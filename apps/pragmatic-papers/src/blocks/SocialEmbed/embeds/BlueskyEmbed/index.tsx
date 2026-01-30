@@ -21,17 +21,19 @@ export async function BlueskyEmbedBlock({
     html = await sanitizeBlueskyHtml(result.value.html)
   }
 
-  const targetId = id!
+  if (!id) {
+    return <EmbedError url={url} message="Embed Block ID not found" platform="Bluesky" />
+  }
 
   return (
     <div className="my-4 flex min-h-[480px] items-center justify-center">
       <div
-        id={targetId}
+        id={id}
         className="w-full max-w-[550px] [&>div]:!my-0"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: html }}
       />
-      <BlueskyEmbedClient targetId={targetId} />
+      <BlueskyEmbedClient targetId={id} />
     </div>
   )
 }

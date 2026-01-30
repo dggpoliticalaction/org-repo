@@ -2,10 +2,10 @@ import {
   fetchTwitterOEmbed,
   sanitizeTwitterHtml,
 } from '@/blocks/SocialEmbed/adapters/twitter.adapter'
+import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
 import { TwitterEmbedClient } from '@/blocks/SocialEmbed/embeds/TwitterEmbed/client'
 import type { SocialEmbedBlock } from '@/payload-types'
 import { isFailure } from '@/utilities/results'
-import { EmbedError } from '../EmbedError'
 
 export async function TwitterEmbedBlock({
   url,
@@ -23,17 +23,19 @@ export async function TwitterEmbedBlock({
     html = await sanitizeTwitterHtml(result.value.html)
   }
 
-  const targetId = id!
+  if (!id) {
+    return <EmbedError url={url} message="Embed Block ID not found" platform="X.com" />
+  }
 
   return (
     <div className="my-4 flex min-h-[480px] items-center justify-center">
       <div
-        id={targetId}
+        id={id}
         className="w-full max-w-[550px] [&>div]:!my-0"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: html }}
       />
-      <TwitterEmbedClient targetId={targetId} />
+      <TwitterEmbedClient targetId={id} />
     </div>
   )
 }
