@@ -12,6 +12,7 @@ export async function TwitterEmbedBlock({
   snapshot,
   hideMedia,
   hideThread,
+  id,
 }: SocialEmbedBlock): Promise<React.ReactNode> {
   let html = snapshot?.html
   if (!html) {
@@ -22,5 +23,17 @@ export async function TwitterEmbedBlock({
     html = await sanitizeTwitterHtml(result.value.html)
   }
 
-  return <TwitterEmbedClient html={html} />
+  const targetId = id!
+
+  return (
+    <div className="my-4 flex min-h-[480px] items-center justify-center">
+      <div
+        id={targetId}
+        className="w-full max-w-[550px] [&>div]:!my-0"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+      <TwitterEmbedClient targetId={targetId} />
+    </div>
+  )
 }
