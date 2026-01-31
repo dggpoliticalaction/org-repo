@@ -1,13 +1,19 @@
+import {
+  fetchYouTubeOEmbed,
+  sanitizeYouTubeHtml,
+} from '@/blocks/SocialEmbed/adapters/youtube.adapter'
 import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
 import type { SocialEmbedBlock } from '@/payload-types'
-import { fetchYouTubeEmbed } from '@/utilities/fetchYouTubeEmbed'
 import { isFailure } from '@/utilities/results'
 
-export async function YouTubeEmbedBlock({ url }: SocialEmbedBlock): Promise<React.ReactNode> {
-  const result = await fetchYouTubeEmbed({ url })
-
-  if (isFailure(result)) {
-    return <EmbedError url={url} message={result.error.message} platform="YouTube" />
+export async function YouTubeEmbedBlock({ url, snapshot }: SocialEmbedBlock): Promise<React.ReactNode> {
+  let html = snapshot?.html
+  if (!html) {
+    const result = await fetchYouTubeOEmbed({ url })
+    if (isFailure(result)) {
+      return <EmbedError url={url} message={result.error.message} platform="YouTube" />
+    }
+    html = await sanitizeYouTubeHtml(result.value.html)
   }
 
   return (
@@ -17,7 +23,7 @@ export async function YouTubeEmbedBlock({ url }: SocialEmbedBlock): Promise<Reac
           <div
             className="absolute inset-0 [&>iframe]:h-full [&>iframe]:w-full"
             // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: result.value }}
+            dangerouslySetInnerHTML={{ __html: html }}
           />
         </div>
       </div>
