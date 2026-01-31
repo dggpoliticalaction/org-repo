@@ -1,0 +1,278 @@
+import type { Article, SocialEmbedBlock, User } from '@/payload-types'
+import type { Payload } from 'payload'
+
+/**
+ * One example URL per social media platform.
+ */
+const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot'>[] = [
+  {
+    platform: 'bluesky',
+    url: 'https://bsky.app/profile/destiny.gg/post/3lbjlth3tnc2k',
+    snapshot: {
+      status: 'ok',
+      fetchedAt: new Date().toISOString(),
+      providerName: 'Bluesky Social',
+      providerURL: 'https://bsky.app',
+      authorName: 'Destiny | Steven Bonnell II (@destiny.gg)',
+      authorURL: 'https://bsky.app/profile/destiny.gg',
+      html: '<blockquote class="bluesky-embed" data-bluesky-uri="at://did:plc:zdkax6bg6xowo4yqsp5thweh/app.bsky.feed.post/3lbjlth3tnc2k" data-bluesky-cid="bafyreicokpbosckviuzdmxkimydk6onewbylqhrlafhahgj3eh6msaz7ie" data-bluesky-embed-color-mode="system"><p lang="en">I&#x27;m him, I&#x27;m that guy.</p>&mdash; Destiny | Steven Bonnell II (<a href="https://bsky.app/profile/did:plc:zdkax6bg6xowo4yqsp5thweh?ref_src=embed">@destiny.gg</a>) <a href="https://bsky.app/profile/did:plc:zdkax6bg6xowo4yqsp5thweh/post/3lbjlth3tnc2k?ref_src=embed">November 22, 2024 at 12:48 AM</a></blockquote>',
+    },
+  },
+  {
+    platform: 'reddit',
+    url: 'https://www.reddit.com/r/news/comments/jptqj9/joe_biden_elected_president_of_the_united_states/',
+  },
+  {
+    platform: 'tiktok',
+    url: 'https://www.tiktok.com/@scout2015/video/6718335390845095173',
+    snapshot: {
+      status: 'ok',
+      fetchedAt: new Date().toISOString(),
+      providerName: 'TikTok',
+      providerURL: 'https://www.tiktok.com',
+      authorName: 'Scout, Suki & Stella',
+      authorURL: 'https://www.tiktok.com/@scout2015',
+      title:
+        "Scramble up ur name & I'll try to guess it😍❤️ #foryoupage #petsoftiktok #aesthetic",
+      html: '<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@scout2015/video/6718335390845095173" data-video-id="6718335390845095173" data-embed-from="oembed" style="max-width:605px; min-width:325px;"> <section> <a target="_blank" title="@scout2015" href="https://www.tiktok.com/@scout2015?refer=embed">@scout2015</a> <p>Scramble up ur name & I\'ll try to guess it😍❤️ <a title="foryoupage" target="_blank" href="https://www.tiktok.com/tag/foryoupage?refer=embed">#foryoupage</a> <a title="petsoftiktok" target="_blank" href="https://www.tiktok.com/tag/petsoftiktok?refer=embed">#petsoftiktok</a> <a title="aesthetic" target="_blank" href="https://www.tiktok.com/tag/aesthetic?refer=embed">#aesthetic</a></p> <a target="_blank" title="♬ original sound - tiff" href="https://www.tiktok.com/music/original-sound-6689804660171082501?refer=embed">♬ original sound - tiff</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>',
+      thumbnailURL:
+        'https://p19-common-sign.tiktokcdn-us.com/tos-maliva-p-0068/2367c7d45cf54a1397abd0e72bf22eac~tplv-tiktokx-origin.image?dr=9636&x-expires=1770062400&x-signature=SJ79uSqdQ0dBdJ52CgSnAHzr3VQ%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=useast5',
+    },
+  },
+  {
+    platform: 'twitter',
+    url: 'https://twitter.com/Interior/status/463440424141459456',
+    snapshot: {
+      status: 'ok',
+      fetchedAt: new Date().toISOString(),
+      providerName: 'Twitter',
+      providerURL: 'https://twitter.com',
+      authorName: 'US Department of the Interior',
+      authorURL: 'https://twitter.com/Interior',
+      html: '<blockquote class="twitter-tweet" data-width="550" data-lang="en" data-dnt="true"><p lang="en" dir="ltr">Sunsets don&#39;t get much better than this one over <a href="https://twitter.com/GrandTetonNPS?ref_src=twsrc%5Etfw">@GrandTetonNPS</a>. <a href="https://twitter.com/hashtag/nature?src=hash&amp;ref_src=twsrc%5Etfw">#nature</a> <a href="https://twitter.com/hashtag/sunset?src=hash&amp;ref_src=twsrc%5Etfw">#sunset</a> <a href="http://t.co/YuKy2rcjyU">pic.twitter.com/YuKy2rcjyU</a></p>&mdash; US Department of the Interior (@Interior) <a href="https://twitter.com/Interior/status/463440424141459456?ref_src=twsrc%5Etfw">May 5, 2014</a></blockquote>',
+    },
+  },
+  { platform: 'youtube', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+] as const
+
+const LOREM_PARAGRAPHS = [
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+  'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.',
+  'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus.',
+  'Nulla facilisi. Fusce consequat. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien nunc, congue vel, ornare at, varius non, magna.',
+  'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In hac habitasse platea dictumst. Aenean vestibulum.',
+]
+
+const createLipsumParagraph = (text: string) => ({
+  children: [
+    {
+      detail: 0,
+      format: 0,
+      mode: 'normal' as const,
+      style: '',
+      text,
+      type: 'text' as const,
+      version: 1,
+    },
+  ],
+  direction: 'ltr' as const,
+  format: '' as const,
+  indent: 0,
+  type: 'paragraph' as const,
+  version: 1,
+})
+
+type LipsumParagraph = ReturnType<typeof createLipsumParagraph>
+
+interface SocialEmbedBlockNode {
+  type: 'block'
+  fields: { blockType: 'socialEmbed'; url: string; platform: string; snapshot?: unknown; hideMedia?: boolean; hideThread?: boolean }
+  format: ''
+  version: 2
+}
+
+/**
+ * Creates article content with one social embed per platform, lorem ipsum between each.
+ */
+const createSocialEmbedContent = () => {
+  const lipsumBetween: LipsumParagraph[] = LOREM_PARAGRAPHS.map((text) => createLipsumParagraph(text))
+  const children: (LipsumParagraph | SocialEmbedBlockNode)[] = []
+
+  for (const item of SOCIAL_MEDIA_URLS) {
+    children.push(...lipsumBetween)
+    children.push({
+      type: 'block' as const,
+      fields: {
+        blockType: 'socialEmbed' as const,
+        url: item.url,
+        platform: item.platform,
+        snapshot: item.snapshot,
+        ...(item.platform === 'twitter' && {
+          hideMedia: false,
+          hideThread: true,
+        }),
+      },
+      format: '' as const,
+      version: 2,
+    })
+  }
+  children.push(...lipsumBetween)
+
+  return {
+    root: {
+      type: 'root',
+      children: [
+        ...children,
+        {
+          children: [],
+          direction: 'ltr' as const,
+          format: '' as const,
+          indent: 0,
+          type: 'paragraph',
+          version: 1,
+        },
+      ],
+      direction: 'ltr' as const,
+      format: '' as const,
+      indent: 0,
+      version: 1,
+    },
+  }
+}
+
+/**
+ * Maps platform to legacy blockType
+ */
+const getLegacyBlockType = (platform: string): string => {
+  switch (platform) {
+    case 'twitter':
+      return 'twitterEmbed'
+    case 'youtube':
+      return 'youtubeEmbed'
+    case 'reddit':
+      return 'redditEmbed'
+    case 'bluesky':
+      return 'blueSkyEmbed'
+    case 'tiktok':
+      return 'tiktokEmbed'
+    default:
+      throw new Error(`Unknown platform: ${platform}`)
+  }
+}
+
+interface LegacyEmbedBlockNode {
+  type: 'block'
+  fields: {
+    blockType: 'twitterEmbed' | 'youtubeEmbed' | 'redditEmbed' | 'blueSkyEmbed' | 'tiktokEmbed'
+    url: string
+    hideMedia?: boolean
+    hideThread?: boolean
+  }
+  format: ''
+  version: 2
+}
+
+/**
+ * Creates article content with legacy social media blocks (one per platform), lorem ipsum between each.
+ */
+const createLegacySocialEmbedContent = () => {
+  const lipsumBetween: LipsumParagraph[] = LOREM_PARAGRAPHS.map((text) => createLipsumParagraph(text))
+  const children: (LipsumParagraph | LegacyEmbedBlockNode)[] = []
+
+  for (const item of SOCIAL_MEDIA_URLS) {
+    children.push(...lipsumBetween)
+    children.push({
+      type: 'block' as const,
+      fields: {
+        blockType: getLegacyBlockType(item.platform ?? '') as
+          | 'twitterEmbed'
+          | 'youtubeEmbed'
+          | 'redditEmbed'
+          | 'blueSkyEmbed'
+          | 'tiktokEmbed',
+        url: item.url,
+        ...(item.platform === 'twitter' && {
+          hideMedia: false,
+          hideThread: false,
+        }),
+      },
+      format: '' as const,
+      version: 2,
+    })
+  }
+  children.push(...lipsumBetween)
+
+  return {
+    root: {
+      type: 'root',
+      children: [
+        ...children,
+        {
+          children: [],
+          direction: 'ltr' as const,
+          format: '' as const,
+          indent: 0,
+          type: 'paragraph',
+          version: 1,
+        },
+      ],
+      direction: 'ltr' as const,
+      format: '' as const,
+      indent: 0,
+      version: 1,
+    },
+  }
+}
+
+export const createSocialEmbedArticle = async (payload: Payload, writer: User): Promise<number> => {
+  if (!writer?.id) {
+    throw new Error('Writer must have an ID')
+  }
+
+  const article = await payload.create({
+    collection: 'articles',
+    data: {
+      title: 'Social Media Embed Test - All Variations',
+      content: createSocialEmbedContent() as Article['content'],
+      authors: [writer.id],
+      _status: 'published',
+      publishedAt: new Date().toISOString(),
+      slug: 'social-media-embed-test-all-variations',
+      meta: {
+        title: 'Social Media Embed Test - All Variations',
+        description:
+          'Test article containing all possible social media block variations from the HOSTNAMES map.',
+      },
+    },
+  })
+
+  return article.id
+}
+
+export const createLegacySocialEmbedArticle = async (
+  payload: Payload,
+  writer: User,
+): Promise<number> => {
+  if (!writer?.id) {
+    throw new Error('Writer must have an ID')
+  }
+
+  const article = await payload.create({
+    collection: 'articles',
+    data: {
+      title: 'Legacy Social Media Embed Test - All Variations',
+      content: createLegacySocialEmbedContent() as Article['content'],
+      authors: [writer.id],
+      _status: 'published',
+      publishedAt: new Date().toISOString(),
+      slug: 'legacy-social-media-embed-test-all-variations',
+      meta: {
+        title: 'Legacy Social Media Embed Test - All Variations',
+        description:
+          'Test article containing all legacy social media block variations using the old blockType structure (twitterEmbed, youtubeEmbed, etc.).',
+      },
+    },
+  })
+
+  return article.id
+}

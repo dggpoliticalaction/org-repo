@@ -1,7 +1,7 @@
 import type { Payload } from 'payload'
 import { createArticles } from './articles'
-import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from './blocks/socialEmbed'
 import { createFootnotesArticle } from './features/footnotes'
+import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from './features/social-embeds'
 import { homeStatic } from './home-static'
 import { createMedia } from './media'
 import { createUsers } from './users'
