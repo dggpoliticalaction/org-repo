@@ -63,7 +63,7 @@ const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot'>
       authorName: 'Rick Astley',
       authorURL: 'https://www.youtube.com/@RickAstleyYT',
       title: 'Rick Astley - Never Gonna Give You Up',
-      html: '<iframe width="200" height="150" src="https://www.youtube.com/embed/dQw4w9WgXcQ?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+      html: '<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
       thumbnailURL: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
     },
   },

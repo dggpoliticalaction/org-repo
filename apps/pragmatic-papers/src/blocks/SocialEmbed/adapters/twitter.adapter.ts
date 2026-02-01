@@ -1,5 +1,6 @@
-import { SocialAdapter, type OEmbedOptionsBase } from '@/blocks/SocialEmbed/adapters/base.adapter'
+import { SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
 import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
+import type { OEmbedRequestQuery } from '@/blocks/SocialEmbed/helpers/oEmbed'
 import { type OEmbedRich } from '@/blocks/SocialEmbed/helpers/oEmbed'
 import type { Prettify } from '@/utilities/prettify'
 import { failure, type Result } from '@/utilities/results'
@@ -48,7 +49,7 @@ export type TwitterOEmbedLang =
  * Twitter/X oEmbed request options.
  * Extends the base with Twitter-specific parameters.
  */
-export interface TwitterOEmbedOptions extends OEmbedOptionsBase {
+export interface TwitterOEmbedOptions extends OEmbedRequestQuery {
   hideMedia?: boolean | null
   hideThread?: boolean | null
   omitScript?: boolean

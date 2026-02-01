@@ -1,6 +1,6 @@
-import { SocialAdapter, type OEmbedOptionsBase } from '@/blocks/SocialEmbed/adapters/base.adapter'
+import { SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
 import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
-import type { OEmbedThumbnail, OEmbedVideo } from '@/blocks/SocialEmbed/helpers/oEmbed'
+import type { OEmbedRequestQuery, OEmbedThumbnail, OEmbedVideo } from '@/blocks/SocialEmbed/helpers/oEmbed'
 import type { Prettify } from '@/utilities/prettify'
 import { failure, type Result } from '@/utilities/results'
 import sanitizeHtml from 'sanitize-html'
@@ -71,11 +71,9 @@ function patchTikTokUrl(url: string): string {
   return urlNext.toString()
 }
 
-export type TikTokOEmbedResponse = Prettify<OEmbedVideo & OEmbedThumbnail>
+export type TikTokOEmbedOptions = OEmbedRequestQuery
 
-export interface TikTokOEmbedOptions extends OEmbedOptionsBase {
-  revalidate?: number
-}
+export type TikTokOEmbedResponse = Prettify<OEmbedVideo & OEmbedThumbnail>
 
 class TikTokAdapter extends SocialAdapter<TikTokOEmbedOptions, TikTokOEmbedResponse> {
   isValidUrl(url: string): boolean {

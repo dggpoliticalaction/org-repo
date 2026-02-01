@@ -1,28 +1,16 @@
-import type { OEmbedResponse } from '@/blocks/SocialEmbed/helpers/oEmbed'
+import type { OEmbedRequestQuery, OEmbedResponse } from '@/blocks/SocialEmbed/helpers/oEmbed'
 import type { Result } from '@/utilities/results'
-
-/**
- * Base shape for oEmbed request options.
- * All adapters accept at least this. Each adapter can extend this type
- * to add platform-specific oEmbed parameters (e.g. theme, hideMedia).
- */
-export interface OEmbedOptionsBase {
-  /** The URL of the post to fetch oEmbed data for. */
-  url: string
-  /** Maximum width of the embed. Common oEmbed parameter; adapters may ignore. */
-  maxwidth?: number
-}
 
 /**
  * Abstract base class for social media platform adapters.
  * Provides common functionality that all adapters can use.
  * Each platform extends this class with its own options and response types.
  *
- * @typeParam TOptions - Adapter-specific oEmbed options (extends OEmbedOptionsBase)
+ * @typeParam TOptions - Adapter-specific oEmbed options (extends OEmbedRequestQuery)
  * @typeParam TResponse - Adapter-specific oEmbed response (extends OEmbedResponse)
  */
 export abstract class SocialAdapter<
-  TOptions extends OEmbedOptionsBase = OEmbedOptionsBase,
+  TOptions extends OEmbedRequestQuery = OEmbedRequestQuery,
   TResponse extends OEmbedResponse = OEmbedResponse,
 > {
   /**

@@ -1,17 +1,13 @@
-import { type OEmbedOptionsBase, SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
+import { SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
 import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
-import type { OEmbedRich } from '@/blocks/SocialEmbed/helpers/oEmbed'
+import type { OEmbedRequestQuery, OEmbedRich } from '@/blocks/SocialEmbed/helpers/oEmbed'
 import type { Prettify } from '@/utilities/prettify'
 import { failure, type Result } from '@/utilities/results'
 import sanitizeHtml from 'sanitize-html'
 
-export type BlueskyOEmbedResponse = Prettify<OEmbedRich & { url: string }>
+export type BlueskyOEmbedOptions = OEmbedRequestQuery
 
-/**
- * Bluesky oEmbed request options.
- * Extends the base with Bluesky-specific parameters.
- */
-export type BlueskyOEmbedOptions = OEmbedOptionsBase
+export type BlueskyOEmbedResponse = Prettify<OEmbedRich & { url: string }>
 
 /**
  * Bluesky adapter extending SocialAdapter with Bluesky-specific options and response types.

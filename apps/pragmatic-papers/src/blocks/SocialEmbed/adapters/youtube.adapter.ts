@@ -1,16 +1,13 @@
-import { SocialAdapter, type OEmbedOptionsBase } from '@/blocks/SocialEmbed/adapters/base.adapter'
+import { SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
 import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
-import type { OEmbedVideo } from '@/blocks/SocialEmbed/helpers/oEmbed'
+import type { OEmbedRequestQuery, OEmbedVideo } from '@/blocks/SocialEmbed/helpers/oEmbed'
 import type { Prettify } from '@/utilities/prettify'
 import { failure, type Result } from '@/utilities/results'
 import sanitizeHtml from 'sanitize-html'
 
-export type YouTubeOEmbedResponse = Prettify<OEmbedVideo>
+export type YouTubeOEmbedOptions = OEmbedRequestQuery
 
-export interface YouTubeOEmbedOptions extends OEmbedOptionsBase {
-  maxheight?: number
-  revalidate?: number
-}
+export type YouTubeOEmbedResponse = Prettify<OEmbedVideo>
 
 /**
  * Extracts a YouTube video ID from common URL patterns.
