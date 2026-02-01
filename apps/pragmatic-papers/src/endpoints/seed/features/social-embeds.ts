@@ -52,7 +52,21 @@ const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot'>
       html: '<blockquote class="twitter-tweet" data-width="550" data-lang="en" data-dnt="true"><p lang="en" dir="ltr">Sunsets don&#39;t get much better than this one over <a href="https://twitter.com/GrandTetonNPS?ref_src=twsrc%5Etfw">@GrandTetonNPS</a>. <a href="https://twitter.com/hashtag/nature?src=hash&amp;ref_src=twsrc%5Etfw">#nature</a> <a href="https://twitter.com/hashtag/sunset?src=hash&amp;ref_src=twsrc%5Etfw">#sunset</a> <a href="http://t.co/YuKy2rcjyU">pic.twitter.com/YuKy2rcjyU</a></p>&mdash; US Department of the Interior (@Interior) <a href="https://twitter.com/Interior/status/463440424141459456?ref_src=twsrc%5Etfw">May 5, 2014</a></blockquote>',
     },
   },
-  { platform: 'youtube', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+  {
+    platform: 'youtube',
+    url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    snapshot: {
+      status: 'ok',
+      fetchedAt: new Date().toISOString(),
+      providerName: 'YouTube',
+      providerURL: 'https://www.youtube.com',
+      authorName: 'Rick Astley',
+      authorURL: 'https://www.youtube.com/@RickAstleyYT',
+      title: 'Rick Astley - Never Gonna Give You Up',
+      html: '<iframe width="200" height="150" src="https://www.youtube.com/embed/dQw4w9WgXcQ?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+      thumbnailURL: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+    },
+  },
 ] as const
 
 const LOREM_PARAGRAPHS = [
