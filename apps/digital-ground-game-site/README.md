@@ -1,4 +1,4 @@
-# Odoo Development Setup with Docker Compose
+# Digital Ground Game Odoo Site Modules
 
 This docker-compose configuration sets up a complete development environment for Odoo built from your **local git submodule** with custom module support.
 
@@ -6,33 +6,43 @@ This docker-compose configuration sets up a complete development environment for
 
 After the database is initialized, you can log in with:
 
-- **URL:** http://localhost:8069
+- **URL:** <http://localhost:8069>
 - **Username:** `admin`
 - **Password:** `admin`
-
-⚠️ **Important:** Change the admin password after first login for security!
 
 ## Quick Start
 
 ### Prerequisites
+
 - Docker and Docker Compose installed
+- uv Python package manager: <https://docs.astral.sh/uv/getting-started/>
 - Odoo git submodule cloned in the `./odoo` directory
 - Your custom modules in the `./addons` directory
+
+### Setting up Development Environment (linting and formatting)
+
+1. Ensure pre-requisites are installed (docker and uv)
+2. Install recommended extensions for python and ruff
+3. Run the `setup_dev_env.sh` script to setup the python dev environment with uv.
+4. Start developing!
 
 ### Starting the Development Environment
 
 1. **Build the Docker image (first time only):**
+
    ```bash
    pnpm run build
    # or
    docker-compose build
    ```
+
    This may take 5-10 minutes on first build as it:
    - Installs Python 3.10 and all system dependencies
    - Installs all Python requirements from `./odoo/requirements.txt`
    - Installs Odoo in editable mode for live code modification
 
 2. **Start the services:**
+
    ```bash
    pnpm run dev:detached
    # or
@@ -45,6 +55,7 @@ After the database is initialized, you can log in with:
    - The database will be automatically initialized with base modules on first startup
 
 4. **View logs:**
+
    ```bash
    pnpm run logs:odoo
    # or
@@ -60,39 +71,22 @@ docker-compose down
 ```
 
 To remove volumes as well (WARNING: this deletes your database):
+
 ```bash
 pnpm run stop:volumes
 # or
 docker-compose down -v
 ```
 
-## Environment Configuration
-
-Edit the `.env` file to customize:
-- `POSTGRES_DB` - Database name (default: odoo)
-- `POSTGRES_USER` - Database user (default: odoo)
-- `POSTGRES_PASSWORD` - Database password (default: odoo)
-- `ODOO_HOST` - Database host (default: db)
-
-Example `.env`:
-```env
-POSTGRES_DB=odoo
-POSTGRES_USER=odoo
-POSTGRES_PASSWORD=your-secure-password
-ODOO_HOST=db
-```
-
 ## Directory Structure
 
-```
+```md
 digital-ground-game-site/
 ├── docker-compose.yml          # Docker Compose configuration
 ├── Dockerfile                  # Custom Dockerfile building from local Odoo
-├── .env                        # Environment variables (optional)
 ├── config/
-│   └── odoo.conf              # Odoo configuration file
-├── addons/                     # Your custom Odoo modules
-│   └── blog_footnotes/         # Example custom module
+│   └── odoo.conf               # Odoo configuration file
+├── addons/                     # Our custom Odoo modules
 └── odoo/                       # Odoo source code (git submodule)
     ├── odoo-bin                # Odoo executable
     ├── requirements.txt        # Python dependencies
@@ -100,43 +94,17 @@ digital-ground-game-site/
     └── ...
 ```
 
-## How It Works
-
-### Custom Dockerfile
-
-The `Dockerfile` in this directory:
-1. Starts from `python:3.10-slim-bookworm` base image
-2. Installs all required system dependencies (PostgreSQL client, node-less, fonts, etc.)
-3. Creates an `odoo` user for security
-4. Copies the local `./odoo` git submodule into the container
-5. Installs all Python dependencies from `requirements.txt`
-6. Installs Odoo in **editable mode** (`pip install -e .`) for live development
-
-### Why Editable Mode?
-
-Installing Odoo with `pip install -e .` allows you to:
-- Modify Odoo source code and have changes reflected immediately
-- Use Python debugger directly in the Odoo codebase
-- Test custom modules against your specific Odoo version
-
-### PostgreSQL Integration
-
-- PostgreSQL runs in a separate `postgres:15-alpine` container
-- Connected via the `odoo_network` bridge network
-- Database credentials are passed through environment variables
-- Health checks ensure database is ready before Odoo starts
-
 ## Custom Modules Development
 
 ### Adding Custom Modules
 
 1. Place your custom modules in the `./addons` directory
 2. The modules are automatically mounted to `/mnt/extra-addons` in the container
-3. Update module list to discover new modules:
+3. In Odoo settings, enter developer mode
+4. Update module list to discover new modules:
+
    ```bash
    # Go to Apps → Update Apps List in the web interface
-   # Or via command line (if running):
-   docker-compose exec odoo odoo -u all -d odoo
    ```
 
 ### Installing Modules
@@ -148,9 +116,9 @@ Installing Odoo with `pip install -e .` allows you to:
 ### Module Development Workflow
 
 With the local Odoo source mounted:
-- Python code changes are reflected on browser refresh
-- Template/XML changes are automatically detected
-- Static files (CSS, JS) require module update or browser refresh
+
+- Any change to the module must be upgraded in Odoo to be seen.
+  This is done via going to the apps, searching for the module, click the "..." and "Upgrade"
 - Use `pnpm run logs:odoo` to see real-time debug output
 
 ### Creating a New Module
@@ -161,9 +129,29 @@ docker-compose exec odoo odoo scaffold my_module /mnt/extra-addons
 
 This generates a basic module scaffold in `./addons/my_module/`.
 
+## How It Works
+
+### Custom Dockerfile
+
+The `Dockerfile` in this directory:
+
+1. Starts from `python:3.10-slim-bookworm` base image
+2. Installs all required system dependencies (PostgreSQL client, node-less, fonts, etc.)
+3. Creates an `odoo` user for security
+4. Copies the local `./odoo` git submodule into the container
+5. Installs all Python dependencies from `requirements.txt`
+
+### PostgreSQL Integration
+
+- PostgreSQL runs in a separate `postgres:18-alpine` container
+- Connected via the `odoo_network` bridge network
+- Database credentials are passed through environment variables
+- Health checks ensure database is ready before Odoo starts
+
 ## Services
 
 ### PostgreSQL Database (db)
+
 - **Image:** postgres:15-alpine
 - **Container:** odoo-db
 - **Port:** 5432
@@ -171,6 +159,7 @@ This generates a basic module scaffold in `./addons/my_module/`.
 - **Health Check:** Waits for readiness before starting Odoo
 
 ### Odoo Server (odoo)
+
 - **Built from:** Local `./odoo` git submodule via custom Dockerfile
 - **Container:** odoo-dev
 - **Port:** 8069 - Main web interface
@@ -196,27 +185,16 @@ logfile = /var/log/odoo/odoo.log
 ```
 
 The file is mounted read-only in the container. To change settings:
+
 1. Edit `./config/odoo.conf`
 2. Restart the container: `pnpm run restart:odoo`
-
-### Database Configuration
-
-Database connection parameters are set via environment variables:
-- `HOST` / `ODOO_HOST` - Database hostname (default: db)
-- `PORT` - Database port (default: 5432)
-- `USER` / `POSTGRES_USER` - Database user (default: odoo)
-- `PASSWORD` / `POSTGRES_PASSWORD` - Database password (default: odoo)
-
-Override in `.env` file or with `-e` flag:
-```bash
-docker-compose -e POSTGRES_PASSWORD=secure-pwd up -d
-```
 
 ## Managing the Database
 
 ### Create a New Database
 
 From the Odoo web interface:
+
 1. Click your profile → **Manage Databases**
 2. **Create Database** and complete the setup wizard
 
@@ -228,6 +206,7 @@ pnpm run db:backup
 ```
 
 Or manually:
+
 ```bash
 docker-compose exec -T db pg_dump -U odoo -d odoo > backup.sql
 ```
@@ -240,6 +219,7 @@ pnpm run db:restore
 ```
 
 Or manually:
+
 ```bash
 docker-compose exec -T db psql -U odoo -d odoo < backup.sql
 ```
@@ -263,6 +243,7 @@ docker-compose exec odoo bash
 ```
 
 From here you can:
+
 - Edit files directly
 - Run Odoo commands
 - Install additional Python packages (temporary)
@@ -294,6 +275,7 @@ docker-compose build --no-cache
 ```
 
 This will:
+
 1. Re-copy the Odoo source from git submodule
 2. Re-install Python dependencies
 3. Rebuild the entire image
@@ -301,12 +283,14 @@ This will:
 ## Troubleshooting
 
 ### Build fails with "ModuleNotFoundError" or import errors
+
 - Ensure Python 3.10 dependencies are installed
 - Check that `./odoo/requirements.txt` exists and is readable
 - Try rebuilding without cache: `docker-compose build --no-cache`
 - Check Docker daemon has enough resources (memory, disk space)
 
 ### Odoo won't connect to database
+
 ```bash
 # Check if database is running and healthy
 pnpm run status
@@ -319,21 +303,26 @@ docker-compose exec db pg_isready -U odoo
 ```
 
 ### Cannot log in / "Invalid credentials"
+
 - Default username is `admin` (not your email)
 - Default password is `admin`
 - If you changed the password and forgot it, reset it via SQL:
+
   ```bash
   docker-compose exec db psql -U odoo -d odoo -c "UPDATE res_users SET password='admin' WHERE login='admin';"
   ```
 
 ### Modules not appearing
+
 1. Ensure modules are in `./addons` directory
 2. Go to **Apps** → **Update Apps List** in web interface
 3. Restart Odoo: `pnpm run restart:odoo`
 4. Check logs for errors: `pnpm run logs:odoo`
 
 ### Port already in use
+
 Modify the ports in `docker-compose.yml`:
+
 ```yaml
 ports:
   - "8080:8069"   # Map to different local port
@@ -342,26 +331,35 @@ ports:
 ```
 
 ### File permissions issues
+
 The container runs as the `odoo` user. If you get permission errors:
+
 ```bash
 # Make files readable
 chmod -R 755 ./addons ./config ./odoo
 ```
 
 ### Changes to Odoo source not reflected
+
 1. Ensure Odoo is installed in editable mode (it should be by default)
 2. For some changes (especially in `__init__.py`), restart the container:
+
    ```bash
    pnpm run restart:odoo
    ```
+
 3. View logs for import errors: `pnpm run logs:odoo`
 
 ### Build takes too long
+
 First build takes 5-10 minutes. Subsequent builds are faster due to Docker layer caching.
+
 - Subsequent `docker-compose up` calls won't rebuild unless you change the Dockerfile or run `docker-compose build`
 
 ### Out of disk space
+
 Docker images can be large (around 2-3GB). Free up space or clean old images:
+
 ```bash
 docker system prune -a
 ```
@@ -369,6 +367,7 @@ docker system prune -a
 ## npm/pnpm Commands
 
 ### Start & Stop
+
 ```bash
 pnpm run dev              # Start in foreground (see logs)
 pnpm run dev:detached     # Start in background
@@ -377,6 +376,7 @@ pnpm run stop:volumes     # Stop and remove volumes (deletes database!)
 ```
 
 ### Logs & Monitoring
+
 ```bash
 pnpm run status           # Show container status
 pnpm run logs             # Show all logs (live)
@@ -385,6 +385,7 @@ pnpm run logs:db          # Database logs only
 ```
 
 ### Container Management
+
 ```bash
 pnpm run restart          # Restart all services
 pnpm run restart:odoo     # Restart only Odoo
@@ -394,18 +395,21 @@ pnpm run shell:db         # Open psql in database
 ```
 
 ### Odoo Operations
+
 ```bash
 pnpm run odoo:update      # Update all modules in running instance
 pnpm run odoo:scaffold    # Generate module scaffold
 ```
 
 ### Database Operations
+
 ```bash
 pnpm run db:backup        # Backup to timestamped SQL file
 pnpm run db:restore       # Restore from backup.sql
 ```
 
 ### Maintenance
+
 ```bash
 pnpm run build            # Build/rebuild Docker image
 pnpm run clean            # Remove containers, volumes, and backups
@@ -415,22 +419,27 @@ pnpm run help             # List all available commands
 ## Development Tips
 
 ### Hot Reload Workflow
+
 1. Modify Python code in `./addons/your_module/`
 2. Refresh browser to see changes
 3. For model/view changes: Go to **Apps** → **Update Apps List**
 
 ### Debugging
+
 - Add print statements: `print("debug info")`
-- Add logging: 
+- Add logging:
+
   ```python
   import logging
   _logger = logging.getLogger(__name__)
   _logger.info("Message")
   ```
+
 - View in logs: `pnpm run logs:odoo | grep "Message"`
 - Use Python debugger: `pdb.set_trace()` (runs in container shell)
 
 ### Performance Optimization
+
 - For production-like testing, set `workers = 2` in `odoo.conf`
 - Current setup uses single worker (`workers = 0`) for easier debugging
 
@@ -451,7 +460,7 @@ docker-compose restart odoo
 
 ## Ports Reference
 
-- **8069** - HTTP web interface (http://localhost:8069)
+- **8069** - HTTP web interface (<http://localhost:8069>)
 - **8071** - XMLRPC protocol
 - **8072** - Long polling / WebSocket
 - **5432** - PostgreSQL database
