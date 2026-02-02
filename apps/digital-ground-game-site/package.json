@@ -1,0 +1,36 @@
+{
+  "name": "digital-ground-game-site",
+  "version": "1.0.0",
+  "description": "Odoo development environment with custom modules for digital ground game site",
+  "private": true,
+  "scripts": {
+    "dev": "docker-compose up",
+    "dev:detached": "docker-compose up -d",
+    "dev:logs": "docker-compose logs -f",
+    "dev:logs:odoo": "docker-compose logs -f odoo",
+    "dev:logs:db": "docker-compose logs -f db",
+    "stop": "docker-compose down",
+    "stop:volumes": "docker-compose down -v",
+    "restart": "docker-compose restart",
+    "restart:odoo": "docker-compose restart odoo",
+    "restart:db": "docker-compose restart db",
+    "status": "docker-compose ps",
+    "shell": "docker-compose exec odoo bash",
+    "shell:db": "docker-compose exec db psql -U odoo -d odoo",
+    "odoo:update": "docker-compose exec odoo odoo-bin -d odoo -u all --dev=all",
+    "odoo:scaffold": "docker-compose exec odoo odoo-bin scaffold",
+    "db:backup": "docker-compose exec db pg_dump -U odoo -d odoo > backup_$(date +%Y%m%d_%H%M%S).sql",
+    "db:restore": "docker-compose exec -T db psql -U odoo -d odoo < backup.sql",
+    "build": "docker-compose build",
+    "clean": "docker-compose down -v && rm -f backup_*.sql",
+    "help": "echo '\n=== Odoo Development Commands ===\n' && echo 'Start & Stop:' && echo '  pnpm run dev              - Start services in foreground' && echo '  pnpm run dev:detached     - Start services in background' && echo '  pnpm run stop             - Stop all services' && echo '  pnpm run stop:volumes     - Stop and remove volumes (WARNING: deletes data)' && echo '\nLogs & Monitoring:' && echo '  pnpm run status           - Show service status' && echo '  pnpm run dev:logs         - Show all logs' && echo '  pnpm run dev:logs:odoo    - Show Odoo logs only' && echo '  pnpm run dev:logs:db      - Show database logs only' && echo '\nContainers:' && echo '  pnpm run restart          - Restart all services' && echo '  pnpm run restart:odoo     - Restart Odoo only' && echo '  pnpm run restart:db       - Restart database only' && echo '  pnpm run shell            - Open bash in Odoo container' && echo '  pnpm run shell:db         - Open psql in database container' && echo '\nOdoo Operations:' && echo '  pnpm run odoo:update      - Update all modules' && echo '  pnpm run odoo:scaffold    - Generate module scaffold' && echo '\nDatabase:' && echo '  pnpm run db:backup        - Backup database to SQL file' && echo '  pnpm run db:restore       - Restore database from backup.sql' && echo '\nMaintenance:' && echo '  pnpm run build            - Build/rebuild Docker images' && echo '  pnpm run clean            - Remove containers, volumes, and backups' && echo '\n'"
+  },
+  "keywords": [
+    "odoo",
+    "erp",
+    "custom-modules",
+    "docker",
+    "development"
+  ],
+  "author": ""
+}

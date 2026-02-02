@@ -1,0 +1,150 @@
+[project]
+name = "odoo-custom-modules"
+version = "0.1.0"
+description = "Custom Odoo modules for digital-ground-game-site"
+requires-python = ">=3.11"
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+    "black>=23.11.0",
+    "isort>=5.12.0",
+    "pylint-odoo>=9.0.0",
+    "pre-commit>=3.5.0",
+    "types-psycopg2>=2.9.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+# Set the maximum line length to 100 (Odoo standard is 79-100)
+line-length = 100
+target-version = "py311"
+
+# Enable specific rule sets
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "PIE", # flake8-pie
+    "PL",  # pylint
+    "RUF", # ruff-specific rules
+]
+
+# Ignore specific rules that conflict with Odoo conventions
+ignore = [
+    "E501",   # Line too long (handled by formatter)
+    "N802",   # Function name should be lowercase (Odoo uses camelCase for some methods)
+    "N806",   # Variable in function should be lowercase
+    "PLR0913", # Too many arguments
+    "PLR2004", # Magic value used in comparison
+    "B008",   # Do not perform function calls in argument defaults (common in Odoo)
+]
+
+# Exclude common paths
+exclude = [
+    ".git",
+    "__pycache__",
+    "*.pyc",
+    ".venv",
+    "venv",
+    "env",
+    "build",
+    "dist",
+    "odoo",  # Exclude the Odoo submodule itself
+    "*.egg-info",
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401", "F403"]  # Allow unused imports in __init__.py
+
+[tool.ruff.isort]
+known-first-party = ["odoo", "odoo.addons"]
+section-order = ["future", "standard-library", "third-party", "odoo", "first-party", "local-folder"]
+
+[tool.ruff.isort.sections]
+"odoo" = ["odoo", "odoo.addons"]
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+extend-exclude = '''
+/(
+  # directories
+  \.git
+  | __pycache__
+  | \.venv
+  | venv
+  | env
+  | build
+  | dist
+  | odoo
+)/
+'''
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false  # Odoo code is mostly untyped
+ignore_missing_imports = true
+exclude = [
+    "^odoo/",
+    "^build/",
+    "^dist/",
+]
+
+# Odoo-specific settings
+plugins = []
+follow_imports = "silent"
+strict_optional = false
+
+[[tool.mypy.overrides]]
+module = "odoo.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "odoo.addons.*"
+ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"
+line_length = 100
+known_odoo = ["odoo"]
+known_odoo_addons = ["odoo.addons"]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "ODOO", "ODOO_ADDONS", "FIRSTPARTY", "LOCALFOLDER"]
+skip = ["odoo", ".venv", "venv", "env", "build", "dist"]
+skip_gitignore = true
+
+[tool.pylint.master]
+load-plugins = ["pylint_odoo"]
+score = false
+
+[tool.pylint.messages_control]
+disable = [
+    "missing-docstring",
+    "invalid-name",
+    "too-few-public-methods",
+    "too-many-arguments",
+    "too-many-instance-attributes",
+    "too-many-locals",
+    "line-too-long",  # Handled by formatter
+]
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.pylint.odoolint]
+manifest_required_authors = false
+manifest_required_keys = ["name", "version", "depends", "data"]

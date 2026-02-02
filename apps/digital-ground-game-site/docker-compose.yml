@@ -1,0 +1,66 @@
+services:
+  # PostgreSQL Database Service
+  db:
+    image: postgres:18-alpine
+    container_name: odoo-db
+    environment:
+      POSTGRES_DB: odoo
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+    networks:
+      - odoo_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo"]
+      interval: 1s
+      timeout: 5s
+      retries: 15
+
+  # Odoo Service - Built from local Odoo git submodule
+  odoo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: odoo-dev
+    depends_on:
+      db:
+        condition: service_healthy
+    command:
+      [
+        "odoo",
+        "-c",
+        "/etc/odoo/odoo.conf",
+        "-i",
+        "base",
+        "-d",
+        "odoo",
+        "--without-demo=all",
+      ]
+    volumes:
+      # Mount custom addons directory
+      - ./addons:/mnt/extra-addons:rw
+      # Mount Odoo config file
+      - ./config/odoo.conf:/etc/odoo/odoo.conf:ro
+      # Mount filestore for persistent data
+      - odoo_filestore:/var/lib/odoo
+    ports:
+      - "8069:8069"
+      - "8071:8071"
+      - "8072:8072"
+    networks:
+      - odoo_network
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
+    driver: local
+  odoo_filestore:
+    driver: local
+
+networks:
+  odoo_network:
+    driver: bridge

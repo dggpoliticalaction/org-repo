@@ -1,0 +1,28 @@
+{
+  "include": ["addons"],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "odoo/.git",
+    "odoo/addons",
+    "odoo/odoo/addons"
+  ],
+  "extraPaths": ["./odoo", "./addons", "./.venv/lib/python3.11/site-packages"],
+  "pythonVersion": "3.11",
+  "pythonPlatform": "Linux",
+  "typeCheckingMode": "basic",
+  "useLibraryCodeForTypes": true,
+  "reportMissingImports": "none",
+  "reportMissingTypeStubs": false,
+  "reportMissingModuleSource": false,
+  "reportGeneralTypeIssues": "warning",
+  "reportOptionalMemberAccess": "none",
+  "reportOptionalSubscript": "none",
+  "reportPrivateImportUsage": "none",
+  "reportUnusedImport": "information",
+  "reportUnusedVariable": "information",
+  "reportAttributeAccessIssue": "none",
+  "venvPath": ".",
+  "venv": ".venv",
+  "stubPath": ""
+}

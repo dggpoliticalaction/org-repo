@@ -1,0 +1,161 @@
+{
+  // Project-specific Zed settings for Odoo module development
+  // This file is located at .zed/settings.json in your project root
+
+  // Editor settings
+  "tab_size": 4,
+  "hard_tabs": false,
+  "soft_wrap": "editor_width",
+  "show_whitespaces": "selection",
+  "format_on_save": "on",
+  "ensure_final_newline_on_save": true,
+  "remove_trailing_whitespace_on_save": true,
+
+  // Python-specific configuration
+  "languages": {
+    "Python": {
+      "tab_size": 4,
+      "hard_tabs": false,
+      "formatter": "language_server",
+      "format_on_save": "on",
+      "language_servers": ["ruff", "basedpyright", "..."],
+    },
+  },
+
+  // Language Server Protocol (LSP) configuration
+  "lsp": {
+    // Ruff - Fast Python linter and formatter
+    "ruff": {
+      "initialization_options": {
+        "settings": {
+          // Ruff configuration (matches pyproject.toml)
+          "lineLength": 100,
+          "lint": {
+            "select": [
+              "E",
+              "W",
+              "F",
+              "I",
+              "N",
+              "UP",
+              "B",
+              "C4",
+              "PIE",
+              "PL",
+              "RUF",
+            ],
+            "ignore": ["E501", "N802", "N806", "PLR0913", "PLR2004", "B008"],
+            "per-file-ignores": {
+              "__init__.py": ["F401", "F403"],
+            },
+          },
+          "format": {
+            "preview": false,
+          },
+          // Exclude Odoo submodule from linting
+          "exclude": [
+            "odoo/**",
+            ".venv/**",
+            "venv/**",
+            "__pycache__/**",
+            "*.pyc",
+          ],
+        },
+      },
+    },
+    // Basedpyright - Type checking and IntelliSense
+    "basedpyright": {
+      "initialization_options": {
+        "settings": {
+          "python": {
+            "pythonPath": ".venv/bin/python",
+            "analysis": {
+              "typeCheckingMode": "basic",
+              "diagnosticMode": "workspace",
+              "autoImportCompletions": true,
+              "autoSearchPaths": true,
+              "extraPaths": [
+                "${workspaceFolder}/odoo",
+                "${workspaceFolder}/addons",
+              ],
+              "diagnosticSeverityOverrides": {
+                "reportUnusedImport": "information",
+                "reportUnusedVariable": "information",
+                "reportGeneralTypeIssues": "warning",
+                "reportOptionalMemberAccess": "none",
+                "reportOptionalSubscript": "none",
+                "reportPrivateImportUsage": "none",
+              },
+              "exclude": [
+                "**/odoo/**",
+                "**/.venv/**",
+                "**/venv/**",
+                "**/__pycache__/**",
+                "**/*.pyc",
+              ],
+            },
+          },
+        },
+      },
+    },
+  },
+
+  // File associations for Odoo
+  "file_types": {
+    "Python": ["*.py"],
+    "XML": ["*.xml"],
+    "JavaScript": ["*.js"],
+    "SCSS": ["*.scss"],
+    "JSON": ["*.json", "*.jsonc"],
+  },
+
+  // Files to exclude from file finder and search
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/__pycache__",
+    "**/*.pyc",
+    "**/.venv",
+    "**/venv",
+    "**/env",
+    "**/node_modules",
+    "odoo/.git",
+    "odoo/addons/**",
+    "odoo/odoo/addons/**",
+  ],
+
+  // Terminal configuration
+  "terminal": {
+    "working_directory": "current_project_directory",
+  },
+
+  // Collaboration settings (if using Zed's collaboration features)
+  "collaboration_panel": {
+    "button": true,
+  },
+
+  // Git integration
+  "git": {
+    "git_gutter": "tracked_files",
+    "inline_blame": {
+      "enabled": true,
+    },
+  },
+
+  // Diagnostic settings
+  "diagnostics": {
+    "include_warnings": true,
+  },
+
+  // Inlay hints for type information
+  "inlay_hints": {
+    "enabled": true,
+    "show_type_hints": true,
+    "show_parameter_hints": true,
+  },
+
+  // Code actions on save
+  "code_actions_on_format": {
+    "source.organizeImports": true,
+    "source.fixAll": true,
+  },
+}

@@ -1,0 +1,4 @@
+[submodule "apps/digital-ground-game-site/odoo"]
+	path = apps/digital-ground-game-site/odoo
+	url = https://github.com/odoo/odoo
+	branch = 18.0
