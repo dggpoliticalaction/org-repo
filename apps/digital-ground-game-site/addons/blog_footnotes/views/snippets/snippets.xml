@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Register Footnotes Snippet in Website Builder -->
+    <template id="snippets" inherit_id="website.snippets" name="Blog Footnotes - Snippets Registration">
+        <xpath expr="//t[@id='installed_snippets_hook']" position="after">
+            <t snippet-group="content" t-snippet="blog_footnotes.s_footnotes" string="Footnotes"
+                t-thumbnail="/blog_footnotes/static/src/img/snippets_thumbs/s_footnotes.svg"
+                keywords="footnote reference citation note blog article content"/>
+        </xpath>
+    </template>
+
+    <!-- Snippet Options for Footnotes Block -->
+    <template id="snippet_options" inherit_id="website.snippet_options" name="Blog Footnotes - Snippet Options">
+        <xpath expr="." position="inside">
+            <!-- Footnotes Block Options -->
+            <div data-selector=".s_footnotes"
+                 data-drop-in=".s_footnotes_list"
+                 data-drop-near="p, h1, h2, h3, blockquote, .s_footnotes">
+
+                <!-- Title visibility option -->
+                <we-select string="Title Display" data-attribute-name="titleDisplay">
+                    <we-button data-select-class="">Show Title</we-button>
+                    <we-button data-select-class="s_footnotes_no_title">Hide Title</we-button>
+                </we-select>
+
+                <!-- Numbering style option -->
+                <we-select string="Number Style" data-attribute-name="numberStyle">
+                    <we-button data-select-class="">Numbers (1, 2, 3)</we-button>
+                    <we-button data-select-class="s_footnotes_alpha">Letters (a, b, c)</we-button>
+                    <we-button data-select-class="s_footnotes_roman">Roman (i, ii, iii)</we-button>
+                    <we-button data-select-class="s_footnotes_symbols">Symbols (*, †, ‡)</we-button>
+                </we-select>
+
+                <!-- Layout options -->
+                <we-select string="Layout" data-attribute-name="layout">
+                    <we-button data-select-class="">Standard</we-button>
+                    <we-button data-select-class="s_footnotes_compact">Compact</we-button>
+                    <we-button data-select-class="s_footnotes_boxed">Boxed</we-button>
+                </we-select>
+
+                <!-- Divider style -->
+                <we-select string="Divider Style" data-attribute-name="dividerStyle">
+                    <we-button data-select-class="">Solid Line</we-button>
+                    <we-button data-select-class="s_footnotes_dashed">Dashed Line</we-button>
+                    <we-button data-select-class="s_footnotes_no_divider">No Divider</we-button>
+                </we-select>
+
+                <!-- Font size options -->
+                <we-select string="Text Size" data-attribute-name="fontSize">
+                    <we-button data-select-class="s_footnotes_small">Small</we-button>
+                    <we-button data-select-class="">Normal</we-button>
+                    <we-button data-select-class="s_footnotes_large">Large</we-button>
+                </we-select>
+            </div>
+
+            <!-- Footnote Items Management -->
+            <div data-selector=".s_footnotes" data-js="FootnotesOptions">
+                <we-row string="Footnotes">
+                    <we-button title="Add Footnote To End" data-add-footnote="true" data-no-preview="true" class="o_we_bg_brand_primary" style="flex: 1;">
+                      <i class="fa fa-plus"/> Add
+                    </we-button>
+                    <we-button title="Delete Last Footnote" data-delete-last-footnote="true" style="margin-left: 4px; flex: 1;" data-no-preview="true">
+                      <i class="fa fa-trash"/> Remove
+                    </we-button>
+                </we-row>
+            </div>
+        </xpath>
+    </template>
+
+
+
+    <!-- Inline Text Options for Footnote Insertion -->
+    <template id="text_inline_footnote_insertion" inherit_id="website.snippet_options" name="Inline Text - Insert Footnote Reference">
+        <xpath expr="." position="inside">
+            <!-- Insert Footnote Reference Button for text editors -->
+            <div data-selector="p, h1, h2, h3, h4, h5, h6, li, td" data-js="InlineTextFootnoteInsertion">
+                <we-row string="Insert">
+                    <we-button class="fa fa-plus" title="Insert Footnote Reference" data-insert-footnote="true" data-no-preview="true" style="flex: 1;">
+                        Footnote Reference
+                    </we-button>
+                </we-row>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Asset definitions for SCSS and JS -->
+    <asset id="blog_footnotes.s_footnotes_scss" name="Footnotes SCSS">
+        <bundle>web.assets_frontend</bundle>
+        <path>blog_footnotes/static/src/scss/s_footnotes.scss</path>
+    </asset>
+
+    <asset id="blog_footnotes.s_footnotes_js" name="Footnotes JavaScript">
+        <bundle>web.assets_frontend</bundle>
+        <path>blog_footnotes/static/src/js/s_footnotes.js</path>
+    </asset>
+
+    <asset id="blog_footnotes.s_footnotes_options_js" name="Footnotes Options JavaScript">
+        <bundle>web_editor.assets_wysiwyg</bundle>
+        <path>blog_footnotes/static/src/js/s_footnotes_options.js</path>
+    </asset>
+</odoo>

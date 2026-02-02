@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_blog_footnote_public,blog.footnote public,model_blog_footnote,base.group_public,1,0,0,0
+access_blog_footnote_portal,blog.footnote portal,model_blog_footnote,base.group_portal,1,0,0,0
+access_blog_footnote_user,blog.footnote user,model_blog_footnote,base.group_user,1,1,1,0
+access_blog_footnote_manager,blog.footnote manager,model_blog_footnote,website.group_website_designer,1,1,1,1

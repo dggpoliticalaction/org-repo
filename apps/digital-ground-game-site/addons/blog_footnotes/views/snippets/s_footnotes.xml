@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Footnotes Snippet Template -->
+    <template id="s_footnotes" name="Footnotes Block">
+        <section class="s_footnotes pt32 pb32" data-snippet="s_footnotes" data-name="Footnotes">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <!-- Header -->
+                        <div class="s_footnotes_header mb-3">
+                            <h3 class="s_footnotes_title">Footnotes</h3>
+                            <hr class="s_footnotes_divider"/>
+                        </div>
+
+                        <!-- Footnotes List -->
+                        <div class="s_footnotes_list">
+                            <ol class="s_footnotes_items">
+                                <li class="s_footnotes_item" data-footnote-id="1">
+                                    <span class="s_footnotes_number">1</span>
+                                    <div class="s_footnotes_content">
+                                        <p>This is an example footnote. Replace this text with your actual footnote content.</p>
+                                    </div>
+                                </li>
+                                <li class="s_footnotes_item" data-footnote-id="2">
+                                    <span class="s_footnotes_number">2</span>
+                                    <div class="s_footnotes_content">
+                                        <p>This is another example footnote with <a href="#">a reference link</a>.</p>
+                                    </div>
+                                </li>
+                            </ol>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <!-- Individual Footnote Item Template (for dynamic addition) -->
+    <template id="s_footnotes_item" name="Footnote Item">
+        <li class="s_footnotes_item" data-footnote-id="">
+            <span class="s_footnotes_number"></span>
+            <div class="s_footnotes_content">
+                <p>Enter your footnote text here...</p>
+            </div>
+        </li>
+    </template>
+
+
+
+    <!-- Dynamic Content Template for Blog Posts with Footnotes -->
+    <template id="dynamic_filter_template_blog_post_footnotes" name="Blog Posts with Footnotes">
+        <div t-foreach="records" t-as="data" class="s_blog_posts_post mb-4">
+            <t t-set="record" t-value="data['_record']"/>
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <a t-att-href="record.website_url" t-field="record.name"/>
+                    </h4>
+                    <p class="card-text" t-field="record.teaser"/>
+
+                    <!-- Display footnote count if any -->
+                    <div t-if="record.footnote_count > 0" class="s_blog_footnotes_badge mt-2">
+                        <span class="badge bg-secondary">
+                            <i class="fa fa-file-text-o"/>
+                            <t t-esc="record.footnote_count"/>
+                            <t t-if="record.footnote_count == 1">footnote</t>
+                            <t t-else="">footnotes</t>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">
+                        <t t-esc="record.create_date" t-options="{'widget': 'date'}"/>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>

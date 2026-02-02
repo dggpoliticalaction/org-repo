@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Demo Blog Post with Footnotes -->
+        <record id="demo_blog_post_with_footnotes" model="blog.post">
+            <field name="name">The Future of Web Development: A Comprehensive Guide</field>
+            <field name="subtitle">Exploring modern frameworks, tools, and best practices</field>
+            <field name="blog_id" ref="website_blog.blog_blog_1"/>
+            <field name="published_date" eval="(DateTime.now() - timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="content"><![CDATA[
+                <p>Web development has evolved dramatically over the past decade, with new frameworks and tools emerging constantly.<sup class="s_footnote_ref" data-footnote-ref="1"><a href="#footnote-1" class="s_footnote_link">[1]</a></sup></p>
+
+                <h2>Modern JavaScript Frameworks</h2>
+                <p>React, Vue, and Angular have become the de facto standards for building modern web applications.<sup class="s_footnote_ref" data-footnote-ref="2"><a href="#footnote-2" class="s_footnote_link">[2]</a></sup> Each framework brings its own philosophy and ecosystem to the table.</p>
+
+                <h2>The Rise of Static Site Generators</h2>
+                <p>Static site generators like Next.js and Gatsby have revolutionized how we build performant websites, combining the best of static and dynamic content.<sup class="s_footnote_ref" data-footnote-ref="3"><a href="#footnote-3" class="s_footnote_link">[3]</a></sup></p>
+
+                <h2>Conclusion</h2>
+                <p>As we look to the future, web development will continue to evolve, with a focus on performance, accessibility, and developer experience.</p>
+            ]]></field>
+            <field name="website_published">True</field>
+        </record>
+
+        <!-- Demo Footnotes for the Blog Post -->
+        <record id="demo_footnote_1" model="blog.footnote">
+            <field name="reference_text">1</field>
+            <field name="content"><![CDATA[
+                <p>According to the State of JavaScript survey, the web development landscape changes approximately every 18-24 months. Source: <a href="https://stateofjs.com" target="_blank">State of JS 2023</a></p>
+            ]]></field>
+            <field name="sequence">10</field>
+            <field name="blog_post_id" ref="demo_blog_post_with_footnotes"/>
+        </record>
+
+        <record id="demo_footnote_2" model="blog.footnote">
+            <field name="reference_text">2</field>
+            <field name="content"><![CDATA[
+                <p>As of 2024, React holds approximately 42% market share, followed by Vue at 18% and Angular at 16%. Data from Stack Overflow Developer Survey 2024.</p>
+            ]]></field>
+            <field name="sequence">20</field>
+            <field name="blog_post_id" ref="demo_blog_post_with_footnotes"/>
+        </record>
+
+        <record id="demo_footnote_3" model="blog.footnote">
+            <field name="reference_text">3</field>
+            <field name="content"><![CDATA[
+                <p>Static site generators can improve website performance by up to 300% compared to traditional server-rendered applications, according to research by Google's Web Vitals team.</p>
+            ]]></field>
+            <field name="sequence">30</field>
+            <field name="blog_post_id" ref="demo_blog_post_with_footnotes"/>
+        </record>
+
+        <!-- Another Demo Blog Post -->
+        <record id="demo_blog_post_technical" model="blog.post">
+            <field name="name">Understanding Python Type Hints</field>
+            <field name="subtitle">A deep dive into static type checking in Python</field>
+            <field name="blog_id" ref="website_blog.blog_blog_1"/>
+            <field name="published_date" eval="(DateTime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="content"><![CDATA[
+                <p>Python 3.5 introduced type hints through PEP 484,<sup class="s_footnote_ref" data-footnote-ref="1"><a href="#footnote-1" class="s_footnote_link">[1]</a></sup> revolutionizing how developers write and maintain Python code.</p>
+
+                <h2>Benefits of Type Hints</h2>
+                <p>Type hints improve code readability, enable better IDE support, and catch bugs before runtime.<sup class="s_footnote_ref" data-footnote-ref="2"><a href="#footnote-2" class="s_footnote_link">[2]</a></sup></p>
+            ]]></field>
+            <field name="website_published">True</field>
+        </record>
+
+        <record id="demo_footnote_tech_1" model="blog.footnote">
+            <field name="reference_text">1</field>
+            <field name="content"><![CDATA[
+                <p>PEP 484 - Type Hints: <a href="https://peps.python.org/pep-0484/" target="_blank">https://peps.python.org/pep-0484/</a></p>
+            ]]></field>
+            <field name="sequence">10</field>
+            <field name="blog_post_id" ref="demo_blog_post_technical"/>
+        </record>
+
+        <record id="demo_footnote_tech_2" model="blog.footnote">
+            <field name="reference_text">2</field>
+            <field name="content"><![CDATA[
+                <p>Studies show that type hints can reduce bugs by up to 15% in large Python codebases. Reference: "To Type or Not to Type: Quantifying Detectable Bugs in JavaScript" (ICSE 2017)</p>
+            ]]></field>
+            <field name="sequence">20</field>
+            <field name="blog_post_id" ref="demo_blog_post_technical"/>
+        </record>
+    </data>
+</odoo>
