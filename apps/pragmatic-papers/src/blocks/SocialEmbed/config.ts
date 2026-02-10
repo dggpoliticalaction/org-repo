@@ -1,8 +1,7 @@
-import { detectPlatform } from '@/blocks/SocialEmbed/helpers/detectPlatform'
 import { derivePlatform } from '@/blocks/SocialEmbed/hooks/derivePlatform'
 import { fetchSnapshot } from '@/blocks/SocialEmbed/hooks/fetchSnapshot'
-import type { Article, SocialEmbedBlock } from '@/payload-types'
-import type { Block, SelectField, ValidateOptions } from 'payload'
+import { validatePlatform } from '@/blocks/SocialEmbed/hooks/validatePlatform'
+import type { Block } from 'payload'
 
 export const SocialEmbed: Block = {
   slug: 'socialEmbed',
@@ -36,18 +35,7 @@ export const SocialEmbed: Block = {
       options: ['bluesky', 'reddit', 'tiktok', 'twitter', 'youtube'],
       required: true,
       hasMany: false,
-      validate: (
-        value: string | null | undefined,
-        { siblingData }: ValidateOptions<Article, SocialEmbedBlock, SelectField, string>,
-      ): true | string => {
-        const detected = detectPlatform(siblingData.url || '')
-        if (!value) {
-          return !!detected || 'Invalid platform.'
-        }
-        if (!detected) return 'Invalid platform.'
-        if (detected !== value) return 'Platform does not match URL.'
-        return true
-      },
+      validate: validatePlatform,
       admin: {
         hidden: true,
         readOnly: true,

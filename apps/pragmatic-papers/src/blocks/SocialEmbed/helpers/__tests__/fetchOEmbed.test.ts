@@ -21,6 +21,7 @@ describe('fetchOEmbed', () => {
     if (isFailure(result)) {
       assert.equal(result.error instanceof OEmbedRequestError, true)
       assert.equal((result.error as OEmbedRequestError).status, 404)
+      assert.equal((result.error as OEmbedRequestError).code, 'forbidden')
     }
   })
 
@@ -32,7 +33,33 @@ describe('fetchOEmbed', () => {
     const result = await fetchOEmbed(new URL('https://example.com/oembed'))
     assert.equal(isFailure(result), true)
     if (isFailure(result)) {
+      assert.equal(result.error instanceof OEmbedRequestError, true)
+      assert.equal((result.error as OEmbedRequestError).code, 'invalid_oembed_response')
       assert.equal(result.error.message, 'Provider returned an invalid oEmbed response.')
+    }
+  })
+
+  it('maps timeout errors to timeout code', async () => {
+    global.fetch = (async () => {
+      throw new DOMException('Timed out while fetching', 'TimeoutError')
+    }) as typeof global.fetch
+
+    const result = await fetchOEmbed(new URL('https://example.com/oembed'))
+    assert.equal(isFailure(result), true)
+    if (isFailure(result)) {
+      assert.equal((result.error as OEmbedRequestError).code, 'timeout')
+    }
+  })
+
+  it('maps abort errors to aborted code', async () => {
+    global.fetch = (async () => {
+      throw new DOMException('Request aborted', 'AbortError')
+    }) as typeof global.fetch
+
+    const result = await fetchOEmbed(new URL('https://example.com/oembed'))
+    assert.equal(isFailure(result), true)
+    if (isFailure(result)) {
+      assert.equal((result.error as OEmbedRequestError).code, 'aborted')
     }
   })
 
