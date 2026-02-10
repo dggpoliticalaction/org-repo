@@ -13,21 +13,21 @@ export const TwitterEmbed: React.FC<{
   align?: ('none' | 'left' | 'center' | 'right') | undefined
   lang?: string | undefined
   maxWidth?: number | undefined
-}> = (props) => {
+}> = ({ url, hideMedia, hideThread, align, lang, maxWidth }) => {
   const [content, setContent] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!props.url) return
+    if (!url) return
 
     const theme = document.getElementsByTagName('html')[0]?.getAttribute('data-theme') ?? 'dark'
 
     fetchTwitterEmbed({
-      url: props.url,
-      hide_media: props.hideMedia,
-      hide_thread: props.hideThread,
-      align: props.align,
-      maxwidth: props.maxWidth,
+      url,
+      hide_media: hideMedia,
+      hide_thread: hideThread,
+      align,
+      maxwidth: maxWidth,
       theme: theme as 'light' | 'dark',
     }).then((res) => {
       if (!res) {
@@ -36,7 +36,7 @@ export const TwitterEmbed: React.FC<{
         setContent(res.html)
       }
     })
-  }, [props])
+  }, [url, hideMedia, hideThread, align, maxWidth, lang])
 
   useEffect(() => {
     if (contentRef.current && window.twttr) {

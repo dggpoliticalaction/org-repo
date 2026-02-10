@@ -16,10 +16,16 @@ export const VideoMedia: React.FC<MediaProps> = (props) => {
   useEffect(() => {
     const { current: video } = videoRef
     if (video) {
-      video.addEventListener('suspend', () => {
+      const handleSuspend = () => {
         // setShowFallback(true);
         // console.warn('Video was suspended, rendering fallback image.')
-      })
+      }
+
+      video.addEventListener('suspend', handleSuspend)
+
+      return () => {
+        video.removeEventListener('suspend', handleSuspend)
+      }
     }
   }, [])
 
