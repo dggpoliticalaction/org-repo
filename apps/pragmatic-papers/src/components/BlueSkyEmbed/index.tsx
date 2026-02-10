@@ -5,36 +5,40 @@ import { useEffect, useRef, useState } from 'react'
 
 import { fetchBlueSkyEmbed } from '@/utilities/fetchBlueSkyEmbed'
 
+let blueSkyScriptLoaded = false
+
 export const BlueSkyEmbed: React.FC<{
   url?: string
   maxWidth?: number | undefined
-}> = (props) => {
+}> = ({ url, maxWidth }) => {
   const [content, setContent] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!props.url) return
+    if (!url) return
     if (typeof document === 'undefined') return
 
     const theme = document.getElementsByTagName('html')[0]?.getAttribute('data-theme') ?? 'light'
 
     fetchBlueSkyEmbed({
-      url: props.url,
-      maxwidth: props.maxWidth,
+      url,
+      maxwidth: maxWidth,
       theme: theme as 'light' | 'dark',
     }).then((res) => {
       if (!res) {
         setContent('Bluesky post could not be loaded.')
       } else {
         setContent(res.html)
-
-        const script = document.createElement('script')
-        script.src = 'https://embed.bsky.app/static/embed.js'
-        script.async = true
-        document.body.appendChild(script)
+        if (!blueSkyScriptLoaded) {
+          blueSkyScriptLoaded = true
+          const script = document.createElement('script')
+          script.src = 'https://embed.bsky.app/static/embed.js'
+          script.async = true
+          document.body.appendChild(script)
+        }
       }
     })
-  }, [props])
+  }, [url, maxWidth])
 
   return (
     <div>
