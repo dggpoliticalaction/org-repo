@@ -6,7 +6,10 @@ import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
 import type { SocialEmbedBlock } from '@/payload-types'
 import { isFailure } from '@/utilities/results'
 
-export async function YouTubeEmbedBlock({ url, snapshot }: SocialEmbedBlock): Promise<React.ReactNode> {
+export async function YouTubeEmbedBlock({
+  url,
+  snapshot,
+}: SocialEmbedBlock): Promise<React.ReactNode> {
   let html = snapshot?.html
   if (!html) {
     const result = await fetchYouTubeOEmbed({ url })
@@ -17,7 +20,7 @@ export async function YouTubeEmbedBlock({ url, snapshot }: SocialEmbedBlock): Pr
   }
 
   return (
-    <div className="my-4 flex justify-center">
+    <div className="my-8 flex justify-center">
       <div className="w-full max-w-[550px]">
         <div className="relative aspect-video">
           <div

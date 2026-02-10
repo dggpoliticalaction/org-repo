@@ -12,7 +12,7 @@ export async function TikTokEmbedBlock({
   }
 
   return (
-    <div className="my-4 flex justify-center">
+    <div className="my-8 flex justify-center">
       <div className="relative w-full max-w-[360px] space-y-3">
         <div className="sr-only rounded-lg border p-3">
           <div className="text-sm font-medium">TikTok</div>

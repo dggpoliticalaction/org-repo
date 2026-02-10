@@ -1,9 +1,10 @@
 import type { SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
 import { blueskyAdapter } from '@/blocks/SocialEmbed/adapters/bluesky.adapter'
+import { redditAdapter } from '@/blocks/SocialEmbed/adapters/reddit.adapter'
+import { tiktokAdapter } from '@/blocks/SocialEmbed/adapters/tiktok.adapter'
 import { twitterAdapter } from '@/blocks/SocialEmbed/adapters/twitter.adapter'
+import { youtubeAdapter } from '@/blocks/SocialEmbed/adapters/youtube.adapter'
 import type { SocialPlatform } from '@/payload-types'
-import { tiktokAdapter } from './tiktok.adapter'
-import { youtubeAdapter } from './youtube.adapter'
 
 /**
  * Registry mapping social platforms to their adapters.
@@ -11,11 +12,10 @@ import { youtubeAdapter } from './youtube.adapter'
  */
 const adapters: Partial<Record<SocialPlatform, SocialAdapter>> = {
   bluesky: blueskyAdapter,
+  reddit: redditAdapter,
   tiktok: tiktokAdapter,
   twitter: twitterAdapter,
   youtube: youtubeAdapter,
-  // TODO: Add adapters for other platforms as they are refactored
-  // reddit: redditAdapter,
 } as const
 
 /**

@@ -26,7 +26,7 @@ export async function BlueskyEmbedBlock({
   }
 
   return (
-    <div className="my-4 flex min-h-[480px] items-center justify-center">
+    <div className="my-8 flex min-h-[240px] items-center justify-center">
       <div
         id={id}
         className="w-full max-w-[550px] [&>div]:!my-0"

@@ -1,47 +1,54 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import Script from 'next/script'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface RedditOEmbedClientProps {
-  html: string
+  targetId: string
 }
 
-export function RedditEmbedClient({ html }: RedditOEmbedClientProps): React.ReactNode {
-  const ref = useRef<HTMLDivElement>(null)
+export function RedditEmbedClient({ targetId }: RedditOEmbedClientProps): React.ReactNode {
+  const pathname = usePathname()
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    if (!ready || !ref.current) return
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[src="https://embed.reddit.com/widgets.js"]',
+    )
+    if (existing) setReady(true)
+  }, [])
 
-    // On client-side navigations, the script may already be loaded.
-    // Re-inserting it is the most reliable "rescan" approach when no public API is available.
-    const s = document.createElement('script')
-    s.id = 'reddit-embed-widgets'
-    s.src = 'https://embed.reddit.com/widgets.js'
-    s.async = true
-    s.charset = 'UTF-8'
-    ref.current.appendChild(s)
+  useEffect(() => {
+    if (!ready) return
+    const node = document.getElementById(targetId) as HTMLElement | null
+    if (!node) return
+
+    // Reddit has no public "scan/load" API. Re-inserting the script inside
+    // the target node reliably retriggers blockquote processing.
+    const id = requestAnimationFrame(() => {
+      const script = document.createElement('script')
+      script.src = 'https://embed.reddit.com/widgets.js'
+      script.async = true
+      script.charset = 'UTF-8'
+      node.appendChild(script)
+    })
 
     return () => {
-      s.remove()
+      cancelAnimationFrame(id)
+      const appended = node.querySelectorAll<HTMLScriptElement>(
+        'script[src="https://embed.reddit.com/widgets.js"]',
+      )
+      for (const script of appended) script.remove()
     }
-  }, [ready])
+  }, [ready, targetId, pathname])
 
   return (
-    <div className="my-4 flex justify-center items-center">
-      <Script
-        id="reddit-embed-widgets"
-        src="https://embed.reddit.com/widgets.js"
-        strategy="afterInteractive"
-        onReady={() => setReady(true)}
-      />
-      <div
-        ref={ref}
-        className="flex items-center min-h-[150px] w-full max-w-[550px]"
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
-    </div>
+    <Script
+      id="reddit-embed-widgets"
+      src="https://embed.reddit.com/widgets.js"
+      strategy="afterInteractive"
+      onReady={() => setReady(true)}
+    />
   )
 }
