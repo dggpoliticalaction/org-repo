@@ -96,6 +96,24 @@ export const nextJsConfig = [
     },
     rules: {
       ...pluginReactHooks.configs.recommended.rules,
+      // Enforce precise dependencies for hooks like useEffect/useCallback
+      // to avoid stale closures and unnecessary re-renders/fetches.
+      "react-hooks/exhaustive-deps": [
+        "error",
+        {
+          // Treat custom hooks that manage timers/effects as well.
+          additionalHooks: "useDebounce",
+        },
+      ],
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector:
+            "CallExpression[callee.name='useEffect'][arguments.length=1] CallExpression[callee.name=/^set[A-Z]/]",
+          message:
+            "Avoid calling state setters inside useEffect without a dependency array; add an appropriate dependency list or refactor to prevent repeated updates.",
+        },
+      ],
     },
   },
   // Add Node.js globals for config files (next.config.js, redirects.js, etc.)

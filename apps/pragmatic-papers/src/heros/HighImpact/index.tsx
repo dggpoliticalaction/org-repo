@@ -13,7 +13,11 @@ export const HighImpactHero: React.FC<Page['hero']> = ({ links, media, richText 
 
   useEffect(() => {
     setHeaderTheme('dark')
-  })
+
+    return () => {
+      setHeaderTheme(null)
+    }
+  }, [setHeaderTheme])
 
   return (
     <div
