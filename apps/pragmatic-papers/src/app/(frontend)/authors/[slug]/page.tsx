@@ -276,7 +276,7 @@ export default async function AuthorPage({
 
       {hasBiography && (
         <section className="mb-10" aria-label="Author biography">
-          <h2 className="mb-3 text-xl font-semibold">Bio</h2>
+          <h2 className="mb-3 text-2xl font-semibold">Bio</h2>
           <RichText enableGutter={false} data={user.biography as ArticleType['content']} />
         </section>
       )}

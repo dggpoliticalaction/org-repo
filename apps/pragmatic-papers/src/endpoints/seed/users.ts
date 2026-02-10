@@ -39,6 +39,7 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
       name: 'Writer One',
       role: 'writer',
       authorSlug: 'writer-one',
+      affiliation: 'Senior Research Fellow, Pragmatic Papers Institute',
       biography: {
         root: {
           children: [
@@ -49,7 +50,7 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'A prolific writer specializing in academic research and scientific papers.',
+                  text: 'A prolific writer specializing in rigorous academic research, long-form analysis, and clear explanations of complex ideas.',
                   type: 'text',
                   version: 1,
                 },
@@ -70,6 +71,32 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
           version: 1,
         },
       },
+      socialLinks: [
+        {
+          link: {
+            type: 'custom',
+            url: 'https://twitter.com/writer_one',
+            label: 'Twitter',
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: 'custom',
+            url: 'https://github.com/writer-one',
+            label: 'GitHub',
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: 'custom',
+            url: 'https://scholar.google.com',
+            label: 'Google Scholar',
+            newTab: true,
+          },
+        },
+      ],
     },
   })
 
@@ -81,6 +108,7 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
       name: 'Writer Two',
       role: 'writer',
       authorSlug: 'writer-two',
+      affiliation: 'Associate Editor, Department of Theoretical Studies',
       biography: {
         root: {
           children: [
@@ -91,7 +119,7 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'An experienced researcher with focus on theoretical physics and mathematics.',
+                  text: 'An experienced researcher focused on theoretical frameworks, mathematical modeling, and the bridge between theory and practice.',
                   type: 'text',
                   version: 1,
                 },
@@ -112,6 +140,32 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
           version: 1,
         },
       },
+      socialLinks: [
+        {
+          link: {
+            type: 'custom',
+            url: 'https://twitter.com/writer_two',
+            label: 'Twitter',
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: 'custom',
+            url: 'https://github.com/writer-two',
+            label: 'GitHub',
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: 'custom',
+            url: 'https://orcid.org',
+            label: 'ORCID',
+            newTab: true,
+          },
+        },
+      ],
     },
   })
 
