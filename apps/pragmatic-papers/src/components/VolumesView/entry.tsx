@@ -15,7 +15,7 @@ import { toRoman } from '@/utilities/toRoman'
 
 export type EntryVolumeData = Pick<
   Volume,
-  'slug' | 'description' | 'title' | 'volumeNumber' | 'publishedAt'
+  'id' | 'slug' | 'description' | 'title' | 'volumeNumber' | 'publishedAt'
 >
 
 export const Entry: React.FC<{

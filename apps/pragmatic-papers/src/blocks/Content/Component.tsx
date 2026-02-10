@@ -25,13 +25,14 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
           columns.length > 0 &&
           columns.map((col, index) => {
             const { enableLink, link, richText, size } = col
+            const key = col.id ?? link?.url ?? link?.label ?? index.toString()
 
             return (
               <div
                 className={cn(`col-span-4 lg:col-span-${colsSpanClasses[size!]}`, {
                   'md:col-span-2': size !== 'full',
                 })}
-                key={index}
+                key={key}
               >
                 {richText && <RichText data={richText} enableGutter={false} />}
 
