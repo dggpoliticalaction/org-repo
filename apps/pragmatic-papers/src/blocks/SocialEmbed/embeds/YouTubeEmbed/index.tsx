@@ -21,7 +21,7 @@ export async function YouTubeEmbedBlock({
 
   return (
     <div className="my-8 flex justify-center">
-      <div className="w-full max-w-[550px]">
+      <div className="w-full max-w-[640px]">
         <div className="relative aspect-video">
           <div
             className="absolute inset-0 [&>iframe]:h-full [&>iframe]:w-full"
