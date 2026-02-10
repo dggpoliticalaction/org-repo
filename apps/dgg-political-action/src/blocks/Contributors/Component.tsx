@@ -31,10 +31,11 @@ export const ContributorsBlock: React.FC<ContributorsBlockProps> = ({ title, con
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {contributors?.map((contributor: Contributor, index: number) => {
           const { name, bio, image, socialLinks } = contributor
+          const contributorKey = contributor?.id ?? index.toString()
 
           return (
             <div
-              key={index}
+              key={contributorKey}
               className="bg-card border border-border rounded-lg p-6 flex flex-col items-center text-center"
             >
               {image && typeof image === 'object' && 'url' in image && (
@@ -53,12 +54,13 @@ export const ContributorsBlock: React.FC<ContributorsBlockProps> = ({ title, con
               {socialLinks && socialLinks.length > 0 && (
                 <div className="flex gap-3 mt-auto">
                   {socialLinks.map((link: SocialLink, linkIndex: number) => {
-                    const { platform, url } = link
+                    const { platform, url, id } = link
+                    const linkKey = id ?? `${platform}-${url || linkIndex}`
                     const Icon = platformIcons[platform as keyof typeof platformIcons]
 
                     return (
                       <a
-                        key={linkIndex}
+                        key={linkKey}
                         href={url || '#'}
                         target="_blank"
                         rel="noopener noreferrer"

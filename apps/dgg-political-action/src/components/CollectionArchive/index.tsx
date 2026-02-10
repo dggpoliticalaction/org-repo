@@ -18,8 +18,11 @@ export const CollectionArchive: React.FC<Props> = (props) => {
         <div className="grid grid-cols-4 sm:grid-cols-8 lg:grid-cols-12 gap-y-4 gap-x-4 lg:gap-y-8 lg:gap-x-8 xl:gap-x-8">
           {posts?.map((result, index) => {
             if (typeof result === 'object' && result !== null) {
+              const key = (result as { slug?: string; title?: string }).slug ??
+                (result as { title?: string }).title ??
+                index.toString()
               return (
-                <div className="col-span-4" key={index}>
+                <div className="col-span-4" key={key}>
                   <Card className="h-full" doc={result} relationTo="posts" showCategories />
                 </div>
               )

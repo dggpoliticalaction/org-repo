@@ -24,8 +24,9 @@ export async function Footer() {
         <div className="flex flex-col-reverse items-start md:flex-row gap-4 md:items-center">
           <ThemeSelector />
           <nav className="flex flex-col md:flex-row gap-4">
-            {navItems.map(({ link }, i) => {
-              return <CMSLink className="text-white" key={i} {...link} />
+            {navItems.map(({ id, link }) => {
+              const key = id ?? link?.url ?? link?.label
+              return <CMSLink className="text-white" key={key} {...link} />
             })}
           </nav>
         </div>

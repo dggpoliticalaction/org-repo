@@ -52,10 +52,14 @@ export const Card: React.FC<{
 
                     const categoryTitle = titleFromCategory || 'Untitled category'
 
+                    const key = (category as { id?: string | number }).id ??
+                      categoryTitle ??
+                      index.toString()
+
                     const isLast = index === categories.length - 1
 
                     return (
-                      <Fragment key={index}>
+                      <Fragment key={key}>
                         {categoryTitle}
                         {!isLast && <Fragment>, &nbsp;</Fragment>}
                       </Fragment>

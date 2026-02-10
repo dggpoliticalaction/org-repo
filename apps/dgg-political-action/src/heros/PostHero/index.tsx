@@ -25,10 +25,14 @@ export const PostHero: React.FC<{
 
                 const titleToUse = categoryTitle || 'Untitled category'
 
+                const key = (category as { id?: string | number }).id ??
+                  titleToUse ??
+                  index.toString()
+
                 const isLast = index === categories.length - 1
 
                 return (
-                  <React.Fragment key={index}>
+                  <React.Fragment key={key}>
                     {titleToUse}
                     {!isLast && <React.Fragment>, &nbsp;</React.Fragment>}
                   </React.Fragment>
