@@ -1,27 +1,22 @@
 import { getAdapter } from '@/blocks/SocialEmbed/adapters'
+import { OEmbedRequestError } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
 import { isOEmbedRich, isOEmbedThumbnail } from '@/blocks/SocialEmbed/helpers/oEmbed'
 import type { Article, SocialEmbedBlock } from '@/payload-types'
 import { isAutosave } from '@/utilities/isAutosave'
 import { isFailure } from '@/utilities/results'
 import type { FieldHookArgs } from 'payload'
 
-// TODO: Make this configurable in admin settings eventually.
-const maxwidth = 550
-
 export async function fetchSnapshot({
   req,
   siblingData,
-  operation,
   value = '',
 }: FieldHookArgs<Article, string, SocialEmbedBlock>): Promise<string> {
   if (isAutosave(req)) return value
 
-  req.payload.logger.info({ value, operation }, 'Fetching oEmbed snapshot')
-
   if (!siblingData.platform) {
     siblingData.snapshot = {
       ...siblingData.snapshot,
-      status: 'error',
+      status: 'not_found',
       title: 'No platform found',
       fetchedAt: new Date().toISOString(),
     }
@@ -33,18 +28,24 @@ export async function fetchSnapshot({
     siblingData.snapshot = {
       ...siblingData.snapshot,
       status: 'not_found',
+      title: 'No adapter found',
       fetchedAt: new Date().toISOString(),
     }
     return value
   }
 
-  const result = await adapter.getOEmbed({ url: value, maxwidth })
+  const result = await adapter.getOEmbed({
+    url: value,
+    ...(siblingData.platform === 'twitter' && {
+      hideMedia: siblingData.hideMedia,
+      hideThread: siblingData.hideThread,
+    }),
+  })
 
   if (isFailure(result)) {
-    req.payload.logger.info({ result: result.error.message }, 'Failed to fetch oEmbed snapshot')
     siblingData.snapshot = {
       ...siblingData.snapshot,
-      status: 'forbidden',
+      status: result.error instanceof OEmbedRequestError ? result.error.code : 'error',
       fetchedAt: new Date().toISOString(),
     }
     return value

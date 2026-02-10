@@ -80,9 +80,18 @@ export interface OEmbedLink extends OEmbedBase {
 export type OEmbedResponse = OEmbedPhoto | OEmbedVideo | OEmbedRich | OEmbedLink
 
 export const isOEmbedPhoto = (x: OEmbedResponse): x is OEmbedPhoto => x.type === 'photo'
-export const isOEmbedVideo = (x: OEmbedResponse): x is OEmbedVideo => x.type === 'video'
-export const isOEmbedRich = (x: OEmbedResponse): x is OEmbedRich => x.type === 'rich'
+export const isOEmbedVideo = (x: OEmbedResponse): x is OEmbedVideo =>
+  x.type === 'video' && typeof x.html === 'string'
+export const isOEmbedRich = (x: OEmbedResponse): x is OEmbedRich =>
+  x.type === 'rich' && typeof x.html === 'string'
 export const isOEmbedLink = (x: OEmbedResponse): x is OEmbedLink => x.type === 'link'
+export const isOEmbed = (x: unknown): x is OEmbedResponse =>
+  typeof x === 'object' &&
+  x !== null &&
+  (isOEmbedPhoto(x as OEmbedPhoto) ||
+    isOEmbedVideo(x as OEmbedVideo) ||
+    isOEmbedRich(x as OEmbedRich) ||
+    isOEmbedLink(x as OEmbedLink))
 export const isOEmbedThumbnail = (
   x: OEmbedResponse | (OEmbedResponse & OEmbedThumbnail),
 ): x is OEmbedResponse & OEmbedThumbnail => {

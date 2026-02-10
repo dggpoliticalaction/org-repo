@@ -9,10 +9,6 @@ export function derivePlatform({
   siblingData,
 }: FieldHookArgs<Article, string, SocialEmbedBlock>): string | undefined {
   if (isAutosave(req)) return value
-  const platform = detectPlatform(siblingData.url || '')
-  req.payload.logger.info({ platform }, 'Deriving platform')
-  if (platform) {
-    siblingData.platform = platform
-  }
+  siblingData.platform = detectPlatform(siblingData.url || '') ?? undefined
   return value
 }

@@ -22,7 +22,9 @@ class RedditAdapter extends SocialAdapter<RedditOEmbedOptions, RedditOEmbedRespo
         host === 'reddit.com' ||
         host === 'www.reddit.com' ||
         host === 'old.reddit.com' ||
-        host === 'np.reddit.com'
+        host === 'np.reddit.com' ||
+        host === 'new.reddit.com' ||
+        host === 'amp.reddit.com'
       if (!isRedditHost) return false
 
       const path = urlObj.pathname

@@ -40,13 +40,16 @@ export const SocialEmbed: Block = {
         value: string | null | undefined,
         { siblingData }: ValidateOptions<Article, SocialEmbedBlock, SelectField, string>,
       ): true | string => {
+        const detected = detectPlatform(siblingData.url || '')
         if (!value) {
-          return !!detectPlatform(siblingData.url || '') || 'Invalid platform.'
+          return !!detected || 'Invalid platform.'
         }
+        if (!detected) return 'Invalid platform.'
+        if (detected !== value) return 'Platform does not match URL.'
         return true
       },
       admin: {
-        // hidden: true,
+        hidden: true,
         readOnly: true,
       },
     },
@@ -58,7 +61,15 @@ export const SocialEmbed: Block = {
         {
           name: 'status',
           type: 'select',
-          options: ['ok', 'not_found', 'forbidden', 'error'],
+          options: [
+            'ok',
+            'not_found',
+            'forbidden',
+            'error',
+            'timeout',
+            'aborted',
+            'invalid_oembed_response',
+          ],
         },
         { name: 'fetchedAt', type: 'date', label: 'Fetched At' },
         { name: 'providerName', type: 'text', label: 'Provider Name' },
@@ -70,7 +81,7 @@ export const SocialEmbed: Block = {
         { name: 'thumbnailURL', type: 'text', label: 'Thumbnail URL' },
       ],
       admin: {
-        // hidden: true,
+        hidden: true,
         readOnly: true,
       },
     },

@@ -3,25 +3,29 @@ import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
 import { RedditEmbedClient } from '@/blocks/SocialEmbed/embeds/RedditEmbed/client'
 import type { SocialEmbedBlock } from '@/payload-types'
 import { isFailure } from '@/utilities/results'
+import { getPlatformDisplayName } from '../../helpers/getPlatformDisplayName'
 
 export async function RedditEmbedBlock({
   url,
+  platform,
   snapshot,
   id,
 }: SocialEmbedBlock): Promise<React.ReactNode> {
+  const displayName = getPlatformDisplayName(platform)
+
   let html = snapshot?.html
   if (!html) {
     const result = await fetchRedditOEmbed({ url, maxwidth: 550 })
 
     if (isFailure(result)) {
-      return <EmbedError url={url} message={result.error.message} platform="Reddit" />
+      return <EmbedError url={url} message={result.error.message} displayName={displayName} />
     }
 
     html = await sanitizeRedditHtml(result.value.html)
   }
 
   if (!id) {
-    return <EmbedError url={url} message="Embed Block ID not found" platform="Reddit" />
+    return <EmbedError url={url} message="Embed Block ID not found" displayName={displayName} />
   }
 
   return (

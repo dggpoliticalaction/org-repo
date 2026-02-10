@@ -98,9 +98,16 @@ const createLipsumParagraph = (text: string) => ({
 
 type LipsumParagraph = ReturnType<typeof createLipsumParagraph>
 
+type SocialEmbedBlockFields = Pick<
+  SocialEmbedBlock,
+  'url' | 'platform' | 'snapshot' | 'hideMedia' | 'hideThread'
+> & {
+  blockType: 'socialEmbed'
+}
+
 interface SocialEmbedBlockNode {
   type: 'block'
-  fields: { blockType: 'socialEmbed'; url: string; platform: string; snapshot?: unknown; hideMedia?: boolean; hideThread?: boolean }
+  fields: SocialEmbedBlockFields
   format: ''
   version: 2
 }
@@ -157,7 +164,7 @@ const createSocialEmbedContent = () => {
 /**
  * Maps platform to legacy blockType
  */
-const getLegacyBlockType = (platform: string): string => {
+const getLegacyBlockType = (platform: string): LegacySocialBlockType => {
   switch (platform) {
     case 'twitter':
       return 'twitterEmbed'
@@ -174,10 +181,12 @@ const getLegacyBlockType = (platform: string): string => {
   }
 }
 
+type LegacySocialBlockType = 'twitterEmbed' | 'youtubeEmbed' | 'redditEmbed' | 'blueSkyEmbed' | 'tiktokEmbed'
+
 interface LegacyEmbedBlockNode {
   type: 'block'
   fields: {
-    blockType: 'twitterEmbed' | 'youtubeEmbed' | 'redditEmbed' | 'blueSkyEmbed' | 'tiktokEmbed'
+    blockType: LegacySocialBlockType
     url: string
     hideMedia?: boolean
     hideThread?: boolean
@@ -198,12 +207,7 @@ const createLegacySocialEmbedContent = () => {
     children.push({
       type: 'block' as const,
       fields: {
-        blockType: getLegacyBlockType(item.platform ?? '') as
-          | 'twitterEmbed'
-          | 'youtubeEmbed'
-          | 'redditEmbed'
-          | 'blueSkyEmbed'
-          | 'tiktokEmbed',
+        blockType: getLegacyBlockType(item.platform ?? '') as LegacySocialBlockType,
         url: item.url,
         ...(item.platform === 'twitter' && {
           hideMedia: false,

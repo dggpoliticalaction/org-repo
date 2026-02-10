@@ -7,7 +7,11 @@ import sanitizeHtml from 'sanitize-html'
 
 export function parseTikTokPostId(input: string): string | null {
   if (!URL.canParse(input)) return null
-  return new URL(input).pathname.match(/\/video\/(\d+)/)?.[1] ?? null
+  const url = new URL(input)
+  const host = url.hostname.toLowerCase()
+  const isTikTokHost = host === 'tiktok.com' || host === 'www.tiktok.com' || host === 'm.tiktok.com'
+  if (!isTikTokHost) return null
+  return url.pathname.match(/\/video\/(\d+)/)?.[1] ?? null
 }
 
 export interface TikTokIFrameSettings {

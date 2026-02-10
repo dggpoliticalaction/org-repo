@@ -22,6 +22,13 @@ export abstract class SocialAdapter<
   abstract isValidUrl(url: string): boolean
 
   /**
+   * Builds the platform-specific oEmbed endpoint URL.
+   * @param options - Options object; shape is defined by the adapter's TOptions
+   * @returns A URL pointing to the provider oEmbed endpoint
+   */
+  abstract buildUrl(options: TOptions): URL
+
+  /**
    * Fetches the oEmbed data for the given options.
    * Each adapter implements this with its class's TOptions and TResponse.
    * @param options - Options object; shape is defined by the adapter's TOptions

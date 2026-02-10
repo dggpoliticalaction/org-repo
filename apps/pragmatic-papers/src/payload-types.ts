@@ -1994,7 +1994,7 @@ export interface SquiggleRuleBlock {
  * via the `definition` "SocialEmbedSnapshot".
  */
 export interface SocialEmbedSnapshot {
-  status?: ('ok' | 'not_found' | 'forbidden' | 'error') | null;
+  status?: ('ok' | 'not_found' | 'forbidden' | 'error' | 'timeout' | 'aborted' | 'invalid_oembed_response') | null;
   fetchedAt?: string | null;
   providerName?: string | null;
   providerURL?: string | null;

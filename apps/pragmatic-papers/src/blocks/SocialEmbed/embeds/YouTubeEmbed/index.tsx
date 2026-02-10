@@ -3,18 +3,21 @@ import {
   sanitizeYouTubeHtml,
 } from '@/blocks/SocialEmbed/adapters/youtube.adapter'
 import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
+import { getPlatformDisplayName } from '@/blocks/SocialEmbed/helpers/getPlatformDisplayName'
 import type { SocialEmbedBlock } from '@/payload-types'
 import { isFailure } from '@/utilities/results'
 
 export async function YouTubeEmbedBlock({
   url,
+  platform,
   snapshot,
 }: SocialEmbedBlock): Promise<React.ReactNode> {
+  const displayName = getPlatformDisplayName(platform)
   let html = snapshot?.html
   if (!html) {
     const result = await fetchYouTubeOEmbed({ url })
     if (isFailure(result)) {
-      return <EmbedError url={url} message={result.error.message} platform="YouTube" />
+      return <EmbedError url={url} message={result.error.message} displayName={displayName} />
     }
     html = await sanitizeYouTubeHtml(result.value.html)
   }

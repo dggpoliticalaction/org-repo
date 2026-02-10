@@ -23,6 +23,6 @@ const adapters: Partial<Record<SocialPlatform, SocialAdapter>> = {
  * @param platform - The social platform
  * @returns The adapter for the platform, or undefined if not found
  */
-export function getAdapter(platform: SocialPlatform): SocialAdapter | undefined {
-  return adapters[platform]
+export function getAdapter(platform: SocialPlatform): SocialAdapter | null {
+  return adapters[platform] || null
 }

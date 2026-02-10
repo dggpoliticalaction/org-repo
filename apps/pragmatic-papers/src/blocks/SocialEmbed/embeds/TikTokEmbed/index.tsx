@@ -1,21 +1,24 @@
 import { buildTikTokSrc, parseTikTokPostId } from '@/blocks/SocialEmbed/adapters/tiktok.adapter'
 import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
+import { getPlatformDisplayName } from '@/blocks/SocialEmbed/helpers/getPlatformDisplayName'
 import type { SocialEmbedBlock } from '@/payload-types'
 
 export async function TikTokEmbedBlock({
   url,
+  platform,
   snapshot,
 }: SocialEmbedBlock): Promise<React.ReactNode> {
+  const displayName = getPlatformDisplayName(platform)
   const postId = parseTikTokPostId(url)
   if (!postId) {
-    return <EmbedError url={url} message="Invalid TikTok URL" platform="TikTok" />
+    return <EmbedError url={url} message="Invalid URL" displayName={displayName} />
   }
 
   return (
     <div className="my-8 flex justify-center">
       <div className="relative w-full max-w-[360px] space-y-3">
         <div className="sr-only rounded-lg border p-3">
-          <div className="text-sm font-medium">TikTok</div>
+          <div className="text-sm font-medium">{displayName}</div>
           {snapshot?.authorName && <div className="text-sm opacity-80">{snapshot.authorName}</div>}
           {snapshot?.title && <div className="mt-2 text-sm">{snapshot.title}</div>}
           <a
@@ -24,7 +27,7 @@ export async function TikTokEmbedBlock({
             target="_blank"
             rel="noreferrer"
           >
-            View on TikTok
+            View on {displayName}
           </a>
         </div>
         <div className="relative aspect-[9/16] overflow-hidden rounded-lg shadow-xl">
