@@ -53,11 +53,11 @@
       "runOnce": false,
       "initialDelaySecs": 0
     },
-    "autoCloseOnboardingChannels": {
+    "autoCloseWelcomeThreads": {
       "schedule": "0 0 * * * *",
       "log": true,
       "runOnce": false,
-      "initialDelaySecs": 60
+      "initialDelaySecs": 120
     }
   },
   "rateLimiting": {
@@ -85,42 +85,24 @@
     }
   },
   "onboarding": {
-    "delaySeconds": 7,
-    "categoryName": "onboarding",
-    "teamRoleName": "Onboarding Team",
-    "teamLeadRoleName": "Team Lead",
-    "autoCloseDays": 7
+    "delaySeconds": 7
+  },
+  "welcomeThread": {
+    "channelName": "entrance",
+    "welcomeTeamRoleName": "Welcome Team",
+    "modRoleName": "Moderator",
+    "directorRoleName": "Director",
+    "maxActiveThreads": 50,
+    "maxTotalThreads": 500,
+    "inactivityDays": 5,
+    "welcomeMessage": "Welcome! This is a brief summary of our server. Someone from the Welcome Team will introduce themselves and help you get started. Feel free to say hello here."
   },
   "teams": {
-    "Dev Team": {
-      "interestRoleName": "Interest in Dev Team",
-      "leadRoleName": "Team Lead",
-      "welcomeMessage": "Welcome! Thank you for your interest in the Dev Team. We are a team of developers who are passionate about building and maintaining our digital infrastructure. Someone will be with you soon!"
-    },
-    "Events Team": {
-      "interestRoleName": "Interest in Events Team",
-      "leadRoleName": "Team Lead",
-      "welcomeMessage": "Welcome! Thank you for your interest in the Events Team. We are a team of event organizers who are passionate about planning and hosting events. Someone will be with you soon!"
-    },
-    "Media Team": {
-      "interestRoleName": "Interest in Media Team",
-      "leadRoleName": "Team Lead",
-      "welcomeMessage": "Welcome! Thank you for your interest in the Media Team. We are a team of media professionals who are passionate about creating and sharing content. Someone will be with you soon!"
-    },
-    "Recruitment Team": {
-      "interestRoleName": "Interest in Recruitment Team",
-      "leadRoleName": "Team Lead",
-      "welcomeMessage": "Welcome! Thank you for your interest in the Recruitment Team. We are a team of recruiters who are passionate about finding and hiring new members. Someone will be with you soon!"
-    },
-    "Research Team": {
-      "interestRoleName": "Interest in Research Team",
-      "leadRoleName": "Team Lead",
-      "welcomeMessage": "Welcome! Thank you for your interest in the Research Team. We are a team of researchers who are passionate about finding and hiring new members. Someone will be with you soon!"
-    },
-    "Moderator": {
-      "interestRoleName": "Interest in Moderation",
-      "leadRoleName": "Head Moderator",
-      "welcomeMessage": "Welcome! Thank you for your interest in the Moderation Team. We are a team of moderators who are passionate about keeping our community safe and welcoming. Someone will be with you soon!"
-    }
+    "Dev Team": { "interestRoleName": "Interest in Dev Team" },
+    "Events Team": { "interestRoleName": "Interest in Events Team" },
+    "Media Team": { "interestRoleName": "Interest in Media Team" },
+    "Recruitment Team": { "interestRoleName": "Interest in Recruitment Team" },
+    "Research Team": { "interestRoleName": "Interest in Research Team" },
+    "Moderator": { "interestRoleName": "Interest in Moderation" }
   }
 }

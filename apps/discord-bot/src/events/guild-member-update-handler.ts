@@ -24,7 +24,7 @@ export class GuildMemberUpdateHandler implements EventHandler {
   /**
    * Process a GuildMemberUpdate event.
    * Detects role additions that match configured team interest roles
-   * and queues channel creation with a delay.
+   * and queues welcome thread creation with a delay.
    */
   public async process(
     oldMember: GuildMember | PartialGuildMember,
@@ -39,7 +39,10 @@ export class GuildMemberUpdateHandler implements EventHandler {
       return
     }
 
-    const teams = Config.teams as Record<string, string> | undefined
+    const teams = Config.teams as Record<
+      string,
+      { interestRoleName?: string }
+    > | undefined
 
     if (!teams) {
       return
@@ -53,9 +56,8 @@ export class GuildMemberUpdateHandler implements EventHandler {
 
     // Handle added team roles - check if role matches any interest role in teams config
     for (const [roleId, role] of addedRoles) {
-      // Find team name by checking if role name matches any interest role in teams config
       const teamName = Object.keys(teams).find(
-        (team) => teams[team] === role.name,
+        (team) => teams[team]?.interestRoleName === role.name,
       )
 
       if (teamName) {
@@ -70,7 +72,7 @@ export class GuildMemberUpdateHandler implements EventHandler {
     // Handle removed team roles - cancel pending channel creation
     for (const [roleId, role] of removedRoles) {
       const teamName = Object.keys(teams).find(
-        (team) => teams[team] === role.name,
+        (team) => teams[team]?.interestRoleName === role.name,
       )
 
       if (teamName) {

@@ -20,10 +20,11 @@ RUN apk add --no-cache \
     giflib-dev \
     pixman-dev
 
-# Enable pnpm
+# Enable pnpm (upgrade Corepack first so it has current npm registry keys;
+# older bundled Corepack fails with "Cannot find matching keyid" after key rotation)
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN corepack enable && npm install -g corepack@latest && corepack enable
 
 WORKDIR /app
 

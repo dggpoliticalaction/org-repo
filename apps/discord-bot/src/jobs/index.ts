@@ -1,3 +1,3 @@
-export { AutoCloseOnboardingChannelsJob } from './auto-close-onboarding-channels-job.js'
+export { AutoCloseWelcomeThreadsJob } from './auto-close-welcome-threads-job.js'
 export { Job } from './job.js'
 export { UpdateServerCountJob } from './update-server-count-job.js'

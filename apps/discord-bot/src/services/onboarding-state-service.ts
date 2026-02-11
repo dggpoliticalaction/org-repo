@@ -1,8 +1,8 @@
 import { type GuildMember } from 'discord.js'
 import { createRequire } from 'node:module'
 
-import { ChannelCreationService } from './channel-creation-service.js'
 import { Logger } from './logger.js'
+import { WelcomeThreadService } from './welcome-thread-service.js'
 
 const require = createRequire(import.meta.url)
 const Config = require('../../config/config.json')
@@ -17,8 +17,10 @@ interface PendingOnboarding {
 }
 
 /**
- * Service to manage pending onboarding channel creations with delays.
- * Handles the delay queue and cancellation if role is removed during the delay period.
+ * Service to manage pending welcome thread creations with delays.
+ * When a user selects an interest role (Channels & Roles), we queue creation of a
+ * welcome thread in the welcome channel after a delay. Handles cancellation if
+ * the role is removed during the delay period.
  */
 export class OnboardingStateService {
   // Map key: `${guildId}-${memberId}-${roleId}`
@@ -29,8 +31,8 @@ export class OnboardingStateService {
   }
 
   /**
-   * Queue a channel creation for a member who just received a team role.
-   * The channel will be created after the configured delay period.
+   * Queue a welcome thread creation for a member who just received an interest role.
+   * The thread will be created in the welcome channel after the configured delay period.
    */
   public queueChannelCreation(
     member: GuildMember,
@@ -42,7 +44,7 @@ export class OnboardingStateService {
     // If already pending for this role, don't queue again
     if (this.pendingOnboardings.has(key)) {
       Logger.info(
-        `Onboarding channel creation already pending for ${member.user.tag} and team ${teamName}`,
+        `Welcome thread creation already pending for ${member.user.tag} and team ${teamName}`,
       )
       return
     }
@@ -51,7 +53,7 @@ export class OnboardingStateService {
     const delayMs = delaySeconds * 1000
 
     Logger.info(
-      `Queueing onboarding channel creation for ${member.user.tag} and team ${teamName} (delay: ${delaySeconds}s)`,
+      `Queueing welcome thread creation for ${member.user.tag} and team ${teamName} (delay: ${delaySeconds}s)`,
     )
 
     const timeoutId = setTimeout(async () => {
@@ -71,7 +73,7 @@ export class OnboardingStateService {
   }
 
   /**
-   * Cancel a pending channel creation if the role was removed during the delay period.
+   * Cancel a pending welcome thread creation if the role was removed during the delay period.
    */
   public cancelPendingCreation(
     guildId: string,
@@ -85,7 +87,7 @@ export class OnboardingStateService {
       clearTimeout(pending.timeoutId)
       this.pendingOnboardings.delete(key)
       Logger.info(
-        `Cancelled pending onboarding channel creation for member ${memberId} and role ${roleId}`,
+        `Cancelled pending welcome thread creation for member ${memberId} and role ${roleId}`,
       )
       return true
     }
@@ -109,7 +111,7 @@ export class OnboardingStateService {
 
     if (cancelled > 0) {
       Logger.info(
-        `Cancelled ${cancelled} pending onboarding channel creation(s) for member ${memberId}`,
+        `Cancelled ${cancelled} pending welcome thread creation(s) for member ${memberId}`,
       )
     }
 
@@ -136,7 +138,7 @@ export class OnboardingStateService {
   }
 
   /**
-   * Execute the channel creation after the delay period.
+   * Execute the welcome thread creation after the delay period.
    */
   private async executeChannelCreation(
     member: GuildMember,
@@ -153,25 +155,15 @@ export class OnboardingStateService {
       const freshMember = await member.guild.members.fetch(member.id)
       if (!freshMember.roles.cache.has(roleId)) {
         Logger.info(
-          `Member ${member.user.tag} no longer has role ${roleId}, skipping channel creation`,
+          `Member ${member.user.tag} no longer has role ${roleId}, skipping welcome thread creation`,
         )
         return
       }
 
-      // Create the channel
-      const channel = await ChannelCreationService.createOnboardingChannel(
-        freshMember,
-        teamName,
-        freshMember.guild,
-      )
-
-      if (channel) {
-        // Send welcome message
-        await ChannelCreationService.sendTeamWelcomeMessage(channel, teamName, freshMember)
-      }
+      await WelcomeThreadService.createWelcomeThread(freshMember)
     } catch (error) {
       Logger.error(
-        `Failed to execute channel creation for ${member.user.tag} and team ${teamName}:`,
+        `Failed to execute welcome thread creation for ${member.user.tag} and team ${teamName}:`,
         error,
       )
     }

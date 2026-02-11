@@ -31,7 +31,7 @@ import {
   TriggerHandler,
 } from './events/index.js'
 import { CustomClient } from './extensions/index.js'
-import { AutoCloseOnboardingChannelsJob, type Job } from './jobs/index.js'
+import { AutoCloseWelcomeThreadsJob, type Job } from './jobs/index.js'
 import { Bot } from './models/bot.js'
 import { type Reaction } from './reactions/index.js'
 import {
@@ -113,9 +113,7 @@ async function start(): Promise<void> {
   const reactionHandler = new ReactionHandler(reactions, eventDataService)
 
   // Jobs
-  const jobs: Job[] = [
-    new AutoCloseOnboardingChannelsJob(client),
-  ]
+  const jobs: Job[] = [new AutoCloseWelcomeThreadsJob(client)]
 
   // Bot
   const bot = new Bot(
