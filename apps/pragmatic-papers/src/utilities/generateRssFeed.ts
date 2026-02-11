@@ -1,15 +1,73 @@
+import type { SerializedInlineBlockNode } from '@payloadcms/richtext-lexical'
+import {
+  convertLexicalToHTML,
+  type HTMLConvertersFunction,
+} from '@payloadcms/richtext-lexical/html'
 import { Feed } from 'feed'
+import type { FootnoteBlock as FootnoteBlockType } from '../payload-types'
 import { type Article, type Media, type Volume } from '../payload-types'
 import { getServerSideURL } from './getURL'
-import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 
 const SITE_URL = getServerSideURL()
+
+const htmlConverters: HTMLConvertersFunction = ({ defaultConverters }) => ({
+  ...defaultConverters,
+  inlineBlocks: {
+    ...defaultConverters.inlineBlocks,
+    inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode }) => {
+      const math = (node.fields as { math?: string })?.math || ''
+      return `<span class="math">\\(${math}\\)</span>`
+    },
+    footnote: ({ node }: { node: SerializedInlineBlockNode }) => {
+      const fields = node.fields as FootnoteBlockType
+      const index = typeof fields.index === 'number' ? fields.index : ''
+      const note = fields.note || ''
+      const referenceId = `footnote-ref-${index}`
+      const describedById = `footnote-${index}`
+      return `<sup id="${referenceId}" title="Footnote ${index}: ${note}"><a href="#${describedById}">[${index}]</a></sup>`
+    },
+  },
+})
 
 const getMediaUrl = (url: string) => {
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url
   }
   return `${SITE_URL}${url}`
+}
+
+const formatFootnotes = (footnotes?: Article['footnotes']): string => {
+  if (!footnotes || !footnotes.length) return ''
+
+  const footnoteItems = footnotes
+    .map((footnote) => {
+      if (!footnote) return ''
+      const { index, note, attributionEnabled, link } = footnote
+      if (!note || typeof index !== 'number') return ''
+
+      const describedById = `footnote-${index}`
+      let linkHtml = ''
+
+      if (attributionEnabled && link?.url) {
+        if (link.type === 'custom') {
+          linkHtml = ` <a href="${link.url}" style="border: none; color: #0066cc; text-decoration: underline;" title="Link to source ${link.label || ''}">${link.url}</a>`
+        } else if (link.type === 'reference' && link.reference) {
+          const referenceUrl =
+            typeof link.reference.value === 'object' && link.reference.value?.slug
+              ? `${SITE_URL}/${link.reference.relationTo}/${link.reference.value.slug}`
+              : link.url
+          linkHtml = ` <a href="${referenceUrl}" style="border: none; color: #0066cc; text-decoration: underline;" title="Link to source ${link.label || ''}">${link.url}</a>`
+        }
+      }
+
+      return `<li><span id="${describedById}">${note}</span>${linkHtml}</li>`
+    })
+    .filter(Boolean)
+    .join('\n    ')
+
+  if (!footnoteItems) return ''
+
+  return `<section style="margin-top: 2em; padding-top: 1em; border-top: 1px solid #ddd;"><h3 style="font-size: 1.2em; font-weight: bold; margin-bottom: 0.5em;">Footnotes</h3><ol style="list-style: decimal; padding-left: 1.5em;">${footnoteItems}</ol></section>`
 }
 
 const formatArticleLink = (article: Article) => {
@@ -34,7 +92,7 @@ const formatVolumeContent = (volume: Volume) => {
   if (volume.editorsNote) {
     sections.push(`
 <div style="margin: 1.5em 0">
-  ${convertLexicalToHTML({ data: volume.editorsNote })}
+  ${convertLexicalToHTML({ data: volume.editorsNote, converters: htmlConverters })}
 </div>`)
   }
 
@@ -95,7 +153,11 @@ export const generateArticleFeed = (articles: Article[]): string => {
         })),
         content: (() => {
           try {
-            return article.content ? convertLexicalToHTML({ data: article.content }) : ''
+            const articleContent = article.content
+              ? convertLexicalToHTML({ data: article.content, converters: htmlConverters })
+              : ''
+            const footnotesHtml = formatFootnotes(article.footnotes)
+            return articleContent + footnotesHtml
           } catch (error) {
             console.error('Error converting article content to HTML:', error)
             return ''
@@ -104,7 +166,7 @@ export const generateArticleFeed = (articles: Article[]): string => {
         extensions: [
           {
             name: 'updated',
-            objects: new Date(article.updatedAt).toISOString(),
+            objects: { updated: new Date(article.updatedAt).toISOString() },
           },
         ],
       })
@@ -133,7 +195,7 @@ export const generateVolumeFeed = (volumes: Volume[]): string => {
         extensions: [
           {
             name: 'updated',
-            objects: new Date(volume.updatedAt).toISOString(),
+            objects: { updated: new Date(volume.updatedAt).toISOString() },
           },
         ],
         published: new Date(volume.publishedAt),

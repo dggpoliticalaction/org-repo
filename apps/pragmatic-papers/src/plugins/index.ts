@@ -1,16 +1,15 @@
+import { revalidateRedirects } from '@/hooks/revalidateRedirects'
+import type { Article, Page, Volume } from '@/payload-types'
+import { getServerSideURL } from '@/utilities/getURL'
+import { toRoman } from '@/utilities/toRoman'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
-import { type Plugin } from 'payload'
-import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { type GenerateTitle, type GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
-
-import type { Article, Volume, Page } from '@/payload-types'
-import { getServerSideURL } from '@/utilities/getURL'
-import { toRoman } from '@/utilities/toRoman'
+import { type Plugin } from 'payload'
 
 function isVolume(obj: Volume | Article | Page): obj is Volume {
   return (obj as Volume).volumeNumber !== undefined
@@ -100,12 +99,23 @@ export const plugins: Plugin[] = [
     },
   }),
   s3Storage({
-    enabled: process.env.NODE_ENV === 'production',
+    // Enable S3 storage only when not using local storage
+    // For staging/preview: set USE_LOCAL_STORAGE=true to use local file system
+    // For production: set USE_LOCAL_STORAGE=false (or leave unset) to use S3
+    enabled: process.env.USE_LOCAL_STORAGE !== 'true',
     collections: {
       media: {
         disablePayloadAccessControl: true,
         generateFileURL: ({ filename }) => {
-          return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${process.env.S3_BUCKET}/${filename}`
+          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+          const bucket = process.env.S3_BUCKET
+
+          if (!supabaseUrl || !bucket) {
+            // Fallback to local media path if env vars are not set
+            return `/media/${filename}`
+          }
+
+          return `${supabaseUrl}/storage/v1/object/public/${bucket}/${filename}`
         },
       },
     },

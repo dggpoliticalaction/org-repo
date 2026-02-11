@@ -19,7 +19,7 @@ import {
   UserCommandMetadata,
 } from './commands/index.js'
 import { ViewDateSent } from './commands/message/index.js'
-import { ViewDateJoined } from './commands/user/index.js'
+import { ViewDateJoined, SendDevOnboarding } from './commands/user/index.js'
 import {
   ButtonHandler,
   CommandHandler,
@@ -79,6 +79,7 @@ async function start(): Promise<void> {
 
     // User Context Commands
     new ViewDateJoined(),
+    new SendDevOnboarding()
   ]
 
   // Buttons
