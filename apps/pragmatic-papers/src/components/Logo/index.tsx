@@ -36,7 +36,8 @@ const logoVariants = cva('', {
 })
 
 export interface LogoRootProps
-  extends React.SVGProps<SVGSVGElement>, VariantProps<typeof logoVariants> {}
+  extends React.SVGProps<SVGSVGElement>,
+    VariantProps<typeof logoVariants> {}
 
 export const LogoRoot: React.FC<LogoRootProps> = ({ className, variant, ...props }) => {
   switch (variant) {
@@ -62,7 +63,8 @@ export const LogoRoot: React.FC<LogoRootProps> = ({ className, variant, ...props
 }
 
 export interface LogoProps
-  extends React.SVGProps<SVGSVGElement>, VariantProps<typeof logoVariants> {
+  extends React.SVGProps<SVGSVGElement>,
+    VariantProps<typeof logoVariants> {
   love?: boolean
 }
 
