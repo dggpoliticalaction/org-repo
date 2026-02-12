@@ -8,6 +8,7 @@ import React, { useState } from 'react'
 import type { Props as MediaProps } from '../types'
 
 import { ImageModal } from '@/components/ImageModal'
+import { MediaCarousel } from '@/components/MediaCarousel'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 export const ImageMedia: React.FC<MediaProps> = (props) => {
@@ -21,6 +22,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     loading: loadingFromProps,
     size,
     enableModal = false,
+    gallery,
   } = props
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -83,15 +85,33 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   }
 
   // NOTE: this is used by the browser to determine which image to download at different screen sizes
-
   return (
     <>
       {enableModal && isPayloadResource && (
         <ImageModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          resource={resource}
-        />
+          resource={!gallery ? resource : undefined}
+          title={gallery ? 'Image gallery' : undefined}
+        >
+          {gallery && (
+            <MediaCarousel
+              images={gallery.images}
+              initialIndex={gallery.startIndex}
+              showCaptions={true}
+              indicatorClassName="bottom-12"
+              imageClassName="w-full h-auto object-contain max-h-[70vh]"
+              pictureClassName="w-full h-full flex items-center justify-center"
+              containerClassName="w-fit max-w-[90vw] bg-background mx-auto"
+              imageContainerClassName="h-[70vh]"
+              navigationClassName={{
+                previous: 'left-4',
+                next: 'right-4'
+              }}
+              enableModal={false}
+            />
+          )}
+        </ImageModal>
       )}
       <picture
         className={cn(pictureClassName, enableModal && 'cursor-pointer')}

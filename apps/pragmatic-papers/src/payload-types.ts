@@ -1965,11 +1965,11 @@ export interface CodeBlock {
  * via the `definition` "MediaCollageBlock".
  */
 export interface MediaCollageBlock {
+  layout: 'grid' | 'carousel';
   images: {
     media: number | Media;
     id?: string | null;
   }[];
-  layout: 'grid' | 'carousel';
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaCollage';

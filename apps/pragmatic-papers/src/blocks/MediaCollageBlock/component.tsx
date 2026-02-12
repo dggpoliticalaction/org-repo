@@ -1,107 +1,37 @@
 'use client'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi,
-} from '@/components/ui/carousel'
+import { MediaCarousel } from '@/components/MediaCarousel'
 import type { MediaCollageBlock as MediaCollageBlockType } from '@/payload-types'
+import type { Media as MediaType } from '@/payload-types'
 import { cn } from '@/utilities/ui'
-import React, { useState } from 'react'
+import React from 'react'
 
 type CollageImage = MediaCollageBlockType['images'][number]
 
-// Carousel navigation indicators
-const CarouselIndicators: React.FC<{
-  images: CollageImage[]
-  current: number
-  api?: CarouselApi
-}> = ({ images, current, api }) => {
-  return (
-    <div className="absolute bottom-10 left-0 right-0 z-10 flex justify-center gap-2">
-      {images.map((_, idx) => (
-        <button
-          key={idx}
-          onClick={() => api?.scrollTo(idx)}
-          type="button"
-          className={cn(
-            'inline-block h-2 w-2 rounded-full bg-muted-foreground transition-all ring-1 ring-background',
-            idx === current ? 'scale-125 bg-primary' : 'opacity-40',
-          )}
-          aria-label={`Go to slide ${idx + 1}`}
-        />
-      ))}
-    </div>
-  )
-}
-
 // actual code for the collage/grid
 export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, layout }) => {
-  const [api, setApi] = useState<CarouselApi>()
-  const [current, setCurrent] = useState(0)
-
-  React.useEffect(() => {
-    if (!api) {
-      return
-    }
-
-    setCurrent(api.selectedScrollSnap())
-
-    api.on('select', () => {
-      setCurrent(api.selectedScrollSnap())
-    })
-  }, [api])
-
   if (!images.length) return null
+
+  // Extract valid media resources for gallery
+  const validMedia = images
+    .map((img) => (typeof img.media === 'number' ? null : img.media))
+    .filter((media): media is MediaType => media !== null)
 
   //carousel image layout
   if (layout === 'carousel') {
     return (
-      <>
-        <Carousel setApi={setApi} opts={{ loop: true }} className="relative">
-          <CarouselContent>
-            {images.map((imageData, index) => { 
-              const image = typeof imageData?.media === 'number' ? null : imageData?.media
-              if (!image) return null
-
-              return (
-                <CarouselItem key={index}>
-                  <figure>
-                    <div className="relative aspect-video w-full rounded-[0.8rem] bg-muted/50 dark:bg-muted/50">
-                      <Media
-                        resource={image}
-                        imgClassName="border border-border rounded-[0.8rem] absolute inset-0 w-full h-full object-contain"
-                        pictureClassName="w-full h-full"
-                        className="h-full w-full"
-                        enableModal
-                      />
-                    </div>
-                    {image.caption && (
-                      <div className="absolute -bottom-6 h-14 w-full overflow-hidden">
-                        <figcaption className="mt-1 w-full text-center">
-                          <RichText
-                            data={image.caption}
-                            enableGutter={false}
-                            enableProse={false}
-                            className="not-prose text-[0.95rem] text-muted-foreground"
-                          />
-                        </figcaption>
-                      </div>
-                    )}
-                  </figure>
-                </CarouselItem>
-              )
-            })}
-          </CarouselContent>
-          <CarouselIndicators images={images} current={current} api={api}  />
-          <CarouselPrevious className="left-4 lg:-left-12" />
-          <CarouselNext className="right-4 lg:-right-12" />
-        </Carousel>
-      </>
+      <MediaCarousel
+        containerClassName=''
+        images={validMedia}
+        showCaptions={true}
+        indicatorClassName="bottom-20"
+        enableModal={true}
+        galleryData={{
+          images: validMedia,
+          startIndex: 0
+        }}
+      />
     )
   }
 
@@ -124,6 +54,10 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
                 resource={media}
                 imgClassName="border border-border rounded-[0.8rem]"
                 enableModal
+                gallery={{
+                  images: validMedia,
+                  startIndex: idx
+                }}
               />
               {media.caption && (
                 <figcaption className="mt-1 w-full text-center">
