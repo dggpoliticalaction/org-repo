@@ -22,14 +22,14 @@ const CarouselIndicators: React.FC<{
   api?: CarouselApi
 }> = ({ images, current, api }) => {
   return (
-    <div className="mt-2 flex justify-center gap-2">
+    <div className="absolute bottom-10 left-0 right-0 z-10 flex justify-center gap-2">
       {images.map((_, idx) => (
         <button
           key={idx}
           onClick={() => api?.scrollTo(idx)}
           type="button"
           className={cn(
-            'inline-block h-2 w-2 rounded-full bg-muted-foreground transition-all',
+            'inline-block h-2 w-2 rounded-full bg-muted-foreground transition-all ring-1 ring-background',
             idx === current ? 'scale-125 bg-primary' : 'opacity-40',
           )}
           aria-label={`Go to slide ${idx + 1}`}
@@ -62,9 +62,9 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
   if (layout === 'carousel') {
     return (
       <>
-        <Carousel setApi={setApi} opts={{ loop: true }}>
+        <Carousel setApi={setApi} opts={{ loop: true }} className="relative">
           <CarouselContent>
-            {images.map((imageData, index) => {
+            {images.map((imageData, index) => { 
               const image = typeof imageData?.media === 'number' ? null : imageData?.media
               if (!image) return null
 
@@ -97,10 +97,10 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
               )
             })}
           </CarouselContent>
+          <CarouselIndicators images={images} current={current} api={api}  />
           <CarouselPrevious className="left-4 lg:-left-12" />
           <CarouselNext className="right-4 lg:-right-12" />
         </Carousel>
-        <CarouselIndicators images={images} current={current} api={api} />
       </>
     )
   }
