@@ -7,8 +7,8 @@ import React, { useState } from 'react'
 
 import type { Props as MediaProps } from '../types'
 
-import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { ImageModal } from '@/components/ImageModal'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 export const ImageMedia: React.FC<MediaProps> = (props) => {
   const {
@@ -119,7 +119,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
             ))}
         <img
           alt={alt}
-          className={cn(imgClassName)}
+          className={cn('w-fit', imgClassName)}
           loading={loading}
           width={width}
           height={height}
