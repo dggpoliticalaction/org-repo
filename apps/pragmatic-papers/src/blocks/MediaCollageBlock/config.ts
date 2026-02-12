@@ -5,6 +5,17 @@ export const MediaCollageBlock: Block = {
   interfaceName: 'MediaCollageBlock',
   fields: [
     {
+      name: 'layout',
+      type: 'select',
+      label: 'Layout',
+      options: [
+        { label: 'Grid', value: 'grid' },
+        { label: 'Carousel', value: 'carousel' },
+      ],
+      defaultValue: 'grid',
+      required: true,
+    },
+    {
       name: 'images',
       type: 'array',
       label: 'Images',
@@ -16,17 +27,6 @@ export const MediaCollageBlock: Block = {
           required: true,
         },
       ],
-      required: true,
-    },
-    {
-      name: 'layout',
-      type: 'select',
-      label: 'Layout',
-      options: [
-        { label: 'Grid', value: 'grid' },
-        { label: 'Carousel', value: 'carousel' },
-      ],
-      defaultValue: 'grid',
       required: true,
     },
   ],
