@@ -97,8 +97,8 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
               )
             })}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+          <CarouselPrevious className="left-4 lg:-left-12" />
+          <CarouselNext className="right-4 lg:-right-12" />
         </Carousel>
         <CarouselIndicators images={images} current={current} api={api} />
       </>
