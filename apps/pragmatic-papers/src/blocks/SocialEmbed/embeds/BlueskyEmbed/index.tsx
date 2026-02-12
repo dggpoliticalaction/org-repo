@@ -18,7 +18,7 @@ export async function BlueskyEmbedBlock({
 
   let html = snapshot?.html
   if (!html) {
-    const result = await fetchBlueskyOEmbed({ url, maxwidth: 550 })
+    const result = await fetchBlueskyOEmbed({ url })
     if (isFailure(result)) {
       return <EmbedError url={url} message={result.error.message} displayName={displayName} />
     }

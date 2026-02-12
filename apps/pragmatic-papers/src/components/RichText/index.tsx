@@ -44,6 +44,7 @@ type NodeTypes =
       | CodeBlockProps
       | MathBlockProps
       | SquiggleRuleBlockProps
+      | SocialEmbedBlockProps
     >
   | SerializedInlineBlockNode<MathBlockProps | FootnoteBlockProps>
 
@@ -77,9 +78,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       <MathBlock {...node.fields} />
     ),
     squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
-    socialEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <SocialEmbedBlock {...node.fields} />
-    ),
+    socialEmbed: ({ node }) => <SocialEmbedBlock {...node.fields} />,
     // Legacy block types for backward compatibility with existing content
     twitterEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
       <TwitterEmbedBlock {...node.fields} />

@@ -24,9 +24,7 @@ export function getEmbedComponent(
   return embeds[platform as SocialPlatform] ?? null
 }
 
-export function SocialEmbedBlock(
-  props: SocialEmbedBlockProps,
-): React.ReactNode | Promise<React.ReactNode> {
+export async function SocialEmbedBlock(props: SocialEmbedBlockProps): Promise<React.ReactNode> {
   const EmbedComponent = getEmbedComponent(props.platform)
   if (!EmbedComponent) {
     return (
@@ -37,5 +35,5 @@ export function SocialEmbedBlock(
       />
     )
   }
-  return EmbedComponent(props)
+  return <EmbedComponent {...props} />
 }
