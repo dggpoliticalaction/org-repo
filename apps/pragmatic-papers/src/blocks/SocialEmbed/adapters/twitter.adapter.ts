@@ -65,6 +65,9 @@ export type TwitterOEmbedResponse = Prettify<OEmbedRich & { url: string }>
  * Twitter adapter extending SocialAdapter with Twitter/X-specific options and response types.
  */
 class TwitterAdapter extends SocialAdapter<TwitterOEmbedOptions, TwitterOEmbedResponse> {
+  readonly maxWidth = 550
+  readonly displayName = 'Twitter'
+
   isValidUrl(url: string): boolean {
     try {
       const urlObj = new URL(url)
@@ -84,7 +87,7 @@ class TwitterAdapter extends SocialAdapter<TwitterOEmbedOptions, TwitterOEmbedRe
   buildUrl(options: TwitterOEmbedOptions): URL {
     const {
       url,
-      maxwidth = 550,
+      maxwidth = this.maxWidth,
       hideMedia = false,
       hideThread = true,
       omitScript = true,
@@ -143,3 +146,5 @@ export function fetchTwitterOEmbed(
 export function sanitizeTwitterHtml(html: string): Promise<string> {
   return twitterAdapter.sanitize(html)
 }
+
+export const TWITTER_DISPLAY_NAME = twitterAdapter.displayName

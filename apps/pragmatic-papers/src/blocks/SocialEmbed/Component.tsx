@@ -4,36 +4,53 @@ import { RedditEmbedBlock } from '@/blocks/SocialEmbed/embeds/RedditEmbed'
 import { TikTokEmbedBlock } from '@/blocks/SocialEmbed/embeds/TikTokEmbed'
 import { TwitterEmbedBlock } from '@/blocks/SocialEmbed/embeds/TwitterEmbed'
 import { YouTubeEmbedBlock } from '@/blocks/SocialEmbed/embeds/YouTubeEmbed'
+import { getPlatformDisplayName } from '@/blocks/SocialEmbed/helpers/getPlatformDisplayName'
+import { shouldRevalidate } from '@/blocks/SocialEmbed/helpers/snapshotFreshness'
+import type { ParentDocContext } from '@/blocks/SocialEmbed/types'
 import type { SocialEmbedBlock as SocialEmbedBlockProps, SocialPlatform } from '@/payload-types'
 import React from 'react'
 
-type EmbedComponent = (props: SocialEmbedBlockProps) => React.ReactNode | Promise<React.ReactNode>
+export type SocialEmbedRenderProps = SocialEmbedBlockProps & {
+  parentDoc?: ParentDocContext
+}
+
+type EmbedComponent = (props: SocialEmbedRenderProps) => React.ReactNode | Promise<React.ReactNode>
 
 const embeds: Record<SocialPlatform, EmbedComponent> = {
-  bluesky: (props: SocialEmbedBlockProps) => <BlueskyEmbedBlock {...props} />,
-  reddit: (props: SocialEmbedBlockProps) => <RedditEmbedBlock {...props} />,
-  tiktok: (props: SocialEmbedBlockProps) => <TikTokEmbedBlock {...props} />,
-  twitter: (props: SocialEmbedBlockProps) => <TwitterEmbedBlock {...props} />,
-  youtube: (props: SocialEmbedBlockProps) => <YouTubeEmbedBlock {...props} />,
+  bluesky: BlueskyEmbedBlock,
+  reddit: RedditEmbedBlock,
+  tiktok: TikTokEmbedBlock,
+  twitter: TwitterEmbedBlock,
+  youtube: YouTubeEmbedBlock,
+} as const
+
+export function getEmbedBlock(platform: SocialPlatform): EmbedComponent | null {
+  return embeds[platform] ?? null
 }
 
-export function getEmbedComponent(
-  platform: SocialPlatform | string | null | undefined,
-): EmbedComponent | null {
-  if (!platform) return null
-  return embeds[platform as SocialPlatform] ?? null
-}
-
-export async function SocialEmbedBlock(props: SocialEmbedBlockProps): Promise<React.ReactNode> {
-  const EmbedComponent = getEmbedComponent(props.platform)
-  if (!EmbedComponent) {
+export async function SocialEmbedBlock(props: SocialEmbedRenderProps): Promise<React.ReactNode> {
+  const displayName = getPlatformDisplayName(props.platform)
+  const EmbedBlock = getEmbedBlock(props.platform)
+  if (!EmbedBlock) {
     return (
       <EmbedError
         url={props.url}
-        message="Embed platform is missing or unsupported."
-        displayName={props.platform ?? 'unknown'}
+        message="Social Media platform is not supported."
+        displayName={displayName}
       />
     )
   }
-  return <EmbedComponent {...props} />
+
+  if (shouldRevalidate(props.snapshot) && props.parentDoc && props.id) {
+    const { revalidateSnapshot } = await import('@/blocks/SocialEmbed/hooks/revalidateSnapshot')
+    props.snapshot = await revalidateSnapshot({
+      parentDoc: props.parentDoc,
+      embedBlockId: props.id,
+      platform: props.platform,
+      url: props.url,
+      snapshot: props.snapshot,
+    })
+  }
+
+  return <EmbedBlock {...props} />
 }

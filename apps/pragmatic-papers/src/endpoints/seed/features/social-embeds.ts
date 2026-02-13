@@ -21,6 +21,15 @@ const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot'>
   {
     platform: 'reddit',
     url: 'https://www.reddit.com/r/news/comments/jptqj9/joe_biden_elected_president_of_the_united_states/',
+    snapshot: {
+      status: 'ok',
+      fetchedAt: new Date().toISOString(),
+      providerName: 'reddit',
+      providerURL: 'https://www.reddit.com',
+      authorName: 'throwawaynumber53',
+      title: 'Joe Biden elected president of the United States',
+      html: '<blockquote class="reddit-embed-bq" style="height:500px"> <a href="https://www.reddit.com/r/news/comments/jptqj9/joe_biden_elected_president_of_the_united_states/">Joe Biden elected president of the United States</a><br> by <a href="https://www.reddit.com/user/throwawaynumber53/">u/throwawaynumber53</a> in <a href="https://www.reddit.com/r/news/">news</a> </blockquote>',
+    },
   },
   {
     platform: 'tiktok',

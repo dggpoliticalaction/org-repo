@@ -1,6 +1,10 @@
 import { SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
 import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
-import type { OEmbedRequestQuery, OEmbedThumbnail, OEmbedVideo } from '@/blocks/SocialEmbed/helpers/oEmbed'
+import type {
+  OEmbedRequestQuery,
+  OEmbedThumbnail,
+  OEmbedVideo,
+} from '@/blocks/SocialEmbed/helpers/oEmbed'
 import type { Prettify } from '@/utilities/prettify'
 import { failure, type Result } from '@/utilities/results'
 import sanitizeHtml from 'sanitize-html'
@@ -80,6 +84,9 @@ export type TikTokOEmbedOptions = OEmbedRequestQuery
 export type TikTokOEmbedResponse = Prettify<OEmbedVideo & OEmbedThumbnail>
 
 class TikTokAdapter extends SocialAdapter<TikTokOEmbedOptions, TikTokOEmbedResponse> {
+  readonly maxWidth = 360
+  readonly displayName = 'TikTok'
+
   isValidUrl(url: string): boolean {
     return parseTikTokPostId(url) !== null
   }
@@ -125,3 +132,5 @@ export function fetchTikTokOEmbed(
 export function sanitizeTikTokHtml(html: string): Promise<string> {
   return tiktokAdapter.sanitize(html)
 }
+
+export const TIKTOK_DISPLAY_NAME = tiktokAdapter.displayName

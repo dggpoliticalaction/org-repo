@@ -13,6 +13,9 @@ export abstract class SocialAdapter<
   TOptions extends OEmbedRequestQuery = OEmbedRequestQuery,
   TResponse extends OEmbedResponse = OEmbedResponse,
 > {
+  abstract readonly maxWidth: number
+  abstract readonly displayName: string
+
   /**
    * Validates if a URL is a valid post URL for this platform.
    * Must be implemented by each adapter.

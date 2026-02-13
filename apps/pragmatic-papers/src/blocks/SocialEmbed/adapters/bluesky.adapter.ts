@@ -13,6 +13,9 @@ export type BlueskyOEmbedResponse = Prettify<OEmbedRich & { url: string }>
  * Bluesky adapter extending SocialAdapter with Bluesky-specific options and response types.
  */
 class BlueskyAdapter extends SocialAdapter<BlueskyOEmbedOptions, BlueskyOEmbedResponse> {
+  readonly maxWidth = 550
+  readonly displayName = 'Bluesky'
+
   isValidUrl(url: string): boolean {
     try {
       const urlObj = new URL(url)
@@ -25,7 +28,7 @@ class BlueskyAdapter extends SocialAdapter<BlueskyOEmbedOptions, BlueskyOEmbedRe
   }
 
   buildUrl(options: BlueskyOEmbedOptions): URL {
-    const { url, maxwidth = 550 } = options
+    const { url, maxwidth = this.maxWidth } = options
     const endpoint = new URL('https://embed.bsky.app/oembed')
     endpoint.searchParams.set('url', url)
     endpoint.searchParams.set('format', 'json')
@@ -73,3 +76,5 @@ export function fetchBlueskyOEmbed(
 export function sanitizeBlueskyHtml(html: string): Promise<string> {
   return blueskyAdapter.sanitize(html)
 }
+
+export const BLUESKY_DISPLAY_NAME = blueskyAdapter.displayName

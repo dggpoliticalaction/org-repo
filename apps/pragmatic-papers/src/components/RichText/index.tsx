@@ -12,6 +12,7 @@ import {
   TwitterEmbedBlock,
   YouTubeEmbedBlock,
 } from '@/blocks/SocialEmbed'
+import type { ParentDocContext } from '@/blocks/SocialEmbed/types'
 import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
 import type {
   BannerBlock as BannerBlockProps,
@@ -57,57 +58,60 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   return relationTo === 'articles' ? `/articles/${slug}` : `/${slug}`
 }
 
-const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
-  ...defaultConverters,
-  ...LinkJSXConverter({ internalDocToHref }),
-  blocks: {
-    banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
-    mediaBlock: ({ node }) => (
-      <MediaBlock
-        className="col-span-3 col-start-1"
-        imgClassName="m-0"
-        {...node.fields}
-        captionClassName="mx-auto max-w-[48rem]"
-        enableGutter={false}
-        disableInnerContainer
-      />
-    ),
-    code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
-    cta: ({ node }) => <CallToActionBlock {...node.fields} />,
-    displayMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
-      <MathBlock {...node.fields} />
-    ),
-    squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
-    socialEmbed: ({ node }) => <SocialEmbedBlock {...node.fields} />,
-    // Legacy block types for backward compatibility with existing content
-    twitterEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <TwitterEmbedBlock {...node.fields} />
-    ),
-    youtubeEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <YouTubeEmbedBlock {...node.fields} />
-    ),
-    redditEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <RedditEmbedBlock {...node.fields} />
-    ),
-    blueSkyEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <BlueskyEmbedBlock {...node.fields} />
-    ),
-    tiktokEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
-      <TikTokEmbedBlock {...node.fields} />
-    ),
-  },
-  inlineBlocks: {
-    inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode<MathBlockProps> }) => (
-      <MathBlock {...node.fields} />
-    ),
-    footnote: ({ node }) => <FootnoteBlock {...node.fields} />,
-  },
-})
+function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunction<NodeTypes> {
+  return ({ defaultConverters }) => ({
+    ...defaultConverters,
+    ...LinkJSXConverter({ internalDocToHref }),
+    blocks: {
+      banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
+      mediaBlock: ({ node }) => (
+        <MediaBlock
+          className="col-span-3 col-start-1"
+          imgClassName="m-0"
+          {...node.fields}
+          captionClassName="mx-auto max-w-[48rem]"
+          enableGutter={false}
+          disableInnerContainer
+        />
+      ),
+      code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
+      cta: ({ node }) => <CallToActionBlock {...node.fields} />,
+      displayMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
+        <MathBlock {...node.fields} />
+      ),
+      squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
+      socialEmbed: ({ node }) => <SocialEmbedBlock {...node.fields} parentDoc={parentDoc} />,
+      // Legacy block types for backward compatibility with existing content
+      twitterEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+        <TwitterEmbedBlock {...node.fields} />
+      ),
+      youtubeEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+        <YouTubeEmbedBlock {...node.fields} />
+      ),
+      redditEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+        <RedditEmbedBlock {...node.fields} />
+      ),
+      blueSkyEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+        <BlueskyEmbedBlock {...node.fields} />
+      ),
+      tiktokEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+        <TikTokEmbedBlock {...node.fields} />
+      ),
+    },
+    inlineBlocks: {
+      inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode<MathBlockProps> }) => (
+        <MathBlock {...node.fields} />
+      ),
+      footnote: ({ node }) => <FootnoteBlock {...node.fields} />,
+    },
+  })
+}
 
 interface RichTextProps extends React.HTMLAttributes<HTMLDivElement> {
   data: DefaultTypedEditorState
   enableGutter?: boolean
   enableProse?: boolean
+  parentDoc?: ParentDocContext
 }
 
 export default function RichText({
@@ -115,6 +119,7 @@ export default function RichText({
   enableProse = true,
   enableGutter = true,
   data,
+  parentDoc,
   ...rest
 }: RichTextProps): React.ReactNode {
   return (
@@ -130,7 +135,7 @@ export default function RichText({
       )}
       {...rest}
     >
-      <ConvertRichText converters={jsxConverters} data={data} disableContainer />
+      <ConvertRichText converters={createJsxConverters(parentDoc)} data={data} disableContainer />
     </div>
   )
 }

@@ -1,6 +1,10 @@
 import { SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
 import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
-import type { OEmbedRequestQuery, OEmbedRich, OEmbedThumbnail } from '@/blocks/SocialEmbed/helpers/oEmbed'
+import type {
+  OEmbedRequestQuery,
+  OEmbedRich,
+  OEmbedThumbnail,
+} from '@/blocks/SocialEmbed/helpers/oEmbed'
 import type { Prettify } from '@/utilities/prettify'
 import { failure, type Result } from '@/utilities/results'
 import sanitizeHtml from 'sanitize-html'
@@ -14,6 +18,9 @@ export interface RedditOEmbedOptions extends OEmbedRequestQuery {
 export type RedditOEmbedResponse = Prettify<OEmbedRich & Partial<OEmbedThumbnail>>
 
 class RedditAdapter extends SocialAdapter<RedditOEmbedOptions, RedditOEmbedResponse> {
+  readonly maxWidth = 550
+  readonly displayName = 'Reddit'
+
   isValidUrl(url: string): boolean {
     try {
       const urlObj = new URL(url)
@@ -37,7 +44,13 @@ class RedditAdapter extends SocialAdapter<RedditOEmbedOptions, RedditOEmbedRespo
   }
 
   buildUrl(options: RedditOEmbedOptions): URL {
-    const { url, maxwidth = 550, parent = false, live = false, omitscript = true } = options
+    const {
+      url,
+      maxwidth = this.maxWidth,
+      parent = false,
+      live = false,
+      omitscript = true,
+    } = options
     const endpoint = new URL('https://www.reddit.com/oembed')
     endpoint.searchParams.set('url', url)
     endpoint.searchParams.set('format', 'json')
@@ -81,3 +94,5 @@ export function fetchRedditOEmbed(
 export function sanitizeRedditHtml(html: string): Promise<string> {
   return redditAdapter.sanitize(html)
 }
+
+export const REDDIT_DISPLAY_NAME = redditAdapter.displayName

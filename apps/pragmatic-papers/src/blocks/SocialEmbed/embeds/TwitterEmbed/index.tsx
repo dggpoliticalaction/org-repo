@@ -1,33 +1,34 @@
 import {
+  TWITTER_DISPLAY_NAME,
   fetchTwitterOEmbed,
   sanitizeTwitterHtml,
 } from '@/blocks/SocialEmbed/adapters/twitter.adapter'
 import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
 import { TwitterEmbedClient } from '@/blocks/SocialEmbed/embeds/TwitterEmbed/client'
-import { getPlatformDisplayName } from '@/blocks/SocialEmbed/helpers/getPlatformDisplayName'
+import { shouldEnhance } from '@/blocks/SocialEmbed/helpers/snapshotFreshness'
 import type { SocialEmbedBlock } from '@/payload-types'
 import { isFailure } from '@/utilities/results'
 
-export async function TwitterEmbedBlock({
-  url,
-  platform,
-  snapshot,
-  hideMedia,
-  hideThread,
-  id,
-}: SocialEmbedBlock): Promise<React.ReactNode> {
-  const displayName = getPlatformDisplayName(platform)
+export async function TwitterEmbedBlock(props: SocialEmbedBlock): Promise<React.ReactNode> {
+  const { url, snapshot, id, hideMedia, hideThread } = props
+
+  if (!id) {
+    return (
+      <EmbedError url={url} message="Embed Block ID not found" displayName={TWITTER_DISPLAY_NAME} />
+    )
+  }
+
   let html = snapshot?.html
+
+  // Legacy behavior for backwards compatibility with blocks containing no snapshot
   if (!html) {
     const result = await fetchTwitterOEmbed({ url, hideMedia, hideThread })
     if (isFailure(result)) {
-      return <EmbedError url={url} message={result.error.message} displayName={displayName} />
+      return (
+        <EmbedError url={url} message={result.error.message} displayName={TWITTER_DISPLAY_NAME} />
+      )
     }
     html = await sanitizeTwitterHtml(result.value.html)
-  }
-
-  if (!id) {
-    return <EmbedError url={url} message="Embed Block ID not found" displayName={displayName} />
   }
 
   return (
@@ -38,7 +39,7 @@ export async function TwitterEmbedBlock({
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: html }}
       />
-      <TwitterEmbedClient targetId={id} />
+      {shouldEnhance(snapshot) && <TwitterEmbedClient targetId={id} />}
     </div>
   )
 }

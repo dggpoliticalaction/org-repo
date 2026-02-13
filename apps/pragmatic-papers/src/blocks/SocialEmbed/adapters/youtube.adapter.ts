@@ -37,12 +37,15 @@ export function parseYouTubeVideoId(input: string): string | null {
 }
 
 class YouTubeAdapter extends SocialAdapter<YouTubeOEmbedOptions, YouTubeOEmbedResponse> {
+  readonly maxWidth = 640
+  readonly displayName = 'YouTube'
+
   isValidUrl(url: string): boolean {
     return parseYouTubeVideoId(url) !== null
   }
 
   buildUrl(options: YouTubeOEmbedOptions): URL {
-    const { url, maxwidth = 550, maxheight } = options
+    const { url, maxwidth = this.maxWidth, maxheight } = options
     const endpoint = new URL('https://www.youtube.com/oembed')
     endpoint.searchParams.set('url', url)
     endpoint.searchParams.set('format', 'json')
@@ -94,3 +97,5 @@ export function fetchYouTubeOEmbed(
 export function sanitizeYouTubeHtml(html: string): Promise<string> {
   return youtubeAdapter.sanitize(html)
 }
+
+export const YOUTUBE_DISPLAY_NAME = youtubeAdapter.displayName
