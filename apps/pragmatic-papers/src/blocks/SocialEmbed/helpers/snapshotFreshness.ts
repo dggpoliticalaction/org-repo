@@ -15,20 +15,8 @@ function getSnapshotFetchedAtMs(snapshot: SocialEmbedSnapshot | null | undefined
   return Number.isFinite(ms) ? ms : null
 }
 
-function isSnapshotFresh(
-  snapshot: SocialEmbedSnapshot | null | undefined,
-  ttlMs: number = SOCIAL_EMBED_SNAPSHOT_TTL_MS,
-): boolean {
-  const fetchedAtMs = getSnapshotFetchedAtMs(snapshot)
-  if (fetchedAtMs == null) return false
-  return Date.now() - fetchedAtMs <= ttlMs
-}
-
-export function shouldEnhance(
-  snapshot: SocialEmbedSnapshot | null | undefined,
-  ttlMs: number = SOCIAL_EMBED_SNAPSHOT_TTL_MS,
-): boolean {
-  return snapshot?.status === 'ok' && isSnapshotFresh(snapshot, ttlMs)
+export function shouldEnhance(snapshot: SocialEmbedSnapshot | null | undefined): boolean {
+  return snapshot?.status === 'ok'
 }
 
 function isSnapshotExpired(

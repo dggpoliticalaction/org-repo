@@ -13,7 +13,7 @@ const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot' 
     snapshot: {
       status: 'ok',
       // Intentionally old so revalidation runs on first article load (TTL is 30 days).
-      fetchedAt: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000).toISOString(),
+      fetchedAt: new Date().toISOString(),
       providerName: 'Bluesky Social',
       providerURL: 'https://bsky.app',
       authorName: 'Destiny | Steven Bonnell II (@destiny.gg)',
