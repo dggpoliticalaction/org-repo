@@ -4,13 +4,16 @@ import type { Payload } from 'payload'
 /**
  * One example URL per social media platform.
  */
-const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot'>[] = [
+const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot' | 'id'>[] = [
   {
     platform: 'bluesky',
     url: 'https://bsky.app/profile/destiny.gg/post/3lbjlth3tnc2k',
+    // Set explicit, stable IDs so runtime revalidation can persist by `fields.id` reliably.
+    id: 'seed-socialEmbed-bluesky',
     snapshot: {
       status: 'ok',
-      fetchedAt: new Date().toISOString(),
+      // Intentionally old so revalidation runs on first article load (TTL is 30 days).
+      fetchedAt: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000).toISOString(),
       providerName: 'Bluesky Social',
       providerURL: 'https://bsky.app',
       authorName: 'Destiny | Steven Bonnell II (@destiny.gg)',
@@ -21,6 +24,7 @@ const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot'>
   {
     platform: 'reddit',
     url: 'https://www.reddit.com/r/news/comments/jptqj9/joe_biden_elected_president_of_the_united_states/',
+    id: 'seed-socialEmbed-reddit',
     snapshot: {
       status: 'ok',
       fetchedAt: new Date().toISOString(),
@@ -34,6 +38,7 @@ const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot'>
   {
     platform: 'tiktok',
     url: 'https://www.tiktok.com/@scout2015/video/6718335390845095173',
+    id: 'seed-socialEmbed-tiktok',
     snapshot: {
       status: 'ok',
       fetchedAt: new Date().toISOString(),
@@ -41,8 +46,7 @@ const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot'>
       providerURL: 'https://www.tiktok.com',
       authorName: 'Scout, Suki & Stella',
       authorURL: 'https://www.tiktok.com/@scout2015',
-      title:
-        "Scramble up ur name & I'll try to guess it😍❤️ #foryoupage #petsoftiktok #aesthetic",
+      title: "Scramble up ur name & I'll try to guess it😍❤️ #foryoupage #petsoftiktok #aesthetic",
       html: '<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@scout2015/video/6718335390845095173" data-video-id="6718335390845095173" data-embed-from="oembed" style="max-width:605px; min-width:325px;"> <section> <a target="_blank" title="@scout2015" href="https://www.tiktok.com/@scout2015?refer=embed">@scout2015</a> <p>Scramble up ur name & I\'ll try to guess it😍❤️ <a title="foryoupage" target="_blank" href="https://www.tiktok.com/tag/foryoupage?refer=embed">#foryoupage</a> <a title="petsoftiktok" target="_blank" href="https://www.tiktok.com/tag/petsoftiktok?refer=embed">#petsoftiktok</a> <a title="aesthetic" target="_blank" href="https://www.tiktok.com/tag/aesthetic?refer=embed">#aesthetic</a></p> <a target="_blank" title="♬ original sound - tiff" href="https://www.tiktok.com/music/original-sound-6689804660171082501?refer=embed">♬ original sound - tiff</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>',
       thumbnailURL:
         'https://p19-common-sign.tiktokcdn-us.com/tos-maliva-p-0068/2367c7d45cf54a1397abd0e72bf22eac~tplv-tiktokx-origin.image?dr=9636&x-expires=1770062400&x-signature=SJ79uSqdQ0dBdJ52CgSnAHzr3VQ%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=useast5',
@@ -51,6 +55,7 @@ const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot'>
   {
     platform: 'twitter',
     url: 'https://twitter.com/Interior/status/463440424141459456',
+    id: 'seed-socialEmbed-twitter',
     snapshot: {
       status: 'ok',
       fetchedAt: new Date().toISOString(),
@@ -64,6 +69,7 @@ const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot'>
   {
     platform: 'youtube',
     url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    id: 'seed-socialEmbed-youtube',
     snapshot: {
       status: 'ok',
       fetchedAt: new Date().toISOString(),
@@ -109,7 +115,7 @@ type LipsumParagraph = ReturnType<typeof createLipsumParagraph>
 
 type SocialEmbedBlockFields = Pick<
   SocialEmbedBlock,
-  'url' | 'platform' | 'snapshot' | 'hideMedia' | 'hideThread'
+  'url' | 'platform' | 'snapshot' | 'hideMedia' | 'hideThread' | 'id'
 > & {
   blockType: 'socialEmbed'
 }
@@ -125,7 +131,9 @@ interface SocialEmbedBlockNode {
  * Creates article content with one social embed per platform, lorem ipsum between each.
  */
 const createSocialEmbedContent = () => {
-  const lipsumBetween: LipsumParagraph[] = LOREM_PARAGRAPHS.map((text) => createLipsumParagraph(text))
+  const lipsumBetween: LipsumParagraph[] = LOREM_PARAGRAPHS.map((text) =>
+    createLipsumParagraph(text),
+  )
   const children: (LipsumParagraph | SocialEmbedBlockNode)[] = []
 
   for (const item of SOCIAL_MEDIA_URLS) {
@@ -136,6 +144,7 @@ const createSocialEmbedContent = () => {
         blockType: 'socialEmbed' as const,
         url: item.url,
         platform: item.platform,
+        id: item.id,
         snapshot: item.snapshot,
         ...(item.platform === 'twitter' && {
           hideMedia: false,
@@ -190,7 +199,12 @@ const getLegacyBlockType = (platform: string): LegacySocialBlockType => {
   }
 }
 
-type LegacySocialBlockType = 'twitterEmbed' | 'youtubeEmbed' | 'redditEmbed' | 'blueSkyEmbed' | 'tiktokEmbed'
+type LegacySocialBlockType =
+  | 'twitterEmbed'
+  | 'youtubeEmbed'
+  | 'redditEmbed'
+  | 'blueSkyEmbed'
+  | 'tiktokEmbed'
 
 interface LegacyEmbedBlockNode {
   type: 'block'
@@ -208,7 +222,9 @@ interface LegacyEmbedBlockNode {
  * Creates article content with legacy social media blocks (one per platform), lorem ipsum between each.
  */
 const createLegacySocialEmbedContent = () => {
-  const lipsumBetween: LipsumParagraph[] = LOREM_PARAGRAPHS.map((text) => createLipsumParagraph(text))
+  const lipsumBetween: LipsumParagraph[] = LOREM_PARAGRAPHS.map((text) =>
+    createLipsumParagraph(text),
+  )
   const children: (LipsumParagraph | LegacyEmbedBlockNode)[] = []
 
   for (const item of SOCIAL_MEDIA_URLS) {
@@ -258,6 +274,11 @@ export const createSocialEmbedArticle = async (payload: Payload, writer: User): 
 
   const article = await payload.create({
     collection: 'articles',
+    context: {
+      // Seed provides snapshots explicitly (including intentionally stale ones).
+      // Skip the SocialEmbed url hook that would otherwise rebuild snapshots on create.
+      skipSocialEmbedSnapshot: true,
+    },
     data: {
       title: 'Social Media Embed Test - All Variations',
       content: createSocialEmbedContent() as Article['content'],
@@ -286,6 +307,9 @@ export const createLegacySocialEmbedArticle = async (
 
   const article = await payload.create({
     collection: 'articles',
+    context: {
+      skipSocialEmbedSnapshot: true,
+    },
     data: {
       title: 'Legacy Social Media Embed Test - All Variations',
       content: createLegacySocialEmbedContent() as Article['content'],

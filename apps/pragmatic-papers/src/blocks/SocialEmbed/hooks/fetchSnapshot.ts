@@ -9,6 +9,7 @@ export async function fetchSnapshot({
   value = '',
 }: FieldHookArgs<Article, string, SocialEmbedBlock>): Promise<string> {
   if (isAutosave(req)) return value
+  if (req?.context?.skipSocialEmbedSnapshot) return value
 
   if (!siblingData.platform) {
     siblingData.snapshot = {

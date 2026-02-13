@@ -12,7 +12,13 @@ function getCachedSnapshotCheck(args: BuildSnapshotArgs): () => Promise<SocialEm
   const revalidate = Math.ceil(SOCIAL_EMBED_SNAPSHOT_TTL_MS / 1000)
   return unstable_cache(
     async () => buildSnapshot(args),
-    ['socialEmbedSnapshot', args.platform, args.url],
+    [
+      'socialEmbedSnapshot',
+      args.platform,
+      args.url,
+      String(!!args.hideMedia),
+      String(!!args.hideThread),
+    ],
     { revalidate },
   )
 }
