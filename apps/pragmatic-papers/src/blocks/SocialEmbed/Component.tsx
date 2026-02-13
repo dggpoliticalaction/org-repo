@@ -41,9 +41,10 @@ export async function SocialEmbedBlock(props: SocialEmbedRenderProps): Promise<R
     )
   }
 
+  let snapshot = props.snapshot
   if (shouldRevalidate(props.snapshot) && props.parentDoc && props.id) {
     const { revalidateSnapshot } = await import('@/blocks/SocialEmbed/hooks/revalidateSnapshot')
-    props.snapshot = await revalidateSnapshot({
+    snapshot = await revalidateSnapshot({
       parentDoc: props.parentDoc,
       embedBlockId: props.id,
       platform: props.platform,
@@ -52,5 +53,5 @@ export async function SocialEmbedBlock(props: SocialEmbedRenderProps): Promise<R
     })
   }
 
-  return <EmbedBlock {...props} />
+  return <EmbedBlock {...props} snapshot={snapshot} />
 }
