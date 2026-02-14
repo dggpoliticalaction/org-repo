@@ -7,8 +7,6 @@ import type { Media as MediaType } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 import React from 'react'
 
-type CollageImage = MediaCollageBlockType['images'][number]
-
 // actual code for the collage/grid
 export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, layout }) => {
   if (!images.length) return null
