@@ -98,7 +98,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
             <MediaCarousel
               images={gallery.images}
               initialIndex={gallery.startIndex}
-              showCaptions={true}
+              showCaptions
               indicatorClassName="bottom-12"
               imageClassName="w-full h-auto object-contain max-h-[70vh]"
               pictureClassName="w-full h-full flex items-center justify-center"

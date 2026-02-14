@@ -24,9 +24,9 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
       <MediaCarousel
         containerClassName=''
         images={validMedia}
-        showCaptions={true}
+        showCaptions
         indicatorClassName="bottom-20"
-        enableModal={true}
+        enableModal
         galleryData={{
           images: validMedia,
           startIndex: 0
