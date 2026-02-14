@@ -1,5 +1,6 @@
 import type { Payload } from 'payload'
 import type { User } from '@/payload-types'
+import { createRichTextFromString } from './richtext'
 
 interface Users {
   admin: User
@@ -38,37 +39,9 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
       password: 'password123',
       name: 'Writer One',
       role: 'writer',
-      biography: {
-        root: {
-          children: [
-            {
-              children: [
-                {
-                  detail: 0,
-                  format: 0,
-                  mode: 'normal',
-                  style: '',
-                  text: 'A prolific writer specializing in academic research and scientific papers.',
-                  type: 'text',
-                  version: 1,
-                },
-              ],
-              direction: 'ltr',
-              format: '',
-              indent: 0,
-              type: 'paragraph',
-              version: 1,
-              textFormat: 0,
-              textStyle: '',
-            },
-          ],
-          direction: 'ltr',
-          format: '',
-          indent: 0,
-          type: 'root',
-          version: 1,
-        },
-      },
+      biography: createRichTextFromString(
+        'A prolific writer specializing in academic research and scientific papers.',
+      ),
     },
   })
 
@@ -79,37 +52,9 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
       password: 'password123',
       name: 'Writer Two',
       role: 'writer',
-      biography: {
-        root: {
-          children: [
-            {
-              children: [
-                {
-                  detail: 0,
-                  format: 0,
-                  mode: 'normal',
-                  style: '',
-                  text: 'An experienced researcher with focus on theoretical physics and mathematics.',
-                  type: 'text',
-                  version: 1,
-                },
-              ],
-              direction: 'ltr',
-              format: '',
-              indent: 0,
-              type: 'paragraph',
-              version: 1,
-              textFormat: 0,
-              textStyle: '',
-            },
-          ],
-          direction: 'ltr',
-          format: '',
-          indent: 0,
-          type: 'root',
-          version: 1,
-        },
-      },
+      biography: createRichTextFromString(
+        'An experienced researcher with focus on theoretical physics and mathematics.',
+      ),
     },
   })
 

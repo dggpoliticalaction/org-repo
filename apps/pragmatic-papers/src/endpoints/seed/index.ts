@@ -1,9 +1,11 @@
 import type { Payload } from 'payload'
-import { createArticles } from './articles'
+import type { Media, User } from '@/payload-types'
 import { createFootnotesArticle } from './features/footnotes'
-import { createMediaCollageArticle } from './features/mediacollage/media-collage'
+import { createMediaCollageArticle } from './features/media-collage'
 import { homeStatic } from './home-static'
-import { createMedia } from './media'
+import { createMediaFromURL } from './media'
+import { createLoremIpsumContent, generateLoremIpsumParagraph } from './richtext'
+import { createArticle, validateWriters, getWriterOrThrow } from './articles'
 import { createUsers } from './users'
 import { createVolumes } from './volumes'
 
@@ -47,32 +49,69 @@ export const seed = async (payload: Payload): Promise<void> => {
 
   const { writer1, writer2 } = await createUsers(payload)
 
-  const { mediaDocs } = await createMedia(payload)
+  const mediaDocs = await Promise.all([
+    createMediaFromURL(
+      payload,
+      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post1.webp',
+      'Curving abstract shapes with an orange and blue gradient',
+    ),
+    createMediaFromURL(
+      payload,
+      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post2.webp',
+      'Curving abstract shapes with an orange and blue gradient',
+    ),
+    createMediaFromURL(
+      payload,
+      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post3.webp',
+      'Curving abstract shapes with an orange and blue gradient',
+    ),
+    createMediaFromURL(
+      payload,
+      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-hero1.webp',
+      'Curving abstract shapes with an orange and blue gradient',
+    ),
+  ])
 
-  const articleResults = await createArticles(
-    payload,
-    [writer1, writer2],
-    [
-      {
-        volumeNumber: 1,
-        numberOfArticles: 6,
+  // Create articles for volumes
+  const writers = [writer1, writer2]
+  validateWriters(writers)
+
+  const volume1Articles: number[] = []
+  for (let i = 1; i <= 6; i++) {
+    const writer = getWriterOrThrow(writers, i)
+    const title = `Article ${i} - Volume 1`
+
+    const article = await createArticle(payload, {
+      title,
+      content: createLoremIpsumContent(Math.floor(Math.random() * 8) + 3),
+      authors: [writer.id],
+      slug: `article-${i}-volume-1`,
+      meta: {
+        title,
+        description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
+        image: mediaDocs[i % mediaDocs.length]?.id,
       },
-      {
-        volumeNumber: 2,
-        numberOfArticles: 3,
+    })
+    volume1Articles.push(article.id)
+  }
+
+  const volume2Articles: number[] = []
+  for (let i = 1; i <= 3; i++) {
+    const writer = getWriterOrThrow(writers, i)
+    const title = `Article ${i} - Volume 2`
+
+    const article = await createArticle(payload, {
+      title,
+      content: createLoremIpsumContent(Math.floor(Math.random() * 8) + 3),
+      authors: [writer.id],
+      slug: `article-${i}-volume-2`,
+      meta: {
+        title,
+        description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
+        image: mediaDocs[i % mediaDocs.length]?.id,
       },
-    ],
-    mediaDocs,
-  )
-
-  // Create the media collage demo article
-  await createMediaCollageArticle(payload, writer1, mediaDocs)
-
-  // Ensure article IDs exist
-  const volume1Articles = articleResults.volume1Articles
-  const volume2Articles = articleResults.volume2Articles
-  if (!volume1Articles || !volume2Articles) {
-    throw new Error('Failed to create articles for one or more volumes')
+    })
+    volume2Articles.push(article.id)
   }
 
   await createVolumes(
@@ -102,6 +141,9 @@ export const seed = async (payload: Payload): Promise<void> => {
 
   // Create a standalone article demonstrating the footnotes feature
   await createFootnotesArticle(payload, [writer1, writer2], mediaDocs, volume1Articles[0]!)
+
+    // Create the media collage demo article
+  await createMediaCollageArticle(payload, writer1, mediaDocs)
 
   // The homepage is literally a "page" in Payload.
   await payload.create({

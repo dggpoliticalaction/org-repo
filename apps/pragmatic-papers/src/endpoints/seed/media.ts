@@ -1,10 +1,9 @@
 import type { Payload, File } from 'payload'
 import type { Media } from '@/payload-types'
 
-interface CreateMediaResult {
-  mediaDocs: Media[]
-}
-
+/**
+ * Fetches a file from a URL and returns a File object compatible with Payload
+ */
 export async function fetchFileByURL(url: string): Promise<File> {
   const res = await fetch(url, {
     credentials: 'include',
@@ -17,15 +16,15 @@ export async function fetchFileByURL(url: string): Promise<File> {
 
   const data = await res.arrayBuffer()
   const extension = url.split('.').pop()?.toLowerCase() || ''
-  
+
   // Map file extensions to proper MIME types
   const mimeTypeMap: Record<string, string> = {
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'png': 'image/png',
-    'webp': 'image/webp',
-    'gif': 'image/gif',
-    'svg': 'image/svg+xml',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    png: 'image/png',
+    webp: 'image/webp',
+    gif: 'image/gif',
+    svg: 'image/svg+xml',
   }
 
   return {
@@ -36,43 +35,28 @@ export async function fetchFileByURL(url: string): Promise<File> {
   }
 }
 
-export const createMedia = async (payload: Payload): Promise<CreateMediaResult> => {
-  const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post1.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post2.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post3.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-hero1.webp',
-    ),
-  ])
-  const mediaDocs = await Promise.all([
-    payload.create({
-      collection: 'media',
-      data: { alt: 'Curving abstract shapes with an orange and blue gradient' },
-      file: image1Buffer,
-    }),
-    payload.create({
-      collection: 'media',
-      data: { alt: 'Curving abstract shapes with an orange and blue gradient' },
-      file: image2Buffer,
-    }),
-    payload.create({
-      collection: 'media',
-      data: { alt: 'Curving abstract shapes with an orange and blue gradient' },
-      file: image3Buffer,
-    }),
-    payload.create({
-      collection: 'media',
-      data: { alt: 'Curving abstract shapes with an orange and blue gradient' },
-      file: hero1Buffer,
-    }),
-  ])
+/**
+ * Creates a media document in Payload from a URL
+ * @param payload - Payload instance
+ * @param url - URL of the file to fetch
+ * @param alt - Alt text for the media
+ * @param additionalData - Optional additional data to include (e.g., caption)
+ * @returns The created media document
+ */
+export async function createMediaFromURL(
+  payload: Payload,
+  url: string,
+  alt: string,
+  additionalData?: Partial<Omit<Media, 'id' | 'alt'>>,
+): Promise<Media> {
+  const file = await fetchFileByURL(url)
 
-  return { mediaDocs }
+  return await payload.create({
+    collection: 'media',
+    data: {
+      alt,
+      ...additionalData,
+    },
+    file,
+  })
 }
