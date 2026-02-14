@@ -51,7 +51,7 @@ const sheetVariants = cva(
 
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
-    VariantProps<typeof sheetVariants> {
+  VariantProps<typeof sheetVariants> {
   hideClose?: boolean
 }
 
@@ -129,5 +129,6 @@ export {
   SheetOverlay,
   SheetPortal,
   SheetTitle,
-  SheetTrigger,
+  SheetTrigger
 }
+

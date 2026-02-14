@@ -1,5 +1,3 @@
-import type { Metadata } from 'next'
-
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
@@ -11,6 +9,7 @@ import { cn } from '@/utilities/ui'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
+import type { Metadata } from 'next'
 import { Open_Sans, Source_Serif_4 } from 'next/font/google'
 import { draftMode } from 'next/headers'
 import React from 'react'
@@ -37,9 +36,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         GeistMono.variable,
         sourceSerif4.className,
         openSans.className,
+        'scroll-smooth',
       )}
       lang="en"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
     >
       <head>
         <InitTheme />
