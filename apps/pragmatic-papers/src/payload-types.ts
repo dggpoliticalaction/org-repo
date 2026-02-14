@@ -29,6 +29,34 @@ export type FootnotesField =
   }[]
   | null;
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuBlock".
+ */
+export type MenuBlock =
+  | {
+    link: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+      | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+      | ({
+        relationTo: 'volumes';
+        value: number | Volume;
+      } | null)
+      | ({
+        relationTo: 'articles';
+        value: number | Article;
+      } | null);
+      url?: string | null;
+      label: string;
+    };
+    id?: string | null;
+  }[]
+  | null;
+/**
  * Supported timezones in IANA format.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1746,8 +1774,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
-  primaryMenu?: MenuBlock;
-  secondaryMenu?: MenuBlock;
+  navItems?: MenuBlock;
   actionButton: {
     enabled: boolean;
     link?: {
@@ -1819,8 +1846,7 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
-  primaryMenu?: T | MenuBlockSelect<T>;
-  secondaryMenu?: T | MenuBlockSelect<T>;
+  navItems?: T | MenuBlockSelect<T>;
   actionButton?:
   | T
   | {

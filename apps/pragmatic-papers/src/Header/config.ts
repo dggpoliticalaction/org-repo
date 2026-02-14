@@ -1,9 +1,9 @@
 import { adminFieldLevel } from '@/access/admins'
+import { menu } from '@/blocks/Menu/config'
 import { colorPicker } from '@/fields/colorPicker'
 import { link } from '@/fields/link'
+import { revalidateHeader } from '@/Header/hooks/revalidateHeader'
 import type { GlobalConfig } from 'payload'
-import { menu } from '../blocks/Menu/config'
-import { revalidateHeader } from './hooks/revalidateHeader'
 
 export const Header: GlobalConfig = {
   slug: 'header',
@@ -13,15 +13,9 @@ export const Header: GlobalConfig = {
   },
   fields: [
     menu({
-      name: 'primaryMenu',
-      label: 'Primary Menu',
-      maxRows: 4,
-      labels: { singular: 'Menu Item', plural: 'Menu Items' },
-    }),
-    menu({
-      name: 'secondaryMenu',
-      label: 'Secondary Menu',
-      maxRows: 4,
+      name: 'navItems',
+      label: 'Navigation Items',
+      maxRows: 12,
       labels: { singular: 'Menu Item', plural: 'Menu Items' },
     }),
     {
