@@ -10,14 +10,15 @@ const menuVariants = cva('flex items-center text-sm', {
   },
   variants: {
     layout: {
-      inline: 'flex-row gap-3',
+      inline: 'flex-row',
       stacked: 'flex-col items-start',
-      responsive: 'flex-col md:flex-row md:gap-3',
+      responsive: 'flex-col md:flex-row',
     },
     link: {
-      inline: '',
+      inline:
+        'border-b-brand px-2.5 py-3 text-base font-medium hover:border-b-[4px] hover:pb-2 hover:text-brand data-[active=true]:border-b-[4px] data-[active=true]:pb-2 data-[active=true]:text-brand dark:border-b-brandLight',
       stacked:
-        'text-lg font-medium uppercase w-full border-t border-border py-4 items-start data-[active=true]:border-l-[12px] data-[active=true]:pl-3 data-[active=true]:border-l-brand hover:border-l-[12px] hover:pl-3 hover:border-l-brand',
+        'w-full items-start border-t border-border border-l-brand py-4 text-lg font-medium hover:border-l-[12px] hover:pl-3 data-[active=true]:border-l-[12px] data-[active=true]:pl-3 dark:border-l-brandLight',
       responsive: '',
     },
   },
