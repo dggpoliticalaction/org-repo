@@ -6,9 +6,7 @@ interface ButtonBlockProps extends React.ComponentProps<typeof Button> {
   button?: ButtonBlockType
 }
 
-export const ButtonBlock: React.FC<ButtonBlockProps> = (props) => {
-  const { button, className, children } = props
-
+export const ButtonBlock: React.FC<ButtonBlockProps> = ({ button, className, children, ...props }) => {
   const { backgroundColor, textColor, link, variant } = button ?? {}
 
   return (
@@ -21,6 +19,7 @@ export const ButtonBlock: React.FC<ButtonBlockProps> = (props) => {
       }}
       className={className}
       asChild
+      {...props}
     >
       <CMSLink link={link}>{children}</CMSLink>
     </Button>
