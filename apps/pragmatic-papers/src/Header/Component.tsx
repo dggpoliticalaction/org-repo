@@ -25,7 +25,7 @@ export async function Header(): Promise<React.JSX.Element> {
   const footerData = await getCachedGlobal('footer', 1)()
 
   return (
-    <header className="border-border bg-background sticky top-0 z-50 border-b-2 py-6">
+    <header className="sticky top-0 z-50 border-b-2 border-border bg-background py-6">
       <div className="container grid grid-cols-[1fr_auto_1fr] items-center gap-4">
         <Sheet>
           <SheetTrigger asChild>
@@ -34,7 +34,7 @@ export async function Header(): Promise<React.JSX.Element> {
               <span className="sr-only">Menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent className='w-full sm:w-3/4'>
+          <SheetContent className="w-full sm:w-3/4" side="left">
             <div className="flex flex-1 flex-col gap-2">
               <MenuBlock menu={navItems} variant="stacked" />
             </div>
@@ -51,9 +51,11 @@ export async function Header(): Promise<React.JSX.Element> {
         >
           <Logo aria-hidden="true" />
         </Link>
-        <div className='flex items-center gap-2 justify-end'>
-          <ActionButton button={actionButton} />
-          <Button className='hidden md:block'>Log In</Button>
+        <div className="flex items-center justify-end gap-2">
+          <ActionButton className="hidden md:block" button={actionButton} />
+          <Button className="hidden md:block" variant="outline" asChild>
+            <Link href="/admin/login">Log In</Link>
+          </Button>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="link" size="clear" className="md:hidden">
@@ -61,8 +63,14 @@ export async function Header(): Promise<React.JSX.Element> {
                 <span className="sr-only">Account</span>
               </Button>
             </SheetTrigger>
-            <SheetContent className='w-full sm:w-3/4' side="right">
-              <ActionButton button={actionButton} />
+            <SheetContent
+              className="flex w-full flex-col items-center justify-center gap-2 py-4 sm:w-3/4"
+              side="right"
+            >
+              <ActionButton button={actionButton} className="w-full" />
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/admin/login">Log In</Link>
+              </Button>
             </SheetContent>
           </Sheet>
         </div>
