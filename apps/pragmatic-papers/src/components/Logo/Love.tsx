@@ -1,7 +1,7 @@
 import { cn } from '@/utilities/ui'
 import { cva, type VariantProps } from 'class-variance-authority'
 import React from 'react'
-import { DggLIcon } from "./icons/DggLIcon"
+import { DggLIcon } from './icons/DggLIcon'
 
 const loveVariants = cva('mr-1 w-auto', {
   defaultVariants: {
@@ -16,10 +16,9 @@ const loveVariants = cva('mr-1 w-auto', {
   },
 })
 
-
 export interface LoveProps
   extends React.SVGProps<SVGSVGElement>,
-  VariantProps<typeof loveVariants> { }
+    VariantProps<typeof loveVariants> {}
 
 /**
  * Love: Decorative logo mark, often used as a "heart" or "signature" glyph for Pragmatic Papers.
@@ -39,7 +38,5 @@ export interface LoveProps
  * ```
  */
 export const Love: React.FC<LoveProps> = ({ className, variant, ...props }) => {
-  return (
-    <DggLIcon className={cn(loveVariants({ className, variant }))} {...props} />
-  )
+  return <DggLIcon className={cn(loveVariants({ className, variant }))} {...props} />
 }
