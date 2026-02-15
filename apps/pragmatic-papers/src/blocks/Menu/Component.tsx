@@ -4,7 +4,7 @@ import { cn } from '@/utilities/ui'
 import { type VariantProps, cva } from 'class-variance-authority'
 import React from 'react'
 
-const menuVariants = cva('flex items-center text-sm', {
+const menuVariants = cva('flex items-center', {
   defaultVariants: {
     layout: 'responsive',
   },
@@ -14,19 +14,27 @@ const menuVariants = cva('flex items-center text-sm', {
       stacked: 'flex-col items-start',
       responsive: 'flex-col md:flex-row',
     },
-    link: {
+  },
+})
+
+const menuLinkVariants = cva('font-medium hover:bg-foreground/10', {
+  defaultVariants: {
+    layout: 'responsive',
+  },
+  variants: {
+    layout: {
       inline:
-        'border-b-foreground px-3 py-2 text-base font-medium hover:bg-foreground/10 hover:data-[active=true]:border-b-0 hover:data-[active=true]:pb-2 data-[active=true]:border-b-[4px] data-[active=true]:pb-1',
+        'border-b-foreground px-3 py-2 hover:data-[active=true]:border-b-0 hover:data-[active=true]:pb-2 data-[active=true]:border-b-[4px] data-[active=true]:pb-1',
       stacked:
-        'w-full items-start border-t border-border border-l-foreground py-4 text-lg font-medium hover:bg-foreground/10 hover:data-[active=true]:border-l-0 hover:data-[active=true]:pl-6 data-[active=true]:border-l-8 data-[active=true]:pl-4',
-      responsive: '',
+        'w-full items-start border-t border-border border-l-foreground py-4 text-lg hover:data-[active=true]:border-l-0 hover:data-[active=true]:pl-6 data-[active=true]:border-l-8 data-[active=true]:pl-4',
+      responsive: 'py-2 md:px-3',
     },
   },
 })
 
 interface MenuBlockProps
   extends React.HTMLAttributes<HTMLDivElement>,
-  VariantProps<typeof menuVariants> {
+    VariantProps<typeof menuVariants> {
   menu?: MenuBlockType
 }
 
@@ -48,7 +56,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu, className, layout, .
       {menu.map(({ link, id }, index) => (
         <CMSLink
           key={id || `menu-item-${index}`}
-          className={cn(menuVariants({ link: layout }))}
+          className={cn(menuLinkVariants({ layout }))}
           link={link}
         />
       ))}
