@@ -22,7 +22,7 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
                 {note}
               </span>
               {attributionEnabled && (
-                <CMSLink link={link} className="underline">
+                <CMSLink link={link} className="underline text-brand shadow-none">
                   {link?.type === 'reference' ? `${getClientSideURL()}${url}` : url}
                 </CMSLink>
               )}

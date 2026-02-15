@@ -1,4 +1,4 @@
-import { CMSLink } from '@/components/Link'
+import { CMSLink } from '@/components/Link/CMSLink2'
 import type { MenuBlock as MenuBlockType } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 import { type VariantProps, cva } from 'class-variance-authority'
@@ -6,20 +6,25 @@ import React from 'react'
 
 const menuVariants = cva('flex items-center text-sm', {
   defaultVariants: {
-    variant: 'responsive',
+    layout: 'responsive',
   },
   variants: {
-    variant: {
+    layout: {
       inline: 'flex-row gap-3',
       stacked: 'flex-col items-start gap-2',
       responsive: 'flex-col md:flex-row gap-2 md:gap-3',
+    },
+    linkWrapper: {
+      inline: '',
+      stacked: 'w-full border-t border-border py-4 items-start',
+      responsive: '',
     },
   },
 })
 
 interface MenuBlockProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof menuVariants> {
+  VariantProps<typeof menuVariants> {
   menu?: MenuBlockType
   renderBefore?: React.ReactNode
   renderAfter?: React.ReactNode
@@ -54,19 +59,18 @@ interface MenuBlockProps
 export const MenuBlock: React.FC<MenuBlockProps> = ({
   menu,
   className,
-  variant,
+  layout,
   renderBefore,
   renderAfter,
   ...props
 }) => {
   if (!menu) return null
   return (
-    <nav className={cn(menuVariants({ variant }), className)} {...props}>
+    <nav className={cn(menuVariants({ layout }), className)} {...props}>
       {renderBefore}
-      {menu &&
-        menu.map(({ link, id }, index) => (
-          <CMSLink key={id || `menu-item-${index}`} {...link} appearance="link" />
-        ))}
+      {menu.map(({ link, id }, index) => (
+        <CMSLink key={id || `menu-item-${index}`} className={cn(menuVariants({ linkWrapper: layout }), "uppercase font-bold text-base")} link={link} />
+      ))}
       {renderAfter}
     </nav>
   )

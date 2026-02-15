@@ -1,28 +1,17 @@
 import { MenuBlock, MenuBlockOrEmpty } from '@/blocks/Menu/Component'
 import { Logo } from '@/components/Logo'
 import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Input } from '@/components/ui/input'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { ActionButton } from '@/Header/ActionButton/Component'
 import type { Header } from '@/payload-types'
 import { getCachedGlobal } from '@/utilities/getGlobals'
-import { TextSearch, User } from 'lucide-react'
+import { SearchIcon, TextSearch, User } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
-import { Copyright } from './Copyright'
 
-/**
- * Renders the site header including primary and secondary menus, logo, and off-canvas menu.
- *
- * - Fetches primary and secondary menus from global header data.
- * - Displays the primary menu on the left, the site logo (linked to home) in the center,
- *   and the secondary menu on the right.
- * - The rightmost menu also includes the OffCanvasContent for mobile or additional navigation.
- *
- * @returns {Promise<React.JSX.Element>} A Promise resolving to the rendered header element.
- */
 export async function Header(): Promise<React.JSX.Element> {
   const { navItems, actionButton }: Header = await getCachedGlobal('header', 1)()
-  const footerData = await getCachedGlobal('footer', 1)()
 
   return (
     <header className="sticky top-0 z-50 border-b-2 border-border bg-background py-6">
@@ -34,14 +23,18 @@ export async function Header(): Promise<React.JSX.Element> {
               <span className="sr-only">Menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-full sm:w-3/4" side="left">
-            <div className="flex flex-1 flex-col gap-2">
-              <MenuBlock menu={navItems} variant="stacked" />
+          <SheetContent className="w-full sm:w-3/4 space-y-4" side="left">
+            <SheetHeader>
+              <SheetTitle><Logo aria-hidden="true" /></SheetTitle>
+            </SheetHeader>
+            <div className="mb-6 flex items-center gap-2 rounded border border-border bg-muted px-3 py-2">
+              <Input type="search" placeholder="Search…" disabled aria-label="Search box" className="bg-transparent border-none" />
+              <Button variant="ghost" size="icon" disabled tabIndex={-1}>
+                <SearchIcon className="w-5 h-5" />
+                <span className="sr-only">Search</span>
+              </Button>
             </div>
-            <div className="flex flex-col flex-wrap items-start gap-3 sm:flex-row sm:items-end">
-              <MenuBlock menu={footerData.navItems} />
-              <Copyright className="text-sm">Pragmatic Papers</Copyright>
-            </div>
+            <MenuBlock menu={navItems} layout="stacked" />
           </SheetContent>
         </Sheet>
         <Link
@@ -49,7 +42,7 @@ export async function Header(): Promise<React.JSX.Element> {
           aria-label="Link to Home"
           className="inline-flex items-center justify-center"
         >
-          <Logo aria-hidden="true" />
+          <Logo love aria-hidden="true" />
         </Link>
         <div className="flex items-center justify-end gap-2">
           <ActionButton className="hidden md:block" button={actionButton} />
