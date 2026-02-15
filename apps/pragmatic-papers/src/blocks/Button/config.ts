@@ -1,6 +1,6 @@
-import { colorPicker } from "@/fields/colorPicker"
-import { link } from "@/fields/link2"
-import type { NamedGroupField } from "payload"
+import { colorPicker } from '@/fields/colorPicker'
+import { link } from '@/fields/link2'
+import type { NamedGroupField } from 'payload'
 
 type ButtonProps = Omit<NamedGroupField, 'fields' | 'name' | 'type' | 'interfaceName'>
 
