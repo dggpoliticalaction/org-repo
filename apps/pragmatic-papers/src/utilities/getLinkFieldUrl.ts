@@ -1,13 +1,19 @@
 import type { LinkField } from '@/payload-types'
 
-export const getLinkFieldUrl = (link?: LinkField): string | null => {
+export function getLinkFieldUrl(link?: LinkField): string | null {
   if (!link) return null
   if (
     link.type === 'reference' &&
     typeof link.reference?.value === 'object' &&
     link.reference?.value.slug
   ) {
-    return `${link.reference?.relationTo !== 'pages' ? `/${link.reference?.relationTo}` : ''}/${link.reference?.value.slug}`
+    let url = ''
+    if (link.reference?.relationTo !== 'pages') {
+      url += `/${link.reference?.relationTo}`
+    }
+
+    url += `/${link.reference?.value.slug}`
+    return url
   }
   return link.url || null
 }
