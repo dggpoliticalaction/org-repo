@@ -14,8 +14,8 @@ export async function Header(): Promise<React.JSX.Element> {
   const { navItems, actionButton }: Header = await getCachedGlobal('header', 1)()
 
   return (
-    <header className="sticky top-0 z-50 space-y-3 border-b border-border bg-background">
-      <div className="container mt-6 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+    <header className="space-y-3 bg-background">
+      <div className="container sticky top-0 z-50 mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-4 bg-background py-3">
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="link" size="clear" className="items-center gap-2">
@@ -88,7 +88,7 @@ export async function Header(): Promise<React.JSX.Element> {
       <MenuBlock
         menu={navItems}
         layout="inline"
-        className="container hidden items-center justify-center lg:flex"
+        className="container hidden items-center justify-center border-t border-border lg:flex"
       />
     </header>
   )
