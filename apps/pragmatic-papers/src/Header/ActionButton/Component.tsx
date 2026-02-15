@@ -7,9 +7,9 @@ interface ActionButtonProps extends React.ComponentProps<typeof ButtonBlock> {
   button?: ButtonBlockType
 }
 
-export const ActionButton: React.FC<ActionButtonProps> = ({ button, className }) => {
+export const ActionButton: React.FC<ActionButtonProps> = ({ button, className, ...props }) => {
   return (
-    <ButtonBlock button={button} className={cn('gap-2', className)}>
+    <ButtonBlock button={button} className={cn('gap-2', className)} {...props}>
       {button?.link?.label || 'Invalid Link'}
       <ExternalLink className="h-4 w-4" />
     </ButtonBlock>
