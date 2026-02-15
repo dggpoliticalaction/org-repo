@@ -14,8 +14,8 @@ export async function Header(): Promise<React.JSX.Element> {
   const { navItems, actionButton }: Header = await getCachedGlobal('header', 1)()
 
   return (
-    <header className="sticky top-0 z-50 border-b-2 border-border bg-background py-6">
-      <div className="container grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+    <header className="sticky top-0 z-50 space-y-3 border-b border-border bg-background">
+      <div className="container mt-6 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="link" size="clear" className="items-center gap-2">
@@ -23,16 +23,20 @@ export async function Header(): Promise<React.JSX.Element> {
               <span className="sr-only">Menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-full space-y-4 sm:w-3/4" side="left">
+          <SheetContent
+            className="w-full space-y-4 sm:w-3/4 [&>button:last-child]:top-3 [&>button:last-child_svg]:h-7 [&>button:last-child_svg]:w-7"
+            side="left"
+          >
             <SheetHeader>
-              <SheetTitle>
-                <Logo aria-hidden="true" />
+              <SheetTitle className="my-2 md:my-1">
+                <span className="sr-only">Pragmatic Papers</span>
+                <Logo aria-hidden="true" variant="inline" className="max-w-[85%]" />
               </SheetTitle>
             </SheetHeader>
             <div className="mb-6 flex items-center gap-2 rounded border border-border bg-muted px-3 py-2">
               <Input
                 type="search"
-                placeholder="Search…"
+                placeholder="Search Coming Soon…"
                 disabled
                 aria-label="Search box"
                 className="border-none bg-transparent"
@@ -50,40 +54,42 @@ export async function Header(): Promise<React.JSX.Element> {
           aria-label="Link to Home"
           className="inline-flex items-center justify-center"
         >
-          <Logo love aria-hidden="true" />
+          <Logo aria-hidden="true" variant="inline" />
         </Link>
         <div className="flex items-center justify-end gap-2">
-          <ActionButton className="hidden md:block" button={actionButton} />
-          <Button className="hidden md:block" variant="outline" asChild>
+          <ActionButton className="hidden lg:flex" button={actionButton} />
+          <Button className="hidden lg:flex" variant="outline" asChild>
             <Link href="/admin/login">Log In</Link>
           </Button>
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="link" size="clear" className="md:hidden">
+              <Button variant="link" size="clear" className="lg:hidden">
                 <User className="h-7 w-7" />
                 <span className="sr-only">Account</span>
               </Button>
             </SheetTrigger>
             <SheetContent
-              className="flex w-full flex-col items-center justify-center gap-2 py-4 sm:w-3/4"
+              className="flex w-full flex-col items-center justify-center space-y-4 py-4 sm:w-3/4 [&>button:last-child]:top-3 [&>button:last-child_svg]:h-7 [&>button:last-child_svg]:w-7"
               side="right"
             >
               <SheetHeader>
                 <SheetTitle>Account</SheetTitle>
               </SheetHeader>
-              <ActionButton button={actionButton} className="w-full" />
-              <Button variant="outline" className="w-full" asChild>
-                <Link href="/admin/login">Log In</Link>
-              </Button>
+              <div className="w-full space-y-2">
+                <ActionButton button={actionButton} className="w-full" />
+                <Button variant="outline" className="w-full" asChild>
+                  <Link href="/admin/login">Log In</Link>
+                </Button>
+              </div>
             </SheetContent>
           </Sheet>
         </div>
-        <MenuBlock
-          menu={navItems}
-          layout="inline"
-          className="col-span-full hidden items-center justify-center lg:flex"
-        />
       </div>
+      <MenuBlock
+        menu={navItems}
+        layout="inline"
+        className="container hidden items-center justify-center lg:flex"
+      />
     </header>
   )
 }
