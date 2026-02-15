@@ -1,4 +1,4 @@
-import { MenuBlock, MenuBlockOrEmpty } from '@/blocks/Menu/Component'
+import { MenuBlock } from '@/blocks/Menu/Component'
 import { Logo } from '@/components/Logo'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -23,18 +23,26 @@ export async function Header(): Promise<React.JSX.Element> {
               <span className="sr-only">Menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-full sm:w-3/4 space-y-4" side="left">
+          <SheetContent className="w-full space-y-4 sm:w-3/4" side="left">
             <SheetHeader>
-              <SheetTitle><Logo aria-hidden="true" /></SheetTitle>
+              <SheetTitle>
+                <Logo aria-hidden="true" />
+              </SheetTitle>
             </SheetHeader>
             <div className="mb-6 flex items-center gap-2 rounded border border-border bg-muted px-3 py-2">
-              <Input type="search" placeholder="Search…" disabled aria-label="Search box" className="bg-transparent border-none" />
+              <Input
+                type="search"
+                placeholder="Search…"
+                disabled
+                aria-label="Search box"
+                className="border-none bg-transparent"
+              />
               <Button variant="ghost" size="icon" disabled tabIndex={-1}>
-                <SearchIcon className="w-5 h-5" />
+                <SearchIcon className="h-5 w-5" />
                 <span className="sr-only">Search</span>
               </Button>
             </div>
-            <MenuBlock menu={navItems} layout="stacked" />
+            <MenuBlock menu={navItems} layout="stacked" className="-mx-6 [&>a]:px-6" />
           </SheetContent>
         </Sheet>
         <Link
@@ -60,6 +68,9 @@ export async function Header(): Promise<React.JSX.Element> {
               className="flex w-full flex-col items-center justify-center gap-2 py-4 sm:w-3/4"
               side="right"
             >
+              <SheetHeader>
+                <SheetTitle>Account</SheetTitle>
+              </SheetHeader>
               <ActionButton button={actionButton} className="w-full" />
               <Button variant="outline" className="w-full" asChild>
                 <Link href="/admin/login">Log In</Link>
@@ -67,11 +78,12 @@ export async function Header(): Promise<React.JSX.Element> {
             </SheetContent>
           </Sheet>
         </div>
+        <MenuBlock
+          menu={navItems}
+          layout="inline"
+          className="col-span-full hidden items-center justify-center lg:flex"
+        />
       </div>
-      <MenuBlockOrEmpty
-        className="justify-self-start [&>*]:hidden md:[&>*]:inline-flex"
-        menu={navItems}
-      />
     </header>
   )
 }

@@ -11,7 +11,7 @@ import { CMSLink } from '@/components/Link'
  * @deprecated
  */
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
-  const navItems = data?.primaryMenu || []
+  const navItems = data?.navItems || []
 
   return (
     <nav className="flex items-center gap-3">

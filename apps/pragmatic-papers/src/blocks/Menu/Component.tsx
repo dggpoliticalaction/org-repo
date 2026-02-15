@@ -11,12 +11,13 @@ const menuVariants = cva('flex items-center text-sm', {
   variants: {
     layout: {
       inline: 'flex-row gap-3',
-      stacked: 'flex-col items-start gap-2',
-      responsive: 'flex-col md:flex-row gap-2 md:gap-3',
+      stacked: 'flex-col items-start',
+      responsive: 'flex-col md:flex-row md:gap-3',
     },
-    linkWrapper: {
+    link: {
       inline: '',
-      stacked: 'w-full border-t border-border py-4 items-start',
+      stacked:
+        'text-lg font-medium uppercase w-full border-t border-border py-4 items-start data-[active=true]:border-l-[12px] data-[active=true]:pl-3 data-[active=true]:border-l-brand hover:border-l-[12px] hover:pl-3 hover:border-l-brand',
       responsive: '',
     },
   },
@@ -69,29 +70,13 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
     <nav className={cn(menuVariants({ layout }), className)} {...props}>
       {renderBefore}
       {menu.map(({ link, id }, index) => (
-        <CMSLink key={id || `menu-item-${index}`} className={cn(menuVariants({ linkWrapper: layout }), "uppercase font-bold text-base")} link={link} />
+        <CMSLink
+          key={id || `menu-item-${index}`}
+          className={cn(menuVariants({ link: layout }))}
+          link={link}
+        />
       ))}
       {renderAfter}
     </nav>
   )
-}
-
-type MenuBlockOrEmptyProps = Omit<MenuBlockProps, 'menu'> & {
-  menu?: MenuBlockType
-}
-
-/**
- * MenuBlockOrEmpty component
- *
- * - Renders the MenuBlock component if a `menu` prop is provided and truthy.
- * - If no menu is present, renders an empty <div> to preserve layout structure.
- * - Useful for grid layouts where maintaining the grid cell is important,
- *   even when no menu items exist (such as in header or footer).
- *
- * Props:
- * - menu: Optional array of menu items; if not provided or empty, renders an empty div.
- * - ...props: Additional props are passed to either MenuBlock or the empty <div>.
- */
-export const MenuBlockOrEmpty: React.FC<MenuBlockOrEmptyProps> = ({ menu, ...props }) => {
-  return menu ? <MenuBlock menu={menu} {...props} /> : <div {...props} />
 }
