@@ -6,8 +6,7 @@ import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 
 export async function Footer(): Promise<React.ReactElement> {
-  const footerData: Footer = await getCachedGlobal('footer', 1)()
-  const navItems = footerData?.navItems || []
+  const { navItems }: Footer = await getCachedGlobal('footer', 1)()
 
   return (
     <footer className="mt-auto">
