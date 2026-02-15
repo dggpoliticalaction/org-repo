@@ -28,8 +28,6 @@ interface MenuBlockProps
   extends React.HTMLAttributes<HTMLDivElement>,
   VariantProps<typeof menuVariants> {
   menu?: MenuBlockType
-  renderBefore?: React.ReactNode
-  renderAfter?: React.ReactNode
 }
 
 /**
@@ -62,14 +60,11 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
   menu,
   className,
   layout,
-  renderBefore,
-  renderAfter,
   ...props
 }) => {
   if (!menu) return null
   return (
     <nav className={cn(menuVariants({ layout }), className)} {...props}>
-      {renderBefore}
       {menu.map(({ link, id }, index) => (
         <CMSLink
           key={id || `menu-item-${index}`}
@@ -77,7 +72,6 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
           link={link}
         />
       ))}
-      {renderAfter}
     </nav>
   )
 }
