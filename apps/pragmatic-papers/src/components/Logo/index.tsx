@@ -68,6 +68,28 @@ export interface LogoProps
   love?: boolean
 }
 
+/**
+ * Logo: The main site logo component for Pragmatic Papers.
+ *
+ * This component renders the appropriate logo SVG, based on the `variant` prop:
+ * - "inline" renders a smaller horizontal (inline) logo
+ * - "stacked" renders a larger vertical (stacked) logo
+ * - "responsive" (default) renders the inline logo on large screens, stacked on smaller screens
+ *
+ * Props:
+ * - variant?: "inline" | "stacked" | "responsive"
+ *      Choose which logo style to render (responsive is default).
+ * - love?: boolean
+ *      If true, renders an additional decorative heart icon.
+ * - ...props: All other SVG props will be passed to the <svg> elements.
+ *
+ * Example usage:
+ * ```tsx
+ * <Logo />
+ * <Logo variant="stacked" />
+ * <Logo love />
+ * ```
+ */
 export const Logo: React.FC<LogoProps> = ({ love, variant, ...props }) => {
   return (
     <>

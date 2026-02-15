@@ -7,6 +7,17 @@ interface ActionButtonProps extends React.ComponentProps<typeof ButtonBlock> {
   button?: ButtonBlockType
 }
 
+/**
+ * Renders an action button based on provided `button` data.
+ * Typically used for header actions (e.g., "Get Started") with an external link icon.
+ *
+ * @param button - ButtonBlockType object, containing link info (label, href, etc.)
+ * @param className - Additional CSS classes for styling.
+ * @param props - All other ButtonBlock props.
+ *
+ * @example
+ * <ActionButton button={buttonData} className="hidden lg:flex" />
+ */
 export const ActionButton: React.FC<ActionButtonProps> = ({ button, className, ...props }) => {
   return (
     <ButtonBlock button={button} className={cn('gap-2', className)} {...props}>

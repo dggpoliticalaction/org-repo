@@ -16,9 +16,9 @@ const menuVariants = cva('flex items-center text-sm', {
     },
     link: {
       inline:
-        'border-b-brand px-2.5 py-3 text-base font-medium hover:border-b-[4px] hover:pb-2 hover:text-brand data-[active=true]:border-b-[4px] data-[active=true]:pb-2 data-[active=true]:text-brand dark:border-b-brandLight',
+        'border-b-foreground px-3 py-2 text-base font-medium hover:bg-foreground/10 hover:data-[active=true]:border-b-0 hover:data-[active=true]:pb-2 data-[active=true]:border-b-[4px] data-[active=true]:pb-1',
       stacked:
-        'w-full items-start border-t border-border border-l-brand py-4 text-lg font-medium hover:border-l-[12px] hover:pl-3 data-[active=true]:border-l-[12px] data-[active=true]:pl-3 dark:border-l-brandLight',
+        'w-full items-start border-t border-border border-l-foreground py-4 text-lg font-medium hover:bg-foreground/10 hover:data-[active=true]:border-l-0 hover:data-[active=true]:pl-6 data-[active=true]:border-l-8 data-[active=true]:pl-4',
       responsive: '',
     },
   },
@@ -31,40 +31,20 @@ interface MenuBlockProps
 }
 
 /**
- * Renders a navigation menu from an array of menu items.
- * Supports layout variants: inline (horizontal), stacked (vertical), and responsive (vertical on mobile, horizontal on larger screens).
- * Allows additional content to be rendered before or after the menu items.
+ * MenuBlock component renders a navigation menu based on menu data.
+ *
+ * @param menu - The array of menu items to display.
+ * @param className - Additional classes for the menu container.
+ * @param layout - Specifies the menu layout variant ('inline', 'stacked', or 'responsive').
+ * @param props - All other HTML div props.
+ *
+ * @example
+ * <MenuBlock menu={menuData} layout="inline" />
  */
-/**
- * MenuBlock component
- *
- * Displays a navigation menu from the provided array of menu items.
- *
- * - Supports different presentation variants:
- *   - 'inline' (horizontal list),
- *   - 'stacked' (vertical list),
- *   - 'responsive' (vertical on mobile, horizontal on larger screens).
- * - Accepts optional nodes to render before or after the menu items via `renderBefore` and `renderAfter`.
- * - For each menu item, it renders a CMSLink component.
- * - Styling is applied through className and variant using class-variance-authority.
- *
- * Props:
- * - menu: Array of menu items to display.
- * - variant: Layout style for the menu.
- * - renderBefore: Optional React node displayed before menu items.
- * - renderAfter: Optional React node displayed after menu items.
- * - className: Additional CSS classes for the menu container.
- * - ...props: Additional props for the container <nav>.
- */
-export const MenuBlock: React.FC<MenuBlockProps> = ({
-  menu,
-  className,
-  layout,
-  ...props
-}) => {
+export const MenuBlock: React.FC<MenuBlockProps> = ({ menu, className, layout, ...props }) => {
   if (!menu) return null
   return (
-    <nav className={cn(menuVariants({ layout }), className)} {...props}>
+    <nav className={cn(menuVariants({ className, layout }))} {...props}>
       {menu.map(({ link, id }, index) => (
         <CMSLink
           key={id || `menu-item-${index}`}

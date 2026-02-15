@@ -6,6 +6,18 @@ interface ButtonBlockProps extends React.ComponentProps<typeof Button> {
   button?: ButtonBlockType
 }
 
+/**
+ * Renders a button based on provided `button` data.
+ * Supports different button variants and colors.
+ *
+ * @param button - ButtonBlockType object, containing link info (label, href, etc.)
+ * @param className - Additional CSS classes for styling.
+ * @param children - The content to display inside the button.
+ * @param props - All other Button props.
+ *
+ * @example
+ * <ButtonBlock button={buttonData} className="my-4">Click Me</ButtonBlock>
+ */
 export const ButtonBlock: React.FC<ButtonBlockProps> = ({
   button,
   className,
