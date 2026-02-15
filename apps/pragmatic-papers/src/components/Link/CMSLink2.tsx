@@ -14,12 +14,15 @@ export const CMSLink: React.FC<CMSLinkProps> = ({ link, className, children, ...
   const url = getLinkFieldUrl(link)
   if (!url) return null
   const Slot = link.type === 'custom' ? 'a' : Link
-  return <Slot
-    href={url} className={cn('text-brand underline shadow-none', className)}
-    target={link?.newTab ? '_blank' : undefined}
-    rel={link?.newTab ? 'noopener noreferrer' : undefined}
-    {...props}
-  >
-    {children || link?.label}
-  </Slot>
+  return (
+    <Slot
+      href={url}
+      className={cn('text-brand shadow-none', className)}
+      target={link?.newTab ? '_blank' : undefined}
+      rel={link?.newTab ? 'noopener noreferrer' : undefined}
+      {...props}
+    >
+      {children || link?.label}
+    </Slot>
+  )
 }
