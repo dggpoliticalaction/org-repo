@@ -1,5 +1,5 @@
-import type { Payload } from 'payload'
 import type { Page } from '@/payload-types'
+import type { Payload } from 'payload'
 
 interface CreateMenusParams {
   aboutPage: Page
@@ -15,7 +15,7 @@ export const createMenus = async (
   await payload.updateGlobal({
     slug: 'header',
     data: {
-      primaryMenu: [
+      navItems: [
         {
           link: {
             type: 'reference',
@@ -37,22 +37,17 @@ export const createMenus = async (
           },
         },
       ],
-      secondaryMenu: [
-        {
-          link: {
-            type: 'custom',
-            label: 'Discord',
-            url: 'https://discord.gg',
-          },
+      actionButton: {
+        enabled: true,
+        link: {
+          type: 'custom',
+          label: 'Join us on Discord!',
+          url: 'https://discord.gg/dggpol',
+          newTab: true,
         },
-        {
-          link: {
-            type: 'custom',
-            label: 'Log In',
-            url: '/login',
-          },
-        },
-      ],
+        backgroundColor: '#5865F2',
+        textColor: '#E0E3FF',
+      },
     },
   })
 
