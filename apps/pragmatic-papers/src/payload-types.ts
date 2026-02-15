@@ -1775,38 +1775,26 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface Header {
   id: number;
   navItems?: MenuBlock;
-  actionButton: {
-    enabled: boolean;
-    link?: {
-      type?: ('reference' | 'custom') | null;
-      newTab?: boolean | null;
-      reference?:
-      | ({
-        relationTo: 'pages';
-        value: number | Page;
-      } | null)
-      | ({
-        relationTo: 'volumes';
-        value: number | Volume;
-      } | null)
-      | ({
-        relationTo: 'articles';
-        value: number | Article;
-      } | null);
-      url?: string | null;
-      label: string;
-    };
-    /**
-     * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-     */
-    backgroundColor?: string | null;
-    /**
-     * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-     */
-    textColor?: string | null;
-  };
+  actionButton?: ButtonBlock;
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonBlock".
+ */
+export interface ButtonBlock {
+  enabled: boolean;
+  link?: LinkField;
+  /**
+   * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
+   */
+  backgroundColor?: string | null;
+  /**
+   * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
+   */
+  textColor?: string | null;
+  variant?: ('default' | 'outline' | 'ghost' | 'link') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1847,22 +1835,7 @@ export interface Footer {
  */
 export interface HeaderSelect<T extends boolean = true> {
   navItems?: T | MenuBlockSelect<T>;
-  actionButton?:
-  | T
-  | {
-    enabled?: T;
-    link?:
-    | T
-    | {
-      type?: T;
-      newTab?: T;
-      reference?: T;
-      url?: T;
-      label?: T;
-    };
-    backgroundColor?: T;
-    textColor?: T;
-  };
+  actionButton?: T | ButtonBlockSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1882,6 +1855,17 @@ export interface MenuBlockSelect<T extends boolean = true> {
     label?: T;
   };
   id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonBlock_select".
+ */
+export interface ButtonBlockSelect<T extends boolean = true> {
+  enabled?: T;
+  link?: T | LinkFieldSelect<T>;
+  backgroundColor?: T;
+  textColor?: T;
+  variant?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
