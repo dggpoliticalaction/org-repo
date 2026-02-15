@@ -2,6 +2,7 @@ import type { Page } from '@/payload-types'
 import type { Payload } from 'payload'
 
 interface CreateMenusParams {
+  homePage: Page
   aboutPage: Page
   contactPage: Page
   privacyPolicyPage: Page
@@ -10,12 +11,22 @@ interface CreateMenusParams {
 
 export const createMenus = async (
   payload: Payload,
-  { aboutPage, contactPage, privacyPolicyPage, termsOfUsePage }: CreateMenusParams,
+  { homePage, aboutPage, contactPage, privacyPolicyPage, termsOfUsePage }: CreateMenusParams,
 ): Promise<void> => {
   await payload.updateGlobal({
     slug: 'header',
     data: {
       navItems: [
+        {
+          link: {
+            type: 'reference',
+            label: 'Home',
+            reference: {
+              relationTo: 'pages',
+              value: homePage.id,
+            },
+          },
+        },
         {
           link: {
             type: 'reference',
@@ -41,7 +52,7 @@ export const createMenus = async (
         enabled: true,
         link: {
           type: 'custom',
-          label: 'Join us on Discord!',
+          label: 'Join the Discord',
           url: 'https://discord.gg/dggpol',
           newTab: true,
         },
