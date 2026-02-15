@@ -102,7 +102,7 @@ export const seed = async (payload: Payload): Promise<void> => {
   await createFootnotesArticle(payload, [writer1, writer2], mediaDocs, volume1Articles[0]!)
 
   // The homepage is literally a "page" in Payload.
-  await payload.create({
+  const homePage = await payload.create({
     collection: 'pages',
     data: homeStatic,
   })
@@ -111,6 +111,7 @@ export const seed = async (payload: Payload): Promise<void> => {
   const { aboutPage, contactPage, privacyPolicyPage, termsOfUsePage } = await createPages(payload)
 
   await createMenus(payload, {
+    homePage,
     aboutPage,
     contactPage,
     privacyPolicyPage,
