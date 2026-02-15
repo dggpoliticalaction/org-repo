@@ -7,6 +7,10 @@ export function getLinkFieldUrl(link?: LinkField): string | null {
     typeof link.reference?.value === 'object' &&
     link.reference?.value.slug
   ) {
+    if (link.reference?.value.slug === 'home') {
+      return '/'
+    }
+
     let url = ''
     if (link.reference?.relationTo !== 'pages') {
       url += `/${link.reference?.relationTo}`
