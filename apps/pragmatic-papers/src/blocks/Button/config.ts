@@ -46,11 +46,11 @@ export const button = (props?: ButtonProps): NamedGroupField => {
           /**
            * Background color picker for button.
            */
-          colorPicker({ overrides: { name: 'backgroundColor', label: 'Background Color' } }),
+          colorPicker({ name: 'backgroundColor', label: 'Background Color' }),
           /**
            * Text color picker for button.
            */
-          colorPicker({ overrides: { name: 'textColor', label: 'Text Color' } }),
+          colorPicker({ name: 'textColor', label: 'Text Color' }),
           /**
            * Button style variant select.
            */

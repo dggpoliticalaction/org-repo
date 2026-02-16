@@ -1,34 +1,36 @@
-import type { TextField } from 'payload'
+import type { TextField, TextFieldSingleValidation } from 'payload'
 
-import deepMerge from '@/utilities/deepMerge'
+type ColorPickerProps = Omit<TextField, 'type'>
 
-type ColorPicker = (options?: { overrides?: Partial<TextField> }) => TextField
+const validateColorPicker: TextFieldSingleValidation = (value, options) => {
+  if (!value && !options?.required) return true // Allow empty values if not required
 
-export const colorPicker: ColorPicker = ({ overrides = {} } = {}) => {
-  const colorField: TextField = {
-    name: 'color',
+  // Validate HEX color format
+  const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
+  if (hexColorRegex.test(value || '')) {
+    return true
+  }
+
+  return 'Please enter a valid HEX color code (e.g., #FF5733 or #F53)'
+}
+
+export const colorPicker = (props: ColorPickerProps): TextField => {
+  return {
+    ...props,
     type: 'text',
-    label: 'Color',
     admin: {
       description: 'Select a color using the color picker or enter a HEX code (e.g., #FF5733)',
       components: {
         Field: {
           path: '@/fields/colorPicker/ColorPickerComponent#ColorPickerComponent',
         },
+        ...props.admin?.components,
       },
+      ...props.admin,
     },
-    validate: (value) => {
-      if (!value) return true // Allow empty values if not required
-
-      // Validate HEX color format
-      const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
-      if (hexColorRegex.test(value)) {
-        return true
-      }
-
-      return 'Please enter a valid HEX color code (e.g., #FF5733 or #F53)'
-    },
+    hasMany: false,
+    maxRows: undefined,
+    minRows: undefined,
+    validate: validateColorPicker,
   }
-
-  return deepMerge(colorField, overrides)
 }
