@@ -1,8 +1,6 @@
 'use client'
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Footer } from '@/payload-types'
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { RowLabelProps, useRowLabel } from '@payloadcms/ui'
+import type { Footer } from '@/payload-types'
+import { type RowLabelProps, useRowLabel } from '@payloadcms/ui'
 
 export const RowLabel: React.FC<RowLabelProps> = () => {
   const { data, rowNumber } = useRowLabel<NonNullable<Footer['navItems']>[number]>()
