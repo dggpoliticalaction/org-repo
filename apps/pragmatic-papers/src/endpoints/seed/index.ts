@@ -1,5 +1,4 @@
 import type { Payload } from 'payload'
-import type { Media, User } from '@/payload-types'
 import { createFootnotesArticle } from './features/footnotes'
 import { createMediaCollageArticle } from './features/media-collage'
 import { homeStatic } from './home-static'
