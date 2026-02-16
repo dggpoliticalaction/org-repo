@@ -94,6 +94,7 @@ export interface Config {
     volumes: Volume;
     media: Media;
     categories: Category;
+    tags: Tag;
     users: User;
     webhooks: Webhook;
     redirects: Redirect;
@@ -112,6 +113,7 @@ export interface Config {
     volumes: VolumesSelect<false> | VolumesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     webhooks: WebhooksSelect<false> | WebhooksSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
@@ -317,6 +319,7 @@ export interface Article {
   };
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
+  tags?: (number | Tag)[] | null;
   createdBy?: (number | null) | User;
   populatedAuthors?:
     | {
@@ -467,6 +470,21 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1074,6 +1092,10 @@ export interface PayloadLockedDocument {
         value: number | Category;
       } | null)
     | ({
+        relationTo: 'tags';
+        value: number | Tag;
+      } | null)
+    | ({
         relationTo: 'users';
         value: number | User;
       } | null)
@@ -1286,6 +1308,7 @@ export interface ArticlesSelect<T extends boolean = true> {
       };
   publishedAt?: T;
   authors?: T;
+  tags?: T;
   createdBy?: T;
   populatedAuthors?:
     | T
@@ -1458,6 +1481,17 @@ export interface CategoriesSelect<T extends boolean = true> {
         label?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }

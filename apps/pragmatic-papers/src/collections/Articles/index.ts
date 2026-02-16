@@ -197,6 +197,15 @@ export const Articles: CollectionConfig = {
       relationTo: 'users',
     },
     {
+      name: 'tags',
+      type: 'relationship',
+      admin: {
+        position: 'sidebar',
+      },
+      hasMany: true,
+      relationTo: 'tags',
+    },
+    {
       name: 'createdBy',
       type: 'relationship',
       relationTo: 'users',

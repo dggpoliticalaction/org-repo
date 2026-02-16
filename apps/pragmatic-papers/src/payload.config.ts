@@ -2,6 +2,7 @@ import { Articles } from '@/collections/Articles'
 import { Categories } from '@/collections/Categories'
 import { Media } from '@/collections/Media'
 import { Pages } from '@/collections/Pages'
+import { Tags } from '@/collections/Tags'
 import { Users } from '@/collections/Users'
 import { Volumes } from '@/collections/Volumes'
 import { Webhooks } from '@/collections/Webhooks'
@@ -61,7 +62,7 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI,
     },
   }),
-  collections: [Pages, Articles, Volumes, Media, Categories, Users, Webhooks],
+  collections: [Pages, Articles, Volumes, Media, Categories, Tags, Users, Webhooks],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [...plugins],
