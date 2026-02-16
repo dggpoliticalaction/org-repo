@@ -2,52 +2,28 @@
  * Utility functions for creating Lexical rich text structures
  */
 
-type LexicalDirection = 'ltr' | 'rtl' | null
-type LexicalFormat = '' | 'left' | 'center' | 'right' | 'justify'
-type LexicalNodeType = 'text' | 'paragraph' | 'root' | 'block' | 'inlineBlock' | string
+import type {
+  ElementFormatType,
+  SerializedEditorState,
+  SerializedElementNode,
+  SerializedLexicalNode,
+} from 'lexical'
+import type {
+  SerializedParagraphNode,
+  SerializedTextNode,
+} from '@payloadcms/richtext-lexical'
 
-interface LexicalBaseNode {
+/**
+ * We need to make this to match with payloads generated types.
+ */
+export type LexicalContent = SerializedEditorState & {
   [k: string]: unknown
-  type: LexicalNodeType
-  version: number
-}
-
-interface LexicalTextNode extends LexicalBaseNode {
-  detail: number
-  format: number
-  mode: 'normal' | 'token' | 'segmented'
-  style: string
-  text: string
-  type: 'text'
-}
-
-interface LexicalParagraphNode extends LexicalBaseNode {
-  children: LexicalTextNode[]
-  direction: LexicalDirection
-  format: LexicalFormat
-  indent: number
-  type: 'paragraph'
-  textFormat?: number
-  textStyle?: string
-}
-
-interface LexicalRootNode extends LexicalBaseNode {
-  children: LexicalBaseNode[]
-  direction: LexicalDirection
-  format: LexicalFormat
-  indent: number
-  type: 'root'
-}
-
-export interface LexicalContent {
-  [k: string]: unknown
-  root: LexicalRootNode
 }
 
 /**
  * Creates a text node for use within paragraphs
  */
-export function createTextNode(text: string, format = 0): LexicalTextNode {
+export function createTextNode(text: string, format = 0): SerializedTextNode {
   return {
     detail: 0,
     format,
@@ -63,11 +39,11 @@ export function createTextNode(text: string, format = 0): LexicalTextNode {
  * Creates a paragraph node containing text
  */
 export function createParagraph(
-  text: string | LexicalTextNode | (LexicalTextNode | Record<string, unknown>)[],
-  format: LexicalFormat = '',
-): LexicalParagraphNode {
+  text: string | SerializedTextNode | (SerializedTextNode | Record<string, unknown>)[],
+  format: ElementFormatType = '',
+): SerializedParagraphNode {
   const children = Array.isArray(text)
-    ? (text as LexicalTextNode[])
+    ? (text as SerializedTextNode[])
     : typeof text === 'string'
       ? [createTextNode(text)]
       : [text]
@@ -87,7 +63,7 @@ export function createParagraph(
 /**
  * Creates an empty paragraph node (for line breaks)
  */
-export function createEmptyParagraph(): LexicalBaseNode {
+export function createEmptyParagraph(): SerializedElementNode {
   return {
     children: [],
     direction: null,
@@ -95,6 +71,7 @@ export function createEmptyParagraph(): LexicalBaseNode {
     indent: 0,
     type: 'paragraph',
     version: 1,
+    textFormat: 0,
   }
 }
 
@@ -122,7 +99,7 @@ export function createRichTextFromParagraphs(
   paragraphs: string[],
   addSpacing = true,
 ): LexicalContent {
-  const children: LexicalBaseNode[] = []
+  const children: SerializedLexicalNode[] = []
 
   paragraphs.forEach((text, index) => {
     children.push(createParagraph(text))
@@ -148,7 +125,7 @@ export function createRichTextFromParagraphs(
  * Creates a complete Lexical rich text structure from paragraph nodes
  * Useful when you need more control over the paragraph structure
  */
-export function createRichText(children: LexicalBaseNode[]): LexicalContent {
+export function createRichText(children: SerializedLexicalNode[]): LexicalContent {
   return {
     root: {
       children,
