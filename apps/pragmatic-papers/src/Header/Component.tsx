@@ -90,7 +90,7 @@ export async function Header(): Promise<React.JSX.Element> {
       <MenuBlock
         menu={navItems}
         layout="inline"
-        className="container my-3 pt-3 hidden items-center justify-center border-t border-border lg:flex"
+        className="container my-3 hidden items-center justify-center border-t border-border pt-3 lg:flex"
       />
     </>
   )
