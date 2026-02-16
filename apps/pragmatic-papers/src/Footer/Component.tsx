@@ -10,11 +10,11 @@ export async function Footer(): Promise<React.ReactElement> {
 
   return (
     <footer className="mt-auto">
-      <div className="container flex flex-col space-y-3 border-t border-border py-8 md:flex-row md:justify-between">
-        <Link className="flex items-center" href="/">
+      <div className="container flex flex-col md:space-y-3 border-t border-border py-8 md:flex-row md:justify-between">
+        <Link className="flex items-center mb-3" href="/">
           <Logo love />
         </Link>
-        <div className="flex flex-col-reverse items-start space-y-3 md:flex-row md:items-center">
+        <div className="flex flex-col-reverse items-start md:flex-row md:items-center">
           <ThemeSelector />
           <MenuBlock menu={navItems} />
         </div>
