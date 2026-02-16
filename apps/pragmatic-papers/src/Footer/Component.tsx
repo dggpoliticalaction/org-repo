@@ -10,9 +10,9 @@ export async function Footer(): Promise<React.ReactElement> {
   const { navItems }: Footer = await getCachedGlobal('footer', 1)()
 
   return (
-    <footer className="mt-auto container">
+    <footer className="container mt-auto">
       <div className="flex flex-col border-t border-border py-4 md:flex-row md:justify-between">
-        <Link className="flex items-center mb-3 md:mb-0" href="/">
+        <Link className="mb-3 flex items-center md:mb-0" href="/">
           <Logo love />
         </Link>
         <div className="flex flex-col-reverse items-start md:flex-row md:items-center">
@@ -20,7 +20,7 @@ export async function Footer(): Promise<React.ReactElement> {
           <MenuBlock menu={navItems} />
         </div>
       </div>
-      <Copyright className='mb-4'>Pragmatic Papers</Copyright>
+      <Copyright className="mb-4" copyright="Pragmatic Papers" />
     </footer>
   )
 }
