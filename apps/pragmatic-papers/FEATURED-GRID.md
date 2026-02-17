@@ -1,16 +1,16 @@
-## Feature: Homepage Featured Grid Layout System
+## Feature: Homepage Featured Article Grid Layout System
 
 ### Summary
 
 We need a flexible, editor-friendly system for curating homepage article layouts when releasing a new **Volume** of Pragmatic Papers (typically 5–7 articles at once). The goal is to allow the chief editor to control **article prominence and placement** using predefined layout presets, while keeping the implementation predictable and scalable.
 
-This issue proposes a **Featured Grid Section** built with Payload CMS blocks, using **layout presets with named slots** (hero, A–F) and a reusable `ArticleTile` renderer with display variants.
+This issue proposes a **Featured Articles Section** built with Payload CMS blocks, using **layout presets with named slots** (featured, A–F) and a reusable `ArticleTile` renderer with display variants.
 
 ---
 
 ## High-level Approach
 
-- Add a new Payload block: **FeaturedGridSection**
+- Add a new Payload block: **FeaturedArticles**
 - Each section:
   - Has a **layout preset selector**
   - Exposes a **fixed set of slots** depending on the preset
@@ -22,21 +22,30 @@ This issue proposes a **Featured Grid Section** built with Payload CMS blocks, u
 
 ## Layout Presets (Initial)
 
-We should start with a small, opinionated set:
+We should start with a small with two presets:
 
-1. **6-Pack A Tri-fold**
+1. **Vespucci 7** (Based on BBC Vermont 7 Grid)
 
-- Mobile: `grid-cols-1` All stack vertically (Hero, 2 Medium, 3 Compact)
+- Mobile: `grid-cols-1` All stack vertically (1 Featured, 2 Medium (Image left), 4 Compact)
 - Tablet `md:grid-cols-2`
-  - Hero (is actually second item due to order, but first in html markup)
+  - 1 Featured Vertical (is actually second item due to order, but first in html markup)
   - 2 Medium stacked vertically `md:order-first`
-  - 3 Compact in 2x2 grid `col-span-2 grid grid-cols-1 md:grid-cols-2`
+  - 4 Compact in 2x2 `col-span-2 grid grid-cols-1 md:grid-cols-2`
 - Desktop `lg:grid-cols-3`
-  - Hero (is actually second item due to order, but first in html markup)
+  - 1 Featured (is actually second item due to order, but first in html markup)
   - 2 Medium stacked vertically (inherits order from tablet)
-  - 3 Compact stacked vertically `col-span-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1`
+  - 4 Compact stacked vertically `col-span-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1`
 
-2. All Heros 2 Column (for Backwards Compatibility)
+2. **Fibonacci 7** (Based on BBC Virginia 7 Grid)
+
+- Mobile: `grid-cols-1` All stack vertically (1 Featured, 4 Medium (Image left), 2 Compact)
+- Tablet: `md:grid-cols-2`
+  - 1 Featured
+  - 4 Medium in 2x2 (might need to duplicate certain Medium with `hidden md:block` for ex.)
+  - 2 Compact in 1x2
+- Desktop: `flex` (might need `display:contents` for small viewport to ignore wrapper divs)
+  - 1 Featured Horizontal (Media right of title + byline + metadata) `col-span-3` & 3 Medium below in 3 cols
+  - 1 Medium, 2 Compact in col to right of the left box
 
 Each preset determines:
 
@@ -47,14 +56,14 @@ Each preset determines:
 
 ## Payload CMS Requirements
 
-### Block: `featuredGridSection`
+### Block: `FeaturedArticles`
 
 Fields:
 
 - `layout` (select)
   - Options: `sixPackA`
 - `slots` (group)
-  - Named slot groups: `hero`, `a`, `b`, `c`, `d`, `e`, `f`
+  - Named slot groups: `featured`, `a`, `b`, `c`, `d`, `e`, `f`
   - Slots are conditionally shown based on `layout`
   - Each slot includes:
     - `article` (relationship → `articles`, required if slot is active)
@@ -74,11 +83,11 @@ Validation rules:
 
 Single reusable component with class variance authority variants:
 
-- `featured`: media + kicker + title + byline + metadata (time since published until we implement reading time feature)
+- `featured`: media + (optional kicker + title) + byline + metadata (time since published until we implement reading time feature)
 - `featured-right`: same as `featured` but with the media on the right
 - `featured-left`: same as `featured` but with the media on the left
-- `default`: title + byline + metadata
-- `compact`: title + metadata
+- `default`: (optional kicker + title) + byline + metadata
+- `compact`: (optional kicker + title) + metadata
 
 Responsibilities:
 
@@ -92,7 +101,7 @@ Responsibilities:
 
 - Each layout preset maps to a dedicated grid template
 - Layouts pass the correct `variant` to each slot’s `ArticleTile`
-- No dynamic grid math or free-form placement logic
+- No dynamic grid math or free-form placement logic, css grid should be sufficient
 
 ---
 
@@ -120,38 +129,9 @@ The editor should **not** be able to:
 
 ---
 
-## Suggested Sub-issues
-
-### 1. Payload Block: FeaturedGridSection
-
-- Define block schema
-- Slot conditional logic
-- Validation (required slots, no duplicates)
-
-### 2. Frontend: ArticleTile Component
-
-- Implement variants
-- Media handling
-- Byline/excerpt rules
-
-### 3. Frontend: Layout Templates
-
-- sixPackA
-- sixPackB
-- twoUp
-- triFold
-
-### 4. Homepage Integration
-
-- Add block to homepage config
-- Wire queries (draft + published support)
-- Add basic styling and spacing
-
----
-
 ## Acceptance Criteria
 
-- Editor can curate a 6-article homepage drop without dev involvement
+- Editor can curate a 7-article homepage drop without dev involvement
 - Layouts render consistently across breakpoints
 - Adding a new layout preset requires:
   - One enum option
@@ -159,6 +139,10 @@ The editor should **not** be able to:
   - One frontend template
 
 ---
+
+## Stretch Goals
+
+- Research popular ways to do lazy load media until near viewport and implement for ArticleTile
 
 ## Notes / Future Enhancements (Out of Scope)
 
