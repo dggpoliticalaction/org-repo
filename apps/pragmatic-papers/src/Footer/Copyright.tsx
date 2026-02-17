@@ -22,18 +22,12 @@ type CopyrightProps = CopyrightPropsWithChildren | CopyrightPropsWithCopyright
  * Example usage:
  * ```tsx
  *   <Copyright className="mt-4" copyright="MySite" />
- *   <Copyright>Custom Footer Content</Copyright>
  * ```
  */
-export const Copyright: React.FC<CopyrightProps> = ({
-  children,
-  className,
-  copyright,
-  ...props
-}) => {
+export const Copyright: React.FC<CopyrightProps> = ({ className, copyright, ...props }) => {
   return (
     <div className={className} {...props}>
-      {children || `&copy; ${new Date().getFullYear()} ${copyright}`}
+      &copy; {new Date().getFullYear()} {copyright}
     </div>
   )
 }
