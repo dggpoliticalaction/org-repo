@@ -1,29 +1,24 @@
 import { CMSLink } from '@/components/Link/CMSLink2'
 import { Button } from '@/components/ui/button'
-import type { ButtonBlock as ButtonBlockType } from '@/payload-types'
+import type { ButtonField as ButtonFieldType } from '@/payload-types'
 
-interface ButtonBlockProps extends React.ComponentProps<typeof Button> {
-  button?: ButtonBlockType
+interface CMSButtonProps extends React.ComponentProps<typeof Button> {
+  button?: ButtonFieldType
 }
 
 /**
- * Renders a button based on provided `button` data.
+ * Renders a CMS button based on provided `button` data.
  * Supports different button variants and colors.
  *
- * @param button - ButtonBlockType object, containing link info (label, href, etc.)
+ * @param button - ButtonField object, containing link info (label, href, etc.)
  * @param className - Additional CSS classes for styling.
  * @param children - The content to display inside the button.
  * @param props - All other Button props.
  *
  * @example
- * <ButtonBlock button={buttonData} className="my-4">Click Me</ButtonBlock>
+ * <CMSButton button={buttonData} className="my-4">Click Me</CMSButton>
  */
-export const ButtonBlock: React.FC<ButtonBlockProps> = ({
-  button,
-  className,
-  children,
-  ...props
-}) => {
+export const CMSButton: React.FC<CMSButtonProps> = ({ button, className, children, ...props }) => {
   const { backgroundColor, textColor, link, variant } = button ?? {}
 
   return (

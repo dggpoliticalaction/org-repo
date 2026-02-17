@@ -1,5 +1,5 @@
-import { MenuBlock } from '@/blocks/Menu/Component'
 import { Logo } from '@/components/Logo'
+import { Menu } from '@/components/Menu'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
@@ -30,8 +30,7 @@ export async function Header(): Promise<React.JSX.Element> {
             >
               <SheetHeader>
                 <SheetTitle className="my-2 md:my-1">
-                  <span className="sr-only">Pragmatic Papers</span>
-                  <Logo aria-hidden="true" variant="inline" className="max-w-[85%]" />
+                  <Logo className="max-w-[80%]" />
                 </SheetTitle>
               </SheetHeader>
               <div className="mb-6 flex items-center gap-2 rounded border border-border bg-muted px-3 py-2">
@@ -47,7 +46,7 @@ export async function Header(): Promise<React.JSX.Element> {
                   <span className="sr-only">Search</span>
                 </Button>
               </div>
-              <MenuBlock menu={navItems} layout="stacked" className="-mx-6 [&>a]:px-6" />
+              <Menu menu={navItems} layout="stacked" className="-mx-6 [&>a]:px-6" />
             </SheetContent>
           </Sheet>
           <Link
@@ -55,7 +54,7 @@ export async function Header(): Promise<React.JSX.Element> {
             aria-label="Link to Home"
             className="inline-flex items-center justify-center"
           >
-            <Logo aria-hidden="true" variant="inline" />
+            <Logo />
           </Link>
           <div className="flex items-center justify-end gap-2">
             <ActionButton className="hidden lg:flex" button={actionButton} />
@@ -87,7 +86,7 @@ export async function Header(): Promise<React.JSX.Element> {
           </div>
         </div>
       </header>
-      <MenuBlock
+      <Menu
         menu={navItems}
         layout="inline"
         className="container my-3 hidden items-center justify-center border-t border-border pt-3 lg:flex"

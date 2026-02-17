@@ -1,4 +1,4 @@
-import { button } from '@/blocks/Button/config'
+import { button } from '@/fields/button'
 import type { NamedGroupField } from 'payload'
 
 /**

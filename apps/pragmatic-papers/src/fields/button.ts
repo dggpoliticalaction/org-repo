@@ -33,7 +33,7 @@ export const button = (props?: ButtonProps): NamedGroupField => {
     /**
      * Interface name to aid with Payload codegen/types.
      */
-    interfaceName: 'ButtonBlock',
+    interfaceName: 'ButtonField',
     type: 'group',
     fields: [
       /**

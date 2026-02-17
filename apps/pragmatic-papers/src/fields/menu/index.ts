@@ -1,4 +1,4 @@
-import { link } from '@/fields/link'
+import { link } from '@/fields/link2'
 import type { ArrayField, Field } from 'payload'
 
 /**
@@ -20,14 +20,15 @@ import type { ArrayField, Field } from 'payload'
  */
 export const menu = ({ ...props }: Omit<ArrayField, 'type' | 'fields'>): Field => {
   return {
+    label: 'Menu',
     ...props,
     type: 'array',
-    fields: [link({ appearances: false })],
-    interfaceName: 'MenuBlock',
+    fields: [link()],
+    interfaceName: 'MenuField',
     admin: {
       initCollapsed: true, // collapse by default for UI clarity
       components: {
-        RowLabel: '@/blocks/Menu/RowLabel#RowLabel', // sets a custom row label for display
+        RowLabel: '@/fields/menu/RowLabel#RowLabel', // sets a custom row label for display
         ...props.admin?.components,
       },
       ...props.admin,

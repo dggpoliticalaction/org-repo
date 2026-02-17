@@ -1,5 +1,5 @@
 import { CMSLink } from '@/components/Link/CMSLink2'
-import type { MenuBlock as MenuBlockType } from '@/payload-types'
+import type { MenuField } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 import { type VariantProps, cva } from 'class-variance-authority'
 import React from 'react'
@@ -32,14 +32,14 @@ const menuLinkVariants = cva('font-medium hover:bg-foreground/10', {
   },
 })
 
-interface MenuBlockProps
+interface MenuProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof menuVariants> {
-  menu?: MenuBlockType
+  menu?: MenuField
 }
 
 /**
- * MenuBlock component renders a navigation menu based on menu data.
+ * Menu component renders a navigation menu based on menu data.
  *
  * @param menu - The array of menu items to display.
  * @param className - Additional classes for the menu container.
@@ -47,9 +47,9 @@ interface MenuBlockProps
  * @param props - All other HTML div props.
  *
  * @example
- * <MenuBlock menu={menuData} layout="inline" />
+ * <Menu menu={menuData} layout="inline" />
  */
-export const MenuBlock: React.FC<MenuBlockProps> = ({ menu, className, layout, ...props }) => {
+export const Menu: React.FC<MenuProps> = ({ menu, className, layout, ...props }) => {
   if (!menu) return null
   return (
     <nav className={cn(menuVariants({ className, layout }))} {...props}>

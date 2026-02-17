@@ -30,29 +30,11 @@ export type FootnotesField =
   | null;
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MenuBlock".
+ * via the `definition` "MenuField".
  */
-export type MenuBlock =
+export type MenuField =
   | {
-      link: {
-        type?: ('reference' | 'custom') | null;
-        newTab?: boolean | null;
-        reference?:
-          | ({
-              relationTo: 'pages';
-              value: number | Page;
-            } | null)
-          | ({
-              relationTo: 'volumes';
-              value: number | Volume;
-            } | null)
-          | ({
-              relationTo: 'articles';
-              value: number | Article;
-            } | null);
-        url?: string | null;
-        label: string;
-      };
+      link?: LinkField;
       id?: string | null;
     }[]
   | null;
@@ -518,10 +500,6 @@ export interface LinkField {
       } | null);
   url?: string | null;
   label?: string | null;
-  /**
-   * Choose how the link should be rendered.
-   */
-  appearance?: ('default' | 'outline') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1349,7 +1327,6 @@ export interface LinkFieldSelect<T extends boolean = true> {
   reference?: T;
   url?: T;
   label?: T;
-  appearance?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1774,16 +1751,16 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
-  navItems?: MenuBlock;
-  actionButton?: ButtonBlock;
+  navItems?: MenuField;
+  actionButton?: ButtonField;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ButtonBlock".
+ * via the `definition` "ButtonField".
  */
-export interface ButtonBlock {
+export interface ButtonField {
   enabled: boolean;
   link?: LinkField;
   /**
@@ -1802,30 +1779,7 @@ export interface ButtonBlock {
  */
 export interface Footer {
   id: number;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'volumes';
-                value: number | Volume;
-              } | null)
-            | ({
-                relationTo: 'articles';
-                value: number | Article;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
+  navItems?: MenuField;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1834,33 +1788,25 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
-  navItems?: T | MenuBlockSelect<T>;
-  actionButton?: T | ButtonBlockSelect<T>;
+  navItems?: T | MenuFieldSelect<T>;
+  actionButton?: T | ButtonFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MenuBlock_select".
+ * via the `definition` "MenuField_select".
  */
-export interface MenuBlockSelect<T extends boolean = true> {
-  link?:
-    | T
-    | {
-        type?: T;
-        newTab?: T;
-        reference?: T;
-        url?: T;
-        label?: T;
-      };
+export interface MenuFieldSelect<T extends boolean = true> {
+  link?: T | LinkFieldSelect<T>;
   id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ButtonBlock_select".
+ * via the `definition` "ButtonField_select".
  */
-export interface ButtonBlockSelect<T extends boolean = true> {
+export interface ButtonFieldSelect<T extends boolean = true> {
   enabled?: T;
   link?: T | LinkFieldSelect<T>;
   backgroundColor?: T;
@@ -1872,20 +1818,7 @@ export interface ButtonBlockSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
+  navItems?: T | MenuFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

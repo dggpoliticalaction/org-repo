@@ -1,5 +1,5 @@
-import { MenuBlock } from '@/blocks/Menu/Component'
 import { Logo } from '@/components/Logo'
+import { Menu } from '@/components/Menu'
 import type { Footer } from '@/payload-types'
 import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { getCachedGlobal } from '@/utilities/getGlobals'
@@ -17,7 +17,7 @@ export async function Footer(): Promise<React.ReactElement> {
         </Link>
         <div className="flex flex-col-reverse items-start md:flex-row md:items-center">
           <ThemeSelector />
-          <MenuBlock menu={navItems} />
+          <Menu menu={navItems} />
         </div>
       </div>
       <Copyright className="mb-4" copyright="Pragmatic Papers" />
