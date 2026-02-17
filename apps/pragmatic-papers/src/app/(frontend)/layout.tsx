@@ -2,7 +2,6 @@ import { AdminBar } from '@/components/AdminBar'
 import { ThemeProvider } from '@/components/Providers/ThemeProvider'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
-import '@/styles/globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { cn } from '@/utilities/ui'
@@ -13,6 +12,7 @@ import type { Metadata } from 'next'
 import { Open_Sans, Source_Serif_4 } from 'next/font/google'
 import { draftMode } from 'next/headers'
 import React from 'react'
+import './globals.css'
 
 const sourceSerif4 = Source_Serif_4({
   variable: '--font-serif',
@@ -34,6 +34,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }): Promise<React.ReactNode> {
   const { isEnabled } = await draftMode()
+  const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 
   return (
     <html
@@ -42,9 +43,11 @@ export default async function RootLayout({
         GeistMono.variable,
         sourceSerif4.className,
         openSans.className,
+        'scroll-smooth',
       )}
       lang="en"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
     >
       <head>
         <link href="/manifest.json" rel="manifest" />
@@ -77,7 +80,7 @@ export default async function RootLayout({
             {children}
           </main>
           <Footer />
-          <GoogleAnalytics gaId="G-PXK2QL92HV" />
+          <GoogleAnalytics gaId={googleAnalyticsId} />
         </ThemeProvider>
       </body>
     </html>

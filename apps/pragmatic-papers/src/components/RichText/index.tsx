@@ -2,6 +2,7 @@ import { BannerBlock } from '@/blocks/Banner/Component'
 import { BlueSkyEmbedBlock } from '@/blocks/BlueSkyEmbed/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
+import { FootnoteBlock } from '@/blocks/Footnote/Component'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
@@ -13,6 +14,7 @@ import type {
   BannerBlock as BannerBlockProps,
   BlueSkyEmbedBlock as BlueSkyEmbedBlockProps,
   CallToActionBlock as CTABlockProps,
+  FootnoteBlock as FootnoteBlockProps,
   MediaBlock as MediaBlockProps,
   RedditEmbedBlock as RedditEmbedBlockProps,
   SquiggleRuleBlock as SquiggleRuleBlockProps,
@@ -25,6 +27,7 @@ import type {
   DefaultNodeTypes,
   DefaultTypedEditorState,
   SerializedBlockNode,
+  SerializedInlineBlockNode,
   SerializedLinkNode,
 } from '@payloadcms/richtext-lexical'
 import {
@@ -48,6 +51,7 @@ type NodeTypes =
       | BlueSkyEmbedBlockProps
       | TikTokEmbedBlockProps
     >
+  | SerializedInlineBlockNode<MathBlockProps | FootnoteBlockProps>
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
@@ -86,24 +90,28 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     tiktokEmbed: ({ node }) => <TikTokEmbedBlock {...node.fields} />,
   },
   inlineBlocks: {
-    inlineMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
+    inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode<MathBlockProps> }) => (
       <MathBlock {...node.fields} />
     ),
+    footnote: ({ node }) => <FootnoteBlock {...node.fields} />,
   },
 })
 
-type Props = {
+interface RichTextProps extends React.HTMLAttributes<HTMLDivElement> {
   data: DefaultTypedEditorState
   enableGutter?: boolean
   enableProse?: boolean
-} & React.HTMLAttributes<HTMLDivElement>
+}
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function RichText(props: Props) {
-  const { className, enableProse = true, enableGutter = true, ...rest } = props
+export default function RichText({
+  className,
+  enableProse = true,
+  enableGutter = true,
+  data,
+  ...rest
+}: RichTextProps): React.ReactNode {
   return (
-    <ConvertRichText
-      converters={jsxConverters}
+    <div
       className={cn(
         'payload-richtext',
         {
@@ -114,6 +122,8 @@ export default function RichText(props: Props) {
         className,
       )}
       {...rest}
-    />
+    >
+      <ConvertRichText converters={jsxConverters} data={data} disableContainer />
+    </div>
   )
 }

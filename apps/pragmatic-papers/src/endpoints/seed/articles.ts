@@ -1,4 +1,4 @@
-import type { Media } from '@/payload-types'
+import type { Media, User } from '@/payload-types'
 import type { Payload } from 'payload'
 
 interface VolumeArticlesConfig {
@@ -74,13 +74,13 @@ const createArticleContent = (numberOfParagraphs: number) => {
 
 export const createArticles = async (
   payload: Payload,
-  // writers: User[],
+  writers: User[],
   volumeConfigs: VolumeArticlesConfig[],
   mediaDocs: Media[],
 ): Promise<CreateArticlesResult> => {
-  // if (writers.length === 0) {
-  //   throw new Error('At least one writer is required to create articles')
-  // }
+  if (writers.length === 0) {
+    throw new Error('At least one writer is required to create articles')
+  }
 
   const result: CreateArticlesResult = {}
 
@@ -88,17 +88,17 @@ export const createArticles = async (
     const volumeArticles: number[] = []
 
     for (let i = 1; i <= config.numberOfArticles; i++) {
-      // const writer = writers[i % writers.length]
-      // if (!writer?.id) {
-      //   throw new Error(`Writer at index ${i % writers.length} has no ID`)
-      // }
+      const writer = writers[i % writers.length]
+      if (!writer?.id) {
+        throw new Error(`Writer at index ${i % writers.length} has no ID`)
+      }
 
       const article = await payload.create({
         collection: 'articles',
         data: {
           title: `Article ${i} - Volume ${config.volumeNumber}`,
           content: createArticleContent(Math.floor(Math.random() * 8) + 3),
-          authors: [1],
+          authors: [writer.id],
           _status: 'published',
           publishedAt: new Date().toISOString(),
           slug: `article-${i}-volume-${config.volumeNumber}`,

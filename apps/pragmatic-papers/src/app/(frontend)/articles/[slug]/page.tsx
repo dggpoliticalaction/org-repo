@@ -1,3 +1,4 @@
+import { FootnoteList } from '@/components/FootnoteList'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import RichText from '@/components/RichText'
@@ -71,8 +72,10 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
+  const { footnotes, content } = article
+
   return (
-    <article className="max-w-3xl">
+    <article className="m-auto max-w-3xl p-5 pb-16">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
@@ -80,7 +83,8 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
       <ArticleHero article={article} />
 
-      <RichText className="" data={article.content} enableGutter={false} />
+      <RichText data={content} enableGutter={false} />
+      <FootnoteList footnotes={footnotes} />
     </article>
   )
 }
