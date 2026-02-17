@@ -3119,14 +3119,6 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
-        },
-        "link_appearance": {
-          "name": "link_appearance",
-          "type": "enum_articles_footnotes_link_appearance",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'default'"
         }
       },
       "indexes": {
@@ -3818,14 +3810,6 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
-        },
-        "link_appearance": {
-          "name": "link_appearance",
-          "type": "enum__articles_v_version_footnotes_link_appearance",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'default'"
         },
         "_uuid": {
           "name": "_uuid",
@@ -9658,7 +9642,7 @@
           "name": "link_label",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -9756,14 +9740,6 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
-        },
-        "action_button_link_appearance": {
-          "name": "action_button_link_appearance",
-          "type": "enum_header_action_button_link_appearance",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'default'"
         },
         "action_button_background_color": {
           "name": "action_button_background_color",
@@ -10051,7 +10027,7 @@
           "name": "link_label",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -10531,14 +10507,6 @@
         "custom"
       ]
     },
-    "public.enum_articles_footnotes_link_appearance": {
-      "name": "enum_articles_footnotes_link_appearance",
-      "schema": "public",
-      "values": [
-        "default",
-        "outline"
-      ]
-    },
     "public.enum_articles_status": {
       "name": "enum_articles_status",
       "schema": "public",
@@ -10553,14 +10521,6 @@
       "values": [
         "reference",
         "custom"
-      ]
-    },
-    "public.enum__articles_v_version_footnotes_link_appearance": {
-      "name": "enum__articles_v_version_footnotes_link_appearance",
-      "schema": "public",
-      "values": [
-        "default",
-        "outline"
       ]
     },
     "public.enum__articles_v_version_status": {
@@ -10654,14 +10614,6 @@
         "custom"
       ]
     },
-    "public.enum_header_action_button_link_appearance": {
-      "name": "enum_header_action_button_link_appearance",
-      "schema": "public",
-      "values": [
-        "default",
-        "outline"
-      ]
-    },
     "public.enum_header_action_button_variant": {
       "name": "enum_header_action_button_variant",
       "schema": "public",
@@ -10691,6 +10643,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "4f52c465-dac0-4882-bd47-68363bcd530f",
+  "id": "cbcc5f61-cf0b-4f68-b3ff-b6667899f243",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
