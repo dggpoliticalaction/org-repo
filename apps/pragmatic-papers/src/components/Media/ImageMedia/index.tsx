@@ -28,7 +28,6 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const isPayloadResource = resource && typeof resource === 'object'
-
   let width: number | undefined = srcFromProps?.width
   let height: number | undefined = srcFromProps?.height
   let alt = altFromProps
@@ -75,11 +74,10 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
       src = getMediaUrl(resource.sizes?.medium?.url, cacheTag)
     }
   }
-
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
 
   const handleClick = () => {
-    if (enableModal && isPayloadResource) {
+    if (enableModal && isPayloadResource && window.innerWidth >= 768) {
       setIsModalOpen(true)
     }
   }
@@ -114,7 +112,10 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         </ImageModal>
       )}
       <picture
-        className={cn(pictureClassName, enableModal && 'cursor-pointer')}
+        className={cn(
+          pictureClassName,
+          enableModal && isPayloadResource && 'max-md:cursor-default md:cursor-pointer',
+        )}
         onClick={handleClick}
       >
         {isPayloadResource &&
