@@ -16,7 +16,6 @@ interface Props {
  * Will be replaced with the new logo component
  * @deprecated
  */
-
 export const Logo = (props: Props): React.ReactElement => {
   const { loading: loadingFromProps, priority: priorityFromProps, className, size, theme } = props
 
