@@ -10,6 +10,9 @@ type LinkGroupType = (options?: {
   overrides?: Partial<ArrayField>
 }) => Field
 
+/**
+ * @deprecated Use menu instead
+ */
 export const linkGroup: LinkGroupType = ({ appearances, overrides = {} } = {}) => {
   const generatedLinkGroup: Field = {
     name: 'links',

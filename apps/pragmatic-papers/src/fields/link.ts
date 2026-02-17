@@ -21,6 +21,9 @@ type LinkType = (options?: {
   overrides?: Partial<GroupField>
 }) => Field
 
+/**
+ * @deprecated Use link2 instead
+ */
 export const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = {}) => {
   const linkResult: GroupField = {
     name: 'link',
