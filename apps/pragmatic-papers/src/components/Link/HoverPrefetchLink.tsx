@@ -37,7 +37,7 @@ export const HoverPrefetchLink: React.FC<React.ComponentProps<'a'>> = ({
   const [active, setActive] = useState(false)
   const pathname = usePathname()
   // Starts-with matching (e.g. href='/about', pathname='/about/me') for active indication
-  const isCurrent = pathname.startsWith(href)
+  const isCurrent = href === '/' ? pathname === href : pathname.startsWith(href)
 
   return (
     <Link
