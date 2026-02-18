@@ -1,9 +1,10 @@
 import { CMSLink } from '@/components/Link/CMSLink2'
 import { Button } from '@/components/ui/button'
-import type { ButtonField as ButtonFieldType } from '@/payload-types'
+import type { ButtonField } from '@/payload-types'
+import { cn } from '@/utilities/ui'
 
 interface CMSButtonProps extends React.ComponentProps<typeof Button> {
-  button?: ButtonFieldType
+  button?: ButtonField
 }
 
 /**
@@ -18,18 +19,30 @@ interface CMSButtonProps extends React.ComponentProps<typeof Button> {
  * @example
  * <CMSButton button={buttonData} className="my-4">Click Me</CMSButton>
  */
-export const CMSButton: React.FC<CMSButtonProps> = ({ button, className, children, ...props }) => {
+export const CMSButton: React.FC<CMSButtonProps> = ({
+  button,
+  className,
+  children,
+  style,
+  ...props
+}) => {
   const { backgroundColor, textColor, link, variant } = button ?? {}
 
   return (
     <Button
       type="button"
       variant={variant}
-      style={{
-        backgroundColor: backgroundColor ?? undefined,
-        color: textColor ?? undefined,
-      }}
-      className={className}
+      className={cn(
+        'bg-[var(--cms-button-background)] text-[var(--cms-button-foreground)] hover:bg-[color-mix(in_srgb,_var(--cms-button-background),_black_10%)]',
+        className,
+      )}
+      style={
+        {
+          '--cms-button-background': backgroundColor,
+          '--cms-button-foreground': textColor,
+          ...style,
+        } as React.CSSProperties
+      }
       asChild
       {...props}
     >
