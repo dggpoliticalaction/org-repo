@@ -25,15 +25,15 @@ export async function Header(): Promise<React.JSX.Element> {
               </Button>
             </SheetTrigger>
             <SheetContent
-              className="w-full space-y-4 sm:w-3/4 [&>button:last-child]:top-3 [&>button:last-child_svg]:h-7 [&>button:last-child_svg]:w-7"
+              className="w-full space-y-4 sm:w-3/4 [&>button:last-child]:top-3 [&>button:last-child]:rounded-none [&>button:last-child_svg]:h-7 [&>button:last-child_svg]:w-7"
               side="left"
             >
               <SheetHeader>
-                <SheetTitle className="my-2 md:my-1">
+                <SheetTitle className="my-2 md:my-0">
                   <Logo className="max-w-[80%]" />
                 </SheetTitle>
               </SheetHeader>
-              <div className="mb-6 flex items-center gap-2 rounded border border-border bg-muted px-3 py-2">
+              <div className="mb-6 flex items-center gap-2 border border-border bg-muted px-3 py-2">
                 <Input
                   type="search"
                   placeholder="Search Coming Soon…"
@@ -58,7 +58,7 @@ export async function Header(): Promise<React.JSX.Element> {
           </Link>
           <div className="flex items-center justify-end gap-2">
             <ActionButton className="hidden lg:flex" button={actionButton} />
-            <Button className="hidden lg:flex" variant="outline" asChild>
+            <Button className="hidden hover:bg-foreground/10 lg:flex" variant="outline" asChild>
               <Link href="/admin/login">Log In</Link>
             </Button>
             <Sheet>
