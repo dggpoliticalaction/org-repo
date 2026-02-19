@@ -39,7 +39,6 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
               resource={metaImage}
               className="h-full w-full"
               imgClassName="h-full w-full object-cover"
-              size="square"
             />
           )}
         </div>
