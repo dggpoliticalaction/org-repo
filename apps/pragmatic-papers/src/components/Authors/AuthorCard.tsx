@@ -70,20 +70,21 @@ function extractBioSnippet(author: User, maxLength = 255): string | undefined {
   return clean.length > maxLength ? `${clean.slice(0, maxLength).trimEnd()}…` : clean
 }
 
-function deriveSocialLinks(author: User): {
-  twitter?: string
-  linkedin?: string
-  github?: string
-  website?: string
-} {
-  const result: {
-    twitter?: string
-    linkedin?: string
-    github?: string
-    website?: string
-  } = {}
+type SocialIconKey = 'twitter' | 'linkedin' | 'github' | 'generic'
 
+function deriveSocialLinks(author: User): {
+  id: string
+  href: string
+  icon: SocialIconKey
+  label?: string | null
+}[] {
   const entries = author.socialLinks || []
+  const links: {
+    id: string
+    href: string
+    icon: SocialIconKey
+    label?: string | null
+  }[] = []
 
   for (const raw of entries) {
     const entry = raw as unknown as {
@@ -101,43 +102,33 @@ function deriveSocialLinks(author: User): {
     if (linkGroup.type !== 'custom' || !linkGroup.url) continue
 
     const href = normalizeExternalUrl(linkGroup.url)
-
     let host = ''
     try {
       const urlObj = new URL(href)
       host = urlObj.hostname.toLowerCase()
     } catch {
-      // Non-HTTP(S) URL like mailto:, just treat as website
+      // Non-HTTP(S) URL like mailto:, just treat as generic
     }
 
-    const label = (linkGroup.label || '').toLowerCase()
+    let icon: SocialIconKey = 'generic'
 
-    if (!result.twitter && (host.includes('twitter.com') || label.includes('twitter'))) {
-      result.twitter = href
-      continue
+    if (host.includes('twitter.com') || host.endsWith('x.com')) {
+      icon = 'twitter'
+    } else if (host.includes('linkedin.com')) {
+      icon = 'linkedin'
+    } else if (host.includes('github.com')) {
+      icon = 'github'
     }
 
-    if (!result.linkedin && (host.includes('linkedin.com') || label.includes('linkedin'))) {
-      result.linkedin = href
-      continue
-    }
-
-    if (!result.github && (host.includes('github.com') || label.includes('github'))) {
-      result.github = href
-      continue
-    }
-
-    if (!result.website && (label.includes('site') || label.includes('website') || !host)) {
-      result.website = href
-      continue
-    }
-
-    if (!result.website) {
-      result.website = href
-    }
+    links.push({
+      id: entry.id || href,
+      href,
+      icon,
+      label: linkGroup.label ?? null,
+    })
   }
 
-  return result
+  return links
 }
 
 export interface AuthorCardProps {
@@ -155,9 +146,14 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
   const bioSnippet = extractBioSnippet(author)
 
   const socialLinks = deriveSocialLinks(author)
-  const hasSocialLinks = Boolean(
-    socialLinks.twitter || socialLinks.linkedin || socialLinks.github || socialLinks.website,
-  )
+  const hasSocialLinks = socialLinks.length > 0
+
+  const iconMap: Record<SocialIconKey, React.ComponentType<{ className?: string }>> = {
+    twitter: Twitter,
+    linkedin: Linkedin,
+    github: Github,
+    generic: Globe,
+  }
 
   return (
     <Card>
@@ -202,50 +198,28 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
           </div>
           {hasSocialLinks && (
             <div className="mt-1 flex flex-row gap-3">
-              {socialLinks.twitter && (
-                <a
-                  href={socialLinks.twitter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground transition-colors hover:text-foreground"
-                  aria-label={`${name} on Twitter`}
-                >
-                  <Twitter className="h-4 w-4" />
-                </a>
-              )}
-              {socialLinks.linkedin && (
-                <a
-                  href={socialLinks.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground transition-colors hover:text-foreground"
-                  aria-label={`${name} on LinkedIn`}
-                >
-                  <Linkedin className="h-4 w-4" />
-                </a>
-              )}
-              {socialLinks.github && (
-                <a
-                  href={socialLinks.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground transition-colors hover:text-foreground"
-                  aria-label={`${name} on GitHub`}
-                >
-                  <Github className="h-4 w-4" />
-                </a>
-              )}
-              {socialLinks.website && (
-                <a
-                  href={socialLinks.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground transition-colors hover:text-foreground"
-                  aria-label={`${name}'s website`}
-                >
-                  <Globe className="h-4 w-4" />
-                </a>
-              )}
+              {socialLinks.map((link) => {
+                const Icon = iconMap[link.icon] || Globe
+                const rawLabel = (link.label || '').trim()
+                const kindLabel =
+                  rawLabel ||
+                  (link.icon === 'generic'
+                    ? 'website'
+                    : link.icon.charAt(0).toUpperCase() + link.icon.slice(1))
+
+                return (
+                  <a
+                    key={link.id}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground transition-colors hover:text-foreground"
+                    aria-label={`${name} on ${kindLabel}`}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                )
+              })}
             </div>
           )}
         </div>
