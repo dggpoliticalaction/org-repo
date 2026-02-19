@@ -13,31 +13,8 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
 import { AuthorArticleCard } from '@/components/Articles/AuthorArticleCard'
 import { authorSlugFromUser } from '@/utilities/authorSlug'
-
-interface UserSocialLinkEntry {
-  id?: string | null
-  link?: {
-    id?: string | null
-    type?: 'reference' | 'custom' | null
-    url?: string | null
-    label?: string | null
-  } | null
-}
-
-function normalizeExternalUrl(raw: string): string | null {
-  const trimmed = raw.trim()
-  if (!trimmed) return null
-  if (typeof URL !== 'undefined' && URL.canParse?.(trimmed)) {
-    return trimmed
-  }
-  const prefixed = `https://${trimmed.replace(/^\/+/, '')}`
-  if (typeof URL !== 'undefined' && URL.canParse?.(prefixed)) {
-    return prefixed
-  }
-
-  // As a final fallback in non-supporting environments, return the raw value
-  return trimmed
-}
+import { deriveAuthorSocialLinks, type SocialIconKey } from '@/utilities/authorSocialLinks'
+import { Github, Globe, Linkedin, Twitter } from 'lucide-react'
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -240,33 +217,36 @@ export default async function AuthorPage({
         {user.socialLinks && user.socialLinks.length > 0 && (
           <nav
             aria-label="Author social links"
-            className="mt-4 flex flex-wrap justify-center gap-3"
+            className="mt-4 flex flex-wrap justify-center gap-3 text-muted-foreground"
           >
-            {user.socialLinks.map((item) => {
-              const entry = item as unknown as UserSocialLinkEntry
-              const linkGroup = entry.link ?? undefined
+            {deriveAuthorSocialLinks(user).map((link) => {
+              const Icon: React.ComponentType<{ className?: string }> =
+                link.icon === 'twitter'
+                  ? Twitter
+                  : link.icon === 'linkedin'
+                    ? Linkedin
+                    : link.icon === 'github'
+                      ? Github
+                      : Globe
 
-              if (!linkGroup) return null
-
-              const normalized =
-                linkGroup.type === 'custom' && linkGroup.url
-                  ? normalizeExternalUrl(linkGroup.url)
-                  : null
-
-              if (!normalized) return null
-
-              const label = linkGroup.label || linkGroup.url || normalized
+              const rawLabel = (link.label || '').trim()
+              const fallbackLabel =
+                link.icon === 'generic'
+                  ? 'website'
+                  : link.icon.charAt(0).toUpperCase() + link.icon.slice(1)
+              const kindLabel = rawLabel || fallbackLabel
 
               return (
                 <a
-                  key={linkGroup.id ?? linkGroup.url ?? normalized}
-                  href={normalized}
+                  key={link.id}
+                  href={link.href}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="text-sm text-brand underline-offset-2 hover:underline"
-                  aria-label={label ? `${label} (opens in a new tab)` : 'External author link'}
+                  className="inline-flex items-center gap-1 text-sm transition-colors hover:text-foreground"
+                  aria-label={kindLabel ? `${kindLabel} (opens in a new tab)` : 'External author link'}
                 >
-                  {label}
+                  <Icon className="h-4 w-4" />
+                  <span className="sr-only">{kindLabel}</span>
                 </a>
               )
             })}

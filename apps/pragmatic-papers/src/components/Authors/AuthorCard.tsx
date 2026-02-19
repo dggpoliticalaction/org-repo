@@ -6,12 +6,7 @@ import { Github, Globe, Linkedin, Twitter } from 'lucide-react'
 import type { Media, User } from '@/payload-types'
 import { Card, CardContent } from '@/components/ui/card'
 import { authorSlugFromUser } from '@/utilities/authorSlug'
-
-function normalizeExternalUrl(url: string): string {
-  const trimmed = url.trim()
-  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) return trimmed
-  return `https://${trimmed.replace(/^\/+/, '')}`
-}
+import { deriveAuthorSocialLinks, type SocialIconKey } from '@/utilities/authorSocialLinks'
 
 function getInitials(name: string): string {
   const value = name.trim()
@@ -70,67 +65,6 @@ function extractBioSnippet(author: User, maxLength = 255): string | undefined {
   return clean.length > maxLength ? `${clean.slice(0, maxLength).trimEnd()}…` : clean
 }
 
-type SocialIconKey = 'twitter' | 'linkedin' | 'github' | 'generic'
-
-function deriveSocialLinks(author: User): {
-  id: string
-  href: string
-  icon: SocialIconKey
-  label?: string | null
-}[] {
-  const entries = author.socialLinks || []
-  const links: {
-    id: string
-    href: string
-    icon: SocialIconKey
-    label?: string | null
-  }[] = []
-
-  for (const raw of entries) {
-    const entry = raw as unknown as {
-      id?: string | null
-      link?: {
-        type?: 'reference' | 'custom' | null
-        url?: string | null
-        label?: string | null
-      } | null
-    }
-
-    const linkGroup = entry.link ?? undefined
-    if (!linkGroup) continue
-
-    if (linkGroup.type !== 'custom' || !linkGroup.url) continue
-
-    const href = normalizeExternalUrl(linkGroup.url)
-    let host = ''
-    try {
-      const urlObj = new URL(href)
-      host = urlObj.hostname.toLowerCase()
-    } catch {
-      // Non-HTTP(S) URL like mailto:, just treat as generic
-    }
-
-    let icon: SocialIconKey = 'generic'
-
-    if (host.includes('twitter.com') || host.endsWith('x.com')) {
-      icon = 'twitter'
-    } else if (host.includes('linkedin.com')) {
-      icon = 'linkedin'
-    } else if (host.includes('github.com')) {
-      icon = 'github'
-    }
-
-    links.push({
-      id: entry.id || href,
-      href,
-      icon,
-      label: linkGroup.label ?? null,
-    })
-  }
-
-  return links
-}
-
 export interface AuthorCardProps {
   author: User
 }
@@ -145,7 +79,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
 
   const bioSnippet = extractBioSnippet(author)
 
-  const socialLinks = deriveSocialLinks(author)
+  const socialLinks = deriveAuthorSocialLinks(author)
   const hasSocialLinks = socialLinks.length > 0
 
   const iconMap: Record<SocialIconKey, React.ComponentType<{ className?: string }>> = {
