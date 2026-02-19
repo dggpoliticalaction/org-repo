@@ -80,7 +80,6 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
   const bioSnippet = extractBioSnippet(author)
 
   const socialLinks = deriveAuthorSocialLinks(author)
-  const hasSocialLinks = socialLinks.length > 0
 
   const iconMap: Record<SocialIconKey, React.ComponentType<{ className?: string }>> = {
     twitter: Twitter,
@@ -130,7 +129,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
               <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{bioSnippet}</p>
             )}
           </div>
-          {hasSocialLinks && (
+          {socialLinks.length > 0 && (
             <div className="mt-1 flex flex-row gap-3">
               {socialLinks.map((link) => {
                 const Icon = iconMap[link.icon] || Globe

@@ -186,6 +186,8 @@ export default async function AuthorPage({
     }
   }
 
+  const socialLinks = deriveAuthorSocialLinks(user)
+
   const hasBiography = !!user.biography
 
   const profile = user.profileImage
@@ -214,12 +216,12 @@ export default async function AuthorPage({
         <h1 className="mb-2 text-3xl font-bold md:text-4xl">{user.name || 'Author'}</h1>
         {user.affiliation && <p className="text-sm text-muted-foreground">{user.affiliation}</p>}
 
-        {user.socialLinks && user.socialLinks.length > 0 && (
+        {socialLinks.length > 0 && (
           <nav
             aria-label="Author social links"
             className="mt-4 flex flex-wrap justify-center gap-3 text-muted-foreground"
           >
-            {deriveAuthorSocialLinks(user).map((link) => {
+            {socialLinks.map((link) => {
               const Icon: React.ComponentType<{ className?: string }> =
                 link.icon === 'twitter'
                   ? Twitter
