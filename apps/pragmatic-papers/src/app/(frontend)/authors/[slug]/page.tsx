@@ -13,7 +13,7 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
 import { AuthorArticleCard } from '@/components/Articles/AuthorArticleCard'
 import { authorSlugFromUser } from '@/utilities/authorSlug'
-import { deriveAuthorSocialLinks, type SocialIconKey } from '@/utilities/authorSocialLinks'
+import { deriveAuthorSocialLinks } from '@/utilities/authorSocialLinks'
 import { Github, Globe, Linkedin, Twitter } from 'lucide-react'
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
@@ -245,7 +245,9 @@ export default async function AuthorPage({
                   target="_blank"
                   rel="noreferrer noopener"
                   className="inline-flex items-center gap-1 text-sm transition-colors hover:text-foreground"
-                  aria-label={kindLabel ? `${kindLabel} (opens in a new tab)` : 'External author link'}
+                  aria-label={
+                    kindLabel ? `${kindLabel} (opens in a new tab)` : 'External author link'
+                  }
                 >
                   <Icon className="h-4 w-4" />
                   <span className="sr-only">{kindLabel}</span>

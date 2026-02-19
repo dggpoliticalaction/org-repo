@@ -74,8 +74,8 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
-  const authors = (article.authors || []).filter(
-    (author): author is User => Boolean(author && typeof author === 'object'),
+  const authors = (article.authors || []).filter((author): author is User =>
+    Boolean(author && typeof author === 'object'),
   )
 
   return (

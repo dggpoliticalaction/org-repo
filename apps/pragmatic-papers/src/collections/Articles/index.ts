@@ -187,9 +187,7 @@ export const Articles: CollectionConfig = {
         position: 'sidebar',
       },
       hooks: {
-        beforeChange: [
-          setPublishedAtDefault,
-        ],
+        beforeChange: [setPublishedAtDefault],
       },
     },
     {
