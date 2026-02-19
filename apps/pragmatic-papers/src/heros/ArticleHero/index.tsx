@@ -1,18 +1,22 @@
 import React from 'react'
+import Link from 'next/link'
 
-import type { Article } from '@/payload-types'
+import type { Article, User } from '@/payload-types'
 import { Squiggle } from '@/components/ui/squiggle'
-import { formatAuthors } from '@/utilities/formatAuthors'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { ImageMedia } from '@/components/Media/ImageMedia'
+import { authorSlugFromUser } from '@/utilities/authorSlug'
 
-export const ArticleHero: React.FC<{
+interface ArticleHeroProps {
   article: Article
-}> = ({ article }) => {
-  const { populatedAuthors, publishedAt, title, heroImage } = article
+  authors?: User[]
+}
 
-  const hasAuthors =
-    populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
+export const ArticleHero: React.FC<ArticleHeroProps> = ({ article, authors }) => {
+  const { publishedAt, title, heroImage } = article
+
+  const authorList = (authors || []).filter((author) => Boolean(author && author.name))
+  const hasAuthors = authorList.length > 0
 
   return (
     <div className="relative flex-col">
@@ -27,7 +31,30 @@ export const ArticleHero: React.FC<{
         <h1 className="mb-6 text-center text-4xl font-bold">{title}</h1>
         {hasAuthors && (
           <div className="text-center text-lg">
-            <p>by {formatAuthors(populatedAuthors)}</p>
+            <p>
+              by{' '}
+              {authorList.map((author, index) => {
+                const slug = author.authorSlug || authorSlugFromUser(author)
+                const href = `/authors/${slug}`
+                const name = author.name || 'Author'
+
+                let separator = ''
+                if (index > 0 && index < authorList.length - 1) {
+                  separator = ', '
+                } else if (index === authorList.length - 1 && authorList.length > 1) {
+                  separator = authorList.length === 2 ? ' and ' : ', and '
+                }
+
+                return (
+                  <React.Fragment key={author.id}>
+                    {index > 0 && separator}
+                    <Link href={href} className="underline-offset-2 hover:underline">
+                      {name}
+                    </Link>
+                  </React.Fragment>
+                )
+              })}
+            </p>
           </div>
         )}
         {publishedAt && (

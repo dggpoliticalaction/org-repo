@@ -74,12 +74,9 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
-  const populatedAuthors = article.populatedAuthors || []
-  const authorIds = populatedAuthors
-    .map((author) => author?.id)
-    .filter((id): id is string => typeof id === 'string')
-
-  const authors = (article.authors || []).filter((author): author is User => !!author)
+  const authors = (article.authors || []).filter(
+    (author): author is User => Boolean(author && typeof author === 'object'),
+  )
 
   return (
     <article className="m-auto max-w-3xl p-5 pb-16">
@@ -88,7 +85,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
       {draft && <LivePreviewListener />}
 
-      <ArticleHero article={article} />
+      <ArticleHero article={article} authors={authors} />
 
       <RichText className="" data={article.content} enableGutter={false} />
 
