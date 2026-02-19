@@ -53,33 +53,10 @@ const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
         equals: slug,
       },
     },
+    depth: 2,
   })
 
   return result.docs?.[0] || null
-})
-
-const queryAuthorsByIds = cache(async ({ ids }: { ids: (string | number)[] }): Promise<User[]> => {
-  const numericIds = ids
-    .map((id) => (typeof id === 'string' ? Number(id) : id))
-    .filter((id): id is number => typeof id === 'number' && !Number.isNaN(id))
-
-  if (!numericIds.length) return []
-
-  const payload = await getPayload({ config: configPromise })
-
-  const result = (await payload.find({
-    collection: 'users',
-    limit: numericIds.length,
-    pagination: false,
-    where: {
-      id: {
-        in: numericIds,
-      },
-    },
-    depth: 1,
-  })) as { docs: User[] }
-
-  return result.docs || []
 })
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
@@ -102,7 +79,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
     .map((author) => author?.id)
     .filter((id): id is string => typeof id === 'string')
 
-  const authors = await queryAuthorsByIds({ ids: authorIds })
+  const authors = (article.authors || []).filter((author): author is User => !!author)
 
   return (
     <article className="m-auto max-w-3xl p-5 pb-16">
