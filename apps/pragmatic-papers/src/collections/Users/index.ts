@@ -16,6 +16,32 @@ import type { User } from '@/payload-types'
 import { authorSlugFromNameAndId } from '@/utilities/authorSlug'
 import { link } from '@/fields/link'
 
+const generateAuthorSlug: CollectionBeforeChangeHook<User> = ({ data }) => {
+  if (!data) return data
+
+  const userData = data as Partial<User>
+
+  // Admin accounts should never have an author slug exposed
+  if (userData.role === 'admin') {
+    userData.authorSlug = null
+    return userData
+  }
+
+  // Only auto-generate an author slug for writers; for other roles
+  // (chief-editor, editor, user) the slug should be explicitly set.
+  if (userData.role === 'writer') {
+    if (!userData.authorSlug || typeof userData.authorSlug !== 'string') {
+      const slug = authorSlugFromNameAndId(
+        (userData.name as string | null | undefined) ?? null,
+        (userData.id as number | null | undefined) ?? null,
+      )
+      userData.authorSlug = slug
+    }
+  }
+
+  return userData
+}
+
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
@@ -200,34 +226,6 @@ export const Users: CollectionConfig = {
   ],
   timestamps: true,
   hooks: {
-    beforeChange: [
-      (args: Parameters<CollectionBeforeChangeHook<User>>[0]): Partial<User> | void => {
-        const { data } = args
-
-        if (!data) return data
-
-        const userData = data as Partial<User>
-
-        // Admin accounts should never have an author slug exposed
-        if (userData.role === 'admin') {
-          userData.authorSlug = null
-          return userData
-        }
-
-        // Only auto-generate an author slug for writers; for other roles
-        // (chief-editor, editor, user) the slug should be explicitly set.
-        if (userData.role === 'writer') {
-          if (!userData.authorSlug || typeof userData.authorSlug !== 'string') {
-            const slug = authorSlugFromNameAndId(
-              (userData.name as string | null | undefined) ?? null,
-              (userData.id as number | null | undefined) ?? null,
-            )
-            userData.authorSlug = slug
-          }
-        }
-
-        return userData
-      },
-    ],
+    beforeChange: [generateAuthorSlug],
   },
 }
