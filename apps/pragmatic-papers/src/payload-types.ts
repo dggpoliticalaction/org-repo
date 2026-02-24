@@ -96,6 +96,7 @@ export interface Config {
     categories: Category;
     users: User;
     webhooks: Webhook;
+    tags: Tag;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -114,6 +115,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     webhooks: WebhooksSelect<false> | WebhooksSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -324,6 +326,7 @@ export interface Article {
         name?: string | null;
       }[]
     | null;
+  tags?: (number | Tag)[] | null;
   footnotes?: FootnotesField;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -467,6 +470,25 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  name: string;
+  /**
+   * Optional description for this tag
+   */
+  description?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1082,6 +1104,10 @@ export interface PayloadLockedDocument {
         value: number | Webhook;
       } | null)
     | ({
+        relationTo: 'tags';
+        value: number | Tag;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: number | Redirect;
       } | null)
@@ -1293,6 +1319,7 @@ export interface ArticlesSelect<T extends boolean = true> {
         id?: T;
         name?: T;
       };
+  tags?: T;
   footnotes?: T | FootnotesFieldSelect<T>;
   generateSlug?: T;
   slug?: T;
@@ -1501,6 +1528,18 @@ export interface WebhooksSelect<T extends boolean = true> {
         timePushed?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  generateSlug?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }
