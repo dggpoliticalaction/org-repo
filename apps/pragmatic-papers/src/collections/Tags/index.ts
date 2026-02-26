@@ -2,11 +2,12 @@ import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 import { editor } from '@/access/editor'
 import { anyone } from '@/access/anyone'
+import { writer } from '@/access/writer'
 
 export const Tags: CollectionConfig = {
   slug: 'tags',
   access: {
-    create: editor,
+    create: writer,
     delete: editor,
     read: anyone,
     update: editor,
