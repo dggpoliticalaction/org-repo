@@ -1,9 +1,11 @@
 'use client'
 import { Media } from '@/components/Media'
-import RichText from '@/components/RichText'
 import { MediaCarousel } from '@/components/MediaCarousel'
-import type { MediaCollageBlock as MediaCollageBlockType } from '@/payload-types'
-import type { Media as MediaType } from '@/payload-types'
+import RichText from '@/components/RichText'
+import type {
+  MediaCollageBlock as MediaCollageBlockType,
+  Media as MediaType,
+} from '@/payload-types'
 import { cn } from '@/utilities/ui'
 import React from 'react'
 
@@ -20,14 +22,16 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
   if (layout === 'carousel') {
     return (
       <MediaCarousel
-        containerClassName=''
         images={validMedia}
         showCaptions
         indicatorClassName="bottom-20"
+        imageClassName="border border-border rounded-sm absolute inset-0 w-full h-full object-contain"
+        pictureClassName="w-full h-full"
+        imageContainerClassName="aspect-video"
         enableModal
         galleryData={{
           images: validMedia,
-          startIndex: 0
+          startIndex: 0,
         }}
       />
     )
@@ -50,11 +54,11 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
             <figure className="my-0">
               <Media
                 resource={media}
-                imgClassName="border border-border rounded-[0.8rem]"
+                imgClassName="border border-border rounded-sm"
                 enableModal
                 gallery={{
                   images: validMedia,
-                  startIndex: idx
+                  startIndex: idx,
                 }}
               />
               {media.caption && (
