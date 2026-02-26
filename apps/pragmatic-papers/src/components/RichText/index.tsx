@@ -80,7 +80,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
         disableInnerContainer
       />
     ),
-    mediaCollage: ({ node }: { node: SerializedBlockNode<MediaCollageBlockProps> }) => (
+    mediaCollage: ({ node }) => (
       <MediaCollageBlock {...node.fields} />
     ),
     code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
