@@ -11,6 +11,7 @@ import * as migration_20260109_081334_upgrade_payload_3_70_0 from './20260109_08
 import * as migration_20260110_021152_discord_header_button from './20260110_021152_discord_header_button';
 import * as migration_20260111_055750_slug_field_update from './20260111_055750_slug_field_update';
 import * as migration_20260117_020339_footnotes from './20260117_020339_footnotes';
+import * as migration_20260226_021046_feature_authors from './20260226_021046_feature_authors';
 
 export const migrations = [
   {
@@ -76,6 +77,11 @@ export const migrations = [
   {
     up: migration_20260117_020339_footnotes.up,
     down: migration_20260117_020339_footnotes.down,
-    name: '20260117_020339_footnotes'
+    name: '20260117_020339_footnotes',
+  },
+  {
+    up: migration_20260226_021046_feature_authors.up,
+    down: migration_20260226_021046_feature_authors.down,
+    name: '20260226_021046_feature_authors'
   },
 ];
