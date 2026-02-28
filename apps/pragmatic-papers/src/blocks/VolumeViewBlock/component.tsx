@@ -41,6 +41,7 @@ export const VolumeViewBlock: React.FC<
       page: sanitizedPageNumber,
       overrideAccess: false,
       select: {
+        id: true,
         title: true,
         slug: true,
         description: true,

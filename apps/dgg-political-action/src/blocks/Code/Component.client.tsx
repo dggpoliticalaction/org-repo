@@ -16,16 +16,25 @@ export const Code: React.FC<Props> = ({ code, language = '' }) => {
     <Highlight code={code} language={language} theme={themes.vsDark}>
       {({ getLineProps, getTokenProps, tokens }) => (
         <pre className="bg-black p-4 border text-xs border-border rounded overflow-x-auto">
-          {tokens.map((line, i) => (
-            <div key={i} {...getLineProps({ className: 'table-row', line })}>
-              <span className="table-cell select-none text-right text-white/25">{i + 1}</span>
-              <span className="table-cell pl-4">
-                {line.map((token, key) => (
-                  <span key={key} {...getTokenProps({ token })} />
-                ))}
-              </span>
-            </div>
-          ))}
+          {tokens.map((line, lineIndex) => {
+            const lineKey = `${lineIndex}-${line
+              .map((token) => `${token.types?.join('-') ?? ''}:${token.content}`)
+              .join('|')}`
+
+            return (
+              <div key={lineKey} {...getLineProps({ className: 'table-row', line })}>
+                <span className="table-cell select-none text-right text-white/25">
+                  {lineIndex + 1}
+                </span>
+                <span className="table-cell pl-4">
+                  {line.map((token, tokenIndex) => {
+                    const tokenKey = `${token.types?.join('-') ?? ''}:${token.content}-${tokenIndex}`
+                    return <span key={tokenKey} {...getTokenProps({ token })} />
+                  })}
+                </span>
+              </div>
+            )
+          })}
           <CopyButton code={code} />
         </pre>
       )}

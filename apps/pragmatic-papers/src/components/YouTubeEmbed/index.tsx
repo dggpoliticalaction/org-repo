@@ -11,17 +11,17 @@ export const YouTubeEmbed: React.FC<{
   url?: string
   maxWidth?: number
   maxHeight?: number
-}> = (props) => {
+}> = ({ url, maxWidth, maxHeight }) => {
   const [content, setContent] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!props.url) return
+    if (!url) return
 
     fetchYouTubeEmbed({
-      url: props.url,
-      maxwidth: props.maxWidth ?? 1920,
-      maxheight: props.maxHeight,
+      url,
+      maxwidth: maxWidth ?? 1920,
+      maxheight: maxHeight,
     }).then((res) => {
       if (!res) {
         setContent('YouTube video could not be loaded.')
@@ -29,7 +29,7 @@ export const YouTubeEmbed: React.FC<{
         setContent(res.html)
       }
     })
-  }, [props])
+  }, [url, maxWidth, maxHeight])
 
   return (
     <div className="youtube-embed-container">

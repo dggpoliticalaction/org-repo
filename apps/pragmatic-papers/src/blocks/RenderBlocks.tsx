@@ -33,9 +33,11 @@ export const RenderBlocks: React.FC<{
         {blocks.map((block, index) => {
           const { blockType } = block
 
+          const key = block.id ?? (blockType ? `${blockType}-${index}` : index)
+
           if (blockType == 'volumeView') {
             return (
-              <div className="my-4" key={index}>
+              <div className="my-4" key={key}>
                 <VolumeViewBlock
                   {...block}
                   id={block.id ?? undefined}
@@ -49,7 +51,7 @@ export const RenderBlocks: React.FC<{
 
             if (Block) {
               return (
-                <div className="my-4" key={index}>
+                <div className="my-4" key={key}>
                   {/* @ts-expect-error there may be some mismatch between the expected types here */}
                   <Block {...block} disableInnerContainer />
                 </div>

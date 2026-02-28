@@ -13,7 +13,11 @@ export const HighImpactHero: React.FC<Page['hero']> = ({ links, media, richText 
 
   useEffect(() => {
     setHeaderTheme('dark')
-  })
+
+    return () => {
+      setHeaderTheme(null)
+    }
+  }, [setHeaderTheme])
 
   return (
     <div
@@ -25,9 +29,10 @@ export const HighImpactHero: React.FC<Page['hero']> = ({ links, media, richText 
           {richText && <RichText className="mb-6" data={richText} enableGutter={false} />}
           {Array.isArray(links) && links.length > 0 && (
             <ul className="flex md:justify-center gap-4">
-              {links.map(({ link }, i) => {
+              {links.map(({ id, link }) => {
+                const key = id ?? link?.url ?? link?.label
                 return (
-                  <li key={i}>
+                  <li key={key}>
                     <CMSLink {...link} />
                   </li>
                 )

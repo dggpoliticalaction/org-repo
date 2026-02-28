@@ -17,8 +17,9 @@ export const VolumesView: React.FC<Props> = (props) => {
         <div className="grid grid-cols-1 gap-4">
           {volumes?.map((result, index) => {
             if (typeof result === 'object' && result !== null) {
+              const key = result.id ?? `${result.slug ?? 'volume'}-${index}`
               return (
-                <div className="pt-3" key={index}>
+                <div className="pt-3" key={key}>
                   <Entry doc={result} relationTo="volumes" />
                   {index + 1 !== volumes.length ? <SquiggleStatic size="full" /> : null}
                 </div>
