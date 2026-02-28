@@ -52,7 +52,7 @@ export const Card: React.FC<{
 
                     const categoryTitle = titleFromCategory || 'Untitled category'
 
-                    const key = (category as { id?: string | number }).id ??
+                    const key = (category as Category).id ??
                       categoryTitle ??
                       index.toString()
 
