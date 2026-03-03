@@ -15,9 +15,9 @@ export const AuthorList: React.FC<AuthorListProps> = ({ authors, ...props }) => 
 
   return (
     <section aria-label="Authors" className="mt-10 border-t pt-8" {...props}>
-      <h2 className="mb-4 text-xl font-semibold">
+      <h3 className="mb-4 text-xl font-semibold">
         Meet the Author{filteredAuthors.length > 1 ? 's' : ''}
-      </h2>
+      </h3>
       <div className="flex flex-col gap-4">
         {filteredAuthors.map((author) => (
           <AuthorCard key={author.id} author={author} />
