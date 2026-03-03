@@ -1,4 +1,5 @@
 **/payload-types.ts
+**/importMap.js
 **/migrations/**
 .tmp
 **/.git
