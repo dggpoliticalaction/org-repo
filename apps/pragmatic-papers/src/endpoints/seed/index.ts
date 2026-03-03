@@ -1,6 +1,7 @@
 import type { Payload } from 'payload'
 import { createArticles } from './articles'
 import { createFootnotesArticle } from './features/footnotes'
+import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from './features/social-embeds'
 import { homeStatic } from './home-static'
 import { createMedia } from './media'
 import { createMenus } from './menus'
@@ -117,4 +118,7 @@ export const seed = async (payload: Payload): Promise<void> => {
     privacyPolicyPage,
     termsOfUsePage,
   })
+
+  await createSocialEmbedArticle(payload, writer1)
+  await createLegacySocialEmbedArticle(payload, writer1)
 }
