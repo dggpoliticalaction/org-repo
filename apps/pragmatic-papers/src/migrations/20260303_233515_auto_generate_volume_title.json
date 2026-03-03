@@ -3119,14 +3119,6 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
-        },
-        "link_appearance": {
-          "name": "link_appearance",
-          "type": "enum_articles_footnotes_link_appearance",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'default'"
         }
       },
       "indexes": {
@@ -3818,14 +3810,6 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
-        },
-        "link_appearance": {
-          "name": "link_appearance",
-          "type": "enum__articles_v_version_footnotes_link_appearance",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'default'"
         },
         "_uuid": {
           "name": "_uuid",
@@ -9672,7 +9656,7 @@
           "name": "link_label",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -9742,7 +9726,7 @@
           "name": "action_button_enabled",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": false
         },
         "action_button_link_type": {
@@ -9782,6 +9766,14 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
+        },
+        "action_button_variant": {
+          "name": "action_button_variant",
+          "type": "enum_header_action_button_variant",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'default'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -10049,7 +10041,7 @@
           "name": "link_label",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -10529,14 +10521,6 @@
         "custom"
       ]
     },
-    "public.enum_articles_footnotes_link_appearance": {
-      "name": "enum_articles_footnotes_link_appearance",
-      "schema": "public",
-      "values": [
-        "default",
-        "outline"
-      ]
-    },
     "public.enum_articles_status": {
       "name": "enum_articles_status",
       "schema": "public",
@@ -10551,14 +10535,6 @@
       "values": [
         "reference",
         "custom"
-      ]
-    },
-    "public.enum__articles_v_version_footnotes_link_appearance": {
-      "name": "enum__articles_v_version_footnotes_link_appearance",
-      "schema": "public",
-      "values": [
-        "default",
-        "outline"
       ]
     },
     "public.enum__articles_v_version_status": {
@@ -10652,6 +10628,16 @@
         "custom"
       ]
     },
+    "public.enum_header_action_button_variant": {
+      "name": "enum_header_action_button_variant",
+      "schema": "public",
+      "values": [
+        "default",
+        "outline",
+        "ghost",
+        "link"
+      ]
+    },
     "public.enum_footer_nav_items_link_type": {
       "name": "enum_footer_nav_items_link_type",
       "schema": "public",
@@ -10671,6 +10657,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "3cdfac51-97fe-4948-a1d9-a6939e6c2f08",
+  "id": "6ca89797-9fe0-43e3-a81d-0401412aeb2f",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
