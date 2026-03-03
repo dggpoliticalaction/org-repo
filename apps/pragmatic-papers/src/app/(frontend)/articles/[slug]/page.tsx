@@ -1,9 +1,9 @@
+import { AuthorList } from '@/components/Authors/AuthorList'
+import { FootnoteList } from '@/components/FootnoteList'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import RichText from '@/components/RichText'
-import { AuthorCard } from '@/components/Authors/AuthorCard'
 import { ArticleHero } from '@/heros/ArticleHero'
-import type { Article, User } from '@/payload-types'
 import { generateMeta } from '@/utilities/generateMeta'
 import configPromise from '@payload-config'
 import type { Metadata } from 'next'
@@ -53,7 +53,6 @@ const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
         equals: slug,
       },
     },
-    depth: 2,
   })
 
   return result.docs?.[0] || null
@@ -74,9 +73,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
-  const authors = (article.authors || []).filter((author): author is User =>
-    Boolean(author && typeof author === 'object'),
-  )
+  const { footnotes, content, authors } = article
 
   return (
     <article className="m-auto max-w-3xl p-5 pb-16">
@@ -85,22 +82,14 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
       {draft && <LivePreviewListener />}
 
-      <ArticleHero article={article} authors={authors} />
-
-      <RichText className="" data={article.content} enableGutter={false} />
-
-      {authors.length > 0 && (
-        <section aria-label="Article authors" className="mt-10 border-t pt-8">
-          <h2 className="mb-4 text-xl font-semibold">
-            Meet the Author{authors.length > 1 ? 's' : ''}
-          </h2>
-          <div className="flex flex-col gap-4">
-            {authors.map((author) => (
-              <AuthorCard key={author.id} author={author} />
-            ))}
-          </div>
-        </section>
-      )}
+      <ArticleHero article={article} />
+      <RichText
+        data={content}
+        enableGutter={false}
+        parentDoc={{ collection: 'articles', id: article.id }}
+      />
+      <FootnoteList footnotes={footnotes} />
+      <AuthorList authors={authors} />
     </article>
   )
 }

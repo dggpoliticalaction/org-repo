@@ -1,36 +1,28 @@
-import { Button } from '@/components/ui/button'
-import type { Header } from '@/payload-types'
+import { CMSButton } from '@/components/Button'
+import type { ButtonField as ButtonFieldType } from '@/payload-types'
+import { cn } from '@/utilities/ui'
 import { ExternalLink } from 'lucide-react'
-import Link from 'next/link'
 
-export const ActionButton: React.FC<Header['actionButton']> = ({
-  enabled,
-  backgroundColor,
-  textColor,
-  link,
-}) => {
-  if (!enabled) return null
+interface ActionButtonProps extends React.ComponentProps<typeof CMSButton> {
+  button?: ButtonFieldType
+}
 
+/**
+ * Renders an action button based on provided `button` data.
+ * Typically used for header actions (e.g., "Get Started") with an external link icon.
+ *
+ * @param button - ButtonFieldType object, containing link info (label, href, etc.)
+ * @param className - Additional CSS classes for styling.
+ * @param props - All other ButtonFieldType props.
+ *
+ * @example
+ * <ActionButton button={buttonData} className="hidden lg:flex" />
+ */
+export const ActionButton: React.FC<ActionButtonProps> = ({ button, className, ...props }) => {
   return (
-    <Button
-      type="button"
-      variant="default"
-      style={{
-        backgroundColor: backgroundColor || '#000000',
-        color: textColor || '#ffffff',
-      }}
-      className="hidden w-fit items-center gap-2 font-bold transition-opacity duration-300 hover:opacity-80 md:flex"
-      asChild
-    >
-      <Link
-        href={link?.url || '/'}
-        target={link?.newTab ? '_blank' : '_self'}
-        aria-label={`Link to ${link?.label || 'Invalid Link'}`}
-        rel={link?.newTab ? 'noopener noreferrer' : undefined}
-      >
-        {link?.label || 'Invalid Link'}
-        <ExternalLink className="h-4 w-4" />
-      </Link>
-    </Button>
+    <CMSButton button={button} className={cn('gap-2', className)} {...props}>
+      {button?.link?.label || 'Invalid Link'}
+      <ExternalLink className="h-4 w-4" />
+    </CMSButton>
   )
 }
