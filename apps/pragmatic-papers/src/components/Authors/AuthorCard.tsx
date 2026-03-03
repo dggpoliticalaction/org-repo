@@ -1,12 +1,11 @@
-import React from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { Github, Globe, Linkedin, Twitter } from 'lucide-react'
-
-import type { Media, User } from '@/payload-types'
 import { Card, CardContent } from '@/components/ui/card'
+import type { Media, User } from '@/payload-types'
 import { authorSlugFromUser } from '@/utilities/authorSlug'
 import { deriveAuthorSocialLinks, type SocialIconKey } from '@/utilities/authorSocialLinks'
+import { Github, Globe, Linkedin, Twitter } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import React from 'react'
 
 function getInitials(name: string): string {
   const value = name.trim()

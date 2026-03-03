@@ -1,20 +1,17 @@
-import type { Metadata } from 'next'
-
-import { PayloadRedirects } from '@/components/PayloadRedirects'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
-import React, { cache } from 'react'
-import Image from 'next/image'
-
-import type { Article as ArticleType, Media, User, Volume } from '@/payload-types'
-
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import RichText from '@/components/RichText'
 import { AuthorArticleCard } from '@/components/Articles/AuthorArticleCard'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PayloadRedirects } from '@/components/PayloadRedirects'
+import RichText from '@/components/RichText'
+import type { Article as ArticleType, Media, User, Volume } from '@/payload-types'
 import { authorSlugFromUser } from '@/utilities/authorSlug'
 import { deriveAuthorSocialLinks } from '@/utilities/authorSocialLinks'
+import configPromise from '@payload-config'
 import { Github, Globe, Linkedin, Twitter } from 'lucide-react'
+import type { Metadata } from 'next'
+import { draftMode } from 'next/headers'
+import Image from 'next/image'
+import { getPayload } from 'payload'
+import React, { cache } from 'react'
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
