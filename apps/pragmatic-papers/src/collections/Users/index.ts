@@ -1,7 +1,7 @@
-import type { CollectionConfig } from 'payload'
-
 import { adminOrSelf } from '@/access/adminOrSelf'
 import { admin, adminFieldLevel } from '@/access/admins'
+import { authenticated } from '@/access/authenticated'
+import { generateAuthorSlug } from '@/collections/Users/hooks/generateAuthorSlug'
 import { link } from '@/fields/link2'
 import type { User } from '@/payload-types'
 import {
@@ -13,8 +13,7 @@ import {
   OrderedListFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-import { authenticated } from '../../access/authenticated'
-import { generateAuthorSlug } from './hooks/generateAuthorSlug'
+import type { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
   slug: 'users',
