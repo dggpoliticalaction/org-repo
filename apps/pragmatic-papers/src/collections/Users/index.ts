@@ -1,6 +1,9 @@
-import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload'
 
-import { authenticated } from '../../access/authenticated'
+import { adminOrSelf } from '@/access/adminOrSelf'
+import { admin, adminFieldLevel } from '@/access/admins'
+import { link } from '@/fields/link2'
+import type { User } from '@/payload-types'
 import {
   FixedToolbarFeature,
   HeadingFeature,
@@ -10,37 +13,8 @@ import {
   OrderedListFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-import { admin, adminFieldLevel } from '@/access/admins'
-import { adminOrSelf } from '@/access/adminOrSelf'
-import type { User } from '@/payload-types'
-import { authorSlugFromNameAndId } from '@/utilities/authorSlug'
-import { link } from '@/fields/link'
-
-const generateAuthorSlug: CollectionBeforeChangeHook<User> = ({ data }) => {
-  if (!data) return data
-
-  const userData = data as Partial<User>
-
-  // Admin accounts should never have an author slug exposed
-  if (userData.role === 'admin') {
-    userData.authorSlug = null
-    return userData
-  }
-
-  // Only auto-generate an author slug for writers; for other roles
-  // (chief-editor, editor, user) the slug should be explicitly set.
-  if (userData.role === 'writer') {
-    if (!userData.authorSlug || typeof userData.authorSlug !== 'string') {
-      const slug = authorSlugFromNameAndId(
-        (userData.name as string | null | undefined) ?? null,
-        (userData.id as number | null | undefined) ?? null,
-      )
-      userData.authorSlug = slug
-    }
-  }
-
-  return userData
-}
+import { authenticated } from '../../access/authenticated'
+import { generateAuthorSlug } from './hooks/generateAuthorSlug'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -135,11 +109,7 @@ export const Users: CollectionConfig = {
         description: 'Optional social or personal links for this author.',
         condition: ({ id }) => Boolean(id),
       },
-      fields: [
-        link({
-          appearances: false,
-        }),
-      ],
+      fields: [link()],
     },
     {
       name: 'role',
@@ -171,57 +141,6 @@ export const Users: CollectionConfig = {
           value: 'user',
         },
       ],
-    },
-    // Security-sensitive auth fields should never be exposed via public reads.
-    {
-      name: 'hash',
-      type: 'text',
-      access: {
-        read: () => false,
-      },
-      admin: {
-        disabled: true,
-      },
-    },
-    {
-      name: 'salt',
-      type: 'text',
-      access: {
-        read: () => false,
-      },
-      admin: {
-        disabled: true,
-      },
-    },
-    {
-      name: 'resetPasswordToken',
-      type: 'text',
-      access: {
-        read: () => false,
-      },
-      admin: {
-        disabled: true,
-      },
-    },
-    {
-      name: 'resetPasswordExpiration',
-      type: 'date',
-      access: {
-        read: () => false,
-      },
-      admin: {
-        disabled: true,
-      },
-    },
-    {
-      name: 'loginAttempts',
-      type: 'number',
-      access: {
-        read: () => false,
-      },
-      admin: {
-        disabled: true,
-      },
     },
   ],
   timestamps: true,
