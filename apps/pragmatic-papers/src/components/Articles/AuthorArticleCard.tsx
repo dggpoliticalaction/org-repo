@@ -1,13 +1,13 @@
 'use client'
 
-import React from 'react'
 import Link from 'next/link'
+import React from 'react'
 
+import { Media } from '@/components/Media'
+import { Card, CardContent } from '@/components/ui/card'
 import type { Article, Volume } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 import useClickableCard from '@/utilities/useClickableCard'
-import { Media } from '@/components/Media'
-import { Card, CardContent } from '@/components/ui/card'
 
 export type AuthorArticleCardData = Pick<Article, 'slug' | 'meta' | 'title'>
 
@@ -31,15 +31,17 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
   const sanitizedDescription = description?.replace(/\s/g, ' ')
 
   return (
-    <Card className={cn('h-full', className)}>
-      <CardContent ref={card.ref} className="flex flex-row gap-4 p-6 sm:flex-row">
+    <Card className={cn('h-full rounded-sm', className)}>
+      <CardContent ref={card.ref} className="flex flex-row gap-4 p-4 sm:flex-row">
         <div className="h-24 w-32 flex-shrink-0 overflow-hidden rounded border border-border bg-muted sm:h-28 sm:w-40">
           {metaImage && typeof metaImage !== 'string' && (
-            <Media
-              resource={metaImage}
-              className="h-full w-full"
-              imgClassName="h-full w-full object-cover"
-            />
+            <Link href={href} ref={link.ref}>
+              <Media
+                resource={metaImage}
+                className="h-full w-full rounded-sm"
+                imgClassName="h-full w-full object-cover"
+              />
+            </Link>
           )}
         </div>
         <div className="flex h-24 min-w-0 flex-1 flex-col justify-between space-y-1 overflow-hidden sm:h-28">

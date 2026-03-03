@@ -88,7 +88,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
   }
 
   return (
-    <Card>
+    <Card className="rounded-sm">
       <CardContent className="flex flex-row gap-4 p-4">
         <Link href={`/authors/${slug}`} aria-label={name || 'Author profile'}>
           <div className="h-24 w-24 overflow-hidden rounded-sm border border-border bg-muted">
