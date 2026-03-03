@@ -29,6 +29,16 @@ export type FootnotesField =
     }[]
   | null;
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuField".
+ */
+export type MenuField =
+  | {
+      link?: LinkField;
+      id?: string | null;
+    }[]
+  | null;
+/**
  * Supported timezones in IANA format.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -495,10 +505,6 @@ export interface LinkField {
       } | null);
   url?: string | null;
   label?: string | null;
-  /**
-   * Choose how the link should be rendered.
-   */
-  appearance?: ('default' | 'outline') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1326,7 +1332,6 @@ export interface LinkFieldSelect<T extends boolean = true> {
   reference?: T;
   url?: T;
   label?: T;
-  appearance?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1751,62 +1756,27 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'volumes';
-                value: number | Volume;
-              } | null)
-            | ({
-                relationTo: 'articles';
-                value: number | Article;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  actionButton: {
-    enabled: boolean;
-    link?: {
-      type?: ('reference' | 'custom') | null;
-      newTab?: boolean | null;
-      reference?:
-        | ({
-            relationTo: 'pages';
-            value: number | Page;
-          } | null)
-        | ({
-            relationTo: 'volumes';
-            value: number | Volume;
-          } | null)
-        | ({
-            relationTo: 'articles';
-            value: number | Article;
-          } | null);
-      url?: string | null;
-      label: string;
-    };
-    /**
-     * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-     */
-    backgroundColor?: string | null;
-    /**
-     * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-     */
-    textColor?: string | null;
-  };
+  navItems?: MenuField;
+  actionButton?: ButtonField;
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonField".
+ */
+export interface ButtonField {
+  enabled: boolean;
+  link?: LinkField;
+  /**
+   * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
+   */
+  backgroundColor?: string | null;
+  /**
+   * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
+   */
+  textColor?: string | null;
+  variant?: ('default' | 'outline' | 'ghost' | 'link') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1814,30 +1784,7 @@ export interface Header {
  */
 export interface Footer {
   id: number;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'volumes';
-                value: number | Volume;
-              } | null)
-            | ({
-                relationTo: 'articles';
-                value: number | Article;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
+  navItems?: MenuField;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1846,59 +1793,37 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
-  actionButton?:
-    | T
-    | {
-        enabled?: T;
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        backgroundColor?: T;
-        textColor?: T;
-      };
+  navItems?: T | MenuFieldSelect<T>;
+  actionButton?: T | ButtonFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuField_select".
+ */
+export interface MenuFieldSelect<T extends boolean = true> {
+  link?: T | LinkFieldSelect<T>;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonField_select".
+ */
+export interface ButtonFieldSelect<T extends boolean = true> {
+  enabled?: T;
+  link?: T | LinkFieldSelect<T>;
+  backgroundColor?: T;
+  textColor?: T;
+  variant?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
+  navItems?: T | MenuFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

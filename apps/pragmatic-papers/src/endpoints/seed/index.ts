@@ -4,6 +4,8 @@ import { createFootnotesArticle } from './features/footnotes'
 import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from './features/social-embeds'
 import { homeStatic } from './home-static'
 import { createMedia } from './media'
+import { createMenus } from './menus'
+import { createPages } from './pages'
 import { createUsers } from './users'
 import { createVolumes } from './volumes'
 
@@ -101,9 +103,20 @@ export const seed = async (payload: Payload): Promise<void> => {
   await createFootnotesArticle(payload, [writer1, writer2], mediaDocs, volume1Articles[0]!)
 
   // The homepage is literally a "page" in Payload.
-  await payload.create({
+  const homePage = await payload.create({
     collection: 'pages',
     data: homeStatic,
+  })
+
+  // Create pages for menus
+  const { aboutPage, contactPage, privacyPolicyPage, termsOfUsePage } = await createPages(payload)
+
+  await createMenus(payload, {
+    homePage,
+    aboutPage,
+    contactPage,
+    privacyPolicyPage,
+    termsOfUsePage,
   })
 
   await createSocialEmbedArticle(payload, writer1)

@@ -1,4 +1,4 @@
-export const LogoInline: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
+export const LogomarkIcon: React.FC<React.ComponentProps<'svg'>> = (props) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 357.88 34.99" {...props}>
       <path
