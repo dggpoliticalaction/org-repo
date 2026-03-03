@@ -12,6 +12,7 @@ import * as migration_20260110_021152_discord_header_button from './20260110_021
 import * as migration_20260111_055750_slug_field_update from './20260111_055750_slug_field_update';
 import * as migration_20260117_020339_footnotes from './20260117_020339_footnotes';
 import * as migration_20260129_091952_auto_generate_volume_title from './20260129_091952_auto_generate_volume_title';
+import * as migration_20260217_013724_header_footer_redesign from './20260217_013724_header_footer_redesign';
 
 export const migrations = [
   {
@@ -82,6 +83,11 @@ export const migrations = [
   {
     up: migration_20260129_091952_auto_generate_volume_title.up,
     down: migration_20260129_091952_auto_generate_volume_title.down,
-    name: '20260129_091952_auto_generate_volume_title'
+    name: '20260129_091952_auto_generate_volume_title',
+  },
+  {
+    up: migration_20260217_013724_header_footer_redesign.up,
+    down: migration_20260217_013724_header_footer_redesign.down,
+    name: '20260217_013724_header_footer_redesign',
   },
 ];
