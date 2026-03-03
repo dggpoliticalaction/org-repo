@@ -89,7 +89,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
         parentDoc={{ collection: 'articles', id: article.id }}
       />
       <FootnoteList footnotes={footnotes} />
-      <AuthorList authors={authors} />
+      <AuthorList aria-label="Article Authors" authors={authors} />
     </article>
   )
 }

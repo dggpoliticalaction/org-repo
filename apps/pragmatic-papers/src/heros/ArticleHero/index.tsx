@@ -1,21 +1,20 @@
-import React from 'react'
 import Link from 'next/link'
+import React from 'react'
 
-import type { Article, User } from '@/payload-types'
-import { Squiggle } from '@/components/ui/squiggle'
-import { formatDateTime } from '@/utilities/formatDateTime'
 import { ImageMedia } from '@/components/Media/ImageMedia'
+import { Squiggle } from '@/components/ui/squiggle'
+import type { Article } from '@/payload-types'
 import { authorSlugFromUser } from '@/utilities/authorSlug'
+import { formatDateTime } from '@/utilities/formatDateTime'
 
 interface ArticleHeroProps {
   article: Article
-  authors?: User[]
 }
 
-export const ArticleHero: React.FC<ArticleHeroProps> = ({ article, authors }) => {
-  const { publishedAt, title, heroImage } = article
+export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
+  const { publishedAt, title, heroImage, authors } = article
 
-  const authorList = (authors || []).filter((author) => Boolean(author && author.name))
+  const authorList = (authors || []).filter((author) => typeof author === 'object')
   const hasAuthors = authorList.length > 0
 
   return (

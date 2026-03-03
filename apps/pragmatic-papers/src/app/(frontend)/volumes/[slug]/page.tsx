@@ -1,22 +1,20 @@
-import type { Metadata } from 'next'
-import type { Payload } from 'payload'
-import type { Article, User } from '@/payload-types'
-
-import { PayloadRedirects } from '@/components/PayloadRedirects'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
-import React, { cache } from 'react'
-
-import { generateMeta } from '@/utilities/generateMeta'
-import PageClient from './page.client'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import RichText from '@/components/RichText'
-import { formatDateTime } from '@/utilities/formatDateTime'
 import { ArticleCard } from '@/components/ArticleCard'
-import { toRoman } from '@/utilities/toRoman'
+import { AuthorList } from '@/components/Authors/AuthorList'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PayloadRedirects } from '@/components/PayloadRedirects'
+import RichText from '@/components/RichText'
 import { Squiggle } from '@/components/ui/squiggle'
-import { AuthorCard } from '@/components/Authors/AuthorCard'
+import type { Article, User } from '@/payload-types'
+import { formatDateTime } from '@/utilities/formatDateTime'
+import { generateMeta } from '@/utilities/generateMeta'
+import { toRoman } from '@/utilities/toRoman'
+import configPromise from '@payload-config'
+import type { Metadata } from 'next'
+import { draftMode } from 'next/headers'
+import type { Payload } from 'payload'
+import { getPayload } from 'payload'
+import React, { cache } from 'react'
+import PageClient from './page.client'
 
 type VolumeArticleRef = number | Article
 
@@ -168,18 +166,7 @@ export default async function VolumePage({
           ))}
         </div>
       </div>
-      {volumeAuthors.length > 0 && (
-        <section aria-label="Volume authors" className="mt-10 border-t pt-8">
-          <h2 className="mb-4 text-xl font-semibold">
-            Meet the Author{volumeAuthors.length > 1 ? 's' : ''}
-          </h2>
-          <div className="flex flex-col gap-4">
-            {volumeAuthors.map((author) => (
-              <AuthorCard key={author.id} author={author} />
-            ))}
-          </div>
-        </section>
-      )}
+      <AuthorList aria-label="Volume Authors" authors={volumeAuthors} />
     </div>
   )
 }
