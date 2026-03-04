@@ -25,8 +25,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   ALTER TABLE "users" ADD COLUMN "affiliation" varchar;
   ALTER TABLE "users" ADD COLUMN "generate_slug" boolean DEFAULT true;
-  ALTER TABLE "users" ADD COLUMN "slug" varchar NOT NULL;
+  ALTER TABLE "users" ADD COLUMN "slug" varchar;
   ALTER TABLE "users" ADD COLUMN "profile_image_id" integer;
+  UPDATE "users" SET "slug" = lower(regexp_replace(trim("name"), '\s+', '-', 'g'));
+  ALTER TABLE "users" ALTER COLUMN "slug" SET NOT NULL;
   ALTER TABLE "users_socials" ADD CONSTRAINT "users_socials_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "users_rels" ADD CONSTRAINT "users_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "users_rels" ADD CONSTRAINT "users_rels_pages_fk" FOREIGN KEY ("pages_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
