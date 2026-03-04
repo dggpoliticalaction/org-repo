@@ -127,7 +127,7 @@ function createSocialEmbedBlock(item: (typeof SOCIAL_MEDIA_URLS)[number]): Socia
  * Creates article content with one social embed per platform, lorem ipsum between each.
  */
 const createSocialEmbedContent = () => {
-  const lipsumParagraphs = generateLoremIpsumParagraphs(5).map((text) => createParagraph(text))
+  const lipsumParagraphs = generateLoremIpsumParagraphs(2).map((text) => createParagraph(text))
   const children: SerializedLexicalNode[] = []
 
   for (const item of SOCIAL_MEDIA_URLS) {
@@ -202,7 +202,7 @@ function createLegacyEmbedBlock(item: (typeof SOCIAL_MEDIA_URLS)[number]): Legac
  * Creates article content with legacy social media blocks (one per platform), lorem ipsum between each.
  */
 const createLegacySocialEmbedContent = () => {
-  const lipsumParagraphs = generateLoremIpsumParagraphs(5).map((text) => createParagraph(text))
+  const lipsumParagraphs = generateLoremIpsumParagraphs(2).map((text) => createParagraph(text))
   const children: SerializedLexicalNode[] = []
 
   for (const item of SOCIAL_MEDIA_URLS) {
