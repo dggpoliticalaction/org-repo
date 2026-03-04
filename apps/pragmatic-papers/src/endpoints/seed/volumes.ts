@@ -1,5 +1,5 @@
-import type { Payload } from 'payload'
 import type { Media, Volume } from '@/payload-types'
+import type { Payload } from 'payload'
 
 interface VolumeConfig {
   volumeNumber: number
@@ -61,6 +61,7 @@ export const createVolumes = async (
         description: config.description,
         editorsNote: createEditorsNote(config.editorsNoteContent),
         articles: config.articleIds,
+        slug: config.volumeNumber.toString(),
         _status: 'published',
         publishedAt: new Date().toISOString(),
         meta: {

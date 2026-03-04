@@ -1,3 +1,4 @@
+import { AuthorList } from '@/components/Authors/AuthorList'
 import { FootnoteList } from '@/components/FootnoteList'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
@@ -72,7 +73,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
-  const { footnotes, content } = article
+  const { footnotes, content, authors } = article
 
   return (
     <article className="m-auto max-w-3xl p-5 pb-16">
@@ -82,9 +83,13 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
       {draft && <LivePreviewListener />}
 
       <ArticleHero article={article} />
-
-      <RichText data={content} enableGutter={false} />
+      <RichText
+        data={content}
+        enableGutter={false}
+        parentDoc={{ collection: 'articles', id: article.id }}
+      />
       <FootnoteList footnotes={footnotes} />
+      <AuthorList aria-label="Article Authors" authors={authors} />
     </article>
   )
 }

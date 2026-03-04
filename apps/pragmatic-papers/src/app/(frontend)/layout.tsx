@@ -68,9 +68,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               preview: isEnabled,
             }}
           />
-
           <Header />
-          {children}
+          <main role="main" className="mt-4">
+            {children}
+          </main>
           <Footer />
           <GoogleAnalytics gaId={googleAnalyticsId} />
         </Providers>

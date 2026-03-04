@@ -8,6 +8,16 @@
 
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuField".
+ */
+export type MenuField =
+  | {
+      link?: LinkField;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "FootnotesField".
  */
 export type FootnotesField =
@@ -82,6 +92,11 @@ export type SupportedTimezones =
   | 'Pacific/Noumea'
   | 'Pacific/Auckland'
   | 'Pacific/Fiji';
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SocialPlatform".
+ */
+export type SocialPlatform = 'bluesky' | 'reddit' | 'tiktok' | 'twitter' | 'youtube';
 
 export interface Config {
   auth: {
@@ -250,6 +265,10 @@ export interface Page {
 export interface Volume {
   id: number;
   title: string;
+  /**
+   * When enabled, the title will be automatically generated from the article titles, separated by " • "
+   */
+  autoGenerateTitle?: boolean | null;
   volumeNumber: number;
   description: string;
   editorsNote?: {
@@ -437,6 +456,7 @@ export interface Media {
 export interface User {
   id: number;
   name?: string | null;
+  affiliation?: string | null;
   biography?: {
     root: {
       type: string;
@@ -452,6 +472,13 @@ export interface User {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  profileImage?: (number | null) | Media;
+  socials?: MenuField;
   role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'user') | null;
   updatedAt: string;
   createdAt: string;
@@ -512,10 +539,6 @@ export interface LinkField {
       } | null);
   url?: string | null;
   label?: string | null;
-  /**
-   * Choose how the link should be rendered.
-   */
-  appearance?: ('default' | 'outline') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1348,7 +1371,6 @@ export interface LinkFieldSelect<T extends boolean = true> {
   reference?: T;
   url?: T;
   label?: T;
-  appearance?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1356,6 +1378,7 @@ export interface LinkFieldSelect<T extends boolean = true> {
  */
 export interface VolumesSelect<T extends boolean = true> {
   title?: T;
+  autoGenerateTitle?: T;
   volumeNumber?: T;
   description?: T;
   editorsNote?: T;
@@ -1494,7 +1517,12 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  affiliation?: T;
   biography?: T;
+  generateSlug?: T;
+  slug?: T;
+  profileImage?: T;
+  socials?: T | MenuFieldSelect<T>;
   role?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1512,6 +1540,14 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuField_select".
+ */
+export interface MenuFieldSelect<T extends boolean = true> {
+  link?: T | LinkFieldSelect<T>;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1785,62 +1821,27 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'volumes';
-                value: number | Volume;
-              } | null)
-            | ({
-                relationTo: 'articles';
-                value: number | Article;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  actionButton: {
-    enabled: boolean;
-    link?: {
-      type?: ('reference' | 'custom') | null;
-      newTab?: boolean | null;
-      reference?:
-        | ({
-            relationTo: 'pages';
-            value: number | Page;
-          } | null)
-        | ({
-            relationTo: 'volumes';
-            value: number | Volume;
-          } | null)
-        | ({
-            relationTo: 'articles';
-            value: number | Article;
-          } | null);
-      url?: string | null;
-      label: string;
-    };
-    /**
-     * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-     */
-    backgroundColor?: string | null;
-    /**
-     * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-     */
-    textColor?: string | null;
-  };
+  navItems?: MenuField;
+  actionButton?: ButtonField;
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonField".
+ */
+export interface ButtonField {
+  enabled: boolean;
+  link?: LinkField;
+  /**
+   * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
+   */
+  backgroundColor?: string | null;
+  /**
+   * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
+   */
+  textColor?: string | null;
+  variant?: ('default' | 'outline' | 'ghost' | 'link') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1848,30 +1849,7 @@ export interface Header {
  */
 export interface Footer {
   id: number;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'volumes';
-                value: number | Volume;
-              } | null)
-            | ({
-                relationTo: 'articles';
-                value: number | Article;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
+  navItems?: MenuField;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1880,59 +1858,29 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
-  actionButton?:
-    | T
-    | {
-        enabled?: T;
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        backgroundColor?: T;
-        textColor?: T;
-      };
+  navItems?: T | MenuFieldSelect<T>;
+  actionButton?: T | ButtonFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonField_select".
+ */
+export interface ButtonFieldSelect<T extends boolean = true> {
+  enabled?: T;
+  link?: T | LinkFieldSelect<T>;
+  backgroundColor?: T;
+  textColor?: T;
+  variant?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
+  navItems?: T | MenuFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2025,55 +1973,35 @@ export interface SquiggleRuleBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "TwitterEmbedBlock".
+ * via the `definition` "SocialEmbedSnapshot".
  */
-export interface TwitterEmbedBlock {
+export interface SocialEmbedSnapshot {
+  status?: ('ok' | 'not_found' | 'forbidden' | 'error' | 'timeout' | 'aborted' | 'invalid_oembed_response') | null;
+  fetchedAt?: string | null;
+  providerName?: string | null;
+  providerURL?: string | null;
+  authorName?: string | null;
+  authorURL?: string | null;
+  title?: string | null;
+  html?: string | null;
+  thumbnailURL?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SocialEmbedBlock".
+ */
+export interface SocialEmbedBlock {
+  /**
+   * Paste a Twitter/X, YouTube, Reddit, BlueSky, or TikTok URL.
+   */
   url: string;
+  platform: SocialPlatform;
+  snapshot?: SocialEmbedSnapshot;
   hideMedia?: boolean | null;
   hideThread?: boolean | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'twitterEmbed';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "YouTubeEmbedBlock".
- */
-export interface YouTubeEmbedBlock {
-  url: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'youtubeEmbed';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "RedditEmbedBlock".
- */
-export interface RedditEmbedBlock {
-  url: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'redditEmbed';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "BlueSkyEmbedBlock".
- */
-export interface BlueSkyEmbedBlock {
-  url: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'blueSkyEmbed';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "TikTokEmbedBlock".
- */
-export interface TikTokEmbedBlock {
-  url: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'tiktokEmbed';
+  blockType: 'socialEmbed';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

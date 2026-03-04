@@ -1,12 +1,29 @@
-import { colorPicker } from '@/fields/colorPicker'
-import { link } from '@/fields/link'
-import type { GroupField } from 'payload'
+import { button } from '@/fields/button'
+import type { NamedGroupField } from 'payload'
 
-export const actionButton: GroupField = {
-  name: 'actionButton',
-  label: 'Action Button',
-  type: 'group',
-  fields: [
+/**
+ * Returns a configured Action Button group field for the Header.
+ *
+ * This field group allows toggling an "action button" (e.g. for prominent CTAs)
+ * in the header via the "enabled" checkbox.
+ *
+ * - The `enabled` checkbox controls whether the button appears.
+ * - Button fields are reused from the shared `button` block config, ensuring
+ *   consistent data structure (URL, color, variant, etc).
+ * - The `admin.condition` ensures the sub-fields are only shown if enabled.
+ *
+ * @returns {NamedGroupField} A Payload CMS group field definition for an action button.
+ */
+export const actionButton = (): NamedGroupField => {
+  const buttonField = button({
+    label: 'Action Button',
+    admin: {
+      condition: (_data, siblingData) => Boolean(siblingData?.enabled),
+    },
+  })
+  // override the name to match the existing Action Button field
+  buttonField.name = 'actionButton'
+  buttonField.fields = [
     {
       name: 'enabled',
       label: 'Enable',
@@ -14,23 +31,7 @@ export const actionButton: GroupField = {
       defaultValue: false,
       required: true,
     },
-    link({
-      appearances: false,
-      overrides: {
-        admin: {
-          condition: (_data, siblingData) => Boolean(siblingData?.enabled),
-        },
-      },
-    }),
-    {
-      type: 'row',
-      admin: {
-        condition: (_data, siblingData) => Boolean(siblingData?.enabled),
-      },
-      fields: [
-        colorPicker({ overrides: { name: 'backgroundColor', label: 'Background Color' } }),
-        colorPicker({ overrides: { name: 'textColor', label: 'Text Color' } }),
-      ],
-    },
-  ],
+    ...buttonField.fields,
+  ]
+  return buttonField
 }

@@ -1,8 +1,11 @@
 import type { Payload } from 'payload'
 import { createArticles } from './articles'
 import { createFootnotesArticle } from './features/footnotes'
+import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from './features/social-embeds'
 import { homeStatic } from './home-static'
 import { createMedia } from './media'
+import { createMenus } from './menus'
+import { createPages } from './pages'
 import { createUsers } from './users'
 import { createVolumes } from './volumes'
 
@@ -44,11 +47,11 @@ export const seed = async (payload: Payload): Promise<void> => {
 
   // Begin seeding
 
-  const { writer1, writer2 } = await createUsers(payload)
+  const media = await createMedia(payload)
 
-  const { mediaDocs } = await createMedia(payload)
+  const { writer1, writer2 } = await createUsers(payload, media)
 
-  const articleResults = await createArticles(
+  const [volume1Articles, volume2Articles] = await createArticles(
     payload,
     [writer1, writer2],
     [
@@ -61,12 +64,9 @@ export const seed = async (payload: Payload): Promise<void> => {
         numberOfArticles: 3,
       },
     ],
-    mediaDocs,
+    media,
   )
 
-  // Ensure article IDs exist
-  const volume1Articles = articleResults.volume1Articles
-  const volume2Articles = articleResults.volume2Articles
   if (!volume1Articles || !volume2Articles) {
     throw new Error('Failed to create articles for one or more volumes')
   }
@@ -93,15 +93,29 @@ export const seed = async (payload: Payload): Promise<void> => {
         articleIds: volume2Articles,
       },
     ],
-    mediaDocs,
+    media,
   )
 
   // Create a standalone article demonstrating the footnotes feature
-  await createFootnotesArticle(payload, [writer1, writer2], mediaDocs, volume1Articles[0]!)
+  await createFootnotesArticle(payload, [writer1, writer2], media, volume1Articles[0]!)
 
   // The homepage is literally a "page" in Payload.
-  await payload.create({
+  const homePage = await payload.create({
     collection: 'pages',
     data: homeStatic,
   })
+
+  // Create pages for menus
+  const { aboutPage, contactPage, privacyPolicyPage, termsOfUsePage } = await createPages(payload)
+
+  await createMenus(payload, {
+    homePage,
+    aboutPage,
+    contactPage,
+    privacyPolicyPage,
+    termsOfUsePage,
+  })
+
+  await createSocialEmbedArticle(payload, writer1)
+  await createLegacySocialEmbedArticle(payload, writer1)
 }
