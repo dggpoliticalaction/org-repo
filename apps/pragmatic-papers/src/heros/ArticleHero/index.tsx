@@ -1,18 +1,20 @@
+import Link from 'next/link'
 import React from 'react'
 
-import type { Article } from '@/payload-types'
-import { Squiggle } from '@/components/ui/squiggle'
-import { formatAuthors } from '@/utilities/formatAuthors'
-import { formatDateTime } from '@/utilities/formatDateTime'
 import { ImageMedia } from '@/components/Media/ImageMedia'
+import { Squiggle } from '@/components/ui/squiggle'
+import type { Article } from '@/payload-types'
+import { formatDateTime } from '@/utilities/formatDateTime'
+import { getSeparator } from '@/utilities/getSeparator'
 
-export const ArticleHero: React.FC<{
+interface ArticleHeroProps {
   article: Article
-}> = ({ article }) => {
-  const { populatedAuthors, publishedAt, title, heroImage } = article
+}
 
-  const hasAuthors =
-    populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
+export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
+  const { publishedAt, title, heroImage, authors } = article
+
+  const filteredAuthors = (authors || []).filter((author) => typeof author === 'object')
 
   return (
     <div className="relative flex-col">
@@ -25,9 +27,19 @@ export const ArticleHero: React.FC<{
       )}
       <div className="relative z-10 flex-col pb-4 dark:text-white">
         <h1 className="mb-6 text-center text-4xl font-bold">{title}</h1>
-        {hasAuthors && (
+        {filteredAuthors.length > 0 && (
           <div className="text-center text-lg">
-            <p>by {formatAuthors(populatedAuthors)}</p>
+            <p>
+              by{' '}
+              {filteredAuthors.map(({ id, slug, name }, index) => (
+                <React.Fragment key={id}>
+                  {getSeparator(index, filteredAuthors.length)}
+                  <Link href={`/authors/${slug}`} className="underline-offset-2 hover:underline">
+                    {name}
+                  </Link>
+                </React.Fragment>
+              ))}
+            </p>
           </div>
         )}
         {publishedAt && (

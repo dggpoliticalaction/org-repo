@@ -6,10 +6,6 @@ interface VolumeArticlesConfig {
   numberOfArticles: number
 }
 
-interface CreateArticlesResult {
-  [key: string]: number[] // volumeId -> articleIds
-}
-
 const LOREM_IPSUMS = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
   'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
@@ -76,13 +72,13 @@ export const createArticles = async (
   payload: Payload,
   writers: User[],
   volumeConfigs: VolumeArticlesConfig[],
-  mediaDocs: Media[],
-): Promise<CreateArticlesResult> => {
+  media: Media[],
+): Promise<number[][]> => {
   if (writers.length === 0) {
     throw new Error('At least one writer is required to create articles')
   }
 
-  const result: CreateArticlesResult = {}
+  const result: number[][] = []
 
   for (const config of volumeConfigs) {
     const volumeArticles: number[] = []
@@ -105,14 +101,14 @@ export const createArticles = async (
           meta: {
             title: `Article ${i} - Volume ${config.volumeNumber}`,
             description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
-            image: mediaDocs[i % mediaDocs.length]?.id,
+            image: media[i % media.length]?.id,
           },
         },
       })
       volumeArticles.push(article.id)
     }
 
-    result[`volume${config.volumeNumber}Articles`] = volumeArticles
+    result.push(volumeArticles)
   }
 
   return result

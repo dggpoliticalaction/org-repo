@@ -45,8 +45,19 @@ import {
   SuperscriptFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig, FieldHook } from 'payload'
 import { slugField } from 'payload'
+
+const setPublishedAtDefault: FieldHook<Article, Article['publishedAt']> = ({
+  siblingData,
+  value,
+}) => {
+  if (siblingData && siblingData._status === 'published' && !value) {
+    return new Date().toISOString()
+  }
+
+  return value
+}
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
@@ -179,15 +190,7 @@ export const Articles: CollectionConfig = {
         position: 'sidebar',
       },
       hooks: {
-        beforeChange: [
-          // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-          ({ siblingData, value }) => {
-            if (siblingData._status === 'published' && !value) {
-              return new Date()
-            }
-            return value
-          },
-        ],
+        beforeChange: [setPublishedAtDefault],
       },
     },
     {
@@ -198,6 +201,11 @@ export const Articles: CollectionConfig = {
       },
       hasMany: true,
       relationTo: 'users',
+      filterOptions: {
+        role: {
+          in: ['writer', 'editor', 'chief-editor'],
+        },
+      },
     },
     {
       name: 'createdBy',

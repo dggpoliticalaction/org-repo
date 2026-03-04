@@ -47,11 +47,11 @@ export const seed = async (payload: Payload): Promise<void> => {
 
   // Begin seeding
 
-  const { writer1, writer2 } = await createUsers(payload)
+  const media = await createMedia(payload)
 
-  const { mediaDocs } = await createMedia(payload)
+  const { writer1, writer2 } = await createUsers(payload, media)
 
-  const articleResults = await createArticles(
+  const [volume1Articles, volume2Articles] = await createArticles(
     payload,
     [writer1, writer2],
     [
@@ -64,12 +64,9 @@ export const seed = async (payload: Payload): Promise<void> => {
         numberOfArticles: 3,
       },
     ],
-    mediaDocs,
+    media,
   )
 
-  // Ensure article IDs exist
-  const volume1Articles = articleResults.volume1Articles
-  const volume2Articles = articleResults.volume2Articles
   if (!volume1Articles || !volume2Articles) {
     throw new Error('Failed to create articles for one or more volumes')
   }
@@ -96,11 +93,11 @@ export const seed = async (payload: Payload): Promise<void> => {
         articleIds: volume2Articles,
       },
     ],
-    mediaDocs,
+    media,
   )
 
   // Create a standalone article demonstrating the footnotes feature
-  await createFootnotesArticle(payload, [writer1, writer2], mediaDocs, volume1Articles[0]!)
+  await createFootnotesArticle(payload, [writer1, writer2], media, volume1Articles[0]!)
 
   // The homepage is literally a "page" in Payload.
   const homePage = await payload.create({

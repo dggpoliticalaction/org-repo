@@ -1,6 +1,8 @@
-import type { CollectionConfig } from 'payload'
-
-import { authenticated } from '../../access/authenticated'
+import { adminOrSelf } from '@/access/adminOrSelf'
+import { admin, adminFieldLevel } from '@/access/admins'
+import { anyone } from '@/access/anyone'
+import { authenticated } from '@/access/authenticated'
+import { menu } from '@/fields/menu'
 import {
   FixedToolbarFeature,
   HeadingFeature,
@@ -10,8 +12,7 @@ import {
   OrderedListFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-import { admin, adminFieldLevel } from '@/access/admins'
-import { adminOrSelf } from '@/access/adminOrSelf'
+import { slugField, type CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -19,7 +20,7 @@ export const Users: CollectionConfig = {
     admin: authenticated,
     create: admin,
     delete: admin,
-    read: authenticated,
+    read: anyone,
     update: adminOrSelf,
   },
   admin: {
@@ -31,6 +32,14 @@ export const Users: CollectionConfig = {
     {
       name: 'name',
       type: 'text',
+    },
+    {
+      name: 'affiliation',
+      type: 'text',
+      required: false,
+      admin: {
+        condition: ({ id }) => Boolean(id),
+      },
     },
     {
       name: 'biography',
@@ -49,7 +58,39 @@ export const Users: CollectionConfig = {
         },
       }),
       required: false,
+      admin: {
+        condition: ({ id }) => Boolean(id),
+      },
     },
+    slugField({
+      useAsSlug: 'name',
+      overrides: (field) => {
+        field.admin = {
+          condition: ({ id }) => Boolean(id),
+          position: 'sidebar',
+        }
+        return field
+      },
+    }),
+    {
+      name: 'profileImage',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        condition: ({ id }) => Boolean(id),
+        position: 'sidebar',
+      },
+    },
+    menu({
+      name: 'socials',
+      label: 'Socials',
+      maxRows: 6,
+      admin: {
+        condition: ({ id }) => Boolean(id),
+        position: 'sidebar',
+      },
+    }),
     {
       name: 'role',
       type: 'select',
@@ -57,6 +98,9 @@ export const Users: CollectionConfig = {
       defaultValue: 'user',
       access: {
         update: adminFieldLevel,
+      },
+      admin: {
+        position: 'sidebar',
       },
       options: [
         {

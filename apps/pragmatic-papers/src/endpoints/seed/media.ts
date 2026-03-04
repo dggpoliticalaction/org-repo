@@ -1,9 +1,5 @@
-import type { Payload, File } from 'payload'
 import type { Media } from '@/payload-types'
-
-interface CreateMediaResult {
-  mediaDocs: Media[]
-}
+import type { File, Payload } from 'payload'
 
 async function fetchFileByURL(url: string): Promise<File> {
   const res = await fetch(url, {
@@ -25,7 +21,7 @@ async function fetchFileByURL(url: string): Promise<File> {
   }
 }
 
-export const createMedia = async (payload: Payload): Promise<CreateMediaResult> => {
+export const createMedia = async (payload: Payload): Promise<Media[]> => {
   const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post1.webp',
@@ -63,5 +59,5 @@ export const createMedia = async (payload: Payload): Promise<CreateMediaResult> 
     }),
   ])
 
-  return { mediaDocs }
+  return mediaDocs
 }
