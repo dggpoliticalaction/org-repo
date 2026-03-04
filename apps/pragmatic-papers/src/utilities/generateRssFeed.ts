@@ -1,17 +1,26 @@
+import { socialEmbedBlockToHTML } from '@/blocks/SocialEmbed/helpers/socialEmbedBlockToHTML'
 import type { SerializedInlineBlockNode } from '@payloadcms/richtext-lexical'
 import {
   convertLexicalToHTML,
   type HTMLConvertersFunction,
 } from '@payloadcms/richtext-lexical/html'
 import { Feed } from 'feed'
-import type { FootnoteBlock as FootnoteBlockType } from '../payload-types'
-import { type Article, type Media, type Volume } from '../payload-types'
+import type { Article, FootnoteBlock, Media, Volume } from '../payload-types'
 import { getServerSideURL } from './getURL'
 
 const SITE_URL = getServerSideURL()
 
 const htmlConverters: HTMLConvertersFunction = ({ defaultConverters }) => ({
   ...defaultConverters,
+  blocks: {
+    ...defaultConverters.blocks,
+    socialEmbed: socialEmbedBlockToHTML,
+    blueSkyEmbed: socialEmbedBlockToHTML,
+    redditEmbed: socialEmbedBlockToHTML,
+    tiktokEmbed: socialEmbedBlockToHTML,
+    twitterEmbed: socialEmbedBlockToHTML,
+    youtubeEmbed: socialEmbedBlockToHTML,
+  },
   inlineBlocks: {
     ...defaultConverters.inlineBlocks,
     inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode }) => {
@@ -19,7 +28,7 @@ const htmlConverters: HTMLConvertersFunction = ({ defaultConverters }) => ({
       return `<span class="math">\\(${math}\\)</span>`
     },
     footnote: ({ node }: { node: SerializedInlineBlockNode }) => {
-      const fields = node.fields as FootnoteBlockType
+      const fields = node.fields as FootnoteBlock
       const index = typeof fields.index === 'number' ? fields.index : ''
       const note = fields.note || ''
       const referenceId = `footnote-ref-${index}`

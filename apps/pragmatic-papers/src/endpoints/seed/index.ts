@@ -145,8 +145,22 @@ export const seed = async (payload: Payload): Promise<void> => {
   await createMediaCollageArticle(payload, writer1, mediaDocs)
 
   // The homepage is literally a "page" in Payload.
-  await payload.create({
+  const homePage = await payload.create({
     collection: 'pages',
     data: homeStatic,
   })
+
+  // Create pages for menus
+  const { aboutPage, contactPage, privacyPolicyPage, termsOfUsePage } = await createPages(payload)
+
+  await createMenus(payload, {
+    homePage,
+    aboutPage,
+    contactPage,
+    privacyPolicyPage,
+    termsOfUsePage,
+  })
+
+  await createSocialEmbedArticle(payload, writer1)
+  await createLegacySocialEmbedArticle(payload, writer1)
 }

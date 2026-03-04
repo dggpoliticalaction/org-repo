@@ -83,7 +83,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
       <ArticleHero article={article} />
 
-      <RichText data={content} enableGutter={false} />
+      <RichText data={content} enableGutter={false} parentDoc={{ collection: 'articles', id: article.id }} />
       <FootnoteList footnotes={footnotes} />
     </article>
   )

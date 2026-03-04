@@ -34,6 +34,7 @@ import { revalidateArticle, revalidateDelete } from './hooks/revalidateVolumes'
 import { checkArticles } from './hooks/checkArticles'
 import { pushToWebhooks } from './hooks/pushToWebhooks'
 import { setDefaultSeoTitle } from './hooks/seoTitle'
+import { generateTitle } from './hooks/generateTitle'
 
 export const Volumes: CollectionConfig = {
   slug: 'volumes',
@@ -64,8 +65,32 @@ export const Volumes: CollectionConfig = {
   fields: [
     {
       name: 'title',
-      type: 'text',
+      type: 'textarea',
       required: true,
+      hooks: {
+        beforeChange: [generateTitle],
+      },
+      admin: {
+        components: {
+          Field: {
+            path: '@/collections/Volumes/components/TitleField#TitleFieldComponent',
+            clientProps: {
+              checkboxFieldPath: 'autoGenerateTitle',
+            },
+          },
+        },
+      },
+    },
+    {
+      name: 'autoGenerateTitle',
+      type: 'checkbox',
+      label: 'Auto-generate title from articles',
+      defaultValue: true,
+      admin: {
+        description:
+          'When enabled, the title will be automatically generated from the article titles, separated by " • "',
+        position: 'sidebar',
+      },
     },
     {
       type: 'tabs',

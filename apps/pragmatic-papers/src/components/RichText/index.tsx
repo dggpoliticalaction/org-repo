@@ -1,28 +1,28 @@
 import { BannerBlock } from '@/blocks/Banner/Component'
-import { BlueSkyEmbedBlock } from '@/blocks/BlueSkyEmbed/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
 import { FootnoteBlock } from '@/blocks/Footnote/Component'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { MediaCollageBlock } from '@/blocks/MediaCollageBlock/component'
-import { RedditEmbedBlock } from '@/blocks/RedditEmbed/Component'
+import {
+  BlueskyEmbedBlock,
+  RedditEmbedBlock,
+  SocialEmbedBlock,
+  TikTokEmbedBlock,
+  TwitterEmbedBlock,
+  YouTubeEmbedBlock,
+} from '@/blocks/SocialEmbed'
+import type { ParentDocContext } from '@/blocks/SocialEmbed/types'
 import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
-import { TikTokEmbedBlock } from '@/blocks/TikTokEmbed/Component'
-import { TwitterEmbedBlock } from '@/blocks/TwitterEmbed/Component'
-import { YouTubeEmbedBlock } from '@/blocks/YouTubeEmbed/Component'
 import type {
   BannerBlock as BannerBlockProps,
-  BlueSkyEmbedBlock as BlueSkyEmbedBlockProps,
   CallToActionBlock as CTABlockProps,
   FootnoteBlock as FootnoteBlockProps,
   MediaBlock as MediaBlockProps,
   MediaCollageBlock as MediaCollageBlockProps,
-  RedditEmbedBlock as RedditEmbedBlockProps,
+  SocialEmbedBlock as SocialEmbedBlockProps,
   SquiggleRuleBlock as SquiggleRuleBlockProps,
-  TikTokEmbedBlock as TikTokEmbedBlockProps,
-  TwitterEmbedBlock as TwitterEmbedBlockProps,
-  YouTubeEmbedBlock as YouTubeEmbedBlockProps,
 } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 import type {
@@ -48,11 +48,7 @@ type NodeTypes =
       | CodeBlockProps
       | MathBlockProps
       | SquiggleRuleBlockProps
-      | TwitterEmbedBlockProps
-      | YouTubeEmbedBlockProps
-      | RedditEmbedBlockProps
-      | BlueSkyEmbedBlockProps
-      | TikTokEmbedBlockProps
+      | SocialEmbedBlockProps
     >
   | SerializedInlineBlockNode<MathBlockProps | FootnoteBlockProps>
 
@@ -65,48 +61,63 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   return relationTo === 'articles' ? `/articles/${slug}` : `/${slug}`
 }
 
-const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
-  ...defaultConverters,
-  ...LinkJSXConverter({ internalDocToHref }),
-  blocks: {
-    banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
-    mediaBlock: ({ node }) => (
-      <MediaBlock
-        className="col-span-3 col-start-1"
-        imgClassName="m-0"
-        {...node.fields}
-        captionClassName="mx-auto max-w-[48rem]"
-        enableGutter={false}
-        disableInnerContainer
-      />
-    ),
-    mediaCollage: ({ node }) => (
+function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunction<NodeTypes> {
+  return ({ defaultConverters }) => ({
+    ...defaultConverters,
+    ...LinkJSXConverter({ internalDocToHref }),
+    blocks: {
+      banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
+      mediaBlock: ({ node }) => (
+        <MediaBlock
+          className="col-span-3 col-start-1"
+          imgClassName="m-0"
+          {...node.fields}
+          captionClassName="mx-auto max-w-[48rem]"
+          enableGutter={false}
+          disableInnerContainer
+        />
+      ),
+      mediaCollage: ({ node }) => (
       <MediaCollageBlock {...node.fields} />
-    ),
-    code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
-    cta: ({ node }) => <CallToActionBlock {...node.fields} />,
-    displayMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
-      <MathBlock {...node.fields} />
-    ),
-    squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
-    twitterEmbed: ({ node }) => <TwitterEmbedBlock {...node.fields} />,
-    youtubeEmbed: ({ node }) => <YouTubeEmbedBlock {...node.fields} />,
-    redditEmbed: ({ node }) => <RedditEmbedBlock {...node.fields} />,
-    blueSkyEmbed: ({ node }) => <BlueSkyEmbedBlock {...node.fields} />,
-    tiktokEmbed: ({ node }) => <TikTokEmbedBlock {...node.fields} />,
-  },
-  inlineBlocks: {
-    inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode<MathBlockProps> }) => (
-      <MathBlock {...node.fields} />
-    ),
-    footnote: ({ node }) => <FootnoteBlock {...node.fields} />,
-  },
-})
+      ),
+      code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
+      cta: ({ node }) => <CallToActionBlock {...node.fields} />,
+      displayMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
+        <MathBlock {...node.fields} />
+      ),
+      squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
+      socialEmbed: ({ node }) => <SocialEmbedBlock {...node.fields} parentDoc={parentDoc} />,
+      // Legacy block types for backward compatibility with existing content
+      twitterEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+        <TwitterEmbedBlock {...node.fields} />
+      ),
+      youtubeEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+        <YouTubeEmbedBlock {...node.fields} />
+      ),
+      redditEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+        <RedditEmbedBlock {...node.fields} />
+      ),
+      blueSkyEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+        <BlueskyEmbedBlock {...node.fields} />
+      ),
+      tiktokEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
+        <TikTokEmbedBlock {...node.fields} />
+      ),
+    },
+    inlineBlocks: {
+      inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode<MathBlockProps> }) => (
+        <MathBlock {...node.fields} />
+      ),
+      footnote: ({ node }) => <FootnoteBlock {...node.fields} />,
+    },
+  })
+}
 
 interface RichTextProps extends React.HTMLAttributes<HTMLDivElement> {
   data: DefaultTypedEditorState
   enableGutter?: boolean
   enableProse?: boolean
+  parentDoc?: ParentDocContext
 }
 
 export default function RichText({
@@ -114,6 +125,7 @@ export default function RichText({
   enableProse = true,
   enableGutter = true,
   data,
+  parentDoc,
   ...rest
 }: RichTextProps): React.ReactNode {
   return (
@@ -129,7 +141,7 @@ export default function RichText({
       )}
       {...rest}
     >
-      <ConvertRichText converters={jsxConverters} data={data} disableContainer />
+      <ConvertRichText converters={createJsxConverters(parentDoc)} data={data} disableContainer />
     </div>
   )
 }

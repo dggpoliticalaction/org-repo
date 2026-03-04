@@ -3,17 +3,20 @@ import { editorFieldLevel } from '@/access/editor'
 import { editorOrSelf, restrictWritersToDraftOnly } from '@/access/editorOrSelf'
 import { writer } from '@/access/writer'
 import { Banner } from '@/blocks/Banner/config'
-import { BlueSkyEmbed } from '@/blocks/BlueSkyEmbed/config'
 import { Code } from '@/blocks/Code/config'
 import { FootnoteBlock } from '@/blocks/Footnote/config'
 import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
-import { RedditEmbed } from '@/blocks/RedditEmbed/config'
+import { SocialEmbed } from '@/blocks/SocialEmbed/config'
+import { LegacyBlueskyEmbed } from '@/blocks/SocialEmbed/embeds/BlueskyEmbed/config'
+import { LegacyRedditEmbed } from '@/blocks/SocialEmbed/embeds/RedditEmbed/config'
+import { LegacyTikTokEmbed } from '@/blocks/SocialEmbed/embeds/TikTokEmbed/config'
+import { LegacyTwitterEmbed } from '@/blocks/SocialEmbed/embeds/TwitterEmbed/config'
+import { LegacyYouTubeEmbed } from '@/blocks/SocialEmbed/embeds/YouTubeEmbed/config'
 import { SquiggleRule } from '@/blocks/SquiggleRule/config'
-import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
-import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
-import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
 import { generateFootnotes } from '@/collections/Articles/hooks/generateFootnotes'
+import { populateAuthors } from '@/collections/Articles/hooks/populateAuthors'
+import { revalidateArticle, revalidateDelete } from '@/collections/Articles/hooks/revalidateArticle'
 import { footnotesArrayField } from '@/fields/footnotes'
 import { type Article } from '@/payload-types'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
@@ -45,8 +48,6 @@ import {
 import { MediaCollageBlock } from '@/blocks/MediaCollageBlock/config'
 import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 import { slugField } from 'payload'
-import { populateAuthors } from './hooks/populateAuthors'
-import { revalidateArticle, revalidateDelete } from './hooks/revalidateArticle'
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
@@ -107,11 +108,13 @@ export const Articles: CollectionConfig = {
                         MediaCollageBlock,
                         DisplayMathBlock,
                         SquiggleRule,
-                        TwitterEmbed,
-                        YouTubeEmbed,
-                        RedditEmbed,
-                        BlueSkyEmbed,
-                        TikTokEmbed,
+                        SocialEmbed,
+                        // Legacy blocks for backward compatibility with existing content
+                        LegacyBlueskyEmbed,
+                        LegacyRedditEmbed,
+                        LegacyTikTokEmbed,
+                        LegacyTwitterEmbed,
+                        LegacyYouTubeEmbed,
                       ],
                       inlineBlocks: [InlineMathBlock, FootnoteBlock],
                     }),

@@ -3,14 +3,12 @@ import type {
   GroupField,
   NamedGroupField,
   RadioField,
-  SelectField,
   SingleRelationshipField,
   TextField,
   TextFieldSingleValidation,
 } from 'payload'
 
 interface LinkFields {
-  appearance?: Partial<SelectField>
   label?: Partial<TextField>
   newTab?: Partial<CheckboxField>
   reference?: Partial<SingleRelationshipField>
@@ -29,14 +27,7 @@ type LinkProps = Omit<NamedGroupField, 'fields' | 'name' | 'type' | 'interfaceNa
  * @returns The link field
  */
 export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField => {
-  const {
-    type = {},
-    newTab = {},
-    reference = {},
-    url = {},
-    label = {},
-    appearance = {},
-  } = component
+  const { type = {}, newTab = {}, reference = {}, url = {}, label = {} } = component
   return {
     label: 'Link',
     ...props,
@@ -124,26 +115,6 @@ export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField =
             required: false,
           },
         ],
-      },
-      {
-        defaultValue: appearance.defaultValue || 'default',
-        options: appearance.options || [
-          {
-            label: 'Default',
-            value: 'default',
-          },
-          {
-            label: 'Outline',
-            value: 'outline',
-          },
-        ],
-        name: 'appearance',
-        type: 'select',
-        admin: {
-          description: 'Choose how the link should be rendered.',
-          hidden: true,
-          ...appearance.admin,
-        },
       },
     ],
   }
