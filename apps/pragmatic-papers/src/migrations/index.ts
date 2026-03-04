@@ -13,6 +13,7 @@ import * as migration_20260111_055750_slug_field_update from './20260111_055750_
 import * as migration_20260117_020339_footnotes from './20260117_020339_footnotes';
 import * as migration_20260217_013724_header_footer_redesign from './20260217_013724_header_footer_redesign';
 import * as migration_20260226_021046_feature_authors from './20260226_021046_feature_authors';
+import * as migration_20260303_233515_auto_generate_volume_title from './20260303_233515_auto_generate_volume_title';
 
 export const migrations = [
   {
@@ -89,5 +90,10 @@ export const migrations = [
     up: migration_20260226_021046_feature_authors.up,
     down: migration_20260226_021046_feature_authors.down,
     name: '20260226_021046_feature_authors',
+  },
+  {
+    up: migration_20260303_233515_auto_generate_volume_title.up,
+    down: migration_20260303_233515_auto_generate_volume_title.down,
+    name: '20260303_233515_auto_generate_volume_title',
   },
 ];
