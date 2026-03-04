@@ -3119,14 +3119,6 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
-        },
-        "link_appearance": {
-          "name": "link_appearance",
-          "type": "enum_articles_footnotes_link_appearance",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'default'"
         }
       },
       "indexes": {
@@ -3819,14 +3811,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "link_appearance": {
-          "name": "link_appearance",
-          "type": "enum__articles_v_version_footnotes_link_appearance",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'default'"
-        },
         "_uuid": {
           "name": "_uuid",
           "type": "varchar",
@@ -4502,6 +4486,13 @@
           "primaryKey": false,
           "notNull": false
         },
+        "auto_generate_title": {
+          "name": "auto_generate_title",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
         "volume_number": {
           "name": "volume_number",
           "type": "numeric",
@@ -4830,6 +4821,13 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
+        },
+        "version_auto_generate_title": {
+          "name": "version_auto_generate_title",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
         },
         "version_volume_number": {
           "name": "version_volume_number",
@@ -10021,7 +10019,7 @@
           "name": "link_label",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -10091,7 +10089,7 @@
           "name": "action_button_enabled",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": false
         },
         "action_button_link_type": {
@@ -10131,6 +10129,14 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
+        },
+        "action_button_variant": {
+          "name": "action_button_variant",
+          "type": "enum_header_action_button_variant",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'default'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -10398,7 +10404,7 @@
           "name": "link_label",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -10878,14 +10884,6 @@
         "custom"
       ]
     },
-    "public.enum_articles_footnotes_link_appearance": {
-      "name": "enum_articles_footnotes_link_appearance",
-      "schema": "public",
-      "values": [
-        "default",
-        "outline"
-      ]
-    },
     "public.enum_articles_status": {
       "name": "enum_articles_status",
       "schema": "public",
@@ -10900,14 +10898,6 @@
       "values": [
         "reference",
         "custom"
-      ]
-    },
-    "public.enum__articles_v_version_footnotes_link_appearance": {
-      "name": "enum__articles_v_version_footnotes_link_appearance",
-      "schema": "public",
-      "values": [
-        "default",
-        "outline"
       ]
     },
     "public.enum__articles_v_version_status": {
@@ -11009,6 +10999,16 @@
         "custom"
       ]
     },
+    "public.enum_header_action_button_variant": {
+      "name": "enum_header_action_button_variant",
+      "schema": "public",
+      "values": [
+        "default",
+        "outline",
+        "ghost",
+        "link"
+      ]
+    },
     "public.enum_footer_nav_items_link_type": {
       "name": "enum_footer_nav_items_link_type",
       "schema": "public",
@@ -11028,6 +11028,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "7461f9e6-0c78-4a14-a97d-7f5716cb4227",
+  "id": "5cb1e646-6f8e-40a7-8e0e-c073e8344d79",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
