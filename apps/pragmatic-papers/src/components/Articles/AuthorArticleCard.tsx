@@ -9,11 +9,9 @@ import type { Article, Volume } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 import useClickableCard from '@/utilities/useClickableCard'
 
-export type AuthorArticleCardData = Pick<Article, 'slug' | 'meta' | 'title'>
-
 export interface AuthorArticleCardProps {
-  article: AuthorArticleCardData
-  volume?: Pick<Volume, 'slug' | 'title'> | null
+  article: Article
+  volume?: Volume
   className?: string
 }
 

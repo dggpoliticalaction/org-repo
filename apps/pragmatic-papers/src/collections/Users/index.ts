@@ -1,9 +1,8 @@
 import { adminOrSelf } from '@/access/adminOrSelf'
 import { admin, adminFieldLevel } from '@/access/admins'
+import { anyone } from '@/access/anyone'
 import { authenticated } from '@/access/authenticated'
-import { generateAuthorSlug } from '@/collections/Users/hooks/generateAuthorSlug'
-import { link } from '@/fields/link2'
-import type { User } from '@/payload-types'
+import { menu } from '@/fields/menu'
 import {
   FixedToolbarFeature,
   HeadingFeature,
@@ -13,7 +12,7 @@ import {
   OrderedListFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-import type { CollectionConfig } from 'payload'
+import { slugField, type CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -21,22 +20,7 @@ export const Users: CollectionConfig = {
     admin: authenticated,
     create: admin,
     delete: admin,
-    // Read access is split:
-    // - Authenticated users: full access (subject to field-level rules)
-    // - Public: only author-type accounts (writers, editors, chief-editors)
-    //   so that /authors pages can query without overrideAccess.
-    read: ({ req }) => {
-      const user = req.user as User | undefined
-
-      if (user) return true
-
-      return {
-        // Never expose admins as authors on public endpoints.
-        role: {
-          in: ['writer', 'editor', 'chief-editor'],
-        },
-      }
-    },
+    read: anyone,
     update: adminOrSelf,
   },
   admin: {
@@ -50,17 +34,11 @@ export const Users: CollectionConfig = {
       type: 'text',
     },
     {
-      name: 'authorSlug',
+      name: 'affiliation',
       type: 'text',
-      unique: true,
       required: false,
       admin: {
-        position: 'sidebar',
-        // Admin accounts are never treated as authors; this slug only applies to
-        // writer/editor accounts that should have a public /authors/{slug} page.
-        description: 'Slug used for the public author URL, e.g. /authors/jane-doe',
-        // Only non-admins can have an author slug
-        condition: ({ id, role }) => Boolean(id) && role !== 'admin',
+        condition: ({ id }) => Boolean(id),
       },
     },
     {
@@ -80,7 +58,20 @@ export const Users: CollectionConfig = {
         },
       }),
       required: false,
+      admin: {
+        condition: ({ id }) => Boolean(id),
+      },
     },
+    slugField({
+      useAsSlug: 'name',
+      overrides: (field) => {
+        field.admin = {
+          condition: ({ id }) => Boolean(id),
+          position: 'sidebar',
+        }
+        return field
+      },
+    }),
     {
       name: 'profileImage',
       type: 'upload',
@@ -88,28 +79,18 @@ export const Users: CollectionConfig = {
       required: false,
       admin: {
         condition: ({ id }) => Boolean(id),
+        position: 'sidebar',
       },
     },
-    {
-      name: 'affiliation',
-      type: 'text',
-      required: false,
-      admin: {
-        condition: ({ id }) => Boolean(id),
-      },
-    },
-    {
-      name: 'socialLinks',
-      label: 'Social Links',
-      type: 'array',
-      required: false,
+    menu({
+      name: 'socials',
+      label: 'Socials',
       maxRows: 6,
       admin: {
-        description: 'Optional social or personal links for this author.',
         condition: ({ id }) => Boolean(id),
+        position: 'sidebar',
       },
-      fields: [link()],
-    },
+    }),
     {
       name: 'role',
       type: 'select',
@@ -117,6 +98,9 @@ export const Users: CollectionConfig = {
       defaultValue: 'user',
       access: {
         update: adminFieldLevel,
+      },
+      admin: {
+        position: 'sidebar',
       },
       options: [
         {
@@ -143,7 +127,4 @@ export const Users: CollectionConfig = {
     },
   ],
   timestamps: true,
-  hooks: {
-    beforeChange: [generateAuthorSlug],
-  },
 }

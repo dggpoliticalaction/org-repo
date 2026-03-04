@@ -1,13 +1,10 @@
-import type { Metadata } from 'next'
-
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
-import React from 'react'
-
-import type { User } from '@/payload-types'
-import { isWriter, isAdmin } from '@/access/checkRole'
 import { AuthorList } from '@/components/Authors/AuthorList'
+import type { User } from '@/payload-types'
+import configPromise from '@payload-config'
+import type { Metadata } from 'next'
+import { draftMode } from 'next/headers'
+import { getPayload } from 'payload'
+import React from 'react'
 
 export const metadata: Metadata = {
   title: 'Authors — Pragmatic Papers',
@@ -23,27 +20,21 @@ async function queryAuthors(): Promise<User[]> {
   const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config: configPromise })
 
-  const result = (await payload.find({
+  const { docs } = await payload.find({
     collection: 'users',
     draft,
     limit: 1000,
     pagination: false,
     sort: 'name',
     depth: 1,
-  })) as { docs: User[] }
-
-  const docs = (result.docs || []) as User[]
-  return docs.filter((user) => {
-    // Never expose admins on the public authors list
-    if (isAdmin(user)) return false
-
-    if (!isWriter(user)) return false
-
-    // Writers and editors can appear as authors; editors require an explicit slug
-    if (user.role === 'writer') return true
-
-    return Boolean(user.authorSlug)
+    where: {
+      role: {
+        in: ['writer', 'editor', 'chief-editor'],
+      },
+    },
   })
+
+  return docs
 }
 
 export default async function AuthorsIndexPage(): Promise<React.ReactNode> {

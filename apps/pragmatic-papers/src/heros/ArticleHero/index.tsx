@@ -4,8 +4,8 @@ import React from 'react'
 import { ImageMedia } from '@/components/Media/ImageMedia'
 import { Squiggle } from '@/components/ui/squiggle'
 import type { Article } from '@/payload-types'
-import { authorSlugFromUser } from '@/utilities/authorSlug'
 import { formatDateTime } from '@/utilities/formatDateTime'
+import { getSeparator } from '@/utilities/getSeparator'
 
 interface ArticleHeroProps {
   article: Article
@@ -14,8 +14,7 @@ interface ArticleHeroProps {
 export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
   const { publishedAt, title, heroImage, authors } = article
 
-  const authorList = (authors || []).filter((author) => typeof author === 'object')
-  const hasAuthors = authorList.length > 0
+  const filteredAuthors = (authors || []).filter((author) => typeof author === 'object')
 
   return (
     <div className="relative flex-col">
@@ -28,31 +27,18 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
       )}
       <div className="relative z-10 flex-col pb-4 dark:text-white">
         <h1 className="mb-6 text-center text-4xl font-bold">{title}</h1>
-        {hasAuthors && (
+        {filteredAuthors.length > 0 && (
           <div className="text-center text-lg">
             <p>
               by{' '}
-              {authorList.map((author, index) => {
-                const slug = author.authorSlug || authorSlugFromUser(author)
-                const href = `/authors/${slug}`
-                const name = author.name || 'Author'
-
-                let separator = ''
-                if (index > 0 && index < authorList.length - 1) {
-                  separator = ', '
-                } else if (index === authorList.length - 1 && authorList.length > 1) {
-                  separator = authorList.length === 2 ? ' and ' : ', and '
-                }
-
-                return (
-                  <React.Fragment key={author.id}>
-                    {index > 0 && separator}
-                    <Link href={href} className="underline-offset-2 hover:underline">
-                      {name}
-                    </Link>
-                  </React.Fragment>
-                )
-              })}
+              {filteredAuthors.map(({ id, slug, name }, index) => (
+                <React.Fragment key={id}>
+                  {getSeparator(index, filteredAuthors.length)}
+                  <Link href={`/authors/${slug}`} className="underline-offset-2 hover:underline">
+                    {name}
+                  </Link>
+                </React.Fragment>
+              ))}
             </p>
           </div>
         )}

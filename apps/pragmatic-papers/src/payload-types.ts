@@ -8,6 +8,16 @@
 
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuField".
+ */
+export type MenuField =
+  | {
+      link?: LinkField;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "FootnotesField".
  */
 export type FootnotesField =
@@ -24,16 +34,6 @@ export type FootnotesField =
        * Optionally add a source link to the footnote.
        */
       attributionEnabled: boolean;
-      link?: LinkField;
-      id?: string | null;
-    }[]
-  | null;
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MenuField".
- */
-export type MenuField =
-  | {
       link?: LinkField;
       id?: string | null;
     }[]
@@ -453,10 +453,7 @@ export interface Media {
 export interface User {
   id: number;
   name?: string | null;
-  /**
-   * Slug used for the public author URL, e.g. /authors/jane-doe
-   */
-  authorSlug?: string | null;
+  affiliation?: string | null;
   biography?: {
     root: {
       type: string;
@@ -472,17 +469,13 @@ export interface User {
     };
     [k: string]: unknown;
   } | null;
-  profileImage?: (number | null) | Media;
-  affiliation?: string | null;
   /**
-   * Optional social or personal links for this author.
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
-  socialLinks?:
-    | {
-        link?: LinkField;
-        id?: string | null;
-      }[]
-    | null;
+  generateSlug?: boolean | null;
+  slug: string;
+  profileImage?: (number | null) | Media;
+  socials?: MenuField;
   role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'user') | null;
   updatedAt: string;
   createdAt: string;
@@ -1497,16 +1490,12 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
-  authorSlug?: T;
-  biography?: T;
-  profileImage?: T;
   affiliation?: T;
-  socialLinks?:
-    | T
-    | {
-        link?: T | LinkFieldSelect<T>;
-        id?: T;
-      };
+  biography?: T;
+  generateSlug?: T;
+  slug?: T;
+  profileImage?: T;
+  socials?: T | MenuFieldSelect<T>;
   role?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1524,6 +1513,14 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuField_select".
+ */
+export interface MenuFieldSelect<T extends boolean = true> {
+  link?: T | LinkFieldSelect<T>;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1827,14 +1824,6 @@ export interface HeaderSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MenuField_select".
- */
-export interface MenuFieldSelect<T extends boolean = true> {
-  link?: T | LinkFieldSelect<T>;
-  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

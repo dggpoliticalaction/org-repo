@@ -1,28 +1,15 @@
 import { Card, CardContent } from '@/components/ui/card'
 import type { Media, User } from '@/payload-types'
-import { authorSlugFromUser } from '@/utilities/authorSlug'
-import { deriveAuthorSocialLinks, type SocialIconKey } from '@/utilities/authorSocialLinks'
-import { Github, Globe, Linkedin, Twitter } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import { AuthorLinks } from './AuthorLinks'
 
 function getInitials(name: string): string {
-  const value = name.trim()
-  if (!value) return ''
-
-  const parts = value.split(/\s+/).filter(Boolean)
-  if (parts.length === 1) {
-    const single = parts[0] ?? ''
-    if (!single) return ''
-    return single.slice(0, 2).toUpperCase()
-  }
-
-  const first = parts[0] ?? ''
-  const second = parts[1] ?? ''
-  if (!first && !second) return ''
-  const chars = `${first[0] ?? ''}${second[0] ?? ''}`
-  return chars.toUpperCase()
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return ''
+  if (parts.length === 1) return parts[0]?.slice(0, 2).toUpperCase() || ''
+  return (parts[0]?.charAt(0) || '') + (parts[1]?.charAt(0) || '').toUpperCase()
 }
 
 function extractProfileImage(author: User): { src?: string; alt: string } {
@@ -69,23 +56,10 @@ export interface AuthorCardProps {
 }
 
 export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
-  const slug = author.authorSlug || authorSlugFromUser(author)
-  const name = author.name || 'Author'
-  const title = author.affiliation || undefined
-
-  const { src: avatarUrl, alt } = extractProfileImage(author)
-  const initials = getInitials(name)
-
+  const { slug, name, affiliation } = author
+  const initials = getInitials(name || 'Author')
   const bioSnippet = extractBioSnippet(author)
-
-  const socialLinks = deriveAuthorSocialLinks(author)
-
-  const iconMap: Record<SocialIconKey, React.ComponentType<{ className?: string }>> = {
-    twitter: Twitter,
-    linkedin: Linkedin,
-    github: Github,
-    generic: Globe,
-  }
+  const { src: avatarUrl, alt } = extractProfileImage(author)
 
   return (
     <Card className="rounded-sm">
@@ -115,10 +89,10 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
                   <Link href={`/authors/${slug}`} className="transition-colors hover:text-brand">
                     {name}
                   </Link>
-                  {title && (
+                  {affiliation && (
                     <span className="ml-1 text-sm font-normal text-muted-foreground">
                       {' - '}
-                      {title}
+                      {affiliation}
                     </span>
                   )}
                 </h3>
@@ -128,32 +102,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
               <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{bioSnippet}</p>
             )}
           </div>
-          {socialLinks.length > 0 && (
-            <div className="mt-1 flex flex-row gap-3">
-              {socialLinks.map((link) => {
-                const Icon = iconMap[link.icon] || Globe
-                const rawLabel = (link.label || '').trim()
-                const kindLabel =
-                  rawLabel ||
-                  (link.icon === 'generic'
-                    ? 'website'
-                    : link.icon.charAt(0).toUpperCase() + link.icon.slice(1))
-
-                return (
-                  <a
-                    key={link.id}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                    aria-label={`${name} on ${kindLabel}`}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </a>
-                )
-              })}
-            </div>
-          )}
+          <AuthorLinks socials={author.socials} />
         </div>
       </CardContent>
     </Card>
