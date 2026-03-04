@@ -17,13 +17,16 @@ interface CreateArticleOptions {
 /**
  * Creates a published article with sensible defaults
  * All seed articles are published so they're immediately visible
+ * @param context - Optional context object passed to Payload's create operation (e.g., to skip hooks)
  */
 export async function createArticle(
   payload: Payload,
   options: CreateArticleOptions,
+  context?: Record<string, unknown>,
 ): Promise<Article> {
   return await payload.create({
     collection: 'articles',
+    ...(context && { context }),
     data: {
       title: options.title,
       content: options.content,
