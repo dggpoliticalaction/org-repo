@@ -36,7 +36,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   BEGIN
     FOR r IN SELECT id, name FROM users LOOP
       base_slug := trim(r.name);
-      base_slug := regexp_replace(base_slug, '[^a-zA-Z0-9\s]', '', 'g');
+      base_slug := regexp_replace(base_slug, '[^a-zA-Z0-9[:space:]]', '', 'g');
       base_slug := lower(regexp_replace(base_slug, '\s+', '-', 'g'));
       candidate := base_slug;
       counter := 2;
