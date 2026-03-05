@@ -9,7 +9,7 @@ Docker configurations for deploying applications to staging, preview, and produc
 **Dockerfiles:**
 
 - `PragmaticPapers.Dockerfile` - Pragmatic Papers (Next.js + Payload CMS)
-- `DiscordBot.Dockerfile` - Discord Bot
+- `DigitalGroundGame.Dockerfile` - DGG Political Action (Next.js + Payload CMS)
 
 **Environment Template:**
 
