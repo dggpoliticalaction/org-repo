@@ -9,7 +9,7 @@ This Turborepo includes the following packages/apps:
 ### Apps and Packages
 
 - `pragmatic-papers`: the Pragmatic Papers website
-- `dgg-political-action`: the DGG Political Action website
+- `discord-bot`: the DGG Political Action discord bot
 - `@repo/ui`: a React component library shared by the web applications
 - `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
@@ -46,7 +46,7 @@ pnpm install
 ```
 3. copy the example .env files 
 ```
-cp apps/pragmatic-papers/.env.example apps/pragmatic-papers/.env && cp apps/dgg-political-action/.env.example apps/dgg-political-action/.env
+cp apps/pragmatic-papers/.env.example apps/pragmatic-papers/.env
 ```
 4. Start dev environment 
 ```
@@ -55,8 +55,6 @@ pnpm dev
 5. Use a browser to view the applications,
 
   - pragmatic papers : `http://localhost:8000`
-  
-  - dgg-political-action:`http://localhost:8888`
 
 
 > [!TIP] 
