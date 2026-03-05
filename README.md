@@ -1,6 +1,6 @@
-# DGG Political Action Org Repo
+# Pragmatic-Papers (Org-Repo)
 
-This monorepo contains the applications of the DGG Political Action organization.
+This monorepo contains the website for pragmaticpapers.com.
 
 ## What's inside?
 
