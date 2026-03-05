@@ -9,7 +9,7 @@ This Turborepo includes the following packages/apps:
 ### Apps and Packages
 
 - `pragmatic-papers`: the Pragmatic Papers website
-- `dgg-political-action`: the DGG Political Action website
+- `discord-bot`: the DGG Political Action discord bot
 - `@repo/ui`: a React component library shared by the web applications
 - `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
