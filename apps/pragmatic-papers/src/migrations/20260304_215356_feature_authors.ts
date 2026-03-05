@@ -1,4 +1,4 @@
-import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
+import { MigrateDownArgs, MigrateUpArgs, sql } from '@payloadcms/db-postgres'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
@@ -25,8 +25,29 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   ALTER TABLE "users" ADD COLUMN "affiliation" varchar;
   ALTER TABLE "users" ADD COLUMN "generate_slug" boolean DEFAULT true;
-  ALTER TABLE "users" ADD COLUMN "slug" varchar NOT NULL;
+  ALTER TABLE "users" ADD COLUMN "slug" varchar;
   ALTER TABLE "users" ADD COLUMN "profile_image_id" integer;
+  DO $$
+  DECLARE
+    r RECORD;
+    base_slug TEXT;
+    candidate TEXT;
+    counter INT;
+  BEGIN
+    FOR r IN SELECT id, name FROM users LOOP
+      base_slug := trim(r.name);
+      base_slug := regexp_replace(base_slug, '[^a-zA-Z0-9[:space:]]', '', 'g');
+      base_slug := lower(regexp_replace(base_slug, '\s+', '-', 'g'));
+      candidate := base_slug;
+      counter := 2;
+      WHILE EXISTS (SELECT 1 FROM users WHERE slug = candidate) LOOP
+        candidate := base_slug || '-' || counter;
+        counter := counter + 1;
+      END LOOP;
+      UPDATE users SET slug = candidate WHERE id = r.id;
+    END LOOP;
+  END $$;
+  ALTER TABLE "users" ALTER COLUMN "slug" SET NOT NULL;
   ALTER TABLE "users_socials" ADD CONSTRAINT "users_socials_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "users_rels" ADD CONSTRAINT "users_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "users_rels" ADD CONSTRAINT "users_rels_pages_fk" FOREIGN KEY ("pages_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;

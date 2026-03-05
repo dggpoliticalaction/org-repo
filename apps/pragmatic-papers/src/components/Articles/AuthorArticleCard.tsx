@@ -37,6 +37,7 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
               <Media
                 resource={metaImage}
                 className="h-full w-full rounded-sm"
+                pictureClassName="h-full w-full"
                 imgClassName="h-full w-full object-cover"
               />
             </Link>
