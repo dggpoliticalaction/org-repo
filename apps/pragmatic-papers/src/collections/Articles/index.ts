@@ -18,6 +18,7 @@ import { generateFootnotes } from '@/collections/Articles/hooks/generateFootnote
 import { populateAuthors } from '@/collections/Articles/hooks/populateAuthors'
 import { revalidateArticle, revalidateDelete } from '@/collections/Articles/hooks/revalidateArticle'
 import { footnotesArrayField } from '@/fields/footnotes'
+import { slugField } from '@/fields/slug'
 import { type Article } from '@/payload-types'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import {
@@ -46,7 +47,6 @@ import {
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
 import type { CollectionBeforeChangeHook, CollectionConfig, FieldHook } from 'payload'
-import { slugField } from 'payload'
 
 const setPublishedAtDefault: FieldHook<Article, Article['publishedAt']> = ({
   siblingData,
@@ -265,9 +265,7 @@ export const Articles: CollectionConfig = {
   },
   versions: {
     drafts: {
-      autosave: {
-        interval: 100, // We set this interval for optimal live preview
-      },
+      autosave: true,
       schedulePublish: true,
     },
     maxPerDoc: 50,
