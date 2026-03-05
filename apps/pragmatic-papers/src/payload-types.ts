@@ -1792,6 +1792,7 @@ export interface Header {
  * via the `definition` "ActionButtonField".
  */
 export interface ActionButtonField {
+  enabled: boolean;
   link?: LinkField;
   /**
    * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
@@ -1802,7 +1803,6 @@ export interface ActionButtonField {
    */
   textColor?: string | null;
   variant?: ('default' | 'outline' | 'ghost' | 'link') | null;
-  enabled: boolean;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1830,11 +1830,11 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "ActionButtonField_select".
  */
 export interface ActionButtonFieldSelect<T extends boolean = true> {
+  enabled?: T;
   link?: T | LinkFieldSelect<T>;
   backgroundColor?: T;
   textColor?: T;
   variant?: T;
-  enabled?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

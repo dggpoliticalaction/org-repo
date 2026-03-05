@@ -10092,6 +10092,13 @@
           "primaryKey": true,
           "notNull": true
         },
+        "action_button_enabled": {
+          "name": "action_button_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "action_button_link_type": {
           "name": "action_button_link_type",
           "type": "enum_header_action_button_link_type",
@@ -10137,13 +10144,6 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'default'"
-        },
-        "action_button_enabled": {
-          "name": "action_button_enabled",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
         },
         "updated_at": {
           "name": "updated_at",
@@ -11035,6 +11035,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "2022674e-9d80-4095-8f9b-7579907d0b3e",
+  "id": "ac8c0092-c430-48f9-bd9e-a34664635d7a",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
