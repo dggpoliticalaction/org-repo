@@ -1,10 +1,10 @@
 import { CMSButton } from '@/components/Button'
-import type { ButtonField as ButtonFieldType } from '@/payload-types'
+import type { ActionButtonField } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 import { ExternalLink } from 'lucide-react'
 
 interface ActionButtonProps extends React.ComponentProps<typeof CMSButton> {
-  button?: ButtonFieldType
+  button?: ActionButtonField
 }
 
 /**
@@ -19,6 +19,7 @@ interface ActionButtonProps extends React.ComponentProps<typeof CMSButton> {
  * <ActionButton button={buttonData} className="hidden lg:flex" />
  */
 export const ActionButton: React.FC<ActionButtonProps> = ({ button, className, ...props }) => {
+  if (!button?.enabled) return null
   return (
     <CMSButton button={button} className={cn('gap-2', className)} {...props}>
       {button?.link?.label || 'Invalid Link'}

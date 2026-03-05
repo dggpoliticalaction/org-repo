@@ -1783,16 +1783,15 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface Header {
   id: number;
   navItems?: MenuField;
-  actionButton?: ButtonField;
+  actionButton: ActionButtonField;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ButtonField".
+ * via the `definition` "ActionButtonField".
  */
-export interface ButtonField {
-  enabled: boolean;
+export interface ActionButtonField {
   link?: LinkField;
   /**
    * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
@@ -1803,6 +1802,7 @@ export interface ButtonField {
    */
   textColor?: string | null;
   variant?: ('default' | 'outline' | 'ghost' | 'link') | null;
+  enabled: boolean;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1820,21 +1820,21 @@ export interface Footer {
  */
 export interface HeaderSelect<T extends boolean = true> {
   navItems?: T | MenuFieldSelect<T>;
-  actionButton?: T | ButtonFieldSelect<T>;
+  actionButton?: T | ActionButtonFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ButtonField_select".
+ * via the `definition` "ActionButtonField_select".
  */
-export interface ButtonFieldSelect<T extends boolean = true> {
-  enabled?: T;
+export interface ActionButtonFieldSelect<T extends boolean = true> {
   link?: T | LinkFieldSelect<T>;
   backgroundColor?: T;
   textColor?: T;
   variant?: T;
+  enabled?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
