@@ -1,34 +1,53 @@
+import type { Media, User } from '@/payload-types'
 import type { Payload } from 'payload'
 import type { User } from '@/payload-types'
 import { createRichTextFromString } from './richtext'
 
-interface Users {
+export interface SeededUsers {
   admin: User
+  chiefEditor: User
   editor: User
   writer1: User
   writer2: User
 }
 
-export const createUsers = async (payload: Payload): Promise<Users> => {
+export const createUsers = async (payload: Payload, media: Media[]): Promise<SeededUsers> => {
   // Create an admin user (just in case you configured your admin account strangely)
   const admin = await payload.create({
     collection: 'users',
     data: {
       email: 'admin@example.com',
       password: 'password123',
-      name: 'Admin User',
+      name: 'John Admin',
       role: 'admin',
+      slug: 'superadmin',
+      profileImage: media[0]?.id,
+    },
+  })
+
+  const chiefEditor = await payload.create({
+    collection: 'users',
+    data: {
+      email: 'chiefeditor@example.com',
+      password: 'password123',
+      name: 'Jane Chief',
+      role: 'chief-editor',
+      slug: 'chiefjane',
+      profileImage: media[1]?.id,
     },
   })
 
   // It's helpful to see what an editor can see with restricted access
   const editor = await payload.create({
     collection: 'users',
+    draft: true,
     data: {
       email: 'editor@example.com',
       password: 'password123',
-      name: 'Editor User',
+      name: 'Stacy The Editor',
       role: 'editor',
+      slug: 'stacytheeditor',
+      profileImage: media[2]?.id,
     },
   })
 
@@ -37,7 +56,7 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
     data: {
       email: 'writer1@example.com',
       password: 'password123',
-      name: 'Writer One',
+      name: 'Teagan Wordsmith',
       role: 'writer',
       biography: createRichTextFromString(
         'A prolific writer specializing in academic research and scientific papers.',
@@ -50,7 +69,7 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
     data: {
       email: 'writer2@example.com',
       password: 'password123',
-      name: 'Writer Two',
+      name: 'Sienna Scribe',
       role: 'writer',
       biography: createRichTextFromString(
         'An experienced researcher with focus on theoretical physics and mathematics.',
@@ -58,5 +77,5 @@ export const createUsers = async (payload: Payload): Promise<Users> => {
     },
   })
 
-  return { admin, editor, writer1, writer2 }
+  return { admin, chiefEditor, editor, writer1, writer2 }
 }

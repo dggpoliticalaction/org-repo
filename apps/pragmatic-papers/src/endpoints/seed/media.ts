@@ -1,4 +1,3 @@
-import type { Payload, File } from 'payload'
 import type { Media } from '@/payload-types'
 
 /**

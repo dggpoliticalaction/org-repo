@@ -1,19 +1,22 @@
-import type { Metadata } from 'next'
-
-import { PayloadRedirects } from '@/components/PayloadRedirects'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
-import React, { cache } from 'react'
-
-import { generateMeta } from '@/utilities/generateMeta'
-import PageClient from './page.client'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import RichText from '@/components/RichText'
-import { formatDateTime } from '@/utilities/formatDateTime'
 import { ArticleCard } from '@/components/ArticleCard'
-import { toRoman } from '@/utilities/toRoman'
+import { AuthorList } from '@/components/Authors/AuthorList'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PayloadRedirects } from '@/components/PayloadRedirects'
+import RichText from '@/components/RichText'
 import { Squiggle } from '@/components/ui/squiggle'
+import type { Article, User } from '@/payload-types'
+import { formatDateTime } from '@/utilities/formatDateTime'
+import { generateMeta } from '@/utilities/generateMeta'
+import { toRoman } from '@/utilities/toRoman'
+import configPromise from '@payload-config'
+import type { Metadata } from 'next'
+import { draftMode } from 'next/headers'
+import type { Payload } from 'payload'
+import { getPayload } from 'payload'
+import React, { cache } from 'react'
+import PageClient from './page.client'
+
+type VolumeArticleRef = number | Article
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -44,7 +47,7 @@ interface Args {
 const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
 
-  const payload = await getPayload({ config: configPromise })
+  const payload: Payload = await getPayload({ config: configPromise })
 
   const result = await payload.find({
     collection: 'volumes',
@@ -61,6 +64,30 @@ const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
   })
 
   return result.docs?.[0] || null
+})
+
+const queryAuthorsByIds = cache(async ({ ids }: { ids: (string | number)[] }): Promise<User[]> => {
+  const numericIds = ids
+    .map((id) => (typeof id === 'string' ? Number(id) : id))
+    .filter((id): id is number => typeof id === 'number' && !Number.isNaN(id))
+
+  if (!numericIds.length) return []
+
+  const payload = await getPayload({ config: configPromise })
+
+  const result = (await payload.find({
+    collection: 'users',
+    limit: numericIds.length,
+    pagination: false,
+    where: {
+      id: {
+        in: numericIds,
+      },
+    },
+    depth: 1,
+  })) as { docs: User[] }
+
+  return result.docs || []
 })
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
@@ -80,10 +107,25 @@ export default async function VolumePage({
 
   if (!volume) return <PayloadRedirects url={url} />
   const { publishedAt, editorsNote, articles } = volume
-  if (articles?.filter((article) => typeof article === 'number')?.length ?? 0 > 0) {
+  if (
+    articles?.filter((article: VolumeArticleRef) => typeof article === 'number')?.length ??
+    0 > 0
+  ) {
     console.error('Fetching volume with unfetched articles', slug)
   }
-  const actualArticles = articles?.filter((article) => typeof article !== 'number')
+  const actualArticles = articles?.filter(
+    (article: VolumeArticleRef): article is Article => typeof article !== 'number',
+  )
+  const volumeAuthorIdSet = new Set<string | number>()
+  actualArticles?.forEach((article) => {
+    const populated = article.populatedAuthors || []
+    populated.forEach((author) => {
+      if (!author?.id) return
+      volumeAuthorIdSet.add(author.id)
+    })
+  })
+
+  const volumeAuthors = await queryAuthorsByIds({ ids: Array.from(volumeAuthorIdSet) })
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-16">
@@ -124,6 +166,7 @@ export default async function VolumePage({
           ))}
         </div>
       </div>
+      <AuthorList aria-label="Volume Authors" authors={volumeAuthors} />
     </div>
   )
 }

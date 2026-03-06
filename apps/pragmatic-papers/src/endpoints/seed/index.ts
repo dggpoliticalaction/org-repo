@@ -49,7 +49,7 @@ export const seed = async (payload: Payload): Promise<void> => {
 
   // Begin seeding
 
-  const { writer1, writer2 } = await createUsers(payload)
+  const media = await createMedia(payload)
 
   const mediaDocs = await Promise.all([
     createMediaFromURL(
@@ -138,11 +138,11 @@ export const seed = async (payload: Payload): Promise<void> => {
         articleIds: volume2Articles,
       },
     ],
-    mediaDocs,
+    media,
   )
 
   // Create a standalone article demonstrating the footnotes feature
-  await createFootnotesArticle(payload, [writer1, writer2], mediaDocs, volume1Articles[0]!)
+  await createFootnotesArticle(payload, [writer1, writer2], media, volume1Articles[0]!)
 
     // Create the media collage demo article
   await createMediaCollageArticle(payload, writer1, mediaDocs)
