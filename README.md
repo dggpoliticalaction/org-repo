@@ -1,6 +1,6 @@
 # Pragmatic-Papers (Org-Repo)
 
-This monorepo contains the website for pragmaticpapers.com.
+This monorepo once contained apps for the discord bot and dggpolitical action website, but it now only contains the website for pragmaticpapers.com.
 
 ## What's inside?
 
