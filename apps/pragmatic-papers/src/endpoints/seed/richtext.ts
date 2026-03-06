@@ -7,7 +7,7 @@ import type {
   SerializedEditorState,
   SerializedElementNode,
   SerializedLexicalNode,
-} from 'lexical'
+} from '@payloadcms/richtext-lexical/lexical'
 import type {
   SerializedParagraphNode,
   SerializedTextNode,

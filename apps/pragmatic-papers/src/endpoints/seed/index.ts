@@ -49,9 +49,7 @@ export const seed = async (payload: Payload): Promise<void> => {
 
   // Begin seeding
 
-  const media = await createMedia(payload)
-
-  const mediaDocs = await Promise.all([
+  const media = await Promise.all([
     createMediaFromURL(
       payload,
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post1.webp',
@@ -73,6 +71,10 @@ export const seed = async (payload: Payload): Promise<void> => {
       'Curving abstract shapes with an orange and blue gradient',
     ),
   ])
+
+  const { writer1, writer2 } = await createUsers(payload, media)
+
+  const mediaDocs = media
 
   // Create articles for volumes
   const writers = [writer1, writer2]

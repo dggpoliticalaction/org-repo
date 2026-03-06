@@ -1,4 +1,3 @@
-import type { SerializedLexicalNode } from 'lexical'
 import type { SocialEmbedBlock, User } from '@/payload-types'
 import type { Payload } from 'payload'
 import { createArticle } from '../articles'
@@ -128,7 +127,7 @@ function createSocialEmbedBlock(item: (typeof SOCIAL_MEDIA_URLS)[number]): Socia
  */
 const createSocialEmbedContent = () => {
   const lipsumParagraphs = generateLoremIpsumParagraphs(2).map((text) => createParagraph(text))
-  const children: SerializedLexicalNode[] = []
+  const children: any[] = []
 
   for (const item of SOCIAL_MEDIA_URLS) {
     children.push(...lipsumParagraphs)
@@ -203,7 +202,7 @@ function createLegacyEmbedBlock(item: (typeof SOCIAL_MEDIA_URLS)[number]): Legac
  */
 const createLegacySocialEmbedContent = () => {
   const lipsumParagraphs = generateLoremIpsumParagraphs(2).map((text) => createParagraph(text))
-  const children: SerializedLexicalNode[] = []
+  const children: any[] = []
 
   for (const item of SOCIAL_MEDIA_URLS) {
     children.push(...lipsumParagraphs)
