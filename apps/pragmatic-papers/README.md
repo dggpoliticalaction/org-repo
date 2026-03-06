@@ -20,7 +20,7 @@ The Pragmatic Papers website built with [Payload CMS](https://payloadcms.com) an
 
 - **Framework**: Next.js 15
 - **CMS**: Payload CMS 3.66
-- **Database**: SQLite (via `@payloadcms/db-sqlite`)
+- **Database**: postgres
 - **Styling**: Tailwind CSS
 - **UI Components**: Radix UI, shadcn/ui
 - **Rich Text**: Lexical editor
@@ -32,26 +32,12 @@ The Pragmatic Papers website built with [Payload CMS](https://payloadcms.com) an
 - Node.js >= 22
 - pnpm >= 10
 
-## Installation
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/dggpoliticalaction/org-repo.git
-cd apps/pragmatic-papers
-```
-
-2. Install dependencies:
-
-```bash
-pnpm install
-```
-
-3. Create a `.env` file in the root directory by copying `.env.example`.
+## Quick Start
+[See root project instructions](../../README.md#quick-start)
 
 ## Development
 
-1. Start the development server:
+1. Start the development scripts:
 
 ```bash
 pnpm dev
@@ -59,8 +45,8 @@ pnpm dev
 
 The application will be available at:
 
-- Frontend: http://localhost:3000
-- Admin Panel: http://localhost:3000/admin
+- Frontend: http://localhost:8000
+- Admin Panel: http://localhost:8000/admin
 
 2. Navigate to the Admin Panel and create your first user account.
 
@@ -71,11 +57,15 @@ The application will be available at:
    > - Email: `demo-author@example.com`
    > - Password: `password`
 
-## Available Scripts
-
+## Available Script
 - `pnpm dev` - Start development server
 - `pnpm build` - Build for production
 - `pnpm start` - Start production server
+
+- `pnpm dev:db`: Start the development docker containers.
+- `pnpm dev:db-down`: Stop the development docker containers.
+- `pnpm dev:db-nuke`: Stop the containers and remove the database volumes.
+
 - `pnpm lint` - Run ESLint
 - `pnpm lint:fix` - Fix ESLint errors
 - `pnpm generate:types` - Generate Payload TypeScript types
@@ -96,52 +86,7 @@ pnpm build
 ```bash
 pnpm start
 ```
-
-## Docker
-
-> **Note**: For most development tasks, running Next.js locally with SQLite is sufficient and recommended. Docker is primarily useful for production deployments, team standardization, or when you need to test with different database configurations.
-
-### When to Use Docker
-
-Docker can be useful in the following scenarios:
-
-- **Production deployments**: Containerizing your application for consistent deployment
-- **Team standardization**: Ensuring all developers use the same environment
-- **Testing different databases**: Switching between SQLite, PostgreSQL, or MongoDB
-- **CI/CD pipelines**: Running tests in isolated environments
-
-### Development with Docker Compose
-
-The project includes a `docker-compose.yml` file, but it's currently configured for MongoDB. Since this project uses SQLite by default, you have to update your Payload config to use the MongoDB adapter.
-
-### Production Docker
-
-For production deployments, use the included `Dockerfile`:
-
-```bash
-# Build the image
-docker build -t pragmatic-papers .
-
-# Run the container
-docker run -p 3000:3000 --env-file .env pragmatic-papers
-```
-
-### Local Development (Recommended)
-
-For most development work, simply run:
-
-```bash
-pnpm dev
-```
-
-This uses SQLite (no separate database server needed) and provides:
-
-- Faster startup times
-- No Docker overhead
-- Easier debugging
-- Simpler environment setup
-
-## Project Structure
+## Example Project Structure
 
 ```
 src/

@@ -8,7 +8,7 @@ This Turborepo includes the following packages/apps:
 
 ### Apps and Packages
 
-- `pragmatic-papers`: the Pragmatic Papers website
+- [`pragmatic-papers`](/apps/pragmatic-papers/README.md): the Pragmatic Papers website
 - `@repo/ui`: a React component library shared by the web applications
 - `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
