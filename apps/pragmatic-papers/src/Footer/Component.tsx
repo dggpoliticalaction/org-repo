@@ -1,7 +1,7 @@
 import { Logo } from '@/components/Logo'
 import { Menu } from '@/components/Menu'
 import type { Footer } from '@/payload-types'
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
+import { ModeToggle } from '@/components/ModeToggle'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import { Copyright } from './Copyright'
@@ -16,7 +16,7 @@ export async function Footer(): Promise<React.ReactElement> {
           <Logo love />
         </Link>
         <div className="flex flex-col-reverse items-start md:flex-row md:items-center">
-          <ThemeSelector />
+          <ModeToggle />
           <Menu menu={navItems} />
         </div>
       </div>
