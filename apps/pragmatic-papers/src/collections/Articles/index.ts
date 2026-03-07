@@ -178,6 +178,16 @@ export const Articles: CollectionConfig = {
       ],
     },
     {
+      name: 'enableMathRendering',
+      type: 'checkbox',
+      label: 'Enable Math Rendering',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Enable MathJax rendering for articles that contain math blocks',
+      },
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       access: {

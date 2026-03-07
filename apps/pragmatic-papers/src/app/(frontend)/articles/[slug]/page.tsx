@@ -7,9 +7,15 @@ import { ArticleHero } from '@/heros/ArticleHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import configPromise from '@payload-config'
 import type { Metadata } from 'next'
+import dynamic from 'next/dynamic'
 import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import React, { cache } from 'react'
+
+const MathJaxProvider = dynamic(
+  () => import('@/providers/MathJaxProvider').then((mod) => mod.MathJaxProvider),
+  { ssr: true },
+)
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -73,9 +79,9 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
-  const { footnotes, content, authors } = article
+  const { footnotes, content, authors, enableMathRendering } = article
 
-  return (
+  const articleContent = (
     <article className="m-auto max-w-3xl p-5 pb-16">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
@@ -92,4 +98,6 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
       <AuthorList aria-label="Article Authors" authors={authors} />
     </article>
   )
+
+  return enableMathRendering ? <MathJaxProvider>{articleContent}</MathJaxProvider> : articleContent
 }
