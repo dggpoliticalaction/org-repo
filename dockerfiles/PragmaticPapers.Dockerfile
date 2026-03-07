@@ -159,9 +159,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Enable Next.js logging
-ENV NEXT_PRIVATE_DEBUG_CACHE=1
-
 # Force all logs to stdout/stderr for Docker
 ENV FORCE_COLOR=0
 
