@@ -1,7 +1,13 @@
 import type { SocialEmbedBlock, User } from '@/payload-types'
 import type { Payload } from 'payload'
 import { createArticle } from '../articles'
-import { createParagraph, createEmptyParagraph, createRichText, generateLoremIpsumParagraphs } from '../richtext'
+import {
+  createParagraph,
+  createEmptyParagraph,
+  createRichText,
+  generateLoremIpsumParagraphs,
+  type SerializedLexicalNode,
+} from '../richtext'
 
 /**
  * One example URL per social media platform.
@@ -127,7 +133,7 @@ function createSocialEmbedBlock(item: (typeof SOCIAL_MEDIA_URLS)[number]): Socia
  */
 const createSocialEmbedContent = () => {
   const lipsumParagraphs = generateLoremIpsumParagraphs(2).map((text) => createParagraph(text))
-  const children: any[] = []
+  const children: SerializedLexicalNode[] = []
 
   for (const item of SOCIAL_MEDIA_URLS) {
     children.push(...lipsumParagraphs)
@@ -202,7 +208,7 @@ function createLegacyEmbedBlock(item: (typeof SOCIAL_MEDIA_URLS)[number]): Legac
  */
 const createLegacySocialEmbedContent = () => {
   const lipsumParagraphs = generateLoremIpsumParagraphs(2).map((text) => createParagraph(text))
-  const children: any[] = []
+  const children: SerializedLexicalNode[] = []
 
   for (const item of SOCIAL_MEDIA_URLS) {
     children.push(...lipsumParagraphs)

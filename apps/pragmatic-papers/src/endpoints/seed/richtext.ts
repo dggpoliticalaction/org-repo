@@ -13,6 +13,9 @@ import type {
   SerializedTextNode,
 } from '@payloadcms/richtext-lexical'
 
+// Re-export commonly used types
+export type { SerializedLexicalNode }
+
 /**
  * We need to make this to match with payloads generated types.
  */
