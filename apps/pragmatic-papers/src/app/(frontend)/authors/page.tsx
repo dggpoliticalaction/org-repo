@@ -1,5 +1,6 @@
 import { AuthorList } from '@/components/Authors/AuthorList'
 import type { User } from '@/payload-types'
+import { timeAsync } from '@/utilities/serverTimingLog'
 import configPromise from '@payload-config'
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
@@ -18,21 +19,25 @@ export const metadata: Metadata = {
 
 async function queryAuthors(): Promise<User[]> {
   const { isEnabled: draft } = await draftMode()
-  const payload = await getPayload({ config: configPromise })
+  const payload = await timeAsync('getPayload (authors-index)', () =>
+    getPayload({ config: configPromise }),
+  )
 
-  const { docs } = await payload.find({
-    collection: 'users',
-    draft,
-    limit: 1000,
-    pagination: false,
-    sort: 'name',
-    depth: 1,
-    where: {
-      role: {
-        in: ['writer', 'editor', 'chief-editor'],
+  const { docs } = await timeAsync('find:users (authors index)', () =>
+    payload.find({
+      collection: 'users',
+      draft,
+      limit: 1000,
+      pagination: false,
+      sort: 'name',
+      depth: 1,
+      where: {
+        role: {
+          in: ['writer', 'editor', 'chief-editor'],
+        },
       },
-    },
-  })
+    }),
+  )
 
   return docs
 }

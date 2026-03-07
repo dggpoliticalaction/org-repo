@@ -5,6 +5,7 @@ import { PayloadRedirects } from '@/components/PayloadRedirects'
 import RichText from '@/components/RichText'
 import { ArticleHero } from '@/heros/ArticleHero'
 import { generateMeta } from '@/utilities/generateMeta'
+import { timeAsync } from '@/utilities/serverTimingLog'
 import configPromise from '@payload-config'
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
@@ -40,20 +41,24 @@ interface Args {
 const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await timeAsync(`getPayload (article:${slug})`, () =>
+    getPayload({ config: configPromise }),
+  )
 
-  const result = await payload.find({
-    collection: 'articles',
-    draft,
-    limit: 1,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      slug: {
-        equals: slug,
+  const result = await timeAsync(`find:articles/${slug}`, () =>
+    payload.find({
+      collection: 'articles',
+      draft,
+      limit: 1,
+      overrideAccess: draft,
+      pagination: false,
+      where: {
+        slug: {
+          equals: slug,
+        },
       },
-    },
-  })
+    }),
+  )
 
   return result.docs?.[0] || null
 })

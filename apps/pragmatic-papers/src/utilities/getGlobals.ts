@@ -3,16 +3,21 @@ import type { Config } from 'src/payload-types'
 import configPromise from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
+import { timeAsync } from './serverTimingLog'
 
 type Global = keyof Config['globals']
 
 async function getGlobal<T extends Global>(slug: T, depth = 0): Promise<Config['globals'][T]> {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await timeAsync(`getPayload (global:${slug})`, () =>
+    getPayload({ config: configPromise }),
+  )
 
-  const global = await payload.findGlobal({
-    slug,
-    depth,
-  })
+  const global = await timeAsync(`findGlobal:${slug}`, () =>
+    payload.findGlobal({
+      slug,
+      depth,
+    }),
+  )
 
   return global as Config['globals'][T]
 }
