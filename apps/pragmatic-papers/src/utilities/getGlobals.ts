@@ -26,7 +26,17 @@ async function getGlobal<T extends Global>(slug: T, depth = 0): Promise<Config['
  * Returns a unstable_cache function mapped with the cache tag for the slug
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const getCachedGlobal = <T extends Global>(slug: T, depth = 0) =>
-  unstable_cache(async () => getGlobal(slug, depth), [slug], {
+export const getCachedGlobal = <T extends Global>(slug: T, depth = 0) => {
+  const cached = unstable_cache(async () => getGlobal(slug, depth), [slug], {
     tags: [`global_${slug}`],
   })
+  return async () => {
+    const start = performance.now()
+    const result = await cached()
+    // eslint-disable-next-line no-console
+    console.log(
+      `[TTFB-TIMING] getCachedGlobal(${slug}): ${(performance.now() - start).toFixed(1)}ms (includes cache lookup)`,
+    )
+    return result
+  }
+}
