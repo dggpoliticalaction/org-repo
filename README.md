@@ -20,7 +20,7 @@ This repo has some additional tools:
 
 ### Requirements
 
-```
+```Bash
 docker
 Node.js version 20.9.0+
 pnpm
@@ -30,7 +30,7 @@ pnpm
 
 ### Quick Start
 
-1. First [clone the repo](#clone) if you have not done so already and then change directory into org-repo.
+1. First clone the repo if you have not done so already and then change directory into org-repo.
 
     ```Bash
     git clone https://github.com/dggpoliticalaction/org-repo.git
