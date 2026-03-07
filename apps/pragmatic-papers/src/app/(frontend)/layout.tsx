@@ -60,6 +60,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           title="Pragmatic Papers - Volumes RSS Feed"
           type="application/rss+xml"
         />
+        {googleAnalyticsId && <GoogleAnalytics gaId={googleAnalyticsId} />}
       </head>
       <body>
         <Providers>
@@ -73,7 +74,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             {children}
           </main>
           <Footer />
-          <GoogleAnalytics gaId={googleAnalyticsId} />
         </Providers>
       </body>
     </html>
