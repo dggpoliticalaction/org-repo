@@ -1,19 +1,13 @@
-# Pragmatic-Papers (Org-Repo)
+# Pragmatic-Papers Website
 
-This monorepo once contained apps for the discord bot and dggpolitical action website, but it now only contains the website for pragmaticpapers.com.
+This repo once contained apps for the discord bot and dggpolitical action website, but it now only contains the website for pragmaticpapers.com.
 
 ## What's inside?
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- [`pragmatic-papers`](/apps/pragmatic-papers/README.md): the Pragmatic Papers website
+- `pragmatic-papers`: the Pragmatic Papers website built with payloadcms and Typescript.
 - `@repo/ui`: a React component library shared by the web applications
 - `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app uses mostly [TypeScript](https://www.typescriptlang.org/).
 
 ### Utilities
 
@@ -24,46 +18,48 @@ This repo has some additional tools:
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
 
-
 ### Requirements
+
 ```
 docker
 Node.js version 20.9.0+
 pnpm
 ```
 
-### Quick Start 
+### [Development Wiki](https://github.com/dggpoliticalaction/org-repo/wiki)
+
+### Quick Start
 
 1. First [clone the repo](#clone) if you have not done so already and then change directory into org-repo.
-```
-git clone https://github.com/dggpoliticalaction/org-repo.git
-cd org-repo
-```
+
+    ```Bash
+    git clone https://github.com/dggpoliticalaction/org-repo.git
+    cd org-repo
+    ```
+
 2. This repository uses `pnpm` as a package manager. install the dependencies:
-```
-pnpm install
-```
-3. copy the example .env files 
-```
-cp apps/pragmatic-papers/.env.example apps/pragmatic-papers/.env
-```
-4. Start dev environment 
-```
-pnpm dev
-```
-5. Use a browser to view the applications,
 
-  - pragmatic papers : `http://localhost:8000`
+    ```Bash
+    pnpm install
+    ```
 
+3. Copy the example .env files
 
-> [!TIP] 
-> You can also start a single application by running `pnpm dev` in the applications root directory.
-> ```
-> cd apps/pragmatic-papers/
-> pnpm dev
-> ```
+    ```Bash
+    cp apps/pragmatic-papers/.env.example apps/pragmatic-papers/.env
+    ```
 
-> [!NOTE] 
+4. Start dev environment
+
+    ```Bash
+    pnpm dev
+    ```
+
+5. Use a browser to access the application,
+
+    [http://localhost:8000](http://localhost:8000)
+
+> [!NOTE]
 > **Dev:Migrations**
 >
 > You do not need to run migrations against your development database, because Drizzle will have already pushed your changes to your database for you.
@@ -85,10 +81,12 @@ Here are the most important scripts available in the root `package.json`:
 - `pnpm ci`: A script for running in a CI environment.
 
 ### Production Migrations
+
 Migrations will be required for non-development database environments.
+
 - Please refer to the offical [Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)
 
-
 ## Useful Links
-  - [Payload Documentation](https://payloadcms.com/docs/getting-started/what-is-payload)
-    - [Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)
+
+- [Payload Documentation](https://payloadcms.com/docs/getting-started/what-is-payload)
+  - [Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)
