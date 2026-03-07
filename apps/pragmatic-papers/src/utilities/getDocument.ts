@@ -30,11 +30,11 @@ async function getDocument(collection: Collection, slug: string, depth = 0) {
 /**
  * Returns a unstable_cache function mapped with the cache tag for the slug
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getCachedDocument = (collection: Collection, slug: string) => {
   const cached = unstable_cache(async () => getDocument(collection, slug), [collection, slug], {
     tags: [`${collection}_${slug}`],
   })
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   return async () => {
     const start = performance.now()
     const result = await cached()

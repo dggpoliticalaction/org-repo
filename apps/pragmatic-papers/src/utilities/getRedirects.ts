@@ -26,11 +26,11 @@ export async function getRedirects(depth = 1) {
  *
  * Cache all redirects together to avoid multiple fetches.
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getCachedRedirects = () => {
   const cached = unstable_cache(async () => getRedirects(), ['redirects'], {
     tags: ['redirects'],
   })
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   return async () => {
     const start = performance.now()
     const result = await cached()
