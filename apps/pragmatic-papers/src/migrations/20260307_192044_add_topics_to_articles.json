@@ -3456,8 +3456,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "tags_id": {
-          "name": "tags_id",
+        "topics_id": {
+          "name": "topics_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -3542,11 +3542,11 @@
           "method": "btree",
           "with": {}
         },
-        "articles_rels_tags_id_idx": {
-          "name": "articles_rels_tags_id_idx",
+        "articles_rels_topics_id_idx": {
+          "name": "articles_rels_topics_id_idx",
           "columns": [
             {
-              "expression": "tags_id",
+              "expression": "topics_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -3630,12 +3630,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "articles_rels_tags_fk": {
-          "name": "articles_rels_tags_fk",
+        "articles_rels_topics_fk": {
+          "name": "articles_rels_topics_fk",
           "tableFrom": "articles_rels",
-          "tableTo": "tags",
+          "tableTo": "topics",
           "columnsFrom": [
-            "tags_id"
+            "topics_id"
           ],
           "columnsTo": [
             "id"
@@ -4305,8 +4305,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "tags_id": {
-          "name": "tags_id",
+        "topics_id": {
+          "name": "topics_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -4391,11 +4391,11 @@
           "method": "btree",
           "with": {}
         },
-        "_articles_v_rels_tags_id_idx": {
-          "name": "_articles_v_rels_tags_id_idx",
+        "_articles_v_rels_topics_id_idx": {
+          "name": "_articles_v_rels_topics_id_idx",
           "columns": [
             {
-              "expression": "tags_id",
+              "expression": "topics_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -4479,12 +4479,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "_articles_v_rels_tags_fk": {
-          "name": "_articles_v_rels_tags_fk",
+        "_articles_v_rels_topics_fk": {
+          "name": "_articles_v_rels_topics_fk",
           "tableFrom": "_articles_v_rels",
-          "tableTo": "tags",
+          "tableTo": "topics",
           "columnsFrom": [
-            "tags_id"
+            "topics_id"
           ],
           "columnsTo": [
             "id"
@@ -6878,8 +6878,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.tags": {
-      "name": "tags",
+    "public.topics": {
+      "name": "topics",
       "schema": "",
       "columns": {
         "id": {
@@ -6929,8 +6929,8 @@
         }
       },
       "indexes": {
-        "tags_name_idx": {
-          "name": "tags_name_idx",
+        "topics_name_idx": {
+          "name": "topics_name_idx",
           "columns": [
             {
               "expression": "name",
@@ -6944,8 +6944,8 @@
           "method": "btree",
           "with": {}
         },
-        "tags_slug_idx": {
-          "name": "tags_slug_idx",
+        "topics_slug_idx": {
+          "name": "topics_slug_idx",
           "columns": [
             {
               "expression": "slug",
@@ -6959,8 +6959,8 @@
           "method": "btree",
           "with": {}
         },
-        "tags_updated_at_idx": {
-          "name": "tags_updated_at_idx",
+        "topics_updated_at_idx": {
+          "name": "topics_updated_at_idx",
           "columns": [
             {
               "expression": "updated_at",
@@ -6974,8 +6974,8 @@
           "method": "btree",
           "with": {}
         },
-        "tags_created_at_idx": {
-          "name": "tags_created_at_idx",
+        "topics_created_at_idx": {
+          "name": "topics_created_at_idx",
           "columns": [
             {
               "expression": "created_at",
@@ -9502,8 +9502,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "tags_id": {
-          "name": "tags_id",
+        "topics_id": {
+          "name": "topics_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -9678,11 +9678,11 @@
           "method": "btree",
           "with": {}
         },
-        "payload_locked_documents_rels_tags_id_idx": {
-          "name": "payload_locked_documents_rels_tags_id_idx",
+        "payload_locked_documents_rels_topics_id_idx": {
+          "name": "payload_locked_documents_rels_topics_id_idx",
           "columns": [
             {
-              "expression": "tags_id",
+              "expression": "topics_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -9844,12 +9844,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "payload_locked_documents_rels_tags_fk": {
-          "name": "payload_locked_documents_rels_tags_fk",
+        "payload_locked_documents_rels_topics_fk": {
+          "name": "payload_locked_documents_rels_topics_fk",
           "tableFrom": "payload_locked_documents_rels",
-          "tableTo": "tags",
+          "tableTo": "topics",
           "columnsFrom": [
-            "tags_id"
+            "topics_id"
           ],
           "columnsTo": [
             "id"
@@ -11256,6 +11256,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "c67fdb08-be7f-4c76-880e-40c33b5fee43",
+  "id": "7af505c2-abf5-4db1-bfcb-71d3e68004e7",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

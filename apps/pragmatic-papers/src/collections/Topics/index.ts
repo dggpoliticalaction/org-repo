@@ -4,8 +4,8 @@ import { editor } from '@/access/editor'
 import { anyone } from '@/access/anyone'
 import { writer } from '@/access/writer'
 
-export const Tags: CollectionConfig = {
-  slug: 'tags',
+export const Topics: CollectionConfig = {
+  slug: 'topics',
   access: {
     create: writer,
     delete: editor,
@@ -27,7 +27,7 @@ export const Tags: CollectionConfig = {
       name: 'description',
       type: 'textarea',
       admin: {
-        description: 'Optional description for this tag',
+        description: 'Optional description for this topic',
       },
     },
     slugField({ useAsSlug: 'name' }),

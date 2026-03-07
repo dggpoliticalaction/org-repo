@@ -244,13 +244,13 @@ export const Articles: CollectionConfig = {
       ],
     },
     {
-      name: 'tags',
+      name: 'topics',
       type: 'relationship',
       admin: {
         position: 'sidebar',
       },
       hasMany: true,
-      relationTo: 'tags',
+      relationTo: 'topics',
     },
     footnotesArrayField(),
     slugField(),
