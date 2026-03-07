@@ -83,7 +83,6 @@ Here are the most important scripts available in the root `package.json`:
 ### Production Migrations
 
 Migrations will be required for non-development database environments.
-
 - Please refer to the offical [Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)
 
 ## Useful Links
