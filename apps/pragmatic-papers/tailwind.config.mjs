@@ -1,6 +1,6 @@
-import tailwindcssAnimate from 'tailwindcss-animate'
-import typography from '@tailwindcss/typography'
 import tailwindcssTextStroke from '@designbycode/tailwindcss-text-stroke'
+import typography from '@tailwindcss/typography'
+import tailwindcssAnimate from 'tailwindcss-animate'
 
 /** @type {import('tailwindcss').Config} */
 const config = {
@@ -54,7 +54,6 @@ const config = {
       colors: {
         /* TODO: Move these definitions to shared styles */
         brand: '#ff401a',
-        brandLight: '#ff7054',
         /* END */
 
         accent: {

@@ -1,16 +1,31 @@
 import { LogomarkIcon } from '@/components/Logo/icons/LogomarkIcon'
 import { cn } from '@/utilities/ui'
+import { type VariantProps, cva } from 'class-variance-authority'
 import React from 'react'
 
-export interface LogoProps extends React.SVGProps<SVGSVGElement> {
+const logoVariants = cva('w-auto text-foreground', {
+  variants: {
+    size: {
+      default: 'h-6 sm:h-7 md:h-8 lg:h-9 xl:h-10',
+      sm: 'h-5 sm:h-6 md:h-7 lg:h-8 xl:h-9',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+})
+
+export interface LogoProps
+  extends React.SVGProps<SVGSVGElement>,
+  VariantProps<typeof logoVariants> {
   love?: boolean
 }
 
-export const Logo: React.FC<LogoProps> = ({ className, ...props }) => {
+export const Logo: React.FC<LogoProps> = ({ className, size, ...props }) => {
   return (
     <>
       <LogomarkIcon
-        className={cn('h-6 w-auto text-foreground sm:h-7 md:h-8 lg:h-9 xl:h-10', className)}
+        className={cn(logoVariants({ size, className }))}
         {...props}
       />
       <span className="sr-only">Pragmatic Papers Logo</span>
