@@ -1,10 +1,10 @@
 import { CMSLink } from '@/components/Link/CMSLink2'
 import { Button } from '@/components/ui/button'
-import type { ButtonField } from '@/payload-types'
+import type { ActionButtonField } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
 interface CMSButtonProps extends React.ComponentProps<typeof Button> {
-  button?: ButtonField
+  button?: ActionButtonField // Eventually replace with ButtonField when it's actually generated in payload-types.ts
 }
 
 /**
