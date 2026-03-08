@@ -1822,15 +1822,15 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface Header {
   id: number;
   navItems?: MenuField;
-  actionButton?: ButtonField;
+  actionButton: ActionButtonField;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ButtonField".
+ * via the `definition` "ActionButtonField".
  */
-export interface ButtonField {
+export interface ActionButtonField {
   enabled: boolean;
   link?: LinkField;
   /**
@@ -1859,16 +1859,16 @@ export interface Footer {
  */
 export interface HeaderSelect<T extends boolean = true> {
   navItems?: T | MenuFieldSelect<T>;
-  actionButton?: T | ButtonFieldSelect<T>;
+  actionButton?: T | ActionButtonFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ButtonField_select".
+ * via the `definition` "ActionButtonField_select".
  */
-export interface ButtonFieldSelect<T extends boolean = true> {
+export interface ActionButtonFieldSelect<T extends boolean = true> {
   enabled?: T;
   link?: T | LinkFieldSelect<T>;
   backgroundColor?: T;

@@ -34,6 +34,8 @@ import { TitleFieldComponent as TitleFieldComponent_5f38144a1c30609056230d234808
 import { NumberSlugComponent as NumberSlugComponent_9af2be3fdd2360e76f1d8ca7ed18129c } from '@/fields/numberSlug/SlugComponent'
 import { RowLabel as RowLabel_b9b9938cf466765c7ed61773d838e057 } from '@/fields/menu/RowLabel'
 import { ColorPickerComponent as ColorPickerComponent_825329501481bc0e04bb53c75811d326 } from '@/fields/colorPicker/ColorPickerComponent'
+import { PaperIconAdmin as PaperIconAdmin_de5f3b464da8d97ce80441fdb9ee9751 } from '@/components/Logo/icons/PaperIcon'
+import { LogomarkIcon as LogomarkIcon_715cf00332be8c15b8f2b121ec0215b0 } from '@/components/Logo/icons/LogomarkIcon'
 import { default as default_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
 import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
@@ -76,6 +78,8 @@ export const importMap = {
   "@/fields/numberSlug/SlugComponent#NumberSlugComponent": NumberSlugComponent_9af2be3fdd2360e76f1d8ca7ed18129c,
   "@/fields/menu/RowLabel#RowLabel": RowLabel_b9b9938cf466765c7ed61773d838e057,
   "@/fields/colorPicker/ColorPickerComponent#ColorPickerComponent": ColorPickerComponent_825329501481bc0e04bb53c75811d326,
+  "@/components/Logo/icons/PaperIcon#PaperIconAdmin": PaperIconAdmin_de5f3b464da8d97ce80441fdb9ee9751,
+  "@/components/Logo/icons/LogomarkIcon#LogomarkIcon": LogomarkIcon_715cf00332be8c15b8f2b121ec0215b0,
   "@/components/BeforeDashboard#default": default_1a7510af427896d367a49dbf838d2de6,
   "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
