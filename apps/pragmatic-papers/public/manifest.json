@@ -4,8 +4,8 @@
   "description": "The Pragmatic Papers is a newsletter covering politics and current events, with a focus on combatting misinformation and voter apathy.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "theme_color": "#ff401a",
   "orientation": "portrait",
   "categories": ["news", "politics", "current events", "education"],
   "icons": [
