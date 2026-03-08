@@ -22,10 +22,10 @@ const collectionLabels = {
 }
 
 const Title: React.FC = () => (
-  <>
-    <PaperIcon className="mr-2 h-3 w-3" />
-    <span>Dashboard</span>
-  </>
+  <div className="group flex items-center gap-2">
+    <PaperIcon className="h-4 w-4 group-hover:text-brand" />
+    <span className="group-hover:underline">Dashboard</span>
+  </div>
 )
 
 export const AdminBar: React.FC<{
