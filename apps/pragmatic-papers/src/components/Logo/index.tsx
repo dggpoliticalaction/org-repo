@@ -12,7 +12,7 @@ export const Logo: React.FC<LogoProps> = ({ className, ...props }) => {
     <>
       <LogomarkIcon
         className={cn(
-          'h-8 w-auto text-black sm:h-9 md:h-10 lg:h-11 xl:h-12 dark:text-white',
+          'h-7 w-auto text-black sm:h-8 md:h-9 lg:h-10 xl:h-11 dark:text-white',
           className,
         )}
         {...props}
