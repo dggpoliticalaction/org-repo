@@ -7,6 +7,7 @@ import { Squiggle } from '@/components/ui/squiggle'
 import type { Article, User } from '@/payload-types'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { generateMeta } from '@/utilities/generateMeta'
+import { timeAsync } from '@/utilities/serverTimingLog'
 import { toRoman } from '@/utilities/toRoman'
 import configPromise from '@payload-config'
 import type { Metadata } from 'next'
@@ -47,21 +48,25 @@ interface Args {
 const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
 
-  const payload: Payload = await getPayload({ config: configPromise })
+  const payload: Payload = await timeAsync(`getPayload (volume:${slug})`, () =>
+    getPayload({ config: configPromise }),
+  )
 
-  const result = await payload.find({
-    collection: 'volumes',
-    draft,
-    limit: 1,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      slug: {
-        equals: slug,
+  const result = await timeAsync(`find:volumes/${slug} (depth:2)`, () =>
+    payload.find({
+      collection: 'volumes',
+      draft,
+      limit: 1,
+      overrideAccess: draft,
+      pagination: false,
+      where: {
+        slug: {
+          equals: slug,
+        },
       },
-    },
-    depth: 2,
-  })
+      depth: 2,
+    }),
+  )
 
   return result.docs?.[0] || null
 })
@@ -73,19 +78,23 @@ const queryAuthorsByIds = cache(async ({ ids }: { ids: (string | number)[] }): P
 
   if (!numericIds.length) return []
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await timeAsync('getPayload (volume-authors)', () =>
+    getPayload({ config: configPromise }),
+  )
 
-  const result = (await payload.find({
-    collection: 'users',
-    limit: numericIds.length,
-    pagination: false,
-    where: {
-      id: {
-        in: numericIds,
+  const result = (await timeAsync(`find:users (${numericIds.length} volume authors)`, () =>
+    payload.find({
+      collection: 'users',
+      limit: numericIds.length,
+      pagination: false,
+      where: {
+        id: {
+          in: numericIds,
+        },
       },
-    },
-    depth: 1,
-  })) as { docs: User[] }
+      depth: 1,
+    }),
+  )) as { docs: User[] }
 
   return result.docs || []
 })

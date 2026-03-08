@@ -15,6 +15,8 @@ import { draftMode } from 'next/headers'
 import React from 'react'
 import './globals.css'
 
+const TIMING_PREFIX = '[TTFB-TIMING]'
+
 const sourceSerif4 = Source_Serif_4({
   variable: '--font-serif',
   subsets: ['latin'],
@@ -26,8 +28,12 @@ const openSans = Open_Sans({
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const layoutStart = performance.now()
   const { isEnabled } = await draftMode()
   const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
+
+  // eslint-disable-next-line no-console
+  console.log(`${TIMING_PREFIX} layout render start: ${(performance.now() - layoutStart).toFixed(1)}ms since layout entry`)
 
   return (
     <html

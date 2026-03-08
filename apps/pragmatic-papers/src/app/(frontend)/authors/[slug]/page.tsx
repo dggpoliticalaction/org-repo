@@ -4,6 +4,7 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import RichText from '@/components/RichText'
 import type { Article as ArticleType, Media, User, Volume } from '@/payload-types'
+import { timeAsync } from '@/utilities/serverTimingLog'
 import config from '@payload-config'
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
@@ -47,29 +48,33 @@ interface Args {
 const queryUserBySlug = cache(async (slug: string): Promise<User | null> => {
   const { isEnabled: draft } = await draftMode()
 
-  const payload = await getPayload({ config })
+  const payload = await timeAsync(`getPayload (author:${slug})`, () =>
+    getPayload({ config }),
+  )
 
-  const { docs } = await payload.find({
-    collection: 'users',
-    draft,
-    limit: 1,
-    pagination: false,
-    where: {
-      and: [
-        {
-          role: {
-            in: ['writer', 'editor', 'chief-editor'],
+  const { docs } = await timeAsync(`find:users/${slug}`, () =>
+    payload.find({
+      collection: 'users',
+      draft,
+      limit: 1,
+      pagination: false,
+      where: {
+        and: [
+          {
+            role: {
+              in: ['writer', 'editor', 'chief-editor'],
+            },
           },
-        },
-        {
-          slug: {
-            equals: slug,
+          {
+            slug: {
+              equals: slug,
+            },
           },
-        },
-      ],
-    },
-    depth: 1,
-  })
+        ],
+      },
+      depth: 1,
+    }),
+  )
 
   return docs[0] || null
 })
@@ -77,20 +82,24 @@ const queryUserBySlug = cache(async (slug: string): Promise<User | null> => {
 const queryArticlesByAuthor = cache(async (userId: number): Promise<ArticleType[]> => {
   const { isEnabled: draft } = await draftMode()
 
-  const payload = await getPayload({ config })
+  const payload = await timeAsync(`getPayload (author-articles:${userId})`, () =>
+    getPayload({ config }),
+  )
 
-  const { docs } = await payload.find({
-    collection: 'articles',
-    draft,
-    limit: 1000,
-    pagination: false,
-    where: {
-      authors: {
-        equals: userId,
+  const { docs } = await timeAsync(`find:articles by author ${userId} (depth:2)`, () =>
+    payload.find({
+      collection: 'articles',
+      draft,
+      limit: 1000,
+      pagination: false,
+      where: {
+        authors: {
+          equals: userId,
+        },
       },
-    },
-    depth: 2,
-  })
+      depth: 2,
+    }),
+  )
 
   return docs
 })
@@ -100,21 +109,25 @@ const queryVolumesForArticles = cache(async (articleIds: number[]): Promise<Volu
 
   const { isEnabled: draft } = await draftMode()
 
-  const payload = await getPayload({ config })
+  const payload = await timeAsync('getPayload (author-volumes)', () =>
+    getPayload({ config }),
+  )
 
-  const { docs } = await payload.find({
-    collection: 'volumes',
-    draft,
-    limit: 1000,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      articles: {
-        in: articleIds,
+  const { docs } = await timeAsync(`find:volumes for ${articleIds.length} articles`, () =>
+    payload.find({
+      collection: 'volumes',
+      draft,
+      limit: 1000,
+      overrideAccess: draft,
+      pagination: false,
+      where: {
+        articles: {
+          in: articleIds,
+        },
       },
-    },
-    depth: 0,
-  })
+      depth: 0,
+    }),
+  )
 
   return docs
 })
