@@ -1,4 +1,5 @@
-import { button } from '@/fields/button'
+import { colorPicker } from '@/fields/colorPicker'
+import { link } from '@/fields/link2'
 import type { NamedGroupField } from 'payload'
 
 /**
@@ -15,23 +16,47 @@ import type { NamedGroupField } from 'payload'
  * @returns {NamedGroupField} A Payload CMS group field definition for an action button.
  */
 export const actionButton = (): NamedGroupField => {
-  const buttonField = button({
-    label: 'Action Button',
-    admin: {
-      condition: (_data, siblingData) => Boolean(siblingData?.enabled),
-    },
-  })
-  // override the name to match the existing Action Button field
-  buttonField.name = 'actionButton'
-  buttonField.fields = [
-    {
-      name: 'enabled',
-      label: 'Enable',
-      type: 'checkbox',
-      defaultValue: false,
-      required: true,
-    },
-    ...buttonField.fields,
-  ]
-  return buttonField
+  return {
+    name: 'actionButton',
+    interfaceName: 'ActionButtonField',
+    type: 'group',
+    required: false,
+    fields: [
+      {
+        name: 'enabled',
+        label: 'Enable',
+        type: 'checkbox',
+        defaultValue: false,
+        required: true,
+      },
+      link({
+        admin: {
+          condition: (_data, siblingData) => Boolean(siblingData?.enabled),
+        },
+      }),
+      {
+        type: 'row',
+        admin: {
+          condition: (_data, siblingData) => Boolean(siblingData?.enabled),
+        },
+        fields: [
+          /**
+           * Background color picker for button.
+           */
+          colorPicker({ name: 'backgroundColor', label: 'Background Color' }),
+          /**
+           * Text color picker for button.
+           */
+          colorPicker({ name: 'textColor', label: 'Text Color' }),
+          {
+            type: 'select',
+            name: 'variant',
+            label: 'Variant',
+            options: ['default', 'outline', 'ghost', 'link'],
+            defaultValue: 'default',
+          },
+        ],
+      },
+    ],
+  }
 }
