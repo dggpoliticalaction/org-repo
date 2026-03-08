@@ -53,8 +53,8 @@ const config = {
       },
       colors: {
         /* TODO: Move these definitions to shared styles */
-        brand: '#0080ff',
-        brandLight: '#56b0ff',
+        brand: '#ff401a',
+        brandLight: '#ff7054',
         /* END */
 
         accent: {

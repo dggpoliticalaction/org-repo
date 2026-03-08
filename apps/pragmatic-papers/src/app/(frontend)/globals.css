@@ -14,8 +14,8 @@
   }
 
   :root {
-    --brand: #56b0ff;
-    --brand-light: #0080ff;
+    --brand: #ff7054;
+    --brand-light: #ff401a;
 
     --background: 0 0% 95%;
     --foreground: 222.2 84% 4.9%;
@@ -56,8 +56,8 @@
     --background: 0 0% 5%;
     --foreground: 210 40% 98%;
 
-    --brand: #0080ff;
-    --brand-light: #56b0ff;
+    --brand: #ff401a;
+    --brand-light: #ff7054;
 
     --card: 0 0% 4%;
     --card-foreground: 210 40% 98%;
