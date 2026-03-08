@@ -81,16 +81,35 @@ export const seed = async (payload: Payload): Promise<void> => {
   const writers = [writer1, writer2]
   validateWriters(writers)
 
+  const volume1Titles = [
+    'The Trolley Problem Revisited: Moral Intuition in the Age of Autonomous Vehicles',
+    'Free Will and Determinism: Can Neuroscience Settle the Debate?',
+    'Plato\'s Cave in the Digital Age: Social Media as Manufactured Reality',
+    'The Ship of Theseus and Personal Identity: Who Are You After a Decade?',
+    'Simone de Beauvoir\'s Ethics of Ambiguity and the Modern Workplace',
+    'Epistemic Injustice: Why Some Voices Are Silenced in Public Discourse',
+  ]
+
+  const volume2Titles = [
+    'Dawkins vs. Blackmore: What Counts as a Meme in the Attention Economy?',
+    'Irony as Ideology: How the Internet Weaponised Humour',
+    'The Half-Life of Virality: Why Memes Die and What Survives',
+  ]
+
   const volume1Articles: number[] = []
-  for (let i = 1; i <= 6; i++) {
+  for (let i = 0; i < volume1Titles.length; i++) {
     const writer = getWriterOrThrow(writers, i)
-    const title = `Article ${i} - Volume 1`
+    const title = volume1Titles[i]!
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
 
     const article = await createArticle(payload, {
       title,
       content: createLoremIpsumContent(Math.floor(Math.random() * 8) + 3),
       authors: [writer.id],
-      slug: `article-${i}-volume-1`,
+      slug,
       meta: {
         title,
         description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
@@ -101,15 +120,19 @@ export const seed = async (payload: Payload): Promise<void> => {
   }
 
   const volume2Articles: number[] = []
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 0; i < volume2Titles.length; i++) {
     const writer = getWriterOrThrow(writers, i)
-    const title = `Article ${i} - Volume 2`
+    const title = volume2Titles[i]!
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
 
     const article = await createArticle(payload, {
       title,
       content: createLoremIpsumContent(Math.floor(Math.random() * 8) + 3),
       authors: [writer.id],
-      slug: `article-${i}-volume-2`,
+      slug,
       meta: {
         title,
         description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),

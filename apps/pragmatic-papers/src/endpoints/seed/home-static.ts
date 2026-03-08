@@ -15,7 +15,7 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
                 format: 0,
                 mode: 'normal',
                 style: '',
-                text: 'Home',
+                text: 'Volumes',
                 type: 'text',
                 version: 1,
               },
