@@ -26,6 +26,22 @@ export default buildConfig({
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeLogin` statement on line 15.
       beforeLogin: ['@/components/BeforeLogin'],
       beforeDashboard: ['@/components/BeforeDashboard'],
+      graphics: {
+        Icon: '@/components/Logo/icons/PaperIcon#PaperIconAdmin',
+        Logo: '@/components/Logo/icons/LogomarkIcon#LogomarkIcon',
+      },
+    },
+    meta: {
+      title: 'Dashboard',
+      description: 'The Pragmatic Papers Admin Dashboard',
+      icons: [
+        {
+          rel: 'icon',
+          type: 'image/png',
+          url: '/favicon.svg',
+        },
+      ],
+      titleSuffix: ' | The Pragmatic Papers CMS',
     },
     importMap: {
       baseDir: path.resolve(dirname),
