@@ -19,6 +19,7 @@ export const seed = async (payload: Payload): Promise<void> => {
       email: {
         in: [
           'admin@example.com',
+          'chiefeditor@example.com',
           'editor@example.com',
           'writer1@example.com',
           'writer2@example.com',
