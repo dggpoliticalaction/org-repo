@@ -3,13 +3,13 @@
 import type { PayloadAdminBarProps, PayloadMeUser } from '@payloadcms/admin-bar'
 
 import { cn } from '@/utilities/ui'
-import { useSelectedLayoutSegments } from 'next/navigation'
 import { PayloadAdminBar } from '@payloadcms/admin-bar'
+import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 import './index.scss'
 
+import { PaperIcon } from '@/components/Logo/icons/PaperIcon'
 import { getClientSideURL } from '@/utilities/getURL'
 
 const baseClass = 'admin-bar'
@@ -21,7 +21,12 @@ const collectionLabels = {
   },
 }
 
-const Title: React.FC = () => <span>Dashboard</span>
+const Title: React.FC = () => (
+  <>
+    <PaperIcon className="mr-2 h-3 w-3" />
+    <span>Dashboard</span>
+  </>
+)
 
 export const AdminBar: React.FC<{
   adminBarProps?: PayloadAdminBarProps
