@@ -4,8 +4,37 @@ import type { RequiredDataFromCollectionSlug } from 'payload'
 export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
   title: 'Home',
   hero: {
-    type: 'lowImpact',
-    richText: null,
+    type: 'pageHero',
+    richText: {
+      root: {
+        children: [
+          {
+            children: [
+              {
+                detail: 0,
+                format: 0,
+                mode: 'normal',
+                style: '',
+                text: 'Home',
+                type: 'text',
+                version: 1,
+              },
+            ],
+            direction: 'ltr' as const,
+            format: '' as const,
+            indent: 0,
+            tag: 'h1',
+            type: 'heading',
+            version: 1,
+          },
+        ],
+        direction: 'ltr' as const,
+        format: '' as const,
+        indent: 0,
+        type: 'root',
+        version: 1,
+      },
+    },
     links: [],
     media: null,
   },

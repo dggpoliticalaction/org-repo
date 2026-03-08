@@ -157,14 +157,23 @@ export const seed = async (payload: Payload): Promise<void> => {
   })
 
   // Create pages for menus
-  const { aboutPage, contactPage, privacyPolicyPage, termsOfUsePage } = await createPages(payload)
+  const {
+    aboutPage,
+    articlesPage,
+    contactPage,
+    privacyPolicyPage,
+    termsOfUsePage,
+    volumesPage,
+  } = await createPages(payload)
 
   await createMenus(payload, {
     homePage,
     aboutPage,
+    articlesPage,
     contactPage,
     privacyPolicyPage,
     termsOfUsePage,
+    volumesPage,
   })
 
   await createSocialEmbedArticle(payload, writer1, mediaDocs)
