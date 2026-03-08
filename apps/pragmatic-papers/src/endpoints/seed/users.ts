@@ -59,9 +59,37 @@ export const createUsers = async (payload: Payload, media: Media[]): Promise<See
       name: 'Teagan Wordsmith',
       slug: 'teagan-wordsmith',
       role: 'writer',
+      affiliation: "Senior Research Fellow, Pragmatic Papers Institute",
       biography: createRichTextFromString(
         'A prolific writer specializing in academic research and scientific papers.',
       ),
+      profileImage: media[3]?.id,
+      socials: [
+        {
+          link: {
+            type: 'custom',
+            url: 'https://twitter.com/writer_one',
+            label: 'Twitter',
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: 'custom',
+            url: 'https://github.com/writer-one',
+            label: 'GitHub',
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: 'custom',
+            url: 'https://scholar.google.com',
+            label: 'Google Scholar',
+            newTab: true,
+          },
+        }
+      ],
     },
   })
 
@@ -74,9 +102,37 @@ export const createUsers = async (payload: Payload, media: Media[]): Promise<See
       name: 'Sienna Scribe',
       slug: 'sienna-scribe',
       role: 'writer',
+      affiliation: "Associate Editor, Department of Theoretical Studies",
       biography: createRichTextFromString(
         'An experienced researcher with focus on theoretical physics and mathematics.',
       ),
+      profileImage: media[0]?.id,
+      socials: [
+        {
+          link: {
+            type: 'custom',
+            url: 'https://twitter.com/writer_two',
+            label: 'Twitter',
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: 'custom',
+            url: 'https://github.com/writer-two',
+            label: 'GitHub',
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: 'custom',
+            url: 'https://orcid.org',
+            label: 'ORCID',
+            newTab: true,
+          },
+        },
+      ],
     },
   })
 
