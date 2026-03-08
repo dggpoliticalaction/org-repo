@@ -1,4 +1,4 @@
-import type { SocialEmbedBlock, User } from '@/payload-types'
+import type { Media, SocialEmbedBlock, User } from '@/payload-types'
 import type { Payload } from 'payload'
 import { createArticle } from '../articles'
 import {
@@ -220,7 +220,11 @@ const createLegacySocialEmbedContent = () => {
   return createRichText(children)
 }
 
-export const createSocialEmbedArticle = async (payload: Payload, writer: User): Promise<number> => {
+export const createSocialEmbedArticle = async (
+  payload: Payload,
+  writer: User,
+  mediaDocs: Media[],
+): Promise<number> => {
   if (!writer?.id) {
     throw new Error('Writer must have an ID')
   }
@@ -237,6 +241,7 @@ export const createSocialEmbedArticle = async (payload: Payload, writer: User): 
       meta: {
         description:
           'Test article containing all possible social media block variations from the HOSTNAMES map.',
+        image: mediaDocs[0]?.id ?? undefined,
       },
     },
     {
@@ -252,6 +257,7 @@ export const createSocialEmbedArticle = async (payload: Payload, writer: User): 
 export const createLegacySocialEmbedArticle = async (
   payload: Payload,
   writer: User,
+  mediaDocs: Media[],
 ): Promise<number> => {
   if (!writer?.id) {
     throw new Error('Writer must have an ID')
@@ -269,6 +275,7 @@ export const createLegacySocialEmbedArticle = async (
       meta: {
         description:
           'Test article containing all legacy social media block variations using the old blockType structure (twitterEmbed, youtubeEmbed, etc.).',
+        image: mediaDocs[0]?.id ?? undefined,
       },
     },
     {

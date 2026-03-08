@@ -167,6 +167,6 @@ export const seed = async (payload: Payload): Promise<void> => {
     termsOfUsePage,
   })
 
-  await createSocialEmbedArticle(payload, writer1)
-  await createLegacySocialEmbedArticle(payload, writer1)
+  await createSocialEmbedArticle(payload, writer1, mediaDocs)
+  await createLegacySocialEmbedArticle(payload, writer1, mediaDocs)
 }
