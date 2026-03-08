@@ -174,6 +174,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/stand
 # These are not included in standalone by default as they should be served by CDN
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./apps/pragmatic-papers/.next/static
 
+# Copy build-time cache (ISR pages, unstable_cache data)
+# Without this, all caches start cold on every deploy
+COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/cache ./apps/pragmatic-papers/.next/cache
+
 # Copy public folder (images, fonts, etc.)
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
 
