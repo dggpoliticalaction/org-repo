@@ -7,7 +7,7 @@ export interface LogoProps extends React.SVGProps<SVGSVGElement> {
   love?: boolean
 }
 
-export const Logo: React.FC<LogoProps> = ({ love, className, ...props }) => {
+export const Logo: React.FC<LogoProps> = ({ className, ...props }) => {
   return (
     <>
       <LogomarkIcon
