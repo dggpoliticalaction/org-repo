@@ -13,6 +13,7 @@ const NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https:
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  compress: false, // Let Traefik handle compression so Next.js can stream responses
   images: {
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL, NEXT_PUBLIC_SUPABASE_URL].map((item) => {
