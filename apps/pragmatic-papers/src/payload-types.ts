@@ -334,9 +334,6 @@ export interface Article {
     image?: (number | null) | Media;
     description?: string | null;
   };
-  /**
-   * Enable MathJax rendering for articles that contain math blocks
-   */
   enableMathRendering?: boolean | null;
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
