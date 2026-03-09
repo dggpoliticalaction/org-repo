@@ -145,10 +145,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    'article-recommendations': ArticleRecommendation;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    'article-recommendations': ArticleRecommendationsSelect<false> | ArticleRecommendationsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -1816,6 +1818,29 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "article-recommendations".
+ */
+export interface ArticleRecommendation {
+  id: number;
+  lastUpdated?: string | null;
+  /**
+   * Ranked articles by engagement score. Updated automatically by the recommendations script.
+   */
+  rankings?:
+    | {
+        article: number | Article;
+        /**
+         * Volume-normalized scrolledUsers * recency decay
+         */
+        engagementScore: number;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1842,6 +1867,23 @@ export interface ActionButtonFieldSelect<T extends boolean = true> {
  */
 export interface FooterSelect<T extends boolean = true> {
   navItems?: T | MenuFieldSelect<T>;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "article-recommendations_select".
+ */
+export interface ArticleRecommendationsSelect<T extends boolean = true> {
+  lastUpdated?: T;
+  rankings?:
+    | T
+    | {
+        article?: T;
+        engagementScore?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

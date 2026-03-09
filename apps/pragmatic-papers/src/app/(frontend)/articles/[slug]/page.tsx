@@ -2,6 +2,7 @@ import { AuthorList } from '@/components/Authors/AuthorList'
 import { FootnoteList } from '@/components/FootnoteList'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
+import { RecommendedArticles } from '@/components/RecommendedArticles'
 import RichText from '@/components/RichText'
 import { ArticleHero } from '@/heros/ArticleHero'
 import { generateMeta } from '@/utilities/generateMeta'
@@ -76,20 +77,24 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   const { footnotes, content, authors } = article
 
   return (
-    <article className="m-auto max-w-3xl p-5 pb-16">
-      {/* Allows redirects for valid pages too */}
-      <PayloadRedirects disableNotFound url={url} />
+    <div className="m-auto max-w-3xl p-5 pb-16 xl:flex xl:max-w-6xl xl:gap-12">
+      <article className="min-w-0 max-w-3xl flex-1">
+        {/* Allows redirects for valid pages too */}
+        <PayloadRedirects disableNotFound url={url} />
 
-      {draft && <LivePreviewListener />}
+        {draft && <LivePreviewListener />}
 
-      <ArticleHero article={article} />
-      <RichText
-        data={content}
-        enableGutter={false}
-        parentDoc={{ collection: 'articles', id: article.id }}
-      />
-      <FootnoteList footnotes={footnotes} />
-      <AuthorList aria-label="Article Authors" authors={authors} />
-    </article>
+        <ArticleHero article={article} />
+        <RichText
+          data={content}
+          enableGutter={false}
+          parentDoc={{ collection: 'articles', id: article.id }}
+        />
+        <FootnoteList footnotes={footnotes} />
+        <AuthorList aria-label="Article Authors" authors={authors} />
+      </article>
+
+      <RecommendedArticles currentArticleSlug={slug} />
+    </div>
   )
 }

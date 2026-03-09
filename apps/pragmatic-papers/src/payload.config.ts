@@ -7,6 +7,7 @@ import { Volumes } from '@/collections/Volumes'
 import { Webhooks } from '@/collections/Webhooks'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { Footer } from '@/Footer/config'
+import { ArticleRecommendations } from '@/globals/ArticleRecommendations/config'
 import { Header } from '@/Header/config'
 import { plugins } from '@/plugins'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -79,7 +80,7 @@ export default buildConfig({
   }),
   collections: [Pages, Articles, Volumes, Media, Categories, Users, Webhooks],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [Header, Footer, ArticleRecommendations],
   plugins: [...plugins],
   secret: process.env.PAYLOAD_SECRET,
   sharp: sharp as unknown as SharpDependency,
