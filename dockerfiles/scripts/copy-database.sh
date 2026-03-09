@@ -110,10 +110,16 @@ DB_EXISTS=$(psql -h "$TARGET_HOST" -p "$TARGET_PORT" -U "$TARGET_USER" -d postgr
 
 if [ "$DB_EXISTS" = "1" ]; then
     echo "Target database exists. Dropping existing target '$TARGET_DB'..."
+    
+    #Terminate connections (Run separately)
     psql -h "$TARGET_HOST" -p "$TARGET_PORT" -U "$TARGET_USER" -d postgres -c "
-        SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$TARGET_DB' AND pid <> pg_backend_pid();
-        DROP DATABASE \"$TARGET_DB\";
-    "
+        SELECT pg_terminate_backend(pid) 
+        FROM pg_stat_activity 
+        WHERE datname = '$TARGET_DB' 
+          AND pid <> pg_backend_pid();"
+          
+    #Drop the database (Run separately)
+    psql -h "$TARGET_HOST" -p "$TARGET_PORT" -U "$TARGET_USER" -d postgres -c "DROP DATABASE \"$TARGET_DB\";"
 fi
 
 # 2. Create fresh target database
