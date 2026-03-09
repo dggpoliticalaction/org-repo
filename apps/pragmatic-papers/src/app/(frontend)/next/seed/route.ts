@@ -1,15 +1,16 @@
+import { isAdmin } from '@/access/checkRole'
+import { seed } from '@/endpoints/seed'
+import type { User } from '@/payload-types'
+import configPromise from '@payload-config'
 import { NextResponse, type NextRequest } from 'next/server'
 import type { PayloadRequest } from 'payload'
 import { getPayload } from 'payload'
-import { seed } from '@/endpoints/seed'
-import { isAdmin } from '@/access/checkRole'
-import type { User } from '@/payload-types'
-import configPromise from '@payload-config'
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    if (process.env.NODE_ENV === 'production') {
-      return NextResponse.json({ error: 'Seeding is not allowed in production' }, { status: 403 })
+    // Seeding is reachable by endpoint on dev and staging; leave unset (or "false") in production.
+    if (process.env.SEED_ENABLED !== 'true') {
+      return NextResponse.json({ error: 'Seeding is not enabled in this environment' }, { status: 403 })
     }
 
     const payload = await getPayload({ config: configPromise })

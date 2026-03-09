@@ -7,8 +7,7 @@ import './index.scss'
 const baseClass = 'before-dashboard'
 
 const BeforeDashboard: React.FC = () => {
-  // These are dev instructions, so we don't want to show them in production but feel free to make a component
-  // for the production dashboard if you want to show something different.
+  // Seeding ui is only visible on dev. Staging seeding is only reachable by endpoint.
   if (process.env.NODE_ENV === 'production') {
     return null
   }

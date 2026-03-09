@@ -20,7 +20,8 @@
         "CRON_SECRET",
         "NEXT_PUBLIC_GOOGLE_ANALYTICS_ID",
         "NEXT_PUBLIC_SERVER_URL",
-        "NEXT_PUBLIC_SUPABASE_URL"
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "SEED_ENABLED"
       ]
     },
     "lint": {
@@ -76,7 +77,8 @@
         "CRON_SECRET",
         "NEXT_PUBLIC_GOOGLE_ANALYTICS_ID",
         "NEXT_PUBLIC_SERVER_URL",
-        "NEXT_PUBLIC_SUPABASE_URL"
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "SEED_ENABLED"
       ]
     }
   }
