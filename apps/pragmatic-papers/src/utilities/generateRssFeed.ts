@@ -1,19 +1,55 @@
 import { socialEmbedBlockToHTML } from '@/blocks/SocialEmbed/helpers/socialEmbedBlockToHTML'
-import type { SerializedInlineBlockNode } from '@payloadcms/richtext-lexical'
+import type { SerializedBlockNode, SerializedInlineBlockNode } from '@payloadcms/richtext-lexical'
 import {
   convertLexicalToHTML,
   type HTMLConvertersFunction,
 } from '@payloadcms/richtext-lexical/html'
 import { Feed } from 'feed'
-import type { Article, FootnoteBlock, Media, Volume } from '../payload-types'
+import type { Article, FootnoteBlock, Media, MediaBlock, MediaCollageBlock, Volume } from '../payload-types'
 import { getServerSideURL } from './getURL'
 
 const SITE_URL = getServerSideURL()
+
+const getMediaUrl = (url: string) => {
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url
+  }
+  return `${SITE_URL}${url}`
+}
+
+const resolveMedia = (media: number | Media): Media | null =>
+  typeof media === 'object' ? media : null
+
+const mediaBlockToHTML = ({ node }: { node: SerializedBlockNode<MediaBlock> }): string => {
+  const media = resolveMedia(node.fields.media)
+  if (!media?.url) return ''
+  const src = getMediaUrl(media.url)
+  const alt = media.alt ?? ''
+  const widthAttr = media.width ? ` width="${media.width}"` : ''
+  const heightAttr = media.height ? ` height="${media.height}"` : ''
+  return `<figure><img src="${src}" alt="${alt}"${widthAttr}${heightAttr} style="max-width:100%;height:auto;" /></figure>`
+}
+
+const mediaCollageBlockToHTML = ({ node }: { node: SerializedBlockNode<MediaCollageBlock> }): string => {
+  const imgs = node.fields.images
+    .map(({ media }) => {
+      const resolved = resolveMedia(media)
+      if (!resolved?.url) return ''
+      const src = getMediaUrl(resolved.url)
+      const alt = resolved.alt ?? ''
+      return `<img src="${src}" alt="${alt}" style="max-width:100%;height:auto;" />`
+    })
+    .filter(Boolean)
+    .join('\n')
+  return imgs ? `<figure style="display:flex;flex-wrap:wrap;gap:0.5em;">${imgs}</figure>` : ''
+}
 
 const htmlConverters: HTMLConvertersFunction = ({ defaultConverters }) => ({
   ...defaultConverters,
   blocks: {
     ...defaultConverters.blocks,
+    mediaBlock: mediaBlockToHTML,
+    mediaCollage: mediaCollageBlockToHTML,
     socialEmbed: socialEmbedBlockToHTML,
     blueSkyEmbed: socialEmbedBlockToHTML,
     redditEmbed: socialEmbedBlockToHTML,
@@ -37,13 +73,6 @@ const htmlConverters: HTMLConvertersFunction = ({ defaultConverters }) => ({
     },
   },
 })
-
-const getMediaUrl = (url: string) => {
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url
-  }
-  return `${SITE_URL}${url}`
-}
 
 const formatFootnotes = (footnotes?: Article['footnotes']): string => {
   if (!footnotes || !footnotes.length) return ''
