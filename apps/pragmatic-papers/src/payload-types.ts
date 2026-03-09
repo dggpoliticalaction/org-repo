@@ -111,6 +111,7 @@ export interface Config {
     categories: Category;
     users: User;
     webhooks: Webhook;
+    topics: Topic;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -129,6 +130,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     webhooks: WebhooksSelect<false> | WebhooksSelect<true>;
+    topics: TopicsSelect<false> | TopicsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -343,6 +345,7 @@ export interface Article {
         name?: string | null;
       }[]
     | null;
+  topics?: (number | Topic)[] | null;
   footnotes?: FootnotesField;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -517,6 +520,25 @@ export interface LinkField {
       } | null);
   url?: string | null;
   label?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topics".
+ */
+export interface Topic {
+  id: number;
+  name: string;
+  /**
+   * Optional description for this topic
+   */
+  description?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1105,6 +1127,10 @@ export interface PayloadLockedDocument {
         value: number | Webhook;
       } | null)
     | ({
+        relationTo: 'topics';
+        value: number | Topic;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: number | Redirect;
       } | null)
@@ -1316,6 +1342,7 @@ export interface ArticlesSelect<T extends boolean = true> {
         id?: T;
         name?: T;
       };
+  topics?: T;
   footnotes?: T | FootnotesFieldSelect<T>;
   generateSlug?: T;
   slug?: T;
@@ -1537,6 +1564,18 @@ export interface WebhooksSelect<T extends boolean = true> {
         timePushed?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topics_select".
+ */
+export interface TopicsSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  generateSlug?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }
