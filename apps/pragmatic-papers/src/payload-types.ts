@@ -1910,6 +1910,20 @@ export interface CodeBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaCollageBlock".
+ */
+export interface MediaCollageBlock {
+  layout: 'grid' | 'carousel';
+  images: {
+    media: number | Media;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaCollage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "DisplayMathBlock".
  */
 export interface DisplayMathBlock {
