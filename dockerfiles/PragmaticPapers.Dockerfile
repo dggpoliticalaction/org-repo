@@ -168,12 +168,11 @@ RUN mkdir -p /app/apps/pragmatic-papers/public/media && \
     chmod -R 755 /app/apps/pragmatic-papers/public/media
 
 # STARTUP SCRIPT: Sources the isolated DB URI if it exists, otherwise uses defaults
-
-
-
 RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'set -e' >> /app/start.sh && \
+    # Source the build.env to get the potentially modified DATABASE_URI for preview deployments
     echo 'if [ -f /app/build.env ]; then . /app/build.env; fi' >> /app/start.sh && \
+    
     echo 'echo "========================================="' >> /app/start.sh && \
     echo 'echo "Starting Pragmatic Papers Application"' >> /app/start.sh && \
     echo 'echo "Node version: $(node --version)"' >> /app/start.sh && \
