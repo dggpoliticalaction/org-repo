@@ -26,7 +26,7 @@ export const Vespucci7Layout: React.FC<{ slots: ArticleGridSlots }> = ({ slots }
       <div className="md:order-last md:row-span-2 lg:order-none lg:col-start-2 lg:row-span-2">
         <ArticleTile
           article={slots.featured.article}
-          variant="featured-large"
+          variant="featured"
           kicker={slots.featured.kicker}
           overrideTitle={slots.featured.overrideTitle}
           className="h-full"
@@ -37,15 +37,13 @@ export const Vespucci7Layout: React.FC<{ slots: ArticleGridSlots }> = ({ slots }
       <div className="flex flex-col gap-6 md:order-first md:row-span-2 lg:col-start-1 lg:row-span-2">
         <ArticleTile
           article={slots.a.article}
-          variant="featured"
-          secondary
+          variant="medium"
           kicker={slots.a.kicker}
           overrideTitle={slots.a.overrideTitle}
         />
         <ArticleTile
           article={slots.b.article}
-          variant="featured"
-          secondary
+          variant="medium"
           kicker={slots.b.kicker}
           overrideTitle={slots.b.overrideTitle}
         />

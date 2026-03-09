@@ -12,56 +12,51 @@ export type ArticleTileData = Pick<
   'title' | 'slug' | 'heroImage' | 'populatedAuthors' | 'publishedAt' | 'meta'
 >
 
+/**
+ * Variants:
+ *   featured     — large primary tile: image above, large title (h3), description, byline
+ *   medium       — secondary tile: image above, medium title (h4), description, byline
+ *   medium-right — same as medium but image on the right (used for wide Fibonacci featured)
+ *   compact      — no image, no description, no byline: kicker + title (h4 small) + timestamp
+ */
 const articleTileVariants = cva('group relative', {
   variants: {
     variant: {
       featured: 'flex flex-col',
-      'featured-large': 'flex flex-col',
-      'featured-right': 'flex flex-col sm:flex-row-reverse',
-      'featured-left': 'flex flex-col sm:flex-row',
-      default: 'flex flex-row',
+      medium: 'flex flex-col',
       compact: 'flex flex-col',
     },
   },
-  defaultVariants: {
-    variant: 'default',
-  },
+  defaultVariants: { variant: 'medium' },
 })
 
 export interface ArticleTileProps extends VariantProps<typeof articleTileVariants> {
   article: ArticleTileData
   kicker?: string | null
   overrideTitle?: string | null
-  secondary?: boolean
   className?: string
 }
 
-const VARIANTS_WITH_MEDIA = ['featured', 'featured-large', 'featured-right', 'featured-left', 'default'] as const
-const VARIANTS_WITH_BYLINE = ['featured', 'featured-large', 'featured-right', 'featured-left', 'default'] as const
-
 export const ArticleTile: React.FC<ArticleTileProps> = ({
   article,
-  variant = 'default',
+  variant = 'medium',
   kicker,
   overrideTitle,
-  secondary = false,
   className,
 }) => {
   const { title, slug, heroImage, populatedAuthors, publishedAt, meta } = article
   const displayTitle = overrideTitle || title
   const href = `/articles/${slug}`
-  const description = meta?.description
 
-  const showMedia =
-    heroImage && (VARIANTS_WITH_MEDIA as readonly string[]).includes(variant ?? 'default')
-  const showByline = (VARIANTS_WITH_BYLINE as readonly string[]).includes(variant ?? 'default')
-  const showDescription = description && variant !== 'compact'
-  const isFeatured = variant?.startsWith('featured') ?? false
+  const showMedia = variant !== 'compact' && !!heroImage
 
   const authorNames = populatedAuthors
     ?.filter((a) => a?.name)
     .map((a) => a.name)
     .join(', ')
+
+  const showByline = !!authorNames
+  const showDescription = !!meta?.description
 
   const timeAgo = publishedAt
     ? formatDistanceToNow(new Date(publishedAt), { addSuffix: true })
@@ -91,46 +86,40 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
         )}
 
         {/* Title */}
-        {secondary ? (
-          <h4
-            className={cn(
-              'font-sans font-extrabold leading-tight',
-              'text-base sm:text-lg lg:text-xl',
-            )}
-          >
+        {variant === 'featured' ? (
+          <h3 className="font-sans text-xl font-extrabold leading-tight sm:text-2xl lg:text-3xl">
+            <Link href={href} className="transition-colors hover:text-brand">
+              {displayTitle}
+            </Link>
+          </h3>
+        ) : variant === 'compact' ? (
+          <h4 className="font-sans text-sm font-extrabold leading-tight lg:text-base">
             <Link href={href} className="transition-colors hover:text-brand">
               {displayTitle}
             </Link>
           </h4>
         ) : (
-          <h3
-            className={cn(
-              'font-sans font-extrabold leading-tight',
-              isFeatured ? 'text-xl sm:text-2xl lg:text-3xl' : 'text-base lg:text-lg',
-              variant === 'compact' && 'text-sm lg:text-base',
-            )}
-          >
+          /* medium / medium-right */
+          <h4 className="font-sans text-base font-extrabold leading-tight sm:text-lg lg:text-xl">
             <Link href={href} className="transition-colors hover:text-brand">
               {displayTitle}
             </Link>
-          </h3>
+          </h4>
         )}
 
         {/* Byline */}
-        {showByline && authorNames && (
-          <p className="mt-1 line-clamp-1 font-sans text-sm text-muted-foreground">
-            {authorNames}
-          </p>
+        {showByline && (
+          <p className="mt-1 line-clamp-1 font-sans text-sm text-muted-foreground">{authorNames}</p>
         )}
 
         {/* Description */}
         {showDescription && (
           <p className="mt-2 line-clamp-3 font-sans text-sm text-muted-foreground">
-            {description}
+            {meta!.description}
           </p>
         )}
 
-        {/* Metadata */}
+        {/* Timestamp */}
         {timeAgo && (
           <p className="mt-1 font-sans text-xs text-muted-foreground/70">{timeAgo}</p>
         )}
@@ -139,42 +128,10 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
   )
 }
 
-/**
- * Returns the class for the media wrapper based on variant.
- */
 function mediaWrapperClass(variant: string | null | undefined): string {
-  switch (variant) {
-    case 'featured':
-      return 'relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg'
-    case 'featured-large':
-      return 'relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg'
-    case 'featured-right':
-    case 'featured-left':
-      return 'relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg sm:mb-0 sm:w-1/2 sm:flex-shrink-0'
-    case 'default':
-      return 'relative mr-3 aspect-square w-24 flex-shrink-0 overflow-hidden rounded-lg sm:w-28'
-    default:
-      return 'relative mb-3 overflow-hidden rounded-lg'
-  }
+  return 'relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg'
 }
 
-/**
- * Returns the class for the text wrapper based on variant.
- */
-function textWrapperClass(variant: string | null | undefined): string {
-  switch (variant) {
-    case 'featured':
-    case 'featured-large':
-      return 'flex flex-col'
-    case 'featured-right':
-      return 'flex flex-col justify-center sm:pr-4'
-    case 'featured-left':
-      return 'flex flex-col justify-center sm:pl-4'
-    case 'default':
-      return 'flex min-w-0 flex-col justify-center'
-    case 'compact':
-      return 'flex flex-col'
-    default:
-      return 'flex flex-col'
-  }
+function textWrapperClass(_variant: string | null | undefined): string {
+  return 'flex flex-col'
 }
