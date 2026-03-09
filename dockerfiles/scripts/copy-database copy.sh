@@ -100,71 +100,41 @@ TARGET_HOST=$(echo "$TARGET_PARSED" | cut -d'|' -f3)
 TARGET_PORT=$(echo "$TARGET_PARSED" | cut -d'|' -f4)
 TARGET_DB=$(echo "$TARGET_PARSED" | cut -d'|' -f5)
 
-echo "Source: $SOURCE_USER@$SOURCE_HOST:$SOURCE_PORT/$SOURCE_DB"
-echo "Target: $TARGET_USER@$TARGET_HOST:$TARGET_PORT/$TARGET_DB"
 
-# Export PGPASSWORD for psql/createdb commands
+# echo "Source: $SOURCE_USER@$SOURCE_HOST:$SOURCE_PORT/$SOURCE_DB"
+# echo "Target: $TARGET_USER@$TARGET_HOST:$TARGET_PORT/$TARGET_DB"
+
+# 1. Clean up Target Database if it exists
 export PGPASSWORD="$TARGET_PASSWORD"
-
-# Check if target database already exists
-echo "Checking if target database '$TARGET_DB' exists..."
 DB_EXISTS=$(psql -h "$TARGET_HOST" -p "$TARGET_PORT" -U "$TARGET_USER" -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='$TARGET_DB'" 2>/dev/null || echo "")
 
 if [ "$DB_EXISTS" = "1" ]; then
-    if [ "$FORCE_DATABASE_COPY" = "true" ]; then
-        echo "Target database exists. FORCE_DATABASE_COPY=true, dropping and recreating..."
-        
-        # Terminate existing connections to the target database
-        psql -h "$TARGET_HOST" -p "$TARGET_PORT" -U "$TARGET_USER" -d postgres -c "
-            SELECT pg_terminate_backend(pid) 
-            FROM pg_stat_activity 
-            WHERE datname = '$TARGET_DB' 
-              AND pid <> pg_backend_pid();
-        " || true
-        
-        # Drop the database
-        psql -h "$TARGET_HOST" -p "$TARGET_PORT" -U "$TARGET_USER" -d postgres -c "DROP DATABASE IF EXISTS \"$TARGET_DB\";"
-    else
-        echo "Target database already exists and FORCE_DATABASE_COPY is not true"
-        echo "Skipping database copy step"
-        exit 0
-    fi
+    echo "Target database exists. Dropping existing target '$TARGET_DB'..."
+    
+    #Terminate connections (Run separately)
+    psql -h "$TARGET_HOST" -p "$TARGET_PORT" -U "$TARGET_USER" -d postgres -c "
+        SELECT pg_terminate_backend(pid) 
+        FROM pg_stat_activity 
+        WHERE datname = '$TARGET_DB' 
+          AND pid <> pg_backend_pid();"
+          
+    #Drop the database (Run separately)
+    psql -h "$TARGET_HOST" -p "$TARGET_PORT" -U "$TARGET_USER" -d postgres -c "DROP DATABASE \"$TARGET_DB\";"
 fi
 
-# Check if source and target are on the same server
-if [ "$SOURCE_HOST" = "$TARGET_HOST" ] && [ "$SOURCE_PORT" = "$TARGET_PORT" ]; then
-    echo "Source and target are on the same PostgreSQL server"
-    echo "Using CREATE DATABASE WITH TEMPLATE for efficient copy..."
-    
-    # Create database from template (most efficient method)
-    psql -h "$TARGET_HOST" -p "$TARGET_PORT" -U "$TARGET_USER" -d postgres -c "
-        CREATE DATABASE \"$TARGET_DB\" 
-        WITH TEMPLATE \"$SOURCE_DB\" 
-        OWNER \"$TARGET_USER\";
-    "
-    
-    echo "Database copied successfully using template method"
-else
-    echo "Source and target are on different servers"
-    echo "Using pg_dump and pg_restore for cross-server copy..."
-    
-    # Create empty target database
-    psql -h "$TARGET_HOST" -p "$TARGET_PORT" -U "$TARGET_USER" -d postgres -c "
-        CREATE DATABASE \"$TARGET_DB\" 
-        OWNER \"$TARGET_USER\";
-    "
-    
-    # Use pg_dump to dump and restore
-    # Set PGPASSWORD for source connection
-    export PGPASSWORD="$SOURCE_PASSWORD"
-    
-    pg_dump -h "$SOURCE_HOST" -p "$SOURCE_PORT" -U "$SOURCE_USER" -d "$SOURCE_DB" \
-        --format=custom --no-owner --no-acl | \
-    PGPASSWORD="$TARGET_PASSWORD" pg_restore -h "$TARGET_HOST" -p "$TARGET_PORT" \
-        -U "$TARGET_USER" -d "$TARGET_DB" --no-owner --no-acl
-    
-    echo "Database copied successfully using dump/restore method"
-fi
+# 2. Create fresh target database
+echo "Creating empty target database '$TARGET_DB'..."
+psql -h "$TARGET_HOST" -p "$TARGET_PORT" -U "$TARGET_USER" -d postgres -c "CREATE DATABASE \"$TARGET_DB\" OWNER \"$TARGET_USER\";"
+
+# 3. Perform the copy via pg_dump/pg_restore
+# This method works even if people are using the SOURCE_DB
+echo "Copying data from '$SOURCE_DB' to '$TARGET_DB' using pg_dump..."
+export PGPASSWORD="$SOURCE_PASSWORD"
+
+pg_dump -h "$SOURCE_HOST" -p "$SOURCE_PORT" -U "$SOURCE_USER" -d "$SOURCE_DB" \
+    --format=custom --no-owner --no-acl | \
+PGPASSWORD="$TARGET_PASSWORD" pg_restore -h "$TARGET_HOST" -p "$TARGET_PORT" \
+    -U "$TARGET_USER" -d "$TARGET_DB" --no-owner --no-acl --no-privileges
 
 echo "========================================"
 echo "Database copy completed successfully"
