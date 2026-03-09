@@ -46,6 +46,7 @@ import {
   SuperscriptFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
+import { MediaCollageBlock } from '@/blocks/MediaCollageBlock/config'
 import type { CollectionBeforeChangeHook, CollectionConfig, FieldHook } from 'payload'
 import { slugField } from 'payload'
 
@@ -116,6 +117,7 @@ export const Articles: CollectionConfig = {
                         Banner,
                         Code,
                         MediaBlock,
+                        MediaCollageBlock,
                         DisplayMathBlock,
                         SquiggleRule,
                         SocialEmbed,
@@ -251,6 +253,15 @@ export const Articles: CollectionConfig = {
           type: 'text',
         },
       ],
+    },
+    {
+      name: 'topics',
+      type: 'relationship',
+      admin: {
+        position: 'sidebar',
+      },
+      hasMany: true,
+      relationTo: 'topics',
     },
     footnotesArrayField(),
     slugField(),

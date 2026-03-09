@@ -1,5 +1,13 @@
-import type { Article, SocialEmbedBlock, User } from '@/payload-types'
+import type { Media, SocialEmbedBlock, User } from '@/payload-types'
 import type { Payload } from 'payload'
+import { createArticle } from '../articles'
+import {
+  createParagraph,
+  createEmptyParagraph,
+  createRichText,
+  generateLoremIpsumParagraphs,
+  type SerializedLexicalNode,
+} from '../richtext'
 
 /**
  * One example URL per social media platform.
@@ -84,35 +92,6 @@ const SOCIAL_MEDIA_URLS: Pick<SocialEmbedBlock, 'platform' | 'url' | 'snapshot' 
   },
 ] as const
 
-const LOREM_PARAGRAPHS = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.',
-  'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus.',
-  'Nulla facilisi. Fusce consequat. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien nunc, congue vel, ornare at, varius non, magna.',
-  'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In hac habitasse platea dictumst. Aenean vestibulum.',
-]
-
-const createLipsumParagraph = (text: string) => ({
-  children: [
-    {
-      detail: 0,
-      format: 0,
-      mode: 'normal' as const,
-      style: '',
-      text,
-      type: 'text' as const,
-      version: 1,
-    },
-  ],
-  direction: 'ltr' as const,
-  format: '' as const,
-  indent: 0,
-  type: 'paragraph' as const,
-  version: 1,
-})
-
-type LipsumParagraph = ReturnType<typeof createLipsumParagraph>
-
 type SocialEmbedBlockFields = Pick<
   SocialEmbedBlock,
   'url' | 'platform' | 'snapshot' | 'hideMedia' | 'hideThread' | 'id'
@@ -128,55 +107,42 @@ interface SocialEmbedBlockNode {
 }
 
 /**
+ * Creates a social embed block node for use within Lexical content
+ */
+function createSocialEmbedBlock(item: (typeof SOCIAL_MEDIA_URLS)[number]): SocialEmbedBlockNode {
+  return {
+    type: 'block',
+    fields: {
+      blockType: 'socialEmbed',
+      url: item.url,
+      platform: item.platform,
+      id: item.id,
+      snapshot: item.snapshot,
+      ...(item.platform === 'twitter' && {
+        hideMedia: false,
+        hideThread: true,
+      }),
+    },
+    format: '',
+    version: 2,
+  }
+}
+
+/**
  * Creates article content with one social embed per platform, lorem ipsum between each.
  */
 const createSocialEmbedContent = () => {
-  const lipsumBetween: LipsumParagraph[] = LOREM_PARAGRAPHS.map((text) =>
-    createLipsumParagraph(text),
-  )
-  const children: (LipsumParagraph | SocialEmbedBlockNode)[] = []
+  const lipsumParagraphs = generateLoremIpsumParagraphs(2).map((text) => createParagraph(text))
+  const children: SerializedLexicalNode[] = []
 
   for (const item of SOCIAL_MEDIA_URLS) {
-    children.push(...lipsumBetween)
-    children.push({
-      type: 'block' as const,
-      fields: {
-        blockType: 'socialEmbed' as const,
-        url: item.url,
-        platform: item.platform,
-        id: item.id,
-        snapshot: item.snapshot,
-        ...(item.platform === 'twitter' && {
-          hideMedia: false,
-          hideThread: true,
-        }),
-      },
-      format: '' as const,
-      version: 2,
-    })
+    children.push(...lipsumParagraphs)
+    children.push(createSocialEmbedBlock(item))
   }
-  children.push(...lipsumBetween)
+  children.push(...lipsumParagraphs)
+  children.push(createEmptyParagraph())
 
-  return {
-    root: {
-      type: 'root',
-      children: [
-        ...children,
-        {
-          children: [],
-          direction: 'ltr' as const,
-          format: '' as const,
-          indent: 0,
-          type: 'paragraph',
-          version: 1,
-        },
-      ],
-      direction: 'ltr' as const,
-      format: '' as const,
-      indent: 0,
-      version: 1,
-    },
-  }
+  return createRichText(children)
 }
 
 /**
@@ -219,80 +185,71 @@ interface LegacyEmbedBlockNode {
 }
 
 /**
- * Creates article content with legacy social media blocks (one per platform), lorem ipsum between each.
+ * Creates a legacy social embed block node for use within Lexical content
  */
-const createLegacySocialEmbedContent = () => {
-  const lipsumBetween: LipsumParagraph[] = LOREM_PARAGRAPHS.map((text) =>
-    createLipsumParagraph(text),
-  )
-  const children: (LipsumParagraph | LegacyEmbedBlockNode)[] = []
-
-  for (const item of SOCIAL_MEDIA_URLS) {
-    children.push(...lipsumBetween)
-    children.push({
-      type: 'block' as const,
-      fields: {
-        blockType: getLegacyBlockType(item.platform ?? '') as LegacySocialBlockType,
-        url: item.url,
-        ...(item.platform === 'twitter' && {
-          hideMedia: false,
-          hideThread: false,
-        }),
-      },
-      format: '' as const,
-      version: 2,
-    })
-  }
-  children.push(...lipsumBetween)
-
+function createLegacyEmbedBlock(item: (typeof SOCIAL_MEDIA_URLS)[number]): LegacyEmbedBlockNode {
   return {
-    root: {
-      type: 'root',
-      children: [
-        ...children,
-        {
-          children: [],
-          direction: 'ltr' as const,
-          format: '' as const,
-          indent: 0,
-          type: 'paragraph',
-          version: 1,
-        },
-      ],
-      direction: 'ltr' as const,
-      format: '' as const,
-      indent: 0,
-      version: 1,
+    type: 'block',
+    fields: {
+      blockType: getLegacyBlockType(item.platform ?? ''),
+      url: item.url,
+      ...(item.platform === 'twitter' && {
+        hideMedia: false,
+        hideThread: false,
+      }),
     },
+    format: '',
+    version: 2,
   }
 }
 
-export const createSocialEmbedArticle = async (payload: Payload, writer: User): Promise<number> => {
+/**
+ * Creates article content with legacy social media blocks (one per platform), lorem ipsum between each.
+ */
+const createLegacySocialEmbedContent = () => {
+  const lipsumParagraphs = generateLoremIpsumParagraphs(2).map((text) => createParagraph(text))
+  const children: SerializedLexicalNode[] = []
+
+  for (const item of SOCIAL_MEDIA_URLS) {
+    children.push(...lipsumParagraphs)
+    children.push(createLegacyEmbedBlock(item))
+  }
+  children.push(...lipsumParagraphs)
+  children.push(createEmptyParagraph())
+
+  return createRichText(children)
+}
+
+export const createSocialEmbedArticle = async (
+  payload: Payload,
+  writer: User,
+  mediaDocs: Media[],
+): Promise<number> => {
   if (!writer?.id) {
     throw new Error('Writer must have an ID')
   }
 
-  const article = await payload.create({
-    collection: 'articles',
-    context: {
+  const title = 'Social Media Embed Test - All Variations'
+
+  const article = await createArticle(
+    payload,
+    {
+      title,
+      content: createSocialEmbedContent(),
+      authors: [writer.id],
+      slug: 'social-media-embed-test-all-variations',
+      meta: {
+        description:
+          'Test article containing all possible social media block variations from the HOSTNAMES map.',
+        image: mediaDocs[0]?.id ?? undefined,
+      },
+    },
+    {
       // Seed provides snapshots explicitly (including intentionally stale ones).
       // Skip the SocialEmbed url hook that would otherwise rebuild snapshots on create.
       skipSocialEmbedSnapshot: true,
     },
-    data: {
-      title: 'Social Media Embed Test - All Variations',
-      content: createSocialEmbedContent() as Article['content'],
-      authors: [writer.id],
-      _status: 'published',
-      publishedAt: new Date().toISOString(),
-      slug: 'social-media-embed-test-all-variations',
-      meta: {
-        title: 'Social Media Embed Test - All Variations',
-        description:
-          'Test article containing all possible social media block variations from the HOSTNAMES map.',
-      },
-    },
-  })
+  )
 
   return article.id
 }
@@ -300,30 +257,31 @@ export const createSocialEmbedArticle = async (payload: Payload, writer: User): 
 export const createLegacySocialEmbedArticle = async (
   payload: Payload,
   writer: User,
+  mediaDocs: Media[],
 ): Promise<number> => {
   if (!writer?.id) {
     throw new Error('Writer must have an ID')
   }
 
-  const article = await payload.create({
-    collection: 'articles',
-    context: {
-      skipSocialEmbedSnapshot: true,
-    },
-    data: {
-      title: 'Legacy Social Media Embed Test - All Variations',
-      content: createLegacySocialEmbedContent() as Article['content'],
+  const title = 'Legacy Social Media Embed Test - All Variations'
+
+  const article = await createArticle(
+    payload,
+    {
+      title,
+      content: createLegacySocialEmbedContent(),
       authors: [writer.id],
-      _status: 'published',
-      publishedAt: new Date().toISOString(),
       slug: 'legacy-social-media-embed-test-all-variations',
       meta: {
-        title: 'Legacy Social Media Embed Test - All Variations',
         description:
           'Test article containing all legacy social media block variations using the old blockType structure (twitterEmbed, youtubeEmbed, etc.).',
+        image: mediaDocs[0]?.id ?? undefined,
       },
     },
-  })
+    {
+      skipSocialEmbedSnapshot: true,
+    },
+  )
 
   return article.id
 }
