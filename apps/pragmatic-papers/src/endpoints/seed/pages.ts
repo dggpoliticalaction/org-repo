@@ -1,5 +1,5 @@
-import type { Payload } from 'payload'
 import type { Page } from '@/payload-types'
+import type { Payload } from 'payload'
 
 interface PageConfig {
   title: string
@@ -10,9 +10,11 @@ interface PageConfig {
 
 interface CreatePagesResult {
   aboutPage: Page
+  articlesPage: Page
   contactPage: Page
   privacyPolicyPage: Page
   termsOfUsePage: Page
+  volumesPage: Page
 }
 
 const createRichTextContent = (content: string) => ({
@@ -47,14 +49,56 @@ const createRichTextContent = (content: string) => ({
   },
 })
 
+/** Hero richText with a heading containing the page name (for pageHero type). */
+const createHeroRichTextHeading = (pageTitle: string, tag: 'h1' | 'h2' | 'h3' | 'h4' = 'h1') => ({
+  root: {
+    children: [
+      {
+        children: [
+          {
+            detail: 0,
+            format: 0,
+            mode: 'normal',
+            style: '',
+            text: pageTitle,
+            type: 'text',
+            version: 1,
+          },
+        ],
+        direction: 'ltr' as const,
+        format: '' as const,
+        indent: 0,
+        tag,
+        type: 'heading' as const,
+        version: 1,
+      },
+    ],
+    direction: 'ltr' as const,
+    format: '' as const,
+    indent: 0,
+    type: 'root',
+    version: 1,
+  },
+})
+
 export const createPages = async (payload: Payload): Promise<CreatePagesResult> => {
-  const pageConfigs: Record<'about' | 'contact' | 'privacyPolicy' | 'termsOfUse', PageConfig> = {
+  const pageConfigs: Record<
+    'about' | 'articles' | 'contact' | 'privacyPolicy' | 'termsOfUse' | 'volumes',
+    PageConfig
+  > = {
     about: {
       title: 'About',
       slug: 'about',
       content:
         'Welcome to Pragmatic Papers. We are dedicated to publishing high-quality research and scholarly articles across various disciplines.',
       description: 'Learn more about Pragmatic Papers and our mission.',
+    },
+    articles: {
+      title: 'Articles',
+      slug: 'articles',
+      content:
+        'Browse our collection of peer-reviewed articles and research papers. Each volume brings together curated works from leading scholars.',
+      description: 'Browse all articles published by Pragmatic Papers.',
     },
     contact: {
       title: 'Contact',
@@ -77,9 +121,16 @@ export const createPages = async (payload: Payload): Promise<CreatePagesResult> 
         'By using our website, you agree to these terms of use. Please read them carefully before accessing or using our services.',
       description: 'Review our terms of use before using our website.',
     },
+    volumes: {
+      title: 'Volumes',
+      slug: 'volumes',
+      content:
+        'Explore our published volumes. Each volume is a themed collection of articles, edited and introduced by our editorial team.',
+      description: 'Explore all volumes published by Pragmatic Papers.',
+    },
   }
 
-  const { about, contact, privacyPolicy, termsOfUse } = pageConfigs
+  const { about, articles, contact, privacyPolicy, termsOfUse, volumes } = pageConfigs
 
   const aboutPage = await payload.create({
     collection: 'pages',
@@ -107,6 +158,37 @@ export const createPages = async (payload: Payload): Promise<CreatePagesResult> 
       meta: {
         title: about.title,
         description: about.description,
+        image: null,
+      },
+      _status: 'published',
+      publishedAt: new Date().toISOString(),
+    },
+  })
+
+  const articlesPage = await payload.create({
+    collection: 'pages',
+    data: {
+      title: articles.title,
+      slug: articles.slug,
+      hero: {
+        type: 'pageHero',
+        richText: createHeroRichTextHeading(articles.title),
+        links: [],
+        media: null,
+      },
+      layout: [
+        {
+          blockType: 'volumeView',
+          introContent: null,
+          populateBy: 'collection',
+          relationTo: 'volumes',
+          limit: 6,
+          selectedDocs: [],
+        },
+      ],
+      meta: {
+        title: articles.title,
+        description: articles.description,
         image: null,
       },
       _status: 'published',
@@ -213,10 +295,43 @@ export const createPages = async (payload: Payload): Promise<CreatePagesResult> 
     },
   })
 
+  const volumesPage = await payload.create({
+    collection: 'pages',
+    data: {
+      title: volumes.title,
+      slug: volumes.slug,
+      hero: {
+        type: 'pageHero',
+        richText: createHeroRichTextHeading(volumes.title),
+        links: [],
+        media: null,
+      },
+      layout: [
+        {
+          blockType: 'volumeView',
+          introContent: null,
+          populateBy: 'collection',
+          relationTo: 'volumes',
+          limit: 6,
+          selectedDocs: [],
+        },
+      ],
+      meta: {
+        title: volumes.title,
+        description: volumes.description,
+        image: null,
+      },
+      _status: 'published',
+      publishedAt: new Date().toISOString(),
+    },
+  })
+
   return {
     aboutPage,
+    articlesPage,
     contactPage,
     privacyPolicyPage,
     termsOfUsePage,
+    volumesPage,
   }
 }
