@@ -62,6 +62,11 @@ GitHub Actions runs `pnpm lint:ci` and `pnpm check-types` on PRs to `main` and `
 - **Access control**: Each collection defines `access` functions (`create`, `read`, `update`, `delete`) that determine permissions per operation
 - **Blocks & Fields**: Custom block types and field types are defined as configs and registered in `payload.config.ts`; Payload auto-generates TypeScript types from them via `generate:types`
 
+### Turbo Configuration (`turbo.json`)
+- **Environment variables**: Any new `process.env.*` variable **must** be added to the `env` array in both the `build` and `ci` tasks in `turbo.json`. Without this, Turbo's cache won't invalidate when the variable changes, causing stale builds.
+- The `build` and `ci` tasks are cached; `dev:*` tasks are not cached.
+- `dev:next` depends on `dev:install` and `dev:db` completing first.
+
 ### Key Patterns
 - **Database in dev**: Drizzle "push" mode auto-syncs schema changes — no manual migrations needed during development
 - **Styling**: TailwindCSS with CSS variables (HSL) for theming
