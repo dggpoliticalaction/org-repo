@@ -134,6 +134,15 @@ fi
 # Check if source and target are on the same server
 if [ "$SOURCE_HOST" = "$TARGET_HOST" ] && [ "$SOURCE_PORT" = "$TARGET_PORT" ]; then
     echo "Source and target are on the same PostgreSQL server"
+    # terminate active connections to the source database are present, as TEMPLATE method requires exclusive access
+    echo "Terminating existing connections to SOURCE database '$SOURCE_DB'..."
+    psql -h "$SOURCE_HOST" -p "$SOURCE_PORT" -U "$SOURCE_USER" -d postgres -c "
+        SELECT pg_terminate_backend(pid) 
+        FROM pg_stat_activity 
+        WHERE datname = '$SOURCE_DB' 
+          AND pid <> pg_backend_pid();
+    " || true
+
     echo "Using CREATE DATABASE WITH TEMPLATE for efficient copy..."
     
     # Create database from template (most efficient method)
