@@ -86,7 +86,10 @@ ENV COPY_SOURCE_DATABASE=${COPY_SOURCE_DATABASE}
 ENV SOURCE_DATABASE_URI=${SOURCE_DATABASE_URI}
 ENV FORCE_DATABASE_COPY=${FORCE_DATABASE_COPY}
 
-# --- FIX 1: Ensure the build-time environment file is created and contains the URI ---
+# --- PREVIEW ISOLATION LOGIC ---
+# 1. If BUILD_ENV=preview, modify-database-uri.sh generates a unique DB name based on PR number.
+# 2. We store this NEW_DATABASE_URI in /tmp/build.env to persist it.
+# 3. copy-database.sh clones the staging DB into this new isolated PR database.
 RUN /usr/local/bin/modify-database-uri.sh && \
     if [ -f /tmp/database_uri.env ]; then \
         . /tmp/database_uri.env && \
@@ -106,6 +109,7 @@ RUN . /tmp/build.env && \
 # ============================================
 FROM node:${NODE_VERSION}-alpine AS runner
 WORKDIR /app
+# dumb-init ensures proper signal handling (SIGTERM) for Node.js
 RUN apk add --no-cache dumb-init
 
 ENV NODE_ENV=production
@@ -116,19 +120,20 @@ ENV HOSTNAME="0.0.0.0"
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Copy standalone build
+# Copy the standalone Next.js build
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./apps/pragmatic-papers/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
 
-# --- FIX 2: Copy the modified URI file into the Runner stage ---
+# PERSISTENCE FIX: Copy the unique DATABASE_URI from the Builder stage to the Runner stage
 COPY --from=builder --chown=nextjs:nodejs /tmp/build.env /app/build.env
 
+# Prepare media directory for local storage deployments
 RUN mkdir -p /app/apps/pragmatic-papers/public/media && \
     chown -R nextjs:nodejs /app/apps/pragmatic-papers/public/media && \
     chmod -R 755 /app/apps/pragmatic-papers/public/media
 
-# --- FIX 3: Update start.sh to source the environment file before starting Node ---
+# STARTUP SCRIPT: Sources the isolated DB URI if it exists, otherwise uses defaults
 RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'set -e' >> /app/start.sh && \
     echo 'if [ -f /app/build.env ]; then . /app/build.env; fi' >> /app/start.sh && \
