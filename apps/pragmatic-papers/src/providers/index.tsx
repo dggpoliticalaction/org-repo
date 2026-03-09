@@ -1,7 +1,7 @@
-import React from 'react'
+'use client'
 
-import { HeaderThemeProvider } from './HeaderTheme'
-import { ThemeProvider } from './Theme'
+import React from 'react'
+import { ThemeProvider } from 'next-themes'
 import { MathJaxContext } from 'better-react-mathjax'
 
 export const Providers: React.FC<{
@@ -9,8 +9,8 @@ export const Providers: React.FC<{
 }> = ({ children }) => {
   return (
     <MathJaxContext>
-      <ThemeProvider>
-        <HeaderThemeProvider>{children}</HeaderThemeProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        {children}
       </ThemeProvider>
     </MathJaxContext>
   )
