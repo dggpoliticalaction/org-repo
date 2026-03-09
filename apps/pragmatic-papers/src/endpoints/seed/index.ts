@@ -94,6 +94,7 @@ export const seed = async (
             content: createLoremIpsumContent(Math.floor(Math.random() * 8) + 3),
             authors: [getWriterOrThrow(writers, i).id],
             slug: titleToSlug(title),
+            heroImage: ctx.media[i % ctx.media.length]?.id,
             meta: {
               title,
               description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
@@ -116,6 +117,7 @@ export const seed = async (
             content: createLoremIpsumContent(Math.floor(Math.random() * 8) + 3),
             authors: [getWriterOrThrow(writers, i).id],
             slug: titleToSlug(title),
+            heroImage: ctx.media[i % ctx.media.length]?.id,
             meta: {
               title,
               description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),

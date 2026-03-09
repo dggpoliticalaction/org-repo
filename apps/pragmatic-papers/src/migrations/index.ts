@@ -16,6 +16,7 @@ import * as migration_20260303_233515_auto_generate_volume_title from './2026030
 import * as migration_20260304_215356_feature_authors from './20260304_215356_feature_authors';
 import * as migration_20260305_050800_action_button_needed_more_migrations from './20260305_050800_action_button_needed_more_migrations';
 import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles';
+import * as migration_20260309_202950_article_grid from './20260309_202950_article_grid';
 
 export const migrations = [
   {
@@ -101,11 +102,16 @@ export const migrations = [
   {
     up: migration_20260305_050800_action_button_needed_more_migrations.up,
     down: migration_20260305_050800_action_button_needed_more_migrations.down,
-    name: '20260305_050800_action_button_needed_more_migrations'
+    name: '20260305_050800_action_button_needed_more_migrations',
   },
   {
     up: migration_20260307_192044_add_topics_to_articles.up,
     down: migration_20260307_192044_add_topics_to_articles.down,
-    name: '20260307_192044_add_topics_to_articles'
+    name: '20260307_192044_add_topics_to_articles',
+  },
+  {
+    up: migration_20260309_202950_article_grid.up,
+    down: migration_20260309_202950_article_grid.down,
+    name: '20260309_202950_article_grid'
   },
 ];

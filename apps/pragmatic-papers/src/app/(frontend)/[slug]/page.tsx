@@ -75,13 +75,15 @@ export default async function Page({
   const { hero, layout } = page
 
   return (
-    <article className="m-auto max-w-3xl pb-24">
+    <article className="pb-24">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
 
-      <RenderHero {...hero} />
+      <div className="mx-auto max-w-3xl">
+        <RenderHero {...hero} />
+      </div>
       <RenderBlocks blocks={layout} searchParamsPromise={searchParamsPromise} />
     </article>
   )

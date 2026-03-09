@@ -239,7 +239,7 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | VolumeView | FormBlock)[];
+  layout: (ArticleGridBlock | CallToActionBlock | ContentBlock | MediaBlock | VolumeView | FormBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -539,6 +539,101 @@ export interface Topic {
   slug: string;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ArticleGridBlock".
+ */
+export interface ArticleGridBlock {
+  /**
+   * Choose a layout preset that determines how the 7 article slots are arranged.
+   */
+  layout: 'vespucci-7' | 'fibonacci-7';
+  /**
+   * Fill each slot with an article. Slot names correspond to positions in the chosen layout.
+   */
+  slots?: {
+    featured?: {
+      article?: (number | null) | Article;
+      /**
+       * Optional short label above the title (e.g. "Breaking", "Opinion")
+       */
+      kicker?: string | null;
+      /**
+       * Optional override for the article title in this slot
+       */
+      overrideTitle?: string | null;
+    };
+    a?: {
+      article?: (number | null) | Article;
+      /**
+       * Optional short label above the title (e.g. "Breaking", "Opinion")
+       */
+      kicker?: string | null;
+      /**
+       * Optional override for the article title in this slot
+       */
+      overrideTitle?: string | null;
+    };
+    b?: {
+      article?: (number | null) | Article;
+      /**
+       * Optional short label above the title (e.g. "Breaking", "Opinion")
+       */
+      kicker?: string | null;
+      /**
+       * Optional override for the article title in this slot
+       */
+      overrideTitle?: string | null;
+    };
+    c?: {
+      article?: (number | null) | Article;
+      /**
+       * Optional short label above the title (e.g. "Breaking", "Opinion")
+       */
+      kicker?: string | null;
+      /**
+       * Optional override for the article title in this slot
+       */
+      overrideTitle?: string | null;
+    };
+    d?: {
+      article?: (number | null) | Article;
+      /**
+       * Optional short label above the title (e.g. "Breaking", "Opinion")
+       */
+      kicker?: string | null;
+      /**
+       * Optional override for the article title in this slot
+       */
+      overrideTitle?: string | null;
+    };
+    e?: {
+      article?: (number | null) | Article;
+      /**
+       * Optional short label above the title (e.g. "Breaking", "Opinion")
+       */
+      kicker?: string | null;
+      /**
+       * Optional override for the article title in this slot
+       */
+      overrideTitle?: string | null;
+    };
+    f?: {
+      article?: (number | null) | Article;
+      /**
+       * Optional short label above the title (e.g. "Breaking", "Opinion")
+       */
+      kicker?: string | null;
+      /**
+       * Optional override for the article title in this slot
+       */
+      overrideTitle?: string | null;
+    };
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'articleGrid';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1215,6 +1310,7 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        articleGrid?: T | ArticleGridBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
@@ -1234,6 +1330,68 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ArticleGridBlock_select".
+ */
+export interface ArticleGridBlockSelect<T extends boolean = true> {
+  layout?: T;
+  slots?:
+    | T
+    | {
+        featured?:
+          | T
+          | {
+              article?: T;
+              kicker?: T;
+              overrideTitle?: T;
+            };
+        a?:
+          | T
+          | {
+              article?: T;
+              kicker?: T;
+              overrideTitle?: T;
+            };
+        b?:
+          | T
+          | {
+              article?: T;
+              kicker?: T;
+              overrideTitle?: T;
+            };
+        c?:
+          | T
+          | {
+              article?: T;
+              kicker?: T;
+              overrideTitle?: T;
+            };
+        d?:
+          | T
+          | {
+              article?: T;
+              kicker?: T;
+              overrideTitle?: T;
+            };
+        e?:
+          | T
+          | {
+              article?: T;
+              kicker?: T;
+              overrideTitle?: T;
+            };
+        f?:
+          | T
+          | {
+              article?: T;
+              kicker?: T;
+              overrideTitle?: T;
+            };
+      };
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

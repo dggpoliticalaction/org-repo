@@ -2,6 +2,7 @@ import React, { Fragment } from 'react'
 
 import type { Page } from '@/payload-types'
 
+import { ArticleGridBlock } from '@/blocks/ArticleGrid/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
@@ -12,6 +13,7 @@ import { MathBlock } from '@/blocks/Math/Component'
 const blockComponents = {
   InlineMathBlock: MathBlock,
   DisplayMathBlock: MathBlock,
+  articleGrid: ArticleGridBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
   formBlock: FormBlock,
@@ -35,7 +37,7 @@ export const RenderBlocks: React.FC<{
 
           if (blockType == 'volumeView') {
             return (
-              <div className="my-4" key={index}>
+              <div className="mx-auto my-4 max-w-3xl" key={index}>
                 <VolumeViewBlock
                   {...block}
                   id={block.id ?? undefined}
@@ -44,12 +46,18 @@ export const RenderBlocks: React.FC<{
                 />
               </div>
             )
+          } else if (blockType === 'articleGrid') {
+            return (
+              <div className="my-4" key={index}>
+                <ArticleGridBlock {...block} id={block.id ?? undefined} />
+              </div>
+            )
           } else if (blockType && blockType in blockComponents) {
             const Block = blockComponents[blockType]
 
             if (Block) {
               return (
-                <div className="my-4" key={index}>
+                <div className="mx-auto my-4 max-w-3xl" key={index}>
                   {/* @ts-expect-error there may be some mismatch between the expected types here */}
                   <Block {...block} disableInnerContainer />
                 </div>
