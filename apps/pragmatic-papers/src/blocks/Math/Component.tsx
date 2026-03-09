@@ -26,10 +26,10 @@ export const MathBlock: React.FC<MathBlockProps> = (props) => {
     <>
       {isClient ? (
         isInline ? (
-          <MathJax inline>\({math}\)</MathJax>
+          <MathJax key={math} inline>\({math}\)</MathJax>
         ) : (
           <div className="my-4 flex justify-center">
-            <MathJax>\[{math}\]</MathJax>
+            <MathJax key={math}>\[{math}\]</MathJax>
           </div>
         )
       ) : null}
