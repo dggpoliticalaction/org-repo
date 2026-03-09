@@ -26,8 +26,7 @@ const hasMathBlock = (node: SerializedLexicalNode): boolean => {
 export const detectMathBlocks: CollectionBeforeChangeHook<Article> = ({ data }) => {
   if (!data?.content) return data
 
-  const content = data.content as { root?: { children?: SerializedLexicalNode[] } }
-  const rootChildren = content.root?.children
+  const rootChildren = data.content.root?.children
   data.enableMathRendering = Array.isArray(rootChildren) && rootChildren.some(hasMathBlock)
 
   return data

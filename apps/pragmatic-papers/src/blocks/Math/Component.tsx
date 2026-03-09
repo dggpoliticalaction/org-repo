@@ -1,7 +1,4 @@
-'use client'
 import React from 'react'
-
-import { useState, useEffect } from 'react'
 
 import { MathJax } from 'better-react-mathjax'
 
@@ -12,11 +9,6 @@ export interface MathBlockProps {
 
 export const MathBlock: React.FC<MathBlockProps> = (props) => {
   const { math, blockType } = props
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
 
   if (!math) return null
 
@@ -24,15 +16,15 @@ export const MathBlock: React.FC<MathBlockProps> = (props) => {
 
   return (
     <>
-      {isClient ? (
-        isInline ? (
-          <MathJax key={math} inline>\({math}\)</MathJax>
-        ) : (
-          <div className="my-4 flex justify-center">
-            <MathJax key={math}>\[{math}\]</MathJax>
-          </div>
-        )
-      ) : null}
+      {isInline ? (
+        <MathJax key={math} inline>
+          \({math}\)
+        </MathJax>
+      ) : (
+        <div className="my-4 flex justify-center">
+          <MathJax key={math}>\[{math}\]</MathJax>
+        </div>
+      )}
     </>
   )
 }

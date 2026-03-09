@@ -4,18 +4,13 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import RichText from '@/components/RichText'
 import { ArticleHero } from '@/heros/ArticleHero'
+import { MathJaxProvider } from '@/providers/MathJaxProvider'
 import { generateMeta } from '@/utilities/generateMeta'
 import configPromise from '@payload-config'
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
 import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import React, { cache } from 'react'
-
-const MathJaxProvider = dynamic(
-  () => import('@/providers/MathJaxProvider').then((mod) => mod.MathJaxProvider),
-  { ssr: true },
-)
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -81,7 +76,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   const { footnotes, content, authors, enableMathRendering } = article
 
-  const articleContent = (
+  return (
     <article className="m-auto max-w-3xl p-5 pb-16">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
@@ -89,15 +84,15 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
       {draft && <LivePreviewListener />}
 
       <ArticleHero article={article} />
-      <RichText
-        data={content}
-        enableGutter={false}
-        parentDoc={{ collection: 'articles', id: article.id }}
-      />
+      <MathJaxProvider enableMathRendering={enableMathRendering}>
+        <RichText
+          data={content}
+          enableGutter={false}
+          parentDoc={{ collection: 'articles', id: article.id }}
+        />
+      </MathJaxProvider>
       <FootnoteList footnotes={footnotes} />
       <AuthorList aria-label="Article Authors" authors={authors} />
     </article>
   )
-
-  return enableMathRendering ? <MathJaxProvider>{articleContent}</MathJaxProvider> : articleContent
 }
