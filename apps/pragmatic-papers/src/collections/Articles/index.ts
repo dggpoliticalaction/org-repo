@@ -245,6 +245,15 @@ export const Articles: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'topics',
+      type: 'relationship',
+      admin: {
+        position: 'sidebar',
+      },
+      hasMany: true,
+      relationTo: 'topics',
+    },
     footnotesArrayField(),
     slugField(),
   ],

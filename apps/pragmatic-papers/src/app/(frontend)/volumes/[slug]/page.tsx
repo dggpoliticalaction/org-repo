@@ -14,7 +14,6 @@ import { draftMode } from 'next/headers'
 import type { Payload } from 'payload'
 import { getPayload } from 'payload'
 import React, { cache } from 'react'
-import PageClient from './page.client'
 
 type VolumeArticleRef = number | Article
 
@@ -129,7 +128,6 @@ export default async function VolumePage({
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-16">
-      <PageClient />
 
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
