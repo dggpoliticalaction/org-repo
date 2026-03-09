@@ -552,9 +552,9 @@ export interface ArticleGridBlock {
   /**
    * Fill each slot with an article. Slot names correspond to positions in the chosen layout.
    */
-  slots?: {
-    featured?: {
-      article?: (number | null) | Article;
+  slots: {
+    featured: {
+      article: number | Article;
       /**
        * Optional short label above the title (e.g. "Breaking", "Opinion")
        */
@@ -564,8 +564,8 @@ export interface ArticleGridBlock {
        */
       overrideTitle?: string | null;
     };
-    a?: {
-      article?: (number | null) | Article;
+    a: {
+      article: number | Article;
       /**
        * Optional short label above the title (e.g. "Breaking", "Opinion")
        */
@@ -575,8 +575,8 @@ export interface ArticleGridBlock {
        */
       overrideTitle?: string | null;
     };
-    b?: {
-      article?: (number | null) | Article;
+    b: {
+      article: number | Article;
       /**
        * Optional short label above the title (e.g. "Breaking", "Opinion")
        */
@@ -586,8 +586,8 @@ export interface ArticleGridBlock {
        */
       overrideTitle?: string | null;
     };
-    c?: {
-      article?: (number | null) | Article;
+    c: {
+      article: number | Article;
       /**
        * Optional short label above the title (e.g. "Breaking", "Opinion")
        */
@@ -597,8 +597,8 @@ export interface ArticleGridBlock {
        */
       overrideTitle?: string | null;
     };
-    d?: {
-      article?: (number | null) | Article;
+    d: {
+      article: number | Article;
       /**
        * Optional short label above the title (e.g. "Breaking", "Opinion")
        */
@@ -608,8 +608,8 @@ export interface ArticleGridBlock {
        */
       overrideTitle?: string | null;
     };
-    e?: {
-      article?: (number | null) | Article;
+    e: {
+      article: number | Article;
       /**
        * Optional short label above the title (e.g. "Breaking", "Opinion")
        */
@@ -619,8 +619,8 @@ export interface ArticleGridBlock {
        */
       overrideTitle?: string | null;
     };
-    f?: {
-      article?: (number | null) | Article;
+    f: {
+      article: number | Article;
       /**
        * Optional short label above the title (e.g. "Breaking", "Opinion")
        */

@@ -1,66 +1,29 @@
 import type { Block, Field } from 'payload'
 
-export const LAYOUT_SLOT_CONFIG = {
-  'vespucci-7': {
-    featured: 'featured',
-    a: 'medium',
-    b: 'medium',
-    c: 'compact',
-    d: 'compact',
-    e: 'compact',
-    f: 'compact',
-  },
-  'fibonacci-7': {
-    featured: 'featured',
-    a: 'medium',
-    b: 'medium',
-    c: 'medium',
-    d: 'medium',
-    e: 'compact',
-    f: 'compact',
-  },
-} as const
-
-export type ArticleGridLayout = keyof typeof LAYOUT_SLOT_CONFIG
+export type ArticleGridLayout = 'vespucci-7' | 'fibonacci-7'
 export type SlotName = 'featured' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f'
 
-const ALL_LAYOUTS: ArticleGridLayout[] = ['vespucci-7', 'fibonacci-7']
+const ALL_SLOTS: SlotName[] = ['featured', 'a', 'b', 'c', 'd', 'e', 'f']
 
-function layoutsUsingSlot(slot: SlotName): ArticleGridLayout[] {
-  return ALL_LAYOUTS.filter((layout) => slot in LAYOUT_SLOT_CONFIG[layout])
-}
+type SlotArticle = number | { id: number } | undefined
+type Slots = Record<SlotName, { article?: SlotArticle }>
 
-function getLayoutFromPath(
+/** Unwrap a relationship value to a plain numeric ID. */
+const toId = (val: SlotArticle): number | undefined =>
+  typeof val === 'object' && val !== null ? val.id : val
+
+/** Navigate from a field's `path` up to its parent ArticleGrid block. */
+const getBlockSlots = (
   data: Record<string, unknown>,
   path: (string | number)[] | undefined,
-): ArticleGridLayout | null {
-  if (!path || !data) return null
-  const layoutFieldIndex = path.indexOf('layout')
-  if (layoutFieldIndex === -1 || path[layoutFieldIndex + 1] === undefined) return null
-  const blockIndex = Number(path[layoutFieldIndex + 1])
-  if (isNaN(blockIndex)) return null
-  const layoutArray = data.layout as Array<Record<string, unknown>> | undefined
-  if (!Array.isArray(layoutArray) || !layoutArray[blockIndex]) return null
-  return (layoutArray[blockIndex].layout as ArticleGridLayout) || null
-}
-
-function getSlotsFromPath(
-  data: Record<string, unknown>,
-  path: (string | number)[] | undefined,
-): Record<SlotName, { article?: number | { id: number } }> | null {
-  if (!path || !data) return null
-  const layoutFieldIndex = path.indexOf('layout')
-  if (layoutFieldIndex === -1 || path[layoutFieldIndex + 1] === undefined) return null
-  const blockIndex = Number(path[layoutFieldIndex + 1])
-  if (isNaN(blockIndex)) return null
-  const layoutArray = data.layout as Array<Record<string, unknown>> | undefined
-  if (!Array.isArray(layoutArray) || !layoutArray[blockIndex]) return null
-  return (layoutArray[blockIndex].slots as Record<SlotName, { article?: number | { id: number } }>) || null
+): Slots | undefined => {
+  const i = path?.indexOf('layout') ?? -1
+  if (i === -1) return undefined
+  const blocks = data.layout as Record<string, unknown>[] | undefined
+  return (blocks?.[Number(path![i + 1])] as Record<string, unknown>)?.slots as Slots | undefined
 }
 
 function slotFields(slotName: SlotName, label: string): Field {
-  const validLayouts = layoutsUsingSlot(slotName)
-
   return {
     name: slotName,
     type: 'group',
@@ -71,42 +34,25 @@ function slotFields(slotName: SlotName, label: string): Field {
         type: 'relationship',
         relationTo: 'articles',
         label: 'Article',
+        required: true,
         filterOptions: { _status: { equals: 'published' } },
         validate: (
           value: unknown,
           { data, path }: { data: unknown; path: (string | number)[] },
         ) => {
-          const layout = getLayoutFromPath(data as Record<string, unknown>, path)
-          if (layout && !validLayouts.includes(layout)) return true
           if (!value) return `An article is required for slot "${slotName}".`
 
-          const slots = getSlotsFromPath(data as Record<string, unknown>, path)
+          const slots = getBlockSlots(data as Record<string, unknown>, path)
           if (!slots) return true
 
-          const thisId =
-            typeof value === 'object' && value !== null && 'id' in (value as object)
-              ? (value as { id: number }).id
-              : (value as number)
-
-          const allSlots: SlotName[] = ['featured', 'a', 'b', 'c', 'd', 'e', 'f']
-          for (const other of allSlots) {
-            if (other === slotName) continue
-            const otherSlot = slots[other]
-            if (!otherSlot?.article) continue
-            const otherId =
-              typeof otherSlot.article === 'object' ? otherSlot.article.id : otherSlot.article
-            if (otherId === thisId) {
-              return `This article is already used in slot "${other}". Each slot must have a unique article.`
-            }
+          const thisId = toId(value as SlotArticle)
+          const duplicate = ALL_SLOTS.find(
+            (s) => s !== slotName && toId(slots[s]?.article) === thisId,
+          )
+          if (duplicate) {
+            return `This article is already used in slot "${duplicate}". Each slot must have a unique article.`
           }
           return true
-        },
-        admin: {
-          condition: (data, _siblingData, { path }) => {
-            const layout = getLayoutFromPath(data, path)
-            if (!layout) return true
-            return validLayouts.includes(layout)
-          },
         },
       },
       {
@@ -115,11 +61,6 @@ function slotFields(slotName: SlotName, label: string): Field {
         label: 'Kicker',
         admin: {
           description: 'Optional short label above the title (e.g. "Breaking", "Opinion")',
-          condition: (data, _siblingData, { path }) => {
-            const layout = getLayoutFromPath(data, path)
-            if (!layout) return true
-            return validLayouts.includes(layout)
-          },
         },
       },
       {
@@ -128,11 +69,6 @@ function slotFields(slotName: SlotName, label: string): Field {
         label: 'Override Title',
         admin: {
           description: 'Optional override for the article title in this slot',
-          condition: (data, _siblingData, { path }) => {
-            const layout = getLayoutFromPath(data, path)
-            if (!layout) return true
-            return validLayouts.includes(layout)
-          },
         },
       },
     ],
