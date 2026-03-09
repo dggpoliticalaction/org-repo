@@ -106,12 +106,12 @@ export const createMediaCollageArticle = async (
   ])
 
   // Create the article
-  const title = 'Media Collage Demo'
+  const title = 'Grids, Carousels, and Captions: Exploring Rich Media Layouts'
   const article = await createArticle(payload, {
     title,
     content,
     authors: [writer.id],
-    slug: 'media-collage-demo',
+    slug: 'grids-carousels-captions-exploring-rich-media-layouts',
     meta: {
       title,
       description:
