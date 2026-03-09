@@ -2,16 +2,26 @@ import type { Page } from '@/payload-types'
 import type { Payload } from 'payload'
 
 interface CreateMenusParams {
-  homePage: Page
   aboutPage: Page
+  articlesPage: Page
   contactPage: Page
+  homePage: Page
   privacyPolicyPage: Page
   termsOfUsePage: Page
+  volumesPage: Page
 }
 
 export const createMenus = async (
   payload: Payload,
-  { homePage, aboutPage, contactPage, privacyPolicyPage, termsOfUsePage }: CreateMenusParams,
+  {
+    aboutPage,
+    articlesPage,
+    contactPage,
+    homePage,
+    privacyPolicyPage,
+    termsOfUsePage,
+    volumesPage,
+  }: CreateMenusParams,
 ): Promise<void> => {
   await payload.updateGlobal({
     slug: 'header',
@@ -24,6 +34,26 @@ export const createMenus = async (
             reference: {
               relationTo: 'pages',
               value: homePage.id,
+            },
+          },
+        },
+        {
+          link: {
+            type: 'reference',
+            label: 'Volumes',
+            reference: {
+              relationTo: 'pages',
+              value: volumesPage.id,
+            },
+          },
+        },
+        {
+          link: {
+            type: 'reference',
+            label: 'Articles',
+            reference: {
+              relationTo: 'pages',
+              value: articlesPage.id,
             },
           },
         },
