@@ -15,6 +15,7 @@ import { LegacyTikTokEmbed } from '@/blocks/SocialEmbed/embeds/TikTokEmbed/confi
 import { LegacyTwitterEmbed } from '@/blocks/SocialEmbed/embeds/TwitterEmbed/config'
 import { LegacyYouTubeEmbed } from '@/blocks/SocialEmbed/embeds/YouTubeEmbed/config'
 import { SquiggleRule } from '@/blocks/SquiggleRule/config'
+import { detectMathBlocks } from '@/collections/Articles/hooks/detectMathBlocks'
 import { generateFootnotes } from '@/collections/Articles/hooks/generateFootnotes'
 import { populateAuthors } from '@/collections/Articles/hooks/populateAuthors'
 import { revalidateArticle, revalidateDelete } from '@/collections/Articles/hooks/revalidateArticle'
@@ -180,6 +181,14 @@ export const Articles: CollectionConfig = {
       ],
     },
     {
+      name: 'enableMathRendering',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        hidden: true,
+      },
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       access: {
@@ -269,6 +278,7 @@ export const Articles: CollectionConfig = {
         }
       },
       generateFootnotes,
+      detectMathBlocks,
     ],
     afterChange: [revalidateArticle],
     afterRead: [populateAuthors],
