@@ -14,10 +14,9 @@ export type ArticleTileData = Pick<
 
 /**
  * Variants:
- *   featured     — large primary tile: image above, large title (h3), description, byline
- *   medium       — secondary tile: image above, medium title (h4), description, byline
- *   medium-right — same as medium but image on the right (used for wide Fibonacci featured)
- *   compact      — no image, no description, no byline: kicker + title (h4 small) + timestamp
+ *   featured — large primary tile: image above, large title (h3), description, byline
+ *   medium   — secondary tile: image above, medium title (h4), description, byline
+ *   compact  — no image, no description, no byline: kicker + title (h4 small) + timestamp
  */
 const articleTileVariants = cva('group relative', {
   variants: {
