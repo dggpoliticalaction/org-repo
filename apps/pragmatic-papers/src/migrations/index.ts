@@ -14,6 +14,7 @@ import * as migration_20260117_020339_footnotes from './20260117_020339_footnote
 import * as migration_20260217_013724_header_footer_redesign from './20260217_013724_header_footer_redesign';
 import * as migration_20260303_233515_auto_generate_volume_title from './20260303_233515_auto_generate_volume_title';
 import * as migration_20260304_215356_feature_authors from './20260304_215356_feature_authors';
+import * as migration_20260307_014204_enable_math_rendering from './20260307_014204_enable_math_rendering';
 import * as migration_20260305_050800_action_button_needed_more_migrations from './20260305_050800_action_button_needed_more_migrations';
 import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles';
 
@@ -97,6 +98,11 @@ export const migrations = [
     up: migration_20260304_215356_feature_authors.up,
     down: migration_20260304_215356_feature_authors.down,
     name: '20260304_215356_feature_authors',
+  },
+  {
+    up: migration_20260307_014204_enable_math_rendering.up,
+    down: migration_20260307_014204_enable_math_rendering.down,
+    name: '20260307_014204_enable_math_rendering'
   },
   {
     up: migration_20260305_050800_action_button_needed_more_migrations.up,

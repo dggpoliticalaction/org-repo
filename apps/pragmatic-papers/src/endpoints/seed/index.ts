@@ -2,6 +2,7 @@ import type { Media, User } from '@/payload-types'
 import type { Payload } from 'payload'
 import { createArticle, getWriterOrThrow, validateWriters } from './articles'
 import { createFootnotesArticle } from './features/footnotes'
+import { createMathBlocksArticle } from './features/math-blocks'
 import { createMediaCollageArticle } from './features/media-collage'
 import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from './features/social-embeds'
 import { homeStatic } from './home-static'
@@ -129,13 +130,14 @@ export const seed = async (
     {
       name: 'Creating feature articles...',
       fn: async () => {
-        const [footnotes, socialEmbed, legacySocialEmbed, mediaCollage] = await Promise.all([
+        const [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks] = await Promise.all([
           createFootnotesArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, ctx.volume1Articles[0]!),
           createSocialEmbedArticle(payload, ctx.writer1, ctx.media),
           createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media),
           createMediaCollageArticle(payload, ctx.writer1, ctx.media),
+          createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media),
         ])
-        ctx.featureArticles = [footnotes, socialEmbed, legacySocialEmbed, mediaCollage]
+        ctx.featureArticles = [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks]
       },
     },
     {
