@@ -1,17 +1,18 @@
 import type { CollectionConfig } from 'payload'
 
-import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { VolumeView } from '@/blocks/VolumeViewBlock/config'
+import { hero } from '@/heros/config'
+import { slugField } from 'payload'
+import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
-import { hero } from '@/heros/config'
-import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
 
+import { admin } from '@/access/admins'
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -19,7 +20,6 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
-import { admin } from '@/access/admins'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -126,9 +126,7 @@ export const Pages: CollectionConfig<'pages'> = {
   },
   versions: {
     drafts: {
-      autosave: {
-        interval: 800, 
-      },
+      autosave: true,
       schedulePublish: true,
     },
     maxPerDoc: 50,
