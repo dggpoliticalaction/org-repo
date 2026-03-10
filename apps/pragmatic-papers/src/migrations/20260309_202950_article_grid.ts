@@ -109,7 +109,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "_pages_v_blocks_article_grid" DISABLE ROW LEVEL SECURITY;
   DROP TABLE "pages_blocks_article_grid" CASCADE;
   DROP TABLE "_pages_v_blocks_article_grid" CASCADE;
-  ALTER TABLE "header" ALTER COLUMN "action_button_enabled" DROP NOT NULL;
   DROP TYPE "public"."enum_pages_blocks_article_grid_layout";
   DROP TYPE "public"."enum__pages_v_blocks_article_grid_layout";`)
 }
