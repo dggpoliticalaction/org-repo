@@ -182,7 +182,7 @@ export default async function AuthorPage({
 
       <header className="flex flex-col items-center space-y-3 text-center">
         {profileSrc && (
-          <div className="h-32 w-32 overflow-hidden rounded-full border border-border">
+          <div className="border-border h-32 w-32 overflow-hidden rounded-full border">
             <Image
               src={profileSrc}
               alt={profileDoc?.alt || user.name || 'Author avatar'}
@@ -193,7 +193,7 @@ export default async function AuthorPage({
           </div>
         )}
         <h1 className="text-3xl font-bold md:text-4xl">{user.name || 'Author'}</h1>
-        {user.affiliation && <p className="text-sm text-muted-foreground">{user.affiliation}</p>}
+        {user.affiliation && <p className="text-muted-foreground text-sm">{user.affiliation}</p>}
         <AuthorLinks socials={user.socials} />
       </header>
 
@@ -207,7 +207,7 @@ export default async function AuthorPage({
       <section aria-label="Articles by this author">
         <h2 className="mb-4 text-2xl font-semibold">Articles</h2>
         {articles.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No articles found for this author yet.</p>
+          <p className="text-muted-foreground text-sm">No articles found for this author yet.</p>
         ) : (
           <div className="flex flex-col gap-4">
             {articles.map((article) => {

@@ -33,7 +33,7 @@ export const CMSButton: React.FC<CMSButtonProps> = ({
       type="button"
       variant={variant}
       className={cn(
-        'bg-[var(--cms-button-background)] text-[var(--cms-button-foreground)] hover:bg-[color-mix(in_srgb,_var(--cms-button-background),_black_10%)]',
+        'bg-(--cms-button-background) text-(--cms-button-foreground) hover:bg-[color-mix(in_srgb,var(--cms-button-background),black_10%)]',
         className,
       )}
       style={

@@ -48,7 +48,7 @@ export const Entry: React.FC<{
         {titleToUse && (
           <h3 className="my-6 text-center">
             <Link
-              className="text-xl font-bold transition-colors group-hover:text-brand md:text-3xl"
+              className="group-hover:text-brand text-xl font-bold transition-colors md:text-3xl"
               href={href}
               ref={link.ref}
             >
@@ -58,7 +58,7 @@ export const Entry: React.FC<{
         )}
         <div className="text-justify">
           {description && (
-            <div className="my-3 text-sm text-muted-foreground md:text-base">
+            <div className="text-muted-foreground my-3 text-sm md:text-base">
               {description && <p>{sanitizedDescription}</p>}
             </div>
           )}

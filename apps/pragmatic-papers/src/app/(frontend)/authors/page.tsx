@@ -41,16 +41,16 @@ export default async function AuthorsIndexPage(): Promise<React.ReactNode> {
   const authors = await queryAuthors()
 
   return (
-    <article className="m-auto max-w-3xl px-4 pb-16 pt-8">
+    <article className="m-auto max-w-3xl px-4 pt-8 pb-16">
       <header className="mb-8 text-center">
         <h1 className="mb-2 text-3xl font-bold md:text-4xl">Authors</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Learn more about Pragmatic Papers contributors and explore their work.
         </p>
       </header>
 
       {authors.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No authors available yet.</p>
+        <p className="text-muted-foreground text-sm">No authors available yet.</p>
       ) : (
         <AuthorList authors={authors} />
       )}

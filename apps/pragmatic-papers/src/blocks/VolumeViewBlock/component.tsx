@@ -54,12 +54,12 @@ export const VolumeViewBlock: React.FC<
       <div className="my-4" id={`block-${id}`}>
         {introContent && (
           <div className="mb-16">
-            <RichText className="ms-0 max-w-[48rem]" data={introContent} enableGutter={false} />
+            <RichText className="ms-0 max-w-3xl" data={introContent} enableGutter={false} />
           </div>
         )}
         <VolumesView volumes={volumes.docs} />
 
-        <div className="container mb-8 mt-6">
+        <div className="container mt-6 mb-8">
           <PageRange
             collection="volumes"
             currentPage={volumes.page}
@@ -85,7 +85,7 @@ export const VolumeViewBlock: React.FC<
         <div className="my-4" id={`block-${id}`}>
           {introContent && (
             <div className="container mb-16">
-              <RichText className="ms-0 max-w-[48rem]" data={introContent} enableGutter={false} />
+              <RichText className="ms-0 max-w-3xl" data={introContent} enableGutter={false} />
             </div>
           )}
           <VolumesView volumes={volumes} />

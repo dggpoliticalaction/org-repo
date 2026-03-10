@@ -22,7 +22,7 @@ const SquiggleStatic: React.FC<SquiggleProps> = ({ className, size = 'small' }) 
     <div className={cn('mx-auto my-8', sizeClasses[size], className)}>
       <div
         className={cn(
-          'relative block h-1 w-full bg-[url(/squiggle-static.svg)] bg-[length:auto_4px] bg-[left_calc(100%)_top_calc(100%)] bg-repeat-x',
+          'relative block h-1 w-full bg-[url(/squiggle-static.svg)] bg-size-[auto_4px] bg-position-[left_calc(100%)_top_calc(100%)] bg-repeat-x',
         )}
       />
     </div>
@@ -34,7 +34,7 @@ const Squiggle: React.FC<SquiggleProps> = ({ className, size = 'small' }) => {
     <div className={cn('mx-auto my-8', sizeClasses[size], className)}>
       <div
         className={cn(
-          'relative block h-1 w-full bg-[url(/squiggle.svg)] bg-[length:auto_4px] bg-[left_calc(100%)_top_calc(100%)] bg-repeat-x',
+          'relative block h-1 w-full bg-[url(/squiggle.svg)] bg-size-[auto_4px] bg-position-[left_calc(100%)_top_calc(100%)] bg-repeat-x',
         )}
       />
     </div>

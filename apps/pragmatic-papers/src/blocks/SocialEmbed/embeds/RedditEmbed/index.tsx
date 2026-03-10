@@ -35,7 +35,7 @@ export async function RedditEmbedBlock(props: SocialEmbedBlock): Promise<React.R
     <div className="my-8 flex min-h-[240px] items-center justify-center">
       <div
         id={id}
-        className="w-full max-w-[550px] [&>div]:!my-0"
+        className="w-full max-w-[550px] [&>div]:my-0!"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: html }}
       />

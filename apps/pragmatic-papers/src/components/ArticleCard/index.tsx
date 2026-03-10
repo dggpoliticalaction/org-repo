@@ -33,26 +33,26 @@ export const ArticleCard: React.FC<{
         className={cn('flex h-full flex-row hover:cursor-pointer sm:flex-col', className)}
         ref={card.ref}
       >
-        <div className="flex min-w-24 flex-shrink-0 basis-1/4 flex-col justify-center overflow-hidden rounded-lg sm:max-h-[300px] sm:min-w-0 sm:basis-auto">
+        <div className="flex min-w-24 shrink-0 basis-1/4 flex-col justify-center overflow-hidden rounded-lg sm:max-h-[300px] sm:min-w-0 sm:basis-auto">
           {metaImage && typeof metaImage !== 'string' && (
             <Media
               resource={metaImage}
-              className="aspect-[4/3] w-full sm:aspect-square"
+              className="aspect-4/3 w-full sm:aspect-square"
               imgClassName="object-cover h-full w-full rounded-lg"
               size="square"
             />
           )}
         </div>
-        <div className="flex flex-grow basis-3/4 flex-col p-4 sm:basis-auto">
+        <div className="flex grow basis-3/4 flex-col p-4 sm:basis-auto">
           {titleToUse && (
             <div className="line-clamp-4 pb-1 font-sans text-xl font-extrabold">
-              <Link className="transition-colors hover:text-brand" href={href} ref={link.ref}>
+              <Link className="hover:text-brand transition-colors" href={href} ref={link.ref}>
                 {titleToUse}
               </Link>
             </div>
           )}
           {description && (
-            <p className="line-clamp-2 pt-1 text-sm text-muted-foreground sm:line-clamp-5">
+            <p className="text-muted-foreground line-clamp-2 pt-1 text-sm sm:line-clamp-5">
               {sanitizedDescription}
             </p>
           )}
