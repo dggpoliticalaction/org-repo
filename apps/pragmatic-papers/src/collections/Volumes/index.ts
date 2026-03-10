@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import { slugField, type CollectionConfig } from 'payload'
 
 import {
   AlignFeature,
@@ -13,8 +13,6 @@ import {
   OrderedListFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-
-import { numberSlugField } from '@/fields/numberSlug'
 
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
@@ -198,7 +196,12 @@ export const Volumes: CollectionConfig = {
         ],
       },
     },
-    ...numberSlugField('volumeNumber'),
+    slugField({
+      useAsSlug: 'volumeNumber',
+      slugify: ({ valueToSlugify }) => {
+        return (valueToSlugify?.toString() || '').toLowerCase().replace(/[^a-z0-9]/g, '-')
+      },
+    }),
   ],
   hooks: {
     afterChange: [revalidateArticle, pushToWebhooks],
