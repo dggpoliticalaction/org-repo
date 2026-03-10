@@ -33,6 +33,7 @@ export interface ArticleTileProps extends VariantProps<typeof articleTileVariant
   article: ArticleTileData
   kicker?: string | null
   overrideTitle?: string | null
+  horizontal?: boolean
   className?: string
 }
 
@@ -41,6 +42,7 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
   variant = 'medium',
   kicker,
   overrideTitle,
+  horizontal = false,
   className,
 }) => {
   const { title, slug, heroImage, populatedAuthors, publishedAt, meta } = article
@@ -62,10 +64,14 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
     : null
 
   return (
-    <article className={cn(articleTileVariants({ variant }), className)}>
+    <article className={cn(
+      articleTileVariants({ variant }),
+      horizontal && 'sm:flex-row-reverse sm:items-center sm:gap-4',
+      className,
+    )}>
       {/* Media */}
       {showMedia && (
-        <Link href={href} className={mediaWrapperClass(variant)} tabIndex={-1} aria-hidden>
+        <Link href={href} className={cn(mediaWrapperClass(variant), horizontal && 'sm:w-1/2 sm:shrink-0 sm:mb-0')} tabIndex={-1} aria-hidden>
           <Media
             resource={heroImage as MediaType}
             className="h-full w-full"
@@ -76,7 +82,7 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
       )}
 
       {/* Text content */}
-      <div className={textWrapperClass(variant)}>
+      <div className={cn(textWrapperClass(variant), horizontal && 'sm:justify-center')}>
         {/* Kicker */}
         {kicker && (
           <span className="mb-1 inline-block font-sans text-xs font-bold uppercase tracking-wider text-brand">
