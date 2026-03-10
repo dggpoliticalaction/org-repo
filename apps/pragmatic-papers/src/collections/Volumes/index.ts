@@ -199,9 +199,7 @@ export const Volumes: CollectionConfig = {
     },
     slugField({
       useAsSlug: 'volumeNumber',
-      slugify: ({ valueToSlugify }) => {
-        return (valueToSlugify?.toString() || '').toLowerCase().replace(/[^a-z0-9]/g, '-')
-      },
+      slugify: ({ valueToSlugify }) => String(valueToSlugify || ''),
     }),
   ],
   hooks: {
