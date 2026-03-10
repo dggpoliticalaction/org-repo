@@ -1,5 +1,6 @@
 import type { Media, User } from '@/payload-types'
 import type { Payload } from 'payload'
+import type { SerializedLexicalNode } from '../richtext'
 import {
   createParagraph,
   createEmptyParagraph,
@@ -7,6 +8,36 @@ import {
   createTextNode,
 } from '../richtext'
 import { createArticle, validateWriters } from '../articles'
+
+/**
+ * Creates an inline math block node (renders LaTeX within a paragraph)
+ */
+export function createMathInlineBlock(math: string): SerializedLexicalNode {
+  return {
+    type: 'inlineBlock',
+    fields: {
+      blockType: 'inlineMathBlock',
+      math,
+    },
+    format: '',
+    version: 1,
+  } as SerializedLexicalNode
+}
+
+/**
+ * Creates a display math block node (renders LaTeX as a standalone block)
+ */
+export function createMathDisplayBlock(math: string): SerializedLexicalNode {
+  return {
+    type: 'block',
+    fields: {
+      blockType: 'displayMathBlock',
+      math,
+    },
+    format: '',
+    version: 2,
+  } as SerializedLexicalNode
+}
 
 const createMathBlocksContent = () => {
   const children = [
@@ -22,15 +53,7 @@ const createMathBlocksContent = () => {
     createEmptyParagraph(),
     createParagraph([
       createTextNode('Einstein\'s mass-energy equivalence '),
-      {
-        type: 'inlineBlock',
-        fields: {
-          blockType: 'inlineMathBlock',
-          math: 'E = mc^2',
-        },
-        format: '',
-        version: 1,
-      },
+      createMathInlineBlock('E = mc^2'),
       createTextNode(
         ' is one of the most recognisable equations in all of physics, relating energy, mass, and the speed of light.',
       ),
@@ -38,15 +61,7 @@ const createMathBlocksContent = () => {
     createEmptyParagraph(),
     createParagraph([
       createTextNode('Bayes\' theorem '),
-      {
-        type: 'inlineBlock',
-        fields: {
-          blockType: 'inlineMathBlock',
-          math: 'P(A \\mid B) = \\dfrac{P(B \\mid A)\\,P(A)}{P(B)}',
-        },
-        format: '',
-        version: 1,
-      },
+      createMathInlineBlock('P(A \\mid B) = \\dfrac{P(B \\mid A)\\,P(A)}{P(B)}'),
       createTextNode(
         ' underpins modern probabilistic reasoning and has become central to debates in epistemology about rational belief revision.',
       ),
@@ -54,25 +69,9 @@ const createMathBlocksContent = () => {
     createEmptyParagraph(),
     createParagraph([
       createTextNode('The sum of the first '),
-      {
-        type: 'inlineBlock',
-        fields: {
-          blockType: 'inlineMathBlock',
-          math: 'n',
-        },
-        format: '',
-        version: 1,
-      },
+      createMathInlineBlock('n'),
       createTextNode(' natural numbers is given by the closed form '),
-      {
-        type: 'inlineBlock',
-        fields: {
-          blockType: 'inlineMathBlock',
-          math: '\\sum_{i=1}^{n} i = \\dfrac{n(n+1)}{2}',
-        },
-        format: '',
-        version: 1,
-      },
+      createMathInlineBlock('\\sum_{i=1}^{n} i = \\dfrac{n(n+1)}{2}'),
       createTextNode(
         ', a result attributed to Gauss that elegantly illustrates the power of algebraic thinking.',
       ),
@@ -87,54 +86,22 @@ const createMathBlocksContent = () => {
     createParagraph(
       'The Gaussian integral is a cornerstone of probability theory and quantum mechanics:',
     ),
-    {
-      type: 'block',
-      fields: {
-        blockType: 'displayMathBlock',
-        math: '\\int_{-\\infty}^{\\infty} e^{-x^2}\\,dx = \\sqrt{\\pi}',
-      },
-      format: '',
-      version: 2,
-    },
+    createMathDisplayBlock('\\int_{-\\infty}^{\\infty} e^{-x^2}\\,dx = \\sqrt{\\pi}'),
     createEmptyParagraph(),
     createParagraph(
       'The Fundamental Theorem of Calculus connects differentiation and integration, forming the backbone of analysis:',
     ),
-    {
-      type: 'block',
-      fields: {
-        blockType: 'displayMathBlock',
-        math: '\\frac{d}{dx}\\left[\\int_a^x f(t)\\,dt\\right] = f(x)',
-      },
-      format: '',
-      version: 2,
-    },
+    createMathDisplayBlock('\\frac{d}{dx}\\left[\\int_a^x f(t)\\,dt\\right] = f(x)'),
     createEmptyParagraph(),
     createParagraph(
       'The time-dependent Schrödinger equation describes how the quantum state of a physical system evolves:',
     ),
-    {
-      type: 'block',
-      fields: {
-        blockType: 'displayMathBlock',
-        math: 'i\\hbar\\,\\frac{\\partial}{\\partial t}\\Psi(\\mathbf{r},t) = \\hat{H}\\,\\Psi(\\mathbf{r},t)',
-      },
-      format: '',
-      version: 2,
-    },
+    createMathDisplayBlock('i\\hbar\\,\\frac{\\partial}{\\partial t}\\Psi(\\mathbf{r},t) = \\hat{H}\\,\\Psi(\\mathbf{r},t)'),
     createEmptyParagraph(),
     createParagraph(
       'Gauss\'s law — one of Maxwell\'s equations — relates the electric flux through a closed surface to the enclosed charge:',
     ),
-    {
-      type: 'block',
-      fields: {
-        blockType: 'displayMathBlock',
-        math: '\\nabla \\cdot \\mathbf{E} = \\frac{\\rho}{\\varepsilon_0}',
-      },
-      format: '',
-      version: 2,
-    },
+    createMathDisplayBlock('\\nabla \\cdot \\mathbf{E} = \\frac{\\rho}{\\varepsilon_0}'),
     createEmptyParagraph(),
 
     // --- Closing ---
