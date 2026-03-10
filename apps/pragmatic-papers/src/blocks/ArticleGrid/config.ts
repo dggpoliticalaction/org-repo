@@ -87,8 +87,8 @@ export const ArticleGrid: Block = {
       required: true,
       defaultValue: 'vespucci-7',
       options: [
-        { label: 'Vespucci 7 (Vermont-style)', value: 'vespucci-7' },
-        { label: 'Fibonacci 7 (Virginia-style)', value: 'fibonacci-7' },
+        { label: 'Vespucci 7', value: 'vespucci-7' },
+        { label: 'Fibonacci 7', value: 'fibonacci-7' },
       ],
       admin: {
         description: 'Choose a layout preset that determines how the 7 article slots are arranged.',

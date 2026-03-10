@@ -1,6 +1,8 @@
 import type { RequiredDataFromCollectionSlug } from 'payload'
 
-// Used for pre-seeded content so that the homepage is not empty
+// Used as a pre-seed fallback so that the homepage is not empty before the DB is seeded.
+// The actual seeded home page (with ArticleGrid blocks) is created by
+// `features/article-grid.ts` — this static version is intentionally minimal.
 export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
   title: 'Home',
   hero: {
@@ -15,7 +17,7 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
                 format: 0,
                 mode: 'normal',
                 style: '',
-                text: 'Volumes',
+                text: 'Welcome to Pragmatic Papers',
                 type: 'text',
                 version: 1,
               },
@@ -23,9 +25,10 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
             direction: 'ltr' as const,
             format: '' as const,
             indent: 0,
-            tag: 'h1',
-            type: 'heading',
+            type: 'paragraph',
             version: 1,
+            textFormat: 0,
+            textStyle: '',
           },
         ],
         direction: 'ltr' as const,
@@ -38,17 +41,7 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
     links: [],
     media: null,
   },
-  layout: [
-    {
-      introContent: null,
-      populateBy: 'collection',
-      relationTo: 'volumes',
-      limit: 6,
-      blockName: null,
-      blockType: 'volumeView',
-      selectedDocs: [],
-    },
-  ],
+  layout: [],
   meta: {
     title: null,
     image: null,

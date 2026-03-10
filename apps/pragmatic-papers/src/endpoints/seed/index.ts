@@ -4,7 +4,7 @@ import { createArticle, getWriterOrThrow, validateWriters } from './articles'
 import { createFootnotesArticle } from './features/footnotes'
 import { createMediaCollageArticle } from './features/media-collage'
 import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from './features/social-embeds'
-import { homeStatic } from './home-static'
+import { createArticleGridHomePage } from './features/article-grid'
 import { createMediaFromURL } from './media'
 import { createMenus } from './menus'
 import { createPages } from './pages'
@@ -175,7 +175,8 @@ export const seed = async (
     {
       name: 'Creating pages & menus...',
       fn: async () => {
-        const homePage = await payload.create({ collection: 'pages', data: homeStatic })
+        await createArticleGridHomePage(payload, ctx.volume1Articles, ctx.volume2Articles)
+        const homePage = await payload.find({ collection: 'pages', where: { slug: { equals: 'home' } }, limit: 1 }).then((res) => res.docs[0]!)
         const { aboutPage, articlesPage, contactPage, privacyPolicyPage, termsOfUsePage, volumesPage } = await createPages(payload)
         await createMenus(payload, { homePage, aboutPage, articlesPage, contactPage, privacyPolicyPage, termsOfUsePage, volumesPage })
       },
