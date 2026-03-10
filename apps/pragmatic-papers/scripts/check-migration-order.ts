@@ -17,5 +17,5 @@ for (const migration of migrations) {
 if (failed) {
   process.exit(1)
 } else {
-  console.log('All migrations are in chronological order.')
+  console.warn('All migrations are in chronological order.')
 }
