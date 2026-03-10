@@ -1,48 +1,37 @@
 # Dockerfile for Pragmatic Papers (Next.js + Payload CMS)
 # Optimized for pnpm monorepo with Turborepo
 # Based on official Turborepo and Next.js Docker deployment guides
-
 ARG NODE_VERSION=22.21.1
 
 # ============================================
 # Base stage - setup pnpm and dependencies
 # ============================================
 FROM node:${NODE_VERSION}-alpine AS base
-
 # Install dependencies for native modules (required for sharp and other native deps)
 RUN apk add --no-cache libc6-compat
-
 # Enable pnpm via corepack
 RUN corepack enable
-
 WORKDIR /app
 
 # ============================================
 # Pruner stage - prune monorepo to this app
 # ============================================
 FROM base AS pruner
-
 # Install turbo globally
 RUN npm install -g turbo
-
-# Copy entire monorepo
-COPY . .
-
-# Prune the monorepo to just this app and its dependencies
+# Copy entire monorepo and prune to only include pragmatic-papers and its dependencies
 # This creates /app/out/json (package.json files) and /app/out/full (source code)
+COPY . .
 RUN turbo prune pragmatic-papers --docker
 
 # ============================================
 # Installer stage - install dependencies only
 # ============================================
 FROM base AS installer
-
 WORKDIR /app
-
-# Copy pruned lockfile and package.json files from pruner
+# Copy pruned lockfile and package.json files from pruner stage
 COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-
 # Install dependencies with frozen lockfile
 # Using cache mount for pnpm store to speed up builds
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
@@ -52,7 +41,6 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 # Builder stage - build the application
 # ============================================
 FROM base AS builder
-
 WORKDIR /app
 
 # Install PostgreSQL client for database operations
@@ -61,7 +49,6 @@ RUN apk add --no-cache postgresql-client
 
 # Copy installed node_modules from installer
 COPY --from=installer /app/ .
-
 # Copy pruned source code from pruner
 COPY --from=pruner /app/out/full/ .
 
@@ -70,7 +57,7 @@ COPY dockerfiles/scripts/modify-database-uri.sh /usr/local/bin/modify-database-u
 COPY dockerfiles/scripts/copy-database.sh /usr/local/bin/copy-database.sh
 RUN chmod +x /usr/local/bin/modify-database-uri.sh /usr/local/bin/copy-database.sh
 
-# Accept build arguments for environment variables
+# Build Arguments
 ARG NODE_ENV=production
 ARG BUILD_ENV=production
 ARG DATABASE_URI
@@ -90,13 +77,12 @@ ARG NEXT_PUBLIC_SUPABASE_URL
 # When BUILD_ENV=preview, we extract the prefix and append it to database names
 # This creates unique databases for each preview deployment (e.g., "pragmatic_papers_pr_330")
 ARG COOLIFY_FQDN=
-
 # Database copy configuration for preview deployments
 ARG COPY_SOURCE_DATABASE=false
 ARG SOURCE_DATABASE_URI
 ARG FORCE_DATABASE_COPY=false
 
-# Set environment variables for build
+# Environment Variables
 ENV NODE_ENV=${NODE_ENV}
 ENV BUILD_ENV=${BUILD_ENV}
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -115,24 +101,22 @@ ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
 
 # Coolify-specific environment variables
 ENV COOLIFY_FQDN=${COOLIFY_FQDN}
-
 # Database copy environment variables
 ENV COPY_SOURCE_DATABASE=${COPY_SOURCE_DATABASE}
 ENV SOURCE_DATABASE_URI=${SOURCE_DATABASE_URI}
 ENV FORCE_DATABASE_COPY=${FORCE_DATABASE_COPY}
 
-# Modify DATABASE_URI to include preview deployment suffix (if BUILD_ENV=preview and COOLIFY_FQDN is set)
-# and copy database before running migrations (if enabled)
-# This automatically creates unique database names like "pragmatic_papers_pr_330"
-# and creates an isolated copy of the source database for preview deployments
-# to prevent schema mismatches between staging and preview environments
+# --- PREVIEW ISOLATION LOGIC ---
+# 1. If BUILD_ENV=preview, modify-database-uri.sh generates a unique DB name based on PR number.
+# 2. We store this NEW_DATABASE_URI in /tmp/build.env to persist it.
+# 3. copy-database.sh clones the staging DB into this new isolated PR database.
 RUN /usr/local/bin/modify-database-uri.sh && \
     if [ -f /tmp/database_uri.env ]; then \
         . /tmp/database_uri.env && \
-        echo "DATABASE_URI=$DATABASE_URI" >> /tmp/build.env && \
+        echo "export DATABASE_URI='$DATABASE_URI'" > /tmp/build.env && \
         /usr/local/bin/copy-database.sh; \
     else \
-        echo "DATABASE_URI=$DATABASE_URI" >> /tmp/build.env && \
+        echo "export DATABASE_URI='$DATABASE_URI'" > /tmp/build.env && \
         /usr/local/bin/copy-database.sh; \
     fi
 
@@ -140,17 +124,14 @@ RUN /usr/local/bin/modify-database-uri.sh && \
 # Uses the 'ci' script which runs migrations and then builds
 # Source the potentially modified DATABASE_URI before building
 RUN . /tmp/build.env && \
-    export DATABASE_URI && \
     pnpm turbo run ci --filter=pragmatic-papers
 
 # ============================================
 # Runner stage - minimal production runtime
 # ============================================
 FROM node:${NODE_VERSION}-alpine AS runner
-
 WORKDIR /app
-
-# Install dumb-init for proper signal handling
+# dumb-init ensures proper signal handling (SIGTERM) for Node.js
 RUN apk add --no-cache dumb-init
 
 # Set production environment
@@ -169,30 +150,31 @@ ENV FORCE_COLOR=0
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Copy standalone build output from builder
+# Copy the standalone Next.js build
 # The standalone build includes a minimal server.js and only necessary node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/standalone ./
-
 # Copy static assets (required for standalone mode)
 # These are not included in standalone by default as they should be served by CDN
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./apps/pragmatic-papers/.next/static
-
 # Copy public folder (images, fonts, etc.)
 COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
 
-# Create media directory for local storage with proper permissions
-# This directory will be used when USE_LOCAL_STORAGE=true
-# The volume mount will overlay this directory, but we create it to ensure proper ownership
+# PERSISTENCE FIX: Copy the unique DATABASE_URI from the Builder stage to the Runner stage
+COPY --from=builder --chown=nextjs:nodejs /tmp/build.env /app/build.env
+
+# Prepare media directory for local storage deployments
 RUN mkdir -p /app/apps/pragmatic-papers/public/media && \
     chown -R nextjs:nodejs /app/apps/pragmatic-papers/public/media && \
     chmod -R 755 /app/apps/pragmatic-papers/public/media
 
-# Create startup script with logging
+# STARTUP SCRIPT: Sources the isolated DB URI if it exists, otherwise uses defaults
 RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'set -e' >> /app/start.sh && \
+    # Source the build.env to get the potentially modified DATABASE_URI for preview deployments
+    echo 'if [ -f /app/build.env ]; then . /app/build.env; fi' >> /app/start.sh && \
+    
     echo 'echo "========================================="' >> /app/start.sh && \
     echo 'echo "Starting Pragmatic Papers Application"' >> /app/start.sh && \
-    echo 'echo "========================================="' >> /app/start.sh && \
     echo 'echo "Node version: $(node --version)"' >> /app/start.sh && \
     echo 'echo "Environment: $NODE_ENV"' >> /app/start.sh && \
     echo 'echo "Database: PostgreSQL"' >> /app/start.sh && \
@@ -207,12 +189,9 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
 
 # Switch to non-root user
 USER nextjs
-
-# Expose portdf
+# Expose port for Next.js application
 EXPOSE 3000
-
 # Use dumb-init to handle signals properly (SIGTERM, etc.)
 ENTRYPOINT ["dumb-init", "--"]
-
-# Start using the startup script for better log visibility
+# Start using the startup script for better log visibility and to ensure environment variables are sourced
 CMD ["/app/start.sh"]
