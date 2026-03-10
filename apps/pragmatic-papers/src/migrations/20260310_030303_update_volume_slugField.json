@@ -4617,18 +4617,18 @@
           "primaryKey": false,
           "notNull": false
         },
+        "generate_slug": {
+          "name": "generate_slug",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
         "slug": {
           "name": "slug",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
-        },
-        "slug_lock": {
-          "name": "slug_lock",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": true
         },
         "updated_at": {
           "name": "updated_at",
@@ -4679,7 +4679,7 @@
               "nulls": "last"
             }
           ],
-          "isUnique": false,
+          "isUnique": true,
           "concurrently": false,
           "method": "btree",
           "with": {}
@@ -4953,18 +4953,18 @@
           "primaryKey": false,
           "notNull": false
         },
+        "version_generate_slug": {
+          "name": "version_generate_slug",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
         "version_slug": {
           "name": "version_slug",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
-        },
-        "version_slug_lock": {
-          "name": "version_slug_lock",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": true
         },
         "version_updated_at": {
           "name": "version_updated_at",
@@ -11270,6 +11270,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "7af505c2-abf5-4db1-bfcb-71d3e68004e7",
+  "id": "e6341e2b-051a-4064-85aa-287a0c393c29",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

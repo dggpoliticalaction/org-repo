@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import { slugField, type CollectionConfig } from 'payload'
 
 import {
   AlignFeature,
@@ -14,10 +14,13 @@ import {
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
 
-import { numberSlugField } from '@/fields/numberSlug'
+import { editor } from '@/access/editor'
+import { Banner } from '@/blocks/Banner/config'
+import { Code } from '@/blocks/Code/config'
+import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { SquiggleRule } from '@/blocks/SquiggleRule/config'
 
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
-import { editor } from '@/access/editor'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import {
   MetaDescriptionField,
@@ -26,10 +29,6 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
-import { Banner } from '../../blocks/Banner/config'
-import { Code } from '../../blocks/Code/config'
-import { MediaBlock } from '../../blocks/MediaBlock/config'
-import { SquiggleRule } from '../../blocks/SquiggleRule/config'
 import { checkArticles } from './hooks/checkArticles'
 import { generateTitle } from './hooks/generateTitle'
 import { pushToWebhooks } from './hooks/pushToWebhooks'
@@ -198,7 +197,10 @@ export const Volumes: CollectionConfig = {
         ],
       },
     },
-    ...numberSlugField('volumeNumber'),
+    slugField({
+      useAsSlug: 'volumeNumber',
+      slugify: ({ valueToSlugify }) => String(valueToSlugify || ''),
+    }),
   ],
   hooks: {
     afterChange: [revalidateArticle, pushToWebhooks],
