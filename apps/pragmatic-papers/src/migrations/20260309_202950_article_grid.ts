@@ -65,7 +65,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"block_name" varchar
   );
   
-  ALTER TABLE "header" ALTER COLUMN "action_button_enabled" SET NOT NULL;
   ALTER TABLE "pages_blocks_article_grid" ADD CONSTRAINT "pages_blocks_article_grid_slots_featured_article_id_articles_id_fk" FOREIGN KEY ("slots_featured_article_id") REFERENCES "public"."articles"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "pages_blocks_article_grid" ADD CONSTRAINT "pages_blocks_article_grid_slots_a_article_id_articles_id_fk" FOREIGN KEY ("slots_a_article_id") REFERENCES "public"."articles"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "pages_blocks_article_grid" ADD CONSTRAINT "pages_blocks_article_grid_slots_b_article_id_articles_id_fk" FOREIGN KEY ("slots_b_article_id") REFERENCES "public"."articles"("id") ON DELETE set null ON UPDATE no action;
