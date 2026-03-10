@@ -54,3 +54,6 @@ jobs:
 
       - name: Type checking
         run: pnpm run check-types
+
+      - name: Check migration order
+        run: apps/pragmatic-papers/scripts/check-migration-order.sh
