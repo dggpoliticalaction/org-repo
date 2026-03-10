@@ -7,6 +7,7 @@ import { Code } from '@/blocks/Code/config'
 import { FootnoteBlock } from '@/blocks/Footnote/config'
 import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { MediaCollageBlock } from '@/blocks/MediaCollageBlock/config'
 import { SocialEmbed } from '@/blocks/SocialEmbed/config'
 import { LegacyBlueskyEmbed } from '@/blocks/SocialEmbed/embeds/BlueskyEmbed/config'
 import { LegacyRedditEmbed } from '@/blocks/SocialEmbed/embeds/RedditEmbed/config'
@@ -45,7 +46,6 @@ import {
   SuperscriptFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
-import { MediaCollageBlock } from '@/blocks/MediaCollageBlock/config'
 import type { CollectionBeforeChangeHook, CollectionConfig, FieldHook } from 'payload'
 import { slugField } from 'payload'
 
@@ -276,9 +276,7 @@ export const Articles: CollectionConfig = {
   },
   versions: {
     drafts: {
-      autosave: {
-        interval: 800,
-      },
+      autosave: true,
       schedulePublish: true,
     },
     maxPerDoc: 50,
