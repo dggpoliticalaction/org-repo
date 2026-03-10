@@ -129,7 +129,8 @@ RUN chmod +x /app/start.sh
 
 # Prepare media directory for local storage
 RUN mkdir -p /app/apps/pragmatic-papers/public/media && \
-    chown -R nextjs:nodejs /app/apps/pragmatic-papers/public/media
+    chown -R nextjs:nodejs /app/apps/pragmatic-papers/public/media && \
+    chmod -R 755 /app/apps/pragmatic-papers/public/media
 
 USER nextjs
 EXPOSE 3000
