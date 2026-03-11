@@ -134,6 +134,17 @@ fi
 # Check if source and target are on the same server
 if [ "$SOURCE_HOST" = "$TARGET_HOST" ] && [ "$SOURCE_PORT" = "$TARGET_PORT" ]; then
     echo "Source and target are on the same PostgreSQL server"
+
+    # --- Fix For ERROR:  source database "pragmatic_papers" is being accessed by other users ---
+    echo "Terminating existing connections to source database '$SOURCE_DB'..."
+    psql -h "$TARGET_HOST" -p "$TARGET_PORT" -U "$TARGET_USER" -d postgres -c "
+        SELECT pg_terminate_backend(pid) 
+        FROM pg_stat_activity 
+        WHERE datname = '$SOURCE_DB' 
+          AND pid <> pg_backend_pid();
+    " || true
+    # ---------------------
+
     echo "Using CREATE DATABASE WITH TEMPLATE for efficient copy..."
     
     # Create database from template (most efficient method)
