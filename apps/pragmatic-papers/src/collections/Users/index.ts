@@ -1,6 +1,5 @@
 import { adminOrSelf } from '@/access/adminOrSelf'
 import { admin, adminFieldLevel } from '@/access/admins'
-import { anyone } from '@/access/anyone'
 import { authenticated } from '@/access/authenticated'
 import { menu } from '@/fields/menu'
 import {
