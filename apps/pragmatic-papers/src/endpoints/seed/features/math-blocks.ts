@@ -1,12 +1,7 @@
 import type { Media, User } from '@/payload-types'
 import type { Payload } from 'payload'
 import type { SerializedLexicalNode } from '../richtext'
-import {
-  createParagraph,
-  createEmptyParagraph,
-  createRichText,
-  createTextNode,
-} from '../richtext'
+import { createParagraph, createEmptyParagraph, createRichText, createTextNode } from '../richtext'
 import { createArticle, validateWriters } from '../articles'
 
 /**
@@ -48,11 +43,11 @@ const createMathBlocksContent = () => {
 
     // --- Inline math section ---
     createParagraph(
-      'Inline math allows equations to flow naturally within a sentence. For example, Einstein\'s famous mass-energy equivalence',
+      "Inline math allows equations to flow naturally within a sentence. For example, Einstein's famous mass-energy equivalence",
     ),
     createEmptyParagraph(),
     createParagraph([
-      createTextNode('Einstein\'s mass-energy equivalence '),
+      createTextNode("Einstein's mass-energy equivalence "),
       createMathInlineBlock('E = mc^2'),
       createTextNode(
         ' is one of the most recognisable equations in all of physics, relating energy, mass, and the speed of light.',
@@ -60,7 +55,7 @@ const createMathBlocksContent = () => {
     ]),
     createEmptyParagraph(),
     createParagraph([
-      createTextNode('Bayes\' theorem '),
+      createTextNode("Bayes' theorem "),
       createMathInlineBlock('P(A \\mid B) = \\dfrac{P(B \\mid A)\\,P(A)}{P(B)}'),
       createTextNode(
         ' underpins modern probabilistic reasoning and has become central to debates in epistemology about rational belief revision.',
@@ -96,10 +91,12 @@ const createMathBlocksContent = () => {
     createParagraph(
       'The time-dependent Schrödinger equation describes how the quantum state of a physical system evolves:',
     ),
-    createMathDisplayBlock('i\\hbar\\,\\frac{\\partial}{\\partial t}\\Psi(\\mathbf{r},t) = \\hat{H}\\,\\Psi(\\mathbf{r},t)'),
+    createMathDisplayBlock(
+      'i\\hbar\\,\\frac{\\partial}{\\partial t}\\Psi(\\mathbf{r},t) = \\hat{H}\\,\\Psi(\\mathbf{r},t)',
+    ),
     createEmptyParagraph(),
     createParagraph(
-      'Gauss\'s law — one of Maxwell\'s equations — relates the electric flux through a closed surface to the enclosed charge:',
+      "Gauss's law — one of Maxwell's equations — relates the electric flux through a closed surface to the enclosed charge:",
     ),
     createMathDisplayBlock('\\nabla \\cdot \\mathbf{E} = \\frac{\\rho}{\\varepsilon_0}'),
     createEmptyParagraph(),
@@ -131,7 +128,7 @@ export const createMathBlocksArticle = async (
     meta: {
       title,
       description:
-        'A guide to inline and display math rendering, demonstrating LaTeX equations from Bayes\' theorem to the Schrödinger equation.',
+        "A guide to inline and display math rendering, demonstrating LaTeX equations from Bayes' theorem to the Schrödinger equation.",
       image: mediaDocs[0]?.id,
     },
   })

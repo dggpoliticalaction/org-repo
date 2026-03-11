@@ -77,9 +77,7 @@ function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunctio
           disableInnerContainer
         />
       ),
-      mediaCollage: ({ node }) => (
-      <MediaCollageBlock {...node.fields} />
-      ),
+      mediaCollage: ({ node }) => <MediaCollageBlock {...node.fields} />,
       code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
       cta: ({ node }) => <CallToActionBlock {...node.fields} />,
       displayMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (

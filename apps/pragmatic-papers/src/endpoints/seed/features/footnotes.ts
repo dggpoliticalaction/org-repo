@@ -1,11 +1,6 @@
 import type { Media, User } from '@/payload-types'
 import type { Payload } from 'payload'
-import {
-  createParagraph,
-  createEmptyParagraph,
-  createRichText,
-  createTextNode,
-} from '../richtext'
+import { createParagraph, createEmptyParagraph, createRichText, createTextNode } from '../richtext'
 import { createArticle, validateWriters } from '../articles'
 
 const createArticleContentWithFootnotes = (referencedArticleId: number) => {

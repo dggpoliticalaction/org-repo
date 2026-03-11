@@ -20,8 +20,24 @@ interface ActionButtonProps extends React.ComponentProps<typeof CMSButton> {
  */
 export const ActionButton: React.FC<ActionButtonProps> = ({ button, className, ...props }) => {
   if (!button?.enabled) return null
+  const { backgroundColor, textColor } = button ?? {}
+
   return (
-    <CMSButton button={button} className={cn('gap-2', className)} {...props}>
+    <CMSButton
+      link={button?.link}
+      variant={button?.variant}
+      className={cn(
+        'gap-2 bg-(--cms-button-background) text-(--cms-button-foreground) hover:bg-[color-mix(in_srgb,var(--cms-button-background),black_10%)]',
+        className,
+      )}
+      style={
+        {
+          '--cms-button-background': backgroundColor,
+          '--cms-button-foreground': textColor,
+        } as unknown as React.CSSProperties
+      }
+      {...props}
+    >
       {button?.link?.label || 'Invalid Link'}
       <ExternalLink className="h-4 w-4" />
     </CMSButton>

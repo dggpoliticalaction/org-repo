@@ -22,7 +22,6 @@ interface SeedContext {
   featureArticles: number[]
 }
 
-
 export const seed = async (
   payload: Payload,
   onProgress?: (message: string, step: number, total: number) => void,
@@ -30,22 +29,25 @@ export const seed = async (
   const ctx = {} as SeedContext
 
   const volume1Titles = [
-    "The Trolley Problem Revisited: Moral Intuition in the Age of Autonomous Vehicles",
-    "Free Will and Determinism: Can Neuroscience Settle the Debate?",
+    'The Trolley Problem Revisited: Moral Intuition in the Age of Autonomous Vehicles',
+    'Free Will and Determinism: Can Neuroscience Settle the Debate?',
     "Plato's Cave in the Digital Age: Social Media as Manufactured Reality",
-    "The Ship of Theseus and Personal Identity: Who Are You After a Decade?",
+    'The Ship of Theseus and Personal Identity: Who Are You After a Decade?',
     "Simone de Beauvoir's Ethics of Ambiguity and the Modern Workplace",
-    "Epistemic Injustice: Why Some Voices Are Silenced in Public Discourse",
+    'Epistemic Injustice: Why Some Voices Are Silenced in Public Discourse',
   ]
 
   const volume2Titles = [
-    "Dawkins vs. Blackmore: What Counts as a Meme in the Attention Economy?",
-    "Irony as Ideology: How the Internet Weaponised Humour",
-    "The Half-Life of Virality: Why Memes Die and What Survives",
+    'Dawkins vs. Blackmore: What Counts as a Meme in the Attention Economy?',
+    'Irony as Ideology: How the Internet Weaponised Humour',
+    'The Half-Life of Virality: Why Memes Die and What Survives',
   ]
 
   const titleToSlug = (title: string) =>
-    title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
 
   const steps: { name: string; fn: () => Promise<void> }[] = [
     {
@@ -53,7 +55,17 @@ export const seed = async (
       fn: async () => {
         await payload.delete({
           collection: 'users',
-          where: { email: { in: ['admin@example.com', 'chiefeditor@example.com', 'editor@example.com', 'writer1@example.com', 'writer2@example.com'] } },
+          where: {
+            email: {
+              in: [
+                'admin@example.com',
+                'chiefeditor@example.com',
+                'editor@example.com',
+                'writer1@example.com',
+                'writer2@example.com',
+              ],
+            },
+          },
         })
         await payload.delete({ collection: 'articles', where: {} })
         await payload.delete({ collection: 'volumes', where: {} })
@@ -64,7 +76,8 @@ export const seed = async (
     {
       name: 'Uploading media...',
       fn: async () => {
-        const IMAGE_BASE = 'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed'
+        const IMAGE_BASE =
+          'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed'
         const ALT = 'Curving abstract shapes with an orange and blue gradient'
         ctx.media = await Promise.all([
           createMediaFromURL(payload, `${IMAGE_BASE}/image-post1.webp`, ALT),
@@ -130,13 +143,19 @@ export const seed = async (
     {
       name: 'Creating feature articles...',
       fn: async () => {
-        const [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks] = await Promise.all([
-          createFootnotesArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, ctx.volume1Articles[0]!),
-          createSocialEmbedArticle(payload, ctx.writer1, ctx.media),
-          createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media),
-          createMediaCollageArticle(payload, ctx.writer1, ctx.media),
-          createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media),
-        ])
+        const [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks] =
+          await Promise.all([
+            createFootnotesArticle(
+              payload,
+              [ctx.writer1, ctx.writer2],
+              ctx.media,
+              ctx.volume1Articles[0]!,
+            ),
+            createSocialEmbedArticle(payload, ctx.writer1, ctx.media),
+            createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media),
+            createMediaCollageArticle(payload, ctx.writer1, ctx.media),
+            createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media),
+          ])
         ctx.featureArticles = [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks]
       },
     },
@@ -149,22 +168,28 @@ export const seed = async (
             {
               volumeNumber: 1,
               title: 'Volume 1: Foundations of Philosophy',
-              description: 'A comprehensive collection of foundational philosophy papers covering various topics.',
-              editorsNoteContent: 'This inaugural volume brings together six groundbreaking papers that lay the foundation for future research.',
+              description:
+                'A comprehensive collection of foundational philosophy papers covering various topics.',
+              editorsNoteContent:
+                'This inaugural volume brings together six groundbreaking papers that lay the foundation for future research.',
               articleIds: ctx.volume1Articles,
             },
             {
               volumeNumber: 2,
               title: 'Volume 2: Advanced Studies in Memes',
-              description: 'A focused collection of three in-depth research papers exploring advanced topics in memes.',
-              editorsNoteContent: 'This volume presents three comprehensive studies that push the boundaries of current research in memes.',
+              description:
+                'A focused collection of three in-depth research papers exploring advanced topics in memes.',
+              editorsNoteContent:
+                'This volume presents three comprehensive studies that push the boundaries of current research in memes.',
               articleIds: ctx.volume2Articles,
             },
             {
               volumeNumber: 3,
               title: 'Volume 3: Feature Demonstrations',
-              description: 'A collection of articles demonstrating the platform\'s feature set, including footnotes, social embeds, and media collages.',
-              editorsNoteContent: 'This volume showcases the full range of content features available to authors on Pragmatic Papers.',
+              description:
+                "A collection of articles demonstrating the platform's feature set, including footnotes, social embeds, and media collages.",
+              editorsNoteContent:
+                'This volume showcases the full range of content features available to authors on Pragmatic Papers.',
               articleIds: ctx.featureArticles,
             },
           ],
@@ -176,8 +201,23 @@ export const seed = async (
       name: 'Creating pages & menus...',
       fn: async () => {
         const homePage = await payload.create({ collection: 'pages', data: homeStatic })
-        const { aboutPage, articlesPage, contactPage, privacyPolicyPage, termsOfUsePage, volumesPage } = await createPages(payload)
-        await createMenus(payload, { homePage, aboutPage, articlesPage, contactPage, privacyPolicyPage, termsOfUsePage, volumesPage })
+        const {
+          aboutPage,
+          articlesPage,
+          contactPage,
+          privacyPolicyPage,
+          termsOfUsePage,
+          volumesPage,
+        } = await createPages(payload)
+        await createMenus(payload, {
+          homePage,
+          aboutPage,
+          articlesPage,
+          contactPage,
+          privacyPolicyPage,
+          termsOfUsePage,
+          volumesPage,
+        })
       },
     },
   ]

@@ -13,17 +13,20 @@ Seed scripts populate the database with sample content for development. Rather t
 ### Rich Text Utilities (`richtext.ts`)
 
 **Basic Functions:**
+
 - `createTextNode(text, format?)` - Creates a text node
 - `createParagraph(text | textNode | array)` - Creates a paragraph with text/nodes
 - `createEmptyParagraph()` - Creates a line break paragraph
 - `createRichText(children)` - Wraps paragraph nodes in root structure
 
 **High-Level Functions:**
+
 - `createRichTextFromString(text)` - Single paragraph from string
 - `createRichTextFromParagraphs(paragraphs[], addSpacing?)` - Multiple paragraphs with auto-spacing
 - `createLoremIpsumContent(numParagraphs)` - Lorem ipsum for testing
 
 **Lorem Ipsum Generators:**
+
 - `generateLoremIpsumParagraph(numSentences)` - Single paragraph
 - `generateLoremIpsumParagraphs(numParagraphs)` - Array of paragraphs
 
@@ -88,6 +91,7 @@ When generating a seed from article JSON:
 ⚠️ **Do NOT use URLs from article JSON** (e.g., `/api/media/file/image.jpg`) - these point to the local development server and won't work in seed scripts.
 
 **Instead:**
+
 - Ask the user to provide external URLs for each media item
 - Use publicly accessible URLs (CDN, GitHub raw, image hosting services, etc.)
 - Example: `https://raw.githubusercontent.com/org/repo/main/image.jpg`
@@ -160,12 +164,15 @@ export const createMyFeatureArticle = async (
 ## Example: Converting JSON to Seed
 
 **Given article JSON with:**
+
 - Title: "Example Article"
 - Content with paragraphs and media blocks
 - Media with captions (showing local URLs like `/api/media/file/...`)
 
 **AI should first ask:**
+
 > "I see this article uses 2 media items. The JSON shows local dev server URLs which won't work for seeding. Please provide external URLs for:
+>
 > 1. Media with alt text 'alt1' and caption 'Caption 1'
 > 2. Media with alt text 'alt2' and caption 'Caption 2'"
 
