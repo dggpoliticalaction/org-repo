@@ -1,3 +1,4 @@
+import { adminFieldLevel } from '@/access/admins'
 import type { GlobalConfig } from 'payload'
 
 import { menu } from '@/fields/menu'
@@ -7,6 +8,7 @@ export const Footer: GlobalConfig = {
   slug: 'footer',
   access: {
     read: () => true,
+    update: adminFieldLevel,
   },
   fields: [
     menu({
