@@ -71,7 +71,9 @@ export const SeedButton: React.FC = () => {
               <span style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flex: 1 }}>
                 <Spinner />
                 <span style={{ flex: 1 }}>{event.message}</span>
-                <span style={{ opacity: 0.5, fontSize: '0.8em', whiteSpace: 'nowrap' }}>{event.step} of {event.total}</span>
+                <span style={{ opacity: 0.5, fontSize: '0.8em', whiteSpace: 'nowrap' }}>
+                  {event.step} of {event.total}
+                </span>
               </span>,
               { id: SEED_TOAST_ID, duration: Infinity },
             )
