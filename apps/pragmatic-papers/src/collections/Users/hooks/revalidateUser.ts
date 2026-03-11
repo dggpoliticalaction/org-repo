@@ -1,8 +1,6 @@
-import type { CollectionAfterChangeHook } from 'payload'
-
+import type { User } from '@/payload-types'
 import { revalidatePath } from 'next/cache'
-
-import type { User } from '../../../payload-types'
+import type { CollectionAfterChangeHook } from 'payload'
 
 export const revalidateUser: CollectionAfterChangeHook<User> = async ({
   doc,
@@ -19,11 +17,13 @@ export const revalidateUser: CollectionAfterChangeHook<User> = async ({
 
   for (const slug of slugsToRevalidate) {
     if (slug) {
-      payload.logger.info(`Revalidating author at path: /authors/${slug}`)
-      revalidatePath(`/authors/${slug}`)
+      const path = `/authors/${slug}`
+      payload.logger.info(`Revalidating author at path: ${path}`)
+      revalidatePath(path)
     }
   }
 
+  payload.logger.info(`Revalidating authors index at path: /authors`)
   revalidatePath('/authors')
 
   // Find all published articles where this user is an author and revalidate them
@@ -46,9 +46,9 @@ export const revalidateUser: CollectionAfterChangeHook<User> = async ({
   })
 
   for (const article of articles.docs) {
-    const articlePath = `/articles/${article.slug}`
-    payload.logger.info(`Revalidating article at path: ${articlePath}`)
-    revalidatePath(articlePath)
+    const path = `/articles/${article.slug}`
+    payload.logger.info(`Revalidating article at path: ${path}`)
+    revalidatePath(path)
   }
 
   // Find volumes that contain these articles
