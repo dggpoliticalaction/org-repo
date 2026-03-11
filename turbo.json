@@ -23,6 +23,8 @@
         "NEXT_PUBLIC_SUPABASE_URL"
       ]
     },
+    "lint:fix":{
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },
