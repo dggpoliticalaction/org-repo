@@ -55,7 +55,7 @@ pnpm
     pnpm dev
     ```
 
-5. Use a browser to access the application,
+5. Use a browser( I heard the blue e works well! ) to access the application,
 
     [http://localhost:8000](http://localhost:8000)
 
