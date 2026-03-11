@@ -20,7 +20,7 @@ export const Users: CollectionConfig = {
     admin: authenticated,
     create: admin,
     delete: admin,
-    read: anyone,
+    read: adminOrSelf,
     update: adminOrSelf,
   },
   admin: {
