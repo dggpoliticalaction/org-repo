@@ -1,6 +1,6 @@
 import { adminOrSelf } from '@/access/adminOrSelf'
 import { admin, adminFieldLevel } from '@/access/admins'
-import { authenticated } from '@/access/authenticated'
+import { staff } from '@/access/staff'
 import { menu } from '@/fields/menu'
 import {
   FixedToolbarFeature,
@@ -17,7 +17,7 @@ import { slugField, type CollectionConfig } from 'payload'
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
-    admin: authenticated,
+    admin: staff,
     create: admin,
     delete: admin,
     read: adminOrSelf,
