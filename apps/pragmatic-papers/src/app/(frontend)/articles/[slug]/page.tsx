@@ -6,6 +6,7 @@ import RichText from '@/components/RichText'
 import { ArticleHero } from '@/heros/ArticleHero'
 import { MathJaxProvider } from '@/providers/MathJaxProvider'
 import { generateMeta } from '@/utilities/generateMeta'
+import { articleJsonLd, JsonLd } from '@/utilities/jsonLd'
 import configPromise from '@payload-config'
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
@@ -78,6 +79,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   return (
     <article className="m-auto max-w-3xl p-5 pb-16">
+      <JsonLd data={articleJsonLd(article, slug)} />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 

@@ -7,6 +7,7 @@ import { Squiggle } from '@/components/ui/squiggle'
 import type { Article, User } from '@/payload-types'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { generateMeta } from '@/utilities/generateMeta'
+import { volumeJsonLd, JsonLd } from '@/utilities/jsonLd'
 import { toRoman } from '@/utilities/toRoman'
 import configPromise from '@payload-config'
 import type { Metadata } from 'next'
@@ -128,7 +129,7 @@ export default async function VolumePage({
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-16">
-
+      <JsonLd data={volumeJsonLd(volume, slug, actualArticles?.length)} />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
