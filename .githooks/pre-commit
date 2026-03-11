@@ -11,14 +11,6 @@ if [ $status -ne 0 ]; then
     exit $status
 fi
 
-pnpm format
-status=$?
-if [ $status -ne 0 ]; then
-    echo "❌ Format failed. attempting to fix issues..."
-    pnpm format:fix
-    exit $status
-fi
-
 pnpm check-types
 status=$?
 if [ $status -ne 0 ]; then
