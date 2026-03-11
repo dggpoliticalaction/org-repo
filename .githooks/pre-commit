@@ -3,19 +3,30 @@
 # 1. Ensure we are in the project root
 cd "$(git rev-parse --show-toplevel)"
 
-echo "🚀 Running Turbo Lint..."
+echo "🚀 Running Turbo Checks..."
 
-# 2. Execute your lint command
-# We use 'npm run' so it finds the local version of turbo in node_modules
-npm run lint:ci
-
-# 3. Capture the exit code
+pnpm lint -- --max-warnings 0
 status=$?
-
 if [ $status -ne 0 ]; then
-    echo "❌ Linting failed. Commit aborted."
+    echo "❌ Linting failed. attempting to fix issues..."
+    pnpm lint:fix
     exit $status
 fi
 
-echo "✅ Linting passed!"
+pnpm format
+status=$?
+if [ $status -ne 0 ]; then
+    echo "❌ Format failed. attempting to fix issues..."
+    pnpm format:fix
+    exit $status
+fi
+
+pnpm check-types
+status=$?
+if [ $status -ne 0 ]; then
+    echo "❌ Type checking failed. Commit aborted."
+    exit $status
+fi
+
+echo "✅ checks passed!"
 exit 0
