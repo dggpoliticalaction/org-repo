@@ -5,7 +5,7 @@ import type { User } from '@/payload-types'
 type isAuthenticated = (args: AccessArgs<User>) => boolean
 
 export const authenticated: isAuthenticated = ({ req: { user } }) => {
-  // Basic "user" accounts should not be allowed into the admin UI.
+  // Basic "member" accounts should not be allowed into the admin UI.
   if (!user) {
     return false
   }
@@ -14,5 +14,5 @@ export const authenticated: isAuthenticated = ({ req: { user } }) => {
     return false
   }
   // prevent the lowest‑privilege role from hitting `access.admin`
-  return user.role !== 'user'
+  return user.role !== 'member'
 }

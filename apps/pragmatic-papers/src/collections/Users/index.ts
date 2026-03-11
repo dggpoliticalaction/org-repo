@@ -94,7 +94,7 @@ export const Users: CollectionConfig = {
       name: 'role',
       type: 'select',
       saveToJWT: true,
-      defaultValue: 'user',
+      defaultValue: 'member',
       access: {
         update: adminFieldLevel,
       },
@@ -119,8 +119,8 @@ export const Users: CollectionConfig = {
           value: 'writer',
         },
         {
-          label: 'User',
-          value: 'user',
+          label: 'Member',
+          value: 'member',
         },
       ],
     },
