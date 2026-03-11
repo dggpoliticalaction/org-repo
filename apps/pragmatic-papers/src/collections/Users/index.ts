@@ -12,6 +12,7 @@ import {
   OrderedListFeature,
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
+import { revalidateUser } from '@/collections/Users/hooks/revalidateUser'
 import { slugField, type CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
@@ -126,5 +127,8 @@ export const Users: CollectionConfig = {
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidateUser],
+  },
   timestamps: true,
 }
