@@ -1,7 +1,6 @@
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
-import { Providers } from '@/providers'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { cn } from '@/utilities/ui'
@@ -9,6 +8,7 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import type { Metadata } from 'next'
+import { ThemeProvider } from 'next-themes'
 import { Open_Sans, Source_Serif_4 } from 'next/font/google'
 import { draftMode } from 'next/headers'
 import React from 'react'
@@ -60,7 +60,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
       </head>
       <body>
-        <Providers>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <AdminBar
             adminBarProps={{
               preview: isEnabled,
@@ -71,7 +76,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             {children}
           </main>
           <Footer />
-        </Providers>
+        </ThemeProvider>
       </body>
       <GoogleAnalytics gaId={googleAnalyticsId} />
     </html>

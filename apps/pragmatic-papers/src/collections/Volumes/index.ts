@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import { slugField, type CollectionConfig } from 'payload'
 
 import {
   AlignFeature,
@@ -14,14 +14,14 @@ import {
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
 
-import { numberSlugField } from '@/fields/numberSlug'
-
-import { Banner } from '../../blocks/Banner/config'
-import { Code } from '../../blocks/Code/config'
-import { MediaBlock } from '../../blocks/MediaBlock/config'
-import { SquiggleRule } from '../../blocks/SquiggleRule/config'
 import { editor } from '@/access/editor'
+import { Banner } from '@/blocks/Banner/config'
+import { Code } from '@/blocks/Code/config'
+import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { SquiggleRule } from '@/blocks/SquiggleRule/config'
+
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
+import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -29,12 +29,11 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
-import { generatePreviewPath } from '@/utilities/generatePreviewPath'
-import { revalidateArticle, revalidateDelete } from './hooks/revalidateVolumes'
 import { checkArticles } from './hooks/checkArticles'
-import { pushToWebhooks } from './hooks/pushToWebhooks'
-import { setDefaultSeoTitle } from './hooks/seoTitle'
 import { generateTitle } from './hooks/generateTitle'
+import { pushToWebhooks } from './hooks/pushToWebhooks'
+import { revalidateArticle, revalidateDelete } from './hooks/revalidateVolumes'
+import { setDefaultSeoTitle } from './hooks/seoTitle'
 
 export const Volumes: CollectionConfig = {
   slug: 'volumes',
@@ -198,7 +197,10 @@ export const Volumes: CollectionConfig = {
         ],
       },
     },
-    ...numberSlugField('volumeNumber'),
+    slugField({
+      useAsSlug: 'volumeNumber',
+      slugify: ({ valueToSlugify }) => String(valueToSlugify || ''),
+    }),
   ],
   hooks: {
     afterChange: [revalidateArticle, pushToWebhooks],
@@ -207,9 +209,7 @@ export const Volumes: CollectionConfig = {
   },
   versions: {
     drafts: {
-      autosave: {
-        interval: 100, // We set this interval for optimal live preview
-      },
+      autosave: true,
       schedulePublish: true,
     },
     maxPerDoc: 50,
