@@ -18,6 +18,7 @@ import * as migration_20260305_050800_action_button_needed_more_migrations from 
 import * as migration_20260307_014204_enable_math_rendering from './20260307_014204_enable_math_rendering';
 import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles';
 import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField';
+import * as migration_20260311_060145_rename_user_to_member from './20260311_060145_rename_user_to_member';
 
 export const migrations = [
   {
@@ -118,6 +119,11 @@ export const migrations = [
   {
     up: migration_20260310_030303_update_volume_slugField.up,
     down: migration_20260310_030303_update_volume_slugField.down,
-    name: '20260310_030303_update_volume_slugField'
+    name: '20260310_030303_update_volume_slugField',
+  },
+  {
+    up: migration_20260311_060145_rename_user_to_member.up,
+    down: migration_20260311_060145_rename_user_to_member.down,
+    name: '20260311_060145_rename_user_to_member'
   },
 ];
