@@ -153,6 +153,7 @@ export const createFootnotesArticle = async (
     content: createArticleContentWithFootnotes(referencedArticleId),
     authors: [writer.id],
     slug: 'demonstrating-footnotes-comprehensive-guide',
+    heroImage: mediaDocs[Math.floor(Math.random() * mediaDocs.length)]?.id,
     meta: {
       title,
       description:
