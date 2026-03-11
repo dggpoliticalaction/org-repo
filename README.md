@@ -32,39 +32,39 @@ pnpm
 
 1. First clone the repo if you have not done so already and then change directory into org-repo.
 
-    ```Bash
-    git clone https://github.com/dggpoliticalaction/org-repo.git
-    cd org-repo
-    ```
+   ```Bash
+   git clone https://github.com/dggpoliticalaction/org-repo.git
+   cd org-repo
+   ```
 
 2. This repository uses `pnpm` as a package manager. install the dependencies:
 
-    ```Bash
-    pnpm install
-    ```
+   ```Bash
+   pnpm install
+   ```
 
 3. Copy the example .env files
 
-    ```Bash
-    cp apps/pragmatic-papers/.env.example apps/pragmatic-papers/.env
-    ```
+   ```Bash
+   cp apps/pragmatic-papers/.env.example apps/pragmatic-papers/.env
+   ```
 
 4. Start dev environment
 
-    ```Bash
-    pnpm dev
-    ```
+   ```Bash
+   pnpm dev
+   ```
 
 5. Use a browser to access the application,
 
-    [http://localhost:8000](http://localhost:8000)
+   [http://localhost:8000](http://localhost:8000)
 
 > [!NOTE]
 > **Dev:Migrations**
 >
 > You do not need to run migrations against your development database, because Drizzle will have already pushed your changes to your database for you.
 >
->Payload uses Drizzle ORM's powerful push mode to automatically sync data changes to your database for you while in development mode. By default, this is enabled and is the suggested workflow to using Postgres and Payload while doing local development.
+> Payload uses Drizzle ORM's powerful push mode to automatically sync data changes to your database for you while in development mode. By default, this is enabled and is the suggested workflow to using Postgres and Payload while doing local development.
 
 ### Development Scripts
 
@@ -83,6 +83,7 @@ Here are the most important scripts available in the root `package.json`:
 ### Production Migrations
 
 Migrations will be required for non-development database environments.
+
 - Please refer to the offical [Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)
 
 ## Useful Links

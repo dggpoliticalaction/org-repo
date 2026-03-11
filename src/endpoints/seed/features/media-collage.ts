@@ -98,7 +98,7 @@ export const createMediaCollageArticle = async (
     createEmptyParagraph(),
     createParagraph('Another grid layout with differently shaped images!'),
     createMediaCollageBlock(
-      [ mediaDocs[0]?.id, itsBadMedia.id, blueCoatMedia.id].filter(
+      [mediaDocs[0]?.id, itsBadMedia.id, blueCoatMedia.id].filter(
         (id): id is number => id !== undefined,
       ),
       'grid',

@@ -1,5 +1,5 @@
-name: "Setup PNPM"
-description: "Sets up Node.js, PNPM, and installs dependencies"
+name: 'Setup PNPM'
+description: 'Sets up Node.js, PNPM, and installs dependencies'
 
 inputs:
   node-version:
@@ -8,7 +8,7 @@ inputs:
   restore-nextjs-cache:
     description: Whether to restore Next.js build cache
     required: false
-    default: "false"
+    default: 'false'
 
 runs:
   using: composite
@@ -16,7 +16,7 @@ runs:
     - name: Install pnpm
       uses: pnpm/action-setup@v4
       with:
-        version: "10.13.1"
+        version: '10.13.1'
 
     - name: Use Node.js ${{ inputs.node-version }}
       uses: actions/setup-node@v4

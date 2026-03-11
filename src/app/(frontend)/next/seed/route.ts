@@ -39,7 +39,9 @@ export async function POST(req: NextRequest): Promise<Response> {
       }
 
       try {
-        await seed(payload, (message, step, total) => send({ type: 'progress', message, step, total }))
+        await seed(payload, (message, step, total) =>
+          send({ type: 'progress', message, step, total }),
+        )
         send({ type: 'success' })
       } catch (error) {
         console.error('Error seeding database:', error)

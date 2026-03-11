@@ -22,16 +22,11 @@
         "NEXT_PUBLIC_SUPABASE_URL"
       ]
     },
-    "lint:fix":{
-    },
-    "lint": {
-    },
-    "format": {
-    },
-    "format:fix": {
-    },
-    "check-types": {
-    },
+    "lint:fix": {},
+    "lint": {},
+    "format": {},
+    "format:fix": {},
+    "check-types": {},
     "dev:install": {
       "cache": false
     },

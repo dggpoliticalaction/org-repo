@@ -33,8 +33,7 @@ const menuLinkVariants = cva('font-medium hover:bg-foreground/10', {
 })
 
 interface MenuProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof menuVariants> {
+  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof menuVariants> {
   menu?: MenuField
 }
 
