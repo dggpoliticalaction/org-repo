@@ -7237,7 +7237,7 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
-          "default": "'user'"
+          "default": "'member'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -12070,7 +12070,7 @@
         "chief-editor",
         "editor",
         "writer",
-        "user"
+        "member"
       ]
     },
     "public.enum_redirects_to_type": {
@@ -12158,6 +12158,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "25276579-75e7-453e-acba-b37af479578c",
+  "id": "c7e61613-d5da-4de1-9eaa-f980a9540186",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
