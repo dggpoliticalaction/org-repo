@@ -112,6 +112,7 @@ export const createMediaCollageArticle = async (
     content,
     authors: [writer.id],
     slug: 'grids-carousels-captions-exploring-rich-media-layouts',
+    heroImage: mediaDocs[Math.floor(Math.random() * mediaDocs.length)]?.id,
     meta: {
       title,
       description:

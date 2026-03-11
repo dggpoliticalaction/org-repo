@@ -299,8 +299,11 @@ export interface Volume {
     description?: string | null;
   };
   publishedAt?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -336,6 +339,7 @@ export interface Article {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  enableMathRendering?: boolean | null;
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
   createdBy?: (number | null) | User;
@@ -1333,6 +1337,7 @@ export interface ArticlesSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  enableMathRendering?: T;
   publishedAt?: T;
   authors?: T;
   createdBy?: T;
@@ -1391,8 +1396,8 @@ export interface VolumesSelect<T extends boolean = true> {
         description?: T;
       };
   publishedAt?: T;
+  generateSlug?: T;
   slug?: T;
-  slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
