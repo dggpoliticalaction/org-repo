@@ -1,3 +1,18 @@
+@keyframes seedSpinner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.seedSpinner {
+  animation: seedSpinner 0.5s linear infinite;
+  transform-origin: center;
+  flex-shrink: 0;
+}
+
 .seedButton {
   appearance: none;
   background: none;

@@ -14,7 +14,7 @@ export const generateTitle: FieldHook<Volume, string, Volume> = async ({ value, 
   const articleIds = siblingData.articles as number[] | undefined
 
   if (!articleIds || articleIds.length === 0) {
-    return value || ''
+    return value || '<No Articles>'
   }
 
   try {

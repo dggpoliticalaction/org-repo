@@ -7,6 +7,7 @@ import { Code } from '@/blocks/Code/config'
 import { FootnoteBlock } from '@/blocks/Footnote/config'
 import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { MediaCollageBlock } from '@/blocks/MediaCollageBlock/config'
 import { SocialEmbed } from '@/blocks/SocialEmbed/config'
 import { LegacyBlueskyEmbed } from '@/blocks/SocialEmbed/embeds/BlueskyEmbed/config'
 import { LegacyRedditEmbed } from '@/blocks/SocialEmbed/embeds/RedditEmbed/config'
@@ -14,6 +15,7 @@ import { LegacyTikTokEmbed } from '@/blocks/SocialEmbed/embeds/TikTokEmbed/confi
 import { LegacyTwitterEmbed } from '@/blocks/SocialEmbed/embeds/TwitterEmbed/config'
 import { LegacyYouTubeEmbed } from '@/blocks/SocialEmbed/embeds/YouTubeEmbed/config'
 import { SquiggleRule } from '@/blocks/SquiggleRule/config'
+import { detectMathBlocks } from '@/collections/Articles/hooks/detectMathBlocks'
 import { generateFootnotes } from '@/collections/Articles/hooks/generateFootnotes'
 import { populateAuthors } from '@/collections/Articles/hooks/populateAuthors'
 import { revalidateArticle, revalidateDelete } from '@/collections/Articles/hooks/revalidateArticle'
@@ -115,6 +117,7 @@ export const Articles: CollectionConfig = {
                         Banner,
                         Code,
                         MediaBlock,
+                        MediaCollageBlock,
                         DisplayMathBlock,
                         SquiggleRule,
                         SocialEmbed,
@@ -176,6 +179,14 @@ export const Articles: CollectionConfig = {
           ],
         },
       ],
+    },
+    {
+      name: 'enableMathRendering',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        hidden: true,
+      },
     },
     {
       name: 'publishedAt',
@@ -243,6 +254,15 @@ export const Articles: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'topics',
+      type: 'relationship',
+      admin: {
+        position: 'sidebar',
+      },
+      hasMany: true,
+      relationTo: 'topics',
+    },
     footnotesArrayField(),
     slugField(),
   ],
@@ -258,6 +278,7 @@ export const Articles: CollectionConfig = {
         }
       },
       generateFootnotes,
+      detectMathBlocks,
     ],
     afterChange: [revalidateArticle],
     afterRead: [populateAuthors],
@@ -265,9 +286,7 @@ export const Articles: CollectionConfig = {
   },
   versions: {
     drafts: {
-      autosave: {
-        interval: 100, // We set this interval for optimal live preview
-      },
+      autosave: true,
       schedulePublish: true,
     },
     maxPerDoc: 50,

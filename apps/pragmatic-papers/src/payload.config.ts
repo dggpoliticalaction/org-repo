@@ -5,6 +5,7 @@ import { Pages } from '@/collections/Pages'
 import { Users } from '@/collections/Users'
 import { Volumes } from '@/collections/Volumes'
 import { Webhooks } from '@/collections/Webhooks'
+import { Topics } from '@/collections/Topics'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { Footer } from '@/Footer/config'
 import { Header } from '@/Header/config'
@@ -77,7 +78,7 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI,
     },
   }),
-  collections: [Pages, Articles, Volumes, Media, Categories, Users, Webhooks],
+  collections: [Pages, Articles, Volumes, Media, Categories, Users, Webhooks, Topics],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [...plugins],

@@ -52,7 +52,7 @@
     --error: 10 100% 86%;
   }
 
-  [data-theme='dark'] {
+  .dark {
     --background: 0 0% 5%;
     --foreground: 210 40% 98%;
 
@@ -100,15 +100,6 @@
   }
 }
 
-html {
-  opacity: 0;
-}
-
-html[data-theme='dark'],
-html[data-theme='light'] {
-  opacity: initial;
-}
-
 /* Table Styles */
 
 .lexical-table {
@@ -129,7 +120,7 @@ html[data-theme='light'] {
   padding: 0px 16px !important;
 }
 
-html[data-theme='dark'] {
+html.dark {
   .lexical-table-cell-header-1,
   .lexical-table-cell-header-2 {
     color: white;
@@ -144,7 +135,7 @@ html[data-theme='dark'] {
   }
 }
 
-html[data-theme='light'] {
+html:not(.dark) {
   .lexical-table-cell-header-0 {
     color: rgb(54, 54, 54);
   }
