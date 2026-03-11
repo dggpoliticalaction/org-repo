@@ -3,7 +3,6 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [
@@ -23,20 +22,11 @@
         "NEXT_PUBLIC_SUPABASE_URL"
       ]
     },
-    "lint:fix":{
-    },
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
-    "format": {
-      "dependsOn": ["^format"]
-    },
-    "format:fix": {
-      "dependsOn": ["^format:fix"]
-    },
-    "check-types": {
-      "dependsOn": ["^check-types"]
-    },
+    "lint:fix": {},
+    "lint": {},
+    "format": {},
+    "format:fix": {},
+    "check-types": {},
     "dev:install": {
       "cache": false
     },
@@ -59,7 +49,6 @@
       "persistent": true
     },
     "ci": {
-      "dependsOn": ["^ci"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [
