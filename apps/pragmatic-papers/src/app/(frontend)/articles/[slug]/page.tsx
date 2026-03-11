@@ -4,6 +4,7 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import RichText from '@/components/RichText'
 import { ArticleHero } from '@/heros/ArticleHero'
+import { MathJaxProvider } from '@/providers/MathJaxProvider'
 import { generateMeta } from '@/utilities/generateMeta'
 import configPromise from '@payload-config'
 import type { Metadata } from 'next'
@@ -73,7 +74,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
-  const { footnotes, content, authors } = article
+  const { footnotes, content, authors, enableMathRendering } = article
 
   return (
     <article className="m-auto max-w-3xl p-5 pb-16">
@@ -83,11 +84,13 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
       {draft && <LivePreviewListener />}
 
       <ArticleHero article={article} />
-      <RichText
-        data={content}
-        enableGutter={false}
-        parentDoc={{ collection: 'articles', id: article.id }}
-      />
+      <MathJaxProvider enableMathRendering={enableMathRendering}>
+        <RichText
+          data={content}
+          enableGutter={false}
+          parentDoc={{ collection: 'articles', id: article.id }}
+        />
+      </MathJaxProvider>
       <FootnoteList footnotes={footnotes} />
       <AuthorList aria-label="Article Authors" authors={authors} />
     </article>

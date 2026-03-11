@@ -19,4 +19,10 @@ export interface Props {
   size?: string // for NextImage only
   src?: StaticImageData // for static media
   videoClassName?: string
+  enableModal?: boolean // Enable click to view full resolution in modal
+  gallery?: {
+    // Optional gallery context for carousel modal
+    images: MediaType[]
+    startIndex: number
+  }
 }

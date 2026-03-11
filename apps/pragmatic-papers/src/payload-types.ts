@@ -111,6 +111,7 @@ export interface Config {
     categories: Category;
     users: User;
     webhooks: Webhook;
+    topics: Topic;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -129,6 +130,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     webhooks: WebhooksSelect<false> | WebhooksSelect<true>;
+    topics: TopicsSelect<false> | TopicsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -297,8 +299,11 @@ export interface Volume {
     description?: string | null;
   };
   publishedAt?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -334,6 +339,7 @@ export interface Article {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  enableMathRendering?: boolean | null;
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
   createdBy?: (number | null) | User;
@@ -343,6 +349,7 @@ export interface Article {
         name?: string | null;
       }[]
     | null;
+  topics?: (number | Topic)[] | null;
   footnotes?: FootnotesField;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -517,6 +524,25 @@ export interface LinkField {
       } | null);
   url?: string | null;
   label?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topics".
+ */
+export interface Topic {
+  id: number;
+  name: string;
+  /**
+   * Optional description for this topic
+   */
+  description?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1105,6 +1131,10 @@ export interface PayloadLockedDocument {
         value: number | Webhook;
       } | null)
     | ({
+        relationTo: 'topics';
+        value: number | Topic;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: number | Redirect;
       } | null)
@@ -1307,6 +1337,7 @@ export interface ArticlesSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  enableMathRendering?: T;
   publishedAt?: T;
   authors?: T;
   createdBy?: T;
@@ -1316,6 +1347,7 @@ export interface ArticlesSelect<T extends boolean = true> {
         id?: T;
         name?: T;
       };
+  topics?: T;
   footnotes?: T | FootnotesFieldSelect<T>;
   generateSlug?: T;
   slug?: T;
@@ -1364,8 +1396,8 @@ export interface VolumesSelect<T extends boolean = true> {
         description?: T;
       };
   publishedAt?: T;
+  generateSlug?: T;
   slug?: T;
-  slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1537,6 +1569,18 @@ export interface WebhooksSelect<T extends boolean = true> {
         timePushed?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topics_select".
+ */
+export interface TopicsSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  generateSlug?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1907,6 +1951,20 @@ export interface CodeBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'code';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaCollageBlock".
+ */
+export interface MediaCollageBlock {
+  layout: 'grid' | 'carousel';
+  images: {
+    media: number | Media;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaCollage';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

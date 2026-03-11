@@ -4,6 +4,7 @@ import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
 import { FootnoteBlock } from '@/blocks/Footnote/Component'
 import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { MediaCollageBlock } from '@/blocks/MediaCollageBlock/component'
 import {
   BlueskyEmbedBlock,
   RedditEmbedBlock,
@@ -19,6 +20,7 @@ import type {
   CallToActionBlock as CTABlockProps,
   FootnoteBlock as FootnoteBlockProps,
   MediaBlock as MediaBlockProps,
+  MediaCollageBlock as MediaCollageBlockProps,
   SocialEmbedBlock as SocialEmbedBlockProps,
   SquiggleRuleBlock as SquiggleRuleBlockProps,
 } from '@/payload-types'
@@ -41,6 +43,7 @@ type NodeTypes =
   | SerializedBlockNode<
       | CTABlockProps
       | MediaBlockProps
+      | MediaCollageBlockProps
       | BannerBlockProps
       | CodeBlockProps
       | MathBlockProps
@@ -73,6 +76,9 @@ function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunctio
           enableGutter={false}
           disableInnerContainer
         />
+      ),
+      mediaCollage: ({ node }) => (
+      <MediaCollageBlock {...node.fields} />
       ),
       code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
       cta: ({ node }) => <CallToActionBlock {...node.fields} />,

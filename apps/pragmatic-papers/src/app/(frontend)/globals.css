@@ -188,96 +188,6 @@
   }
 }
 
-/* Base styles */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-size: unset;
-  font-weight: unset;
-}
-
-body {
-  @apply bg-background text-foreground flex min-h-screen flex-col;
-}
-
-html {
-  opacity: 0;
-}
-
-html[data-theme='dark'],
-html[data-theme='light'] {
-  opacity: initial;
-}
-
-/* Typography / Prose overrides */
-.prose {
-  --tw-prose-body: var(--text);
-  --tw-prose-headings: var(--text);
-  font-family: var(--font-serif);
-}
-
-.prose h1 {
-  font-size: 4rem;
-  font-weight: 700;
-  margin-bottom: 0.25em;
-  color: transparent;
-  -webkit-text-stroke-width: 2px;
-  -webkit-text-stroke-color: var(--brand-light);
-  font-family:
-    Open Sans,
-    Open Sans Fallback;
-}
-
-.prose h2 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: 0;
-}
-
-.prose h3 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: 0;
-}
-
-.prose h4 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: 30px;
-  letter-spacing: 0;
-}
-
-.prose p {
-  font-size: 1.188rem;
-  line-height: 1.9rem;
-  font-weight: 400;
-  letter-spacing: -0.25px;
-  font-variation-settings: 'opsz' 20;
-}
-
-.prose a {
-  box-shadow: inset 0 -2px 0 0 var(--brand);
-  text-decoration: none;
-  color: inherit;
-  transition: box-shadow 0.2s ease-out;
-  word-break: break-word;
-}
-
-.prose a:hover {
-  box-shadow: inset 0 -11px 0 0 var(--brand-light);
-}
-
-@media (width >= 48rem) {
-  .prose-md h1 {
-    font-size: 6rem;
-  }
-}
-
 /* Table Styles */
 
 .lexical-table {
@@ -298,7 +208,7 @@ html[data-theme='light'] {
   padding: 0px 16px !important;
 }
 
-html[data-theme='dark'] {
+html.dark {
   .lexical-table-cell-header-1,
   .lexical-table-cell-header-2 {
     color: white;
@@ -313,7 +223,7 @@ html[data-theme='dark'] {
   }
 }
 
-html[data-theme='light'] {
+html:not(.dark) {
   .lexical-table-cell-header-0 {
     color: rgb(54, 54, 54);
   }

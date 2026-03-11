@@ -10,7 +10,6 @@ import { homeStatic } from '@/endpoints/seed/home-static'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
-import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -77,7 +76,6 @@ export default async function Page({
 
   return (
     <article className="m-auto max-w-3xl pb-24">
-      <PageClient />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
