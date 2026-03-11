@@ -10,10 +10,7 @@ import type { ArticleGridSlots } from './types'
 import { Vespucci7Layout } from './layouts/Vespucci7'
 import { Fibonacci7Layout } from './layouts/Fibonacci7'
 
-const layoutComponents: Record<
-  ArticleGridLayout,
-  React.FC<{ slots: ArticleGridSlots }>
-> = {
+const layoutComponents: Record<ArticleGridLayout, React.FC<{ slots: ArticleGridSlots }>> = {
   'vespucci-7': Vespucci7Layout,
   'fibonacci-7': Fibonacci7Layout,
 }

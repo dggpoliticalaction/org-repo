@@ -105,9 +105,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
-   ALTER TABLE "pages_blocks_article_grid" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "_pages_v_blocks_article_grid" DISABLE ROW LEVEL SECURITY;
-  DROP TABLE "pages_blocks_article_grid" CASCADE;
+   DROP TABLE "pages_blocks_article_grid" CASCADE;
   DROP TABLE "_pages_v_blocks_article_grid" CASCADE;
   DROP TYPE "public"."enum_pages_blocks_article_grid_layout";
   DROP TYPE "public"."enum__pages_v_blocks_article_grid_layout";`)

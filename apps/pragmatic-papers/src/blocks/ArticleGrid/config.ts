@@ -99,7 +99,8 @@ export const ArticleGrid: Block = {
       type: 'group',
       label: 'Article Slots',
       admin: {
-        description: 'Fill each slot with an article. Slot names correspond to positions in the chosen layout.',
+        description:
+          'Fill each slot with an article. Slot names correspond to positions in the chosen layout.',
       },
       fields: [
         slotFields('featured', 'Featured Article'),

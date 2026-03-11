@@ -1,16 +1,24 @@
-import React from 'react'
-import Link from 'next/link'
 import { type VariantProps, cva } from 'class-variance-authority'
 import { formatDistanceToNow } from 'date-fns'
+import Link from 'next/link'
+import React from 'react'
 
-import type { Article, Media as MediaType } from '@/payload-types'
 import { Media } from '@/components/Media'
+import type { Article, Media as MediaType } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
 export type ArticleTileData = Pick<
   Article,
   'title' | 'slug' | 'heroImage' | 'populatedAuthors' | 'publishedAt' | 'meta'
 >
+
+function mediaWrapperClass(_variant: string | null | undefined): string {
+  return 'relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg'
+}
+
+function textWrapperClass(_variant: string | null | undefined): string {
+  return 'flex flex-col'
+}
 
 /**
  * Variants:
@@ -64,14 +72,21 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
     : null
 
   return (
-    <article className={cn(
-      articleTileVariants({ variant }),
-      horizontal && 'sm:flex-row-reverse sm:items-center sm:gap-4',
-      className,
-    )}>
+    <article
+      className={cn(
+        articleTileVariants({ variant }),
+        horizontal && 'sm:flex-row-reverse sm:items-center sm:gap-4',
+        className,
+      )}
+    >
       {/* Media */}
       {showMedia && (
-        <Link href={href} className={cn(mediaWrapperClass(variant), horizontal && 'sm:w-1/2 sm:shrink-0 sm:mb-0')} tabIndex={-1} aria-hidden>
+        <Link
+          href={href}
+          className={cn(mediaWrapperClass(variant), horizontal && 'sm:mb-0 sm:w-1/2 sm:shrink-0')}
+          tabIndex={-1}
+          aria-hidden
+        >
           <Media
             resource={heroImage as MediaType}
             className="h-full w-full"
@@ -125,18 +140,8 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
         )}
 
         {/* Timestamp */}
-        {timeAgo && (
-          <p className="mt-1 font-sans text-xs text-muted-foreground/70">{timeAgo}</p>
-        )}
+        {timeAgo && <p className="mt-1 font-sans text-xs text-muted-foreground/70">{timeAgo}</p>}
       </div>
     </article>
   )
-}
-
-function mediaWrapperClass(variant: string | null | undefined): string {
-  return 'relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg'
-}
-
-function textWrapperClass(_variant: string | null | undefined): string {
-  return 'flex flex-col'
 }

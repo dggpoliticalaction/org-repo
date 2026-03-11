@@ -8,10 +8,7 @@ import type {
   SerializedElementNode,
   SerializedLexicalNode,
 } from '@payloadcms/richtext-lexical/lexical'
-import type {
-  SerializedParagraphNode,
-  SerializedTextNode,
-} from '@payloadcms/richtext-lexical'
+import type { SerializedParagraphNode, SerializedTextNode } from '@payloadcms/richtext-lexical'
 
 // Re-export commonly used types
 export type { SerializedLexicalNode }
