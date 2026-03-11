@@ -11,13 +11,7 @@ import * as migration_20260109_081334_upgrade_payload_3_70_0 from './20260109_08
 import * as migration_20260110_021152_discord_header_button from './20260110_021152_discord_header_button';
 import * as migration_20260111_055750_slug_field_update from './20260111_055750_slug_field_update';
 import * as migration_20260117_020339_footnotes from './20260117_020339_footnotes';
-import * as migration_20260217_013724_header_footer_redesign from './20260217_013724_header_footer_redesign';
-import * as migration_20260303_233515_auto_generate_volume_title from './20260303_233515_auto_generate_volume_title';
-import * as migration_20260304_215356_feature_authors from './20260304_215356_feature_authors';
-import * as migration_20260305_050800_action_button_needed_more_migrations from './20260305_050800_action_button_needed_more_migrations';
-import * as migration_20260307_014204_enable_math_rendering from './20260307_014204_enable_math_rendering';
-import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles';
-import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField';
+import * as migration_20260311_021745_release_2 from './20260311_021745_release_2';
 
 export const migrations = [
   {
@@ -86,38 +80,8 @@ export const migrations = [
     name: '20260117_020339_footnotes',
   },
   {
-    up: migration_20260217_013724_header_footer_redesign.up,
-    down: migration_20260217_013724_header_footer_redesign.down,
-    name: '20260217_013724_header_footer_redesign',
-  },
-  {
-    up: migration_20260303_233515_auto_generate_volume_title.up,
-    down: migration_20260303_233515_auto_generate_volume_title.down,
-    name: '20260303_233515_auto_generate_volume_title',
-  },
-  {
-    up: migration_20260304_215356_feature_authors.up,
-    down: migration_20260304_215356_feature_authors.down,
-    name: '20260304_215356_feature_authors',
-  },
-  {
-    up: migration_20260305_050800_action_button_needed_more_migrations.up,
-    down: migration_20260305_050800_action_button_needed_more_migrations.down,
-    name: '20260305_050800_action_button_needed_more_migrations',
-  },
-  {
-    up: migration_20260307_014204_enable_math_rendering.up,
-    down: migration_20260307_014204_enable_math_rendering.down,
-    name: '20260307_014204_enable_math_rendering',
-  },
-  {
-    up: migration_20260307_192044_add_topics_to_articles.up,
-    down: migration_20260307_192044_add_topics_to_articles.down,
-    name: '20260307_192044_add_topics_to_articles',
-  },
-  {
-    up: migration_20260310_030303_update_volume_slugField.up,
-    down: migration_20260310_030303_update_volume_slugField.down,
-    name: '20260310_030303_update_volume_slugField'
+    up: migration_20260311_021745_release_2.up,
+    down: migration_20260311_021745_release_2.down,
+    name: '20260311_021745_release_2'
   },
 ];
