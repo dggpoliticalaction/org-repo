@@ -4,6 +4,7 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import RichText from '@/components/RichText'
 import type { Article as ArticleType, Media, User, Volume } from '@/payload-types'
+import { authorJsonLd, JsonLd } from '@/utilities/jsonLd'
 import config from '@payload-config'
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
@@ -175,6 +176,7 @@ export default async function AuthorPage({
 
   return (
     <article className="container mb-16 max-w-3xl">
+      <JsonLd data={authorJsonLd(user, slug)} />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
