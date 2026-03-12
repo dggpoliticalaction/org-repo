@@ -3,7 +3,7 @@ import { useRowLabel, useFormFields } from "@payloadcms/ui"
 
 type SlotDescriptionsMap = Record<string, string[]>
 
-type SlotRowLabelProps = {
+interface SlotRowLabelProps {
   /** Map of layout key → slot description array, passed via clientProps */
   slotDescriptions: SlotDescriptionsMap
   /** The field name for the layout select (default: "layout") */

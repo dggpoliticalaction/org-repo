@@ -6,7 +6,10 @@ import { createRichTextFromString } from "../richtext"
 /**
  * Builds the `slots` array for an ArticleGrid block from an ordered array of article IDs.
  */
-function createSlots(layoutKey: ArticleGridLayoutKey, articleIds: number[]): ArticleGridBlock["slots"] {
+function createSlots(
+  layoutKey: ArticleGridLayoutKey,
+  articleIds: number[],
+): ArticleGridBlock["slots"] {
   const expected = layouts[layoutKey].slotDescriptions.length
   if (articleIds.length !== expected) {
     throw new Error(
