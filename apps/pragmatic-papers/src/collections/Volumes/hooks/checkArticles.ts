@@ -1,5 +1,5 @@
-import { type RelationshipFieldManyValidation, getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { type RelationshipFieldManyValidation, getPayload } from "payload"
+import configPromise from "@payload-config"
 
 export const checkArticles: RelationshipFieldManyValidation = async (value) => {
   const payload = await getPayload({ config: configPromise })
@@ -7,10 +7,10 @@ export const checkArticles: RelationshipFieldManyValidation = async (value) => {
   const fieldValue = value as number[]
 
   const articles = await payload.find({
-    collection: 'articles',
+    collection: "articles",
     where: {
       id: { in: fieldValue },
-      _status: { not_equals: 'published' },
+      _status: { not_equals: "published" },
     },
   })
 
@@ -20,5 +20,5 @@ export const checkArticles: RelationshipFieldManyValidation = async (value) => {
 
   return `The following articles are not published: ${articles.docs
     .map((article) => article.title)
-    .join(', ')}`
+    .join(", ")}`
 }

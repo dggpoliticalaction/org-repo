@@ -1,18 +1,18 @@
-import React from 'react'
+import React from "react"
 
 const defaultLabels = {
-  plural: 'Docs',
-  singular: 'Doc',
+  plural: "Docs",
+  singular: "Doc",
 }
 
 const defaultCollectionLabels = {
   articles: {
-    plural: 'Articles',
-    singular: 'Article',
+    plural: "Articles",
+    singular: "Article",
   },
   volumes: {
-    plural: 'Volumes',
-    singular: 'Volume',
+    plural: "Volumes",
+    singular: "Volume",
   },
 }
 
@@ -49,11 +49,11 @@ export const PageRange: React.FC<{
     {}
 
   return (
-    <div className={[className, 'font-semibold'].filter(Boolean).join(' ')}>
-      {(typeof totalDocs === 'undefined' || totalDocs === 0) && 'Search produced no results.'}
-      {typeof totalDocs !== 'undefined' &&
+    <div className={[className, "font-semibold"].filter(Boolean).join(" ")}>
+      {(typeof totalDocs === "undefined" || totalDocs === 0) && "Search produced no results."}
+      {typeof totalDocs !== "undefined" &&
         totalDocs > 0 &&
-        `Showing ${indexStart}${indexStart > 0 ? ` - ${indexEnd}` : ''} of ${totalDocs} ${
+        `Showing ${indexStart}${indexStart > 0 ? ` - ${indexEnd}` : ""} of ${totalDocs} ${
           totalDocs > 1 ? plural : singular
         }`}
     </div>

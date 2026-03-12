@@ -1,7 +1,7 @@
-import { adminOrSelf } from '@/access/adminOrSelf'
-import { admin, adminFieldLevel } from '@/access/admins'
-import { staff } from '@/access/staff'
-import { menu } from '@/fields/menu'
+import { adminOrSelf } from "@/access/adminOrSelf"
+import { admin, adminFieldLevel } from "@/access/admins"
+import { staff } from "@/access/staff"
+import { menu } from "@/fields/menu"
 import {
   FixedToolbarFeature,
   HeadingFeature,
@@ -10,12 +10,12 @@ import {
   lexicalEditor,
   OrderedListFeature,
   UnorderedListFeature,
-} from '@payloadcms/richtext-lexical'
-import { revalidateUser } from '@/collections/Users/hooks/revalidateUser'
-import { slugField, type CollectionConfig } from 'payload'
+} from "@payloadcms/richtext-lexical"
+import { revalidateUser } from "@/collections/Users/hooks/revalidateUser"
+import { slugField, type CollectionConfig } from "payload"
 
 export const Users: CollectionConfig = {
-  slug: 'users',
+  slug: "users",
   access: {
     admin: staff,
     create: admin,
@@ -24,31 +24,31 @@ export const Users: CollectionConfig = {
     update: adminOrSelf,
   },
   admin: {
-    defaultColumns: ['name', 'role', 'email'],
-    useAsTitle: 'name',
+    defaultColumns: ["name", "role", "email"],
+    useAsTitle: "name",
   },
   auth: true,
   fields: [
     {
-      name: 'name',
-      type: 'text',
+      name: "name",
+      type: "text",
     },
     {
-      name: 'affiliation',
-      type: 'text',
+      name: "affiliation",
+      type: "text",
       required: false,
       admin: {
         condition: ({ id }) => Boolean(id),
       },
     },
     {
-      name: 'biography',
-      type: 'richText',
+      name: "biography",
+      type: "richText",
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
           return [
             ...rootFeatures,
-            HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+            HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
             FixedToolbarFeature(),
             InlineToolbarFeature(),
             OrderedListFeature(),
@@ -63,65 +63,65 @@ export const Users: CollectionConfig = {
       },
     },
     slugField({
-      useAsSlug: 'name',
+      useAsSlug: "name",
       overrides: (field) => {
         field.admin = {
           condition: ({ id }) => Boolean(id),
-          position: 'sidebar',
+          position: "sidebar",
         }
         return field
       },
     }),
     {
-      name: 'profileImage',
-      type: 'upload',
-      relationTo: 'media',
+      name: "profileImage",
+      type: "upload",
+      relationTo: "media",
       required: false,
       admin: {
         condition: ({ id }) => Boolean(id),
-        position: 'sidebar',
+        position: "sidebar",
       },
     },
     menu({
-      name: 'socials',
-      label: 'Socials',
+      name: "socials",
+      label: "Socials",
       maxRows: 6,
       admin: {
         condition: ({ id }) => Boolean(id),
-        position: 'sidebar',
+        position: "sidebar",
       },
     }),
     {
-      name: 'role',
-      type: 'select',
+      name: "role",
+      type: "select",
       saveToJWT: true,
-      defaultValue: 'member',
+      defaultValue: "member",
       access: {
         update: adminFieldLevel,
       },
       admin: {
-        position: 'sidebar',
+        position: "sidebar",
       },
       options: [
         {
-          label: 'Admin',
-          value: 'admin',
+          label: "Admin",
+          value: "admin",
         },
         {
-          label: 'Chief Editor',
-          value: 'chief-editor',
+          label: "Chief Editor",
+          value: "chief-editor",
         },
         {
-          label: 'Editor',
-          value: 'editor',
+          label: "Editor",
+          value: "editor",
         },
         {
-          label: 'Writer',
-          value: 'writer',
+          label: "Writer",
+          value: "writer",
         },
         {
-          label: 'Member',
-          value: 'member',
+          label: "Member",
+          value: "member",
         },
       ],
     },

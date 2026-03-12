@@ -1,8 +1,8 @@
-import { colorPicker } from '@/fields/colorPicker'
-import { link } from '@/fields/link2'
-import type { NamedGroupField } from 'payload'
+import { colorPicker } from "@/fields/colorPicker"
+import { link } from "@/fields/link2"
+import type { NamedGroupField } from "payload"
 
-type ButtonProps = Omit<NamedGroupField, 'fields' | 'name' | 'type' | 'interfaceName'>
+type ButtonProps = Omit<NamedGroupField, "fields" | "name" | "type" | "interfaceName">
 
 /**
  * Utility function for constructing a Payload CMS button group field.
@@ -24,42 +24,42 @@ export const button = (props?: ButtonProps): NamedGroupField => {
     /**
      * Sets the admin label for this button field.
      */
-    label: 'Button',
+    label: "Button",
     ...props,
     /**
      * The machine name for this field (do not change unless required).
      */
-    name: 'button',
+    name: "button",
     /**
      * Interface name to aid with Payload codegen/types.
      */
-    interfaceName: 'ButtonField',
-    type: 'group',
+    interfaceName: "ButtonField",
+    type: "group",
     fields: [
       /**
        * The button's link (label, href, etc).
        */
       link(),
       {
-        type: 'row',
+        type: "row",
         fields: [
           /**
            * Background color picker for button.
            */
-          colorPicker({ name: 'backgroundColor', label: 'Background Color' }),
+          colorPicker({ name: "backgroundColor", label: "Background Color" }),
           /**
            * Text color picker for button.
            */
-          colorPicker({ name: 'textColor', label: 'Text Color' }),
+          colorPicker({ name: "textColor", label: "Text Color" }),
           /**
            * Button style variant select.
            */
           {
-            type: 'select',
-            name: 'variant',
-            label: 'Variant',
-            options: ['default', 'outline', 'ghost', 'link'],
-            defaultValue: 'default',
+            type: "select",
+            name: "variant",
+            label: "Variant",
+            options: ["default", "outline", "ghost", "link"],
+            defaultValue: "default",
           },
         ],
       },

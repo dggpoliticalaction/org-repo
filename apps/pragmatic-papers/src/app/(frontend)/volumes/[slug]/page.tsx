@@ -1,26 +1,26 @@
-import { ArticleCard } from '@/components/ArticleCard'
-import { AuthorList } from '@/components/Authors/AuthorList'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { PayloadRedirects } from '@/components/PayloadRedirects'
-import RichText from '@/components/RichText'
-import { Squiggle } from '@/components/ui/squiggle'
-import type { Article, User } from '@/payload-types'
-import { formatDateTime } from '@/utilities/formatDateTime'
-import { generateMeta } from '@/utilities/generateMeta'
-import { toRoman } from '@/utilities/toRoman'
-import configPromise from '@payload-config'
-import type { Metadata } from 'next'
-import { draftMode } from 'next/headers'
-import type { Payload } from 'payload'
-import { getPayload } from 'payload'
-import React, { cache } from 'react'
+import { ArticleCard } from "@/components/ArticleCard"
+import { AuthorList } from "@/components/Authors/AuthorList"
+import { LivePreviewListener } from "@/components/LivePreviewListener"
+import { PayloadRedirects } from "@/components/PayloadRedirects"
+import RichText from "@/components/RichText"
+import { Squiggle } from "@/components/ui/squiggle"
+import type { Article, User } from "@/payload-types"
+import { formatDateTime } from "@/utilities/formatDateTime"
+import { generateMeta } from "@/utilities/generateMeta"
+import { toRoman } from "@/utilities/toRoman"
+import configPromise from "@payload-config"
+import type { Metadata } from "next"
+import { draftMode } from "next/headers"
+import type { Payload } from "payload"
+import { getPayload } from "payload"
+import React, { cache } from "react"
 
 type VolumeArticleRef = number | Article
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
   const volumes = await payload.find({
-    collection: 'volumes',
+    collection: "volumes",
     draft: false,
     limit: 1000,
     overrideAccess: false,
@@ -49,7 +49,7 @@ const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
   const payload: Payload = await getPayload({ config: configPromise })
 
   const result = await payload.find({
-    collection: 'volumes',
+    collection: "volumes",
     draft,
     limit: 1,
     overrideAccess: draft,
@@ -67,15 +67,15 @@ const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
 
 const queryAuthorsByIds = cache(async ({ ids }: { ids: (string | number)[] }): Promise<User[]> => {
   const numericIds = ids
-    .map((id) => (typeof id === 'string' ? Number(id) : id))
-    .filter((id): id is number => typeof id === 'number' && !Number.isNaN(id))
+    .map((id) => (typeof id === "string" ? Number(id) : id))
+    .filter((id): id is number => typeof id === "number" && !Number.isNaN(id))
 
   if (!numericIds.length) return []
 
   const payload = await getPayload({ config: configPromise })
 
   const result = (await payload.find({
-    collection: 'users',
+    collection: "users",
     limit: numericIds.length,
     pagination: false,
     where: {
@@ -90,7 +90,7 @@ const queryAuthorsByIds = cache(async ({ ids }: { ids: (string | number)[] }): P
 })
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
+  const { slug = "" } = await paramsPromise
   const volume = await queryVolumeBySlug({ slug })
 
   return generateMeta({ doc: volume })
@@ -100,20 +100,20 @@ export default async function VolumePage({
   params: paramsPromise,
 }: Args): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()
-  const { slug = '' } = await paramsPromise
-  const url = '/volumes/' + slug
+  const { slug = "" } = await paramsPromise
+  const url = "/volumes/" + slug
   const volume = await queryVolumeBySlug({ slug })
 
   if (!volume) return <PayloadRedirects url={url} />
   const { publishedAt, editorsNote, articles } = volume
   if (
-    articles?.filter((article: VolumeArticleRef) => typeof article === 'number')?.length ??
+    articles?.filter((article: VolumeArticleRef) => typeof article === "number")?.length ??
     0 > 0
   ) {
-    console.error('Fetching volume with unfetched articles', slug)
+    console.error("Fetching volume with unfetched articles", slug)
   }
   const actualArticles = articles?.filter(
-    (article: VolumeArticleRef): article is Article => typeof article !== 'number',
+    (article: VolumeArticleRef): article is Article => typeof article !== "number",
   )
   const volumeAuthorIdSet = new Set<string | number>()
   actualArticles?.forEach((article) => {

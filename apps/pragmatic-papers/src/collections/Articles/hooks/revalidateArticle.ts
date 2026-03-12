@@ -1,22 +1,22 @@
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, Payload } from 'payload'
+import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, Payload } from "payload"
 
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from "next/cache"
 
-import type { Article } from '../../../payload-types'
+import type { Article } from "../../../payload-types"
 
 const revalidateDoc = async (givenDoc: Article, payload: Payload) => {
   const path = `/articles/${givenDoc.slug}`
 
   payload.logger.info(`Revalidating article at path: ${path}`)
   revalidatePath(path)
-  revalidatePath('/feed.articles')
-  revalidateTag('articles-sitemap')
+  revalidatePath("/feed.articles")
+  revalidateTag("articles-sitemap")
 
   // Find and revalidate all volumes that reference this article
   const volumes = await payload.find({
-    collection: 'volumes',
+    collection: "volumes",
     where: {
-      'articles.id': {
+      "articles.id": {
         equals: givenDoc.id,
       },
     },
@@ -39,12 +39,12 @@ export const revalidateArticle: CollectionAfterChangeHook<Article> = async ({
   req: { payload, context },
 }) => {
   if (!context.disableRevalidate) {
-    if (doc._status === 'published') {
+    if (doc._status === "published") {
       await revalidateDoc(doc, payload)
     }
 
     // If the article was previously published, we need to revalidate the old path
-    if (previousDoc._status === 'published' && doc._status !== 'published') {
+    if (previousDoc._status === "published" && doc._status !== "published") {
       await revalidateDoc(previousDoc, payload)
     }
   }

@@ -1,10 +1,10 @@
-import { isOEmbed, type OEmbedResponse } from '@/blocks/SocialEmbed/helpers/oEmbed'
-import type { SocialEmbedSnapshot } from '@/payload-types'
-import { failure, type Result, success } from '@/utilities/results'
+import { isOEmbed, type OEmbedResponse } from "@/blocks/SocialEmbed/helpers/oEmbed"
+import type { SocialEmbedSnapshot } from "@/payload-types"
+import { failure, type Result, success } from "@/utilities/results"
 
 const DEFAULT_TIMEOUT_MS = 15_000
 
-export type OEmbedRequestErrorCode = Exclude<NonNullable<SocialEmbedSnapshot['status']>, 'ok'>
+export type OEmbedRequestErrorCode = Exclude<NonNullable<SocialEmbedSnapshot["status"]>, "ok">
 
 export class OEmbedRequestError extends Error {
   status?: number
@@ -12,9 +12,9 @@ export class OEmbedRequestError extends Error {
 
   constructor(message: string, options?: { status?: number; code: OEmbedRequestErrorCode }) {
     super(message)
-    this.name = 'OEmbedRequestError'
+    this.name = "OEmbedRequestError"
     this.status = options?.status
-    this.code = options?.code ?? 'error'
+    this.code = options?.code ?? "error"
   }
 }
 
@@ -38,31 +38,31 @@ export async function fetchOEmbed<T extends OEmbedResponse = OEmbedResponse>(
     if (!res.ok) {
       throw new OEmbedRequestError(`Failed to fetch oEmbed: ${res.statusText}`, {
         status: res.status,
-        code: 'forbidden',
+        code: "forbidden",
       })
     }
 
     const raw = await res.json()
     if (!isOEmbed(raw)) {
-      throw new OEmbedRequestError('Provider returned an invalid oEmbed response.', {
-        code: 'invalid_oembed_response',
+      throw new OEmbedRequestError("Provider returned an invalid oEmbed response.", {
+        code: "invalid_oembed_response",
       })
     }
 
     return success(raw as T)
   } catch (error) {
-    if (error instanceof DOMException && error.name === 'TimeoutError') {
+    if (error instanceof DOMException && error.name === "TimeoutError") {
       return failure(
-        new OEmbedRequestError('Timed out while fetching oEmbed.', { code: 'timeout' }),
+        new OEmbedRequestError("Timed out while fetching oEmbed.", { code: "timeout" }),
       )
     }
-    if (error instanceof DOMException && error.name === 'AbortError') {
-      return failure(new OEmbedRequestError('oEmbed request was aborted.', { code: 'aborted' }))
+    if (error instanceof DOMException && error.name === "AbortError") {
+      return failure(new OEmbedRequestError("oEmbed request was aborted.", { code: "aborted" }))
     }
     return failure(
       error instanceof OEmbedRequestError
         ? error
-        : new OEmbedRequestError(String(error), { code: 'error' }),
+        : new OEmbedRequestError(String(error), { code: "error" }),
     )
   }
 }
