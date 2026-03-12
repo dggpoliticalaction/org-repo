@@ -43,6 +43,19 @@ const nextConfig = {
         ],
       },
       {
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'private, no-cache, no-store, must-revalidate',
+          },
+          {
+            key: 'CDN-Cache-Control',
+            value: 'no-store',
+          },
+        ],
+      },
+      {
         source: '/:path*',
         headers: [
           {
@@ -58,6 +71,10 @@ const nextConfig = {
           {
             type: 'cookie',
             key: '__prerender_bypass',
+          },
+          {
+            type: 'cookie',
+            key: 'payload-token',
           },
         ],
       },
