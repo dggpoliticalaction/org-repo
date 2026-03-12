@@ -1,4 +1,4 @@
-import type { SocialPlatform } from '@/payload-types'
+import type { SocialPlatform } from "@/payload-types"
 
 interface DomainRule {
   root: string
@@ -12,27 +12,27 @@ interface PlatformRule {
 
 const RULES: readonly PlatformRule[] = [
   {
-    platform: 'twitter',
+    platform: "twitter",
     domains: [
-      { root: 'twitter.com', subdomains: ['www', 'mobile'] },
-      { root: 'x.com', subdomains: ['www'] },
+      { root: "twitter.com", subdomains: ["www", "mobile"] },
+      { root: "x.com", subdomains: ["www"] },
     ],
   },
   {
-    platform: 'youtube',
-    domains: [{ root: 'youtube.com', subdomains: ['www', 'm'] }, { root: 'youtu.be' }],
+    platform: "youtube",
+    domains: [{ root: "youtube.com", subdomains: ["www", "m"] }, { root: "youtu.be" }],
   },
   {
-    platform: 'bluesky',
-    domains: [{ root: 'bsky.app' }],
+    platform: "bluesky",
+    domains: [{ root: "bsky.app" }],
   },
   {
-    platform: 'reddit',
-    domains: [{ root: 'reddit.com', subdomains: ['www', 'old', 'new', 'np', 'amp'] }],
+    platform: "reddit",
+    domains: [{ root: "reddit.com", subdomains: ["www", "old", "new", "np", "amp"] }],
   },
   {
-    platform: 'tiktok',
-    domains: [{ root: 'tiktok.com', subdomains: ['www', 'm'] }],
+    platform: "tiktok",
+    domains: [{ root: "tiktok.com", subdomains: ["www", "m"] }],
   },
 ] as const
 
@@ -40,7 +40,7 @@ function normalizeHost(host: string): string {
   return host.trim().toLowerCase()
 }
 
-const ACCEPTED_PROTOCOLS = ['http:', 'https:'] as const
+const ACCEPTED_PROTOCOLS = ["http:", "https:"] as const
 
 type AcceptedProtocol = (typeof ACCEPTED_PROTOCOLS)[number]
 

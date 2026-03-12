@@ -1,4 +1,4 @@
-import type { Block } from 'payload'
+import type { Block } from "payload"
 
 /**
  * Legacy config for TikTok embeds.
@@ -6,19 +6,19 @@ import type { Block } from 'payload'
  * @see SocialEmbedBlock
  */
 export const LegacyTikTokEmbed: Block = {
-  slug: 'tiktokEmbed',
+  slug: "tiktokEmbed",
   // interfaceName: 'TikTokEmbedBlock',
   labels: {
-    singular: 'TikTok Embed (Legacy)',
-    plural: 'TikTok Embeds (Legacy)',
+    singular: "TikTok Embed (Legacy)",
+    plural: "TikTok Embeds (Legacy)",
   },
   admin: {
-    group: 'Legacy',
+    group: "Legacy",
   },
   fields: [
     {
-      name: 'url',
-      type: 'text',
+      name: "url",
+      type: "text",
       required: true,
     },
   ],

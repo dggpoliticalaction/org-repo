@@ -1,9 +1,9 @@
-import { SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
-import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
-import type { OEmbedRequestQuery, OEmbedVideo } from '@/blocks/SocialEmbed/helpers/oEmbed'
-import type { Prettify } from '@/utilities/prettify'
-import { failure, type Result } from '@/utilities/results'
-import sanitizeHtml from 'sanitize-html'
+import { SocialAdapter } from "@/blocks/SocialEmbed/adapters/base.adapter"
+import { fetchOEmbed } from "@/blocks/SocialEmbed/helpers/fetchOEmbed"
+import type { OEmbedRequestQuery, OEmbedVideo } from "@/blocks/SocialEmbed/helpers/oEmbed"
+import type { Prettify } from "@/utilities/prettify"
+import { failure, type Result } from "@/utilities/results"
+import sanitizeHtml from "sanitize-html"
 
 export type YouTubeOEmbedOptions = OEmbedRequestQuery
 
@@ -17,13 +17,13 @@ export function parseYouTubeVideoId(input: string): string | null {
   if (!URL.canParse(input)) return null
   try {
     const url = new URL(input)
-    const host = url.hostname.toLowerCase().replace(/^www\./, '')
-    if (host === 'youtube.com' || host === 'youtu.be') {
-      if (host === 'youtu.be') {
-        const id = url.pathname.slice(1).split('/')[0]
-        return id && !id.includes('?') ? id : null
+    const host = url.hostname.toLowerCase().replace(/^www\./, "")
+    if (host === "youtube.com" || host === "youtu.be") {
+      if (host === "youtu.be") {
+        const id = url.pathname.slice(1).split("/")[0]
+        return id && !id.includes("?") ? id : null
       }
-      const v = url.searchParams.get('v')
+      const v = url.searchParams.get("v")
       if (v) return v
       const embedMatch = url.pathname.match(/^\/embed\/([^/?#]+)/)
       if (embedMatch?.[1]) return embedMatch[1]
@@ -38,7 +38,7 @@ export function parseYouTubeVideoId(input: string): string | null {
 
 class YouTubeAdapter extends SocialAdapter<YouTubeOEmbedOptions, YouTubeOEmbedResponse> {
   readonly maxWidth = 640
-  readonly displayName = 'YouTube'
+  readonly displayName = "YouTube"
 
   isValidUrl(url: string): boolean {
     return parseYouTubeVideoId(url) !== null
@@ -46,11 +46,11 @@ class YouTubeAdapter extends SocialAdapter<YouTubeOEmbedOptions, YouTubeOEmbedRe
 
   buildUrl(options: YouTubeOEmbedOptions): URL {
     const { url, maxwidth = this.maxWidth, maxheight } = options
-    const endpoint = new URL('https://www.youtube.com/oembed')
-    endpoint.searchParams.set('url', url)
-    endpoint.searchParams.set('format', 'json')
-    endpoint.searchParams.set('maxwidth', String(maxwidth))
-    if (maxheight != null) endpoint.searchParams.set('maxheight', String(maxheight))
+    const endpoint = new URL("https://www.youtube.com/oembed")
+    endpoint.searchParams.set("url", url)
+    endpoint.searchParams.set("format", "json")
+    endpoint.searchParams.set("maxwidth", String(maxwidth))
+    if (maxheight != null) endpoint.searchParams.set("maxheight", String(maxheight))
     return endpoint
   }
 
@@ -59,27 +59,27 @@ class YouTubeAdapter extends SocialAdapter<YouTubeOEmbedOptions, YouTubeOEmbedRe
     init?: RequestInit,
   ): Promise<Result<YouTubeOEmbedResponse, Error>> {
     if (!this.isValidUrl(options.url)) {
-      return failure(new Error('Invalid YouTube URL.'))
+      return failure(new Error("Invalid YouTube URL."))
     }
     return await fetchOEmbed<YouTubeOEmbedResponse>(this.buildUrl(options), init)
   }
 
   async sanitize(html: string): Promise<string> {
     return sanitizeHtml(html, {
-      allowedTags: ['iframe'],
+      allowedTags: ["iframe"],
       allowedAttributes: {
         iframe: [
-          'src',
-          'width',
-          'height',
-          'frameborder',
-          'allow',
-          'referrerpolicy',
-          'allowfullscreen',
-          'title',
+          "src",
+          "width",
+          "height",
+          "frameborder",
+          "allow",
+          "referrerpolicy",
+          "allowfullscreen",
+          "title",
         ],
       },
-      allowedSchemes: ['http', 'https'],
+      allowedSchemes: ["http", "https"],
       allowProtocolRelative: false,
     })
   }

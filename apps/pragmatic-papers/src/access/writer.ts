@@ -1,5 +1,5 @@
-import type { Access, FieldAccess } from 'payload'
-import { isWriter } from './checkRole'
+import type { Access, FieldAccess } from "payload"
+import { isWriter } from "./checkRole"
 
 export const writer: Access = ({ req: { user } }) => {
   if (!user) {

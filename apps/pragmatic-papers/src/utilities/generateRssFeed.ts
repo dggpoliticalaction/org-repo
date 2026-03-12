@@ -1,12 +1,12 @@
-import { socialEmbedBlockToHTML } from '@/blocks/SocialEmbed/helpers/socialEmbedBlockToHTML'
-import type { SerializedInlineBlockNode } from '@payloadcms/richtext-lexical'
+import { socialEmbedBlockToHTML } from "@/blocks/SocialEmbed/helpers/socialEmbedBlockToHTML"
+import type { SerializedInlineBlockNode } from "@payloadcms/richtext-lexical"
 import {
   convertLexicalToHTML,
   type HTMLConvertersFunction,
-} from '@payloadcms/richtext-lexical/html'
-import { Feed } from 'feed'
-import type { Article, FootnoteBlock, Media, Volume } from '../payload-types'
-import { getServerSideURL } from './getURL'
+} from "@payloadcms/richtext-lexical/html"
+import { Feed } from "feed"
+import type { Article, FootnoteBlock, Media, Volume } from "../payload-types"
+import { getServerSideURL } from "./getURL"
 
 const SITE_URL = getServerSideURL()
 
@@ -24,13 +24,13 @@ const htmlConverters: HTMLConvertersFunction = ({ defaultConverters }) => ({
   inlineBlocks: {
     ...defaultConverters.inlineBlocks,
     inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode }) => {
-      const math = (node.fields as { math?: string })?.math || ''
+      const math = (node.fields as { math?: string })?.math || ""
       return `<span class="math">\\(${math}\\)</span>`
     },
     footnote: ({ node }: { node: SerializedInlineBlockNode }) => {
       const fields = node.fields as FootnoteBlock
-      const index = typeof fields.index === 'number' ? fields.index : ''
-      const note = fields.note || ''
+      const index = typeof fields.index === "number" ? fields.index : ""
+      const note = fields.note || ""
       const referenceId = `footnote-ref-${index}`
       const describedById = `footnote-${index}`
       return `<sup id="${referenceId}" title="Footnote ${index}: ${note}"><a href="#${describedById}">[${index}]</a></sup>`
@@ -39,42 +39,42 @@ const htmlConverters: HTMLConvertersFunction = ({ defaultConverters }) => ({
 })
 
 const getMediaUrl = (url: string) => {
-  if (url.startsWith('http://') || url.startsWith('https://')) {
+  if (url.startsWith("http://") || url.startsWith("https://")) {
     return url
   }
   return `${SITE_URL}${url}`
 }
 
-const formatFootnotes = (footnotes?: Article['footnotes']): string => {
-  if (!footnotes || !footnotes.length) return ''
+const formatFootnotes = (footnotes?: Article["footnotes"]): string => {
+  if (!footnotes || !footnotes.length) return ""
 
   const footnoteItems = footnotes
     .map((footnote) => {
-      if (!footnote) return ''
+      if (!footnote) return ""
       const { index, note, attributionEnabled, link } = footnote
-      if (!note || typeof index !== 'number') return ''
+      if (!note || typeof index !== "number") return ""
 
       const describedById = `footnote-${index}`
-      let linkHtml = ''
+      let linkHtml = ""
 
       if (attributionEnabled && link?.url) {
-        if (link.type === 'custom') {
-          linkHtml = ` <a href="${link.url}" style="border: none; color: #0066cc; text-decoration: underline;" title="Link to source ${link.label || ''}">${link.url}</a>`
-        } else if (link.type === 'reference' && link.reference) {
+        if (link.type === "custom") {
+          linkHtml = ` <a href="${link.url}" style="border: none; color: #0066cc; text-decoration: underline;" title="Link to source ${link.label || ""}">${link.url}</a>`
+        } else if (link.type === "reference" && link.reference) {
           const referenceUrl =
-            typeof link.reference.value === 'object' && link.reference.value?.slug
+            typeof link.reference.value === "object" && link.reference.value?.slug
               ? `${SITE_URL}/${link.reference.relationTo}/${link.reference.value.slug}`
               : link.url
-          linkHtml = ` <a href="${referenceUrl}" style="border: none; color: #0066cc; text-decoration: underline;" title="Link to source ${link.label || ''}">${link.url}</a>`
+          linkHtml = ` <a href="${referenceUrl}" style="border: none; color: #0066cc; text-decoration: underline;" title="Link to source ${link.label || ""}">${link.url}</a>`
         }
       }
 
       return `<li><span id="${describedById}">${note}</span>${linkHtml}</li>`
     })
     .filter(Boolean)
-    .join('\n    ')
+    .join("\n    ")
 
-  if (!footnoteItems) return ''
+  if (!footnoteItems) return ""
 
   return `<section style="margin-top: 2em; padding-top: 1em; border-top: 1px solid #ddd;"><h3 style="font-size: 1.2em; font-weight: bold; margin-bottom: 0.5em;">Footnotes</h3><ol style="list-style: decimal; padding-left: 1.5em;">${footnoteItems}</ol></section>`
 }
@@ -107,11 +107,11 @@ const formatVolumeContent = (volume: Volume) => {
 
   const articles = volume.articles
     ?.map((articleRef) => {
-      if (typeof articleRef === 'string') return ''
+      if (typeof articleRef === "string") return ""
       return formatArticleLink(articleRef as Article)
     })
     .filter(Boolean)
-    .join('\n')
+    .join("\n")
 
   if (articles) {
     sections.push(`
@@ -123,18 +123,18 @@ const formatVolumeContent = (volume: Volume) => {
 </div>`)
   }
 
-  return sections.join('\n')
+  return sections.join("\n")
 }
 
-const createBaseFeedConfig = (type: 'Articles' | 'Volumes') => ({
+const createBaseFeedConfig = (type: "Articles" | "Volumes") => ({
   title: `Pragmatic Papers - ${type}`,
   description: `Latest ${type.toLowerCase()} from Pragmatic Papers`,
   id: SITE_URL,
   link: SITE_URL,
-  language: 'en',
+  language: "en",
   favicon: `${SITE_URL}/favicon.ico`,
   copyright: `All rights reserved ${new Date().getFullYear()}`,
-  generator: 'Pragmatic Papers',
+  generator: "Pragmatic Papers",
   updated: new Date(),
   feedLinks: {
     atom: `${SITE_URL}/feed.${type.toLowerCase()}`,
@@ -142,39 +142,39 @@ const createBaseFeedConfig = (type: 'Articles' | 'Volumes') => ({
 })
 
 export const generateArticleFeed = (articles: Article[]): string => {
-  const feed = new Feed(createBaseFeedConfig('Articles'))
+  const feed = new Feed(createBaseFeedConfig("Articles"))
 
   articles.forEach((article) => {
-    if (article._status === 'published' && article.publishedAt) {
+    if (article._status === "published" && article.publishedAt) {
       feed.addItem({
         title: article.title,
         id: `${SITE_URL}/articles/${article.slug}`,
         link: `${SITE_URL}/articles/${article.slug}`,
         published: new Date(article.publishedAt),
-        description: article.meta?.description ? article.meta.description : '',
+        description: article.meta?.description ? article.meta.description : "",
         date: new Date(article.publishedAt),
         image:
-          article.meta?.image && typeof article.meta.image !== 'string'
-            ? getMediaUrl((article.meta.image as Media).url ?? '')
+          article.meta?.image && typeof article.meta.image !== "string"
+            ? getMediaUrl((article.meta.image as Media).url ?? "")
             : undefined,
         author: article.populatedAuthors?.map((author) => ({
-          name: author.name || '',
+          name: author.name || "",
         })),
         content: (() => {
           try {
             const articleContent = article.content
               ? convertLexicalToHTML({ data: article.content, converters: htmlConverters })
-              : ''
+              : ""
             const footnotesHtml = formatFootnotes(article.footnotes)
             return articleContent + footnotesHtml
           } catch (error) {
-            console.error('Error converting article content to HTML:', error)
-            return ''
+            console.error("Error converting article content to HTML:", error)
+            return ""
           }
         })(),
         extensions: [
           {
-            name: 'updated',
+            name: "updated",
             objects: { updated: new Date(article.updatedAt).toISOString() },
           },
         ],
@@ -186,34 +186,34 @@ export const generateArticleFeed = (articles: Article[]): string => {
 }
 
 export const generateVolumeFeed = (volumes: Volume[]): string => {
-  const feed = new Feed(createBaseFeedConfig('Volumes'))
+  const feed = new Feed(createBaseFeedConfig("Volumes"))
 
   volumes.forEach((volume) => {
-    if (volume._status === 'published' && volume.publishedAt) {
+    if (volume._status === "published" && volume.publishedAt) {
       feed.addItem({
         title: volume.title,
         id: `${SITE_URL}/volumes/${volume.slug}`,
         link: `${SITE_URL}/volumes/${volume.slug}`,
-        description: volume.meta?.description || '',
+        description: volume.meta?.description || "",
         date: new Date(volume.publishedAt),
         image:
-          volume.meta?.image && typeof volume.meta.image !== 'string'
-            ? getMediaUrl((volume.meta.image as Media).url ?? '')
+          volume.meta?.image && typeof volume.meta.image !== "string"
+            ? getMediaUrl((volume.meta.image as Media).url ?? "")
             : undefined,
         content: formatVolumeContent(volume),
         extensions: [
           {
-            name: 'updated',
+            name: "updated",
             objects: { updated: new Date(volume.updatedAt).toISOString() },
           },
         ],
         published: new Date(volume.publishedAt),
         author: volume.articles
-          ?.filter((articleRef): articleRef is Article => typeof articleRef !== 'string')
+          ?.filter((articleRef): articleRef is Article => typeof articleRef !== "string")
           .flatMap(
             (article) =>
               article.populatedAuthors?.map((author) => ({
-                name: author.name || '',
+                name: author.name || "",
               })) || [],
           ),
       })
