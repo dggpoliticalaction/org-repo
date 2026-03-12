@@ -1,5 +1,5 @@
 import type { MenuField } from "@/payload-types"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import { Github, Globe, Linkedin, type LucideIcon, Twitter } from "lucide-react"
 
 export type SocialIconKey = "twitter" | "linkedin" | "github" | "generic"

@@ -11,7 +11,7 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel"
 import type { Media as MediaType } from "@/payload-types"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import React, { useState } from "react"
 
 interface MediaCarouselProps {

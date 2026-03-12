@@ -1,5 +1,5 @@
 import { LogomarkIcon } from "@/components/Logo/icons/LogomarkIcon"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import { type VariantProps, cva } from "class-variance-authority"
 import React from "react"
 

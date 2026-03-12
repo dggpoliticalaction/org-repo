@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
 import { LinkButton } from "./link-button"
 

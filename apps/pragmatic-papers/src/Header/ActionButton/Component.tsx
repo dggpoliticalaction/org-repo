@@ -1,6 +1,6 @@
 import { CMSButton } from "@/components/Button"
 import type { ActionButtonField } from "@/payload-types"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import { ExternalLink } from "lucide-react"
 
 interface ActionButtonProps extends React.ComponentProps<typeof CMSButton> {

@@ -1,7 +1,7 @@
 "use client"
 
 import { type ButtonProps, buttonVariants } from "@/components/ui/button"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import Link from "next/link"
 
 interface LinkButtonProps extends React.ComponentProps<typeof Link> {

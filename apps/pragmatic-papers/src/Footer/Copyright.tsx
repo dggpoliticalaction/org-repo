@@ -1,4 +1,4 @@
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 
 type CopyrightPropsWithChildren = {
   children: React.ReactNode

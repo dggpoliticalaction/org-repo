@@ -1,5 +1,5 @@
 import type { FootnoteBlock as FootnoteBlockType } from "@/payload-types"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import Link from "next/link"
 import React from "react"
 

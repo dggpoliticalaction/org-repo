@@ -1,6 +1,6 @@
 import { CMSLink } from "@/components/Link/CMSLink2"
 import type { MenuField } from "@/payload-types"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import { type VariantProps, cva } from "class-variance-authority"
 import React from "react"
 

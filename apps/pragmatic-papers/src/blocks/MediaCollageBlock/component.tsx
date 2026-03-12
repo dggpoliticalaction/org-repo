@@ -6,7 +6,7 @@ import type {
   MediaCollageBlock as MediaCollageBlockType,
   Media as MediaType,
 } from "@/payload-types"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import React from "react"
 
 // actual code for the collage/grid

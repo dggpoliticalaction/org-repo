@@ -24,7 +24,7 @@ import type {
   SocialEmbedBlock as SocialEmbedBlockProps,
   SquiggleRuleBlock as SquiggleRuleBlockProps,
 } from "@/payload-types"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import type {
   DefaultNodeTypes,
   DefaultTypedEditorState,

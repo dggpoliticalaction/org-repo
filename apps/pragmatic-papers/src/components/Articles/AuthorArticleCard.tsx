@@ -6,8 +6,8 @@ import React from "react"
 import { Media } from "@/components/Media"
 import { Card, CardContent } from "@/components/ui/card"
 import type { Article, Volume } from "@/payload-types"
-import { cn } from "@/utilities/ui"
 import useClickableCard from "@/utilities/useClickableCard"
+import { cn } from "@/utilities/utils"
 
 export interface AuthorArticleCardProps {
   article: Article
