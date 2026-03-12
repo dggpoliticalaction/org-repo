@@ -67,15 +67,15 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   if (!article) return {}
 
   const ogImage =
-    typeof article.meta?.image === 'object' && article.meta?.image?.sizes?.og?.url
+    typeof article.meta?.image === "object" && article.meta?.image?.sizes?.og?.url
       ? getMediaUrl(article.meta.image.sizes.og.url)
       : undefined
 
-  const title = article.meta?.title || article.title || 'Pragmatic Papers'
+  const title = article.meta?.title || article.title || "Pragmatic Papers"
   const description = article.meta?.description || undefined
 
   const og = mergeOpenGraph({
-    description: description || '',
+    description: description || "",
     title,
     url: `/articles/${slug}`,
   })
