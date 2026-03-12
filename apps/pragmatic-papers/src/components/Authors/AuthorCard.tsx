@@ -81,7 +81,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
             )}
           </div>
         </Link>
-        <div className="flex h-24 flex-1 flex-col justify-between overflow-hidden">
+        <div className="flex min-h-24 flex-1 flex-col overflow-hidden">
           <div className="min-h-0 space-y-1">
             <div className="flex items-center justify-between">
               <div>
@@ -102,7 +102,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
               <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{bioSnippet}</p>
             )}
           </div>
-          <AuthorLinks socials={author.socials} />
+          <AuthorLinks className="mt-auto pt-1" socials={author.socials} />
         </div>
       </CardContent>
     </Card>
