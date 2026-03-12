@@ -67,7 +67,7 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
                     data={media.caption}
                     enableGutter={false}
                     enableProse={false}
-                    className="not-prose text-[0.95rem] text-muted-foreground"
+                    className="not-prose text-muted-foreground text-[0.95rem]"
                   />
                 </figcaption>
               )}

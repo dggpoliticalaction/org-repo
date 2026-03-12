@@ -64,7 +64,7 @@ export const MediaBlock: React.FC<Props> = (props) => {
             data={caption}
             enableGutter={false}
             enableProse={false}
-            className="not-prose text-[0.95rem] text-muted-foreground"
+            className="not-prose text-muted-foreground text-[0.95rem]"
           />
         </figcaption>
       )}

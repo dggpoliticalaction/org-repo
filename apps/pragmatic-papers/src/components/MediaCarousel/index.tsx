@@ -43,7 +43,7 @@ const CarouselIndicators: React.FC<{
 }> = ({ count, current, api, className }) => {
   return (
     <div
-      className={cn("absolute bottom-10 left-0 right-0 z-10 flex justify-center gap-2", className)}
+      className={cn("absolute right-0 bottom-10 left-0 z-10 flex justify-center gap-2", className)}
     >
       {Array.from({ length: count }).map((_, idx) => (
         <button
@@ -51,8 +51,8 @@ const CarouselIndicators: React.FC<{
           onClick={() => api?.scrollTo(idx)}
           type="button"
           className={cn(
-            "inline-block h-2 w-2 rounded-sm bg-muted-foreground ring-2 ring-background transition-all",
-            idx === current ? "scale-125 bg-primary" : "opacity-40",
+            "bg-muted-foreground ring-background inline-block h-2 w-2 rounded-sm ring-2 transition-all",
+            idx === current ? "bg-primary scale-125" : "opacity-40",
           )}
           aria-label={`Go to slide ${idx + 1}`}
         />
@@ -120,13 +120,13 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
                   />
                 </div>
                 {showCaptions && (
-                  <figcaption className="mt-3 min-h-[1.5rem] w-full text-center">
+                  <figcaption className="mt-3 min-h-6 w-full text-center">
                     {image.caption && (
                       <RichText
                         data={image.caption}
                         enableGutter={false}
                         enableProse={false}
-                        className="not-prose text-[0.95rem] text-muted-foreground"
+                        className="not-prose text-muted-foreground text-[0.95rem]"
                       />
                     )}
                   </figcaption>

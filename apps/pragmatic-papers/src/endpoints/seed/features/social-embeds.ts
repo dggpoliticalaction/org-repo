@@ -2,8 +2,8 @@ import type { Media, SocialEmbedBlock, User } from "@/payload-types"
 import type { Payload } from "payload"
 import { createArticle } from "../articles"
 import {
-  createParagraph,
   createEmptyParagraph,
+  createParagraph,
   createRichText,
   generateLoremIpsumParagraphs,
   type SerializedLexicalNode,

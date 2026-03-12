@@ -1,13 +1,13 @@
+import type { Media, User } from "@/payload-types"
 import type { Payload } from "payload"
-import type { User, Media } from "@/payload-types"
+import { createArticle } from "../articles"
 import { createMediaFromURL } from "../media"
 import {
-  createRichTextFromString,
-  createParagraph,
   createEmptyParagraph,
+  createParagraph,
   createRichText,
+  createRichTextFromString,
 } from "../richtext"
-import { createArticle } from "../articles"
 
 /**
  * Helper to create a media block

@@ -23,7 +23,7 @@ const collectionLabels = {
 
 const Title: React.FC = () => (
   <div className="group flex items-center gap-2">
-    <PaperIcon className="h-4 w-4 group-hover:text-brand" />
+    <PaperIcon className="group-hover:text-brand h-4 w-4" />
     <span className="group-hover:underline">Dashboard</span>
   </div>
 )

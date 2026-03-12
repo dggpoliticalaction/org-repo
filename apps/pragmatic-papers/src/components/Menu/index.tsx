@@ -1,8 +1,8 @@
-import { CMSLink } from "@/components/Link/CMSLink2"
 import type { MenuField } from "@/payload-types"
 import { cn } from "@/utilities/ui"
 import { type VariantProps, cva } from "class-variance-authority"
 import React from "react"
+import { CMSButton } from "../Button"
 
 const menuVariants = cva("flex items-center", {
   defaultVariants: {
@@ -10,24 +10,9 @@ const menuVariants = cva("flex items-center", {
   },
   variants: {
     layout: {
-      inline: "flex-row",
+      inline: "flex-row gap-1",
       stacked: "flex-col items-start",
-      responsive: "flex-col md:flex-row",
-    },
-  },
-})
-
-const menuLinkVariants = cva("font-medium hover:bg-foreground/10", {
-  defaultVariants: {
-    layout: "responsive",
-  },
-  variants: {
-    layout: {
-      inline:
-        "border-b-foreground px-3 py-2 hover:data-[active=true]:border-b-0 hover:data-[active=true]:pb-2 data-[active=true]:border-b-[4px] data-[active=true]:pb-1",
-      stacked:
-        "w-full items-start border-t border-border border-l-foreground py-4 text-lg hover:data-[active=true]:border-l-0 hover:data-[active=true]:pl-6 data-[active=true]:border-l-8 data-[active=true]:pl-4",
-      responsive: "py-2 md:px-3",
+      responsive: "flex-col md:flex-row md:gap-1",
     },
   },
 })
@@ -54,10 +39,16 @@ export const Menu: React.FC<MenuProps> = ({ menu, className, layout, ...props })
   return (
     <nav className={cn(menuVariants({ className, layout }))} {...props}>
       {menu.map(({ link, id }, index) => (
-        <CMSLink
+        <CMSButton
           key={id || `menu-item-${index}`}
-          className={cn(menuLinkVariants({ layout }))}
+          // className={cn(menuLinkVariants({ layout }))}
           link={link}
+          variant="ghost"
+          size={layout === "stacked" ? "lg" : "default"}
+          className={cn({
+            "border-border w-full justify-start rounded-none border-0 border-t px-4 py-6 text-lg data-[active=true]:shadow-[inset_4px_0_0_var(--foreground)]":
+              layout === "stacked",
+          })}
         />
       ))}
     </nav>

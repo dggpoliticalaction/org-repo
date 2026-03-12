@@ -62,10 +62,10 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
   const { src: avatarUrl, alt } = extractProfileImage(author)
 
   return (
-    <Card className="rounded-sm">
+    <Card className="rounded-xs">
       <CardContent className="flex flex-row gap-4 p-4">
         <Link href={`/authors/${slug}`} aria-label={name || "Author profile"}>
-          <div className="h-24 w-24 overflow-hidden rounded-sm border border-border bg-muted">
+          <div className="border-border bg-muted h-24 w-24 overflow-hidden rounded-xs border">
             {avatarUrl ? (
               <Image
                 src={avatarUrl}
@@ -75,7 +75,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
                 className="h-full w-full object-cover transition-opacity hover:opacity-80"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-primary text-lg font-semibold text-primary-foreground">
+              <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center text-lg font-semibold">
                 {initials}
               </div>
             )}
@@ -85,12 +85,12 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
           <div className="min-h-0 space-y-1">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-foreground">
-                  <Link href={`/authors/${slug}`} className="transition-colors hover:text-brand">
+                <h3 className="text-foreground font-semibold">
+                  <Link href={`/authors/${slug}`} className="hover:text-brand transition-colors">
                     {name}
                   </Link>
                   {affiliation && (
-                    <span className="ml-1 text-sm font-normal text-muted-foreground">
+                    <span className="text-muted-foreground ml-1 text-sm font-normal">
                       {" - "}
                       {affiliation}
                     </span>
@@ -99,7 +99,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
               </div>
             </div>
             {bioSnippet && (
-              <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{bioSnippet}</p>
+              <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{bioSnippet}</p>
             )}
           </div>
           <AuthorLinks socials={author.socials} />

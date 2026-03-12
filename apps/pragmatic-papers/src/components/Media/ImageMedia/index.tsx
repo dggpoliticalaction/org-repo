@@ -96,7 +96,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
       {enableModal && isPayloadResource && (
         <Dialog open={isModalOpen} onOpenChange={() => setIsModalOpen(false)}>
           <DialogContent
-            className="flex h-full max-w-full flex-col items-center justify-center border-0 bg-transparent [&>button]:right-6 [&>button]:top-6 [&_svg]:h-6 [&_svg]:w-6"
+            className="flex h-full max-w-full flex-col items-center justify-center border-0 bg-transparent [&_svg]:h-6 [&_svg]:w-6 [&>button]:top-6 [&>button]:right-6"
             onClick={handleDialogContentClick}
           >
             <DialogTitle className="sr-only">
@@ -130,7 +130,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
                 />
                 {resource.caption && (
                   <RichText
-                    className="text-center text-muted-foreground"
+                    className="text-muted-foreground text-center"
                     data={resource.caption}
                     enableGutter={false}
                     enableProse={false}

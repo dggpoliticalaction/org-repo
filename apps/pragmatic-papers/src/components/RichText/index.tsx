@@ -72,7 +72,7 @@ function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunctio
           className="col-span-3 col-start-1"
           imgClassName="m-0"
           {...node.fields}
-          captionClassName="mx-auto max-w-[48rem]"
+          captionClassName="mx-auto max-w-3xl"
           enableGutter={false}
           disableInnerContainer
         />
@@ -133,7 +133,7 @@ export default function RichText({
         {
           container: enableGutter,
           "max-w-none": !enableGutter,
-          "prose dark:prose-invert md:prose-md": enableProse,
+          "prose md:prose-md dark:prose-invert": enableProse,
         },
         className,
       )}

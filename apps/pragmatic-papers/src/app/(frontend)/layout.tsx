@@ -26,7 +26,6 @@ const openSans = Open_Sans({
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
-  const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 
   return (
     <html
@@ -59,7 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           type="application/rss+xml"
         />
       </head>
-      <body>
+      <body className="flex min-h-screen flex-col">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -72,13 +71,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }}
           />
           <Header />
-          <main role="main" className="mt-4">
+          <main role="main" className="flex-1">
             {children}
           </main>
           <Footer />
         </ThemeProvider>
       </body>
-      <GoogleAnalytics gaId={googleAnalyticsId} />
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
     </html>
   )
 }

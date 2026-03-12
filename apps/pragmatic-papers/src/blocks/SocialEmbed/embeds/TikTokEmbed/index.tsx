@@ -15,7 +15,7 @@ export async function TikTokEmbedBlock({
       return (
         <div className="my-8 flex justify-center">
           <div
-            className="w-full max-w-[550px] [&>div]:!my-0"
+            className="w-full max-w-[550px] [&>div]:my-0!"
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: snapshot.html }}
           />
@@ -52,7 +52,7 @@ export async function TikTokEmbedBlock({
             View on {TIKTOK_DISPLAY_NAME}
           </a>
         </div>
-        <div className="relative aspect-[9/16] overflow-hidden rounded-lg shadow-xl">
+        <div className="relative aspect-9/16 overflow-hidden rounded-lg shadow-xl">
           <iframe
             className="absolute inset-0 h-full w-full"
             src={buildTikTokSrc(postId, { autoplay: 1, loop: 1 })}
