@@ -1,10 +1,10 @@
-'use client'
-import React, { useCallback, useEffect } from 'react'
-import type { TextFieldClientProps } from 'payload'
+"use client"
+import React, { useCallback, useEffect } from "react"
+import type { TextFieldClientProps } from "payload"
 
-import { useField, Button, TextInput, FieldLabel, useFormFields, useForm } from '@payloadcms/ui'
+import { useField, Button, TextInput, FieldLabel, useFormFields, useForm } from "@payloadcms/ui"
 
-import './index.scss'
+import "./index.scss"
 
 type NumberSlugComponentProps = {
   fieldToUse: string
@@ -20,7 +20,7 @@ export const NumberSlugComponent: React.FC<NumberSlugComponentProps> = ({
 }) => {
   const { label } = field
 
-  const checkboxFieldPath = path?.includes('.')
+  const checkboxFieldPath = path?.includes(".")
     ? `${path}.${checkboxFieldPathFromProps}`
     : checkboxFieldPathFromProps
 
@@ -46,7 +46,7 @@ export const NumberSlugComponent: React.FC<NumberSlugComponentProps> = ({
 
         if (value !== formattedSlug) setValue(formattedSlug)
       } else {
-        if (value !== '') setValue('')
+        if (value !== "") setValue("")
       }
     }
   }, [targetFieldValue, checkboxValue, setValue, value])
@@ -56,7 +56,7 @@ export const NumberSlugComponent: React.FC<NumberSlugComponentProps> = ({
       e.preventDefault()
 
       dispatchFields({
-        type: 'UPDATE',
+        type: "UPDATE",
         path: checkboxFieldPath,
         value: !checkboxValue,
       })
@@ -72,7 +72,7 @@ export const NumberSlugComponent: React.FC<NumberSlugComponentProps> = ({
         <FieldLabel htmlFor={`field-${path}`} label={label} />
 
         <Button className="lock-button" buttonStyle="none" onClick={handleLock}>
-          {checkboxValue ? 'Unlock' : 'Lock'}
+          {checkboxValue ? "Unlock" : "Lock"}
         </Button>
       </div>
 

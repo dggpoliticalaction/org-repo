@@ -495,7 +495,7 @@ export interface User {
   slug: string;
   profileImage?: (number | null) | Media;
   socials?: MenuField;
-  role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'user') | null;
+  role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'member') | null;
   updatedAt: string;
   createdAt: string;
   email: string;

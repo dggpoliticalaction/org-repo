@@ -1,13 +1,13 @@
-import type { Payload, File } from 'payload'
-import type { Media } from '@/payload-types'
+import type { Payload, File } from "payload"
+import type { Media } from "@/payload-types"
 
 /**
  * Fetches a file from a URL and returns a File object compatible with Payload
  */
 export async function fetchFileByURL(url: string): Promise<File> {
   const res = await fetch(url, {
-    credentials: 'include',
-    method: 'GET',
+    credentials: "include",
+    method: "GET",
   })
 
   if (!res.ok) {
@@ -15,20 +15,20 @@ export async function fetchFileByURL(url: string): Promise<File> {
   }
 
   const data = await res.arrayBuffer()
-  const extension = url.split('.').pop()?.toLowerCase() || ''
+  const extension = url.split(".").pop()?.toLowerCase() || ""
 
   // Map file extensions to proper MIME types
   const mimeTypeMap: Record<string, string> = {
-    jpg: 'image/jpeg',
-    jpeg: 'image/jpeg',
-    png: 'image/png',
-    webp: 'image/webp',
-    gif: 'image/gif',
-    svg: 'image/svg+xml',
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+    webp: "image/webp",
+    gif: "image/gif",
+    svg: "image/svg+xml",
   }
 
   return {
-    name: url.split('/').pop() || `file-${Date.now()}`,
+    name: url.split("/").pop() || `file-${Date.now()}`,
     data: Buffer.from(data),
     mimetype: mimeTypeMap[extension] || `image/${extension}`,
     size: data.byteLength,
@@ -47,12 +47,12 @@ export async function createMediaFromURL(
   payload: Payload,
   url: string,
   alt: string,
-  additionalData?: Partial<Omit<Media, 'id' | 'alt'>>,
+  additionalData?: Partial<Omit<Media, "id" | "alt">>,
 ): Promise<Media> {
   const file = await fetchFileByURL(url)
 
   return await payload.create({
-    collection: 'media',
+    collection: "media",
     data: {
       alt,
       ...additionalData,

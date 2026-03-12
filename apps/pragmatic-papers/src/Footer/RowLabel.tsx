@@ -1,11 +1,11 @@
-'use client'
-import type { Footer } from '@/payload-types'
-import { type RowLabelProps, useRowLabel } from '@payloadcms/ui'
+"use client"
+import type { Footer } from "@/payload-types"
+import { type RowLabelProps, useRowLabel } from "@payloadcms/ui"
 
 export const RowLabel: React.FC<RowLabelProps> = () => {
-  const { data, rowNumber } = useRowLabel<NonNullable<Footer['navItems']>[number]>()
+  const { data, rowNumber } = useRowLabel<NonNullable<Footer["navItems"]>[number]>()
 
-  let label = 'Row'
+  let label = "Row"
   if (data?.link?.label) {
     label = `Nav item`
     if (rowNumber !== undefined) {

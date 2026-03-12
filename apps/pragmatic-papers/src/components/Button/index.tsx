@@ -1,7 +1,7 @@
-import { CMSLink } from '@/components/Link/CMSLink2'
-import { Button } from '@/components/ui/button'
-import type { ActionButtonField } from '@/payload-types'
-import { cn } from '@/utilities/ui'
+import { CMSLink } from "@/components/Link/CMSLink2"
+import { Button } from "@/components/ui/button"
+import type { ActionButtonField } from "@/payload-types"
+import { cn } from "@/utilities/ui"
 
 interface CMSButtonProps extends React.ComponentProps<typeof Button> {
   button?: ActionButtonField // Eventually replace with ButtonField when it's actually generated in payload-types.ts
@@ -33,13 +33,13 @@ export const CMSButton: React.FC<CMSButtonProps> = ({
       type="button"
       variant={variant}
       className={cn(
-        'bg-[var(--cms-button-background)] text-[var(--cms-button-foreground)] hover:bg-[color-mix(in_srgb,_var(--cms-button-background),_black_10%)]',
+        "bg-[var(--cms-button-background)] text-[var(--cms-button-foreground)] hover:bg-[color-mix(in_srgb,_var(--cms-button-background),_black_10%)]",
         className,
       )}
       style={
         {
-          '--cms-button-background': backgroundColor,
-          '--cms-button-foreground': textColor,
+          "--cms-button-background": backgroundColor,
+          "--cms-button-foreground": textColor,
           ...style,
         } as React.CSSProperties
       }

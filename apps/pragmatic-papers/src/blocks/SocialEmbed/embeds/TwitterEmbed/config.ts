@@ -1,4 +1,4 @@
-import type { Block } from 'payload'
+import type { Block } from "payload"
 
 /**
  * Legacy config for Twitter embeds.
@@ -6,28 +6,28 @@ import type { Block } from 'payload'
  * @see SocialEmbedBlock
  */
 export const LegacyTwitterEmbed: Block = {
-  slug: 'twitterEmbed',
+  slug: "twitterEmbed",
   // interfaceName: 'TwitterOEmbedBlock',
   labels: {
-    singular: 'Twitter Embed (Legacy)',
-    plural: 'Twitter Embeds (Legacy)',
+    singular: "Twitter Embed (Legacy)",
+    plural: "Twitter Embeds (Legacy)",
   },
   admin: {
-    group: 'Legacy',
+    group: "Legacy",
   },
   fields: [
     {
-      name: 'url',
-      type: 'text',
+      name: "url",
+      type: "text",
       required: true,
     },
     {
-      name: 'hideMedia',
-      type: 'checkbox',
+      name: "hideMedia",
+      type: "checkbox",
     },
     {
-      name: 'hideThread',
-      type: 'checkbox',
+      name: "hideThread",
+      type: "checkbox",
     },
   ],
 }

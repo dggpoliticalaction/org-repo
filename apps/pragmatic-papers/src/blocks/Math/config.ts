@@ -1,57 +1,57 @@
-import { type Block } from 'payload'
+import { type Block } from "payload"
 
 export const InlineMathBlock: Block = {
-  slug: 'inlineMathBlock',
-  interfaceName: 'InlineMathBlock',
+  slug: "inlineMathBlock",
+  interfaceName: "InlineMathBlock",
   fields: [
     {
-      name: 'math',
-      type: 'text',
+      name: "math",
+      type: "text",
       required: true,
-      label: 'Math Expression',
+      label: "Math Expression",
       admin: {
-        description: 'Enter a LaTeX math expression.',
+        description: "Enter a LaTeX math expression.",
       },
     },
   ],
   graphQL: {
-    singularName: 'InlineMathBlock',
+    singularName: "InlineMathBlock",
   },
   labels: {
-    plural: 'Inline Math Blocks',
-    singular: 'Inline Math Block',
+    plural: "Inline Math Blocks",
+    singular: "Inline Math Block",
   },
   admin: {
     components: {
-      Label: '/blocks/Math/AdminComponent',
+      Label: "/blocks/Math/AdminComponent",
     },
   },
 }
 
 export const DisplayMathBlock: Block = {
-  slug: 'displayMathBlock',
-  interfaceName: 'DisplayMathBlock',
+  slug: "displayMathBlock",
+  interfaceName: "DisplayMathBlock",
   fields: [
     {
-      name: 'math',
-      type: 'textarea',
+      name: "math",
+      type: "textarea",
       required: true,
-      label: 'Math Expression',
+      label: "Math Expression",
       admin: {
-        description: 'Enter a LaTeX math expression.',
+        description: "Enter a LaTeX math expression.",
       },
     },
   ],
   graphQL: {
-    singularName: 'DisplayMathBlock',
+    singularName: "DisplayMathBlock",
   },
   labels: {
-    plural: 'Display Math Blocks',
-    singular: 'Display Math Block',
+    plural: "Display Math Blocks",
+    singular: "Display Math Block",
   },
   admin: {
     components: {
-      Label: '/blocks/Math/AdminComponent',
+      Label: "/blocks/Math/AdminComponent",
     },
   },
 }

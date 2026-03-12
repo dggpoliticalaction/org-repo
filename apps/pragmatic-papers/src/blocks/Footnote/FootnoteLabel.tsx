@@ -1,5 +1,5 @@
-import type { FootnoteBlock } from '@/payload-types'
-import React from 'react'
+import type { FootnoteBlock } from "@/payload-types"
+import React from "react"
 
 interface FootnoteLabelProps {
   siblingData: Partial<FootnoteBlock>

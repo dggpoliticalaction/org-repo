@@ -2,12 +2,12 @@ import {
   TWITTER_DISPLAY_NAME,
   fetchTwitterOEmbed,
   sanitizeTwitterHtml,
-} from '@/blocks/SocialEmbed/adapters/twitter.adapter'
-import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
-import { TwitterEmbedClient } from '@/blocks/SocialEmbed/embeds/TwitterEmbed/client'
-import { shouldEnhance } from '@/blocks/SocialEmbed/helpers/snapshotFreshness'
-import type { SocialEmbedBlock } from '@/payload-types'
-import { isFailure } from '@/utilities/results'
+} from "@/blocks/SocialEmbed/adapters/twitter.adapter"
+import { EmbedError } from "@/blocks/SocialEmbed/embeds/EmbedError"
+import { TwitterEmbedClient } from "@/blocks/SocialEmbed/embeds/TwitterEmbed/client"
+import { shouldEnhance } from "@/blocks/SocialEmbed/helpers/snapshotFreshness"
+import type { SocialEmbedBlock } from "@/payload-types"
+import { isFailure } from "@/utilities/results"
 
 export async function TwitterEmbedBlock(props: SocialEmbedBlock): Promise<React.ReactNode> {
   const { url, snapshot, id, hideMedia, hideThread } = props

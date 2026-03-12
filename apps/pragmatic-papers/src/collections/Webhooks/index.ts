@@ -1,10 +1,10 @@
-import { admin } from '@/access/admins'
-import { type Webhook } from '@/payload-types'
-import { type FieldHookArgs, type CollectionConfig } from 'payload'
-import { format, isAfter } from 'date-fns'
+import { admin } from "@/access/admins"
+import { type Webhook } from "@/payload-types"
+import { type FieldHookArgs, type CollectionConfig } from "payload"
+import { format, isAfter } from "date-fns"
 
 export const Webhooks: CollectionConfig = {
-  slug: 'webhooks',
+  slug: "webhooks",
   access: {
     create: admin,
     delete: admin,
@@ -13,19 +13,19 @@ export const Webhooks: CollectionConfig = {
   },
   fields: [
     {
-      name: 'name',
-      type: 'text',
+      name: "name",
+      type: "text",
       required: false,
     },
     {
-      name: 'url',
-      type: 'text',
+      name: "url",
+      type: "text",
       required: true,
     },
     {
-      type: 'text',
-      name: 'mostRecent',
-      label: 'Most Recent',
+      type: "text",
+      name: "mostRecent",
+      label: "Most Recent",
       hooks: {
         afterRead: [
           (ctx: FieldHookArgs<Webhook>): string => {
@@ -34,34 +34,34 @@ export const Webhooks: CollectionConfig = {
                 return { vol: v.volumeNumber, time: new Date(v.timePushed ?? 0) }
               })
               .reduce((prev, curr) => (isAfter(prev.time, curr.time) ? prev : curr))
-            return latest ? `Vol. ${latest.vol} - ${format(latest.time, 'PP pp')}` : '-'
+            return latest ? `Vol. ${latest.vol} - ${format(latest.time, "PP pp")}` : "-"
           },
         ],
       },
       admin: {
         readOnly: true,
-        description: 'The most recent volume number that has been pushed to this webhook',
+        description: "The most recent volume number that has been pushed to this webhook",
       },
     },
     {
-      name: 'pushed',
-      type: 'array',
+      name: "pushed",
+      type: "array",
       labels: {
-        plural: 'volumes',
-        singular: 'volume',
+        plural: "volumes",
+        singular: "volume",
       },
       fields: [
         {
-          name: 'volumeNumber',
-          type: 'number',
+          name: "volumeNumber",
+          type: "number",
           admin: {
             readOnly: true,
             hidden: true,
           },
         },
         {
-          name: 'timePushed',
-          type: 'date',
+          name: "timePushed",
+          type: "date",
           admin: {
             readOnly: true,
             hidden: true,
