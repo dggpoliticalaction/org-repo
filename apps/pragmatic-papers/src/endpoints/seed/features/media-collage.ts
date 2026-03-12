@@ -1,13 +1,13 @@
+import type { Media, User } from "@/payload-types"
 import type { Payload } from "payload"
-import type { User, Media } from "@/payload-types"
+import { createArticle } from "../articles"
 import { createMediaFromURL } from "../media"
 import {
-  createRichTextFromString,
-  createParagraph,
   createEmptyParagraph,
+  createParagraph,
   createRichText,
+  createRichTextFromString,
 } from "../richtext"
-import { createArticle } from "../articles"
 
 /**
  * Helper to create a media block
@@ -112,6 +112,7 @@ export const createMediaCollageArticle = async (
     content,
     authors: [writer.id],
     slug: "grids-carousels-captions-exploring-rich-media-layouts",
+    heroImage: mediaDocs[Math.floor(Math.random() * mediaDocs.length)]?.id,
     meta: {
       title,
       description:

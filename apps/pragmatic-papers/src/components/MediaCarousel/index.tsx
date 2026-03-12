@@ -120,7 +120,7 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
                   />
                 </div>
                 {showCaptions && (
-                  <figcaption className="mt-3 min-h-[1.5rem] w-full text-center">
+                  <figcaption className="mt-3 min-h-6 w-full text-center">
                     {image.caption && (
                       <RichText
                         data={image.caption}

@@ -1,7 +1,7 @@
 import { adminOrSelf } from "@/access/adminOrSelf"
 import { admin, adminFieldLevel } from "@/access/admins"
-import { anyone } from "@/access/anyone"
-import { authenticated } from "@/access/authenticated"
+import { staff } from "@/access/staff"
+import { revalidateUser } from "@/collections/Users/hooks/revalidateUser"
 import { menu } from "@/fields/menu"
 import {
   FixedToolbarFeature,
@@ -17,10 +17,10 @@ import { slugField, type CollectionConfig } from "payload"
 export const Users: CollectionConfig = {
   slug: "users",
   access: {
-    admin: authenticated,
+    admin: staff,
     create: admin,
     delete: admin,
-    read: anyone,
+    read: adminOrSelf,
     update: adminOrSelf,
   },
   admin: {
@@ -95,7 +95,7 @@ export const Users: CollectionConfig = {
       name: "role",
       type: "select",
       saveToJWT: true,
-      defaultValue: "user",
+      defaultValue: "member",
       access: {
         update: adminFieldLevel,
       },
@@ -120,11 +120,14 @@ export const Users: CollectionConfig = {
           value: "writer",
         },
         {
-          label: "User",
-          value: "user",
+          label: "Member",
+          value: "member",
         },
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidateUser],
+  },
   timestamps: true,
 }
