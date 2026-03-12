@@ -1,19 +1,19 @@
-import { SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
-import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
+import { SocialAdapter } from "@/blocks/SocialEmbed/adapters/base.adapter"
+import { fetchOEmbed } from "@/blocks/SocialEmbed/helpers/fetchOEmbed"
 import type {
   OEmbedRequestQuery,
   OEmbedThumbnail,
   OEmbedVideo,
-} from '@/blocks/SocialEmbed/helpers/oEmbed'
-import type { Prettify } from '@/utilities/prettify'
-import { failure, type Result } from '@/utilities/results'
-import sanitizeHtml from 'sanitize-html'
+} from "@/blocks/SocialEmbed/helpers/oEmbed"
+import type { Prettify } from "@/utilities/prettify"
+import { failure, type Result } from "@/utilities/results"
+import sanitizeHtml from "sanitize-html"
 
 export function parseTikTokPostId(input: string): string | null {
   if (!URL.canParse(input)) return null
   const url = new URL(input)
   const host = url.hostname.toLowerCase()
-  const isTikTokHost = host === 'tiktok.com' || host === 'www.tiktok.com' || host === 'm.tiktok.com'
+  const isTikTokHost = host === "tiktok.com" || host === "www.tiktok.com" || host === "m.tiktok.com"
   if (!isTikTokHost) return null
   return url.pathname.match(/\/video\/(\d+)/)?.[1] ?? null
 }
@@ -51,19 +51,19 @@ export function buildTikTokSrc(postId: string, settings: TikTokIFrameSettings = 
     closed_caption = 1,
   } = settings
   const src = new URL(`https://www.tiktok.com/player/v1/${postId}`)
-  src.searchParams.set('controls', String(controls))
-  src.searchParams.set('progress_bar', String(progress_bar))
-  src.searchParams.set('play_button', String(play_button))
-  src.searchParams.set('volume_control', String(volume_control))
-  src.searchParams.set('fullscreen_button', String(fullscreen_button))
-  src.searchParams.set('timestamp', String(timestamp))
-  src.searchParams.set('loop', String(loop))
-  src.searchParams.set('autoplay', String(autoplay))
-  src.searchParams.set('music_info', String(music_info))
-  src.searchParams.set('description', String(description))
-  src.searchParams.set('rel', String(rel))
-  src.searchParams.set('native_context_menu', String(native_context_menu))
-  src.searchParams.set('closed_caption', String(closed_caption))
+  src.searchParams.set("controls", String(controls))
+  src.searchParams.set("progress_bar", String(progress_bar))
+  src.searchParams.set("play_button", String(play_button))
+  src.searchParams.set("volume_control", String(volume_control))
+  src.searchParams.set("fullscreen_button", String(fullscreen_button))
+  src.searchParams.set("timestamp", String(timestamp))
+  src.searchParams.set("loop", String(loop))
+  src.searchParams.set("autoplay", String(autoplay))
+  src.searchParams.set("music_info", String(music_info))
+  src.searchParams.set("description", String(description))
+  src.searchParams.set("rel", String(rel))
+  src.searchParams.set("native_context_menu", String(native_context_menu))
+  src.searchParams.set("closed_caption", String(closed_caption))
   return src.toString()
 }
 
@@ -73,8 +73,8 @@ export function buildTikTokSrc(postId: string, settings: TikTokIFrameSettings = 
  */
 function patchTikTokUrl(url: string): string {
   const urlNext = new URL(url)
-  if (urlNext.hostname === 'tiktok.com') {
-    urlNext.hostname = 'www.tiktok.com'
+  if (urlNext.hostname === "tiktok.com") {
+    urlNext.hostname = "www.tiktok.com"
   }
   return urlNext.toString()
 }
@@ -85,15 +85,15 @@ export type TikTokOEmbedResponse = Prettify<OEmbedVideo & OEmbedThumbnail>
 
 class TikTokAdapter extends SocialAdapter<TikTokOEmbedOptions, TikTokOEmbedResponse> {
   readonly maxWidth = 360
-  readonly displayName = 'TikTok'
+  readonly displayName = "TikTok"
 
   isValidUrl(url: string): boolean {
     return parseTikTokPostId(url) !== null
   }
 
   buildUrl(options: TikTokOEmbedOptions): URL {
-    const endpoint = new URL('https://www.tiktok.com/oembed')
-    endpoint.searchParams.set('url', patchTikTokUrl(options.url))
+    const endpoint = new URL("https://www.tiktok.com/oembed")
+    endpoint.searchParams.set("url", patchTikTokUrl(options.url))
     return endpoint
   }
 
@@ -101,20 +101,20 @@ class TikTokAdapter extends SocialAdapter<TikTokOEmbedOptions, TikTokOEmbedRespo
     options: TikTokOEmbedOptions,
     init?: RequestInit,
   ): Promise<Result<TikTokOEmbedResponse, Error>> {
-    if (!this.isValidUrl(options.url)) return failure(new Error('Invalid TikTok post URL.'))
+    if (!this.isValidUrl(options.url)) return failure(new Error("Invalid TikTok post URL."))
     return await fetchOEmbed<TikTokOEmbedResponse>(this.buildUrl(options), init)
   }
 
   async sanitize(html: string): Promise<string> {
     return sanitizeHtml(html, {
-      allowedTags: ['blockquote', 'section', 'p', 'a'],
+      allowedTags: ["blockquote", "section", "p", "a"],
       allowedAttributes: {
-        blockquote: ['class', 'cite', 'data-video-id', 'data-embed-from', 'style'],
+        blockquote: ["class", "cite", "data-video-id", "data-embed-from", "style"],
         section: [],
         p: [],
-        a: ['target', 'title', 'href'],
+        a: ["target", "title", "href"],
       },
-      allowedSchemes: ['http', 'https'],
+      allowedSchemes: ["http", "https"],
       allowProtocolRelative: false,
     })
   }

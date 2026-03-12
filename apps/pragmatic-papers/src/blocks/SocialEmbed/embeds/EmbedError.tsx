@@ -1,5 +1,5 @@
-import { Card, CardContent } from '@/components/ui/card'
-import { ExternalLink, TriangleAlert } from 'lucide-react'
+import { Card, CardContent } from "@/components/ui/card"
+import { ExternalLink, TriangleAlert } from "lucide-react"
 
 interface EmbedErrorProps {
   url: string

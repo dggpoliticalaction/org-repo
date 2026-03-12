@@ -1,7 +1,7 @@
-import dynamic from 'next/dynamic'
+import dynamic from "next/dynamic"
 
 const MathJaxContext = dynamic(
-  () => import('better-react-mathjax').then((mod) => mod.MathJaxContext),
+  () => import("better-react-mathjax").then((mod) => mod.MathJaxContext),
   {
     ssr: true,
   },

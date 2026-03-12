@@ -1,10 +1,10 @@
-import RichText from '@/components/RichText'
-import React from 'react'
+import RichText from "@/components/RichText"
+import React from "react"
 
-import { Width } from '../Width'
+import { Width } from "../Width"
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
-import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
+import { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical"
+import type { DefaultTypedEditorState } from "@payloadcms/richtext-lexical"
 
 export const Message: React.FC<{ message: SerializedEditorState }> = ({ message }) => {
   return (

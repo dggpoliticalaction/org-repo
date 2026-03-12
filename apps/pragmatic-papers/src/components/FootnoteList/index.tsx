@@ -1,8 +1,8 @@
-import { CMSLink } from '@/components/Link/CMSLink2'
-import type { FootnotesField } from '@/payload-types'
-import { getLinkFieldUrl } from '@/utilities/getLinkFieldUrl'
-import { getClientSideURL } from '@/utilities/getURL'
-import React from 'react'
+import { CMSLink } from "@/components/Link/CMSLink2"
+import type { FootnotesField } from "@/payload-types"
+import { getLinkFieldUrl } from "@/utilities/getLinkFieldUrl"
+import { getClientSideURL } from "@/utilities/getURL"
+import React from "react"
 
 interface FootnoteListProps {
   footnotes?: FootnotesField
@@ -23,7 +23,7 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
               </span>
               {attributionEnabled && (
                 <CMSLink link={link} className="text-brand underline shadow-none">
-                  {link?.type === 'reference' ? `${getClientSideURL()}${url}` : url}
+                  {link?.type === "reference" ? `${getClientSideURL()}${url}` : url}
                 </CMSLink>
               )}
             </li>

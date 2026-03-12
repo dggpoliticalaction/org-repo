@@ -1,13 +1,13 @@
-import { SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
-import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
+import { SocialAdapter } from "@/blocks/SocialEmbed/adapters/base.adapter"
+import { fetchOEmbed } from "@/blocks/SocialEmbed/helpers/fetchOEmbed"
 import type {
   OEmbedRequestQuery,
   OEmbedRich,
   OEmbedThumbnail,
-} from '@/blocks/SocialEmbed/helpers/oEmbed'
-import type { Prettify } from '@/utilities/prettify'
-import { failure, type Result } from '@/utilities/results'
-import sanitizeHtml from 'sanitize-html'
+} from "@/blocks/SocialEmbed/helpers/oEmbed"
+import type { Prettify } from "@/utilities/prettify"
+import { failure, type Result } from "@/utilities/results"
+import sanitizeHtml from "sanitize-html"
 
 export interface RedditOEmbedOptions extends OEmbedRequestQuery {
   parent?: boolean
@@ -19,19 +19,19 @@ export type RedditOEmbedResponse = Prettify<OEmbedRich & Partial<OEmbedThumbnail
 
 class RedditAdapter extends SocialAdapter<RedditOEmbedOptions, RedditOEmbedResponse> {
   readonly maxWidth = 550
-  readonly displayName = 'Reddit'
+  readonly displayName = "Reddit"
 
   isValidUrl(url: string): boolean {
     try {
       const urlObj = new URL(url)
       const host = urlObj.hostname.toLowerCase()
       const isRedditHost =
-        host === 'reddit.com' ||
-        host === 'www.reddit.com' ||
-        host === 'old.reddit.com' ||
-        host === 'np.reddit.com' ||
-        host === 'new.reddit.com' ||
-        host === 'amp.reddit.com'
+        host === "reddit.com" ||
+        host === "www.reddit.com" ||
+        host === "old.reddit.com" ||
+        host === "np.reddit.com" ||
+        host === "new.reddit.com" ||
+        host === "amp.reddit.com"
       if (!isRedditHost) return false
 
       const path = urlObj.pathname
@@ -51,13 +51,13 @@ class RedditAdapter extends SocialAdapter<RedditOEmbedOptions, RedditOEmbedRespo
       live = false,
       omitscript = true,
     } = options
-    const endpoint = new URL('https://www.reddit.com/oembed')
-    endpoint.searchParams.set('url', url)
-    endpoint.searchParams.set('format', 'json')
-    endpoint.searchParams.set('maxwidth', String(maxwidth))
-    endpoint.searchParams.set('parent', String(parent))
-    endpoint.searchParams.set('live', String(live))
-    endpoint.searchParams.set('omitscript', String(omitscript))
+    const endpoint = new URL("https://www.reddit.com/oembed")
+    endpoint.searchParams.set("url", url)
+    endpoint.searchParams.set("format", "json")
+    endpoint.searchParams.set("maxwidth", String(maxwidth))
+    endpoint.searchParams.set("parent", String(parent))
+    endpoint.searchParams.set("live", String(live))
+    endpoint.searchParams.set("omitscript", String(omitscript))
     return endpoint
   }
 
@@ -65,18 +65,18 @@ class RedditAdapter extends SocialAdapter<RedditOEmbedOptions, RedditOEmbedRespo
     options: RedditOEmbedOptions,
     init?: RequestInit,
   ): Promise<Result<RedditOEmbedResponse, Error>> {
-    if (!this.isValidUrl(options.url)) return failure(new Error('Invalid Reddit URL.'))
+    if (!this.isValidUrl(options.url)) return failure(new Error("Invalid Reddit URL."))
     return await fetchOEmbed<RedditOEmbedResponse>(this.buildUrl(options), init)
   }
 
   async sanitize(html: string): Promise<string> {
     return sanitizeHtml(html, {
-      allowedTags: ['blockquote', 'a', 'br'],
+      allowedTags: ["blockquote", "a", "br"],
       allowedAttributes: {
-        blockquote: ['class', 'cite', 'style'],
-        a: ['href'],
+        blockquote: ["class", "cite", "style"],
+        a: ["href"],
       },
-      allowedSchemes: ['http', 'https'],
+      allowedSchemes: ["http", "https"],
       allowProtocolRelative: false,
     })
   }

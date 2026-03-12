@@ -99,23 +99,23 @@ When generating a seed from article JSON:
 ## Seed File Structure
 
 ```typescript
-import type { Payload } from 'payload'
-import type { User, Media } from '@/payload-types'
-import { createMediaFromURL } from '../utils/media'
+import type { Payload } from "payload"
+import type { User, Media } from "@/payload-types"
+import { createMediaFromURL } from "../utils/media"
 import {
   createRichText,
   createParagraph,
   createTextNode,
   createEmptyParagraph,
-} from '../utils/richtext'
-import { createArticle } from '../utils/articles'
+} from "../utils/richtext"
+import { createArticle } from "../utils/articles"
 
 // Helper functions for custom blocks
 function createMyCustomBlock(data) {
   return {
-    type: 'block',
-    fields: { blockType: 'myBlock', ...data },
-    format: '',
+    type: "block",
+    fields: { blockType: "myBlock", ...data },
+    format: "",
     version: 2,
   }
 }
@@ -128,38 +128,38 @@ export const createMyFeatureArticle = async (
   // Create any additional media
   const customMedia = await createMediaFromURL(
     payload,
-    'https://example.com/image.jpg',
-    'Alt text',
-    { caption: createRichTextFromString('Caption text') },
+    "https://example.com/image.jpg",
+    "Alt text",
+    { caption: createRichTextFromString("Caption text") },
   )
 
   // Build content programmatically
   const content = createRichText([
-    createParagraph('Introduction paragraph'),
+    createParagraph("Introduction paragraph"),
     createEmptyParagraph(),
     createMyCustomBlock({
       /* data */
     }),
     createParagraph([
-      createTextNode('Text with '),
+      createTextNode("Text with "),
       {
-        type: 'inlineBlock',
+        type: "inlineBlock",
         fields: {
           /* inline block data */
         },
       },
-      createTextNode(' more text'),
+      createTextNode(" more text"),
     ]),
   ])
 
   // Create the article
   const article = await createArticle(payload, {
-    title: 'My Feature Demo',
+    title: "My Feature Demo",
     content,
     authors: [writer.id],
-    slug: 'my-feature-demo',
+    slug: "my-feature-demo",
     meta: {
-      description: 'Description of the feature',
+      description: "Description of the feature",
       image: mediaDocs[0]?.id,
     },
   })
@@ -191,34 +191,34 @@ export const createExampleArticle = async (payload, writer, mediaDocs) => {
   const [media1, media2] = await Promise.all([
     createMediaFromURL(
       payload,
-      'https://example.com/images/image1.jpg', // External URL from user
-      'alt1',
-      { caption: createRichTextFromString('Caption 1') },
+      "https://example.com/images/image1.jpg", // External URL from user
+      "alt1",
+      { caption: createRichTextFromString("Caption 1") },
     ),
     createMediaFromURL(
       payload,
-      'https://cdn.example.com/image2.png', // External URL from user
-      'alt2',
-      { caption: createRichTextFromString('Caption 2') },
+      "https://cdn.example.com/image2.png", // External URL from user
+      "alt2",
+      { caption: createRichTextFromString("Caption 2") },
     ),
   ])
 
   // Build content
   const content = createRichText([
-    createParagraph('First paragraph from JSON'),
+    createParagraph("First paragraph from JSON"),
     createEmptyParagraph(),
     createMediaBlock(media1.id),
     createEmptyParagraph(),
-    createParagraph('Second paragraph from JSON'),
+    createParagraph("Second paragraph from JSON"),
   ])
 
   // Create article
   return await createArticle(payload, {
-    title: 'Example Article',
+    title: "Example Article",
     content,
     authors: [writer.id],
-    slug: 'example-article',
-    meta: { description: 'Example description', image: media1.id },
+    slug: "example-article",
+    meta: { description: "Example description", image: media1.id },
   })
 }
 ```
@@ -241,7 +241,7 @@ export const createExampleArticle = async (payload, writer, mediaDocs) => {
 Add your seed to `index.ts`:
 
 ```typescript
-import { createMyFeatureArticle } from './features/my-feature'
+import { createMyFeatureArticle } from "./features/my-feature"
 
 // In the seed() function:
 await createMyFeatureArticle(payload, writer1, mediaDocs)
