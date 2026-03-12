@@ -1,8 +1,8 @@
-import { Logo } from '@/components/Logo'
-import { Menu } from '@/components/Menu'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { LinkButton } from '@/components/ui/link-button'
+import { Logo } from "@/components/Logo"
+import { Menu } from "@/components/Menu"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { LinkButton } from "@/components/ui/link-button"
 import {
   Sheet,
   SheetClose,
@@ -10,16 +10,16 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
-import { ActionButton } from '@/Header/ActionButton/Component'
-import type { Header } from '@/payload-types'
-import { getCachedGlobal } from '@/utilities/getGlobals'
-import { SearchIcon, TextSearch, User, XIcon } from 'lucide-react'
-import Link from 'next/link'
-import React from 'react'
+} from "@/components/ui/sheet"
+import { ActionButton } from "@/Header/ActionButton/Component"
+import type { Header } from "@/payload-types"
+import { getCachedGlobal } from "@/utilities/getGlobals"
+import { SearchIcon, TextSearch, User, XIcon } from "lucide-react"
+import Link from "next/link"
+import React from "react"
 
 export async function Header(): Promise<React.JSX.Element> {
-  const { navItems, actionButton }: Header = await getCachedGlobal('header', 1)()
+  const { navItems, actionButton }: Header = await getCachedGlobal("header", 1)()
 
   return (
     <>
@@ -91,7 +91,7 @@ export async function Header(): Promise<React.JSX.Element> {
                 <span className="sr-only">Account</span>
               </SheetTrigger>
               <SheetContent
-                className="items-center justify-center space-y-4 py-4 sm:w-3/4 data-[side=right]:w-full data-[side=right]:sm:max-w-sm [&>button:last-child]:top-3 [&>button:last-child_svg]:size-7"
+                className="items-center justify-center space-y-4 py-4 data-[side=right]:w-full sm:w-3/4 data-[side=right]:sm:max-w-sm [&>button:last-child]:top-3 [&>button:last-child_svg]:size-7"
                 side="right"
               >
                 <SheetHeader>

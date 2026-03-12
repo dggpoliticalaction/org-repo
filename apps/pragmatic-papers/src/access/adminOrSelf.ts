@@ -1,5 +1,5 @@
-import type { Access } from 'payload'
-import { isAdmin } from './checkRole'
+import type { Access } from "payload"
+import { isAdmin } from "./checkRole"
 
 export const adminOrSelf: Access = ({ req: { user } }) => {
   if (!user) {

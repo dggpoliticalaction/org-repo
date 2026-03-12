@@ -1,17 +1,17 @@
-'use client'
+"use client"
 
-import type { StaticImageData } from 'next/image'
+import type { StaticImageData } from "next/image"
 
-import { cn } from '@/utilities/ui'
-import React, { useState } from 'react'
+import { cn } from "@/utilities/ui"
+import React, { useState } from "react"
 
-import type { Props as MediaProps } from '../types'
+import type { Props as MediaProps } from "../types"
 
-import { MediaCarousel } from '@/components/MediaCarousel'
-import RichText from '@/components/RichText'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import Image from 'next/image'
+import { MediaCarousel } from "@/components/MediaCarousel"
+import RichText from "@/components/RichText"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import { getMediaUrl } from "@/utilities/getMediaUrl"
+import Image from "next/image"
 
 export const ImageMedia: React.FC<MediaProps> = (props) => {
   const {
@@ -29,44 +29,44 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const isPayloadResource = resource && typeof resource === 'object'
+  const isPayloadResource = resource && typeof resource === "object"
   let width: number | undefined = srcFromProps?.width
   let height: number | undefined = srcFromProps?.height
   let alt = altFromProps
-  let src: StaticImageData | string = srcFromProps || ''
+  let src: StaticImageData | string = srcFromProps || ""
 
   if (!src && isPayloadResource) {
     const { alt: altFromResource, height: fullHeight, width: fullWidth } = resource
 
     width = fullWidth!
     height = fullHeight!
-    alt = altFromResource || ''
+    alt = altFromResource || ""
 
     const cacheTag = resource.updatedAt
 
     if (size) {
       switch (size) {
-        case 'small':
+        case "small":
           src = getMediaUrl(resource.sizes?.small?.url, cacheTag)
           width = resource.sizes?.small?.width ?? undefined
           height = resource.sizes?.small?.height ?? undefined
           break
-        case 'medium':
+        case "medium":
           src = getMediaUrl(resource.sizes?.medium?.url, cacheTag)
           width = resource.sizes?.medium?.width ?? undefined
           height = resource.sizes?.medium?.height ?? undefined
           break
-        case 'large':
+        case "large":
           src = getMediaUrl(resource.sizes?.large?.url, cacheTag)
           width = resource.sizes?.large?.width ?? undefined
           height = resource.sizes?.large?.height ?? undefined
           break
-        case 'xlarge':
+        case "xlarge":
           src = getMediaUrl(resource.sizes?.xlarge?.url, cacheTag)
           width = resource.sizes?.xlarge?.width ?? undefined
           height = resource.sizes?.xlarge?.height ?? undefined
           break
-        case 'square':
+        case "square":
           src = getMediaUrl(resource.sizes?.square?.url, cacheTag)
           width = resource.sizes?.square?.width ?? undefined
           height = resource.sizes?.square?.height ?? undefined
@@ -76,7 +76,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
       src = getMediaUrl(resource.sizes?.medium?.url, cacheTag)
     }
   }
-  const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
+  const loading = loadingFromProps || (!priority ? "lazy" : undefined)
 
   const handleClick = () => {
     if (enableModal && isPayloadResource && window.innerWidth >= 768) {
@@ -100,7 +100,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
             onClick={handleDialogContentClick}
           >
             <DialogTitle className="sr-only">
-              {gallery ? 'Image gallery' : 'Image Modal'}
+              {gallery ? "Image gallery" : "Image Modal"}
             </DialogTitle>
             {gallery ? (
               <MediaCarousel
@@ -113,8 +113,8 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
                 // containerClassName="w-fit mx-auto"
                 imageContainerClassName="h-[80svh]"
                 navigationClassName={{
-                  previous: 'left-1',
-                  next: 'right-1',
+                  previous: "left-1",
+                  next: "right-1",
                 }}
                 enableModal={false}
               />
@@ -122,7 +122,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
               <>
                 <Image
                   src={getMediaUrl(resource.url, resource.updatedAt)}
-                  alt={resource.alt || 'Image'}
+                  alt={resource.alt || "Image"}
                   className="h-[80svh] w-fit rounded-sm object-contain"
                   width={resource.width || 1920}
                   height={resource.height || 1080}
@@ -144,7 +144,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
       <picture
         className={cn(
           pictureClassName,
-          enableModal && isPayloadResource && 'max-md:cursor-default md:cursor-pointer',
+          enableModal && isPayloadResource && "max-md:cursor-default md:cursor-pointer",
         )}
         onClick={handleClick}
       >
@@ -161,20 +161,20 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
             .map((resourceSize) => (
               <source
                 key={resourceSize.url}
-                srcSet={getMediaUrl(resourceSize.url?.replace(/ /g, '%20'), resource.updatedAt)}
+                srcSet={getMediaUrl(resourceSize.url?.replace(/ /g, "%20"), resource.updatedAt)}
                 media={`(max-width: ${resourceSize.width}px)`}
-                type={resourceSize.mimeType ?? ''}
+                type={resourceSize.mimeType ?? ""}
                 width={resourceSize.width!}
                 height={resourceSize.height!}
               />
             ))}
         <img
           alt={alt}
-          className={cn('w-fit', imgClassName)}
+          className={cn("w-fit", imgClassName)}
           loading={loading}
           width={width}
           height={height}
-          src={typeof src === 'object' ? src.src : src}
+          src={typeof src === "object" ? src.src : src}
         />
       </picture>
     </>

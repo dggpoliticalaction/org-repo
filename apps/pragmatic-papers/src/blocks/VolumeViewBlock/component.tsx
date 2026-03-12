@@ -1,13 +1,13 @@
-import type { VolumeView as VolumeBlockProps, Volume } from '@/payload-types'
+import type { VolumeView as VolumeBlockProps, Volume } from "@/payload-types"
 
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import React from 'react'
-import RichText from '@/components/RichText'
+import configPromise from "@payload-config"
+import { getPayload } from "payload"
+import React from "react"
+import RichText from "@/components/RichText"
 
-import { VolumesView } from '@/components/VolumesView'
-import { PageRange } from '@/components/PageRange'
-import { PaginationVolumes } from '@/components/PaginationVolumes'
+import { VolumesView } from "@/components/VolumesView"
+import { PageRange } from "@/components/PageRange"
+import { PaginationVolumes } from "@/components/PaginationVolumes"
 
 export const VolumeViewBlock: React.FC<
   VolumeBlockProps & {
@@ -24,7 +24,7 @@ export const VolumeViewBlock: React.FC<
     limit: limitFromProps,
   } = props
 
-  if (populateBy === 'collection') {
+  if (populateBy === "collection") {
     const payload = await getPayload({ config: configPromise })
 
     const limit = limitFromProps || 6
@@ -35,7 +35,7 @@ export const VolumeViewBlock: React.FC<
     if (!Number.isInteger(sanitizedPageNumber)) sanitizedPageNumber = 0
 
     const volumes = await payload.find({
-      collection: 'volumes',
+      collection: "volumes",
       depth: 1,
       limit,
       page: sanitizedPageNumber,
@@ -47,7 +47,7 @@ export const VolumeViewBlock: React.FC<
         volumeNumber: true,
         publishedAt: true,
       },
-      sort: '-volumeNumber',
+      sort: "-volumeNumber",
     })
 
     return (
@@ -78,7 +78,7 @@ export const VolumeViewBlock: React.FC<
   } else {
     if (selectedDocs?.length) {
       const volumes = selectedDocs.map((post) => {
-        if (typeof post.value === 'object') return post.value
+        if (typeof post.value === "object") return post.value
       }) as Volume[]
 
       return (

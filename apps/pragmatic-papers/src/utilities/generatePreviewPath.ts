@@ -1,10 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { PayloadRequest, CollectionSlug } from 'payload'
+import { PayloadRequest, CollectionSlug } from "payload"
 
 const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
-  pages: '',
-  articles: '/articles',
-  volumes: '/volumes',
+  pages: "",
+  articles: "/articles",
+  volumes: "/volumes",
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -27,7 +27,7 @@ export const generatePreviewPath = ({ collection, slug }: Props) => {
     slug: encodedSlug,
     collection,
     path: `${collectionPrefixMap[collection]}/${encodedSlug}`,
-    previewSecret: process.env.PREVIEW_SECRET || '',
+    previewSecret: process.env.PREVIEW_SECRET || "",
   })
 
   const url = `/next/preview?${encodedParams.toString()}`

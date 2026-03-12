@@ -1,20 +1,20 @@
-import type { StateField } from '@payloadcms/plugin-form-builder/types'
-import type { Control, FieldErrorsImpl } from 'react-hook-form'
+import type { StateField } from "@payloadcms/plugin-form-builder/types"
+import type { Control, FieldErrorsImpl } from "react-hook-form"
 
-import { Label } from '@/components/ui/label'
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import React from 'react'
-import { Controller } from 'react-hook-form'
+} from "@/components/ui/select"
+import React from "react"
+import { Controller } from "react-hook-form"
 
-import { Error } from '../Error'
-import { Width } from '../Width'
-import { stateOptions } from './options'
+import { Error } from "../Error"
+import { Width } from "../Width"
+import { stateOptions } from "./options"
 
 export const State: React.FC<
   StateField & {

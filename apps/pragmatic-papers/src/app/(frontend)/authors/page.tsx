@@ -1,18 +1,18 @@
-import { AuthorList } from '@/components/Authors/AuthorList'
-import type { User } from '@/payload-types'
-import configPromise from '@payload-config'
-import type { Metadata } from 'next'
-import { draftMode } from 'next/headers'
-import { getPayload } from 'payload'
-import React from 'react'
+import { AuthorList } from "@/components/Authors/AuthorList"
+import type { User } from "@/payload-types"
+import configPromise from "@payload-config"
+import type { Metadata } from "next"
+import { draftMode } from "next/headers"
+import { getPayload } from "payload"
+import React from "react"
 
 export const metadata: Metadata = {
-  title: 'Authors — Pragmatic Papers',
-  description: 'Discover all Pragmatic Papers authors and explore their published work.',
+  title: "Authors — Pragmatic Papers",
+  description: "Discover all Pragmatic Papers authors and explore their published work.",
   openGraph: {
-    title: 'Authors — Pragmatic Papers',
-    description: 'Discover all Pragmatic Papers authors and explore their published work.',
-    url: '/authors',
+    title: "Authors — Pragmatic Papers",
+    description: "Discover all Pragmatic Papers authors and explore their published work.",
+    url: "/authors",
   },
 }
 
@@ -21,15 +21,15 @@ async function queryAuthors(): Promise<User[]> {
   const payload = await getPayload({ config: configPromise })
 
   const { docs } = await payload.find({
-    collection: 'users',
+    collection: "users",
     draft,
     limit: 1000,
     pagination: false,
-    sort: 'name',
+    sort: "name",
     depth: 1,
     where: {
       role: {
-        in: ['writer', 'editor', 'chief-editor'],
+        in: ["writer", "editor", "chief-editor"],
       },
     },
   })

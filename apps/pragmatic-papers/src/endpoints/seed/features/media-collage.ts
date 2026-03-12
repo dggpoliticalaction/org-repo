@@ -1,25 +1,25 @@
-import type { Payload } from 'payload'
-import type { User, Media } from '@/payload-types'
-import { createMediaFromURL } from '../media'
+import type { Payload } from "payload"
+import type { User, Media } from "@/payload-types"
+import { createMediaFromURL } from "../media"
 import {
   createRichTextFromString,
   createParagraph,
   createEmptyParagraph,
   createRichText,
-} from '../richtext'
-import { createArticle } from '../articles'
+} from "../richtext"
+import { createArticle } from "../articles"
 
 /**
  * Helper to create a media block
  */
 function createMediaBlock(mediaId: number) {
   return {
-    type: 'block',
+    type: "block",
     fields: {
-      blockType: 'mediaBlock',
+      blockType: "mediaBlock",
       media: mediaId,
     },
-    format: '',
+    format: "",
     version: 2,
   }
 }
@@ -27,17 +27,17 @@ function createMediaBlock(mediaId: number) {
 /**
  * Helper to create a media collage block
  */
-function createMediaCollageBlock(mediaIds: number[], layout: 'grid' | 'carousel' = 'grid') {
+function createMediaCollageBlock(mediaIds: number[], layout: "grid" | "carousel" = "grid") {
   return {
-    type: 'block',
+    type: "block",
     fields: {
-      blockType: 'mediaCollage',
+      blockType: "mediaCollage",
       layout,
       images: mediaIds.map((id) => ({
         media: id,
       })),
     },
-    format: '',
+    format: "",
     version: 2,
   }
 }
@@ -51,7 +51,7 @@ export const createMediaCollageArticle = async (
   const [itsBadMedia, blueCoatMedia] = await Promise.all([
     createMediaFromURL(
       payload,
-      'https://wikicdn.destiny.gg/f/fd/ITSBAD.png',
+      "https://wikicdn.destiny.gg/f/fd/ITSBAD.png",
       "It's bad, what do you want me to say!",
       {
         caption: createRichTextFromString("It's bad, what do you want me to say!"),
@@ -59,63 +59,63 @@ export const createMediaCollageArticle = async (
     ),
     createMediaFromURL(
       payload,
-      'https://wikicdn.destiny.gg/6/64/BlueCoat.jpg',
-      'A snazzy blue jacket',
+      "https://wikicdn.destiny.gg/6/64/BlueCoat.jpg",
+      "A snazzy blue jacket",
       {
-        caption: createRichTextFromString('A snazzy blue jacket'),
+        caption: createRichTextFromString("A snazzy blue jacket"),
       },
     ),
   ])
 
   // Build the article content programmatically
   const content = createRichText([
-    createParagraph('First, Click on an image to see a modal pop up. It displays captions!'),
+    createParagraph("First, Click on an image to see a modal pop up. It displays captions!"),
     createMediaBlock(itsBadMedia.id),
     createEmptyParagraph(),
-    createParagraph('Try viewing a grid of images!'),
+    createParagraph("Try viewing a grid of images!"),
     createMediaCollageBlock(
       [mediaDocs[3]?.id, mediaDocs[0]?.id, mediaDocs[2]?.id, mediaDocs[1]?.id].filter(
         (id): id is number => id !== undefined,
       ),
-      'grid',
+      "grid",
     ),
     createEmptyParagraph(),
-    createParagraph('View them in a carousel! Click for modals!'),
+    createParagraph("View them in a carousel! Click for modals!"),
     createMediaCollageBlock(
       [mediaDocs[3]?.id, mediaDocs[0]?.id, mediaDocs[2]?.id].filter(
         (id): id is number => id !== undefined,
       ),
-      'carousel',
+      "carousel",
     ),
     createEmptyParagraph(),
-    createParagraph('Mix and match! Carousel with different images!'),
+    createParagraph("Mix and match! Carousel with different images!"),
     createMediaCollageBlock(
       [mediaDocs[1]?.id, blueCoatMedia.id, mediaDocs[2]?.id, itsBadMedia.id].filter(
         (id): id is number => id !== undefined,
       ),
-      'carousel',
+      "carousel",
     ),
     createEmptyParagraph(),
-    createParagraph('Another grid layout with differently shaped images!'),
+    createParagraph("Another grid layout with differently shaped images!"),
     createMediaCollageBlock(
       [mediaDocs[0]?.id, itsBadMedia.id, blueCoatMedia.id].filter(
         (id): id is number => id !== undefined,
       ),
-      'grid',
+      "grid",
     ),
   ])
 
   // Create the article
-  const title = 'Grids, Carousels, and Captions: Exploring Rich Media Layouts'
+  const title = "Grids, Carousels, and Captions: Exploring Rich Media Layouts"
   const article = await createArticle(payload, {
     title,
     content,
     authors: [writer.id],
-    slug: 'grids-carousels-captions-exploring-rich-media-layouts',
+    slug: "grids-carousels-captions-exploring-rich-media-layouts",
     meta: {
       title,
       description:
-        'Demonstration of the media collage feature with grid and carousel layouts, showing clickable images with captions.',
+        "Demonstration of the media collage feature with grid and carousel layouts, showing clickable images with captions.",
       image: mediaDocs[0]?.id,
     },
   })

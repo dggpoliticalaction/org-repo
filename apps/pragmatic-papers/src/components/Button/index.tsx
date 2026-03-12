@@ -1,13 +1,13 @@
-import { CMSLink } from '@/components/Link/CMSLink2'
-import { type ButtonProps, buttonVariants } from '@/components/ui/button'
-import type { LinkField } from '@/payload-types'
-import { cn } from '@/utilities/ui'
+import { CMSLink } from "@/components/Link/CMSLink2"
+import { type ButtonProps, buttonVariants } from "@/components/ui/button"
+import type { LinkField } from "@/payload-types"
+import { cn } from "@/utilities/ui"
 
 /** Props for a CMS-driven button that renders as a link; extends anchor props since the underlying element is <a>. */
-interface CMSButtonProps extends React.ComponentProps<'a'> {
+interface CMSButtonProps extends React.ComponentProps<"a"> {
   link?: LinkField // Eventually replace with ButtonField when it's actually generated in payload-types.ts
-  variant?: ButtonProps['variant']
-  size?: ButtonProps['size']
+  variant?: ButtonProps["variant"]
+  size?: ButtonProps["size"]
 }
 
 /**

@@ -1,13 +1,13 @@
-import { Logo } from '@/components/Logo'
-import { Menu } from '@/components/Menu'
-import { ModeToggle } from '@/components/ModeToggle'
-import type { Footer } from '@/payload-types'
-import { getCachedGlobal } from '@/utilities/getGlobals'
-import Link from 'next/link'
-import { Copyright } from './Copyright'
+import { Logo } from "@/components/Logo"
+import { Menu } from "@/components/Menu"
+import { ModeToggle } from "@/components/ModeToggle"
+import type { Footer } from "@/payload-types"
+import { getCachedGlobal } from "@/utilities/getGlobals"
+import Link from "next/link"
+import { Copyright } from "./Copyright"
 
 export async function Footer(): Promise<React.ReactElement> {
-  const { navItems }: Footer = await getCachedGlobal('footer', 1)()
+  const { navItems }: Footer = await getCachedGlobal("footer", 1)()
 
   return (
     <footer className="container mt-auto">

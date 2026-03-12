@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import { format } from "date-fns"
 
 export const formatDateTime = (timestamp: string): string => {
   const now = new Date()
@@ -18,5 +18,5 @@ export const formatDateTime = (timestamp: string): string => {
   // const MinMin = (minutes < 10) ? `0${minutes}` : minutes;
   // const SS = (seconds < 10) ? `0${seconds}` : seconds;
 
-  return format(date, 'MMMM d, yyyy')
+  return format(date, "MMMM d, yyyy")
 }

@@ -1,6 +1,6 @@
-'use client'
-import { MathJax } from 'better-react-mathjax'
-import React from 'react'
+"use client"
+import { MathJax } from "better-react-mathjax"
+import React from "react"
 
 interface AdminMathBlockLabelProps {
   math: string

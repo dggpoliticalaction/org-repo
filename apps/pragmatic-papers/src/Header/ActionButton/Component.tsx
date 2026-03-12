@@ -1,7 +1,7 @@
-import { CMSButton } from '@/components/Button'
-import type { ActionButtonField } from '@/payload-types'
-import { cn } from '@/utilities/ui'
-import { ExternalLink } from 'lucide-react'
+import { CMSButton } from "@/components/Button"
+import type { ActionButtonField } from "@/payload-types"
+import { cn } from "@/utilities/ui"
+import { ExternalLink } from "lucide-react"
 
 interface ActionButtonProps extends React.ComponentProps<typeof CMSButton> {
   button?: ActionButtonField
@@ -27,18 +27,18 @@ export const ActionButton: React.FC<ActionButtonProps> = ({ button, className, .
       link={button?.link}
       variant={button?.variant}
       className={cn(
-        'gap-2 bg-(--cms-button-background) text-(--cms-button-foreground) hover:bg-[color-mix(in_srgb,var(--cms-button-background),black_10%)]',
+        "gap-2 bg-(--cms-button-background) text-(--cms-button-foreground) hover:bg-[color-mix(in_srgb,var(--cms-button-background),black_10%)]",
         className,
       )}
       style={
         {
-          '--cms-button-background': backgroundColor,
-          '--cms-button-foreground': textColor,
+          "--cms-button-background": backgroundColor,
+          "--cms-button-foreground": textColor,
         } as unknown as React.CSSProperties
       }
       {...props}
     >
-      {button?.link?.label || 'Invalid Link'}
+      {button?.link?.label || "Invalid Link"}
       <ExternalLink className="h-4 w-4" />
     </CMSButton>
   )
