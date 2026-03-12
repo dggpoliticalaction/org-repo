@@ -1,18 +1,18 @@
-import React from 'react'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import React from "react"
+import configPromise from "@payload-config"
+import { getPayload } from "payload"
 
-import type { ArticleTileData } from '@/components/ArticleTile'
-import type { ArticleGridBlock as ArticleGridBlockType } from '@/payload-types'
-import type { ArticleGridLayout, SlotName } from './config'
-import type { ArticleGridSlots } from './types'
+import type { ArticleTileData } from "@/components/ArticleTile"
+import type { ArticleGridBlock as ArticleGridBlockType } from "@/payload-types"
+import type { ArticleGridLayout, SlotName } from "./config"
+import type { ArticleGridSlots } from "./types"
 
-import { Vespucci7Layout } from './layouts/Vespucci7'
-import { Fibonacci7Layout } from './layouts/Fibonacci7'
+import { Vespucci7Layout } from "./layouts/Vespucci7"
+import { Fibonacci7Layout } from "./layouts/Fibonacci7"
 
 const layoutComponents: Record<ArticleGridLayout, React.FC<{ slots: ArticleGridSlots }>> = {
-  'vespucci-7': Vespucci7Layout,
-  'fibonacci-7': Fibonacci7Layout,
+  "vespucci-7": Vespucci7Layout,
+  "fibonacci-7": Fibonacci7Layout,
 }
 
 export const ArticleGridBlock: React.FC<
@@ -27,14 +27,14 @@ export const ArticleGridBlock: React.FC<
   const payload = await getPayload({ config: configPromise })
 
   // Collect all article IDs from slots to batch-fetch
-  const slotNames: SlotName[] = ['featured', 'a', 'b', 'c', 'd', 'e', 'f']
+  const slotNames: SlotName[] = ["featured", "a", "b", "c", "d", "e", "f"]
   const articleIdMap = new Map<number, SlotName[]>()
 
   for (const slotName of slotNames) {
     const slot = slots[slotName]
     if (!slot?.article) continue
 
-    const articleId = typeof slot.article === 'object' ? slot.article.id : slot.article
+    const articleId = typeof slot.article === "object" ? slot.article.id : slot.article
     if (!articleIdMap.has(articleId)) {
       articleIdMap.set(articleId, [])
     }
@@ -46,7 +46,7 @@ export const ArticleGridBlock: React.FC<
   // Batch-fetch all articles in one query
   const articleIds = Array.from(articleIdMap.keys())
   const articlesResult = await payload.find({
-    collection: 'articles',
+    collection: "articles",
     depth: 1,
     where: {
       id: {
@@ -77,7 +77,7 @@ export const ArticleGridBlock: React.FC<
     const slot = slots[slotName]
     if (!slot?.article) continue
 
-    const articleId = typeof slot.article === 'object' ? slot.article.id : slot.article
+    const articleId = typeof slot.article === "object" ? slot.article.id : slot.article
     const article = articleLookup.get(articleId)
 
     if (!article) continue

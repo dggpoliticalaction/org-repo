@@ -1,7 +1,7 @@
-import React from 'react'
+import React from "react"
 
-import { ArticleTile } from '@/components/ArticleTile'
-import type { ArticleGridSlots } from '../types'
+import { ArticleTile } from "@/components/ArticleTile"
+import type { ArticleGridSlots } from "../types"
 
 /**
  * Fibonacci 7 Layout (BBC Virginia-style)

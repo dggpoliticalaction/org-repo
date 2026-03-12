@@ -1,5 +1,5 @@
-import type { ArticleTileData } from '@/components/ArticleTile'
-import type { SlotName } from './config'
+import type { ArticleTileData } from "@/components/ArticleTile"
+import type { SlotName } from "./config"
 
 /** Resolved slot data passed to layout components */
 export interface ArticleGridSlotData {

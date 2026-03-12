@@ -1,23 +1,23 @@
-import type { Block, Field } from 'payload'
+import type { Block, Field } from "payload"
 
-export type ArticleGridLayout = 'vespucci-7' | 'fibonacci-7'
-export type SlotName = 'featured' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f'
+export type ArticleGridLayout = "vespucci-7" | "fibonacci-7"
+export type SlotName = "featured" | "a" | "b" | "c" | "d" | "e" | "f"
 
-const ALL_SLOTS: SlotName[] = ['featured', 'a', 'b', 'c', 'd', 'e', 'f']
+const ALL_SLOTS: SlotName[] = ["featured", "a", "b", "c", "d", "e", "f"]
 
 type SlotArticle = number | { id: number } | undefined
 type Slots = Record<SlotName, { article?: SlotArticle }>
 
 /** Unwrap a relationship value to a plain numeric ID. */
 const toId = (val: SlotArticle): number | undefined =>
-  typeof val === 'object' && val !== null ? val.id : val
+  typeof val === "object" && val !== null ? val.id : val
 
 /** Navigate from a field's `path` up to its parent ArticleGrid block. */
 const getBlockSlots = (
   data: Record<string, unknown>,
   path: (string | number)[] | undefined,
 ): Slots | undefined => {
-  const i = path?.indexOf('layout') ?? -1
+  const i = path?.indexOf("layout") ?? -1
   if (i === -1) return undefined
   const blocks = data.layout as Record<string, unknown>[] | undefined
   return (blocks?.[Number(path![i + 1])] as Record<string, unknown>)?.slots as Slots | undefined
@@ -26,16 +26,16 @@ const getBlockSlots = (
 function slotFields(slotName: SlotName, label: string): Field {
   return {
     name: slotName,
-    type: 'group',
+    type: "group",
     label,
     fields: [
       {
-        name: 'article',
-        type: 'relationship',
-        relationTo: 'articles',
-        label: 'Article',
+        name: "article",
+        type: "relationship",
+        relationTo: "articles",
+        label: "Article",
         required: true,
-        filterOptions: { _status: { equals: 'published' } },
+        filterOptions: { _status: { equals: "published" } },
         validate: (
           value: unknown,
           { data, path }: { data: unknown; path: (string | number)[] },
@@ -56,19 +56,19 @@ function slotFields(slotName: SlotName, label: string): Field {
         },
       },
       {
-        name: 'kicker',
-        type: 'text',
-        label: 'Kicker',
+        name: "kicker",
+        type: "text",
+        label: "Kicker",
         admin: {
           description: 'Optional short label above the title (e.g. "Breaking", "Opinion")',
         },
       },
       {
-        name: 'overrideTitle',
-        type: 'text',
-        label: 'Override Title',
+        name: "overrideTitle",
+        type: "text",
+        label: "Override Title",
         admin: {
-          description: 'Optional override for the article title in this slot',
+          description: "Optional override for the article title in this slot",
         },
       },
     ],
@@ -76,40 +76,40 @@ function slotFields(slotName: SlotName, label: string): Field {
 }
 
 export const ArticleGrid: Block = {
-  slug: 'articleGrid',
-  interfaceName: 'ArticleGridBlock',
-  labels: { singular: 'Article Grid', plural: 'Article Grids' },
+  slug: "articleGrid",
+  interfaceName: "ArticleGridBlock",
+  labels: { singular: "Article Grid", plural: "Article Grids" },
   fields: [
     {
-      name: 'layout',
-      type: 'select',
-      label: 'Layout Preset',
+      name: "layout",
+      type: "select",
+      label: "Layout Preset",
       required: true,
-      defaultValue: 'vespucci-7',
+      defaultValue: "vespucci-7",
       options: [
-        { label: 'Vespucci 7', value: 'vespucci-7' },
-        { label: 'Fibonacci 7', value: 'fibonacci-7' },
+        { label: "Vespucci 7", value: "vespucci-7" },
+        { label: "Fibonacci 7", value: "fibonacci-7" },
       ],
       admin: {
-        description: 'Choose a layout preset that determines how the 7 article slots are arranged.',
+        description: "Choose a layout preset that determines how the 7 article slots are arranged.",
       },
     },
     {
-      name: 'slots',
-      type: 'group',
-      label: 'Article Slots',
+      name: "slots",
+      type: "group",
+      label: "Article Slots",
       admin: {
         description:
-          'Fill each slot with an article. Slot names correspond to positions in the chosen layout.',
+          "Fill each slot with an article. Slot names correspond to positions in the chosen layout.",
       },
       fields: [
-        slotFields('featured', 'Featured Article'),
-        slotFields('a', 'Slot A'),
-        slotFields('b', 'Slot B'),
-        slotFields('c', 'Slot C'),
-        slotFields('d', 'Slot D'),
-        slotFields('e', 'Slot E'),
-        slotFields('f', 'Slot F'),
+        slotFields("featured", "Featured Article"),
+        slotFields("a", "Slot A"),
+        slotFields("b", "Slot B"),
+        slotFields("c", "Slot C"),
+        slotFields("d", "Slot D"),
+        slotFields("e", "Slot E"),
+        slotFields("f", "Slot F"),
       ],
     },
   ],

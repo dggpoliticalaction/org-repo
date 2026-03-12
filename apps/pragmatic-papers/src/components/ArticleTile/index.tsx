@@ -1,23 +1,23 @@
-import { type VariantProps, cva } from 'class-variance-authority'
-import { formatDistanceToNow } from 'date-fns'
-import Link from 'next/link'
-import React from 'react'
+import { type VariantProps, cva } from "class-variance-authority"
+import { formatDistanceToNow } from "date-fns"
+import Link from "next/link"
+import React from "react"
 
-import { Media } from '@/components/Media'
-import type { Article, Media as MediaType } from '@/payload-types'
-import { cn } from '@/utilities/ui'
+import { Media } from "@/components/Media"
+import type { Article, Media as MediaType } from "@/payload-types"
+import { cn } from "@/utilities/ui"
 
 export type ArticleTileData = Pick<
   Article,
-  'title' | 'slug' | 'heroImage' | 'populatedAuthors' | 'publishedAt' | 'meta'
+  "title" | "slug" | "heroImage" | "populatedAuthors" | "publishedAt" | "meta"
 >
 
 function mediaWrapperClass(_variant: string | null | undefined): string {
-  return 'relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg'
+  return "relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg"
 }
 
 function textWrapperClass(_variant: string | null | undefined): string {
-  return 'flex flex-col'
+  return "flex flex-col"
 }
 
 /**
@@ -26,15 +26,15 @@ function textWrapperClass(_variant: string | null | undefined): string {
  *   medium   — secondary tile: image above, medium title (h4), description, byline
  *   compact  — no image, no description, no byline: kicker + title (h4 small) + timestamp
  */
-const articleTileVariants = cva('group relative', {
+const articleTileVariants = cva("group relative", {
   variants: {
     variant: {
-      featured: 'flex flex-col',
-      medium: 'flex flex-col',
-      compact: 'flex flex-col',
+      featured: "flex flex-col",
+      medium: "flex flex-col",
+      compact: "flex flex-col",
     },
   },
-  defaultVariants: { variant: 'medium' },
+  defaultVariants: { variant: "medium" },
 })
 
 export interface ArticleTileProps extends VariantProps<typeof articleTileVariants> {
@@ -47,7 +47,7 @@ export interface ArticleTileProps extends VariantProps<typeof articleTileVariant
 
 export const ArticleTile: React.FC<ArticleTileProps> = ({
   article,
-  variant = 'medium',
+  variant = "medium",
   kicker,
   overrideTitle,
   horizontal = false,
@@ -57,12 +57,12 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
   const displayTitle = overrideTitle || title
   const href = `/articles/${slug}`
 
-  const showMedia = variant !== 'compact' && !!heroImage
+  const showMedia = variant !== "compact" && !!heroImage
 
   const authorNames = populatedAuthors
     ?.filter((a) => a?.name)
     .map((a) => a.name)
-    .join(', ')
+    .join(", ")
 
   const showByline = !!authorNames
   const showDescription = !!meta?.description
@@ -75,7 +75,7 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
     <article
       className={cn(
         articleTileVariants({ variant }),
-        horizontal && 'sm:flex-row-reverse sm:items-center sm:gap-4',
+        horizontal && "sm:flex-row-reverse sm:items-center sm:gap-4",
         className,
       )}
     >
@@ -83,7 +83,7 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
       {showMedia && (
         <Link
           href={href}
-          className={cn(mediaWrapperClass(variant), horizontal && 'sm:mb-0 sm:w-1/2 sm:shrink-0')}
+          className={cn(mediaWrapperClass(variant), horizontal && "sm:mb-0 sm:w-1/2 sm:shrink-0")}
           tabIndex={-1}
           aria-hidden
         >
@@ -97,7 +97,7 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
       )}
 
       {/* Text content */}
-      <div className={cn(textWrapperClass(variant), horizontal && 'sm:justify-center')}>
+      <div className={cn(textWrapperClass(variant), horizontal && "sm:justify-center")}>
         {/* Kicker */}
         {kicker && (
           <span className="mb-1 inline-block font-sans text-xs font-bold uppercase tracking-wider text-brand">
@@ -106,13 +106,13 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
         )}
 
         {/* Title */}
-        {variant === 'featured' ? (
+        {variant === "featured" ? (
           <h3 className="font-sans text-xl font-extrabold leading-tight sm:text-2xl lg:text-3xl">
             <Link href={href} className="transition-colors hover:text-brand">
               {displayTitle}
             </Link>
           </h3>
-        ) : variant === 'compact' ? (
+        ) : variant === "compact" ? (
           <h4 className="font-sans text-sm font-extrabold leading-tight lg:text-base">
             <Link href={href} className="transition-colors hover:text-brand">
               {displayTitle}

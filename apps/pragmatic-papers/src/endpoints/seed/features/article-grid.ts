@@ -1,12 +1,12 @@
-import type { Payload, RequiredDataFromCollectionSlug } from 'payload'
-import type { ArticleGridBlock } from '@/payload-types'
-import type { SlotName } from '@/blocks/ArticleGrid/config'
-import { createRichTextFromString } from '../richtext'
+import type { Payload, RequiredDataFromCollectionSlug } from "payload"
+import type { ArticleGridBlock } from "@/payload-types"
+import type { SlotName } from "@/blocks/ArticleGrid/config"
+import { createRichTextFromString } from "../richtext"
 
 /**
  * Slot names used by both vespucci-7 and fibonacci-7 layouts.
  */
-const SLOT_NAMES: SlotName[] = ['featured', 'a', 'b', 'c', 'd', 'e', 'f']
+const SLOT_NAMES: SlotName[] = ["featured", "a", "b", "c", "d", "e", "f"]
 
 /**
  * Builds a single ArticleGrid slot referencing an article by ID.
@@ -23,7 +23,7 @@ function createSlot(articleId: number, kicker?: string | null, overrideTitle?: s
  * Builds the `slots` object for an ArticleGrid block from an ordered array of article IDs.
  * The order matches: [featured, a, b, c, d, e, f].
  */
-function createSlots(articleIds: number[]): ArticleGridBlock['slots'] {
+function createSlots(articleIds: number[]): ArticleGridBlock["slots"] {
   if (articleIds.length !== SLOT_NAMES.length) {
     throw new Error(
       `ArticleGrid requires exactly ${SLOT_NAMES.length} articles, received ${articleIds.length}`,
@@ -31,7 +31,7 @@ function createSlots(articleIds: number[]): ArticleGridBlock['slots'] {
   }
   return Object.fromEntries(
     SLOT_NAMES.map((name, i) => [name, createSlot(articleIds[i]!)]),
-  ) as ArticleGridBlock['slots']
+  ) as ArticleGridBlock["slots"]
 }
 
 /**
@@ -63,49 +63,49 @@ export async function createArticleGridHomePage(
     volume2ArticleIds[0]!, // "Dawkins vs. Blackmore" (1st volume-2 article)
   ]
 
-  const homeData: RequiredDataFromCollectionSlug<'pages'> = {
-    title: 'Home',
-    slug: 'home',
+  const homeData: RequiredDataFromCollectionSlug<"pages"> = {
+    title: "Home",
+    slug: "home",
     generateSlug: false,
-    _status: 'published',
+    _status: "published",
     publishedAt: new Date().toISOString(),
     hero: {
-      type: 'pageHero',
-      richText: createRichTextFromString('Article Grid Home Page Demo!'),
+      type: "pageHero",
+      richText: createRichTextFromString("Article Grid Home Page Demo!"),
       links: [],
       media: null,
     },
     layout: [
       {
-        blockType: 'content',
+        blockType: "content",
         columns: [
           {
-            size: 'full',
-            richText: createRichTextFromString('Vespucci Style Article Grid'),
+            size: "full",
+            richText: createRichTextFromString("Vespucci Style Article Grid"),
             enableLink: false,
           },
         ],
       },
       {
-        blockType: 'articleGrid',
-        blockName: 'Vespucci',
-        layout: 'vespucci-7',
+        blockType: "articleGrid",
+        blockName: "Vespucci",
+        layout: "vespucci-7",
         slots: createSlots(vespucciArticleIds),
       },
       {
-        blockType: 'content',
+        blockType: "content",
         columns: [
           {
-            size: 'full',
-            richText: createRichTextFromString('Fibonacci Style Article Grid'),
+            size: "full",
+            richText: createRichTextFromString("Fibonacci Style Article Grid"),
             enableLink: false,
           },
         ],
       },
       {
-        blockType: 'articleGrid',
-        blockName: 'Fibonacci',
-        layout: 'fibonacci-7',
+        blockType: "articleGrid",
+        blockName: "Fibonacci",
+        layout: "fibonacci-7",
         slots: createSlots(fibonacciArticleIds),
       },
     ],
@@ -116,5 +116,5 @@ export async function createArticleGridHomePage(
     },
   }
 
-  await payload.create({ collection: 'pages', data: homeData })
+  await payload.create({ collection: "pages", data: homeData })
 }
