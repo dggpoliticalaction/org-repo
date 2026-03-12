@@ -1,6 +1,4 @@
-"use client"
 import { cn } from "@/utilities/ui"
-import useClickableCard from "@/utilities/useClickableCard"
 import Link from "next/link"
 import React from "react"
 
@@ -17,7 +15,6 @@ export const ArticleCard: React.FC<{
   relationTo: "articles"
   title?: string
 }> = (props) => {
-  const { card, link } = useClickableCard<HTMLDivElement>({})
   const { className, doc, relationTo, title: titleFromProps } = props
 
   const { slug, meta, title } = doc || {}
@@ -28,10 +25,9 @@ export const ArticleCard: React.FC<{
   const href = `/${relationTo}/${slug}`
 
   return (
-    <div className="h-full overflow-hidden rounded-lg">
+    <div className="relative h-full overflow-hidden rounded-lg">
       <article
-        className={cn("flex h-full flex-row hover:cursor-pointer sm:flex-col", className)}
-        ref={card.ref}
+        className={cn("flex h-full flex-row sm:flex-col", className)}
       >
         <div className="flex min-w-24 flex-shrink-0 basis-1/4 flex-col justify-center overflow-hidden rounded-lg sm:max-h-[300px] sm:min-w-0 sm:basis-auto">
           {metaImage && typeof metaImage !== "string" && (
@@ -46,7 +42,7 @@ export const ArticleCard: React.FC<{
         <div className="flex flex-grow basis-3/4 flex-col p-4 sm:basis-auto">
           {titleToUse && (
             <div className="line-clamp-4 pb-1 font-sans text-xl font-extrabold">
-              <Link className="transition-colors hover:text-brand" href={href} ref={link.ref}>
+              <Link className="transition-colors hover:text-brand after:absolute after:inset-0" href={href}>
                 {titleToUse}
               </Link>
             </div>
