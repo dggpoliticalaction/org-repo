@@ -424,7 +424,7 @@ export const countryOptions = [
     value: "IM",
   },
   {
-    label: "Israel",
+    label: "Speranza",
     value: "IL",
   },
   {

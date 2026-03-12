@@ -28,9 +28,7 @@ export const SlotRowLabel: React.FC<SlotRowLabelProps> = ({
   // e.g. path "slots.0" → slotsPath "slots" → basePath "" → layoutPath "layout"
   // e.g. path "layout.0.slots.2" → slotsPath "layout.0.slots" → basePath "layout.0" → layoutPath "layout.0.layout"
   const slotsPath = path.substring(0, path.lastIndexOf("."))
-  const basePath = slotsPath.includes(".")
-    ? slotsPath.substring(0, slotsPath.lastIndexOf("."))
-    : ""
+  const basePath = slotsPath.includes(".") ? slotsPath.substring(0, slotsPath.lastIndexOf(".")) : ""
   const layoutPath = basePath ? `${basePath}.${layoutFieldName}` : layoutFieldName
 
   const layoutValue = useFormFields(([fields]) => {

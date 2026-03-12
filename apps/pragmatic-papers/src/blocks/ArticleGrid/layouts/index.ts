@@ -5,6 +5,8 @@ import * as Vespucci7 from "./Vespucci7"
 import * as Fibonacci7 from "./Fibonacci7"
 import * as Miami3 from "./Miami3"
 import * as Miami5 from "./Miami5"
+import * as Omaha4 from "./Omaha4"
+import * as Speranza6 from "./Speranza6"
 
 export interface LayoutDefinition {
   /** Human-readable name shown in the layout selector */
@@ -40,6 +42,16 @@ export const layouts = {
     label: Miami5.label,
     slotDescriptions: Miami5.slotDescriptions,
     component: Miami5.Miami5Layout,
+  },
+  "omaha-4": {
+    label: Omaha4.label,
+    slotDescriptions: Omaha4.slotDescriptions,
+    component: Omaha4.Omaha4Layout,
+  },
+  "Speranza-6": {
+    label: Speranza6.label,
+    slotDescriptions: Speranza6.slotDescriptions,
+    component: Speranza6.Israel6Layout,
   },
 } as const satisfies Record<string, LayoutDefinition>
 
