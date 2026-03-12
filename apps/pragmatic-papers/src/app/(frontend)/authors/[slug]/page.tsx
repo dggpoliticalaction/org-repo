@@ -189,7 +189,7 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
 
       <header className="flex flex-col items-center space-y-3 text-center">
         {profileSrc && (
-          <div className="border-border h-32 w-32 overflow-hidden rounded-full border">
+          <div className="h-32 w-32 overflow-hidden rounded-full border border-border">
             <Image
               src={profileSrc}
               alt={profileDoc?.alt || user.name || "Author avatar"}
@@ -200,7 +200,7 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
           </div>
         )}
         <h1 className="text-3xl font-bold md:text-4xl">{user.name || "Author"}</h1>
-        {user.affiliation && <p className="text-muted-foreground text-sm">{user.affiliation}</p>}
+        {user.affiliation && <p className="text-sm text-muted-foreground">{user.affiliation}</p>}
         <AuthorLinks socials={user.socials} />
       </header>
 
@@ -214,7 +214,7 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
       <section aria-label="Articles by this author">
         <h2 className="mb-4 text-2xl font-semibold">Articles</h2>
         {totalDocs === 0 ? (
-          <p className="text-muted-foreground text-sm">Look out for this author's debut!</p>
+          <p className="text-sm text-muted-foreground">Look out for this author's debut!</p>
         ) : (
           <>
             <PageRange
