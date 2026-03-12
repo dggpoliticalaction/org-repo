@@ -19,6 +19,22 @@ const collectionLabels = {
     plural: "Pages",
     singular: "Page",
   },
+  volumes: {
+    plural: "Volumes",
+    singular: "Volume",
+  },
+  articles: {
+    plural: "Articles",
+    singular: "Article",
+  },
+  authors: {
+    plural: "Authors",
+    singular: "Author",
+  },
+  tags: {
+    plural: "Topics",
+    singular: "Topic",
+  },
 }
 
 const Title: React.FC = () => (
