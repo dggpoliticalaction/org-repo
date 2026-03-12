@@ -84,7 +84,7 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
         >
           <Media
             resource={heroImage as MediaType}
-            className="h-full w-full"
+            className="h-full w-full group-hover:opacity-75 transition-opacity"
             imgClassName="h-full w-full object-cover"
             loading="lazy"
           />
@@ -103,20 +103,20 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
         {/* Title */}
         {variant === "featured" ? (
           <h3 className="font-sans text-xl font-extrabold leading-tight sm:text-2xl lg:text-3xl">
-            <Link href={href} className="transition-colors hover:text-brand group-hover:underline">
+            <Link href={href} className="transition-colors hover:underline">
               {displayTitle}
             </Link>
           </h3>
         ) : variant === "compact" ? (
           <h4 className="font-sans text-sm font-extrabold leading-tight lg:text-base">
-            <Link href={href} className="transition-colors hover:text-brand group-hover:underline">
+            <Link href={href} className="transition-colors hover:underline">
               {displayTitle}
             </Link>
           </h4>
         ) : (
           /* medium / medium-right */
           <h4 className="font-sans text-base font-extrabold leading-tight sm:text-lg lg:text-xl">
-            <Link href={href} className="transition-colors hover:text-brand group-hover:underline">
+            <Link href={href} className="transition-colors hover:underline">
               {displayTitle}
             </Link>
           </h4>

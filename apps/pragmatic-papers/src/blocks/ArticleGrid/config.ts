@@ -3,26 +3,6 @@ import type { Block, Field } from "payload"
 export type ArticleGridLayout = "vespucci-7" | "fibonacci-7"
 export type SlotName = "featured" | "a" | "b" | "c" | "d" | "e" | "f"
 
-const ALL_SLOTS: SlotName[] = ["featured", "a", "b", "c", "d", "e", "f"]
-
-type SlotArticle = number | { id: number } | undefined
-type Slots = Record<SlotName, { article?: SlotArticle }>
-
-/** Unwrap a relationship value to a plain numeric ID. */
-const toId = (val: SlotArticle): number | undefined =>
-  typeof val === "object" && val !== null ? val.id : val
-
-/** Navigate from a field's `path` up to its parent ArticleGrid block. */
-const getBlockSlots = (
-  data: Record<string, unknown>,
-  path: (string | number)[] | undefined,
-): Slots | undefined => {
-  const i = path?.indexOf("layout") ?? -1
-  if (i === -1) return undefined
-  const blocks = data.layout as Record<string, unknown>[] | undefined
-  return (blocks?.[Number(path![i + 1])] as Record<string, unknown>)?.slots as Slots | undefined
-}
-
 function slotFields(slotName: SlotName, label: string): Field {
   return {
     name: slotName,
@@ -36,24 +16,6 @@ function slotFields(slotName: SlotName, label: string): Field {
         label: "Article",
         required: true,
         filterOptions: { _status: { equals: "published" } },
-        validate: (
-          value: unknown,
-          { data, path }: { data: unknown; path: (string | number)[] },
-        ) => {
-          if (!value) return `An article is required for slot "${slotName}".`
-
-          const slots = getBlockSlots(data as Record<string, unknown>, path)
-          if (!slots) return true
-
-          const thisId = toId(value as SlotArticle)
-          const duplicate = ALL_SLOTS.find(
-            (s) => s !== slotName && toId(slots[s]?.article) === thisId,
-          )
-          if (duplicate) {
-            return `This article is already used in slot "${duplicate}". Each slot must have a unique article.`
-          }
-          return true
-        },
       },
       {
         name: "kicker",
