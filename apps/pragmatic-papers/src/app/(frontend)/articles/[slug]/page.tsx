@@ -89,7 +89,9 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   return (
     <article className="m-auto max-w-3xl p-5 pb-16">
-      <JsonLd data={[buildArticleJsonLd(article, fullUrl), buildBreadcrumbJsonLd(breadcrumbItems)]} />
+      <JsonLd
+        data={[buildArticleJsonLd(article, fullUrl), buildBreadcrumbJsonLd(breadcrumbItems)]}
+      />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
