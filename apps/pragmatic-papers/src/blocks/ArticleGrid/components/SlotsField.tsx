@@ -71,16 +71,16 @@ export const SlotsField: React.FC<SlotsFieldProps> = (props) => {
     if (layoutValue === prevLayoutRef.current) return
     prevLayoutRef.current = layoutValue
 
-    const targetCount = slotCounts[layoutValue]!
+    const requiredCount = slotCounts[layoutValue]!
     const fieldPath = path || "slots"
     const fieldSchemaPath = schemaPath || fieldPath
 
-    if (rowCount < targetCount) {
-      for (let i = rowCount; i < targetCount; i++) {
+    if (rowCount < requiredCount) {
+      for (let i = rowCount; i < requiredCount; i++) {
         addFieldRow({ path: fieldPath, rowIndex: i, schemaPath: fieldSchemaPath })
       }
-    } else if (rowCount > targetCount) {
-      for (let i = rowCount - 1; i >= targetCount; i--) {
+    } else if (rowCount > requiredCount) {
+      for (let i = rowCount - 1; i >= requiredCount; i--) {
         removeFieldRow({ path: fieldPath, rowIndex: i })
       }
     }
