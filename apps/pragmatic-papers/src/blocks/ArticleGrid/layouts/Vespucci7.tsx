@@ -4,20 +4,12 @@ import { ArticleTile } from "@/components/ArticleTile"
 import type { ArticleGridSlots } from "../types"
 
 /**
- * Vespucci 7 Layout (BBC Vermont-style)
+ * Vespucci 7 Layout
  *
- * Mobile (grid-cols-1):
- *   All stack vertically: Featured, A (medium), B (medium), C–F (compact)
- *
- * Tablet (md:grid-cols-2):
- *   Col 1: A + B stacked (md:order-first)
- *   Col 2: Featured
- *   Full width row: C, D, E, F in 2×2 grid
- *
- * Desktop (lg:grid-cols-3):
- *   Col 1: A + B stacked
- *   Col 2: Featured
- *   Col 3: C, D, E, F stacked vertically
+ * Desktop (lg:grid-cols-3 — 25%/50%/25%):
+ *   Col 1: A + B (image above)
+ *   Col 2: Featured (image above, large center column)
+ *   Col 3: C, D, E, F (no image, stacked)
  */
 export const Vespucci7Layout: React.FC<{ slots: ArticleGridSlots }> = ({ slots }) => {
   return (
@@ -26,7 +18,7 @@ export const Vespucci7Layout: React.FC<{ slots: ArticleGridSlots }> = ({ slots }
       <div className="md:order-last md:row-span-2 lg:order-none lg:col-start-2 lg:row-span-2">
         <ArticleTile
           article={slots.featured.article}
-          variant="featured"
+          imagePosition="above"
           kicker={slots.featured.kicker}
           overrideTitle={slots.featured.overrideTitle}
           className="h-full"
@@ -37,41 +29,41 @@ export const Vespucci7Layout: React.FC<{ slots: ArticleGridSlots }> = ({ slots }
       <div className="flex flex-col gap-6 md:order-first md:row-span-2 lg:col-start-1 lg:row-span-2">
         <ArticleTile
           article={slots.a.article}
-          variant="medium"
+          imagePosition="above"
           kicker={slots.a.kicker}
           overrideTitle={slots.a.overrideTitle}
         />
         <ArticleTile
           article={slots.b.article}
-          variant="medium"
+          imagePosition="above"
           kicker={slots.b.kicker}
           overrideTitle={slots.b.overrideTitle}
         />
       </div>
 
-      {/* Slots C–F — right column (25%), 4 compact tiles filling the full height */}
+      {/* Slots C–F — right column (25%), 4 tiles with no image */}
       <div className="grid auto-rows-fr grid-cols-1 gap-6 md:col-span-2 md:grid-cols-2 lg:col-span-1 lg:col-start-3 lg:row-span-2 lg:grid-cols-1">
         <ArticleTile
           article={slots.c.article}
-          variant="compact"
+          imagePosition="none"
           kicker={slots.c.kicker}
           overrideTitle={slots.c.overrideTitle}
         />
         <ArticleTile
           article={slots.d.article}
-          variant="compact"
+          imagePosition="none"
           kicker={slots.d.kicker}
           overrideTitle={slots.d.overrideTitle}
         />
         <ArticleTile
           article={slots.e.article}
-          variant="compact"
+          imagePosition="none"
           kicker={slots.e.kicker}
           overrideTitle={slots.e.overrideTitle}
         />
         <ArticleTile
           article={slots.f.article}
-          variant="compact"
+          imagePosition="none"
           kicker={slots.f.kicker}
           overrideTitle={slots.f.overrideTitle}
         />

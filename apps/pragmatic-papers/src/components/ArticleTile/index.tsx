@@ -1,4 +1,3 @@
-import { type VariantProps, cva } from "class-variance-authority"
 import { formatDistanceToNow } from "date-fns"
 import Link from "next/link"
 import React from "react"
@@ -12,44 +11,29 @@ export type ArticleTileData = Pick<
   "title" | "slug" | "heroImage" | "populatedAuthors" | "publishedAt" | "meta"
 >
 
-/**
- * Variants:
- *   featured — large primary tile: image above, large title (h3), description, byline
- *   medium   — secondary tile: image above, medium title (h4), description, byline
- *   compact  — no image, no description, no byline: kicker + title (h4 small) + timestamp
- */
-const articleTileVariants = cva("group relative", {
-  variants: {
-    variant: {
-      featured: "flex flex-col",
-      medium: "flex flex-col",
-      compact: "flex flex-col",
-    },
-  },
-  defaultVariants: { variant: "medium" },
-})
+export type ImagePosition = "above" | "below" | "left" | "right" | "none"
 
-export interface ArticleTileProps extends VariantProps<typeof articleTileVariants> {
+export interface ArticleTileProps {
   article: ArticleTileData
+  imagePosition?: ImagePosition
   kicker?: string | null
   overrideTitle?: string | null
-  horizontal?: boolean
   className?: string
 }
 
 export const ArticleTile: React.FC<ArticleTileProps> = ({
   article,
-  variant = "medium",
+  imagePosition = "above",
   kicker,
   overrideTitle,
-  horizontal = false,
   className,
 }) => {
   const { title, slug, heroImage, populatedAuthors, publishedAt, meta } = article
   const displayTitle = overrideTitle || title
   const href = `/articles/${slug}`
 
-  const showMedia = variant !== "compact" && !!heroImage
+  const showMedia = imagePosition !== "none" && !!heroImage
+  const isHorizontal = imagePosition === "left" || imagePosition === "right"
 
   const authorNames = populatedAuthors
     ?.filter((a) => a?.name)
@@ -63,80 +47,82 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
     ? formatDistanceToNow(new Date(publishedAt), { addSuffix: true })
     : null
 
+  const mediaBlock = showMedia && (
+    <Link
+      href={href}
+      className={cn(
+        "relative aspect-[16/9] w-full shrink-0 overflow-hidden rounded-lg",
+        isHorizontal && "w-1/2",
+      )}
+      tabIndex={-1}
+      aria-hidden
+    >
+      <Media
+        resource={heroImage as MediaType}
+        className="h-full w-full transition-opacity group-hover:opacity-75"
+        imgClassName="h-full w-full object-cover"
+        loading="lazy"
+      />
+    </Link>
+  )
+
+  const textBlock = (
+    <div className={cn("flex flex-col", isHorizontal && "justify-center")}>
+      {/* Kicker */}
+      {kicker && (
+        <span className="mb-1 inline-block font-sans text-xs font-bold uppercase tracking-wider text-brand">
+          {kicker}
+        </span>
+      )}
+
+      {/* Title — uses container queries to scale with available space */}
+      <h4 className="font-sans text-sm font-extrabold leading-tight @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl">
+        <Link href={href} className="transition-colors hover:underline">
+          {displayTitle}
+        </Link>
+      </h4>
+
+      {/* Byline */}
+      {showByline && (
+        <p className="mt-1 line-clamp-1 font-sans text-sm text-muted-foreground">{authorNames}</p>
+      )}
+
+      {/* Description */}
+      {showDescription && (
+        <p className="mt-2 line-clamp-3 font-sans text-sm text-muted-foreground">
+          {meta!.description}
+        </p>
+      )}
+
+      {/* Timestamp */}
+      {timeAgo && <p className="mt-1 font-sans text-xs text-muted-foreground/70">{timeAgo}</p>}
+    </div>
+  )
+
   return (
     <article
       className={cn(
-        articleTileVariants({ variant }),
-        horizontal && "sm:flex-row-reverse sm:items-center sm:gap-4",
+        "group relative flex gap-4 @container",
+        isHorizontal ? "flex-row items-center" : "flex-col",
         className,
       )}
     >
-      {/* Media */}
-      {showMedia && (
-        <Link
-          href={href}
-          className={cn(
-            "relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg",
-            horizontal && "sm:mb-0 sm:w-1/2 sm:shrink-0",
-          )}
-          tabIndex={-1}
-          aria-hidden
-        >
-          <Media
-            resource={heroImage as MediaType}
-            className="h-full w-full transition-opacity group-hover:opacity-75"
-            imgClassName="h-full w-full object-cover"
-            loading="lazy"
-          />
-        </Link>
+      {imagePosition === "below" ? (
+        <>
+          {textBlock}
+          {mediaBlock}
+        </>
+      ) : imagePosition === "right" ? (
+        <>
+          {textBlock}
+          {mediaBlock}
+        </>
+      ) : (
+        <>
+          {mediaBlock}
+          {textBlock}
+        </>
       )}
-
-      {/* Text content */}
-      <div className={cn("flex flex-col", horizontal && "sm:justify-center")}>
-        {/* Kicker */}
-        {kicker && (
-          <span className="mb-1 inline-block font-sans text-xs font-bold uppercase tracking-wider text-brand">
-            {kicker}
-          </span>
-        )}
-
-        {/* Title */}
-        {variant === "featured" ? (
-          <h3 className="font-sans text-xl font-extrabold leading-tight sm:text-2xl lg:text-3xl">
-            <Link href={href} className="transition-colors hover:underline">
-              {displayTitle}
-            </Link>
-          </h3>
-        ) : variant === "compact" ? (
-          <h4 className="font-sans text-sm font-extrabold leading-tight lg:text-base">
-            <Link href={href} className="transition-colors hover:underline">
-              {displayTitle}
-            </Link>
-          </h4>
-        ) : (
-          /* medium / medium-right */
-          <h4 className="font-sans text-base font-extrabold leading-tight sm:text-lg lg:text-xl">
-            <Link href={href} className="transition-colors hover:underline">
-              {displayTitle}
-            </Link>
-          </h4>
-        )}
-
-        {/* Byline */}
-        {showByline && (
-          <p className="mt-1 line-clamp-1 font-sans text-sm text-muted-foreground">{authorNames}</p>
-        )}
-
-        {/* Description */}
-        {showDescription && (
-          <p className="mt-2 line-clamp-3 font-sans text-sm text-muted-foreground">
-            {meta!.description}
-          </p>
-        )}
-
-        {/* Timestamp */}
-        {timeAgo && <p className="mt-1 font-sans text-xs text-muted-foreground/70">{timeAgo}</p>}
-      </div>
     </article>
   )
 }
