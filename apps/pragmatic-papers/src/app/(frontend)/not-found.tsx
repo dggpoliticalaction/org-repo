@@ -1,14 +1,30 @@
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty"
 import { LinkButton } from "@/components/ui/link-button"
+import { CircleAlert } from "lucide-react"
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function NotFound() {
+export default function NotFound(): React.ReactElement {
   return (
-    <div className="container py-28">
-      <div className="prose max-w-none">
-        <h1 style={{ marginBottom: 0 }}>404</h1>
-        <p className="mb-4">This page could not be found.</p>
-      </div>
-      <LinkButton href="/">Go home</LinkButton>
-    </div>
+    <Empty className="py-28">
+      <EmptyHeader>
+        <EmptyMedia>
+          <CircleAlert className="text-brand size-5" />
+        </EmptyMedia>
+        <EmptyTitle className="font-display grid gap-1 font-bold">
+          <div className="text-brand text-4xl">404</div>
+          <div className="text-xl">Page Not Found</div>
+        </EmptyTitle>
+        <EmptyDescription>The page you are looking for does not exist.</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent className="flex-row justify-center gap-2">
+        <LinkButton href="/">Go home</LinkButton>
+      </EmptyContent>
+    </Empty>
   )
 }
