@@ -4,15 +4,14 @@ import { getPayload } from "payload"
 
 import type { ArticleTileData } from "@/components/ArticleTile"
 import type { ArticleGridBlock as ArticleGridBlockType } from "@/payload-types"
-import type { ArticleGridLayout, SlotName } from "./config"
-import type { ArticleGridSlots } from "./types"
+import type { ArticleGridSlotData } from "./types"
+import { layouts, type ArticleGridLayoutKey } from "./layouts"
 
-import { Vespucci7Layout } from "./layouts/Vespucci7"
-import { Fibonacci7Layout } from "./layouts/Fibonacci7"
-
-const layoutComponents: Record<ArticleGridLayout, React.FC<{ slots: ArticleGridSlots }>> = {
-  "vespucci-7": Vespucci7Layout,
-  "fibonacci-7": Fibonacci7Layout,
+/** Raw slot shape from Payload (array item) */
+interface RawSlot {
+  article: number | { id: number }
+  kicker?: string | null
+  overrideTitle?: string | null
 }
 
 export const ArticleGridBlock: React.FC<
@@ -20,40 +19,38 @@ export const ArticleGridBlock: React.FC<
     id?: string
   }
 > = async (props) => {
-  const { id, layout, slots } = props
+  const { id, layout } = props
+  // Cast to array — the Payload schema defines `slots` as an array field,
+  // but generated types may lag behind until `payload generate:types` is re-run.
+  const slots = props.slots as unknown as RawSlot[] | undefined
 
-  if (!layout || !slots) return null
+  if (!layout || !slots?.length) return null
+
+  const layoutDef = layouts[layout as ArticleGridLayoutKey]
+  if (!layoutDef) return null
+
+  const expectedCount = layoutDef.slotDescriptions.length
+  if (slots.length < expectedCount) return null // incomplete grid
 
   const payload = await getPayload({ config: configPromise })
 
-  // Collect all article IDs from slots to batch-fetch
-  const slotNames: SlotName[] = ["featured", "a", "b", "c", "d", "e", "f"]
-  const articleIdMap = new Map<number, SlotName[]>()
-
-  for (const slotName of slotNames) {
-    const slot = slots[slotName]
-    if (!slot?.article) continue
-
+  // Collect unique article IDs to batch-fetch
+  const articleIds = new Set<number>()
+  for (const slot of slots) {
+    if (!slot.article) continue
     const articleId = typeof slot.article === "object" ? slot.article.id : slot.article
-    if (!articleIdMap.has(articleId)) {
-      articleIdMap.set(articleId, [])
-    }
-    articleIdMap.get(articleId)!.push(slotName)
+    articleIds.add(articleId)
   }
 
-  if (articleIdMap.size === 0) return null
+  if (articleIds.size === 0) return null
 
   // Batch-fetch all articles in one query
-  const articleIds = Array.from(articleIdMap.keys())
+  const ids = Array.from(articleIds)
   const articlesResult = await payload.find({
     collection: "articles",
     depth: 1,
-    where: {
-      id: {
-        in: articleIds,
-      },
-    },
-    limit: articleIds.length,
+    where: { id: { in: ids } },
+    limit: ids.length,
     overrideAccess: false,
     select: {
       title: true,
@@ -72,37 +69,26 @@ export const ArticleGridBlock: React.FC<
     articleLookup.set(doc.id, doc as unknown as ArticleTileData)
   }
 
-  // Build resolved slots
-  const resolvedSlots: Partial<ArticleGridSlots> = {}
-  for (const slotName of slotNames) {
-    const slot = slots[slotName]
-    if (!slot?.article) continue
-
+  // Resolve each slot in order
+  const resolvedSlots: ArticleGridSlotData[] = []
+  for (let i = 0; i < expectedCount; i++) {
+    const slot = slots[i]!
     const articleId = typeof slot.article === "object" ? slot.article.id : slot.article
     const article = articleLookup.get(articleId)
+    if (!article) return null // missing article → don't render incomplete grid
 
-    if (!article) continue
-
-    resolvedSlots[slotName] = {
+    resolvedSlots.push({
       article,
       kicker: slot.kicker,
       overrideTitle: slot.overrideTitle,
-    }
+    })
   }
 
-  // Ensure all required slots are populated
-  const allSlotsResolved = slotNames.every((name) => resolvedSlots[name])
-  if (!allSlotsResolved) {
-    // Gracefully degrade — don't render an incomplete grid
-    return null
-  }
-
-  const LayoutComponent = layoutComponents[layout as ArticleGridLayout]
-  if (!LayoutComponent) return null
+  const LayoutComponent = layoutDef.component
 
   return (
     <section className="container" id={`block-${id}`}>
-      <LayoutComponent slots={resolvedSlots as ArticleGridSlots} />
+      <LayoutComponent slots={resolvedSlots} />
     </section>
   )
 }

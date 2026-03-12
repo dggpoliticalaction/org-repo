@@ -1,37 +1,23 @@
 import type { Payload, RequiredDataFromCollectionSlug } from "payload"
 import type { ArticleGridBlock } from "@/payload-types"
-import type { SlotName } from "@/blocks/ArticleGrid/config"
+import { layouts, type ArticleGridLayoutKey } from "@/blocks/ArticleGrid/layouts"
 import { createRichTextFromString } from "../richtext"
 
 /**
- * Slot names used by both vespucci-7 and fibonacci-7 layouts.
+ * Builds the `slots` array for an ArticleGrid block from an ordered array of article IDs.
  */
-const SLOT_NAMES: SlotName[] = ["featured", "a", "b", "c", "d", "e", "f"]
-
-/**
- * Builds a single ArticleGrid slot referencing an article by ID.
- */
-function createSlot(articleId: number, kicker?: string | null, overrideTitle?: string | null) {
-  return {
-    article: articleId,
-    kicker: kicker ?? null,
-    overrideTitle: overrideTitle ?? null,
-  }
-}
-
-/**
- * Builds the `slots` object for an ArticleGrid block from an ordered array of article IDs.
- * The order matches: [featured, a, b, c, d, e, f].
- */
-function createSlots(articleIds: number[]): ArticleGridBlock["slots"] {
-  if (articleIds.length !== SLOT_NAMES.length) {
+function createSlots(layoutKey: ArticleGridLayoutKey, articleIds: number[]): ArticleGridBlock["slots"] {
+  const expected = layouts[layoutKey].slotDescriptions.length
+  if (articleIds.length !== expected) {
     throw new Error(
-      `ArticleGrid requires exactly ${SLOT_NAMES.length} articles, received ${articleIds.length}`,
+      `Layout "${layoutKey}" requires exactly ${expected} articles, received ${articleIds.length}`,
     )
   }
-  return Object.fromEntries(
-    SLOT_NAMES.map((name, i) => [name, createSlot(articleIds[i]!)]),
-  ) as ArticleGridBlock["slots"]
+  return articleIds.map((articleId) => ({
+    article: articleId,
+    kicker: null,
+    overrideTitle: null,
+  })) as unknown as ArticleGridBlock["slots"]
 }
 
 /**
@@ -90,7 +76,7 @@ export async function createArticleGridHomePage(
         blockType: "articleGrid",
         blockName: "Vespucci",
         layout: "vespucci-7",
-        slots: createSlots(vespucciArticleIds),
+        slots: createSlots("vespucci-7", vespucciArticleIds),
       },
       {
         blockType: "content",
@@ -106,7 +92,7 @@ export async function createArticleGridHomePage(
         blockType: "articleGrid",
         blockName: "Fibonacci",
         layout: "fibonacci-7",
-        slots: createSlots(fibonacciArticleIds),
+        slots: createSlots("fibonacci-7", fibonacciArticleIds),
       },
     ],
     meta: {

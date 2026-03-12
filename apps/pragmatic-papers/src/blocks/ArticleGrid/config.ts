@@ -1,41 +1,15 @@
-import type { Block, Field } from "payload"
+import type { Block } from "payload"
+import { layouts, type ArticleGridLayoutKey } from "./layouts"
 
-export type ArticleGridLayout = "vespucci-7" | "fibonacci-7"
-export type SlotName = "featured" | "a" | "b" | "c" | "d" | "e" | "f"
+/** Map of layout key → slot count, passed to the custom SlotsField component */
+const slotCounts: Record<string, number> = Object.fromEntries(
+  Object.entries(layouts).map(([key, def]) => [key, def.slotDescriptions.length]),
+)
 
-function slotFields(slotName: SlotName, label: string): Field {
-  return {
-    name: slotName,
-    type: "group",
-    label,
-    fields: [
-      {
-        name: "article",
-        type: "relationship",
-        relationTo: "articles",
-        label: "Article",
-        required: true,
-        filterOptions: { _status: { equals: "published" } },
-      },
-      {
-        name: "kicker",
-        type: "text",
-        label: "Kicker",
-        admin: {
-          description: 'Optional short label above the title (e.g. "Breaking", "Opinion")',
-        },
-      },
-      {
-        name: "overrideTitle",
-        type: "text",
-        label: "Override Title",
-        admin: {
-          description: "Optional override for the article title in this slot",
-        },
-      },
-    ],
-  }
-}
+/** Map of layout key → slot descriptions, passed to the custom SlotRowLabel component */
+const slotDescriptions: Record<string, string[]> = Object.fromEntries(
+  Object.entries(layouts).map(([key, def]) => [key, def.slotDescriptions]),
+)
 
 export const ArticleGrid: Block = {
   slug: "articleGrid",
@@ -47,31 +21,63 @@ export const ArticleGrid: Block = {
       type: "select",
       label: "Layout Preset",
       required: true,
-      defaultValue: "vespucci-7",
-      options: [
-        { label: "Vespucci 7", value: "vespucci-7" },
-        { label: "Fibonacci 7", value: "fibonacci-7" },
-      ],
+      defaultValue: "vespucci-7" satisfies ArticleGridLayoutKey,
+      options: Object.entries(layouts).map(([value, def]) => ({
+        label: def.label,
+        value,
+      })),
       admin: {
-        description: "Choose a layout preset that determines how the 7 article slots are arranged.",
+        description: "Choose a layout preset that determines how article slots are arranged.",
       },
     },
     {
       name: "slots",
-      type: "group",
+      type: "array",
       label: "Article Slots",
+      required: true,
       admin: {
         description:
-          "Fill each slot with an article. Slot names correspond to positions in the chosen layout.",
+          "Fill each slot with an article. The number of slots is determined by the chosen layout.",
+        components: {
+          Field: {
+            path: "@/blocks/ArticleGrid/components/SlotsField#SlotsField",
+            clientProps: {
+              slotCounts,
+            },
+          },
+          RowLabel: {
+            path: "@/blocks/ArticleGrid/components/SlotRowLabel#SlotRowLabel",
+            clientProps: {
+              slotDescriptions,
+            },
+          },
+        },
       },
       fields: [
-        slotFields("featured", "Featured Article"),
-        slotFields("a", "Slot A"),
-        slotFields("b", "Slot B"),
-        slotFields("c", "Slot C"),
-        slotFields("d", "Slot D"),
-        slotFields("e", "Slot E"),
-        slotFields("f", "Slot F"),
+        {
+          name: "article",
+          type: "relationship",
+          relationTo: "articles",
+          label: "Article",
+          required: true,
+          filterOptions: { _status: { equals: "published" } },
+        },
+        {
+          name: "kicker",
+          type: "text",
+          label: "Kicker",
+          admin: {
+            description: 'Optional short label above the title (e.g. "Breaking", "Opinion")',
+          },
+        },
+        {
+          name: "overrideTitle",
+          type: "text",
+          label: "Override Title",
+          admin: {
+            description: "Optional override for the article title in this slot",
+          },
+        },
       ],
     },
   ],
