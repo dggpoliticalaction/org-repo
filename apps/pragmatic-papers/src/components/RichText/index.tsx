@@ -77,9 +77,7 @@ function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunctio
           disableInnerContainer
         />
       ),
-      mediaCollage: ({ node }) => (
-      <MediaCollageBlock {...node.fields} />
-      ),
+      mediaCollage: ({ node }) => <MediaCollageBlock {...node.fields} />,
       code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
       cta: ({ node }) => <CallToActionBlock {...node.fields} />,
       displayMathBlock: ({ node }: { node: SerializedBlockNode<MathBlockProps> }) => (
@@ -135,7 +133,7 @@ export default function RichText({
         {
           container: enableGutter,
           'max-w-none': !enableGutter,
-          'prose md:prose-md dark:prose-invert': enableProse,
+          'prose dark:prose-invert md:prose-md': enableProse,
         },
         className,
       )}

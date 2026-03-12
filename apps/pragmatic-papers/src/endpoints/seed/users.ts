@@ -59,7 +59,7 @@ export const createUsers = async (payload: Payload, media: Media[]): Promise<See
       name: 'Teagan Wordsmith',
       slug: 'teagan-wordsmith',
       role: 'writer',
-      affiliation: "Senior Research Fellow, Pragmatic Papers Institute",
+      affiliation: 'Senior Research Fellow, Pragmatic Papers Institute',
       biography: createRichTextFromString(
         'A prolific writer specializing in academic research and scientific papers.',
       ),
@@ -88,7 +88,7 @@ export const createUsers = async (payload: Payload, media: Media[]): Promise<See
             label: 'Google Scholar',
             newTab: true,
           },
-        }
+        },
       ],
     },
   })
@@ -102,7 +102,7 @@ export const createUsers = async (payload: Payload, media: Media[]): Promise<See
       name: 'Sienna Scribe',
       slug: 'sienna-scribe',
       role: 'writer',
-      affiliation: "Associate Editor, Department of Theoretical Studies",
+      affiliation: 'Associate Editor, Department of Theoretical Studies',
       biography: createRichTextFromString(
         'An experienced researcher with focus on theoretical physics and mathematics.',
       ),
