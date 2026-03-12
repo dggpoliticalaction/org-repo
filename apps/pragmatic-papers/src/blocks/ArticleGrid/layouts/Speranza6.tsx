@@ -30,7 +30,7 @@ export const slotDescriptions = [
  *
  * Desktop (lg:grid-cols-4)
  */
-export const Israel6Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
+export const Speranza6Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
   const [featured, a, b, c, d, e] = slots
 
   return (

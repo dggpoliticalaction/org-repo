@@ -51,7 +51,7 @@ export const layouts = {
   "Speranza-6": {
     label: Speranza6.label,
     slotDescriptions: Speranza6.slotDescriptions,
-    component: Speranza6.Israel6Layout,
+    component: Speranza6.Speranza6Layout,
   },
 } as const satisfies Record<string, LayoutDefinition>
 
