@@ -12,14 +12,6 @@ export type ArticleTileData = Pick<
   "title" | "slug" | "heroImage" | "populatedAuthors" | "publishedAt" | "meta"
 >
 
-function mediaWrapperClass(_variant: string | null | undefined): string {
-  return "relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg"
-}
-
-function textWrapperClass(_variant: string | null | undefined): string {
-  return "flex flex-col"
-}
-
 /**
  * Variants:
  *   featured — large primary tile: image above, large title (h3), description, byline
@@ -83,7 +75,7 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
       {showMedia && (
         <Link
           href={href}
-          className={cn(mediaWrapperClass(variant), horizontal && "sm:mb-0 sm:w-1/2 sm:shrink-0")}
+          className={cn("relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg", horizontal && "sm:mb-0 sm:w-1/2 sm:shrink-0")}
           tabIndex={-1}
           aria-hidden
         >
@@ -97,7 +89,7 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
       )}
 
       {/* Text content */}
-      <div className={cn(textWrapperClass(variant), horizontal && "sm:justify-center")}>
+      <div className={cn("flex flex-col", horizontal && "sm:justify-center")}>
         {/* Kicker */}
         {kicker && (
           <span className="mb-1 inline-block font-sans text-xs font-bold uppercase tracking-wider text-brand">
