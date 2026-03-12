@@ -1,3 +1,4 @@
+import containerQueries from "@tailwindcss/container-queries"
 import tailwindcssTextStroke from "@designbycode/tailwindcss-text-stroke"
 import typography from "@tailwindcss/typography"
 import tailwindcssAnimate from "tailwindcss-animate"
@@ -11,7 +12,7 @@ const config = {
     "./src/**/*.{ts,tsx}",
   ],
   darkMode: "class",
-  plugins: [tailwindcssAnimate, typography, tailwindcssTextStroke],
+  plugins: [tailwindcssAnimate, typography, tailwindcssTextStroke, containerQueries],
   prefix: "",
   safelist: [
     "lg:col-span-4",
