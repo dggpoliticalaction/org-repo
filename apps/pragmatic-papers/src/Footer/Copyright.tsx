@@ -1,3 +1,5 @@
+import { cn } from "@/utilities/ui"
+
 type CopyrightPropsWithChildren = {
   children: React.ReactNode
   copyright?: never
@@ -26,7 +28,7 @@ type CopyrightProps = CopyrightPropsWithChildren | CopyrightPropsWithCopyright
  */
 export const Copyright: React.FC<CopyrightProps> = ({ className, copyright, ...props }) => {
   return (
-    <div className={className} {...props}>
+    <div className={cn("text-muted-foreground text-sm", className)} {...props}>
       &copy; {new Date().getFullYear()} {copyright}
     </div>
   )

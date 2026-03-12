@@ -10,17 +10,18 @@ export async function Footer(): Promise<React.ReactElement> {
   const { navItems }: Footer = await getCachedGlobal("footer", 1)()
 
   return (
-    <footer className="container mt-auto">
-      <div className="border-border flex flex-col gap-4 border-t py-4 md:flex-row md:justify-between">
-        <Link className="mb-3 flex items-center md:mb-0" href="/">
+    <footer className="container space-y-2 py-2">
+      <hr />
+      <div className="flex flex-row items-center justify-between gap-2">
+        <Link href="/" className="flex-1">
           <Logo size="sm" />
         </Link>
-        <div className="flex flex-col-reverse items-start md:flex-row md:items-center md:gap-1">
-          <Menu menu={navItems} />
-          <ModeToggle />
-        </div>
+        <ModeToggle />
       </div>
-      <Copyright className="mb-4" copyright="Pragmatic Papers" />
+      <div className="flex flex-col-reverse items-start gap-1 md:flex-row md:items-center md:justify-between md:gap-2">
+        <Copyright copyright="Pragmatic Papers" />
+        <Menu menu={navItems} />
+      </div>
     </footer>
   )
 }
