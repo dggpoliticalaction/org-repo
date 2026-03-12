@@ -95,7 +95,8 @@ const config = {
       },
       fontFamily: {
         mono: ["var(--font-geist-mono)"],
-        sans: ["var(--font-geist-sans)"],
+        sans: ["var(--font-open-sans)"],
+        serif: ["var(--font-serif)"],
       },
       keyframes: {
         "accordion-down": {
@@ -121,7 +122,7 @@ const config = {
                 color: "transparent",
                 "-webkit-text-stroke-width": "2px",
                 "-webkit-text-stroke-color": "var(--brand-light)",
-                fontFamily: "Open Sans,Open Sans Fallback",
+                fontFamily: "var(--font-open-sans)",
               },
               h2: {
                 fontSize: "2.25rem",

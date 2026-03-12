@@ -20,6 +20,7 @@ const sourceSerif4 = Source_Serif_4({
 })
 
 const openSans = Open_Sans({
+  variable: "--font-open-sans",
   subsets: ["latin"],
 })
 
@@ -33,8 +34,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       className={cn(
         GeistSans.variable,
         GeistMono.variable,
-        sourceSerif4.className,
-        openSans.className,
+        sourceSerif4.variable,
+        openSans.variable,
         "scroll-smooth",
       )}
       lang="en"

@@ -40,7 +40,10 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
           <div className="min-h-0 space-y-1">
             {title && (
               <h3 className="line-clamp-3 font-semibold text-foreground">
-                <Link href={href} className="transition-colors hover:text-brand after:absolute after:inset-0">
+                <Link
+                  href={href}
+                  className="transition-colors after:absolute after:inset-0 hover:text-brand"
+                >
                   {title}
                 </Link>
               </h3>
