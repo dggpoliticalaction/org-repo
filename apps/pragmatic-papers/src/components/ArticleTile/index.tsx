@@ -75,7 +75,10 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
       {showMedia && (
         <Link
           href={href}
-          className={cn("relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg", horizontal && "sm:mb-0 sm:w-1/2 sm:shrink-0")}
+          className={cn(
+            "relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-lg",
+            horizontal && "sm:mb-0 sm:w-1/2 sm:shrink-0",
+          )}
           tabIndex={-1}
           aria-hidden
         >
@@ -100,20 +103,20 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
         {/* Title */}
         {variant === "featured" ? (
           <h3 className="font-sans text-xl font-extrabold leading-tight sm:text-2xl lg:text-3xl">
-            <Link href={href} className="transition-colors hover:text-brand">
+            <Link href={href} className="transition-colors hover:text-brand group-hover:underline">
               {displayTitle}
             </Link>
           </h3>
         ) : variant === "compact" ? (
           <h4 className="font-sans text-sm font-extrabold leading-tight lg:text-base">
-            <Link href={href} className="transition-colors hover:text-brand">
+            <Link href={href} className="transition-colors hover:text-brand group-hover:underline">
               {displayTitle}
             </Link>
           </h4>
         ) : (
           /* medium / medium-right */
           <h4 className="font-sans text-base font-extrabold leading-tight sm:text-lg lg:text-xl">
-            <Link href={href} className="transition-colors hover:text-brand">
+            <Link href={href} className="transition-colors hover:text-brand group-hover:underline">
               {displayTitle}
             </Link>
           </h4>
