@@ -40,9 +40,9 @@
   --sidebar-ring: oklch(0.708 0 0);
   --brand: oklch(0.6567 0.2311 32.7);
   /* 4.52:1 contrast ratio for WCAG 2.1 AA */
-  --brand-foreground: oklch(0.5935 0.2266 31.72);
+  --brand-foreground: oklch(0.592 0.2125 32.7);
   /* 7.11:1 contrast ratio for WCAG 2.1 AAA */
-  --brand-high-contrast: oklch(0.4817 0.1814 32.23);
+  --brand-high-contrast: oklch(0.4827 0.16 32.7);
 }
 
 .dark {
@@ -80,8 +80,8 @@
   --brand: oklch(0.6567 0.2311 32.7);
   /* 6:1 contrast ratio for WCAG 2.1 AA */
   --brand-foreground: oklch(0.6567 0.2311 32.7);
-  /* 7.07:1 contrast ratio for WCAG 2.1 AAA */
-  --brand-high-contrast: oklch(0.6944 0.1975 33.34);
+  /* 7:1 contrast ratio for WCAG 2.1 AAA */
+  --brand-high-contrast: oklch(0.69 0.18 32.7);
 }
 
 @theme inline {
@@ -144,6 +144,5 @@
 @utility container {
   margin-inline: auto;
   padding-inline: 1rem;
-  width: 100%;
   max-width: 80rem;
 }
