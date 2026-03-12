@@ -1,14 +1,14 @@
-import React, { Fragment } from 'react'
+import React, { Fragment } from "react"
 
-import type { Page } from '@/payload-types'
+import type { Page } from "@/payload-types"
 
-import { ArticleGridBlock } from '@/blocks/ArticleGrid/Component'
-import { CallToActionBlock } from '@/blocks/CallToAction/Component'
-import { ContentBlock } from '@/blocks/Content/Component'
-import { FormBlock } from '@/blocks/Form/Component'
-import { MediaBlock } from '@/blocks/MediaBlock/Component'
-import { VolumeViewBlock } from '@/blocks/VolumeViewBlock/component'
-import { MathBlock } from '@/blocks/Math/Component'
+import { ArticleGridBlock } from "@/blocks/ArticleGrid/Component"
+import { CallToActionBlock } from "@/blocks/CallToAction/Component"
+import { ContentBlock } from "@/blocks/Content/Component"
+import { FormBlock } from "@/blocks/Form/Component"
+import { MathBlock } from "@/blocks/Math/Component"
+import { MediaBlock } from "@/blocks/MediaBlock/Component"
+import { VolumeViewBlock } from "@/blocks/VolumeViewBlock/component"
 
 const blockComponents = {
   InlineMathBlock: MathBlock,
@@ -22,7 +22,7 @@ const blockComponents = {
 }
 
 export const RenderBlocks: React.FC<{
-  blocks: Page['layout'][0][]
+  blocks: Page["layout"][0][]
   searchParamsPromise: Promise<{ p?: string }>
 }> = (props) => {
   const { blocks, searchParamsPromise } = props
@@ -35,18 +35,18 @@ export const RenderBlocks: React.FC<{
         {blocks.map((block, index) => {
           const { blockType } = block
 
-          if (blockType == 'volumeView') {
+          if (blockType == "volumeView") {
             return (
               <div className="mx-auto my-4 max-w-3xl" key={index}>
                 <VolumeViewBlock
                   {...block}
                   id={block.id ?? undefined}
                   searchParamsPromise={searchParamsPromise}
-                  blockType={'volumeView'}
+                  blockType={"volumeView"}
                 />
               </div>
             )
-          } else if (blockType === 'articleGrid') {
+          } else if (blockType === "articleGrid") {
             return (
               <div className="my-4" key={index}>
                 <ArticleGridBlock {...block} id={block.id ?? undefined} />

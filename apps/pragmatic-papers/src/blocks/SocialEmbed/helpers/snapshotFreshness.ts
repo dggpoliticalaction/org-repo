@@ -1,4 +1,4 @@
-import type { SocialEmbedSnapshot } from '@/payload-types'
+import type { SocialEmbedSnapshot } from "@/payload-types"
 
 /**
  * How long we trust a snapshot as "fresh" for allowing provider enhancement scripts.
@@ -16,7 +16,7 @@ function getSnapshotFetchedAtMs(snapshot: SocialEmbedSnapshot | null | undefined
 }
 
 export function shouldEnhance(snapshot: SocialEmbedSnapshot | null | undefined): boolean {
-  return snapshot?.status === 'ok'
+  return snapshot?.status === "ok"
 }
 
 function isSnapshotExpired(
@@ -32,5 +32,5 @@ export function shouldRevalidate(
   snapshot: SocialEmbedSnapshot | null | undefined,
   ttlMs: number = SOCIAL_EMBED_SNAPSHOT_TTL_MS,
 ): boolean {
-  return snapshot?.status === 'ok' && isSnapshotExpired(snapshot, ttlMs)
+  return snapshot?.status === "ok" && isSnapshotExpired(snapshot, ttlMs)
 }

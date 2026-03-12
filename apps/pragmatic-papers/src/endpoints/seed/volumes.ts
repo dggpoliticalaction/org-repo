@@ -1,6 +1,6 @@
-import type { Media, Volume } from '@/payload-types'
-import { createRichTextFromString } from './richtext'
-import type { Payload } from 'payload'
+import type { Media, Volume } from "@/payload-types"
+import { createRichTextFromString } from "./richtext"
+import type { Payload } from "payload"
 
 interface VolumeConfig {
   volumeNumber: number
@@ -23,7 +23,7 @@ export const createVolumes = async (
 
   for (const config of volumeConfigs) {
     const volume = await payload.create({
-      collection: 'volumes',
+      collection: "volumes",
       data: {
         title: config.title,
         volumeNumber: config.volumeNumber,
@@ -31,7 +31,7 @@ export const createVolumes = async (
         editorsNote: createRichTextFromString(config.editorsNoteContent),
         articles: config.articleIds,
         slug: config.volumeNumber.toString(),
-        _status: 'published',
+        _status: "published",
         publishedAt: new Date().toISOString(),
         meta: {
           title: config.title,

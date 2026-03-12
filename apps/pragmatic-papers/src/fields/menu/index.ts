@@ -1,5 +1,5 @@
-import { link } from '@/fields/link2'
-import type { ArrayField, Field } from 'payload'
+import { link } from "@/fields/link2"
+import type { ArrayField, Field } from "payload"
 
 /**
  * Utility function for constructing a Payload CMS menu field
@@ -18,17 +18,17 @@ import type { ArrayField, Field } from 'payload'
  *     })
  *   ]
  */
-export const menu = ({ ...props }: Omit<ArrayField, 'type' | 'fields'>): Field => {
+export const menu = ({ ...props }: Omit<ArrayField, "type" | "fields">): Field => {
   return {
-    label: 'Menu',
+    label: "Menu",
     ...props,
-    type: 'array',
+    type: "array",
     fields: [link()],
-    interfaceName: 'MenuField',
+    interfaceName: "MenuField",
     admin: {
       initCollapsed: true, // collapse by default for UI clarity
       components: {
-        RowLabel: '@/fields/menu/RowLabel#RowLabel', // sets a custom row label for display
+        RowLabel: "@/fields/menu/RowLabel#RowLabel", // sets a custom row label for display
         ...props.admin?.components,
       },
       ...props.admin,

@@ -1,5 +1,5 @@
-import React from 'react'
-import { AdminMathBlockLabel } from './AdminComponent.client'
+import React from "react"
+import { AdminMathBlockLabel } from "./AdminComponent.client"
 
 interface AdminMathBlockProps {
   siblingData: {

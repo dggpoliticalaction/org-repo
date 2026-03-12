@@ -1,17 +1,17 @@
-import { Logo } from '@/components/Logo'
-import { Menu } from '@/components/Menu'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { ActionButton } from '@/Header/ActionButton/Component'
-import type { Header } from '@/payload-types'
-import { getCachedGlobal } from '@/utilities/getGlobals'
-import { SearchIcon, TextSearch, User } from 'lucide-react'
-import Link from 'next/link'
-import React from 'react'
+import { Logo } from "@/components/Logo"
+import { Menu } from "@/components/Menu"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { ActionButton } from "@/Header/ActionButton/Component"
+import type { Header } from "@/payload-types"
+import { getCachedGlobal } from "@/utilities/getGlobals"
+import { SearchIcon, TextSearch, User } from "lucide-react"
+import Link from "next/link"
+import React from "react"
 
 export async function Header(): Promise<React.JSX.Element> {
-  const { navItems, actionButton }: Header = await getCachedGlobal('header', 1)()
+  const { navItems, actionButton }: Header = await getCachedGlobal("header", 1)()
 
   return (
     <>

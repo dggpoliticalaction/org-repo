@@ -1,10 +1,10 @@
-import { BannerBlock } from '@/blocks/Banner/Component'
-import { CallToActionBlock } from '@/blocks/CallToAction/Component'
-import { CodeBlock, type CodeBlockProps } from '@/blocks/Code/Component'
-import { FootnoteBlock } from '@/blocks/Footnote/Component'
-import { MathBlock, type MathBlockProps } from '@/blocks/Math/Component'
-import { MediaBlock } from '@/blocks/MediaBlock/Component'
-import { MediaCollageBlock } from '@/blocks/MediaCollageBlock/component'
+import { BannerBlock } from "@/blocks/Banner/Component"
+import { CallToActionBlock } from "@/blocks/CallToAction/Component"
+import { CodeBlock, type CodeBlockProps } from "@/blocks/Code/Component"
+import { FootnoteBlock } from "@/blocks/Footnote/Component"
+import { MathBlock, type MathBlockProps } from "@/blocks/Math/Component"
+import { MediaBlock } from "@/blocks/MediaBlock/Component"
+import { MediaCollageBlock } from "@/blocks/MediaCollageBlock/component"
 import {
   BlueskyEmbedBlock,
   RedditEmbedBlock,
@@ -12,9 +12,9 @@ import {
   TikTokEmbedBlock,
   TwitterEmbedBlock,
   YouTubeEmbedBlock,
-} from '@/blocks/SocialEmbed'
-import type { ParentDocContext } from '@/blocks/SocialEmbed/types'
-import { SquiggleRuleBlock } from '@/blocks/SquiggleRule/Component'
+} from "@/blocks/SocialEmbed"
+import type { ParentDocContext } from "@/blocks/SocialEmbed/types"
+import { SquiggleRuleBlock } from "@/blocks/SquiggleRule/Component"
 import type {
   BannerBlock as BannerBlockProps,
   CallToActionBlock as CTABlockProps,
@@ -23,20 +23,20 @@ import type {
   MediaCollageBlock as MediaCollageBlockProps,
   SocialEmbedBlock as SocialEmbedBlockProps,
   SquiggleRuleBlock as SquiggleRuleBlockProps,
-} from '@/payload-types'
-import { cn } from '@/utilities/ui'
+} from "@/payload-types"
+import { cn } from "@/utilities/ui"
 import type {
   DefaultNodeTypes,
   DefaultTypedEditorState,
   SerializedBlockNode,
   SerializedInlineBlockNode,
   SerializedLinkNode,
-} from '@payloadcms/richtext-lexical'
+} from "@payloadcms/richtext-lexical"
 import {
   RichText as ConvertRichText,
   type JSXConvertersFunction,
   LinkJSXConverter,
-} from '@payloadcms/richtext-lexical/react'
+} from "@payloadcms/richtext-lexical/react"
 
 type NodeTypes =
   | DefaultNodeTypes
@@ -54,11 +54,11 @@ type NodeTypes =
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
-  if (typeof value !== 'object') {
-    throw new Error('Expected value to be an object')
+  if (typeof value !== "object") {
+    throw new Error("Expected value to be an object")
   }
   const slug = value.slug
-  return relationTo === 'articles' ? `/articles/${slug}` : `/${slug}`
+  return relationTo === "articles" ? `/articles/${slug}` : `/${slug}`
 }
 
 function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunction<NodeTypes> {
@@ -129,11 +129,11 @@ export default function RichText({
   return (
     <div
       className={cn(
-        'payload-richtext',
+        "payload-richtext",
         {
           container: enableGutter,
-          'max-w-none': !enableGutter,
-          'prose dark:prose-invert md:prose-md': enableProse,
+          "max-w-none": !enableGutter,
+          "prose dark:prose-invert md:prose-md": enableProse,
         },
         className,
       )}

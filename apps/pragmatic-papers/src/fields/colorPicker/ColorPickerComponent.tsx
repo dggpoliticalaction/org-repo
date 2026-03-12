@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import React from 'react'
+import React from "react"
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { TextFieldClientProps } from 'payload'
+import { TextFieldClientProps } from "payload"
 
-import { FieldLabel, TextInput, useField } from '@payloadcms/ui'
+import { FieldLabel, TextInput, useField } from "@payloadcms/ui"
 
-import './index.scss'
+import "./index.scss"
 
 type ColorPickerComponentProps = TextFieldClientProps
 
@@ -26,14 +26,14 @@ export const ColorPickerComponent: React.FC<ColorPickerComponentProps> = ({
     let input = e.target.value
 
     // Remove all characters except #, 0-9, A-F, a-f
-    input = input.replace(/[^#0-9A-Fa-f]/g, '')
+    input = input.replace(/[^#0-9A-Fa-f]/g, "")
 
     // Ensure # is at the start, and remove any additional # characters
-    if (input.startsWith('#')) {
-      input = '#' + input.slice(1).replace(/#/g, '')
+    if (input.startsWith("#")) {
+      input = "#" + input.slice(1).replace(/#/g, "")
     } else if (input.length > 0) {
       // If there's input but no #, add it at the start
-      input = '#' + input
+      input = "#" + input
     }
 
     // Limit length: max 7 characters for #RRGGBB format
@@ -55,14 +55,14 @@ export const ColorPickerComponent: React.FC<ColorPickerComponentProps> = ({
         <input
           id={`#${field.label}`}
           type="color"
-          value={value || '#000000'}
+          value={value || "#000000"}
           onChange={handleColorChange}
           disabled={readOnly}
           className="color-picker-input"
           aria-label="Color picker"
         />
         <TextInput
-          value={value || ''}
+          value={value || ""}
           onChange={handleTextChange}
           path={path || field.name}
           readOnly={readOnly}

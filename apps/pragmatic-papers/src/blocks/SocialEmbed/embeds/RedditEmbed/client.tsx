@@ -1,8 +1,8 @@
-'use client'
+"use client"
 
-import { usePathname } from 'next/navigation'
-import Script from 'next/script'
-import { useEffect, useState } from 'react'
+import { usePathname } from "next/navigation"
+import Script from "next/script"
+import { useEffect, useState } from "react"
 
 interface RedditOEmbedClientProps {
   targetId: string
@@ -27,10 +27,10 @@ export function RedditEmbedClient({ targetId }: RedditOEmbedClientProps): React.
     // Reddit has no public "scan/load" API. Re-inserting the script inside
     // the target node reliably retriggers blockquote processing.
     const id = requestAnimationFrame(() => {
-      const script = document.createElement('script')
-      script.src = 'https://embed.reddit.com/widgets.js'
+      const script = document.createElement("script")
+      script.src = "https://embed.reddit.com/widgets.js"
       script.async = true
-      script.charset = 'UTF-8'
+      script.charset = "UTF-8"
       node.appendChild(script)
     })
 

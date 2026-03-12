@@ -1,8 +1,8 @@
-import { cn } from '@/utilities/ui'
-import React from 'react'
+import { cn } from "@/utilities/ui"
+import React from "react"
 
-import { Entry, type EntryVolumeData } from './entry'
-import { SquiggleStatic } from '@/components/ui/squiggle'
+import { Entry, type EntryVolumeData } from "./entry"
+import { SquiggleStatic } from "@/components/ui/squiggle"
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type Props = {
   volumes: EntryVolumeData[]
@@ -12,11 +12,11 @@ export const VolumesView: React.FC<Props> = (props) => {
   const { volumes } = props
 
   return (
-    <div className={cn('m-auto w-11/12 max-w-xl')}>
+    <div className={cn("m-auto w-11/12 max-w-xl")}>
       <div>
         <div className="grid grid-cols-1 gap-4">
           {volumes?.map((result, index) => {
-            if (typeof result === 'object' && result !== null) {
+            if (typeof result === "object" && result !== null) {
               return (
                 <div className="pt-3" key={index}>
                   <Entry doc={result} relationTo="volumes" />

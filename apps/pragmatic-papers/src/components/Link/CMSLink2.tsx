@@ -1,8 +1,8 @@
-import type { LinkField } from '@/payload-types'
-import { getLinkFieldUrl } from '@/utilities/getLinkFieldUrl'
-import { HoverPrefetchLink } from './HoverPrefetchLink'
+import type { LinkField } from "@/payload-types"
+import { getLinkFieldUrl } from "@/utilities/getLinkFieldUrl"
+import { HoverPrefetchLink } from "./HoverPrefetchLink"
 
-interface CMSLinkProps extends React.ComponentProps<'a'> {
+interface CMSLinkProps extends React.ComponentProps<"a"> {
   link?: LinkField
 }
 
@@ -31,12 +31,12 @@ export const CMSLink: React.FC<CMSLinkProps> = ({ link, children, ...props }) =>
   if (!link) return null
   const url = getLinkFieldUrl(link)
   if (!url) return null
-  const Slot = link.type === 'custom' ? 'a' : HoverPrefetchLink
+  const Slot = link.type === "custom" ? "a" : HoverPrefetchLink
   return (
     <Slot
       href={url}
-      target={link?.newTab ? '_blank' : undefined}
-      rel={link?.newTab ? 'noopener noreferrer' : undefined}
+      target={link?.newTab ? "_blank" : undefined}
+      rel={link?.newTab ? "noopener noreferrer" : undefined}
       {...props}
     >
       {children || link?.label}

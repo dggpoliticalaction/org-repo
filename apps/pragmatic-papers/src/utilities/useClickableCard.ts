@@ -1,8 +1,8 @@
-'use client'
-import type { RefObject } from 'react'
+"use client"
+import type { RefObject } from "react"
 
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useRef } from 'react'
+import { useRouter } from "next/navigation"
+import { useCallback, useEffect, useRef } from "react"
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type UseClickableCardType<T extends HTMLElement> = {
@@ -38,7 +38,7 @@ function useClickableCard<T extends HTMLElement>({
         const target = e.target as Element
 
         const timeNow = +new Date()
-        const parent = target?.closest('a')
+        const parent = target?.closest("a")
 
         pressedButton.current = e.button
 
@@ -63,7 +63,7 @@ function useClickableCard<T extends HTMLElement>({
         if (link.current?.href && difference <= 250) {
           if (!hasActiveParent.current && pressedButton.current === 0 && !e.ctrlKey) {
             if (external) {
-              const target = newTab ? '_blank' : '_self'
+              const target = newTab ? "_blank" : "_self"
               window.open(link.current.href, target)
             } else {
               router.push(link.current.href, { scroll })
@@ -82,10 +82,10 @@ function useClickableCard<T extends HTMLElement>({
     const abortController = new AbortController()
 
     if (cardNode) {
-      cardNode.addEventListener('mousedown', handleMouseDown, {
+      cardNode.addEventListener("mousedown", handleMouseDown, {
         signal: abortController.signal,
       })
-      cardNode.addEventListener('mouseup', handleMouseUp, {
+      cardNode.addEventListener("mouseup", handleMouseUp, {
         signal: abortController.signal,
       })
     }

@@ -1,49 +1,49 @@
-import { SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
-import { fetchOEmbed } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
-import type { OEmbedRequestQuery } from '@/blocks/SocialEmbed/helpers/oEmbed'
-import { type OEmbedRich } from '@/blocks/SocialEmbed/helpers/oEmbed'
-import type { Prettify } from '@/utilities/prettify'
-import { failure, type Result } from '@/utilities/results'
-import sanitizeHtml from 'sanitize-html'
+import { SocialAdapter } from "@/blocks/SocialEmbed/adapters/base.adapter"
+import { fetchOEmbed } from "@/blocks/SocialEmbed/helpers/fetchOEmbed"
+import type { OEmbedRequestQuery } from "@/blocks/SocialEmbed/helpers/oEmbed"
+import { type OEmbedRich } from "@/blocks/SocialEmbed/helpers/oEmbed"
+import type { Prettify } from "@/utilities/prettify"
+import { failure, type Result } from "@/utilities/results"
+import sanitizeHtml from "sanitize-html"
 
 /**
  * https://developer.x.com/en/docs/x-for-websites/oembed-api
  */
 export type TwitterOEmbedLang =
-  | 'en'
-  | 'ar'
-  | 'bn'
-  | 'cs'
-  | 'da'
-  | 'de'
-  | 'el'
-  | 'es'
-  | 'fa'
-  | 'fi'
-  | 'fil'
-  | 'fr'
-  | 'he'
-  | 'hi'
-  | 'hu'
-  | 'id'
-  | 'it'
-  | 'ja'
-  | 'ko'
-  | 'msa'
-  | 'nl'
-  | 'no'
-  | 'pl'
-  | 'pt'
-  | 'ro'
-  | 'ru'
-  | 'sv'
-  | 'th'
-  | 'tr'
-  | 'uk'
-  | 'ur'
-  | 'vi'
-  | 'zh-cn'
-  | 'zh-tw'
+  | "en"
+  | "ar"
+  | "bn"
+  | "cs"
+  | "da"
+  | "de"
+  | "el"
+  | "es"
+  | "fa"
+  | "fi"
+  | "fil"
+  | "fr"
+  | "he"
+  | "hi"
+  | "hu"
+  | "id"
+  | "it"
+  | "ja"
+  | "ko"
+  | "msa"
+  | "nl"
+  | "no"
+  | "pl"
+  | "pt"
+  | "ro"
+  | "ru"
+  | "sv"
+  | "th"
+  | "tr"
+  | "uk"
+  | "ur"
+  | "vi"
+  | "zh-cn"
+  | "zh-tw"
 
 /**
  * Twitter/X oEmbed request options.
@@ -53,9 +53,9 @@ export interface TwitterOEmbedOptions extends OEmbedRequestQuery {
   hideMedia?: boolean | null
   hideThread?: boolean | null
   omitScript?: boolean
-  align?: 'left' | 'right' | 'center' | 'none'
+  align?: "left" | "right" | "center" | "none"
   lang?: TwitterOEmbedLang
-  theme?: 'light' | 'dark'
+  theme?: "light" | "dark"
   dnt?: boolean
 }
 
@@ -66,13 +66,13 @@ export type TwitterOEmbedResponse = Prettify<OEmbedRich & { url: string }>
  */
 class TwitterAdapter extends SocialAdapter<TwitterOEmbedOptions, TwitterOEmbedResponse> {
   readonly maxWidth = 550
-  readonly displayName = 'Twitter'
+  readonly displayName = "Twitter"
 
   isValidUrl(url: string): boolean {
     try {
       const urlObj = new URL(url)
       const host = urlObj.hostname.toLowerCase()
-      if (host !== 'twitter.com' && host !== 'x.com') return false
+      if (host !== "twitter.com" && host !== "x.com") return false
       // Supported pattern: /username/status/123456789
       const statusMatch = /^\/\w+\/status\/\d+/.test(urlObj.pathname)
       return statusMatch
@@ -91,22 +91,22 @@ class TwitterAdapter extends SocialAdapter<TwitterOEmbedOptions, TwitterOEmbedRe
       hideMedia = false,
       hideThread = true,
       omitScript = true,
-      align = 'none',
-      lang = 'en',
-      theme = 'light',
+      align = "none",
+      lang = "en",
+      theme = "light",
       dnt = true,
     } = options
 
-    const endpoint = new URL('https://publish.twitter.com/oembed')
-    endpoint.searchParams.set('url', url)
-    endpoint.searchParams.set('maxwidth', String(maxwidth))
-    endpoint.searchParams.set('hide_media', String(hideMedia))
-    endpoint.searchParams.set('hide_thread', String(hideThread))
-    endpoint.searchParams.set('omit_script', String(omitScript))
-    endpoint.searchParams.set('align', align)
-    endpoint.searchParams.set('lang', lang)
-    endpoint.searchParams.set('theme', theme)
-    endpoint.searchParams.set('dnt', String(dnt))
+    const endpoint = new URL("https://publish.twitter.com/oembed")
+    endpoint.searchParams.set("url", url)
+    endpoint.searchParams.set("maxwidth", String(maxwidth))
+    endpoint.searchParams.set("hide_media", String(hideMedia))
+    endpoint.searchParams.set("hide_thread", String(hideThread))
+    endpoint.searchParams.set("omit_script", String(omitScript))
+    endpoint.searchParams.set("align", align)
+    endpoint.searchParams.set("lang", lang)
+    endpoint.searchParams.set("theme", theme)
+    endpoint.searchParams.set("dnt", String(dnt))
 
     return endpoint
   }
@@ -116,19 +116,19 @@ class TwitterAdapter extends SocialAdapter<TwitterOEmbedOptions, TwitterOEmbedRe
     init?: RequestInit,
   ): Promise<Result<TwitterOEmbedResponse, Error>> {
     const { url } = options
-    if (!this.isValidUrl(url)) return failure(new Error('Invalid Twitter/X post URL.'))
+    if (!this.isValidUrl(url)) return failure(new Error("Invalid Twitter/X post URL."))
     return await fetchOEmbed<TwitterOEmbedResponse>(this.buildUrl(options), init)
   }
 
   async sanitize(html: string): Promise<string> {
     return sanitizeHtml(html, {
-      allowedTags: ['blockquote', 'p', 'a'],
+      allowedTags: ["blockquote", "p", "a"],
       allowedAttributes: {
-        blockquote: ['class', 'data-dnt', 'data-theme', 'data-lang', 'data-width'],
-        p: ['lang', 'dir'],
-        a: ['href'],
+        blockquote: ["class", "data-dnt", "data-theme", "data-lang", "data-width"],
+        p: ["lang", "dir"],
+        a: ["href"],
       },
-      allowedSchemes: ['http', 'https'],
+      allowedSchemes: ["http", "https"],
       allowProtocolRelative: false,
     })
   }

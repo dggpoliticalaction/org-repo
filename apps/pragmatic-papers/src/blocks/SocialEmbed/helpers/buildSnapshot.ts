@@ -1,12 +1,12 @@
-import { getAdapter } from '@/blocks/SocialEmbed/adapters'
-import { OEmbedRequestError } from '@/blocks/SocialEmbed/helpers/fetchOEmbed'
-import { isOEmbedRich, isOEmbedThumbnail } from '@/blocks/SocialEmbed/helpers/oEmbed'
-import type { SocialEmbedBlock, SocialEmbedSnapshot } from '@/payload-types'
-import { isFailure } from '@/utilities/results'
+import { getAdapter } from "@/blocks/SocialEmbed/adapters"
+import { OEmbedRequestError } from "@/blocks/SocialEmbed/helpers/fetchOEmbed"
+import { isOEmbedRich, isOEmbedThumbnail } from "@/blocks/SocialEmbed/helpers/oEmbed"
+import type { SocialEmbedBlock, SocialEmbedSnapshot } from "@/payload-types"
+import { isFailure } from "@/utilities/results"
 
 export type BuildSnapshotArgs = Pick<
   SocialEmbedBlock,
-  'platform' | 'url' | 'snapshot' | 'hideMedia' | 'hideThread'
+  "platform" | "url" | "snapshot" | "hideMedia" | "hideThread"
 >
 
 /**
@@ -25,15 +25,15 @@ export async function buildSnapshot({
   if (!adapter) {
     return {
       ...snapshot,
-      status: 'not_found',
-      title: snapshot?.title ?? 'No adapter found',
+      status: "not_found",
+      title: snapshot?.title ?? "No adapter found",
       fetchedAt: new Date().toISOString(),
     }
   }
 
   const result = await adapter.getOEmbed({
     url,
-    ...(platform === 'twitter' && {
+    ...(platform === "twitter" && {
       hideMedia,
       hideThread,
     }),
@@ -42,7 +42,7 @@ export async function buildSnapshot({
   if (isFailure(result)) {
     return {
       ...snapshot,
-      status: result.error instanceof OEmbedRequestError ? result.error.code : 'error',
+      status: result.error instanceof OEmbedRequestError ? result.error.code : "error",
       fetchedAt: new Date().toISOString(),
     }
   }
@@ -68,7 +68,7 @@ export async function buildSnapshot({
 
   return {
     ...snapshot,
-    status: 'ok',
+    status: "ok",
     providerName,
     providerURL,
     authorName,
