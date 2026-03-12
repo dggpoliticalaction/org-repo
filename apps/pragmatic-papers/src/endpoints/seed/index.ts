@@ -202,7 +202,12 @@ export const seed = async (
     {
       name: "Creating pages & menus...",
       fn: async () => {
-        await createArticleGridHomePage(payload, ctx.volume1Articles, ctx.volume2Articles, ctx.featureArticles)
+        await createArticleGridHomePage(
+          payload,
+          ctx.volume1Articles,
+          ctx.volume2Articles,
+          ctx.featureArticles,
+        )
         const homePage = await payload
           .find({ collection: "pages", where: { slug: { equals: "home" } }, limit: 1 })
           .then((res) => res.docs[0]!)

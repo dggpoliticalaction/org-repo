@@ -5,12 +5,7 @@ import type { ArticleGridSlotData } from "../types"
 
 export const label = "Omaha 4"
 
-export const slotDescriptions = [
-  "Featured",
-  "A",
-  "B",
-  "C",
-]
+export const slotDescriptions = ["Featured", "A", "B", "C"]
 
 /**
  * Omaha 4 Layout
