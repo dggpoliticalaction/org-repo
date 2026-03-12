@@ -1,24 +1,24 @@
-import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig } from "payload"
 
 import {
   FixedToolbarFeature,
   InlineToolbarFeature,
   lexicalEditor,
-} from '@payloadcms/richtext-lexical'
-import path from 'path'
-import { fileURLToPath } from 'url'
+} from "@payloadcms/richtext-lexical"
+import path from "path"
+import { fileURLToPath } from "url"
 
-import { anyone } from '../access/anyone'
-import { writer } from '@/access/writer'
-import { editorOrSelf } from '@/access/editorOrSelf'
+import { anyone } from "../access/anyone"
+import { writer } from "@/access/writer"
+import { editorOrSelf } from "@/access/editorOrSelf"
 
-import type { Media as MediaType } from '@/payload-types'
+import type { Media as MediaType } from "@/payload-types"
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export const Media: CollectionConfig = {
-  slug: 'media',
+  slug: "media",
   access: {
     create: writer,
     delete: editorOrSelf,
@@ -27,13 +27,13 @@ export const Media: CollectionConfig = {
   },
   fields: [
     {
-      name: 'alt',
-      type: 'text',
+      name: "alt",
+      type: "text",
       //required: true,
     },
     {
-      name: 'caption',
-      type: 'richText',
+      name: "caption",
+      type: "richText",
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
           return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
@@ -41,9 +41,9 @@ export const Media: CollectionConfig = {
       }),
     },
     {
-      name: 'createdBy',
-      type: 'relationship',
-      relationTo: 'users',
+      name: "createdBy",
+      type: "relationship",
+      relationTo: "users",
       access: {
         update: () => false,
       },
@@ -57,7 +57,7 @@ export const Media: CollectionConfig = {
     beforeChange: [
       (args: Parameters<CollectionBeforeChangeHook<MediaType>>[0]): Partial<MediaType> | void => {
         const { req, operation, data } = args
-        if (operation === 'create') {
+        if (operation === "create") {
           if (req.user) {
             data.createdBy = req.user.id
             return data
@@ -68,76 +68,76 @@ export const Media: CollectionConfig = {
   },
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
-    staticDir: path.resolve(dirname, '../../public/media'),
+    staticDir: path.resolve(dirname, "../../public/media"),
 
     adminThumbnail: ({ doc }: { doc: unknown }) => {
-      return `${(doc as MediaType).sizes?.thumbnail?.url ?? ''}`
+      return `${(doc as MediaType).sizes?.thumbnail?.url ?? ""}`
     },
     formatOptions: {
-      format: 'webp',
+      format: "webp",
     },
     focalPoint: true,
     // Disable local storage when NOT using local storage (i.e., when using S3)
     // For staging/preview: set USE_LOCAL_STORAGE=true to enable local file system
     // For production: set USE_LOCAL_STORAGE=false to use S3 and disable local storage
-    disableLocalStorage: process.env.USE_LOCAL_STORAGE !== 'true',
+    disableLocalStorage: process.env.USE_LOCAL_STORAGE !== "true",
     imageSizes: [
       {
-        name: 'thumbnail',
+        name: "thumbnail",
         width: 300,
         formatOptions: {
-          format: 'webp',
+          format: "webp",
         },
         withoutEnlargement: false,
       },
       {
-        name: 'square',
+        name: "square",
         width: 500,
         height: 500,
         formatOptions: {
-          format: 'webp',
+          format: "webp",
         },
         withoutEnlargement: false,
       },
       {
-        name: 'small',
+        name: "small",
         width: 600,
         formatOptions: {
-          format: 'webp',
+          format: "webp",
         },
         withoutEnlargement: false,
       },
       {
-        name: 'medium',
+        name: "medium",
         width: 900,
         formatOptions: {
-          format: 'webp',
+          format: "webp",
         },
         withoutEnlargement: false,
       },
       {
-        name: 'large',
+        name: "large",
         width: 1400,
         formatOptions: {
-          format: 'webp',
+          format: "webp",
         },
         withoutEnlargement: false,
       },
       {
-        name: 'xlarge',
+        name: "xlarge",
         width: 1920,
         formatOptions: {
-          format: 'webp',
+          format: "webp",
         },
         withoutEnlargement: false,
       },
       {
-        name: 'og',
+        name: "og",
         width: 1200,
         height: 630,
-        crop: 'center',
+        crop: "center",
         formatOptions: {
-          format: 'jpeg',
+          format: "jpeg",
         },
         withoutEnlargement: false,
       },

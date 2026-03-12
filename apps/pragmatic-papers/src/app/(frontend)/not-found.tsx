@@ -1,7 +1,7 @@
-import Link from 'next/link'
-import React from 'react'
+import Link from "next/link"
+import React from "react"
 
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button"
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function NotFound() {

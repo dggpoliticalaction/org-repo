@@ -1,11 +1,11 @@
-'use client'
-import '@/blocks/SocialEmbed/components/URLField.scss'
-import { detectPlatform } from '@/blocks/SocialEmbed/helpers/detectPlatform'
-import { useDebounce } from '@/utilities/useDebounce'
-import { TextField, useField } from '@payloadcms/ui'
-import { CheckCircle2, XCircle } from 'lucide-react'
-import type { TextFieldClientComponent } from 'payload'
-import { useEffect, useState } from 'react'
+"use client"
+import "@/blocks/SocialEmbed/components/URLField.scss"
+import { detectPlatform } from "@/blocks/SocialEmbed/helpers/detectPlatform"
+import { useDebounce } from "@/utilities/useDebounce"
+import { TextField, useField } from "@payloadcms/ui"
+import { CheckCircle2, XCircle } from "lucide-react"
+import type { TextFieldClientComponent } from "payload"
+import { useEffect, useState } from "react"
 
 /**
  * A custom TextField component for validating social media URLs.
@@ -15,11 +15,11 @@ import { useEffect, useState } from 'react'
  */
 export const URLField: TextFieldClientComponent = ({ path, ...props }) => {
   const { value } = useField<string>({ path })
-  const debouncedValue = useDebounce(value || '', 500)
+  const debouncedValue = useDebounce(value || "", 500)
   const [isValid, setIsValid] = useState<boolean | null>(null)
 
   useEffect(() => {
-    if (!debouncedValue || debouncedValue.trim() === '') {
+    if (!debouncedValue || debouncedValue.trim() === "") {
       return setIsValid(null)
     }
 
@@ -33,9 +33,9 @@ export const URLField: TextFieldClientComponent = ({ path, ...props }) => {
       {isValid !== null && (
         <div className="url-field-icon">
           {isValid ? (
-            <CheckCircle2 size={18} style={{ color: '#22c55e' }} aria-label="Valid URL" />
+            <CheckCircle2 size={18} style={{ color: "#22c55e" }} aria-label="Valid URL" />
           ) : (
-            <XCircle size={18} style={{ color: '#ef4444' }} aria-label="Invalid URL" />
+            <XCircle size={18} style={{ color: "#ef4444" }} aria-label="Invalid URL" />
           )}
         </div>
       )}

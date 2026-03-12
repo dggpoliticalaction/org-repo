@@ -1,17 +1,17 @@
-import type { Media, User } from '@/payload-types'
-import type { Payload } from 'payload'
-import { createArticle, getWriterOrThrow, validateWriters } from './articles'
-import { createFootnotesArticle } from './features/footnotes'
-import { createMathBlocksArticle } from './features/math-blocks'
-import { createMediaCollageArticle } from './features/media-collage'
-import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from './features/social-embeds'
-import { homeStatic } from './home-static'
-import { createMediaFromURL } from './media'
-import { createMenus } from './menus'
-import { createPages } from './pages'
-import { createLoremIpsumContent, generateLoremIpsumParagraph } from './richtext'
-import { createUsers } from './users'
-import { createVolumes } from './volumes'
+import type { Media, User } from "@/payload-types"
+import type { Payload } from "payload"
+import { createArticle, getWriterOrThrow, validateWriters } from "./articles"
+import { createFootnotesArticle } from "./features/footnotes"
+import { createMathBlocksArticle } from "./features/math-blocks"
+import { createMediaCollageArticle } from "./features/media-collage"
+import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from "./features/social-embeds"
+import { homeStatic } from "./home-static"
+import { createMediaFromURL } from "./media"
+import { createMenus } from "./menus"
+import { createPages } from "./pages"
+import { createLoremIpsumContent, generateLoremIpsumParagraph } from "./richtext"
+import { createUsers } from "./users"
+import { createVolumes } from "./volumes"
 
 interface SeedContext {
   media: Media[]
@@ -21,7 +21,6 @@ interface SeedContext {
   volume2Articles: number[]
   featureArticles: number[]
 }
-
 
 export const seed = async (
   payload: Payload,
@@ -45,27 +44,41 @@ export const seed = async (
   ]
 
   const titleToSlug = (title: string) =>
-    title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
 
   const steps: { name: string; fn: () => Promise<void> }[] = [
     {
-      name: 'Clearing existing data...',
+      name: "Clearing existing data...",
       fn: async () => {
         await payload.delete({
-          collection: 'users',
-          where: { email: { in: ['admin@example.com', 'chiefeditor@example.com', 'editor@example.com', 'writer1@example.com', 'writer2@example.com'] } },
+          collection: "users",
+          where: {
+            email: {
+              in: [
+                "admin@example.com",
+                "chiefeditor@example.com",
+                "editor@example.com",
+                "writer1@example.com",
+                "writer2@example.com",
+              ],
+            },
+          },
         })
-        await payload.delete({ collection: 'articles', where: {} })
-        await payload.delete({ collection: 'volumes', where: {} })
-        await payload.delete({ collection: 'media', where: {} })
-        await payload.delete({ collection: 'pages', where: {} })
+        await payload.delete({ collection: "articles", where: {} })
+        await payload.delete({ collection: "volumes", where: {} })
+        await payload.delete({ collection: "media", where: {} })
+        await payload.delete({ collection: "pages", where: {} })
       },
     },
     {
-      name: 'Uploading media...',
+      name: "Uploading media...",
       fn: async () => {
-        const IMAGE_BASE = 'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed'
-        const ALT = 'Curving abstract shapes with an orange and blue gradient'
+        const IMAGE_BASE =
+          "https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed"
+        const ALT = "Curving abstract shapes with an orange and blue gradient"
         ctx.media = await Promise.all([
           createMediaFromURL(payload, `${IMAGE_BASE}/image-post1.webp`, ALT),
           createMediaFromURL(payload, `${IMAGE_BASE}/image-post2.webp`, ALT),
@@ -75,7 +88,7 @@ export const seed = async (
       },
     },
     {
-      name: 'Creating users...',
+      name: "Creating users...",
       fn: async () => {
         const { writer1, writer2 } = await createUsers(payload, ctx.media)
         ctx.writer1 = writer1
@@ -84,7 +97,7 @@ export const seed = async (
       },
     },
     {
-      name: 'Creating Volume 1 articles...',
+      name: "Creating Volume 1 articles...",
       fn: async () => {
         const writers = [ctx.writer1, ctx.writer2]
         ctx.volume1Articles = []
@@ -107,7 +120,7 @@ export const seed = async (
       },
     },
     {
-      name: 'Creating Volume 2 articles...',
+      name: "Creating Volume 2 articles...",
       fn: async () => {
         const writers = [ctx.writer1, ctx.writer2]
         ctx.volume2Articles = []
@@ -130,43 +143,55 @@ export const seed = async (
       },
     },
     {
-      name: 'Creating feature articles...',
+      name: "Creating feature articles...",
       fn: async () => {
-        const [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks] = await Promise.all([
-          createFootnotesArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, ctx.volume1Articles[0]!),
-          createSocialEmbedArticle(payload, ctx.writer1, ctx.media),
-          createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media),
-          createMediaCollageArticle(payload, ctx.writer1, ctx.media),
-          createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media),
-        ])
+        const [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks] =
+          await Promise.all([
+            createFootnotesArticle(
+              payload,
+              [ctx.writer1, ctx.writer2],
+              ctx.media,
+              ctx.volume1Articles[0]!,
+            ),
+            createSocialEmbedArticle(payload, ctx.writer1, ctx.media),
+            createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media),
+            createMediaCollageArticle(payload, ctx.writer1, ctx.media),
+            createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media),
+          ])
         ctx.featureArticles = [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks]
       },
     },
     {
-      name: 'Creating volumes...',
+      name: "Creating volumes...",
       fn: async () => {
         await createVolumes(
           payload,
           [
             {
               volumeNumber: 1,
-              title: 'Volume 1: Foundations of Philosophy',
-              description: 'A comprehensive collection of foundational philosophy papers covering various topics.',
-              editorsNoteContent: 'This inaugural volume brings together six groundbreaking papers that lay the foundation for future research.',
+              title: "Volume 1: Foundations of Philosophy",
+              description:
+                "A comprehensive collection of foundational philosophy papers covering various topics.",
+              editorsNoteContent:
+                "This inaugural volume brings together six groundbreaking papers that lay the foundation for future research.",
               articleIds: ctx.volume1Articles,
             },
             {
               volumeNumber: 2,
-              title: 'Volume 2: Advanced Studies in Memes',
-              description: 'A focused collection of three in-depth research papers exploring advanced topics in memes.',
-              editorsNoteContent: 'This volume presents three comprehensive studies that push the boundaries of current research in memes.',
+              title: "Volume 2: Advanced Studies in Memes",
+              description:
+                "A focused collection of three in-depth research papers exploring advanced topics in memes.",
+              editorsNoteContent:
+                "This volume presents three comprehensive studies that push the boundaries of current research in memes.",
               articleIds: ctx.volume2Articles,
             },
             {
               volumeNumber: 3,
-              title: 'Volume 3: Feature Demonstrations',
-              description: 'A collection of articles demonstrating the platform\'s feature set, including footnotes, social embeds, and media collages.',
-              editorsNoteContent: 'This volume showcases the full range of content features available to authors on Pragmatic Papers.',
+              title: "Volume 3: Feature Demonstrations",
+              description:
+                "A collection of articles demonstrating the platform's feature set, including footnotes, social embeds, and media collages.",
+              editorsNoteContent:
+                "This volume showcases the full range of content features available to authors on Pragmatic Papers.",
               articleIds: ctx.featureArticles,
             },
           ],
@@ -175,11 +200,26 @@ export const seed = async (
       },
     },
     {
-      name: 'Creating pages & menus...',
+      name: "Creating pages & menus...",
       fn: async () => {
-        const homePage = await payload.create({ collection: 'pages', data: homeStatic })
-        const { aboutPage, articlesPage, contactPage, privacyPolicyPage, termsOfUsePage, volumesPage } = await createPages(payload)
-        await createMenus(payload, { homePage, aboutPage, articlesPage, contactPage, privacyPolicyPage, termsOfUsePage, volumesPage })
+        const homePage = await payload.create({ collection: "pages", data: homeStatic })
+        const {
+          aboutPage,
+          articlesPage,
+          contactPage,
+          privacyPolicyPage,
+          termsOfUsePage,
+          volumesPage,
+        } = await createPages(payload)
+        await createMenus(payload, {
+          homePage,
+          aboutPage,
+          articlesPage,
+          contactPage,
+          privacyPolicyPage,
+          termsOfUsePage,
+          volumesPage,
+        })
       },
     },
   ]

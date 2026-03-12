@@ -1,13 +1,13 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import React from 'react'
+import Link from "next/link"
+import React from "react"
 
-import { Media } from '@/components/Media'
-import { Card, CardContent } from '@/components/ui/card'
-import type { Article, Volume } from '@/payload-types'
-import { cn } from '@/utilities/ui'
-import useClickableCard from '@/utilities/useClickableCard'
+import { Media } from "@/components/Media"
+import { Card, CardContent } from "@/components/ui/card"
+import type { Article, Volume } from "@/payload-types"
+import { cn } from "@/utilities/ui"
+import useClickableCard from "@/utilities/useClickableCard"
 
 export interface AuthorArticleCardProps {
   article: Article
@@ -26,13 +26,13 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
   const { description, image: metaImage } = meta || {}
 
   const href = `/articles/${slug}`
-  const sanitizedDescription = description?.replace(/\s/g, ' ')
+  const sanitizedDescription = description?.replace(/\s/g, " ")
 
   return (
-    <Card className={cn('h-full rounded-sm', className)}>
+    <Card className={cn("h-full rounded-sm", className)}>
       <CardContent ref={card.ref} className="flex flex-row gap-4 p-4 sm:flex-row">
         <div className="h-24 w-32 flex-shrink-0 overflow-hidden rounded border border-border bg-muted sm:h-28 sm:w-40">
-          {metaImage && typeof metaImage !== 'string' && (
+          {metaImage && typeof metaImage !== "string" && (
             <Link href={href} ref={link.ref}>
               <Media
                 resource={metaImage}
