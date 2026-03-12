@@ -58,6 +58,7 @@ export const ArticleGridBlock: React.FC<
     select: {
       title: true,
       slug: true,
+      authors: true,
       heroImage: true,
       populatedAuthors: true,
       publishedAt: true,

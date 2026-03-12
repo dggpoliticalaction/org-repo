@@ -34,12 +34,14 @@ export const Fibonacci7Layout: React.FC<{ slots: ArticleGridSlots }> = ({ slots 
         <ArticleTile
           article={slots.e.article}
           imagePosition="none"
+          showByline
           kicker={slots.e.kicker}
           overrideTitle={slots.e.overrideTitle}
         />
         <ArticleTile
           article={slots.f.article}
           imagePosition="none"
+          showByline
           kicker={slots.f.kicker}
           overrideTitle={slots.f.overrideTitle}
         />

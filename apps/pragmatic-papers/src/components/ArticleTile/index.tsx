@@ -16,6 +16,7 @@ export type ImagePosition = "above" | "below" | "left" | "right" | "none"
 export interface ArticleTileProps {
   article: ArticleTileData
   imagePosition?: ImagePosition
+  showByline?: boolean
   kicker?: string | null
   overrideTitle?: string | null
   className?: string
@@ -24,6 +25,7 @@ export interface ArticleTileProps {
 export const ArticleTile: React.FC<ArticleTileProps> = ({
   article,
   imagePosition = "above",
+  showByline = false,
   kicker,
   overrideTitle,
   className,
@@ -40,7 +42,6 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
     .map((a) => a.name)
     .join(", ")
 
-  const showByline = !!authorNames
   const showDescription = !!meta?.description
 
   const timeAgo = publishedAt
@@ -83,7 +84,7 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
       </h4>
 
       {/* Byline */}
-      {showByline && (
+      {showByline && authorNames && (
         <p className="mt-1 line-clamp-1 font-sans text-sm text-muted-foreground">{authorNames}</p>
       )}
 

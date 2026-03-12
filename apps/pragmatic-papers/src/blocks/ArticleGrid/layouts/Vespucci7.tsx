@@ -46,24 +46,28 @@ export const Vespucci7Layout: React.FC<{ slots: ArticleGridSlots }> = ({ slots }
         <ArticleTile
           article={slots.c.article}
           imagePosition="none"
+          showByline
           kicker={slots.c.kicker}
           overrideTitle={slots.c.overrideTitle}
         />
         <ArticleTile
           article={slots.d.article}
           imagePosition="none"
+          showByline
           kicker={slots.d.kicker}
           overrideTitle={slots.d.overrideTitle}
         />
         <ArticleTile
           article={slots.e.article}
           imagePosition="none"
+          showByline
           kicker={slots.e.kicker}
           overrideTitle={slots.e.overrideTitle}
         />
         <ArticleTile
           article={slots.f.article}
           imagePosition="none"
+          showByline
           kicker={slots.f.kicker}
           overrideTitle={slots.f.overrideTitle}
         />
