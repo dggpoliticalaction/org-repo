@@ -3,7 +3,12 @@ import { AuthorLinks } from "@/components/Authors/AuthorLinks"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
+import { JsonLd } from "@/components/JsonLd"
 import type { Article as ArticleType, Media, User, Volume } from "@/payload-types"
+import { getMediaUrl } from "@/utilities/getMediaUrl"
+import { getServerSideURL } from "@/utilities/getURL"
+import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
+import { buildPersonJsonLd, buildBreadcrumbJsonLd } from "@/utilities/structuredData"
 import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
@@ -126,15 +131,36 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const name = user?.name || "Author"
   const title = `${name} — Pragmatic Papers`
 
-  const description = user?.affiliation || undefined
+  const affiliationPart = user?.affiliation ? `, ${user.affiliation}` : ""
+  const description = `Articles and contributions by ${name}${affiliationPart}. Read their work on Pragmatic Papers.`
+
+  const profileImage = user?.profileImage
+  const ogImage =
+    profileImage && typeof profileImage === "object"
+      ? getMediaUrl((profileImage as Media).sizes?.og?.url || (profileImage as Media).url)
+      : undefined
+
+  const serverUrl = getServerSideURL()
+  const canonicalUrl = `${serverUrl}/authors/${slug}`
 
   return {
     title,
     description,
-    openGraph: {
+    openGraph: mergeOpenGraph({
       title,
       description,
       url: `/authors/${slug}`,
+      type: "profile",
+      images: ogImage ? [{ url: ogImage }] : undefined,
+    }),
+    twitter: {
+      card: "summary",
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+    alternates: {
+      canonical: canonicalUrl,
     },
   }
 }
@@ -173,8 +199,17 @@ export default async function AuthorPage({
   const profileDoc = profile && typeof profile === "object" ? (profile as Media) : undefined
   const profileSrc = profileDoc?.sizes?.square?.url || profileDoc?.url || undefined
 
+  const serverUrl = getServerSideURL()
+  const fullUrl = `${serverUrl}${url}`
+  const breadcrumbItems = [
+    { name: "Home", url: serverUrl },
+    { name: "Authors", url: `${serverUrl}/authors` },
+    { name: user.name || "Author", url: fullUrl },
+  ]
+
   return (
     <article className="container mb-16 max-w-3xl">
+      <JsonLd data={[buildPersonJsonLd(user, fullUrl), buildBreadcrumbJsonLd(breadcrumbItems)]} />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 

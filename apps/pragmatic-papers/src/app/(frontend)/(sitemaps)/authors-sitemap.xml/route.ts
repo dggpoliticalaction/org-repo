@@ -3,7 +3,7 @@ import { getPayload } from "payload"
 import config from "@payload-config"
 import { unstable_cache } from "next/cache"
 
-const getArticlesSitemap = unstable_cache(
+const getAuthorsSitemap = unstable_cache(
   async () => {
     const payload = await getPayload({ config })
     const SITE_URL =
@@ -13,22 +13,29 @@ const getArticlesSitemap = unstable_cache(
         : "https://example.com")
 
     const results = await payload.find({
-      collection: "articles",
-      overrideAccess: false,
+      collection: "users",
+      overrideAccess: true,
       draft: false,
       depth: 0,
       limit: 1000,
       pagination: false,
       where: {
-        _status: {
-          equals: "published",
-        },
+        and: [
+          {
+            role: {
+              in: ["writer", "editor", "chief-editor"],
+            },
+          },
+          {
+            slug: {
+              not_equals: null,
+            },
+          },
+        ],
       },
       select: {
         slug: true,
         updatedAt: true,
-        title: true,
-        publishedAt: true,
       },
     })
 
@@ -36,31 +43,23 @@ const getArticlesSitemap = unstable_cache(
 
     const sitemap = results.docs
       ? results.docs
-          .filter((page) => Boolean(page?.slug))
-          .map((page) => {
-            return {
-              loc: page?.slug === "home" ? `${SITE_URL}/` : `${SITE_URL}/articles/${page?.slug}`,
-              lastmod: page.updatedAt || dateFallback,
-              news: {
-                title: page.title,
-                publicationName: "Pragmatic Papers",
-                publicationLanguage: "en",
-                date: page.publishedAt ?? dateFallback,
-              },
-            }
-          })
+          .filter((user) => Boolean(user?.slug))
+          .map((user) => ({
+            loc: `${SITE_URL}/authors/${user.slug}`,
+            lastmod: user.updatedAt || dateFallback,
+          }))
       : []
 
     return sitemap
   },
-  ["articles-sitemap"],
+  ["authors-sitemap"],
   {
-    tags: ["articles-sitemap"],
+    tags: ["authors-sitemap"],
   },
 )
 
 export async function GET(): Promise<Response> {
-  const sitemap = await getArticlesSitemap()
+  const sitemap = await getAuthorsSitemap()
 
   return getServerSideSitemap(sitemap)
 }

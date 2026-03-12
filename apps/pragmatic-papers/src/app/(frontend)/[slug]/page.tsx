@@ -11,6 +11,13 @@ import { RenderBlocks } from "@/blocks/RenderBlocks"
 import { RenderHero } from "@/heros/RenderHero"
 import { generateMeta } from "@/utilities/generateMeta"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
+import { JsonLd } from "@/components/JsonLd"
+import { getServerSideURL } from "@/utilities/getURL"
+import {
+  buildWebSiteJsonLd,
+  buildOrganizationJsonLd,
+  buildBreadcrumbJsonLd,
+} from "@/utilities/structuredData"
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function generateStaticParams() {
@@ -74,8 +81,22 @@ export default async function Page({
 
   const { hero, layout } = page
 
+  const serverUrl = getServerSideURL()
+  const isHome = slug === "home"
+  const breadcrumbItems = isHome
+    ? [{ name: "Home", url: serverUrl }]
+    : [
+        { name: "Home", url: serverUrl },
+        { name: page.meta?.title || slug, url: `${serverUrl}/${slug}` },
+      ]
+
+  const jsonLdData = isHome
+    ? [buildWebSiteJsonLd(), buildOrganizationJsonLd(), buildBreadcrumbJsonLd(breadcrumbItems)]
+    : [buildBreadcrumbJsonLd(breadcrumbItems)]
+
   return (
     <article className="m-auto max-w-3xl pb-24">
+      <JsonLd data={jsonLdData} />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
@@ -94,7 +115,8 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     slug,
   })
 
-  return generateMeta({ doc: page })
+  const path = slug === "home" ? "/" : `/${slug}`
+  return generateMeta({ doc: page, path })
 }
 
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
