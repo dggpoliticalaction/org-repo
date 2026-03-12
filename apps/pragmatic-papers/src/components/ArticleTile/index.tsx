@@ -84,7 +84,7 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({
         >
           <Media
             resource={heroImage as MediaType}
-            className="h-full w-full group-hover:opacity-75 transition-opacity"
+            className="h-full w-full transition-opacity group-hover:opacity-75"
             imgClassName="h-full w-full object-cover"
             loading="lazy"
           />
