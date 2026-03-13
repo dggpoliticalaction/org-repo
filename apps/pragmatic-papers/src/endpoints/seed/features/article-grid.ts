@@ -38,6 +38,12 @@ function createSlots(
  *  10. ArticleGrid    – newton-4 layout
  *  11. Content block  – "Fibonacci 6 Style Article Grid"
  *  12. ArticleGrid    – fibonacci-6 layout
+ *  13. Content block  – "Euler 2 Style Article Grid"
+ *  14. ArticleGrid    – euler-2 layout
+ *  15. Content block  – "Bernoulli Left Style Article Grid"
+ *  16. ArticleGrid    – bernoulli-left layout
+ *  17. Content block  – "Bernoulli Right Style Article Grid"
+ *  18. ArticleGrid    – bernoulli-right layout
  *
  * @param volume1ArticleIds - IDs for volume 1 articles (6 articles)
  * @param volume2ArticleIds - IDs for volume 2 articles (at least 2 needed)
@@ -95,6 +101,22 @@ export async function createArticleGridHomePage(
     volume1ArticleIds[2]!, // "Plato's Cave in the Digital Age" (repeated)
   ]
 
+  // Euler-2 grid: vol1[3], vol2[1]
+  const euler2ArticleIds = [
+    volume1ArticleIds[3]!, // "The Ethics of Artificial Intelligence"
+    volume2ArticleIds[1]!, // "Irony as Ideology"
+  ]
+
+  // Bernoulli Left: single article, image right / text left
+  const bernoulliLeftArticleIds = [
+    volume1ArticleIds[0]!, // "The Trolley Problem Revisited"
+  ]
+
+  // Bernoulli Right: single article, image left / text right
+  const bernoulliRightArticleIds = [
+    volume1ArticleIds[1]!, // "Free Will and Determinism"
+  ]
+
   const homeData: RequiredDataFromCollectionSlug<"pages"> = {
     title: "Home",
     slug: "home",
@@ -136,6 +158,21 @@ export async function createArticleGridHomePage(
         blockType: "articleGrid",
         layout: "fibonacci-6",
         slots: createSlots("fibonacci-6", fibonacci6ArticleIds),
+      },
+      {
+        blockType: "articleGrid",
+        layout: "euler-2",
+        slots: createSlots("euler-2", euler2ArticleIds),
+      },
+      {
+        blockType: "articleGrid",
+        layout: "bernoulli-left",
+        slots: createSlots("bernoulli-left", bernoulliLeftArticleIds),
+      },
+      {
+        blockType: "articleGrid",
+        layout: "bernoulli-right",
+        slots: createSlots("bernoulli-right", bernoulliRightArticleIds),
       },
     ],
     meta: {
