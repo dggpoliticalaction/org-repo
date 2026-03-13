@@ -1,7 +1,7 @@
-import React from 'react'
+import React from "react"
 
-export const PaperIcon: React.FC<React.ComponentProps<'svg'>> = ({
-  fill = 'currentColor',
+export const PaperIcon: React.FC<React.ComponentProps<"svg">> = ({
+  fill = "currentColor",
   className,
   style,
 }) => {
@@ -18,9 +18,9 @@ export const PaperIcon: React.FC<React.ComponentProps<'svg'>> = ({
   )
 }
 
-export const PaperIconAdmin: React.FC<React.ComponentProps<'svg'>> = ({
-  fill = 'currentColor',
+export const PaperIconAdmin: React.FC<React.ComponentProps<"svg">> = ({
+  fill = "currentColor",
   className,
 }) => {
-  return <PaperIcon fill={fill} className={className} style={{ width: '100%', height: '100%' }} />
+  return <PaperIcon fill={fill} className={className} style={{ width: "100%", height: "100%" }} />
 }

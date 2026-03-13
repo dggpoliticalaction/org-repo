@@ -1,15 +1,15 @@
-import { Banner } from '@payloadcms/ui/elements/Banner'
-import React from 'react'
+import { Banner } from "@payloadcms/ui/elements/Banner"
+import React from "react"
 
-import { SeedButton } from './SeedButton'
-import './index.scss'
+import { SeedButton } from "./SeedButton"
+import "./index.scss"
 
-const baseClass = 'before-dashboard'
+const baseClass = "before-dashboard"
 
 const BeforeDashboard: React.FC = () => {
   // These are dev instructions, so we don't want to show them in production but feel free to make a component
   // for the production dashboard if you want to show something different.
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     return null
   }
 
@@ -23,15 +23,15 @@ const BeforeDashboard: React.FC = () => {
         <li>
           <SeedButton />
           {
-            ' with a few volumes, articles, authors, and images to jump-start your local development, then '
+            " with a few volumes, articles, authors, and images to jump-start your local development, then "
           }
           <a href="/" target="_blank">
             visit the website
           </a>
-          {' to see the results.'}
+          {" to see the results."}
         </li>
         <li>
-          {'Modify your '}
+          {"Modify your "}
           <a
             href="https://payloadcms.com/docs/configuration/collections"
             rel="noopener noreferrer"
@@ -39,7 +39,7 @@ const BeforeDashboard: React.FC = () => {
           >
             collections
           </a>
-          {' and add more '}
+          {" and add more "}
           <a
             href="https://payloadcms.com/docs/fields/overview"
             rel="noopener noreferrer"
@@ -48,7 +48,7 @@ const BeforeDashboard: React.FC = () => {
             fields
           </a>
           {
-            ' as needed for your task. If you are new to Payload, we also recommend you check out the '
+            " as needed for your task. If you are new to Payload, we also recommend you check out the "
           }
           <a
             href="https://payloadcms.com/docs/getting-started/what-is-payload"
@@ -57,10 +57,10 @@ const BeforeDashboard: React.FC = () => {
           >
             Getting Started
           </a>
-          {' docs.'}
+          {" docs."}
         </li>
       </ul>
-      {'Pro Tip: This block is a '}
+      {"Pro Tip: This block is a "}
       <a
         href="https://payloadcms.com/docs/admin/custom-components/overview#base-component-overrides"
         rel="noopener noreferrer"

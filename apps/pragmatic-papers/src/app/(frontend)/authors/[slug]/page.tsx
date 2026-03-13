@@ -1,20 +1,20 @@
-import { AuthorArticleCard } from '@/components/Articles/AuthorArticleCard'
-import { AuthorLinks } from '@/components/Authors/AuthorLinks'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { PayloadRedirects } from '@/components/PayloadRedirects'
-import RichText from '@/components/RichText'
-import type { Article as ArticleType, Media, User, Volume } from '@/payload-types'
-import config from '@payload-config'
-import type { Metadata } from 'next'
-import { draftMode } from 'next/headers'
-import Image from 'next/image'
-import { getPayload } from 'payload'
-import React, { cache } from 'react'
+import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
+import { AuthorLinks } from "@/components/Authors/AuthorLinks"
+import { LivePreviewListener } from "@/components/LivePreviewListener"
+import { PayloadRedirects } from "@/components/PayloadRedirects"
+import RichText from "@/components/RichText"
+import type { Article as ArticleType, Media, User, Volume } from "@/payload-types"
+import config from "@payload-config"
+import type { Metadata } from "next"
+import { draftMode } from "next/headers"
+import Image from "next/image"
+import { getPayload } from "payload"
+import React, { cache } from "react"
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config })
   const { docs } = await payload.find({
-    collection: 'users',
+    collection: "users",
     draft: false,
     limit: 1000,
     overrideAccess: true,
@@ -23,7 +23,7 @@ export async function generateStaticParams(): Promise<{ slug: string | null | un
       and: [
         {
           role: {
-            in: ['writer', 'editor', 'chief-editor'],
+            in: ["writer", "editor", "chief-editor"],
           },
         },
         {
@@ -50,7 +50,7 @@ const queryUserBySlug = cache(async (slug: string): Promise<User | null> => {
   const payload = await getPayload({ config })
 
   const { docs } = await payload.find({
-    collection: 'users',
+    collection: "users",
     draft,
     limit: 1,
     pagination: false,
@@ -58,7 +58,7 @@ const queryUserBySlug = cache(async (slug: string): Promise<User | null> => {
       and: [
         {
           role: {
-            in: ['writer', 'editor', 'chief-editor'],
+            in: ["writer", "editor", "chief-editor"],
           },
         },
         {
@@ -80,7 +80,7 @@ const queryArticlesByAuthor = cache(async (userId: number): Promise<ArticleType[
   const payload = await getPayload({ config })
 
   const { docs } = await payload.find({
-    collection: 'articles',
+    collection: "articles",
     draft,
     limit: 1000,
     pagination: false,
@@ -103,7 +103,7 @@ const queryVolumesForArticles = cache(async (articleIds: number[]): Promise<Volu
   const payload = await getPayload({ config })
 
   const { docs } = await payload.find({
-    collection: 'volumes',
+    collection: "volumes",
     draft,
     limit: 1000,
     overrideAccess: draft,
@@ -120,10 +120,10 @@ const queryVolumesForArticles = cache(async (articleIds: number[]): Promise<Volu
 })
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
-  const { slug = '' } = await params
+  const { slug = "" } = await params
   const user = await queryUserBySlug(slug)
 
-  const name = user?.name || 'Author'
+  const name = user?.name || "Author"
   const title = `${name} — Pragmatic Papers`
 
   const description = user?.affiliation || undefined
@@ -143,7 +143,7 @@ export default async function AuthorPage({
   params: paramsPromise,
 }: Args): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()
-  const { slug = '' } = await paramsPromise
+  const { slug = "" } = await paramsPromise
   const user = await queryUserBySlug(slug)
   const url = `/authors/${slug}`
   if (!user) return <PayloadRedirects url={url} />
@@ -158,7 +158,7 @@ export default async function AuthorPage({
     const volumeArticles = volume.articles || []
     for (const articleRef of volumeArticles) {
       const articleId =
-        typeof articleRef === 'object' && articleRef !== null
+        typeof articleRef === "object" && articleRef !== null
           ? articleRef.id
           : (articleRef as number | undefined)
       if (articleId != null && !volumeByArticleId.has(articleId)) {
@@ -170,7 +170,7 @@ export default async function AuthorPage({
   const hasBiography = !!user.biography
 
   const profile = user.profileImage
-  const profileDoc = profile && typeof profile === 'object' ? (profile as Media) : undefined
+  const profileDoc = profile && typeof profile === "object" ? (profile as Media) : undefined
   const profileSrc = profileDoc?.sizes?.square?.url || profileDoc?.url || undefined
 
   return (
@@ -185,14 +185,14 @@ export default async function AuthorPage({
           <div className="h-32 w-32 overflow-hidden rounded-full border border-border">
             <Image
               src={profileSrc}
-              alt={profileDoc?.alt || user.name || 'Author avatar'}
+              alt={profileDoc?.alt || user.name || "Author avatar"}
               width={128}
               height={128}
               className="h-full w-full object-cover"
             />
           </div>
         )}
-        <h1 className="text-3xl font-bold md:text-4xl">{user.name || 'Author'}</h1>
+        <h1 className="text-3xl font-bold md:text-4xl">{user.name || "Author"}</h1>
         {user.affiliation && <p className="text-sm text-muted-foreground">{user.affiliation}</p>}
         <AuthorLinks socials={user.socials} />
       </header>
@@ -200,7 +200,7 @@ export default async function AuthorPage({
       {hasBiography && (
         <section className="mb-10" aria-label="Author biography">
           <h2 className="mb-3 text-2xl font-semibold">Bio</h2>
-          <RichText enableGutter={false} data={user.biography as ArticleType['content']} />
+          <RichText enableGutter={false} data={user.biography as ArticleType["content"]} />
         </section>
       )}
 

@@ -1,12 +1,12 @@
-import { buildSnapshot } from '@/blocks/SocialEmbed/helpers/buildSnapshot'
-import type { Article, SocialEmbedBlock } from '@/payload-types'
-import { isAutosave } from '@/utilities/isAutosave'
-import type { FieldHookArgs } from 'payload'
+import { buildSnapshot } from "@/blocks/SocialEmbed/helpers/buildSnapshot"
+import type { Article, SocialEmbedBlock } from "@/payload-types"
+import { isAutosave } from "@/utilities/isAutosave"
+import type { FieldHookArgs } from "payload"
 
 export async function fetchSnapshot({
   req,
   siblingData,
-  value = '',
+  value = "",
 }: FieldHookArgs<Article, string, SocialEmbedBlock>): Promise<string> {
   if (isAutosave(req)) return value
   if (req?.context?.skipSocialEmbedSnapshot) return value
@@ -14,8 +14,8 @@ export async function fetchSnapshot({
   if (!siblingData.platform) {
     siblingData.snapshot = {
       ...siblingData.snapshot,
-      status: 'not_found',
-      title: 'No platform found',
+      status: "not_found",
+      title: "No platform found",
       fetchedAt: new Date().toISOString(),
     }
     return value

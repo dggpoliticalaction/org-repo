@@ -1,4 +1,4 @@
-import type { Block } from 'payload'
+import type { Block } from "payload"
 
 /**
  * Legacy config for Bluesky embeds.
@@ -6,19 +6,19 @@ import type { Block } from 'payload'
  * @see SocialEmbedBlock
  */
 export const LegacyBlueskyEmbed: Block = {
-  slug: 'blueSkyEmbed',
+  slug: "blueSkyEmbed",
   // interfaceName: 'BlueSkyEmbedBlock',
   labels: {
-    singular: 'Bluesky Embed (Legacy)',
-    plural: 'Bluesky Embeds (Legacy)',
+    singular: "Bluesky Embed (Legacy)",
+    plural: "Bluesky Embeds (Legacy)",
   },
   admin: {
-    group: 'Legacy',
+    group: "Legacy",
   },
   fields: [
     {
-      name: 'url',
-      type: 'text',
+      name: "url",
+      type: "text",
       required: true,
     },
   ],

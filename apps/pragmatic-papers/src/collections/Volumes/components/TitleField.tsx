@@ -1,8 +1,8 @@
-'use client'
+"use client"
 
-import React from 'react'
-import type { TextareaFieldClientProps } from 'payload'
-import { TextareaField, useFormFields } from '@payloadcms/ui'
+import React from "react"
+import type { TextareaFieldClientProps } from "payload"
+import { TextareaField, useFormFields } from "@payloadcms/ui"
 
 type TitleFieldProps = {
   checkboxFieldPath: string
@@ -22,7 +22,7 @@ export const TitleFieldComponent: React.FC<TitleFieldProps> = (props) => {
     <div
       title={
         autoGenerateTitle
-          ? 'Title is automatically generated from articles (disable auto-generate to edit manually)'
+          ? "Title is automatically generated from articles (disable auto-generate to edit manually)"
           : undefined
       }
     >

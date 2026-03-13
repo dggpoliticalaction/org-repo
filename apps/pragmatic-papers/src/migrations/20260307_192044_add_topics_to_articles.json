@@ -3220,6 +3220,13 @@
           "primaryKey": false,
           "notNull": false
         },
+        "enable_math_rendering": {
+          "name": "enable_math_rendering",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
         "published_at": {
           "name": "published_at",
           "type": "timestamp(3) with time zone",
@@ -3956,6 +3963,13 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
+        },
+        "version_enable_math_rendering": {
+          "name": "version_enable_math_rendering",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         },
         "version_published_at": {
           "name": "version_published_at",
@@ -10317,7 +10331,7 @@
           "name": "action_button_enabled",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "action_button_link_type": {
