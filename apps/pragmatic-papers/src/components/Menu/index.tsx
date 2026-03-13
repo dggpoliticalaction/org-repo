@@ -25,7 +25,7 @@ const menuItemVariants = cva("text-primary", {
     layout: {
       inline: "hover:underline text-sm underline-offset-4",
       stacked:
-        "border-border w-full justify-start rounded-none border-0 border-t px-4 py-6 text-lg data-[active=true]:shadow-[inset_4px_0_0_var(--foreground)]",
+        "w-full justify-start rounded-none border-0 border-t px-4 text-base py-4 hover:bg-muted",
       responsive: "hover:underline text-sm underline-offset-4",
     },
   },

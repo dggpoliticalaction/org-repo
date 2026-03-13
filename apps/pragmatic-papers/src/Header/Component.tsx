@@ -36,8 +36,8 @@ export async function Header(): Promise<React.JSX.Element> {
                 }
               />
               <SheetContent
-                className="space-y-4 data-[side=bottom]:h-full [&>button:last-child]:rounded-none [&>button:last-child_svg]:size-7"
-                side="bottom"
+                className="space-y-4 data-[side=left]:w-full data-[side=left]:sm:max-w-sm"
+                side="left"
                 showCloseButton={false}
               >
                 <SheetHeader className="flex flex-row items-center justify-between">
@@ -53,7 +53,7 @@ export async function Header(): Promise<React.JSX.Element> {
                     }
                   />
                 </SheetHeader>
-                <div className="bg-muted mx-4 mb-6 flex items-center gap-2 border px-3 py-2">
+                <div className="bg-muted mx-4 mb-6 flex items-center gap-2 rounded-sm border px-3 py-2">
                   <Input
                     type="search"
                     placeholder="Search Coming Soon…"
