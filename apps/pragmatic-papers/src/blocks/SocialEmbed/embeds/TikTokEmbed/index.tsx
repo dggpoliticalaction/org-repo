@@ -39,7 +39,7 @@ export async function TikTokEmbedBlock({
   return (
     <div className="my-8 flex justify-center">
       <div className="relative w-full max-w-[360px] space-y-3">
-        <div className="sr-only rounded-lg border p-3">
+        <div className="sr-only">
           <div className="text-sm font-medium">{TIKTOK_DISPLAY_NAME}</div>
           {snapshot?.authorName && <div className="text-sm opacity-80">{snapshot.authorName}</div>}
           {snapshot?.title && <div className="mt-2 text-sm">{snapshot.title}</div>}

@@ -1,4 +1,5 @@
 import { Logo } from "@/components/Logo"
+import { PaperIcon } from "@/components/Logo/icons/PaperIcon"
 import { Menu } from "@/components/Menu"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -87,15 +88,23 @@ export async function Header(): Promise<React.JSX.Element> {
                 Log In
               </LinkButton> */}
               <Sheet>
-                <SheetTrigger className="lg:hidden">
-                  <User />
-                  <span className="sr-only">Account</span>
-                </SheetTrigger>
+                <SheetTrigger
+                  className="lg:hidden"
+                  render={
+                    <Button variant="ghost" size="icon">
+                      <User className="size-6" />
+                      <span className="sr-only">Account</span>
+                    </Button>
+                  }
+                />
                 <SheetContent
                   className="items-center justify-center space-y-4 py-4 data-[side=right]:w-full sm:w-3/4 data-[side=right]:sm:max-w-sm [&>button:last-child]:top-3 [&>button:last-child_svg]:size-7"
                   side="right"
                 >
                   <SheetHeader>
+                    <div className="bg-brand flex aspect-square items-center justify-center rounded-sm p-2">
+                      <PaperIcon className="text-white" />
+                    </div>
                     <SheetTitle>Account</SheetTitle>
                   </SheetHeader>
                   <div className="w-full space-y-2 px-4">

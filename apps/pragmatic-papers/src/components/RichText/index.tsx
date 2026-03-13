@@ -129,11 +129,11 @@ export default function RichText({
   return (
     <div
       className={cn(
-        "payload-richtext",
+        "payload-richtext prose-neutral prose-headings:font-display font-serif",
         {
           container: enableGutter,
           "max-w-none": !enableGutter,
-          "prose md:prose-md dark:prose-invert": enableProse,
+          "prose dark:prose-invert": enableProse,
         },
         className,
       )}

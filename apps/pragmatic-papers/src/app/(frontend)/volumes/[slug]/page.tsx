@@ -1,9 +1,10 @@
 import { ArticleCard } from "@/components/ArticleCard"
 import { AuthorList } from "@/components/Authors/AuthorList"
+import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
-import { Squiggle } from "@/components/ui/squiggle"
+import { Separator } from "@/components/ui/separator"
 import type { Article, User } from "@/payload-types"
 import { formatDateTime } from "@/utilities/formatDateTime"
 import { generateMeta } from "@/utilities/generateMeta"
@@ -127,41 +128,28 @@ export default async function VolumePage({
   const volumeAuthors = await queryAuthorsByIds({ ids: Array.from(volumeAuthorIdSet) })
 
   return (
-    <div className="mx-auto max-w-3xl px-4 pb-16">
+    <div className="mx-auto max-w-3xl space-y-6 px-4">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
-      <div className="relative flex items-end">
-        <div className="container pb-8 text-center">
-          <div>
-            <div>
-              <h1 className="mb-6 text-3xl md:text-5xl lg:text-6xl">{`Volume ${toRoman(Number(volume.slug))}`}</h1>
-            </div>
-
-            <div className="flex flex-col justify-center gap-4 md:flex-row md:gap-16">
-              {publishedAt && (
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm">Date Published</p>
-                  <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      {editorsNote && (
-        <div className="container w-full">
-          <RichText className="w-full" enableGutter={false} data={editorsNote} />
-        </div>
+      <h1 className="font-display mb-6 text-center text-3xl font-bold md:text-5xl lg:text-6xl">
+        Volume <span className="font-serif font-semibold">{toRoman(Number(volume.slug))}</span>
+      </h1>
+      {publishedAt && (
+        <HoverPrefetchLink
+          href={`/volumes/${volume.slug}`}
+          className="text-brand font-serif font-semibold underline-offset-4 hover:underline"
+        >
+          <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
+        </HoverPrefetchLink>
       )}
-      <Squiggle className="mx-auto h-6 w-1/2" />
-      <div className="flex flex-col items-center gap-4 pt-8">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-          {actualArticles?.map((article) => (
-            <ArticleCard key={article.id} doc={article} relationTo="articles" />
-          ))}
-        </div>
+      {editorsNote && <RichText enableGutter={false} data={editorsNote} />}
+      <Separator />
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+        {actualArticles?.map((article) => (
+          <ArticleCard key={article.id} doc={article} relationTo="articles" />
+        ))}
       </div>
       <AuthorList aria-label="Volume Authors" authors={volumeAuthors} />
     </div>

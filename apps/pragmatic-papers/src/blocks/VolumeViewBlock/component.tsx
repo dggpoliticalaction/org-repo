@@ -1,13 +1,13 @@
-import type { VolumeView as VolumeBlockProps, Volume } from "@/payload-types"
+import type { Volume, VolumeView as VolumeBlockProps } from "@/payload-types"
 
+import RichText from "@/components/RichText"
 import configPromise from "@payload-config"
 import { getPayload } from "payload"
 import React from "react"
-import RichText from "@/components/RichText"
 
-import { VolumesView } from "@/components/VolumesView"
 import { PageRange } from "@/components/PageRange"
 import { PaginationVolumes } from "@/components/PaginationVolumes"
+import { VolumesView } from "@/components/VolumesView"
 
 export const VolumeViewBlock: React.FC<
   VolumeBlockProps & {
@@ -34,7 +34,7 @@ export const VolumeViewBlock: React.FC<
 
     if (!Number.isInteger(sanitizedPageNumber)) sanitizedPageNumber = 0
 
-    const volumes = await payload.find({
+    const { docs, page, totalDocs, totalPages } = await payload.find({
       collection: "volumes",
       depth: 1,
       limit,
@@ -46,33 +46,24 @@ export const VolumeViewBlock: React.FC<
         description: true,
         volumeNumber: true,
         publishedAt: true,
+        updatedAt: true,
+        createdAt: true,
       },
       sort: "-volumeNumber",
     })
 
     return (
-      <div className="my-4" id={`block-${id}`}>
+      <div className="mx-auto my-4 max-w-xl space-y-8 px-4" id={id}>
         {introContent && (
-          <div className="mb-16">
-            <RichText className="ms-0 max-w-3xl" data={introContent} enableGutter={false} />
+          <RichText className="font-display" data={introContent} enableGutter={false} />
+        )}
+        <VolumesView volumes={docs} />
+        <PageRange collection="volumes" currentPage={page} limit={limit} totalDocs={totalDocs} />
+        {totalPages > 1 && page && (
+          <div className="container">
+            <PaginationVolumes page={page} totalPages={totalPages} />
           </div>
         )}
-        <VolumesView volumes={volumes.docs} />
-
-        <div className="container mt-6 mb-8">
-          <PageRange
-            collection="volumes"
-            currentPage={volumes.page}
-            limit={limit}
-            totalDocs={volumes.totalDocs}
-          />
-        </div>
-
-        <div className="container">
-          {volumes.totalPages > 1 && volumes.page && (
-            <PaginationVolumes page={volumes.page} totalPages={volumes.totalPages} />
-          )}
-        </div>
       </div>
     )
   } else {

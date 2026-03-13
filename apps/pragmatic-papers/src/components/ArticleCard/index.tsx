@@ -1,12 +1,11 @@
 "use client"
-import useClickableCard from "@/utilities/useClickableCard"
-import { cn } from "@/utilities/utils"
-import Link from "next/link"
-import React from "react"
 
 import type { Article } from "@/payload-types"
+import React from "react"
 
+import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { Media } from "@/components/Media"
+import { cn } from "@/utilities/utils"
 
 export type CardPostData = Pick<Article, "slug" | "meta" | "title">
 
@@ -17,7 +16,6 @@ export const ArticleCard: React.FC<{
   relationTo: "articles"
   title?: string
 }> = (props) => {
-  const { card, link } = useClickableCard<HTMLDivElement>({})
   const { className, doc, relationTo, title: titleFromProps } = props
 
   const { slug, meta, title } = doc || {}
@@ -28,36 +26,22 @@ export const ArticleCard: React.FC<{
   const href = `/${relationTo}/${slug}`
 
   return (
-    <div className="h-full overflow-hidden rounded-lg">
-      <article
-        className={cn("flex h-full flex-row hover:cursor-pointer sm:flex-col", className)}
-        ref={card.ref}
-      >
-        <div className="flex min-w-24 shrink-0 basis-1/4 flex-col justify-center overflow-hidden rounded-lg sm:max-h-[300px] sm:min-w-0 sm:basis-auto">
-          {metaImage && typeof metaImage !== "string" && (
-            <Media
-              resource={metaImage}
-              className="aspect-4/3 w-full sm:aspect-square"
-              imgClassName="object-cover h-full w-full rounded-lg"
-              size="square"
-            />
-          )}
+    <div className={cn("space-y-2", className)}>
+      {metaImage && typeof metaImage !== "string" && (
+        <div className="bg-muted mb-2 flex aspect-3/2 items-center overflow-hidden rounded-sm hover:opacity-90">
+          <HoverPrefetchLink href={href}>
+            <Media resource={metaImage} imgClassName="object-cover min-h-[352px]" size="square" />
+          </HoverPrefetchLink>
         </div>
-        <div className="flex grow basis-3/4 flex-col p-4 sm:basis-auto">
-          {titleToUse && (
-            <div className="line-clamp-4 pb-1 font-sans text-xl font-extrabold">
-              <Link className="hover:text-brand transition-colors" href={href} ref={link.ref}>
-                {titleToUse}
-              </Link>
-            </div>
-          )}
-          {description && (
-            <p className="text-muted-foreground line-clamp-2 pt-1 text-sm sm:line-clamp-5">
-              {sanitizedDescription}
-            </p>
-          )}
+      )}
+      {titleToUse && (
+        <div className="font-display text-xl font-bold">
+          <HoverPrefetchLink href={href} className="hover:text-primary/80 transition-colors">
+            {titleToUse}
+          </HoverPrefetchLink>
         </div>
-      </article>
+      )}
+      {description && <p className="text-primary font-serif">{sanitizedDescription}</p>}
     </div>
   )
 }
