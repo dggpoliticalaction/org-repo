@@ -5,37 +5,26 @@ import { getServerSideURL } from "@/utilities/getURL"
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
 import { cn } from "@/utilities/utils"
 import { GoogleAnalytics } from "@next/third-parties/google"
-import { GeistMono } from "geist/font/mono"
-import { GeistSans } from "geist/font/sans"
 import type { Metadata } from "next"
 import { ThemeProvider } from "next-themes"
-import { Open_Sans, Source_Serif_4 } from "next/font/google"
-import { draftMode } from "next/headers"
+import { Geist } from "next/font/google"
 import React from "react"
 import "./globals.css"
 
-const sourceSerif4 = Source_Serif_4({
+const geist = Geist({
+  weight: ["400", "700"],
+  subsets: ["latin"],
   variable: "--font-serif",
-  subsets: ["latin"],
 })
 
-const openSans = Open_Sans({
-  subsets: ["latin"],
-})
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { isEnabled } = await draftMode()
-
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}): Promise<React.ReactElement> {
   return (
     <html
-      className={cn(
-        GeistSans.variable,
-        GeistMono.variable,
-        sourceSerif4.className,
-        openSans.className,
-        "scroll-smooth",
-      )}
+      className={cn(geist.className)}
       lang="en"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
@@ -65,11 +54,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           enableSystem
           disableTransitionOnChange
         >
-          <AdminBar
-            adminBarProps={{
-              preview: isEnabled,
-            }}
-          />
+          <AdminBar />
           <Header />
           <main role="main" className="flex-1">
             {children}
