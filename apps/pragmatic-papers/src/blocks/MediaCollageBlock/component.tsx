@@ -51,7 +51,7 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
               "md:col-span-2 md:mx-auto md:max-w-[50%]": isLastOddItem,
             })}
           >
-            <figure className="my-0">
+            <figure className="not-prose">
               <Media
                 resource={media}
                 imgClassName="border border-border rounded-sm"

@@ -35,7 +35,6 @@ export const MediaBlock: React.FC<Props> = (props) => {
   return (
     <figure
       className={cn(
-        "",
         {
           container: enableGutter,
         },
