@@ -1,6 +1,6 @@
 import type { Payload, RequiredDataFromCollectionSlug } from "payload"
 import type { ArticleGridBlock } from "@/payload-types"
-import { layouts, type ArticleGridLayoutKey } from "@/blocks/ArticleGrid/layouts"
+import { layouts, type ArticleGridLayoutKey } from "@/blocks/ArticleGrid/config"
 import { createRichTextFromString } from "../richtext"
 
 /**
