@@ -1,16 +1,22 @@
 import type { Block } from "payload"
 import type { LayoutDefinition } from "./types"
 
-import { Fibonacci7 } from "./layouts/Fibonacci7"
+import { BernoulliLeft } from "./layouts/BernoulliLeft"
+import { BernoulliRight } from "./layouts/BernoulliRight"
+import { Euler2 } from "./layouts/Euler2"
 import { Euler3 } from "./layouts/Euler3"
 import { Euler5 } from "./layouts/Euler5"
-import { Newton4 } from "./layouts/Newton4"
 import { Fibonacci6 } from "./layouts/Fibonacci6"
+import { Fibonacci7 } from "./layouts/Fibonacci7"
+import { Newton4 } from "./layouts/Newton4"
 import { Vespucci7 } from "./layouts/Vespucci7"
 
 export type { LayoutDefinition }
 
 export const layouts = {
+  "bernoulli-left": BernoulliLeft,
+  "bernoulli-right": BernoulliRight,
+  "euler-2": Euler2,
   "euler-3": Euler3,
   "newton-4": Newton4,
   "euler-5": Euler5,
