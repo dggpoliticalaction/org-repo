@@ -77,7 +77,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   const { footnotes, content, authors, enableMathRendering } = article
 
   return (
-    <article className="m-auto max-w-3xl p-5 pb-16">
+    <article className="mx-auto max-w-3xl space-y-6 px-4">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
