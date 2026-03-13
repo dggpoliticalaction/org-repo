@@ -82,7 +82,7 @@ export const createMenus = async (
         enabled: true,
         link: {
           type: "custom",
-          label: "Join Discord",
+          label: "Discord",
           url: "https://discord.gg/dggpol",
           newTab: true,
         },
