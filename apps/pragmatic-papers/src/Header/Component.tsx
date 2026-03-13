@@ -29,20 +29,20 @@ export async function Header(): Promise<React.JSX.Element> {
             <Sheet>
               <SheetTrigger
                 render={
-                  <Button variant="ghost" size="icon-lg">
-                    <TextSearch className="size-7" />
+                  <Button variant="ghost" size="icon">
+                    <TextSearch className="size-6" />
                     <span className="sr-only">Menu</span>
                   </Button>
                 }
               />
               <SheetContent
-                className="space-y-4 data-[side=left]:w-full data-[side=left]:sm:max-w-sm [&>button:last-child]:rounded-none [&>button:last-child_svg]:size-7"
-                side="left"
+                className="space-y-4 data-[side=bottom]:h-full [&>button:last-child]:rounded-none [&>button:last-child_svg]:size-7"
+                side="bottom"
                 showCloseButton={false}
               >
                 <SheetHeader className="flex flex-row items-center justify-between">
                   <SheetTitle className="my-2 md:my-0">
-                    <Logo className="max-w-[80%]" />
+                    <Logo size="sm" />
                   </SheetTitle>
                   <SheetClose
                     render={
@@ -66,7 +66,7 @@ export async function Header(): Promise<React.JSX.Element> {
                     <span className="sr-only">Search</span>
                   </Button>
                 </div>
-                <Menu menu={navItems} layout="stacked" />
+                <Menu menu={navItems} layout="stacked" slot={SheetClose} />
               </SheetContent>
             </Sheet>
             <Link
@@ -78,14 +78,14 @@ export async function Header(): Promise<React.JSX.Element> {
             </Link>
             <div className="flex items-center justify-end gap-2">
               <ActionButton className="hidden lg:flex" button={actionButton} />
-              <LinkButton
+              {/* <LinkButton
                 variant="outline"
                 className="hover:bg-foreground/10 hidden lg:flex"
                 href="/admin/login"
                 prefetch={false}
               >
                 Log In
-              </LinkButton>
+              </LinkButton> */}
               <Sheet>
                 <SheetTrigger className="lg:hidden">
                   <User />

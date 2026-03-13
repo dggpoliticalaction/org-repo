@@ -1,16 +1,12 @@
-import config from "@payload-config"
-import { draftMode, headers as getHeaders } from "next/headers"
-import { getPayload } from "payload"
+import { draftMode } from "next/headers"
 import React from "react"
 
+import { getAuth } from "@/utilities/getAuth"
 import { AdminBarClient } from "./client"
 
-export async function AdminBar(): Promise<React.ReactElement | null> {
-  const headers = await getHeaders()
-  const payload = await getPayload({ config })
-  const { user } = await payload.auth({ headers, canSetHeaders: false })
-  console.log(user)
-  if (!user) return null
+export async function AdminBar(): Promise<React.ReactNode> {
   const { isEnabled } = await draftMode()
+  const { user } = await getAuth()
+  if (!user) return null
   return <AdminBarClient preview={isEnabled} />
 }

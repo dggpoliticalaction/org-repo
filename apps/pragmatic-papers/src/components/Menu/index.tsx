@@ -17,9 +17,25 @@ const menuVariants = cva("flex items-center", {
   },
 })
 
+const menuItemVariants = cva("text-primary", {
+  defaultVariants: {
+    layout: "responsive",
+  },
+  variants: {
+    layout: {
+      inline: "hover:underline text-sm underline-offset-4",
+      stacked:
+        "border-border w-full justify-start rounded-none border-0 border-t px-4 py-6 text-lg data-[active=true]:shadow-[inset_4px_0_0_var(--foreground)]",
+      responsive: "hover:underline text-sm underline-offset-4",
+    },
+  },
+})
+
 interface MenuProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "slot">,
     VariantProps<typeof menuVariants> {
+  /** Wraps each menu link. Falls back to a Fragment when undefined. */
+  slot?: React.ElementType
   menu?: MenuField
 }
 
@@ -29,26 +45,31 @@ interface MenuProps
  * @param menu - The array of menu items to display.
  * @param className - Additional classes for the menu container.
  * @param layout - Specifies the menu layout variant ('inline', 'stacked', or 'responsive').
+ * @param slot - Optional wrapper component for each link (e.g. SheetClose). Falls back to a Fragment.
  * @param props - All other HTML div props.
  *
  * @example
  * <Menu menu={menuData} layout="inline" />
+ * <Menu menu={menuData} layout="stacked" slot={SheetClose} />
  */
-export const Menu: React.FC<MenuProps> = ({ menu, className, layout, ...props }) => {
+export const Menu: React.FC<MenuProps> = ({ menu, className, layout, slot, ...props }) => {
   if (!menu) return null
+
+  const Slot = slot ?? React.Fragment
+
   return (
-    <nav className={cn(menuVariants({ className, layout }))} {...props}>
-      {menu.map(({ link, id }, index) => (
-        <CMSLink
-          key={id || `menu-item-${index}`}
-          link={link}
-          className={cn(
-            "text-primary text-sm underline-offset-4 hover:underline",
-            layout === "stacked" &&
-              "border-border w-full justify-start rounded-none border-0 border-t px-4 py-6 text-lg data-[active=true]:shadow-[inset_4px_0_0_var(--foreground)]",
-          )}
-        />
-      ))}
+    <nav>
+      <ul className={cn(menuVariants({ className, layout }))} {...props}>
+        {menu.map(({ link, id }, index) => {
+          return (
+            <li key={id || `menu-item-${index}`} className={cn(menuItemVariants({ layout }))}>
+              <Slot>
+                <CMSLink link={link} />
+              </Slot>
+            </li>
+          )
+        })}
+      </ul>
     </nav>
   )
 }
