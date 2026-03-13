@@ -1,7 +1,6 @@
-import type { Payload, RequiredDataFromCollectionSlug } from "payload"
-import type { ArticleGridBlock } from "@/payload-types"
 import { layouts, type ArticleGridLayoutKey } from "@/blocks/ArticleGrid/config"
-import { createRichTextFromString } from "../richtext"
+import type { ArticleGridBlock } from "@/payload-types"
+import type { Payload, RequiredDataFromCollectionSlug } from "payload"
 
 /**
  * Builds the `slots` array for an ArticleGrid block from an ordered array of article IDs.
@@ -103,37 +102,14 @@ export async function createArticleGridHomePage(
     _status: "published",
     publishedAt: new Date().toISOString(),
     hero: {
-      type: "pageHero",
-      richText: createRichTextFromString("Article Grid Home Page Demo!"),
-      links: [],
-      media: null,
+      type: "none",
     },
     layout: [
-      {
-        blockType: "content",
-        columns: [
-          {
-            size: "full",
-            richText: createRichTextFromString("Vespucci Style Article Grid"),
-            enableLink: false,
-          },
-        ],
-      },
       {
         blockType: "articleGrid",
         blockName: "Vespucci",
         layout: "vespucci-7",
         slots: createSlots("vespucci-7", vespucciArticleIds),
-      },
-      {
-        blockType: "content",
-        columns: [
-          {
-            size: "full",
-            richText: createRichTextFromString("Fibonacci Style Article Grid"),
-            enableLink: false,
-          },
-        ],
       },
       {
         blockType: "articleGrid",
@@ -142,29 +118,9 @@ export async function createArticleGridHomePage(
         slots: createSlots("fibonacci-7", fibonacciArticleIds),
       },
       {
-        blockType: "content",
-        columns: [
-          {
-            size: "full",
-            richText: createRichTextFromString("Miami 3 Style Article Grid"),
-            enableLink: false,
-          },
-        ],
-      },
-      {
         blockType: "articleGrid",
         layout: "miami-3",
         slots: createSlots("miami-3", miami3ArticleIds),
-      },
-      {
-        blockType: "content",
-        columns: [
-          {
-            size: "full",
-            richText: createRichTextFromString("Miami 5 Style Article Grid"),
-            enableLink: false,
-          },
-        ],
       },
       {
         blockType: "articleGrid",
@@ -172,29 +128,9 @@ export async function createArticleGridHomePage(
         slots: createSlots("miami-5", miami5ArticleIds),
       },
       {
-        blockType: "content",
-        columns: [
-          {
-            size: "full",
-            richText: createRichTextFromString("Omaha 4 Style Article Grid"),
-            enableLink: false,
-          },
-        ],
-      },
-      {
         blockType: "articleGrid",
         layout: "omaha-4",
         slots: createSlots("omaha-4", omaha4ArticleIds),
-      },
-      {
-        blockType: "content",
-        columns: [
-          {
-            size: "full",
-            richText: createRichTextFromString("Speranza 6 Style Article Grid"),
-            enableLink: false,
-          },
-        ],
       },
       {
         blockType: "articleGrid",
