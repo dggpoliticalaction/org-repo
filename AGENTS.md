@@ -28,8 +28,6 @@ Turborepo monorepo for **Pragmatic Papers**, a Next.js 15 website with Payload C
   - `pnpm payload migrate` — run database migrations
   - `pnpm payload migrate:create` — create a new migration
 
-### CI
-GitHub Actions runs `pnpm lint:ci` and `pnpm check-types` on PRs to `main` and `dev`.
 
 ## Architecture
 
@@ -84,8 +82,6 @@ GitHub Actions runs `pnpm lint:ci` and `pnpm check-types` on PRs to `main` and `
 ### Block Conventions
 - **File structure**: `blocks/<Name>/config.ts` (Payload config) + `blocks/<Name>/Component.tsx` (React component)
 - **Two rendering systems**: `RenderBlocks` renders page layout blocks (Content, CTA, MediaBlock, Form, VolumeView); `RichText` renders Lexical inline/rich-text blocks (Banner, Code, Math, Footnote, SocialEmbed, SquiggleRule)
-- **Slug naming**: camelCase (e.g. `mediaBlock`, `formBlock`, `volumeView`)
-- **RSS feeds**: Blocks that appear in articles or volumes must also be renderable as HTML for RSS feeds in `feed.articles/route.ts` and `feed.volumes/route.ts` — not just as React components
 
 ### Data Fetching Patterns
 - Use `getPayload({ config: configPromise })` with `configPromise` imported from `@payload-config`
@@ -96,27 +92,7 @@ GitHub Actions runs `pnpm lint:ci` and `pnpm check-types` on PRs to `main` and `
 - Metadata: use `generateMeta({ doc })` from `@/utilities/generateMeta`
 - Static generation: implement `generateStaticParams()` with `overrideAccess: false` and `draft: false`
 
-### Route Structure (`app/(frontend)/`)
-- `/` — home (Pages collection, `slug: 'home'`)
-- `/[slug]` — dynamic pages
-- `/articles/[slug]` — articles
-- `/volumes/[slug]` — volumes (slug is volume number)
-- `/authors` — author index; `/authors/[slug]` — author profile
-- `/feed.articles`, `/feed.volumes` — RSS feeds
-- `/next/preview`, `/next/exit-preview` — draft mode endpoints
-- `(sitemaps)/*-sitemap.xml` — sitemaps for articles, pages, volumes
 
-### Environment Variables
-Key env vars are defined in `apps/pragmatic-papers/.env.example`:
-- `DATABASE_URI` — Postgres connection string
-- `PAYLOAD_SECRET` — JWT encryption
-- `NEXT_PUBLIC_SERVER_URL` — CORS, links (no trailing slash)
-- `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` — Google Analytics
-- `CRON_SECRET` — cron job auth
-- `PREVIEW_SECRET` — preview request validation
-- `USE_LOCAL_STORAGE` — `true` for local file storage, otherwise S3
-- S3 (production): `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`
-- `NEXT_PUBLIC_SUPABASE_URL` — used for public media URLs when using S3 via Supabase
 
 ### Turbo Configuration (`turbo.json`)
 - **Environment variables**: Any new `process.env.*` variable **must** be added to the `env` array in both the `build` and `ci` tasks in `turbo.json`. Without this, Turbo's cache won't invalidate when the variable changes, causing stale builds.
@@ -130,8 +106,6 @@ Key env vars are defined in `apps/pragmatic-papers/.env.example`:
 - **Pre-commit hooks**: Husky + lint-staged runs Prettier and ESLint (`--max-warnings 0`) on staged files
 - **Colocation**: Prefer colocating logic near where it's used. `src/utilities/` is only for genuinely reusable helpers shared across multiple features (e.g. `generateMeta`, `getURL`, `toRoman`, `cn`). Don't put single-use logic there.
 
-### Requirements
-- Node.js >= 22
-- pnpm 10
-- Docker (for local PostgreSQL on port 9000)
-- No test framework set up yet
+### Testing your changes
+- run linting and type-checks
+- No unit or integration test framework set up yet - ignore for now
