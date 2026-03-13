@@ -4,19 +4,19 @@ import { ArticleTile } from "@/components/ArticleTile"
 import type { ArticleGridSlotData } from "../types"
 import type { LayoutDefinition } from "../types"
 
-export const label = "Miami 3"
+export const label = "Euler 2"
 
-export const slotDescriptions = ["Left article", "Center article", "Right article"]
+export const slotDescriptions = ["Left article", "Right article"]
 
 /**
- * Miami 3 Layout
+ * Euler 2 Layout
  *
- * 3 articles in a single row, each with an image above.
- * Responsive: 1 column on mobile, 3 equal columns on md+.
+ * 2 articles in a single row, each with an image above.
+ * Responsive: 1 column on mobile, 2 equal columns on md+.
  */
-export const Miami3Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
+export const Euler2Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       {slots.map((slot, i) => (
         <ArticleTile
           key={i}
@@ -30,8 +30,8 @@ export const Miami3Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots
   )
 }
 
-export const Miami3: LayoutDefinition = {
+export const Euler2: LayoutDefinition = {
   label,
   slotDescriptions,
-  component: Miami3Layout,
+  component: Euler2Layout,
 }

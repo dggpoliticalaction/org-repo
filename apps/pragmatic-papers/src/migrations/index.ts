@@ -19,7 +19,6 @@ import * as migration_20260307_014204_enable_math_rendering from './20260307_014
 import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles';
 import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField';
 import * as migration_20260311_160239_rename_Users_role_user_to_member from './20260311_160239_rename_Users_role_user_to_member';
-import * as migration_20260311_221821_article_grid from './20260311_221821_article_grid';
 
 export const migrations = [
   {
@@ -126,10 +125,5 @@ export const migrations = [
     up: migration_20260311_160239_rename_Users_role_user_to_member.up,
     down: migration_20260311_160239_rename_Users_role_user_to_member.down,
     name: '20260311_160239_rename_Users_role_user_to_member',
-  },
-  {
-    up: migration_20260311_221821_article_grid.up,
-    down: migration_20260311_221821_article_grid.down,
-    name: '20260311_221821_article_grid'
-  },
+  }
 ];

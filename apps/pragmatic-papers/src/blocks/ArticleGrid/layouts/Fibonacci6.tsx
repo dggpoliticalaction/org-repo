@@ -4,7 +4,7 @@ import { ArticleTile } from "@/components/ArticleTile"
 import type { ArticleGridSlotData } from "../types"
 import type { LayoutDefinition } from "../types"
 
-export const label = "Speranza 6"
+export const label = "Fibonacci 6"
 
 export const slotDescriptions = [
   "Large featured article spanning top-left (image right)",
@@ -16,7 +16,7 @@ export const slotDescriptions = [
 ]
 
 /**
- * Speranza 6 Layout
+ * Fibonacci 6 Layout
  *
  * Like Fibonacci 7, but the right column has two image-above tiles
  * instead of one image-above + two no-image tiles.
@@ -31,7 +31,7 @@ export const slotDescriptions = [
  *
  * Desktop (lg:grid-cols-4)
  */
-export const Speranza6Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
+export const Fibonacci6Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
   const [featured, a, b, c, d, e] = slots
 
   return (
@@ -80,8 +80,8 @@ export const Speranza6Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ sl
   )
 }
 
-export const Speranza6: LayoutDefinition = {
+export const Fibonacci6: LayoutDefinition = {
   label,
   slotDescriptions,
-  component: Speranza6Layout,
+  component: Fibonacci6Layout,
 }

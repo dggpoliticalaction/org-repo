@@ -552,7 +552,7 @@ export interface ArticleGridBlock {
   /**
    * Choose a layout preset that determines how the 7 article slots are arranged.
    */
-  layout: 'vespucci-7' | 'fibonacci-7' | 'miami-3' | 'miami-5' | 'omaha-4' | 'Speranza-6';
+  layout: 'bernoulli-left' | 'bernoulli-right' | 'euler-2' | 'euler-3' | 'newton-4' | 'euler-5' | 'fibonacci-6' | 'vespucci-7' | 'fibonacci-7';
   /**
    * Fill each slot with an article. Slot names correspond to positions in the chosen layout.
    */

@@ -1,20 +1,26 @@
 import type { Block } from "payload"
 import type { LayoutDefinition } from "./types"
 
+import { BernoulliLeft } from "./layouts/BernoulliLeft"
+import { BernoulliRight } from "./layouts/BernoulliRight"
+import { Euler2 } from "./layouts/Euler2"
+import { Euler3 } from "./layouts/Euler3"
+import { Euler5 } from "./layouts/Euler5"
+import { Fibonacci6 } from "./layouts/Fibonacci6"
 import { Fibonacci7 } from "./layouts/Fibonacci7"
-import { Miami3 } from "./layouts/Miami3"
-import { Miami5 } from "./layouts/Miami5"
-import { Omaha4 } from "./layouts/Omaha4"
-import { Speranza6 } from "./layouts/Speranza6"
+import { Newton4 } from "./layouts/Newton4"
 import { Vespucci7 } from "./layouts/Vespucci7"
 
 export type { LayoutDefinition }
 
 export const layouts = {
-  "miami-3": Miami3,
-  "omaha-4": Omaha4,
-  "miami-5": Miami5,
-  "Speranza-6": Speranza6,
+  "bernoulli-left": BernoulliLeft,
+  "bernoulli-right": BernoulliRight,
+  "euler-2": Euler2,
+  "euler-3": Euler3,
+  "newton-4": Newton4,
+  "euler-5": Euler5,
+  "fibonacci-6": Fibonacci6,
   "vespucci-7": Vespucci7,
   "fibonacci-7": Fibonacci7,
 } as const satisfies Record<string, LayoutDefinition>
