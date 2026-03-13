@@ -3,11 +3,12 @@ import { AuthorLinks } from "@/components/Authors/AuthorLinks"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import type { Article as ArticleType, Media, User, Volume } from "@/payload-types"
+import { getInitials } from "@/utilities/getInitials"
 import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
-import Image from "next/image"
 import { getPayload } from "payload"
 import React, { cache } from "react"
 
@@ -173,6 +174,7 @@ export default async function AuthorPage({
   const profileDoc = profile && typeof profile === "object" ? (profile as Media) : undefined
   const profileSrc = profileDoc?.sizes?.square?.url || profileDoc?.url || undefined
 
+  const initials = getInitials(user.name || "Author")
   return (
     <article className="container mb-16 max-w-3xl">
       {/* Allows redirects for valid pages too */}
@@ -182,15 +184,10 @@ export default async function AuthorPage({
 
       <header className="flex flex-col items-center space-y-3 text-center">
         {profileSrc && (
-          <div className="border-border h-32 w-32 overflow-hidden rounded-full border">
-            <Image
-              src={profileSrc}
-              alt={profileDoc?.alt || user.name || "Author avatar"}
-              width={128}
-              height={128}
-              className="h-full w-full object-cover"
-            />
-          </div>
+          <Avatar className="aspect-square h-full w-32 hover:opacity-80">
+            <AvatarImage src={profileSrc} alt={user.name || "Author"} />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
         )}
         <h1 className="text-3xl font-bold md:text-4xl">{user.name || "Author"}</h1>
         {user.affiliation && <p className="text-muted-foreground text-sm">{user.affiliation}</p>}

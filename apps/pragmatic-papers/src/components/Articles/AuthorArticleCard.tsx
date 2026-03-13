@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import React from "react"
 
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
@@ -27,42 +26,40 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
   const { description, image: metaImage } = meta || {}
 
   const href = `/articles/${slug}`
-  const sanitizedDescription = description?.replace(/\s/g, " ")
 
   return (
-    <Card className={cn("h-full rounded-xs", className)}>
-      <CardContent ref={card.ref} className="flex flex-row gap-4 p-4 sm:flex-row">
+    <Card className={cn("rounded-sm", className)}>
+      <CardContent ref={card.ref} className="flex flex-row gap-4">
         <div className="border-border bg-muted h-24 w-32 shrink-0 overflow-hidden rounded-sm border sm:h-28 sm:w-40">
           {metaImage && typeof metaImage !== "string" && (
-            <Link href={href} ref={link.ref}>
+            <HoverPrefetchLink href={href} ref={link.ref}>
               <Media
                 resource={metaImage}
-                className="h-full w-full rounded-xs"
-                pictureClassName="h-full w-full"
+                className="h-full w-full rounded-sm"
+                pictureClassName="h-full w-full hover:opacity-80"
                 imgClassName="h-full w-full object-cover"
               />
-            </Link>
+            </HoverPrefetchLink>
           )}
         </div>
-        <div className="flex h-24 min-w-0 flex-1 flex-col justify-between space-y-1 overflow-hidden sm:h-28">
-          <div className="min-h-0 space-y-1">
-            {title && (
-              <h3 className="text-foreground hover:text-brand line-clamp-3 font-semibold transition-colors">
-                <HoverPrefetchLink href={href} ref={link.ref}>
-                  {title}
-                </HoverPrefetchLink>
-              </h3>
-            )}
-            {sanitizedDescription && (
-              <p className="text-muted-foreground line-clamp-2 text-sm">{sanitizedDescription}</p>
-            )}
-          </div>
+        <div className="flex flex-col gap-1">
+          {title && (
+            <h3 className="text-primary font-display hover:text-primary/80 line-clamp-3 text-lg font-semibold">
+              <HoverPrefetchLink href={href} ref={link.ref}>
+                {title}
+              </HoverPrefetchLink>
+            </h3>
+          )}
+          {description && (
+            <p className="text-primary line-clamp-2 font-serif text-sm">{description}</p>
+          )}
           {volume && (
-            <p className="text-muted-foreground pt-1 text-xs">
-              <Link href={`/volumes/${volume.slug}`} className="underline-offset-2 hover:underline">
-                {volume.title ?? volume.slug}
-              </Link>
-            </p>
+            <HoverPrefetchLink
+              href={`/volumes/${volume.slug}`}
+              className="text-muted-foreground mt-auto line-clamp-1 text-sm underline-offset-2 hover:underline"
+            >
+              {volume.title ?? volume.slug}
+            </HoverPrefetchLink>
           )}
         </div>
       </CardContent>
