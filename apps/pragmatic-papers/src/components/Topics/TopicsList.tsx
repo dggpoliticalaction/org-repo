@@ -1,4 +1,4 @@
-import { Topic } from "@/payload-types"
+import { type Topic } from "@/payload-types"
 import { TopicBadge } from "./TopicsBadge"
 import { cn } from "@/utilities/ui"
 
@@ -15,12 +15,12 @@ export const TopicsList: React.FC<TopicsListProps> = ({
 }) => {
   if (!topics?.length) return null
 
-  const resolvedTopics = topics.filter((topic): topic is Topic => typeof topic === 'object')
+  const resolvedTopics = topics.filter((topic): topic is Topic => typeof topic === "object")
 
   if (!resolvedTopics.length) return null
 
   return (
-    <section aria-label="Topics" className={cn('mt-6', className)} {...props}>
+    <section aria-label="Topics" className={cn("mt-6", className)} {...props}>
       <div className="flex flex-wrap gap-2">
         {resolvedTopics.map((topic) => (
           <TopicBadge key={topic.id} topic={topic} className={badgeClassName} />
