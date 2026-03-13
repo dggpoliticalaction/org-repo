@@ -32,7 +32,7 @@ const menuItemVariants = cva("text-primary", {
 })
 
 interface MenuProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "slot">,
+  extends Omit<React.HTMLAttributes<HTMLUListElement>, "slot">,
     VariantProps<typeof menuVariants> {
   /** Wraps each menu link. Falls back to a Fragment when undefined. */
   slot?: React.ElementType
