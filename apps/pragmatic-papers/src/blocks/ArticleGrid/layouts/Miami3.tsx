@@ -6,11 +6,7 @@ import type { LayoutDefinition } from "../types"
 
 export const label = "Miami 3"
 
-export const slotDescriptions = [
-  "Left article (image above)",
-  "Center article (image above)",
-  "Right article (image above)",
-]
+export const slotDescriptions = ["Left article", "Center article", "Right article"]
 
 /**
  * Miami 3 Layout

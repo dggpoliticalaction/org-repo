@@ -8,26 +8,15 @@ export const label = "Fibonacci 7"
 
 export const slotDescriptions = [
   "Large featured article spanning top-left (image right)",
-  "Bottom row, left (image above)",
-  "Bottom row, center (image above)",
-  "Bottom row, right (image above)",
-  "Right column, top (image above)",
-  "Right column, middle (no image, with byline)",
-  "Right column, bottom (no image, with byline)",
+  "Bottom row, left",
+  "Bottom row, center",
+  "Bottom row, right",
+  "Right column, top",
+  "Right column, middle (Compact, no hero)",
+  "Right column, bottom (Compact, no hero)",
 ]
 
 /**
- * Fibonacci 7 Layout
- *
- * Slots (by index):
- *   0: Featured — top-left spanning 3 cols (image right)
- *   1: A — bottom row, left (image above)
- *   2: B — bottom row, center (image above)
- *   3: C — bottom row, right (image above)
- *   4: D — right column, top (image above)
- *   5: E — right column, middle (no image, byline)
- *   6: F — right column, bottom (no image, byline)
- *
  * Desktop (lg:grid-cols-4)
  */
 export const Fibonacci7Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
@@ -45,7 +34,7 @@ export const Fibonacci7Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ s
         />
       </div>
 
-      {/* Slot D + E + F — right column: D (image above) then E, F (no image) */}
+      {/* Slot D + E + F — right column: D then E, F (no image) */}
       <div className="flex flex-col gap-6 lg:row-span-2">
         <ArticleTile
           article={d!.article}

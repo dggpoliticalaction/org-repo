@@ -7,11 +7,11 @@ import type { LayoutDefinition } from "../types"
 export const label = "Miami 5"
 
 export const slotDescriptions = [
-  "First article (image above)",
-  "Second article (image above)",
-  "Third article (image above)",
-  "Fourth article (image above)",
-  "Fifth article (image above)",
+  "First article",
+  "Second article",
+  "Third article",
+  "Fourth article",
+  "Fifth article",
 ]
 
 /**

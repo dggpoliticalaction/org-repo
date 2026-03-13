@@ -8,11 +8,11 @@ export const label = "Speranza 6"
 
 export const slotDescriptions = [
   "Large featured article spanning top-left (image right)",
-  "Bottom row, left (image above)",
-  "Bottom row, center (image above)",
-  "Bottom row, right (image above)",
-  "Right column, top (image above)",
-  "Right column, bottom (image above)",
+  "Bottom row, left",
+  "Bottom row, center",
+  "Bottom row, right",
+  "Right column, top",
+  "Right column, bottom",
 ]
 
 /**
@@ -23,11 +23,11 @@ export const slotDescriptions = [
  *
  * Slots (by index):
  *   0: Featured — top-left spanning 3 cols (image right)
- *   1: A — bottom row, left (image above)
- *   2: B — bottom row, center (image above)
- *   3: C — bottom row, right (image above)
- *   4: D — right column, top (image above)
- *   5: E — right column, bottom (image above)
+ *   1: A — bottom row, left
+ *   2: B — bottom row, center
+ *   3: C — bottom row, right
+ *   4: D — right column, top
+ *   5: E — right column, bottom
  *
  * Desktop (lg:grid-cols-4)
  */

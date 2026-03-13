@@ -8,8 +8,8 @@ export const label = "Vespucci 7"
 
 export const slotDescriptions = [
   "Large featured article in center column",
-  "Left column, top (image above)",
-  "Left column, bottom (image above)",
+  "Left column, top",
+  "Left column, bottom",
   "Right column, stacked (no image)",
   "Right column, stacked (no image)",
   "Right column, stacked (no image)",
@@ -21,8 +21,8 @@ export const slotDescriptions = [
  *
  * Slots (by index):
  *   0: Featured — center column (50%, image above)
- *   1: A — left column, top (image above)
- *   2: B — left column, bottom (image above)
+ *   1: A — left column, top
+ *   2: B — left column, bottom
  *   3: C — right column (no image)
  *   4: D — right column (no image)
  *   5: E — right column (no image)

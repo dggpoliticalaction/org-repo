@@ -4,23 +4,15 @@ import { ArticleTile } from "@/components/ArticleTile"
 import type { ArticleGridSlotData } from "../types"
 import type { LayoutDefinition } from "../types"
 
-export const label = "Omaha 4"
+export const label = "Euler 4"
 
-export const slotDescriptions = ["Featured", "A", "B", "C"]
+export const slotDescriptions = ["Featured", "Right top", "Right middle", "Right bottom"]
 
 /**
- * Omaha 4 Layout
- *
- * Slots (by index):
- *   0: Featured — left column (75%, image above)
- *   1: A — right column, top (25%, image above)
- *   2: B — right column, middle (25%, no image)
- *   3: C — right column, bottom (25%, no image)
- *
+ * Euler 4 Layout
  * Desktop: 75%/25% two-column split
- * No bylines on any tile.
  */
-export const Omaha4Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
+export const Euler4Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
   const [featured, a, b, c] = slots
 
   return (
@@ -66,5 +58,5 @@ export const Omaha4Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots
 export const Omaha4: LayoutDefinition = {
   label,
   slotDescriptions,
-  component: Omaha4Layout,
+  component: Euler4Layout,
 }
