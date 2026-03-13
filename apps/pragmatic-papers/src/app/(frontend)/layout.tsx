@@ -12,9 +12,9 @@ import React from "react"
 import "./globals.css"
 
 const geist = Geist({
-  weight: ["400", "700"],
+  weight: ["400", "600"],
   subsets: ["latin"],
-  variable: "--font-serif",
+  variable: "--font-sans",
 })
 
 export default async function RootLayout({
@@ -24,7 +24,7 @@ export default async function RootLayout({
 }): Promise<React.ReactElement> {
   return (
     <html
-      className={cn(geist.className)}
+      className={cn(geist.variable)}
       lang="en"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
@@ -56,7 +56,7 @@ export default async function RootLayout({
         >
           <AdminBar />
           <Header />
-          <main role="main" className="flex-1">
+          <main role="main" className="my-4 flex-1">
             {children}
           </main>
           <Footer />

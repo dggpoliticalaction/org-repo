@@ -14,10 +14,10 @@ export default function NotFound(): React.ReactElement {
     <Empty className="py-28">
       <EmptyHeader>
         <EmptyMedia>
-          <CircleAlert className="text-brand size-5" />
+          <CircleAlert className="text-brand-high-contrast size-5" />
         </EmptyMedia>
-        <EmptyTitle className="font-display grid gap-1 font-bold">
-          <div className="text-brand text-4xl">404</div>
+        <EmptyTitle className="font-display grid gap-1 font-semibold">
+          <div className="text-brand-high-contrast text-6xl">404</div>
           <div className="text-xl">Page Not Found</div>
         </EmptyTitle>
         <EmptyDescription>The page you are looking for does not exist.</EmptyDescription>

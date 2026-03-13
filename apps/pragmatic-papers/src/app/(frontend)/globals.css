@@ -146,3 +146,7 @@
   padding-inline: 1rem;
   max-width: 80rem;
 }
+
+@utility font-display {
+  font-family: var(--font-sans);
+}
