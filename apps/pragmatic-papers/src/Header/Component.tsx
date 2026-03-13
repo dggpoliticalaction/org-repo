@@ -23,102 +23,100 @@ export async function Header(): Promise<React.JSX.Element> {
 
   return (
     <>
-      <header className="bg-background sticky top-0 z-50 mt-3">
-        <div className="bg-background container grid grid-cols-[1fr_auto_1fr] items-center gap-4 py-3">
-          <Sheet>
-            <SheetTrigger
-              render={
-                <Button variant="ghost" size="icon-lg">
-                  <TextSearch className="size-7" />
-                  <span className="sr-only">Menu</span>
-                </Button>
-              }
-            />
-            <SheetContent
-              className="space-y-4 data-[side=left]:w-full data-[side=left]:sm:max-w-sm [&>button:last-child]:rounded-none [&>button:last-child_svg]:size-7"
-              side="left"
-              showCloseButton={false}
-            >
-              <SheetHeader className="flex flex-row items-center justify-between">
-                <SheetTitle className="my-2 md:my-0">
-                  <Logo className="max-w-[80%]" />
-                </SheetTitle>
-                <SheetClose
-                  render={
-                    <Button variant="ghost" size="icon-lg">
-                      <XIcon className="size-7" />
-                      <span className="sr-only">Close</span>
-                    </Button>
-                  }
-                />
-              </SheetHeader>
-              <div className="bg-muted mx-4 mb-6 flex items-center gap-2 border px-3 py-2">
-                <Input
-                  type="search"
-                  placeholder="Search Coming Soon…"
-                  disabled
-                  aria-label="Search box"
-                  className="border-none bg-transparent"
-                />
-                <Button variant="ghost" size="icon" disabled tabIndex={-1}>
-                  <SearchIcon className="size-5" />
-                  <span className="sr-only">Search</span>
-                </Button>
-              </div>
-              <Menu menu={navItems} layout="stacked" />
-            </SheetContent>
-          </Sheet>
-          <Link
-            href="/"
-            aria-label="Link to Home"
-            className="inline-flex items-center justify-center"
-          >
-            <Logo />
-          </Link>
-          <div className="flex items-center justify-end gap-2">
-            <ActionButton className="hidden lg:flex" button={actionButton} />
-            <LinkButton
-              variant="outline"
-              className="hover:bg-foreground/10 hidden lg:flex"
-              href="/admin/login"
-              prefetch={false}
-            >
-              Log In
-            </LinkButton>
+      <header className="bg-background sticky top-0 z-50">
+        <div className="container">
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b py-3">
             <Sheet>
-              <SheetTrigger className="lg:hidden">
-                <User />
-                <span className="sr-only">Account</span>
-              </SheetTrigger>
+              <SheetTrigger
+                render={
+                  <Button variant="ghost" size="icon-lg">
+                    <TextSearch className="size-7" />
+                    <span className="sr-only">Menu</span>
+                  </Button>
+                }
+              />
               <SheetContent
-                className="items-center justify-center space-y-4 py-4 data-[side=right]:w-full sm:w-3/4 data-[side=right]:sm:max-w-sm [&>button:last-child]:top-3 [&>button:last-child_svg]:size-7"
-                side="right"
+                className="space-y-4 data-[side=left]:w-full data-[side=left]:sm:max-w-sm [&>button:last-child]:rounded-none [&>button:last-child_svg]:size-7"
+                side="left"
+                showCloseButton={false}
               >
-                <SheetHeader>
-                  <SheetTitle>Account</SheetTitle>
+                <SheetHeader className="flex flex-row items-center justify-between">
+                  <SheetTitle className="my-2 md:my-0">
+                    <Logo className="max-w-[80%]" />
+                  </SheetTitle>
+                  <SheetClose
+                    render={
+                      <Button variant="ghost" size="icon-lg">
+                        <XIcon className="size-7" />
+                        <span className="sr-only">Close</span>
+                      </Button>
+                    }
+                  />
                 </SheetHeader>
-                <div className="w-full space-y-2 px-4">
-                  <ActionButton button={actionButton} className="w-full" />
-                  <LinkButton
-                    variant="outline"
-                    size="lg"
-                    className="w-full"
-                    href="/admin/login"
-                    prefetch={false}
-                  >
-                    Log In
-                  </LinkButton>
+                <div className="bg-muted mx-4 mb-6 flex items-center gap-2 border px-3 py-2">
+                  <Input
+                    type="search"
+                    placeholder="Search Coming Soon…"
+                    disabled
+                    aria-label="Search box"
+                    className="border-none bg-transparent"
+                  />
+                  <Button variant="ghost" size="icon" disabled tabIndex={-1}>
+                    <SearchIcon className="size-5" />
+                    <span className="sr-only">Search</span>
+                  </Button>
                 </div>
+                <Menu menu={navItems} layout="stacked" />
               </SheetContent>
             </Sheet>
+            <Link
+              href="/"
+              aria-label="Link to Home"
+              className="inline-flex items-center justify-center"
+            >
+              <Logo />
+            </Link>
+            <div className="flex items-center justify-end gap-2">
+              <ActionButton className="hidden lg:flex" button={actionButton} />
+              <LinkButton
+                variant="outline"
+                className="hover:bg-foreground/10 hidden lg:flex"
+                href="/admin/login"
+                prefetch={false}
+              >
+                Log In
+              </LinkButton>
+              <Sheet>
+                <SheetTrigger className="lg:hidden">
+                  <User />
+                  <span className="sr-only">Account</span>
+                </SheetTrigger>
+                <SheetContent
+                  className="items-center justify-center space-y-4 py-4 data-[side=right]:w-full sm:w-3/4 data-[side=right]:sm:max-w-sm [&>button:last-child]:top-3 [&>button:last-child_svg]:size-7"
+                  side="right"
+                >
+                  <SheetHeader>
+                    <SheetTitle>Account</SheetTitle>
+                  </SheetHeader>
+                  <div className="w-full space-y-2 px-4">
+                    <ActionButton button={actionButton} className="w-full" />
+                    <LinkButton
+                      variant="outline"
+                      size="lg"
+                      className="w-full"
+                      href="/admin/login"
+                      prefetch={false}
+                    >
+                      Log In
+                    </LinkButton>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
       </header>
-      <Menu
-        menu={navItems}
-        layout="inline"
-        className="container my-3 hidden items-center justify-center border-t pt-3 lg:flex"
-      />
+      <Menu menu={navItems} layout="inline" className="hidden justify-center py-3 lg:flex" />
     </>
   )
 }
