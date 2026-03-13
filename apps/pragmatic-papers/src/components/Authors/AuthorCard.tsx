@@ -65,8 +65,8 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
     <Card className="rounded-xs">
       <CardContent className="flex flex-row gap-4">
         <HoverPrefetchLink href={`/authors/${slug}`} aria-label={name || "Author profile"}>
-          <Avatar className="h-full w-24 hover:opacity-80">
-            <AvatarImage src={src} alt={alt} className="rounded-sm" />
+          <Avatar className="aspect-square h-full w-24 hover:opacity-80">
+            <AvatarImage src={src} alt={alt} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </HoverPrefetchLink>

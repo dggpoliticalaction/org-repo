@@ -3,6 +3,7 @@
 import Link from "next/link"
 import React from "react"
 
+import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { Media } from "@/components/Media"
 import { Card, CardContent } from "@/components/ui/card"
 import type { Article, Volume } from "@/payload-types"
@@ -46,10 +47,10 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
         <div className="flex h-24 min-w-0 flex-1 flex-col justify-between space-y-1 overflow-hidden sm:h-28">
           <div className="min-h-0 space-y-1">
             {title && (
-              <h3 className="text-foreground line-clamp-3 font-semibold">
-                <Link href={href} ref={link.ref} className="hover:text-brand transition-colors">
+              <h3 className="text-foreground hover:text-brand line-clamp-3 font-semibold transition-colors">
+                <HoverPrefetchLink href={href} ref={link.ref}>
                   {title}
-                </Link>
+                </HoverPrefetchLink>
               </h3>
             )}
             {sanitizedDescription && (
