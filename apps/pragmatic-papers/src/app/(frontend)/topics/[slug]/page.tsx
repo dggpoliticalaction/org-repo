@@ -1,0 +1,174 @@
+import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
+import { LivePreviewListener } from "@/components/LivePreviewListener"
+import { PayloadRedirects } from "@/components/PayloadRedirects"
+import type { Article, Topic, Volume } from "@/payload-types"
+import config from "@payload-config"
+import type { Metadata } from "next"
+import { draftMode } from "next/headers"
+import { getPayload } from "payload"
+import React, { cache } from "react"
+
+interface Args {
+	params: Promise<{
+		slug?: string
+	}>
+}
+
+export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
+	const payload = await getPayload({ config })
+	const { docs } = await payload.find({
+		collection: "topics",
+		draft: false,
+		limit: 1000,
+		overrideAccess: true,
+		pagination: false,
+		where: {
+			slug: {
+				not_equals: null,
+			},
+		},
+	})
+
+	return docs.map(({ slug }) => ({ slug }))
+}
+
+const queryTopicBySlug = cache(async (slug: string): Promise<Topic | null> => {
+	const { isEnabled: draft } = await draftMode()
+
+	const payload = await getPayload({ config })
+
+	const { docs } = await payload.find({
+		collection: "topics",
+		draft,
+		limit: 1,
+		pagination: false,
+		where: {
+			slug: {
+				equals: slug,
+			},
+		},
+		depth: 0,
+	})
+
+	return docs[0] || null
+})
+
+const queryArticlesByTopic = cache(async (topicId: number): Promise<Article[]> => {
+	const { isEnabled: draft } = await draftMode()
+
+	const payload = await getPayload({ config })
+
+	const { docs } = await payload.find({
+		collection: "articles",
+		draft,
+		limit: 1000,
+		pagination: false,
+		where: {
+			topics: {
+				equals: topicId,
+			},
+		},
+		depth: 2,
+	})
+
+	return docs
+})
+
+const queryVolumesForArticles = cache(async (articleIds: number[]): Promise<Volume[]> => {
+	if (!articleIds.length) return []
+
+	const { isEnabled: draft } = await draftMode()
+
+	const payload = await getPayload({ config })
+
+	const { docs } = await payload.find({
+		collection: "volumes",
+		draft,
+		limit: 1000,
+		overrideAccess: draft,
+		pagination: false,
+		where: {
+			articles: {
+				in: articleIds,
+			},
+		},
+		depth: 0,
+	})
+
+	return docs
+})
+
+export async function generateMetadata({ params }: Args): Promise<Metadata> {
+	const { slug = "" } = await params
+	const topic = await queryTopicBySlug(slug)
+
+	const name = topic?.name || "Topic"
+	const title = `${name} - Pragmatic Papers`
+	const description = topic?.description || undefined
+
+	return {
+		title,
+		description,
+		openGraph: {
+			title,
+			description,
+			url: `/topics/${slug}`,
+		},
+	}
+}
+
+export default async function TopicPage({ params: paramsPromise }: Args): Promise<React.ReactNode> {
+	const { isEnabled: draft } = await draftMode()
+	const { slug = "" } = await paramsPromise
+	const url = `/topics/${slug}`
+	const topic = await queryTopicBySlug(slug)
+
+	if (!topic) return <PayloadRedirects url={url} />
+
+	const articles = await queryArticlesByTopic(topic.id)
+	const articleIds = articles.map((article) => article.id).filter(Boolean)
+	const volumes = await queryVolumesForArticles(articleIds)
+
+	const volumeByArticleId = new Map<number, Volume>()
+
+	for (const volume of volumes) {
+		const volumeArticles = volume.articles || []
+		for (const articleRef of volumeArticles) {
+			const articleId =
+				typeof articleRef === "object" && articleRef !== null
+					? articleRef.id
+					: (articleRef as number | undefined)
+
+			if (articleId != null && !volumeByArticleId.has(articleId)) {
+				volumeByArticleId.set(articleId, volume)
+			}
+		}
+	}
+
+	return (
+		<article className="container mb-16 max-w-3xl">
+			<PayloadRedirects disableNotFound url={url} />
+
+			{draft && <LivePreviewListener />}
+
+			<header className="mb-8 space-y-3 text-center">
+				<h1 className="text-3xl font-bold md:text-4xl">{topic.name}</h1>
+				{topic.description && <p className="text-sm text-muted-foreground">{topic.description}</p>}
+			</header>
+
+			<section aria-label="Articles for this topic">
+				<h2 className="mb-4 text-2xl font-semibold">Articles</h2>
+				{articles.length === 0 ? (
+					<p className="text-sm text-muted-foreground">No articles found for this topic yet.</p>
+				) : (
+					<div className="flex flex-col gap-4">
+						{articles.map((article) => {
+							const volume = volumeByArticleId.get(article.id)
+							return <AuthorArticleCard key={article.id} article={article} volume={volume} />
+						})}
+					</div>
+				)}
+			</section>
+		</article>
+	)
+}
