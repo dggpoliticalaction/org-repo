@@ -26,9 +26,7 @@ export const ArticleCard: React.FC<{
 
   return (
     <div className="relative h-full overflow-hidden rounded-lg">
-      <article
-        className={cn("flex h-full flex-row sm:flex-col", className)}
-      >
+      <article className={cn("flex h-full flex-row sm:flex-col", className)}>
         <div className="flex min-w-24 flex-shrink-0 basis-1/4 flex-col justify-center overflow-hidden rounded-lg sm:max-h-[300px] sm:min-w-0 sm:basis-auto">
           {metaImage && typeof metaImage !== "string" && (
             <Media
@@ -42,7 +40,10 @@ export const ArticleCard: React.FC<{
         <div className="flex flex-grow basis-3/4 flex-col p-4 sm:basis-auto">
           {titleToUse && (
             <div className="line-clamp-4 pb-1 font-sans text-xl font-extrabold">
-              <Link className="transition-colors hover:text-brand after:absolute after:inset-0" href={href}>
+              <Link
+                className="transition-colors after:absolute after:inset-0 hover:text-brand"
+                href={href}
+              >
                 {titleToUse}
               </Link>
             </div>

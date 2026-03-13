@@ -1,20 +1,37 @@
-import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
-import { editor } from "@/access/editor";
-import { Banner } from "@/blocks/Banner/config";
-import { Code } from "@/blocks/Code/config";
-import { MediaBlock } from "@/blocks/MediaBlock/config";
-import { SquiggleRule } from "@/blocks/SquiggleRule/config";
-import { generatePreviewPath } from "@/utilities/generatePreviewPath";
-import { OverviewField, MetaTitleField, MetaImageField, MetaDescriptionField, PreviewField } from "@payloadcms/plugin-seo/fields";
-import { lexicalEditor, AlignFeature, HeadingFeature, BlocksFeature, FixedToolbarFeature, InlineToolbarFeature, HorizontalRuleFeature, UnorderedListFeature, OrderedListFeature, IndentFeature, BlockquoteFeature } from "@payloadcms/richtext-lexical";
-import { type CollectionConfig, slugField } from "payload";
-import { checkArticles } from "./hooks/checkArticles";
-import { generateTitle } from "./hooks/generateTitle";
-import { pushToWebhooks } from "./hooks/pushToWebhooks";
-import { getNextVolumeNumber } from "./hooks/getNextVolumeNumber";
-import { revalidateArticle, revalidateDelete } from "./hooks/revalidateVolumes";
-import { setDefaultSeoTitle } from "./hooks/seoTitle";
-
+import { authenticatedOrPublished } from "@/access/authenticatedOrPublished"
+import { editor } from "@/access/editor"
+import { Banner } from "@/blocks/Banner/config"
+import { Code } from "@/blocks/Code/config"
+import { MediaBlock } from "@/blocks/MediaBlock/config"
+import { SquiggleRule } from "@/blocks/SquiggleRule/config"
+import { generatePreviewPath } from "@/utilities/generatePreviewPath"
+import {
+  OverviewField,
+  MetaTitleField,
+  MetaImageField,
+  MetaDescriptionField,
+  PreviewField,
+} from "@payloadcms/plugin-seo/fields"
+import {
+  lexicalEditor,
+  AlignFeature,
+  HeadingFeature,
+  BlocksFeature,
+  FixedToolbarFeature,
+  InlineToolbarFeature,
+  HorizontalRuleFeature,
+  UnorderedListFeature,
+  OrderedListFeature,
+  IndentFeature,
+  BlockquoteFeature,
+} from "@payloadcms/richtext-lexical"
+import { type CollectionConfig, slugField } from "payload"
+import { checkArticles } from "./hooks/checkArticles"
+import { generateTitle } from "./hooks/generateTitle"
+import { pushToWebhooks } from "./hooks/pushToWebhooks"
+import { getNextVolumeNumber } from "./hooks/getNextVolumeNumber"
+import { revalidateArticle, revalidateDelete } from "./hooks/revalidateVolumes"
+import { setDefaultSeoTitle } from "./hooks/seoTitle"
 
 export const Volumes: CollectionConfig = {
   slug: "volumes",
@@ -28,17 +45,19 @@ export const Volumes: CollectionConfig = {
     useAsTitle: "title",
     defaultColumns: ["title", "volumeNumber", "publishedAt", "description"],
     livePreview: {
-      url: ({ data, req }) => generatePreviewPath({
-        slug: data?.slug,
+      url: ({ data, req }) =>
+        generatePreviewPath({
+          slug: data?.slug,
+          collection: "volumes",
+          req,
+        }),
+    },
+    preview: (data, { req }) =>
+      generatePreviewPath({
+        slug: data?.slug as string,
         collection: "volumes",
         req,
       }),
-    },
-    preview: (data, { req }) => generatePreviewPath({
-      slug: data?.slug as string,
-      collection: "volumes",
-      req,
-    }),
   },
   fields: [
     {
@@ -65,7 +84,8 @@ export const Volumes: CollectionConfig = {
       label: "Auto-generate title from articles",
       defaultValue: true,
       admin: {
-        description: 'When enabled, the title will be automatically generated from the article titles, separated by " • "',
+        description:
+          'When enabled, the title will be automatically generated from the article titles, separated by " • "',
         position: "sidebar",
       },
     },
@@ -105,7 +125,7 @@ export const Volumes: CollectionConfig = {
                     OrderedListFeature(),
                     IndentFeature(),
                     BlockquoteFeature(),
-                  ];
+                  ]
                 },
               }),
               label: "Editor's Note",
@@ -169,9 +189,9 @@ export const Volumes: CollectionConfig = {
           // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
           ({ siblingData, value }) => {
             if (siblingData._status === "published" && !value) {
-              return new Date();
+              return new Date()
             }
-            return value;
+            return value
           },
         ],
       },
@@ -193,4 +213,4 @@ export const Volumes: CollectionConfig = {
     },
     maxPerDoc: 50,
   },
-};
+}
