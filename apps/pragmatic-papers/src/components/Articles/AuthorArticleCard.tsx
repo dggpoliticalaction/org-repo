@@ -39,8 +39,11 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
         <div className="flex h-24 min-w-0 flex-1 flex-col justify-between space-y-1 overflow-hidden sm:h-28">
           <div className="min-h-0 space-y-1">
             {title && (
-              <h3 className="line-clamp-3 font-semibold text-foreground">
-                <Link href={href} className="transition-colors hover:text-brand after:absolute after:inset-0">
+              <h3 className="line-clamp-2 font-semibold text-foreground">
+                <Link
+                  href={href}
+                  className="transition-colors after:absolute after:inset-0 hover:text-brand"
+                >
                   {title}
                 </Link>
               </h3>
@@ -50,7 +53,7 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
             )}
           </div>
           {volume && (
-            <p className="relative pt-1 text-xs text-muted-foreground">
+            <p className="line-clamp-1 pt-1 text-xs text-muted-foreground">
               <Link href={`/volumes/${volume.slug}`} className="underline-offset-2 hover:underline">
                 {volume.title ?? volume.slug}
               </Link>
