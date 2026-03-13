@@ -24,8 +24,7 @@ const menuItemVariants = cva("text-primary", {
   variants: {
     layout: {
       inline: "hover:underline text-sm underline-offset-4",
-      stacked:
-        "w-full justify-start rounded-none border-0 border-t px-4 text-base py-4 hover:bg-muted",
+      stacked: "w-full justify-start border-0 border-t hover:bg-muted",
       responsive: "hover:underline text-sm underline-offset-4",
     },
   },
@@ -61,10 +60,18 @@ export const Menu: React.FC<MenuProps> = ({ menu, className, layout, slot, ...pr
     <nav>
       <ul className={cn(menuVariants({ className, layout }))} {...props}>
         {menu.map(({ link, id }, index) => {
+          const isStacked = layout === "stacked"
           return (
             <li key={id || `menu-item-${index}`} className={cn(menuItemVariants({ layout }))}>
-              <Slot>
-                <CMSLink link={link} />
+              <Slot className="w-full">
+                <CMSLink
+                  link={link}
+                  className={cn(
+                    "block w-full text-left",
+                    isStacked &&
+                      "data-[active=true]:bg-muted px-4 py-3 data-[active=true]:font-semibold",
+                  )}
+                />
               </Slot>
             </li>
           )
