@@ -1,11 +1,11 @@
+import { isAdmin } from "@/access/checkRole"
+import { seed } from "@/endpoints/seed"
+import type { User } from "@/payload-types"
+import configPromise from "@payload-config"
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 import type { PayloadRequest } from "payload"
 import { getPayload } from "payload"
-import { seed } from "@/endpoints/seed"
-import { isAdmin } from "@/access/checkRole"
-import type { User } from "@/payload-types"
-import configPromise from "@payload-config"
 
 type SeedEvent =
   | { type: "progress"; message: string; step: number; total: number }
