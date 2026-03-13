@@ -1,6 +1,7 @@
+import type { JsonLdData } from "@/utilities/structuredData"
+
 interface JsonLdProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: Record<string, any> | Record<string, any>[]
+  data: JsonLdData | JsonLdData[]
 }
 
 export function JsonLd({ data }: JsonLdProps) {
