@@ -13,8 +13,7 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
   if (!footnotes || !footnotes.length) return null
   return (
     <>
-      <Separator />
-      <section className="border-border mt-4 border-t pt-4">
+      <section className="border-border space-y-2 border-t pt-4">
         <h3 className="text-xl font-semibold">Footnotes</h3>
         <ol className="list-inside list-decimal">
           {footnotes.map(({ index, note, attributionEnabled, link }) => {
@@ -25,7 +24,10 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
                   {note}
                 </span>
                 {attributionEnabled && (
-                  <CMSLink link={link} className="text-brand underline shadow-none">
+                  <CMSLink
+                    link={link}
+                    className="text-brand dark:text-brand-high-contrast text-sm underline shadow-none"
+                  >
                     {link?.type === "reference" ? `${getClientSideURL()}${url}` : url}
                   </CMSLink>
                 )}
@@ -34,6 +36,7 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
           })}
         </ol>
       </section>
+      <Separator />
     </>
   )
 }

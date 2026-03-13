@@ -37,13 +37,13 @@ export const Entry: React.FC<{
           <HoverPrefetchLink href={href}>{titleToUse}</HoverPrefetchLink>
         </h3>
       )}
-      <div className="text-brand flex gap-2 text-left font-serif text-sm">
+      <div className="text-brand dark:text-brand-high-contrast flex gap-2 text-left font-serif text-sm">
         {volumeNumber && <span className="font-semibold">Volume {toRoman(volumeNumber)}</span>}
         <span>•</span>
         {publishedAt && (
           <HoverPrefetchLink
             href={href}
-            className="text-brand font-semibold underline-offset-2 hover:underline"
+            className="font-semibold underline-offset-2 hover:underline"
           >
             <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
           </HoverPrefetchLink>
