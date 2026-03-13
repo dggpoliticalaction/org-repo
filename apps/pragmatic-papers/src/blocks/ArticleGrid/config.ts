@@ -1,5 +1,25 @@
 import type { Block } from "payload"
-import { layouts, type ArticleGridLayoutKey } from "./layouts"
+import type { LayoutDefinition } from "./types"
+
+import { Vespucci7 } from "./layouts/Vespucci7"
+import { Fibonacci7 } from "./layouts/Fibonacci7"
+import { Miami3 } from "./layouts/Miami3"
+import { Miami5 } from "./layouts/Miami5"
+import { Omaha4 } from "./layouts/Omaha4"
+import { Speranza6 } from "./layouts/Speranza6"
+
+export type { LayoutDefinition }
+
+export const layouts = {
+  "vespucci-7": Vespucci7,
+  "fibonacci-7": Fibonacci7,
+  "miami-3": Miami3,
+  "miami-5": Miami5,
+  "omaha-4": Omaha4,
+  "Speranza-6": Speranza6,
+} as const satisfies Record<string, LayoutDefinition>
+
+export type ArticleGridLayoutKey = keyof typeof layouts
 
 /** Map of layout key → slot count, passed to the custom SlotsField component */
 const slotCounts: Record<string, number> = Object.fromEntries(

@@ -2,6 +2,7 @@ import React from "react"
 
 import { ArticleTile } from "@/components/ArticleTile"
 import type { ArticleGridSlotData } from "../types"
+import type { LayoutDefinition } from "../types"
 
 export const label = "Omaha 4"
 
@@ -60,4 +61,10 @@ export const Omaha4Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots
       </div>
     </div>
   )
+}
+
+export const Omaha4: LayoutDefinition = {
+  label,
+  slotDescriptions,
+  component: Omaha4Layout,
 }

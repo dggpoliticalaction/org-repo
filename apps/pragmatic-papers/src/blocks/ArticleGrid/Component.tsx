@@ -5,7 +5,7 @@ import { getPayload } from "payload"
 import type { ArticleTileData } from "@/components/ArticleTile"
 import type { ArticleGridBlock as ArticleGridBlockType } from "@/payload-types"
 import type { ArticleGridSlotData } from "./types"
-import { layouts, type ArticleGridLayoutKey } from "./layouts"
+import { layouts, type ArticleGridLayoutKey } from "./config"
 
 /** Raw slot shape from Payload (array item) */
 interface RawSlot {

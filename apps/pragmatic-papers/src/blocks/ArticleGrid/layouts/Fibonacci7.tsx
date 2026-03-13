@@ -2,6 +2,7 @@ import React from "react"
 
 import { ArticleTile } from "@/components/ArticleTile"
 import type { ArticleGridSlotData } from "../types"
+import type { LayoutDefinition } from "../types"
 
 export const label = "Fibonacci 7"
 
@@ -84,4 +85,10 @@ export const Fibonacci7Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ s
       </div>
     </div>
   )
+}
+
+export const Fibonacci7: LayoutDefinition = {
+  label,
+  slotDescriptions,
+  component: Fibonacci7Layout,
 }
