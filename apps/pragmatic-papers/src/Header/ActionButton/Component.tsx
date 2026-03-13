@@ -27,7 +27,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({ button, className, .
       link={button?.link}
       variant={button?.variant}
       className={cn(
-        "gap-2 bg-(--cms-button-background) text-(--cms-button-foreground) hover:bg-[color-mix(in_srgb,var(--cms-button-background),black_10%)]",
+        "gap-2 bg-(--cms-button-background) text-(--cms-button-foreground) [a]:hover:bg-[color-mix(in_srgb,var(--cms-button-background),black_10%)]",
         className,
       )}
       style={

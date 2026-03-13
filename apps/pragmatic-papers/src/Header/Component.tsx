@@ -1,5 +1,6 @@
 import { Logo } from "@/components/Logo"
 import { PaperIcon } from "@/components/Logo/icons/PaperIcon"
+import { MegaMenu } from "@/components/MegaMenu"
 import { Menu } from "@/components/Menu"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -125,7 +126,8 @@ export async function Header(): Promise<React.JSX.Element> {
           </div>
         </div>
       </header>
-      <Menu menu={navItems} layout="inline" className="hidden justify-center py-3 lg:flex" />
+      {/* <Menu menu={navItems} layout="inline" className="hidden justify-center py-3 lg:flex" /> */}
+      <MegaMenu menu={navItems} />
     </>
   )
 }
