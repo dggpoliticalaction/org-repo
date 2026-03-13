@@ -1,22 +1,22 @@
 import type { Block } from "payload"
 import type { LayoutDefinition } from "./types"
 
-import { Vespucci7 } from "./layouts/Vespucci7"
 import { Fibonacci7 } from "./layouts/Fibonacci7"
 import { Miami3 } from "./layouts/Miami3"
 import { Miami5 } from "./layouts/Miami5"
 import { Omaha4 } from "./layouts/Omaha4"
 import { Speranza6 } from "./layouts/Speranza6"
+import { Vespucci7 } from "./layouts/Vespucci7"
 
 export type { LayoutDefinition }
 
 export const layouts = {
+  "miami-3": Miami3,
+  "omaha-4": Omaha4,
+  "miami-5": Miami5,
+  "Speranza-6": Speranza6,
   "vespucci-7": Vespucci7,
   "fibonacci-7": Fibonacci7,
-  "miami-3": Miami3,
-  "miami-5": Miami5,
-  "omaha-4": Omaha4,
-  "Speranza-6": Speranza6,
 } as const satisfies Record<string, LayoutDefinition>
 
 export type ArticleGridLayoutKey = keyof typeof layouts
@@ -41,7 +41,7 @@ export const ArticleGrid: Block = {
       type: "select",
       label: "Layout Preset",
       required: true,
-      defaultValue: "vespucci-7" satisfies ArticleGridLayoutKey,
+      defaultValue: "vespucci-7",
       options: Object.entries(layouts).map(([value, def]) => ({
         label: def.label,
         value,
