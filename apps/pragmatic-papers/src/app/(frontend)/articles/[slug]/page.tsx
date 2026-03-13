@@ -83,7 +83,6 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   const fullUrl = `${serverUrl}${url}`
   const breadcrumbItems = [
     { name: "Home", url: serverUrl },
-    { name: "Articles", url: `${serverUrl}/articles` },
     { name: article.meta?.title || article.title, url: fullUrl },
   ]
 
