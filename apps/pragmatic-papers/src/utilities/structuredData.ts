@@ -171,7 +171,11 @@ export function buildBreadcrumbJsonLd(items: { name: string; url: string }[]): B
   }
 }
 
-export function buildCollectionPageJsonLd(title: string, description: string, url: string): CollectionPageJsonLd {
+export function buildCollectionPageJsonLd(
+  title: string,
+  description: string,
+  url: string,
+): CollectionPageJsonLd {
   return {
     "@context": "https://schema.org" as const,
     "@type": "CollectionPage" as const,
