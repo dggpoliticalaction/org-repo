@@ -30,14 +30,14 @@ function createSlots(
  *   2. ArticleGrid    – vespucci-7 layout
  *   3. Content block  – "Fibonacci Style Article Grid"
  *   4. ArticleGrid    – fibonacci-7 layout
- *   5. Content block  – "Miami 3 Style Article Grid"
- *   6. ArticleGrid    – miami-3 layout
- *   7. Content block  – "Miami 5 Style Article Grid"
- *   8. ArticleGrid    – miami-5 layout
- *   9. Content block  – "Omaha 4 Style Article Grid"
- *  10. ArticleGrid    – omaha-4 layout
- *  11. Content block  – "Speranza 6 Style Article Grid"
- *  12. ArticleGrid    – Speranza-6 layout
+ *   5. Content block  – "Euler 3 Style Article Grid"
+ *   6. ArticleGrid    – euler-3 layout
+ *   7. Content block  – "Euler 5 Style Article Grid"
+ *   8. ArticleGrid    – euler-5 layout
+ *   9. Content block  – "Newton 4 Style Article Grid"
+ *  10. ArticleGrid    – newton-4 layout
+ *  11. Content block  – "Fibonacci 6 Style Article Grid"
+ *  12. ArticleGrid    – fibonacci-6 layout
  *
  * @param volume1ArticleIds - IDs for volume 1 articles (6 articles)
  * @param volume2ArticleIds - IDs for volume 2 articles (at least 2 needed)
@@ -61,15 +61,15 @@ export async function createArticleGridHomePage(
     volume2ArticleIds[0]!, // "Dawkins vs. Blackmore" (1st volume-2 article)
   ]
 
-  // Miami-3 grid: vol1[0], vol1[4], vol2[1]
-  const miami3ArticleIds = [
+  // Euler-3 grid: vol1[0], vol1[4], vol2[1]
+  const euler3ArticleIds = [
     volume1ArticleIds[0]!, // "The Trolley Problem Revisited"
     volume1ArticleIds[4]!, // "Simone de Beauvoir's Ethics of Ambiguity"
     volume2ArticleIds[1]!, // "Irony as Ideology"
   ]
 
-  // Miami-5 grid: featureArticles[3], vol1[1], featureArticles[2], vol1[5], vol1[5]
-  const miami5ArticleIds = [
+  // Euler-5 grid: featureArticles[3], vol1[1], featureArticles[2], vol1[5], vol1[5]
+  const euler5ArticleIds = [
     featureArticleIds[3]!, // mediaCollage – "Grids, Carousels, and Captions"
     volume1ArticleIds[1]!, // "Free Will and Determinism"
     featureArticleIds[2]!, // legacySocialEmbed – "Legacy Social Media Embed Test"
@@ -77,16 +77,16 @@ export async function createArticleGridHomePage(
     volume1ArticleIds[5]!, // "Epistemic Injustice" (repeated)
   ]
 
-  // Omaha-4 grid: vol1[2], vol2[0], vol2[0], vol1[0]
-  const omaha4ArticleIds = [
+  // Newton-4 grid: vol1[2], vol2[0], vol2[0], vol1[0]
+  const newton4ArticleIds = [
     volume1ArticleIds[2]!, // "Plato's Cave in the Digital Age"
     volume2ArticleIds[0]!, // "Dawkins vs. Blackmore"
     volume2ArticleIds[0]!, // "Dawkins vs. Blackmore" (repeated)
     volume1ArticleIds[0]!, // "The Trolley Problem Revisited"
   ]
 
-  // Speranza-6 grid: vol1[1], vol1[0], vol1[2], vol1[5], vol2[0], vol1[2]
-  const speranza6ArticleIds = [
+  // Fibonacci-6 grid: vol1[1], vol1[0], vol1[2], vol1[5], vol2[0], vol1[2]
+  const fibonacci6ArticleIds = [
     volume1ArticleIds[1]!, // "Free Will and Determinism"
     volume1ArticleIds[0]!, // "The Trolley Problem Revisited"
     volume1ArticleIds[2]!, // "Plato's Cave in the Digital Age"
@@ -119,23 +119,23 @@ export async function createArticleGridHomePage(
       },
       {
         blockType: "articleGrid",
-        layout: "miami-3",
-        slots: createSlots("miami-3", miami3ArticleIds),
+        layout: "euler-3",
+        slots: createSlots("euler-3", euler3ArticleIds),
       },
       {
         blockType: "articleGrid",
-        layout: "miami-5",
-        slots: createSlots("miami-5", miami5ArticleIds),
+        layout: "euler-5",
+        slots: createSlots("euler-5", euler5ArticleIds),
       },
       {
         blockType: "articleGrid",
-        layout: "omaha-4",
-        slots: createSlots("omaha-4", omaha4ArticleIds),
+        layout: "newton-4",
+        slots: createSlots("newton-4", newton4ArticleIds),
       },
       {
         blockType: "articleGrid",
-        layout: "Speranza-6",
-        slots: createSlots("Speranza-6", speranza6ArticleIds),
+        layout: "fibonacci-6",
+        slots: createSlots("fibonacci-6", fibonacci6ArticleIds),
       },
     ],
     meta: {

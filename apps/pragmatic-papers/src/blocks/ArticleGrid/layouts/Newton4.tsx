@@ -55,7 +55,7 @@ export const Euler4Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots
   )
 }
 
-export const Omaha4: LayoutDefinition = {
+export const Newton4: LayoutDefinition = {
   label,
   slotDescriptions,
   component: Euler4Layout,
