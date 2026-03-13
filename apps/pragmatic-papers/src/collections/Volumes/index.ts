@@ -11,7 +11,7 @@ import { type CollectionConfig, slugField } from "payload";
 import { checkArticles } from "./hooks/checkArticles";
 import { generateTitle } from "./hooks/generateTitle";
 import { pushToWebhooks } from "./hooks/pushToWebhooks";
-import { getNextVolumeNumber } from "./hooks/getVolumeNumber";
+import { getNextVolumeNumber } from "./hooks/getNextVolumeNumber";
 import { revalidateArticle, revalidateDelete } from "./hooks/revalidateVolumes";
 import { setDefaultSeoTitle } from "./hooks/seoTitle";
 

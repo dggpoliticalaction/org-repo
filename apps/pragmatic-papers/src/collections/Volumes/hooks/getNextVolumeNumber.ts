@@ -4,6 +4,7 @@ export const getNextVolumeNumber: FieldHook = async ({ req }) => {
   const { payload } = req;
   const volumes = await payload.find({
     collection: "volumes",
+    limit: 1,
     pagination: false,
     sort: "-volumeNumber",
   });
