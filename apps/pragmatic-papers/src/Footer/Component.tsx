@@ -1,6 +1,7 @@
 import { Logo } from "@/components/Logo"
 import { Menu } from "@/components/Menu"
 import { ModeToggle } from "@/components/ModeToggle"
+import { Separator } from "@/components/ui/separator"
 import type { Footer } from "@/payload-types"
 import { getCachedGlobal } from "@/utilities/getGlobals"
 import Link from "next/link"
@@ -11,7 +12,7 @@ export async function Footer(): Promise<React.ReactElement> {
 
   return (
     <footer className="container space-y-2 py-2">
-      <hr />
+      <Separator />
       <div className="flex flex-row items-center justify-between gap-2">
         <Link href="/" className="flex-1">
           <Logo size="sm" />
