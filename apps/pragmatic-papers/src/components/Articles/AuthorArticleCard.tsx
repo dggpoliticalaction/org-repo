@@ -39,7 +39,7 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
         <div className="flex h-24 min-w-0 flex-1 flex-col justify-between space-y-1 overflow-hidden sm:h-28">
           <div className="min-h-0 space-y-1">
             {title && (
-              <h3 className="line-clamp-2 font-semibold text-foreground">
+              <h3 className="line-clamp-3 font-semibold text-foreground">
                 <Link
                   href={href}
                   className="transition-colors after:absolute after:inset-0 hover:text-brand"
