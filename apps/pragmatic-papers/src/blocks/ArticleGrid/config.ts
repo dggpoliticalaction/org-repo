@@ -77,8 +77,15 @@ export const ArticleGrid: Block = {
         {
           name: "article",
           type: "relationship",
-          relationTo: "articles",
+          relationTo: ["articles", "volumes"],
           label: "Article",
+          admin: {
+            sortOptions: {
+              articles: "-publishedAt",
+              volumes: "-volumeNumber",
+            },
+          },
+          unique: true,
           required: true,
           filterOptions: { _status: { equals: "published" } },
         },

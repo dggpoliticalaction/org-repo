@@ -68,31 +68,31 @@ export async function createArticleGridHomePage(
     volume2ArticleIds[1]!, // "Irony as Ideology"
   ]
 
-  // Miami-5 grid: featureArticles[3], vol1[1], featureArticles[2], vol1[5], vol1[5]
+  // Miami-5 grid: all unique per block
   const miami5ArticleIds = [
     featureArticleIds[3]!, // mediaCollage – "Grids, Carousels, and Captions"
     volume1ArticleIds[1]!, // "Free Will and Determinism"
     featureArticleIds[2]!, // legacySocialEmbed – "Legacy Social Media Embed Test"
     volume1ArticleIds[5]!, // "Epistemic Injustice"
-    volume1ArticleIds[5]!, // "Epistemic Injustice" (repeated)
+    volume1ArticleIds[3]!, // "The Ship of Theseus and Personal Identity"
   ]
 
-  // Omaha-4 grid: vol1[2], vol2[0], vol2[0], vol1[0]
+  // Omaha-4 grid: all unique per block
   const omaha4ArticleIds = [
     volume1ArticleIds[2]!, // "Plato's Cave in the Digital Age"
     volume2ArticleIds[0]!, // "Dawkins vs. Blackmore"
-    volume2ArticleIds[0]!, // "Dawkins vs. Blackmore" (repeated)
+    volume2ArticleIds[1]!, // "Irony as Ideology"
     volume1ArticleIds[0]!, // "The Trolley Problem Revisited"
   ]
 
-  // Speranza-6 grid: vol1[1], vol1[0], vol1[2], vol1[5], vol2[0], vol1[2]
+  // Speranza-6 grid: all unique per block
   const speranza6ArticleIds = [
     volume1ArticleIds[1]!, // "Free Will and Determinism"
     volume1ArticleIds[0]!, // "The Trolley Problem Revisited"
     volume1ArticleIds[2]!, // "Plato's Cave in the Digital Age"
     volume1ArticleIds[5]!, // "Epistemic Injustice"
     volume2ArticleIds[0]!, // "Dawkins vs. Blackmore"
-    volume1ArticleIds[2]!, // "Plato's Cave in the Digital Age" (repeated)
+    volume1ArticleIds[3]!, // "The Ship of Theseus and Personal Identity"
   ]
 
   const homeData: RequiredDataFromCollectionSlug<"pages"> = {
