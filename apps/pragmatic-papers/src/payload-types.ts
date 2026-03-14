@@ -55,7 +55,7 @@ export type CollectionGridLayout =
   | 'vespucci-7'
   | 'fibonacci-7';
 /**
- * Fill each slot with an article. The number of slots is determined by the chosen layout.
+ * Fill each slot with a article or volume. The number of slots is determined by the chosen layout.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CollectionGridSlots".
@@ -75,7 +75,7 @@ export type CollectionGridSlots = {
    */
   kicker?: string | null;
   /**
-   * Optional override for the article title in this slot
+   * Optional override for the title in this slot
    */
   overrideTitle?: string | null;
   id?: string | null;
