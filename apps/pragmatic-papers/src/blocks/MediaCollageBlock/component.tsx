@@ -25,7 +25,6 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
         showCaptions
         indicatorClassName="bottom-20"
         imageClassName="border border-border rounded-sm absolute inset-0 w-full h-full object-contain"
-        pictureClassName="w-full h-full"
         imageContainerClassName="aspect-video"
         enableModal
         galleryData={{
@@ -49,7 +48,7 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
             media={media}
             imgClassName="border border-border rounded-sm"
             enableModal
-            className={cn("not-prose", isLastOddItem && "md:col-span-2")}
+            className={cn("not-prose", isLastOddItem && "mx-auto w-1/2 md:col-span-2")}
             gallery={{
               images: validMedia,
               startIndex: idx,

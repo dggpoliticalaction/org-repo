@@ -65,6 +65,8 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
   images,
   initialIndex = 0,
   containerClassName,
+  imageContainerClassName,
+  imageClassName,
   navigationClassName,
   indicatorClassName,
   enableModal = false,
@@ -100,14 +102,26 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
         opts={{ loop: true, startIndex: initialIndex }}
         className={cn("relative", containerClassName)}
       >
-        <CarouselContent>
+        <CarouselContent className="h-full">
           {validImages.map((image, index) => (
-            <CarouselItem key={index}>
-              {enableModal ? (
-                <LightboxMediaBlock media={image} />
-              ) : (
-                <MediaBlock media={image} enableGutter={false} />
-              )}
+            <CarouselItem key={index} className="h-full bg-neutral-300 dark:bg-neutral-700">
+              <div
+                className={cn(
+                  "relative flex w-full items-center justify-center overflow-hidden rounded-sm",
+                  imageContainerClassName ?? "aspect-video",
+                )}
+              >
+                {enableModal ? (
+                  <LightboxMediaBlock media={image} enableGutter={false} />
+                ) : (
+                  <MediaBlock
+                    media={image}
+                    enableGutter={false}
+                    className="h-full w-full"
+                    imgClassName={cn("max-h-full max-w-full object-contain", imageClassName)}
+                  />
+                )}
+              </div>
             </CarouselItem>
           ))}
         </CarouselContent>

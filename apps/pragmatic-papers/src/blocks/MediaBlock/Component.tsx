@@ -47,7 +47,6 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
       {caption && (
         <figcaption
           className={cn(
-            "mt-3",
             {
               container: !disableInnerContainer,
             },
