@@ -9,7 +9,7 @@ import type { Article as ArticleType, Media, User, Volume } from "@/payload-type
 import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
-import Image from "next/image"
+import NextImage from "next/image"
 import { getPayload } from "payload"
 import React, { cache } from "react"
 
@@ -190,7 +190,7 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
       <header className="flex flex-col items-center space-y-3 text-center">
         {profileSrc && (
           <div className="h-32 w-32 overflow-hidden rounded-full border border-border">
-            <Image
+            <NextImage
               src={profileSrc}
               alt={profileDoc?.alt || user.name || "Author avatar"}
               width={128}
