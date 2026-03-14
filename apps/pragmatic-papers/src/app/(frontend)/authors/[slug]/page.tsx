@@ -1,7 +1,6 @@
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
-import { NextImageFade } from "@/components/Media/ImageMedia/NextImageFade"
 import { PageRange } from "@/components/PageRange"
 import { Pagination } from "@/components/Pagination"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
@@ -10,6 +9,7 @@ import type { Article as ArticleType, Media, User, Volume } from "@/payload-type
 import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
+import NextImage from "next/image"
 import { getPayload } from "payload"
 import React, { cache } from "react"
 
@@ -190,7 +190,7 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
       <header className="flex flex-col items-center space-y-3 text-center">
         {profileSrc && (
           <div className="h-32 w-32 overflow-hidden rounded-full border border-border">
-            <NextImageFade
+            <NextImage
               src={profileSrc}
               alt={profileDoc?.alt || user.name || "Author avatar"}
               width={128}

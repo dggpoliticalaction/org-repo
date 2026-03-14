@@ -8,7 +8,7 @@ import React from "react"
 import type { Props as MediaProps } from "../types"
 
 import { getMediaUrl } from "@/utilities/getMediaUrl"
-import { NextImageFade } from "./NextImageFade"
+import NextImage from "next/image"
 
 const breakpoints = {
   "3xl": 1920,
@@ -92,7 +92,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
   return (
     <picture className={cn(pictureClassName)}>
-      <NextImageFade
+      <NextImage
         alt={alt || ""}
         className={cn("h-full w-full rounded object-cover", imgClassName)}
         fill={fill}
