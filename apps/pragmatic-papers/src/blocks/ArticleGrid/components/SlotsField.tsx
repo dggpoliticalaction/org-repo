@@ -32,7 +32,9 @@ export const SlotsField: React.FC<SlotsFieldProps> = (props) => {
 
   const rowCount = useFormFields(([fields]) => {
     const rowsField = fields[path || "slots"]
-    return rowsField && "rows" in rowsField && Array.isArray(rowsField.rows) ? rowsField.rows.length : 0
+    return rowsField && "rows" in rowsField && Array.isArray(rowsField.rows)
+      ? rowsField.rows.length
+      : 0
   })
 
   const prevLayoutRef = useRef(layoutValue)

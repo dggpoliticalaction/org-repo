@@ -65,7 +65,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       href={href}
       id={id ?? undefined}
       className={cn(
-        "@container group flex flex-col gap-6 space-y-2",
+        "group flex flex-col gap-6 space-y-2 @container",
         isHorizontal && "flex-row",
         className,
       )}
@@ -95,7 +95,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
         )}
 
         {/* Title — uses container queries to scale with available space */}
-        <h3 className="@xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl font-display text-sm font-bold leading-tight text-primary hover:text-primary/80">
+        <h3 className="font-display text-sm font-bold leading-tight text-primary hover:text-primary/80 @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl">
           {overrideTitle || title}
         </h3>
 
