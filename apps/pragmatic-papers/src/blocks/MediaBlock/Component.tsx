@@ -11,6 +11,7 @@ import { Media } from "../../components/Media"
 export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
   breakout?: boolean
   captionClassName?: string
+  pictureClassName?: string
   className?: string
   enableGutter?: boolean
   imgClassName?: string
@@ -21,6 +22,7 @@ export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
 export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
   const {
     captionClassName,
+    pictureClassName,
     className,
     enableGutter = true,
     imgClassName,
@@ -42,7 +44,12 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
       )}
     >
       {(media || staticImage) && (
-        <Media imgClassName={imgClassName} resource={media} src={staticImage} />
+        <Media
+          pictureClassName={pictureClassName}
+          imgClassName={imgClassName}
+          resource={media}
+          src={staticImage}
+        />
       )}
       {caption && (
         <figcaption

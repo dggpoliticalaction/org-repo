@@ -49,10 +49,6 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
             imgClassName="border border-border rounded-sm"
             enableModal
             className={cn("not-prose", isLastOddItem && "mx-auto w-1/2 md:col-span-2")}
-            gallery={{
-              images: validMedia,
-              startIndex: idx,
-            }}
           />
         )
       })}
