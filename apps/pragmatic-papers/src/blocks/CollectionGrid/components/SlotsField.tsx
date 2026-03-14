@@ -13,7 +13,7 @@ type SlotsFieldProps = ArrayFieldClientProps & {
 }
 
 /**
- * Custom array field component for ArticleGrid slots.
+ * Custom array field component for CollectionGrid slots.
  *
  * Watches the sibling `layout` select field and automatically adjusts
  * the number of array rows to match the selected layout's slot count.

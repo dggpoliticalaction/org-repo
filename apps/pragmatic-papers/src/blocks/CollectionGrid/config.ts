@@ -74,13 +74,13 @@ export const CollectionGrid: Block = {
           "Fill each slot with a article or volume. The number of slots is determined by the chosen layout.",
         components: {
           Field: {
-            path: "@/blocks/ArticleGrid/components/SlotsField#SlotsField",
+            path: "@/blocks/CollectionGrid/components/SlotsField#SlotsField",
             clientProps: {
               slotCounts,
             },
           },
           RowLabel: {
-            path: "@/blocks/ArticleGrid/components/SlotRowLabel#SlotRowLabel",
+            path: "@/blocks/CollectionGrid/components/SlotRowLabel#SlotRowLabel",
             clientProps: {
               slotDescriptions,
             },

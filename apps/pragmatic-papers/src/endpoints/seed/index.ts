@@ -1,7 +1,7 @@
 import type { Media, User } from "@/payload-types"
 import type { Payload } from "payload"
 import { createArticle, getWriterOrThrow, validateWriters } from "./articles"
-import { createArticleGridHomePage } from "./features/article-grid"
+import { createCollectionGridHomePage } from "./features/collection-grid"
 import { createFootnotesArticle } from "./features/footnotes"
 import { createMathBlocksArticle } from "./features/math-blocks"
 import { createMediaCollageArticle } from "./features/media-collage"
@@ -202,7 +202,7 @@ export const seed = async (
     {
       name: "Creating pages & menus...",
       fn: async () => {
-        await createArticleGridHomePage(
+        await createCollectionGridHomePage(
           payload,
           ctx.volume1Articles,
           ctx.volume2Articles,

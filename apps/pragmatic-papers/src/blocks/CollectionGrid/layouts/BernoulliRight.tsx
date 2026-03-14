@@ -1,6 +1,6 @@
 import React from "react"
 
-import { CollectionTile } from "@/blocks/ArticleGrid/CollectionTile"
+import { CollectionTile } from "../CollectionTile"
 import { type LayoutDefinition, type LayoutProps } from "../types"
 
 export const BernoulliRight: LayoutDefinition = {

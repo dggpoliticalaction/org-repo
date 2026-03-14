@@ -1272,7 +1272,7 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
-        collectionGrid?: T | ArticleGridBlockSelect<T>;
+        collectionGrid?: T | CollectionGridBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
@@ -1295,9 +1295,9 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ArticleGridBlock_select".
+ * via the `definition` "CollectionGridBlock_select".
  */
-export interface ArticleGridBlockSelect<T extends boolean = true> {
+export interface CollectionGridBlockSelect<T extends boolean = true> {
   layout?: T;
   slots?: T | CollectionGridSlotsSelect<T>;
   id?: T;

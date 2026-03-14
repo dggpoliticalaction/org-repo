@@ -2,33 +2,33 @@ import type { Page } from "@/payload-types"
 import type { Payload } from "payload"
 
 /**
- * Creates the home page with ArticleGrid blocks and saves it to the `pages` collection.
+ * Creates the home page with CollectionGrid blocks and saves it to the `pages` collection.
  *
  * The page mirrors the exported homepage.json layout:
  *   1. Content block  – "Vespucci Style Article Grid"
- *   2. ArticleGrid    – vespucci-7 layout
+ *   2. CollectionGrid    – vespucci-7 layout
  *   3. Content block  – "Fibonacci Style Article Grid"
- *   4. ArticleGrid    – fibonacci-7 layout
+ *   4. CollectionGrid    – fibonacci-7 layout
  *   9. Content block  – "Newton 4 Style Article Grid"
- *  10. ArticleGrid    – newton-4 layout
+ *  10. CollectionGrid    – newton-4 layout
  *   5. Content block  – "Euler 3 Style Article Grid"
- *   6. ArticleGrid    – euler-3 layout
+ *   6. CollectionGrid    – euler-3 layout
  *   7. Content block  – "Euler 5 Style Article Grid"
- *   8. ArticleGrid    – euler-5 layout
+ *   8. CollectionGrid    – euler-5 layout
  *  11. Content block  – "Fibonacci 6 Style Article Grid"
- *  12. ArticleGrid    – fibonacci-6 layout
+ *  12. CollectionGrid    – fibonacci-6 layout
  *  13. Content block  – "Euler 2 Style Article Grid"
- *  14. ArticleGrid    – euler-2 layout
+ *  14. CollectionGrid    – euler-2 layout
  *  15. Content block  – "Bernoulli Left Style Article Grid"
- *  16. ArticleGrid    – bernoulli-left layout
+ *  16. CollectionGrid    – bernoulli-left layout
  *  17. Content block  – "Bernoulli Right Style Article Grid"
- *  18. ArticleGrid    – bernoulli-right layout
+ *  18. CollectionGrid    – bernoulli-right layout
  *
  * @param volume1ArticleIds - Volume 1 article IDs (6 articles)
  * @param volume2ArticleIds - Volume 2 article IDs (at least 2 needed)
  * @param featureArticleIds - Feature article IDs (index 2 = legacySocialEmbed, index 3 = mediaCollage)
  */
-export async function createArticleGridHomePage(
+export async function createCollectionGridHomePage(
   payload: Payload,
   volume1ArticleIds: number[],
   volume2ArticleIds: number[],
