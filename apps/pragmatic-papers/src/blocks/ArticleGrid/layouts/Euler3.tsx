@@ -1,12 +1,13 @@
 import React from "react"
 
-import { ArticleTile } from "@/components/ArticleTile"
-import type { ArticleGridSlotData } from "../types"
-import type { LayoutDefinition } from "../types"
+import { cn } from "@/utilities/ui"
+import { CollectionTile } from "../CollectionTile"
+import { type LayoutDefinition, type LayoutProps } from "../types"
 
-export const label = "Euler 3"
-
-export const slotDescriptions = ["Left article", "Center article", "Right article"]
+export const Euler3: LayoutDefinition = {
+  label: "Euler 3",
+  slotDescriptions: ["Left Column", "Center Column", "Right Column"],
+}
 
 /**
  * Euler 3 Layout
@@ -14,24 +15,12 @@ export const slotDescriptions = ["Left article", "Center article", "Right articl
  * 3 articles in a single row, each with an image above.
  * Responsive: 1 column on mobile, 3 equal columns on md+.
  */
-export const Euler3Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
+export const Euler3Layout: React.FC<LayoutProps> = ({ className, slots, ...props }) => {
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-      {slots.map((slot, i) => (
-        <ArticleTile
-          key={i}
-          article={slot.article}
-          imagePosition="above"
-          kicker={slot.kicker}
-          overrideTitle={slot.overrideTitle}
-        />
+    <section className={cn("grid grid-cols-1 gap-6 md:grid-cols-3", className)} {...props}>
+      {slots.map((slot, index) => (
+        <CollectionTile key={slot?.id ?? index} tile={slot} />
       ))}
-    </div>
+    </section>
   )
-}
-
-export const Euler3: LayoutDefinition = {
-  label,
-  slotDescriptions,
-  component: Euler3Layout,
 }

@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 
 import type { Page } from "@/payload-types"
 
-import { ArticleGridBlock } from "@/blocks/ArticleGrid/Component"
+import { CollectionGridBlock } from "@/blocks/ArticleGrid/Component"
 import { CallToActionBlock } from "@/blocks/CallToAction/Component"
 import { ContentBlock } from "@/blocks/Content/Component"
 import { FormBlock } from "@/blocks/Form/Component"
@@ -13,7 +13,7 @@ import { VolumeViewBlock } from "@/blocks/VolumeViewBlock/component"
 const blockComponents = {
   InlineMathBlock: MathBlock,
   DisplayMathBlock: MathBlock,
-  articleGrid: ArticleGridBlock,
+  collectionGrid: CollectionGridBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
   formBlock: FormBlock,
@@ -46,11 +46,9 @@ export const RenderBlocks: React.FC<{
                 />
               </div>
             )
-          } else if (blockType === "articleGrid") {
+          } else if (blockType === "collectionGrid") {
             return (
-              <div className="my-4" key={index}>
-                <ArticleGridBlock {...block} id={block.id ?? undefined} />
-              </div>
+              <CollectionGridBlock key={block.id || index} id={block.id ?? undefined} {...block} />
             )
           } else if (blockType && blockType in blockComponents) {
             const Block = blockComponents[blockType]

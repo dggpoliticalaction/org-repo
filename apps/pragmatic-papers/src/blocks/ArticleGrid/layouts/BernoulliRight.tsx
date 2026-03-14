@@ -1,33 +1,23 @@
 import React from "react"
 
-import { ArticleTile } from "@/components/ArticleTile"
-import type { ArticleGridSlotData } from "../types"
-import type { LayoutDefinition } from "../types"
+import { CollectionTile } from "@/blocks/ArticleGrid/CollectionTile"
+import { type LayoutDefinition, type LayoutProps } from "../types"
 
-export const label = "Bernoulli Right"
-
-export const slotDescriptions = ["Article"]
+export const BernoulliRight: LayoutDefinition = {
+  label: "Bernoulli Right",
+  slotDescriptions: ["Featured Image Right"],
+}
 
 /**
  * Bernoulli Right Layout
  *
  * A single article with the image on the left and the title block on the right.
  */
-export const BernoulliRightLayout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
-  const [article] = slots
-
+export const BernoulliRightLayout: React.FC<LayoutProps> = ({ slots, ...props }) => {
+  const [featured] = slots
   return (
-    <ArticleTile
-      article={article!.article}
-      imagePosition="left"
-      kicker={article!.kicker}
-      overrideTitle={article!.overrideTitle}
-    />
+    <section {...props}>
+      <CollectionTile tile={featured!} imagePosition="right" />
+    </section>
   )
-}
-
-export const BernoulliRight: LayoutDefinition = {
-  label,
-  slotDescriptions,
-  component: BernoulliRightLayout,
 }

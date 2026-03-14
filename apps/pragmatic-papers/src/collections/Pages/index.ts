@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload"
 
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished"
-import { ArticleGrid } from "@/blocks/ArticleGrid/config"
+import { CollectionGrid } from "@/blocks/ArticleGrid/config"
 import { CallToAction } from "@/blocks/CallToAction/config"
 import { Content } from "@/blocks/Content/config"
 import { FormBlock } from "@/blocks/Form/config"
@@ -73,7 +73,7 @@ export const Pages: CollectionConfig<"pages"> = {
             {
               name: "layout",
               type: "blocks",
-              blocks: [ArticleGrid, CallToAction, Content, MediaBlock, VolumeView, FormBlock],
+              blocks: [CollectionGrid, CallToAction, Content, MediaBlock, VolumeView, FormBlock],
               required: true,
               admin: {
                 initCollapsed: true,

@@ -1,20 +1,21 @@
 import React from "react"
 
-import { ArticleTile } from "@/components/ArticleTile"
-import type { ArticleGridSlotData } from "../types"
-import type { LayoutDefinition } from "../types"
+import { cn } from "@/utilities/ui"
+import { CollectionTile } from "../CollectionTile"
+import type { LayoutDefinition, LayoutProps } from "../types"
 
-export const label = "Vespucci 7"
-
-export const slotDescriptions = [
-  "Large featured article in center column",
-  "Left column, top",
-  "Left column, bottom",
-  "Right column, stacked (no image)",
-  "Right column, stacked (no image)",
-  "Right column, stacked (no image)",
-  "Right column, stacked (no image)",
-]
+export const Vespucci7: LayoutDefinition = {
+  label: "Vespucci 7",
+  slotDescriptions: [
+    "Featured Centered (Image Right)",
+    "Left Column, Top",
+    "Left Column, Bottom",
+    "Right Column, First (Compact)",
+    "Right Column, Second (Compact)",
+    "Right Column, Third (Compact)",
+    "Right Column, Fourth (Compact)",
+  ],
+}
 
 /**
  * Vespucci 7 Layout
@@ -30,57 +31,33 @@ export const slotDescriptions = [
  *
  * Desktop (lg:grid-cols-3 — 25%/50%/25%)
  */
-export const Vespucci7Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
+export const Vespucci7Layout: React.FC<LayoutProps> = ({ className, slots, ...props }) => {
   const [featured, a, b, c, d, e, f] = slots
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-[25%_50%_25%]">
+    <section
+      className={cn("grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-[1fr_2fr_1fr]", className)}
+      {...props}
+    >
       {/* Featured — center column (50%), spans 2 rows */}
-      <div className="md:order-last md:row-span-2 lg:order-none lg:col-start-2 lg:row-span-2">
-        <ArticleTile
-          article={featured!.article}
-          imagePosition="above"
-          kicker={featured!.kicker}
-          overrideTitle={featured!.overrideTitle}
-          className="h-full"
-        />
-      </div>
+      <CollectionTile
+        className="h-full md:col-span-2 md:row-span-2 lg:col-span-1 lg:row-span-2"
+        tile={featured!}
+      />
 
       {/* Slots A + B — left column (25%), spans 2 rows */}
-      <div className="flex flex-col gap-6 md:order-first md:row-span-2 lg:col-start-1 lg:row-span-2">
-        <ArticleTile
-          article={a!.article}
-          imagePosition="above"
-          kicker={a!.kicker}
-          overrideTitle={a!.overrideTitle}
-        />
-        <ArticleTile
-          article={b!.article}
-          imagePosition="above"
-          kicker={b!.kicker}
-          overrideTitle={b!.overrideTitle}
-        />
+      <div className="grid grid-cols-1 gap-6 md:col-span-2 md:grid-cols-2 lg:order-first lg:col-span-1 lg:row-span-2 lg:grid-cols-1">
+        <CollectionTile tile={a!} />
+        <CollectionTile tile={b!} />
       </div>
 
       {/* Slots C–F — right column (25%), 4 tiles with no image */}
-      <div className="grid auto-rows-fr grid-cols-1 gap-6 md:col-span-2 md:grid-cols-2 lg:col-span-1 lg:col-start-3 lg:row-span-2 lg:grid-cols-1">
-        {[c, d, e, f].map((slot, i) => (
-          <ArticleTile
-            key={i}
-            article={slot!.article}
-            imagePosition="none"
-            showByline
-            kicker={slot!.kicker}
-            overrideTitle={slot!.overrideTitle}
-          />
-        ))}
+      <div className="grid auto-rows-fr grid-cols-1 gap-6 md:col-span-2 md:grid-cols-2 lg:col-span-1 lg:col-start-3 lg:row-span-2 lg:row-start-1 lg:grid-cols-1">
+        <CollectionTile tile={c!} imagePosition="none" showByline />
+        <CollectionTile tile={d!} imagePosition="none" showByline />
+        <CollectionTile tile={e!} imagePosition="none" showByline />
+        <CollectionTile tile={f!} imagePosition="none" showByline />
       </div>
-    </div>
+    </section>
   )
-}
-
-export const Vespucci7: LayoutDefinition = {
-  label,
-  slotDescriptions,
-  component: Vespucci7Layout,
 }

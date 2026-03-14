@@ -39,6 +39,48 @@ export type FootnotesField =
     }[]
   | null;
 /**
+ * Choose a layout preset that determines how article slots are arranged.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollectionGridLayout".
+ */
+export type CollectionGridLayout =
+  | 'bernoulli-left'
+  | 'bernoulli-right'
+  | 'euler-2'
+  | 'euler-3'
+  | 'newton-4'
+  | 'euler-5'
+  | 'fibonacci-6'
+  | 'vespucci-7'
+  | 'fibonacci-7';
+/**
+ * Fill each slot with an article. The number of slots is determined by the chosen layout.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollectionGridSlots".
+ */
+export type CollectionGridSlots = {
+  collection:
+    | {
+        relationTo: 'articles';
+        value: number | Article;
+      }
+    | {
+        relationTo: 'volumes';
+        value: number | Volume;
+      };
+  /**
+   * Optional short label above the title (e.g. "Breaking", "Opinion")
+   */
+  kicker?: string | null;
+  /**
+   * Optional override for the article title in this slot
+   */
+  overrideTitle?: string | null;
+  id?: string | null;
+}[];
+/**
  * Supported timezones in IANA format.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -239,7 +281,7 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (ArticleGridBlock | CallToActionBlock | ContentBlock | MediaBlock | VolumeView | FormBlock)[];
+  layout: (CollectionGridBlock | CallToActionBlock | ContentBlock | MediaBlock | VolumeView | FormBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -546,98 +588,14 @@ export interface Topic {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ArticleGridBlock".
+ * via the `definition` "CollectionGridBlock".
  */
-export interface ArticleGridBlock {
-  /**
-   * Choose a layout preset that determines how the 7 article slots are arranged.
-   */
-  layout: 'bernoulli-left' | 'bernoulli-right' | 'euler-2' | 'euler-3' | 'newton-4' | 'euler-5' | 'fibonacci-6' | 'vespucci-7' | 'fibonacci-7';
-  /**
-   * Fill each slot with an article. Slot names correspond to positions in the chosen layout.
-   */
-  slots: {
-    featured: {
-      article: number | Article;
-      /**
-       * Optional short label above the title (e.g. "Breaking", "Opinion")
-       */
-      kicker?: string | null;
-      /**
-       * Optional override for the article title in this slot
-       */
-      overrideTitle?: string | null;
-    };
-    a: {
-      article: number | Article;
-      /**
-       * Optional short label above the title (e.g. "Breaking", "Opinion")
-       */
-      kicker?: string | null;
-      /**
-       * Optional override for the article title in this slot
-       */
-      overrideTitle?: string | null;
-    };
-    b: {
-      article: number | Article;
-      /**
-       * Optional short label above the title (e.g. "Breaking", "Opinion")
-       */
-      kicker?: string | null;
-      /**
-       * Optional override for the article title in this slot
-       */
-      overrideTitle?: string | null;
-    };
-    c: {
-      article: number | Article;
-      /**
-       * Optional short label above the title (e.g. "Breaking", "Opinion")
-       */
-      kicker?: string | null;
-      /**
-       * Optional override for the article title in this slot
-       */
-      overrideTitle?: string | null;
-    };
-    d: {
-      article: number | Article;
-      /**
-       * Optional short label above the title (e.g. "Breaking", "Opinion")
-       */
-      kicker?: string | null;
-      /**
-       * Optional override for the article title in this slot
-       */
-      overrideTitle?: string | null;
-    };
-    e: {
-      article: number | Article;
-      /**
-       * Optional short label above the title (e.g. "Breaking", "Opinion")
-       */
-      kicker?: string | null;
-      /**
-       * Optional override for the article title in this slot
-       */
-      overrideTitle?: string | null;
-    };
-    f: {
-      article: number | Article;
-      /**
-       * Optional short label above the title (e.g. "Breaking", "Opinion")
-       */
-      kicker?: string | null;
-      /**
-       * Optional override for the article title in this slot
-       */
-      overrideTitle?: string | null;
-    };
-  };
+export interface CollectionGridBlock {
+  layout: CollectionGridLayout;
+  slots: CollectionGridSlots;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'articleGrid';
+  blockType: 'collectionGrid';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1314,7 +1272,7 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
-        articleGrid?: T | ArticleGridBlockSelect<T>;
+        collectionGrid?: T | ArticleGridBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
@@ -1341,61 +1299,19 @@ export interface PagesSelect<T extends boolean = true> {
  */
 export interface ArticleGridBlockSelect<T extends boolean = true> {
   layout?: T;
-  slots?:
-    | T
-    | {
-        featured?:
-          | T
-          | {
-              article?: T;
-              kicker?: T;
-              overrideTitle?: T;
-            };
-        a?:
-          | T
-          | {
-              article?: T;
-              kicker?: T;
-              overrideTitle?: T;
-            };
-        b?:
-          | T
-          | {
-              article?: T;
-              kicker?: T;
-              overrideTitle?: T;
-            };
-        c?:
-          | T
-          | {
-              article?: T;
-              kicker?: T;
-              overrideTitle?: T;
-            };
-        d?:
-          | T
-          | {
-              article?: T;
-              kicker?: T;
-              overrideTitle?: T;
-            };
-        e?:
-          | T
-          | {
-              article?: T;
-              kicker?: T;
-              overrideTitle?: T;
-            };
-        f?:
-          | T
-          | {
-              article?: T;
-              kicker?: T;
-              overrideTitle?: T;
-            };
-      };
+  slots?: T | CollectionGridSlotsSelect<T>;
   id?: T;
   blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollectionGridSlots_select".
+ */
+export interface CollectionGridSlotsSelect<T extends boolean = true> {
+  collection?: T;
+  kicker?: T;
+  overrideTitle?: T;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

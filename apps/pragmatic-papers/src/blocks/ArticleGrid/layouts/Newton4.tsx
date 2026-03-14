@@ -1,62 +1,37 @@
 import React from "react"
 
-import { ArticleTile } from "@/components/ArticleTile"
-import type { ArticleGridSlotData } from "../types"
-import type { LayoutDefinition } from "../types"
+import { cn } from "@/utilities/ui"
+import { CollectionTile } from "../CollectionTile"
+import type { LayoutDefinition, LayoutProps } from "../types"
 
-export const label = "Euler 4"
-
-export const slotDescriptions = ["Featured", "Right top", "Right middle", "Right bottom"]
+export const Newton4: LayoutDefinition = {
+  label: "Newton 4",
+  slotDescriptions: [
+    "Featured Left",
+    "Right Column, Top",
+    "Right Column, Middle",
+    "Right Column, Bottom",
+  ],
+}
 
 /**
- * Euler 4 Layout
+ * Newton 4 Layout
  * Desktop: 75%/25% two-column split
  */
-export const Euler4Layout: React.FC<{ slots: ArticleGridSlotData[] }> = ({ slots }) => {
+export const Newton4Layout: React.FC<LayoutProps> = ({ className, slots, ...props }) => {
   const [featured, a, b, c] = slots
 
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[75%_25%]">
+    <section className={cn("grid grid-cols-1 gap-6 lg:grid-cols-[3fr_1fr]", className)} {...props}>
       {/* Featured — left column (75%) */}
-      <ArticleTile
-        article={featured!.article}
-        imagePosition="above"
-        showByline={false}
-        kicker={featured!.kicker}
-        overrideTitle={featured!.overrideTitle}
-        className="h-full text-center"
-      />
+      <CollectionTile className="h-full" tile={featured!} />
 
       {/* Right column — 3 stacked tiles (25%) */}
-      <div className="grid grid-cols-3 gap-6 lg:grid-cols-1">
-        <ArticleTile
-          article={a!.article}
-          imagePosition="above"
-          showByline={false}
-          kicker={a!.kicker}
-          overrideTitle={a!.overrideTitle}
-        />
-        <ArticleTile
-          article={b!.article}
-          imagePosition="none"
-          showByline={false}
-          kicker={b!.kicker}
-          overrideTitle={b!.overrideTitle}
-        />
-        <ArticleTile
-          article={c!.article}
-          imagePosition="none"
-          showByline={false}
-          kicker={c!.kicker}
-          overrideTitle={c!.overrideTitle}
-        />
+      <div className="grid grid-cols-1 gap-6">
+        <CollectionTile tile={a!} />
+        <CollectionTile tile={b!} imagePosition="none" />
+        <CollectionTile tile={c!} imagePosition="none" />
       </div>
-    </div>
+    </section>
   )
-}
-
-export const Newton4: LayoutDefinition = {
-  label,
-  slotDescriptions,
-  component: Euler4Layout,
 }

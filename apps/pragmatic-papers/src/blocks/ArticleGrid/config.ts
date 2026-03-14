@@ -1,6 +1,4 @@
 import type { Block } from "payload"
-import type { LayoutDefinition } from "./types"
-
 import { BernoulliLeft } from "./layouts/BernoulliLeft"
 import { BernoulliRight } from "./layouts/BernoulliRight"
 import { Euler2 } from "./layouts/Euler2"
@@ -10,8 +8,20 @@ import { Fibonacci6 } from "./layouts/Fibonacci6"
 import { Fibonacci7 } from "./layouts/Fibonacci7"
 import { Newton4 } from "./layouts/Newton4"
 import { Vespucci7 } from "./layouts/Vespucci7"
+import type { LayoutDefinition } from "./types"
 
 export type { LayoutDefinition }
+
+type Layout =
+  | "bernoulli-left"
+  | "bernoulli-right"
+  | "euler-2"
+  | "euler-3"
+  | "newton-4"
+  | "euler-5"
+  | "fibonacci-6"
+  | "vespucci-7"
+  | "fibonacci-7"
 
 export const layouts = {
   "bernoulli-left": BernoulliLeft,
@@ -23,34 +33,31 @@ export const layouts = {
   "fibonacci-6": Fibonacci6,
   "vespucci-7": Vespucci7,
   "fibonacci-7": Fibonacci7,
-} as const satisfies Record<string, LayoutDefinition>
+} as const satisfies Record<Layout, LayoutDefinition>
 
-export type ArticleGridLayoutKey = keyof typeof layouts
-
-/** Map of layout key → slot count, passed to the custom SlotsField component */
 const slotCounts: Record<string, number> = Object.fromEntries(
-  Object.entries(layouts).map(([key, def]) => [key, def.slotDescriptions.length]),
+  Object.entries(layouts).map(([key, { slotDescriptions }]) => [key, slotDescriptions.length]),
 )
 
-/** Map of layout key → slot descriptions, passed to the custom SlotRowLabel component */
 const slotDescriptions: Record<string, string[]> = Object.fromEntries(
   Object.entries(layouts).map(([key, def]) => [key, def.slotDescriptions]),
 )
 
-export const ArticleGrid: Block = {
-  slug: "articleGrid",
-  interfaceName: "ArticleGridBlock",
-  labels: { singular: "Article Grid", plural: "Article Grids" },
+export const CollectionGrid: Block = {
+  slug: "collectionGrid",
+  interfaceName: "CollectionGridBlock",
+  labels: { singular: "Collection Grid", plural: "Collection Grids" },
   fields: [
     {
       name: "layout",
       type: "select",
+      interfaceName: "CollectionGridLayout",
       label: "Layout Preset",
       required: true,
       defaultValue: "vespucci-7",
-      options: Object.entries(layouts).map(([value, def]) => ({
-        label: def.label,
+      options: Object.entries(layouts).map(([value, { label }]) => ({
         value,
+        label,
       })),
       admin: {
         description: "Choose a layout preset that determines how article slots are arranged.",
@@ -59,11 +66,12 @@ export const ArticleGrid: Block = {
     {
       name: "slots",
       type: "array",
-      label: "Article Slots",
+      label: "Slots",
+      interfaceName: "CollectionGridSlots",
       required: true,
       admin: {
         description:
-          "Fill each slot with an article. The number of slots is determined by the chosen layout.",
+          "Fill each slot with a article or volume. The number of slots is determined by the chosen layout.",
         components: {
           Field: {
             path: "@/blocks/ArticleGrid/components/SlotsField#SlotsField",
@@ -81,17 +89,16 @@ export const ArticleGrid: Block = {
       },
       fields: [
         {
-          name: "article",
+          name: "collection",
           type: "relationship",
           relationTo: ["articles", "volumes"],
-          label: "Article",
+          label: "Article or Volume",
           admin: {
             sortOptions: {
               articles: "-publishedAt",
               volumes: "-volumeNumber",
             },
           },
-          unique: true,
           required: true,
           filterOptions: { _status: { equals: "published" } },
         },
@@ -108,7 +115,7 @@ export const ArticleGrid: Block = {
           type: "text",
           label: "Override Title",
           admin: {
-            description: "Optional override for the article title in this slot",
+            description: "Optional override for the title in this slot",
           },
         },
       ],

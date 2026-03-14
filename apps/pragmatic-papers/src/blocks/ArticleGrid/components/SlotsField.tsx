@@ -1,7 +1,7 @@
 "use client"
-import React, { useEffect, useMemo, useRef } from "react"
+import { ArrayField, useForm, useFormFields } from "@payloadcms/ui"
 import type { ArrayFieldClientProps } from "payload"
-import { ArrayField, useFormFields, useForm } from "@payloadcms/ui"
+import React, { useEffect, useRef } from "react"
 
 type SlotCountMap = Record<string, number>
 
@@ -23,55 +23,25 @@ type SlotsFieldProps = ArrayFieldClientProps & {
 export const SlotsField: React.FC<SlotsFieldProps> = (props) => {
   const { slotCounts, layoutFieldName = "layout", path, schemaPath, field } = props
 
-  // Derive the full path to the layout field (sibling of this array field)
   const basePath = path?.includes(".") ? path.substring(0, path.lastIndexOf(".")) : ""
   const layoutPath = basePath ? `${basePath}.${layoutFieldName}` : layoutFieldName
 
   const { addFieldRow, removeFieldRow } = useForm()
 
-  const layoutValue = useFormFields(([fields]) => {
-    return fields[layoutPath]?.value as string | undefined
-  })
+  const layoutValue = useFormFields(([fields]) => fields[layoutPath]?.value as string | undefined)
 
-  const targetCount = (layoutValue && slotCounts[layoutValue]) || 0
-
-  // Override the field config to lock min/max rows to the target count
-  const lockedField = useMemo(
-    () => ({
-      ...field,
-      minRows: targetCount,
-      maxRows: targetCount,
-    }),
-    [field, targetCount],
-  )
-
-  // Get current row count from form state
   const rowCount = useFormFields(([fields]) => {
-    const prefix = path || "slots"
-    const rowsField = fields[prefix]
-    if (rowsField && "rows" in rowsField && Array.isArray(rowsField.rows)) {
-      return rowsField.rows.length
-    }
-    return 0
+    const rowsField = fields[path || "slots"]
+    return rowsField && "rows" in rowsField && Array.isArray(rowsField.rows) ? rowsField.rows.length : 0
   })
 
-  // Track previous layout to only react to *changes*, not initial render
-  const prevLayoutRef = useRef<string | undefined>(undefined)
-  const isInitialRender = useRef(true)
+  const prevLayoutRef = useRef(layoutValue)
 
   useEffect(() => {
-    if (!layoutValue || !slotCounts[layoutValue]) return
-
-    if (isInitialRender.current) {
-      isInitialRender.current = false
-      prevLayoutRef.current = layoutValue
-      return
-    }
-
-    if (layoutValue === prevLayoutRef.current) return
+    const requiredCount = (layoutValue && slotCounts[layoutValue]) || 0
+    if (!requiredCount || layoutValue === prevLayoutRef.current) return
     prevLayoutRef.current = layoutValue
 
-    const requiredCount = slotCounts[layoutValue]!
     const fieldPath = path || "slots"
     const fieldSchemaPath = schemaPath || fieldPath
 
@@ -86,5 +56,6 @@ export const SlotsField: React.FC<SlotsFieldProps> = (props) => {
     }
   }, [layoutValue, slotCounts, rowCount, path, schemaPath, addFieldRow, removeFieldRow])
 
-  return <ArrayField {...props} field={lockedField} />
+  const targetCount = (layoutValue && slotCounts[layoutValue]) || 0
+  return <ArrayField {...props} field={{ ...field, minRows: targetCount, maxRows: targetCount }} />
 }
