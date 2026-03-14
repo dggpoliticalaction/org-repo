@@ -31,9 +31,9 @@ export const ArticleCard: React.FC<{
           {metaImage && typeof metaImage !== "string" && (
             <Media
               resource={metaImage}
-              className="aspect-[4/3] w-full sm:aspect-square"
-              imgClassName="object-cover h-full w-full rounded-lg"
-              size="square"
+              className="aspect-[4/3]"
+              imgClassName="h-full w-full object-cover"
+              // size="square"
             />
           )}
         </div>

@@ -1,7 +1,7 @@
 "use client"
 
-import { Media } from "@/components/Media"
-import RichText from "@/components/RichText"
+import { MediaBlock } from "@/blocks/MediaBlock/Component"
+import { LightboxMediaBlock } from "@/blocks/MediaBlock/LightboxMediaBlock"
 import {
   Carousel,
   CarouselContent,
@@ -64,15 +64,10 @@ const CarouselIndicators: React.FC<{
 export const MediaCarousel: React.FC<MediaCarouselProps> = ({
   images,
   initialIndex = 0,
-  showCaptions = true,
   containerClassName,
-  imageContainerClassName,
-  imageClassName,
-  pictureClassName,
   navigationClassName,
   indicatorClassName,
   enableModal = false,
-  galleryData,
 }) => {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(initialIndex)
@@ -108,30 +103,11 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
         <CarouselContent>
           {validImages.map((image, index) => (
             <CarouselItem key={index}>
-              <figure>
-                <div className={cn("relative w-full rounded-sm", imageContainerClassName)}>
-                  <Media
-                    resource={image}
-                    imgClassName={imageClassName}
-                    pictureClassName={pictureClassName}
-                    className="h-full w-full"
-                    enableModal={enableModal}
-                    gallery={galleryData}
-                  />
-                </div>
-                {showCaptions && (
-                  <figcaption className="mt-3 min-h-[1.5rem] w-full text-center">
-                    {image.caption && (
-                      <RichText
-                        data={image.caption}
-                        enableGutter={false}
-                        enableProse={false}
-                        className="not-prose text-[0.95rem] text-muted-foreground"
-                      />
-                    )}
-                  </figcaption>
-                )}
-              </figure>
+              {enableModal ? (
+                <LightboxMediaBlock media={image} />
+              ) : (
+                <MediaBlock media={image} enableGutter={false} />
+              )}
             </CarouselItem>
           ))}
         </CarouselContent>

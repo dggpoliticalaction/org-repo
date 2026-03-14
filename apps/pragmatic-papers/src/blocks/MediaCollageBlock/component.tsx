@@ -1,13 +1,12 @@
 "use client"
-import { Media } from "@/components/Media"
 import { MediaCarousel } from "@/components/MediaCarousel"
-import RichText from "@/components/RichText"
 import type {
   MediaCollageBlock as MediaCollageBlockType,
   Media as MediaType,
 } from "@/payload-types"
 import { cn } from "@/utilities/ui"
 import React from "react"
+import { LightboxMediaBlock } from "../MediaBlock/LightboxMediaBlock"
 
 // actual code for the collage/grid
 export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, layout }) => {
@@ -39,40 +38,23 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
 
   // Grid layout
   return (
-    <div className="grid grid-cols-1 items-start gap-x-4 gap-y-4 md:grid-cols-2">
+    <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
       {images.map((img, idx) => {
         const media = typeof img.media === "number" ? null : img.media
         if (!media) return null
         const isLastOddItem = images.length % 2 !== 0 && idx === images.length - 1
         return (
-          <div
-            key={idx}
-            className={cn({
-              "md:col-span-2 md:mx-auto md:max-w-[50%]": isLastOddItem,
-            })}
-          >
-            <figure className="my-0">
-              <Media
-                resource={media}
-                imgClassName="border border-border rounded-sm"
-                enableModal
-                gallery={{
-                  images: validMedia,
-                  startIndex: idx,
-                }}
-              />
-              {media.caption && (
-                <figcaption className="mt-1 w-full text-center">
-                  <RichText
-                    data={media.caption}
-                    enableGutter={false}
-                    enableProse={false}
-                    className="not-prose text-[0.95rem] text-muted-foreground"
-                  />
-                </figcaption>
-              )}
-            </figure>
-          </div>
+          <LightboxMediaBlock
+            key={`${img.id}-${idx}`}
+            media={media}
+            imgClassName="border border-border rounded-sm"
+            enableModal
+            className={cn("not-prose", isLastOddItem && "md:col-span-2")}
+            gallery={{
+              images: validMedia,
+              startIndex: idx,
+            }}
+          />
         )
       })}
     </div>
