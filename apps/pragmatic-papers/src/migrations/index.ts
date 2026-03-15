@@ -19,6 +19,7 @@ import * as migration_20260307_014204_enable_math_rendering from './20260307_014
 import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles';
 import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField';
 import * as migration_20260311_160239_rename_Users_role_user_to_member from './20260311_160239_rename_Users_role_user_to_member';
+import * as migration_20260315_010753_volume_title_backto_default from './20260315_010753_volume_title_backto_default';
 
 export const migrations = [
   {
@@ -124,6 +125,11 @@ export const migrations = [
   {
     up: migration_20260311_160239_rename_Users_role_user_to_member.up,
     down: migration_20260311_160239_rename_Users_role_user_to_member.down,
-    name: '20260311_160239_rename_Users_role_user_to_member'
+    name: '20260311_160239_rename_Users_role_user_to_member',
+  },
+  {
+    up: migration_20260315_010753_volume_title_backto_default.up,
+    down: migration_20260315_010753_volume_title_backto_default.down,
+    name: '20260315_010753_volume_title_backto_default'
   },
 ];
