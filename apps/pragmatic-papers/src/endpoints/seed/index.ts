@@ -164,12 +164,14 @@ export const seed = async (
               [ctx.writer1, ctx.writer2],
               ctx.media,
               ctx.volume1Articles[0]!,
-              [ctx.topics[0]!]
+              [ctx.topics[0]!],
             ),
             createSocialEmbedArticle(payload, ctx.writer1, ctx.media, [ctx.topics[0]!]),
             createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media, [ctx.topics[0]!]),
             createMediaCollageArticle(payload, ctx.writer1, ctx.media, [ctx.topics[0]!]),
-            createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [ctx.topics[0]!]),
+            createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+              ctx.topics[0]!,
+            ]),
           ])
         ctx.featureArticles = [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks]
       },
