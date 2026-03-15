@@ -5,10 +5,10 @@ import configPromise from "@payload-config"
 import type { Volume } from "@/payload-types"
 
 /**
- * @deprecated 
-*Deprecated. With new frontpage, we now want to allow editors to set custom titles for volumes,
-*instead of auto-generating them from article titles. This file is left here for reference in case 
-*we want to re-implement this feature in the future.
+ * @deprecated
+ *Deprecated. With new frontpage, we now want to allow editors to set custom titles for volumes,
+ *instead of auto-generating them from article titles. This file is left here for reference in case
+ *we want to re-implement this feature in the future.
  */
 export const generateTitle: FieldHook<Volume, string, Volume> = async ({ value, siblingData }) => {
   // Only auto-generate if the toggle is enabled

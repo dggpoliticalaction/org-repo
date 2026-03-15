@@ -66,7 +66,7 @@ export const Volumes: CollectionConfig = {
       type: "text",
       required: true,
     },
-    // @deprecated as new front page design wont need it, but keeping for now in case we want to 
+    // @deprecated as new front page design wont need it, but keeping for now in case we want to
     // revert back to old design
     //   admin: {
     //     components: {
