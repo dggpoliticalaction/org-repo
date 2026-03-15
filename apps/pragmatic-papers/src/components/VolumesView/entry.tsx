@@ -45,7 +45,7 @@ export const Entry: React.FC<{
         {titleToUse && (
           <h3 className="my-6 text-center">
             <Link
-              className="text-xl font-bold transition-colors group-hover:text-brand after:absolute after:inset-0 md:text-3xl"
+              className="text-xl font-bold transition-colors after:absolute after:inset-0 group-hover:text-brand md:text-3xl"
               href={href}
             >
               {titleToUse}
