@@ -253,6 +253,7 @@ export const CarouselIndicators: React.FC<{
             idx === current ? "scale-125 bg-primary" : "opacity-40",
           )}
           aria-label={`Go to slide ${idx + 1}`}
+          tabIndex={-1}
         />
       ))}
     </div>
