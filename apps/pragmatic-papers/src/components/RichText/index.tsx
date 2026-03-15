@@ -67,7 +67,7 @@ function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunctio
     ...LinkJSXConverter({ internalDocToHref }),
     blocks: {
       banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
-      mediaBlock: ({ node }) => <LightboxMediaBlock {...node.fields} />,
+      mediaBlock: ({ node }) => <LightboxMediaBlock breakout {...node.fields} />,
       mediaCollage: ({ node }) => <MediaCollageBlock {...node.fields} />,
       code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
       cta: ({ node }) => <CallToActionBlock {...node.fields} />,

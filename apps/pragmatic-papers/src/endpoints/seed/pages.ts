@@ -1,6 +1,8 @@
 import type { Page } from "@/payload-types"
 import type { Payload } from "payload"
 
+import { createRichTextContent } from "./richtext"
+
 interface PageConfig {
   title: string
   slug: string
@@ -16,38 +18,6 @@ interface CreatePagesResult {
   termsOfUsePage: Page
   volumesPage: Page
 }
-
-const createRichTextContent = (content: string) => ({
-  root: {
-    children: [
-      {
-        children: [
-          {
-            detail: 0,
-            format: 0,
-            mode: "normal",
-            style: "",
-            text: content,
-            type: "text",
-            version: 1,
-          },
-        ],
-        direction: "ltr" as const,
-        format: "" as const,
-        indent: 0,
-        type: "paragraph",
-        version: 1,
-        textFormat: 0,
-        textStyle: "",
-      },
-    ],
-    direction: "ltr" as const,
-    format: "" as const,
-    indent: 0,
-    type: "root",
-    version: 1,
-  },
-})
 
 /** Hero richText with a heading containing the page name (for pageHero type). */
 const createHeroRichTextHeading = (pageTitle: string, tag: "h1" | "h2" | "h3" | "h4" = "h1") => ({

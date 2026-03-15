@@ -104,30 +104,15 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
       >
         <CarouselContent>
           {validImages.map((image, index) => (
-            <CarouselItem key={index} className="bg-neutral-300 dark:bg-neutral-700">
-              <div
-                className={cn(
-                  "relative flex min-h-0 w-full items-center justify-center overflow-hidden rounded-sm",
-                  imageContainerClassName ?? "aspect-video",
-                )}
-              >
-                {enableModal ? (
-                  <LightboxMediaBlock
-                    media={image}
-                    enableGutter={false}
-                    className="h-full w-full"
-                    pictureClassName="not-prose h-full w-full"
-                    imgClassName={cn("max-h-full max-w-full object-contain", imageClassName)}
-                  />
-                ) : (
-                  <MediaBlock
-                    media={image}
-                    enableGutter={false}
-                    className="h-full w-full"
-                    imgClassName={cn("max-h-full max-w-full object-contain", imageClassName)}
-                  />
-                )}
-              </div>
+            <CarouselItem
+              key={index}
+              className="flex aspect-video w-full items-center justify-center overflow-hidden"
+            >
+              {enableModal ? (
+                <LightboxMediaBlock media={image} enableGutter={false} imgClassName="not-prose" />
+              ) : (
+                <MediaBlock media={image} enableGutter={false} imgClassName="not-prose" />
+              )}
             </CarouselItem>
           ))}
         </CarouselContent>

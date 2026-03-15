@@ -29,12 +29,9 @@ export const ArticleCard: React.FC<{
       <article className={cn("flex h-full flex-row sm:flex-col", className)}>
         <div className="flex min-w-24 flex-shrink-0 basis-1/4 flex-col justify-center overflow-hidden rounded-lg sm:max-h-[300px] sm:min-w-0 sm:basis-auto">
           {metaImage && typeof metaImage !== "string" && (
-            <Media
-              resource={metaImage}
-              className="aspect-[4/3]"
-              imgClassName="h-full w-full object-cover"
-              // size="square"
-            />
+            <div className="aspect-[4/3]">
+              <Media resource={metaImage} imgClassName="h-full w-full object-cover" size="(max-width: 640px) 25vw, 50vw" />
+            </div>
           )}
         </div>
         <div className="flex flex-grow basis-3/4 flex-col p-4 sm:basis-auto">

@@ -18,7 +18,11 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
 
   return (
     <div className="relative flex-col">
-      {heroImage && <Media className="min-h-56 md:h-[420px]" resource={heroImage} />}
+      {heroImage && (
+        <div className="-mx-5 md:-mx-8 xl:-mx-16 min-h-56 md:h-[420px]">
+          <Media priority size="100vw" resource={heroImage} />
+        </div>
+      )}
       <div className="relative z-10 mt-4 flex-col pb-4 dark:text-white">
         <h1 className="mb-6 text-center text-4xl font-bold">{title}</h1>
         {filteredAuthors.length > 0 && (

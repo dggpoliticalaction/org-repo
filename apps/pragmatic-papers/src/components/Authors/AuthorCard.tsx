@@ -1,6 +1,6 @@
+import { Media } from "@/components/Media"
 import { Card, CardContent } from "@/components/ui/card"
-import type { Media, User } from "@/payload-types"
-import Image from "next/image"
+import type { Media as MediaType, User } from "@/payload-types"
 import Link from "next/link"
 import React from "react"
 import { AuthorLinks } from "./AuthorLinks"
@@ -12,13 +12,9 @@ function getInitials(name: string): string {
   return (parts[0]?.charAt(0) || "") + (parts[1]?.charAt(0) || "").toUpperCase()
 }
 
-function extractProfileImage(author: User): { src?: string; alt: string } {
+function extractProfileDoc(author: User): MediaType | undefined {
   const profile = author.profileImage
-  const profileDoc = profile && typeof profile === "object" ? (profile as Media) : undefined
-  const src = profileDoc?.sizes?.square?.url || profileDoc?.url || undefined
-  const alt = profileDoc?.alt || author.name || "Author avatar"
-
-  return { src, alt }
+  return profile && typeof profile === "object" ? (profile as MediaType) : undefined
 }
 
 function extractBioSnippet(author: User, maxLength = 255): string | undefined {
@@ -59,20 +55,18 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
   const { slug, name, affiliation } = author
   const initials = getInitials(name || "Author")
   const bioSnippet = extractBioSnippet(author)
-  const { src: avatarUrl, alt } = extractProfileImage(author)
+  const profileDoc = extractProfileDoc(author)
 
   return (
     <Card className="rounded-sm">
       <CardContent className="flex flex-row gap-4 p-4">
         <Link href={`/authors/${slug}`} aria-label={name || "Author profile"}>
           <div className="h-24 w-24 overflow-hidden rounded-sm border border-border bg-muted">
-            {avatarUrl ? (
-              <Image
-                src={avatarUrl}
-                alt={alt}
-                width={96}
-                height={96}
-                className="h-full w-full object-cover transition-opacity hover:opacity-80"
+            {profileDoc ? (
+              <Media
+                resource={profileDoc}
+                imgClassName="h-full w-full object-cover transition-opacity hover:opacity-80"
+                size="96px"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-primary text-lg font-semibold text-primary-foreground">

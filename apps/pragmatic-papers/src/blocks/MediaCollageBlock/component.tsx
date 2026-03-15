@@ -23,7 +23,6 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
       <MediaCarousel
         images={validMedia}
         showCaptions
-        indicatorClassName="bottom-20"
         imageClassName="border border-border rounded-sm absolute inset-0 w-full h-full object-contain"
         imageContainerClassName="aspect-video"
         enableModal
@@ -46,9 +45,12 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
           <LightboxMediaBlock
             key={`${img.id}-${idx}`}
             media={media}
-            imgClassName="border border-border rounded-sm"
-            enableModal
             className={cn("not-prose", isLastOddItem && "mx-auto w-1/2 md:col-span-2")}
+            sizes={
+              isLastOddItem
+                ? "(max-width: 1376px) 100vw, 1376px"
+                : "(max-width: 768px) 100vw, (max-width: 1376px) 50vw, 688px"
+            }
           />
         )
       })}
