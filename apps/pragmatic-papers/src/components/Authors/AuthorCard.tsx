@@ -1,19 +1,10 @@
+import { AuthorLinks } from "@/components/Authors/AuthorLinks"
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
+import { Media } from "@/components/Media"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
-import type { Media, User } from "@/payload-types"
+import type { User } from "@/payload-types"
 import { getInitials } from "@/utilities/getInitials"
-import React from "react"
-import { AuthorLinks } from "./AuthorLinks"
-
-function extractProfileImage(author: User): { src?: string; alt: string } {
-  const profile = author.profileImage
-  const profileDoc = profile && typeof profile === "object" ? (profile as Media) : undefined
-  const src = profileDoc?.sizes?.square?.url || profileDoc?.url || undefined
-  const alt = profileDoc?.alt || author.name || "Author avatar"
-
-  return { src, alt }
-}
 
 function extractBioSnippet(author: User, maxLength = 255): string | undefined {
   const bio = author.biography as User["biography"] | string
@@ -53,14 +44,21 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
   const { slug, name, affiliation } = author
   const initials = getInitials(name || "Author")
   const bioSnippet = extractBioSnippet(author)
-  const { src, alt } = extractProfileImage(author)
 
   return (
     <Card className="rounded-xs">
       <CardContent className="flex flex-row gap-4">
         <HoverPrefetchLink href={`/authors/${slug}`} aria-label={name || "Author profile"}>
           <Avatar className="aspect-square h-full w-24 hover:opacity-80">
-            <AvatarImage src={src} alt={alt} />
+            <AvatarImage
+              render={
+                <Media
+                  resource={author.profileImage}
+                  imgClassName="object-cover min-h-[352px]"
+                  size="square"
+                />
+              }
+            />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </HoverPrefetchLink>

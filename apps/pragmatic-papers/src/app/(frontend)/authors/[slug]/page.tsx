@@ -1,12 +1,13 @@
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
+import { Media } from "@/components/Media"
 import { PageRange } from "@/components/PageRange"
 import { Pagination } from "@/components/Pagination"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import type { Article as ArticleType, Media, User, Volume } from "@/payload-types"
+import type { Article as ArticleType, User, Volume } from "@/payload-types"
 import { getInitials } from "@/utilities/getInitials"
 import config from "@payload-config"
 import type { Metadata } from "next"
@@ -43,7 +44,7 @@ export async function generateStaticParams(): Promise<{ slug: string | null | un
 
 interface Args {
   params: Promise<{
-    slug?: string
+    slug: string
   }>
   searchParams: Promise<{
     p?: string
@@ -125,7 +126,7 @@ const queryVolumesForArticles = cache(async (articleIds: number[]): Promise<Volu
 })
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
-  const { slug = "" } = await params
+  const { slug } = await params
   const user = await queryUserBySlug(slug)
 
   const name = user?.name || "Author"
@@ -155,8 +156,12 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
   const url = `/authors/${slug}`
   if (!user) return <PayloadRedirects url={url} />
 
-  const articlesResult = await queryArticlesByAuthor(user.id, page)
-  const { docs: articles, totalDocs, totalPages, page: currentPage } = articlesResult
+  const {
+    docs: articles,
+    totalDocs,
+    totalPages,
+    page: currentPage,
+  } = await queryArticlesByAuthor(user.id, page)
   const articleIds = articles.map((article) => article.id).filter(Boolean)
   const volumes = await queryVolumesForArticles(articleIds)
 
@@ -178,8 +183,6 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
   const hasBiography = !!user.biography
 
   const profile = user.profileImage
-  const profileDoc = profile && typeof profile === "object" ? (profile as Media) : undefined
-  const profileSrc = profileDoc?.sizes?.square?.url || profileDoc?.url || undefined
 
   const initials = getInitials(user.name || "Author")
   return (
@@ -190,9 +193,13 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
       {draft && <LivePreviewListener />}
 
       <header className="flex flex-col items-center space-y-3 text-center">
-        {profileSrc && (
+        {profile && (
           <Avatar className="aspect-square h-full w-32 hover:opacity-80">
-            <AvatarImage src={profileSrc} alt={user.name || "Author"} />
+            <AvatarImage
+              render={
+                <Media resource={profile} imgClassName="object-cover min-h-[352px]" size="square" />
+              }
+            />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         )}
