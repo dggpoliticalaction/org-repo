@@ -152,7 +152,7 @@ export default async function TopicPage({ params: paramsPromise }: Args): Promis
 			{draft && <LivePreviewListener />}
 
 			<header className="mb-8 space-y-3 text-center">
-				<h1 className="text-3xl font-bold md:text-4xl">{topic.name}</h1>
+				<h1 className="text-3xl font-bold md:text-4xl">Topic: {topic.name}</h1>
 				{topic.description && <p className="text-sm text-muted-foreground">{topic.description}</p>}
 			</header>
 

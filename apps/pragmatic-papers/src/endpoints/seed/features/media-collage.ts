@@ -46,6 +46,7 @@ export const createMediaCollageArticle = async (
   payload: Payload,
   writer: User,
   mediaDocs: Media[],
+  topics: number[] = [],
 ): Promise<number> => {
   // Create media with captions
   const [itsBadMedia, blueCoatMedia] = await Promise.all([
@@ -111,6 +112,7 @@ export const createMediaCollageArticle = async (
     title,
     content,
     authors: [writer.id],
+    topics: topics,
     slug: "grids-carousels-captions-exploring-rich-media-layouts",
     heroImage: mediaDocs[Math.floor(Math.random() * mediaDocs.length)]?.id,
     meta: {

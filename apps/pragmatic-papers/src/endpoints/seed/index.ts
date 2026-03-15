@@ -10,6 +10,7 @@ import { createMediaFromURL } from "./media"
 import { createMenus } from "./menus"
 import { createPages } from "./pages"
 import { createLoremIpsumContent, generateLoremIpsumParagraph } from "./richtext"
+import { createTopics } from "./topics"
 import { createUsers } from "./users"
 import { createVolumes } from "./volumes"
 
@@ -17,6 +18,7 @@ interface SeedContext {
   media: Media[]
   writer1: User
   writer2: User
+  topics: number[]
   volume1Articles: number[]
   volume2Articles: number[]
   featureArticles: number[]
@@ -69,6 +71,7 @@ export const seed = async (
         })
         await payload.delete({ collection: "articles", where: {} })
         await payload.delete({ collection: "volumes", where: {} })
+        await payload.delete({ collection: "topics", where: {} })
         await payload.delete({ collection: "media", where: {} })
         await payload.delete({ collection: "pages", where: {} })
       },
@@ -97,6 +100,13 @@ export const seed = async (
       },
     },
     {
+      name: "Creating topics...",
+      fn: async () => {
+        const topics = await createTopics(payload)
+        ctx.topics = topics.map((topic) => topic.id)
+      },
+    },
+    {
       name: "Creating Volume 1 articles...",
       fn: async () => {
         const writers = [ctx.writer1, ctx.writer2]
@@ -107,6 +117,7 @@ export const seed = async (
             title,
             content: createLoremIpsumContent(Math.floor(Math.random() * 8) + 3),
             authors: [getWriterOrThrow(writers, i).id],
+            topics: [ctx.topics[1]!],
             slug: titleToSlug(title),
             heroImage: ctx.media[i % ctx.media.length]?.id,
             meta: {
@@ -130,6 +141,7 @@ export const seed = async (
             title,
             content: createLoremIpsumContent(Math.floor(Math.random() * 8) + 3),
             authors: [getWriterOrThrow(writers, i).id],
+            topics: [ctx.topics[2]!],
             slug: titleToSlug(title),
             heroImage: ctx.media[i % ctx.media.length]?.id,
             meta: {
@@ -152,11 +164,12 @@ export const seed = async (
               [ctx.writer1, ctx.writer2],
               ctx.media,
               ctx.volume1Articles[0]!,
+              [ctx.topics[0]!]
             ),
-            createSocialEmbedArticle(payload, ctx.writer1, ctx.media),
-            createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media),
-            createMediaCollageArticle(payload, ctx.writer1, ctx.media),
-            createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media),
+            createSocialEmbedArticle(payload, ctx.writer1, ctx.media, [ctx.topics[0]!]),
+            createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media, [ctx.topics[0]!]),
+            createMediaCollageArticle(payload, ctx.writer1, ctx.media, [ctx.topics[0]!]),
+            createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [ctx.topics[0]!]),
           ])
         ctx.featureArticles = [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks]
       },
