@@ -30,7 +30,6 @@ import {
   PreviewField,
 } from "@payloadcms/plugin-seo/fields"
 import { checkArticles } from "./hooks/checkArticles"
-import { generateTitle } from "./hooks/generateTitle"
 import { pushToWebhooks } from "./hooks/pushToWebhooks"
 import { revalidateArticle, revalidateDelete } from "./hooks/revalidateVolumes"
 import { setDefaultSeoTitle } from "./hooks/seoTitle"
@@ -64,33 +63,32 @@ export const Volumes: CollectionConfig = {
   fields: [
     {
       name: "title",
-      type: "textarea",
+      type: "text",
       required: true,
-      hooks: {
-        beforeChange: [generateTitle],
-      },
-      admin: {
-        components: {
-          Field: {
-            path: "@/collections/Volumes/components/TitleField#TitleFieldComponent",
-            clientProps: {
-              checkboxFieldPath: "autoGenerateTitle",
-            },
-          },
-        },
-      },
     },
-    {
-      name: "autoGenerateTitle",
-      type: "checkbox",
-      label: "Auto-generate title from articles",
-      defaultValue: true,
-      admin: {
-        description:
-          'When enabled, the title will be automatically generated from the article titles, separated by " • "',
-        position: "sidebar",
-      },
-    },
+    // @deprecated as new front page design wont need it, but keeping for now in case we want to 
+    // revert back to old design
+    //   admin: {
+    //     components: {
+    //       Field: {
+    //         path: "@/collections/Volumes/components/TitleField#TitleFieldComponent",
+    //         clientProps: {
+    //           checkboxFieldPath: "autoGenerateTitle",
+    //         },
+    //       },
+    //     },
+    //   },
+    // },
+    // {
+    //   name: "autoGenerateTitle",
+    //   type: "checkbox",
+    //   label: "Auto-generate title from articles",
+    //   defaultValue: true,
+    //   admin: {
+    //     description:
+    //       'When enabled, the title will be automatically generated from the article titles, separated by " • "',
+    //     position: "sidebar",
+    //   },
     {
       type: "tabs",
       tabs: [
