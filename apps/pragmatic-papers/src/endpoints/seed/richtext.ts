@@ -2,13 +2,13 @@
  * Utility functions for creating Lexical rich text structures
  */
 
+import type { SerializedParagraphNode, SerializedTextNode } from "@payloadcms/richtext-lexical"
 import type {
   ElementFormatType,
   SerializedEditorState,
   SerializedElementNode,
   SerializedLexicalNode,
 } from "@payloadcms/richtext-lexical/lexical"
-import type { SerializedParagraphNode, SerializedTextNode } from "@payloadcms/richtext-lexical"
 
 // Re-export commonly used types
 export type { SerializedLexicalNode }
