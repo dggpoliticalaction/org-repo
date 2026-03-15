@@ -30,7 +30,11 @@ export const ArticleCard: React.FC<{
         <div className="flex min-w-24 flex-shrink-0 basis-1/4 flex-col justify-center overflow-hidden rounded-lg sm:max-h-[300px] sm:min-w-0 sm:basis-auto">
           {metaImage && typeof metaImage !== "string" && (
             <div className="aspect-[4/3]">
-              <Media resource={metaImage} imgClassName="h-full w-full object-cover" size="(max-width: 640px) 25vw, 50vw" />
+              <Media
+                resource={metaImage}
+                imgClassName="h-full w-full object-cover"
+                size="(max-width: 640px) 25vw, 50vw"
+              />
             </div>
           )}
         </div>

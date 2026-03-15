@@ -19,24 +19,12 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
 
   //carousel image layout
   if (layout === "carousel") {
-    return (
-      <MediaCarousel
-        images={validMedia}
-        showCaptions
-        imageClassName="border border-border rounded-sm absolute inset-0 w-full h-full object-contain"
-        imageContainerClassName="aspect-video"
-        enableModal
-        galleryData={{
-          images: validMedia,
-          startIndex: 0,
-        }}
-      />
-    )
+    return <MediaCarousel images={validMedia} showCaptions enableModal />
   }
 
   // Grid layout
   return (
-    <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
+    <div className="-mx-5 grid grid-cols-1 items-start gap-6 md:-mx-8 md:grid-cols-2 xl:-mx-16">
       {images.map((img, idx) => {
         const media = typeof img.media === "number" ? null : img.media
         if (!media) return null

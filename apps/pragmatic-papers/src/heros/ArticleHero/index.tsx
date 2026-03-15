@@ -19,7 +19,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
   return (
     <div className="relative flex-col">
       {heroImage && (
-        <div className="-mx-5 md:-mx-8 xl:-mx-16 min-h-56 md:h-[420px]">
+        <div className="-mx-5 min-h-56 md:-mx-8 md:h-[480px] xl:-mx-16">
           <Media priority size="100vw" resource={heroImage} />
         </div>
       )}

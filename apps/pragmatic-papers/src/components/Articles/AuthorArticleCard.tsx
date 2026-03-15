@@ -29,7 +29,11 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
         <div className="h-24 w-32 flex-shrink-0 overflow-hidden rounded-sm border border-border bg-muted sm:h-28 sm:w-40">
           {metaImage && typeof metaImage !== "string" && (
             <div className="aspect-[4/3]">
-              <Media resource={metaImage} imgClassName="h-full w-full object-cover" size="(max-width: 640px) 128px, 160px" />
+              <Media
+                resource={metaImage}
+                imgClassName="h-full w-full object-cover"
+                size="(max-width: 640px) 128px, 160px"
+              />
             </div>
           )}
         </div>

@@ -232,4 +232,31 @@ const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<ty
 )
 CarouselNext.displayName = "CarouselNext"
 
+export const CarouselIndicators: React.FC<{
+  count: number
+  current: number
+  className?: string
+}> = ({ count, current, className }) => {
+  const { api } = useCarousel()
+
+  return (
+    <div
+      className={cn("absolute bottom-10 left-0 right-0 z-10 flex justify-center gap-2", className)}
+    >
+      {Array.from({ length: count }).map((_, idx) => (
+        <button
+          key={idx}
+          onClick={() => api?.scrollTo(idx)}
+          type="button"
+          className={cn(
+            "inline-block h-2 w-2 rounded-sm bg-muted-foreground ring-2 ring-background transition-all",
+            idx === current ? "scale-125 bg-primary" : "opacity-40",
+          )}
+          aria-label={`Go to slide ${idx + 1}`}
+        />
+      ))}
+    </div>
+  )
+}
+
 export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi }

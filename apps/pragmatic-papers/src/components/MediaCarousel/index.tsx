@@ -5,70 +5,27 @@ import { LightboxMediaBlock } from "@/blocks/MediaBlock/LightboxMediaBlock"
 import {
   Carousel,
   CarouselContent,
+  CarouselIndicators,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel"
 import type { Media as MediaType } from "@/payload-types"
-import { cn } from "@/utilities/ui"
 import React, { useState } from "react"
 
 interface MediaCarouselProps {
   images: (MediaType | null)[]
   initialIndex?: number
   showCaptions?: boolean
-  containerClassName?: string
-  imageContainerClassName?: string
-  imageClassName?: string
-  pictureClassName?: string
-  navigationClassName?: {
-    previous?: string
-    next?: string
-  }
-  indicatorClassName?: string
   enableModal?: boolean
-  galleryData?: {
-    images: MediaType[]
-    startIndex: number
-  }
 }
 
 // Carousel navigation indicators
-const CarouselIndicators: React.FC<{
-  count: number
-  current: number
-  api?: CarouselApi
-  className?: string
-}> = ({ count, current, api, className }) => {
-  return (
-    <div
-      className={cn("absolute bottom-10 left-0 right-0 z-10 flex justify-center gap-2", className)}
-    >
-      {Array.from({ length: count }).map((_, idx) => (
-        <button
-          key={idx}
-          onClick={() => api?.scrollTo(idx)}
-          type="button"
-          className={cn(
-            "inline-block h-2 w-2 rounded-sm bg-muted-foreground ring-2 ring-background transition-all",
-            idx === current ? "scale-125 bg-primary" : "opacity-40",
-          )}
-          aria-label={`Go to slide ${idx + 1}`}
-        />
-      ))}
-    </div>
-  )
-}
 
 export const MediaCarousel: React.FC<MediaCarouselProps> = ({
   images,
   initialIndex = 0,
-  containerClassName,
-  imageContainerClassName,
-  imageClassName,
-  navigationClassName,
-  indicatorClassName,
   enableModal = false,
 }) => {
   const [api, setApi] = useState<CarouselApi>()
@@ -91,40 +48,45 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
     })
   }, [api, initialIndex])
 
-  const validImages = images.filter((img): img is MediaType => img !== null)
+  const validImages = images.filter((img) => img !== null)
 
   if (!validImages.length) return null
 
   return (
-    <>
-      <Carousel
-        setApi={setApi}
-        opts={{ loop: true, startIndex: initialIndex }}
-        className={cn("relative", containerClassName)}
-      >
-        <CarouselContent>
-          {validImages.map((image, index) => (
-            <CarouselItem
-              key={index}
-              className="flex aspect-video w-full items-center justify-center overflow-hidden"
-            >
-              {enableModal ? (
-                <LightboxMediaBlock media={image} enableGutter={false} imgClassName="not-prose" />
-              ) : (
-                <MediaBlock media={image} enableGutter={false} imgClassName="not-prose" />
-              )}
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselIndicators
-          count={validImages.length}
-          current={current}
-          api={api}
-          className={indicatorClassName}
-        />
-        <CarouselPrevious className={navigationClassName?.previous || "left-3 lg:-left-12"} />
-        <CarouselNext className={navigationClassName?.next || "right-3 lg:-right-12"} />
-      </Carousel>
-    </>
+    <Carousel
+      setApi={setApi}
+      opts={{ loop: true, startIndex: initialIndex }}
+      className="-mx-5 md:-mx-8 xl:-mx-16"
+    >
+      <CarouselContent>
+        {validImages.map((image, index) => (
+          <CarouselItem
+            key={index}
+            className="flex aspect-video w-full items-center justify-center"
+          >
+            {enableModal ? (
+              <LightboxMediaBlock
+                media={image}
+                enableGutter={false}
+                className="h-full w-full"
+                imgClassName="not-prose object-contain"
+                captionClassName="hidden"
+              />
+            ) : (
+              <MediaBlock
+                media={image}
+                enableGutter={false}
+                className="h-full w-full"
+                imgClassName="not-prose object-contain"
+                captionClassName="hidden"
+              />
+            )}
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselIndicators count={validImages.length} current={current} />
+      <CarouselPrevious className="left-3 lg:-left-12" />
+      <CarouselNext className="right-3 lg:-right-12" />
+    </Carousel>
   )
 }
