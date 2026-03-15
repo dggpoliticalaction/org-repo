@@ -128,7 +128,7 @@ export default async function VolumePage({
   const volumeAuthors = await queryAuthorsByIds({ ids: Array.from(volumeAuthorIdSet) })
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6 px-4">
+    <article className="mx-auto max-w-3xl space-y-6 px-4">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
@@ -152,6 +152,6 @@ export default async function VolumePage({
         ))}
       </div>
       <AuthorList aria-label="Volume Authors" authors={volumeAuthors} />
-    </div>
+    </article>
   )
 }
