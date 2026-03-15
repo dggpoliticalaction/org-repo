@@ -265,10 +265,6 @@ export interface Page {
 export interface Volume {
   id: number;
   title: string;
-  /**
-   * When enabled, the title will be automatically generated from the article titles, separated by " • "
-   */
-  autoGenerateTitle?: boolean | null;
   volumeNumber: number;
   description: string;
   editorsNote?: {
@@ -1383,7 +1379,6 @@ export interface LinkFieldSelect<T extends boolean = true> {
  */
 export interface VolumesSelect<T extends boolean = true> {
   title?: T;
-  autoGenerateTitle?: T;
   volumeNumber?: T;
   description?: T;
   editorsNote?: T;
