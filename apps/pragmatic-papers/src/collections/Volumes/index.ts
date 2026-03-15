@@ -66,29 +66,6 @@ export const Volumes: CollectionConfig = {
       type: "text",
       required: true,
     },
-    // @deprecated as new front page design wont need it, but keeping for now in case we want to
-    // revert back to old design
-    //   admin: {
-    //     components: {
-    //       Field: {
-    //         path: "@/collections/Volumes/components/TitleField#TitleFieldComponent",
-    //         clientProps: {
-    //           checkboxFieldPath: "autoGenerateTitle",
-    //         },
-    //       },
-    //     },
-    //   },
-    // },
-    // {
-    //   name: "autoGenerateTitle",
-    //   type: "checkbox",
-    //   label: "Auto-generate title from articles",
-    //   defaultValue: true,
-    //   admin: {
-    //     description:
-    //       'When enabled, the title will be automatically generated from the article titles, separated by " • "',
-    //     position: "sidebar",
-    //   },
     {
       type: "tabs",
       tabs: [
