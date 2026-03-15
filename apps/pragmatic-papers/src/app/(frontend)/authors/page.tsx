@@ -41,7 +41,7 @@ export default async function AuthorsIndexPage(): Promise<React.ReactNode> {
   const authors = await queryAuthors()
 
   return (
-    <article className="m-auto max-w-3xl px-4 pt-8 pb-16">
+    <article className="mx-auto max-w-3xl space-y-6 px-4">
       <header className="mb-8 text-center">
         <h1 className="mb-2 text-3xl font-bold md:text-4xl">Authors</h1>
         <p className="text-muted-foreground text-sm">
