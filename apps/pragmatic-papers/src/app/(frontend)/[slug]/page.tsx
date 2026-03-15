@@ -85,8 +85,7 @@ export default async function Page({
 }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = "home" } = await paramsPromise
-  const url = slug === "home" ? "/" : `/${slug}`
-
+  const url = "/" + slug
   let page: RequiredDataFromCollectionSlug<"pages"> | null = null
 
   page = await queryPageBySlug({
