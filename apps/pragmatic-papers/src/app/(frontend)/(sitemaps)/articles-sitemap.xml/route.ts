@@ -6,10 +6,7 @@ import { unstable_cache } from "next/cache"
 const getArticlesSitemap = unstable_cache(
   async () => {
     const payload = await getPayload({ config })
-    const SITE_URL =
-      process.env.NEXT_PUBLIC_SERVER_URL ||
-      process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-      "https://example.com"
+    const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL
 
     const results = await payload.find({
       collection: "articles",
@@ -38,7 +35,7 @@ const getArticlesSitemap = unstable_cache(
           .filter((page) => Boolean(page?.slug))
           .map((page) => {
             return {
-              loc: page?.slug === "home" ? `${SITE_URL}/` : `${SITE_URL}/articles/${page?.slug}`,
+              loc: page?.slug === "home" ? `${SITE_URL}` : `${SITE_URL}/articles/${page?.slug}`,
               lastmod: page.updatedAt || dateFallback,
               news: {
                 title: page.title,

@@ -1,7 +1,4 @@
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL ||
-  process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-  "https://example.com"
+const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
@@ -11,9 +8,11 @@ module.exports = {
     "/articles-sitemap.xml",
     "/pages-sitemap.xml",
     "/volumes-sitemap.xml",
+    "/authors-sitemap.xml",
     "/*",
     "/volumes/*",
     "/articles/*",
+    "/authors/*",
   ],
   robotsTxtOptions: {
     policies: [
@@ -26,6 +25,7 @@ module.exports = {
       `${SITE_URL}/pages-sitemap.xml`,
       `${SITE_URL}/articles-sitemap.xml`,
       `${SITE_URL}/volumes-sitemap.xml`,
+      `${SITE_URL}/authors-sitemap.xml`,
     ],
   },
 }

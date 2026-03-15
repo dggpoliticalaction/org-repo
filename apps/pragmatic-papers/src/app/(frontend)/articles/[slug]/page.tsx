@@ -6,6 +6,9 @@ import RichText from "@/components/RichText"
 import { ArticleHero } from "@/heros/ArticleHero"
 import { MathJaxProvider } from "@/providers/MathJaxProvider"
 import { generateMeta } from "@/utilities/generateMeta"
+import { JsonLd } from "@/components/JsonLd"
+import { getServerSideURL } from "@/utilities/getURL"
+import { buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/utilities/structuredData"
 import configPromise from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
@@ -63,7 +66,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = "" } = await paramsPromise
   const article = await queryArticleBySlug({ slug })
 
-  return generateMeta({ doc: article })
+  return generateMeta({ doc: article, path: `/articles/${slug}` })
 }
 
 export default async function Article({ params: paramsPromise }: Args): Promise<React.ReactNode> {
@@ -76,8 +79,18 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   const { footnotes, content, authors, enableMathRendering } = article
 
+  const serverUrl = getServerSideURL()
+  const fullUrl = `${serverUrl}${url}`
+  const breadcrumbItems = [
+    { name: "Home", url: serverUrl },
+    { name: article.meta?.title || article.title, url: fullUrl },
+  ]
+
   return (
     <article className="m-auto max-w-3xl p-5 pb-16">
+      <JsonLd
+        data={[buildArticleJsonLd(article, fullUrl), buildBreadcrumbJsonLd(breadcrumbItems)]}
+      />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
