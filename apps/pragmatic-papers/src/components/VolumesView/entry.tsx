@@ -1,4 +1,3 @@
-"use client"
 import type { Volume } from "@/payload-types"
 import { cn } from "@/utilities/utils"
 import React from "react"

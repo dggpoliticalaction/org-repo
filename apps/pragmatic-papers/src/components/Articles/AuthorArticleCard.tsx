@@ -1,12 +1,9 @@
-"use client"
-
 import React from "react"
 
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { Media } from "@/components/Media"
 import { Card, CardContent } from "@/components/ui/card"
 import type { Article, Volume } from "@/payload-types"
-import useClickableCard from "@/utilities/useClickableCard"
 import { cn } from "@/utilities/utils"
 
 export interface AuthorArticleCardProps {
@@ -20,8 +17,6 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
   volume,
   className,
 }) => {
-  const { card, link } = useClickableCard<HTMLDivElement>({})
-
   const { slug, meta, title } = article
   const { description, image: metaImage } = meta || {}
 
@@ -29,10 +24,10 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
 
   return (
     <Card className={cn("rounded-sm", className)}>
-      <CardContent ref={card.ref} className="flex flex-row gap-4">
+      <CardContent className="flex flex-row gap-4">
         <div className="border-border bg-muted h-24 w-32 shrink-0 overflow-hidden rounded-sm border sm:h-28 sm:w-40">
           {metaImage && typeof metaImage !== "string" && (
-            <HoverPrefetchLink href={href} ref={link.ref}>
+            <HoverPrefetchLink href={href}>
               <Media
                 resource={metaImage}
                 className="h-full w-full rounded-sm"
@@ -45,9 +40,7 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
         <div className="flex flex-col gap-1">
           {title && (
             <h3 className="text-primary font-display hover:text-primary/80 line-clamp-3 text-lg font-semibold">
-              <HoverPrefetchLink href={href} ref={link.ref}>
-                {title}
-              </HoverPrefetchLink>
+              <HoverPrefetchLink href={href}>{title}</HoverPrefetchLink>
             </h3>
           )}
           {description && (

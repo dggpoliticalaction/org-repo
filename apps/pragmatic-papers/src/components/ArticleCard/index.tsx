@@ -1,5 +1,3 @@
-"use client"
-
 import type { Article } from "@/payload-types"
 import React from "react"
 
@@ -28,7 +26,7 @@ export const ArticleCard: React.FC<{
   return (
     <div className={cn("space-y-2", className)}>
       {metaImage && typeof metaImage !== "string" && (
-        <div className="bg-muted mb-2 flex aspect-3/2 items-center overflow-hidden rounded-sm hover:opacity-90">
+        <div className="bg-muted aspect-3/2 mb-2 flex items-center overflow-hidden rounded-sm hover:opacity-90">
           <HoverPrefetchLink href={href}>
             <Media resource={metaImage} imgClassName="object-cover min-h-[352px]" size="square" />
           </HoverPrefetchLink>
