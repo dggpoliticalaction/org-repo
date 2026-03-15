@@ -186,7 +186,7 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
 
   const initials = getInitials(user.name || "Author")
   return (
-    <article className="container mb-16 max-w-3xl">
+    <article className="mx-auto max-w-3xl space-y-6 px-4">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
