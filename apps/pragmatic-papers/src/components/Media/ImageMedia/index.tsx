@@ -11,7 +11,7 @@ const placeholderBlur =
 
 export type ImageVariant = keyof Required<MediaType>["sizes"]
 
-interface ImageMediaProps extends Omit<ImageProps, "src" | "alt" | "width" | "height"> {
+export interface ImageMediaProps extends Omit<ImageProps, "src" | "alt" | "width" | "height"> {
   media: MediaType
   variant?: ImageVariant
   containerClassName?: string

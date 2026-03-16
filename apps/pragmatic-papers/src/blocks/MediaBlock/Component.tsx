@@ -46,7 +46,7 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
         className,
       )}
     >
-      <Media imgClassName={imgClassName} media={media} sizes={imgSize} />
+      <Media className={imgClassName} media={media} sizes={imgSize} />
       {caption && (
         <figcaption
           className={cn(

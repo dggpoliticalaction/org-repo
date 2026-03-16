@@ -1,25 +1,18 @@
 import React from "react"
 
-import type { Props } from "./types"
+import { ImageMedia, type ImageMediaProps } from "./ImageMedia"
+import { VideoMedia, type VideoMediaProps } from "./VideoMedia"
 
-import { ImageMedia } from "./ImageMedia"
-import { VideoMedia } from "./VideoMedia"
+function isVideoMediaProps(props: VideoMediaProps | ImageMediaProps): props is VideoMediaProps {
+  if (!props.media) return false
+  if (typeof props.media === "number") return false
+  return props.media.mimeType?.includes("video") ?? false
+}
 
-export const Media: React.FC<Props> = ({ media, imgClassName, ...props }) => {
-  if (!media || typeof media === "number") return null
-
-  if (media.mimeType?.includes("video")) {
-    return <VideoMedia media={media} {...props} />
+export const Media: React.FC<VideoMediaProps | ImageMediaProps> = (props) => {
+  if (isVideoMediaProps(props)) {
+    return <VideoMedia {...props} />
   }
 
-  return (
-    <ImageMedia
-      media={media}
-      // TODO: alt should be required
-      alt={props.alt || ""}
-      // TODO: imgClassName should be renamed to className
-      className={imgClassName}
-      {...props}
-    />
-  )
+  return <ImageMedia {...props} />
 }

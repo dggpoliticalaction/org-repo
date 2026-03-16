@@ -65,7 +65,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
             {profileDoc ? (
               <Media
                 media={profileDoc}
-                imgClassName="h-full w-full object-cover transition-opacity hover:opacity-80"
+                className="h-full w-full object-cover transition-opacity hover:opacity-80"
                 sizes="96px"
               />
             ) : (

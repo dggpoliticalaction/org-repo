@@ -31,7 +31,7 @@ export const ArticleCard: React.FC<{
           <Media
             media={image}
             variant="square"
-            imgClassName="aspect-[4/3]"
+            className="aspect-[4/3]"
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 352px"
           />
         )}

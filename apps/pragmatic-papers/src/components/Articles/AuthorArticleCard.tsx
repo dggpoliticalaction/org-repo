@@ -31,7 +31,7 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
             <div className="aspect-[4/3]">
               <Media
                 media={metaImage}
-                imgClassName="h-full w-full object-cover"
+                className="h-full w-full object-cover"
                 sizes="(max-width: 640px) 128px, 160px"
               />
             </div>

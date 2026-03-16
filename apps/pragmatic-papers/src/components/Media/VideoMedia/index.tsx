@@ -1,14 +1,19 @@
 "use client"
 
-import { cn } from "@/utilities/ui"
 import React, { useEffect, useRef } from "react"
 
-import type { Props as MediaProps } from "../types"
+import type { Media as MediaType } from "@/payload-types"
 
 import { getMediaUrl } from "@/utilities/getMediaUrl"
 
-export const VideoMedia: React.FC<MediaProps> = (props) => {
-  const { onClick, media, videoClassName } = props
+export interface VideoMediaProps {
+  className?: string
+  onClick?: () => void
+  media?: number | MediaType // for Payload media
+}
+
+export const VideoMedia: React.FC<VideoMediaProps> = (props) => {
+  const { onClick, media, className } = props
 
   const videoRef = useRef<HTMLVideoElement>(null)
   // const [showFallback] = useState<boolean>()
@@ -29,7 +34,7 @@ export const VideoMedia: React.FC<MediaProps> = (props) => {
     return (
       <video
         autoPlay
-        className={cn(videoClassName)}
+        className={className}
         controls={false}
         loop
         muted
