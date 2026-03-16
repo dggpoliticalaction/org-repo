@@ -1,4 +1,4 @@
-import type { LinkField } from '@/payload-types'
+import type { LinkField } from "@/payload-types"
 
 /**
  * Generates a URL string from a given LinkField object.
@@ -16,16 +16,16 @@ import type { LinkField } from '@/payload-types'
 export function getLinkFieldUrl(link?: LinkField): string | null {
   if (!link) return null
   if (
-    link.type === 'reference' &&
-    typeof link.reference?.value === 'object' &&
+    link.type === "reference" &&
+    typeof link.reference?.value === "object" &&
     link.reference?.value.slug
   ) {
-    if (link.reference?.value.slug === 'home') {
-      return '/'
+    if (link.reference?.value.slug === "home") {
+      return "/"
     }
 
-    let url = ''
-    if (link.reference?.relationTo !== 'pages') {
+    let url = ""
+    if (link.reference?.relationTo !== "pages") {
       url += `/${link.reference?.relationTo}`
     }
 

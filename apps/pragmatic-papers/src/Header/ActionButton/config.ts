@@ -1,6 +1,6 @@
-import { colorPicker } from '@/fields/colorPicker'
-import { link } from '@/fields/link2'
-import type { NamedGroupField } from 'payload'
+import { colorPicker } from "@/fields/colorPicker"
+import { link } from "@/fields/link2"
+import type { NamedGroupField } from "payload"
 
 /**
  * Returns a configured Action Button group field for the Header.
@@ -17,15 +17,15 @@ import type { NamedGroupField } from 'payload'
  */
 export const actionButton = (): NamedGroupField => {
   return {
-    name: 'actionButton',
-    interfaceName: 'ActionButtonField',
-    type: 'group',
+    name: "actionButton",
+    interfaceName: "ActionButtonField",
+    type: "group",
     required: false,
     fields: [
       {
-        name: 'enabled',
-        label: 'Enable',
-        type: 'checkbox',
+        name: "enabled",
+        label: "Enable",
+        type: "checkbox",
         defaultValue: false,
         required: true,
       },
@@ -35,7 +35,7 @@ export const actionButton = (): NamedGroupField => {
         },
       }),
       {
-        type: 'row',
+        type: "row",
         admin: {
           condition: (_data, siblingData) => Boolean(siblingData?.enabled),
         },
@@ -43,17 +43,17 @@ export const actionButton = (): NamedGroupField => {
           /**
            * Background color picker for button.
            */
-          colorPicker({ name: 'backgroundColor', label: 'Background Color' }),
+          colorPicker({ name: "backgroundColor", label: "Background Color" }),
           /**
            * Text color picker for button.
            */
-          colorPicker({ name: 'textColor', label: 'Text Color' }),
+          colorPicker({ name: "textColor", label: "Text Color" }),
           {
-            type: 'select',
-            name: 'variant',
-            label: 'Variant',
-            options: ['default', 'outline', 'ghost', 'link'],
-            defaultValue: 'default',
+            type: "select",
+            name: "variant",
+            label: "Variant",
+            options: ["default", "outline", "ghost", "link"],
+            defaultValue: "default",
           },
         ],
       },

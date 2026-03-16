@@ -1,12 +1,13 @@
-import type { Payload } from 'payload'
-import type { Article, User } from '@/payload-types'
-import type { LexicalContent } from './richtext'
+import type { Payload } from "payload"
+import type { Article, User } from "@/payload-types"
+import type { LexicalContent } from "./richtext"
 
 interface CreateArticleOptions {
   title: string
   content: LexicalContent
   authors: number[]
   slug: string
+  heroImage?: number | null
   meta?: {
     title?: string | null
     description?: string | null
@@ -25,13 +26,14 @@ export async function createArticle(
   context?: Record<string, unknown>,
 ): Promise<Article> {
   return await payload.create({
-    collection: 'articles',
+    collection: "articles",
     ...(context && { context }),
     data: {
       title: options.title,
       content: options.content,
       authors: options.authors,
-      _status: 'published',
+      heroImage: options.heroImage || undefined,
+      _status: "published",
       publishedAt: new Date().toISOString(),
       slug: options.slug,
       meta: {
@@ -48,7 +50,7 @@ export async function createArticle(
  */
 export function validateWriters(writers: User[]): void {
   if (writers.length === 0) {
-    throw new Error('At least one writer is required to create articles')
+    throw new Error("At least one writer is required to create articles")
   }
 }
 

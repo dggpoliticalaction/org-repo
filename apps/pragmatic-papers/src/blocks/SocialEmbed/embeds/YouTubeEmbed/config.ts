@@ -1,4 +1,4 @@
-import type { Block } from 'payload'
+import type { Block } from "payload"
 
 /**
  * Legacy config for YouTube embeds.
@@ -6,19 +6,19 @@ import type { Block } from 'payload'
  * @see SocialEmbedBlock
  */
 export const LegacyYouTubeEmbed: Block = {
-  slug: 'youtubeEmbed',
+  slug: "youtubeEmbed",
   // interfaceName: 'YouTubeEmbedBlock',
   labels: {
-    singular: 'YouTube Embed (Legacy)',
-    plural: 'YouTube Embeds (Legacy)',
+    singular: "YouTube Embed (Legacy)",
+    plural: "YouTube Embeds (Legacy)",
   },
   admin: {
-    group: 'Legacy',
+    group: "Legacy",
   },
   fields: [
     {
-      name: 'url',
-      type: 'text',
+      name: "url",
+      type: "text",
       required: true,
     },
   ],

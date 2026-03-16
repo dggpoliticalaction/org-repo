@@ -1,18 +1,18 @@
-import type { TextField, TextFieldSingleValidation } from 'payload'
+import type { TextField, TextFieldSingleValidation } from "payload"
 
 const validateColorPicker: TextFieldSingleValidation = (value, options) => {
   if (!value && !options?.required) return true // Allow empty values if not required
 
   // Validate HEX color format
   const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
-  if (hexColorRegex.test(value || '')) {
+  if (hexColorRegex.test(value || "")) {
     return true
   }
 
-  return 'Please enter a valid HEX color code (e.g., #FF5733 or #F53)'
+  return "Please enter a valid HEX color code (e.g., #FF5733 or #F53)"
 }
 
-type ColorPickerProps = Omit<TextField, 'type'>
+type ColorPickerProps = Omit<TextField, "type">
 
 /**
  * `colorPicker` is a utility function to create a custom Payload CMS text field
@@ -37,14 +37,14 @@ type ColorPickerProps = Omit<TextField, 'type'>
  */
 export const colorPicker = (props: ColorPickerProps): TextField => {
   return {
-    label: 'Color Picker',
+    label: "Color Picker",
     ...props,
-    type: 'text',
+    type: "text",
     admin: {
-      description: 'Select a color using the color picker or enter a HEX code (e.g., #FF5733)',
+      description: "Select a color using the color picker or enter a HEX code (e.g., #FF5733)",
       components: {
         Field: {
-          path: '@/fields/colorPicker/ColorPickerComponent#ColorPickerComponent',
+          path: "@/fields/colorPicker/ColorPickerComponent#ColorPickerComponent",
         },
         ...props.admin?.components,
       },

@@ -1,4 +1,4 @@
-import type { Block } from 'payload'
+import type { Block } from "payload"
 
 /**
  * Legacy config for Reddit embeds.
@@ -6,19 +6,19 @@ import type { Block } from 'payload'
  * @see SocialEmbedBlock
  */
 export const LegacyRedditEmbed: Block = {
-  slug: 'redditEmbed',
+  slug: "redditEmbed",
   // interfaceName: 'RedditEmbedBlock',
   labels: {
-    singular: 'Reddit Embed (Legacy)',
-    plural: 'Reddit Embeds (Legacy)',
+    singular: "Reddit Embed (Legacy)",
+    plural: "Reddit Embeds (Legacy)",
   },
   admin: {
-    group: 'Legacy',
+    group: "Legacy",
   },
   fields: [
     {
-      name: 'url',
-      type: 'text',
+      name: "url",
+      type: "text",
       required: true,
     },
   ],

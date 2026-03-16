@@ -13,17 +13,20 @@ Seed scripts populate the database with sample content for development. Rather t
 ### Rich Text Utilities (`richtext.ts`)
 
 **Basic Functions:**
+
 - `createTextNode(text, format?)` - Creates a text node
 - `createParagraph(text | textNode | array)` - Creates a paragraph with text/nodes
 - `createEmptyParagraph()` - Creates a line break paragraph
 - `createRichText(children)` - Wraps paragraph nodes in root structure
 
 **High-Level Functions:**
+
 - `createRichTextFromString(text)` - Single paragraph from string
 - `createRichTextFromParagraphs(paragraphs[], addSpacing?)` - Multiple paragraphs with auto-spacing
 - `createLoremIpsumContent(numParagraphs)` - Lorem ipsum for testing
 
 **Lorem Ipsum Generators:**
+
 - `generateLoremIpsumParagraph(numSentences)` - Single paragraph
 - `generateLoremIpsumParagraphs(numParagraphs)` - Array of paragraphs
 
@@ -88,6 +91,7 @@ When generating a seed from article JSON:
 ⚠️ **Do NOT use URLs from article JSON** (e.g., `/api/media/file/image.jpg`) - these point to the local development server and won't work in seed scripts.
 
 **Instead:**
+
 - Ask the user to provide external URLs for each media item
 - Use publicly accessible URLs (CDN, GitHub raw, image hosting services, etc.)
 - Example: `https://raw.githubusercontent.com/org/repo/main/image.jpg`
@@ -95,23 +99,23 @@ When generating a seed from article JSON:
 ## Seed File Structure
 
 ```typescript
-import type { Payload } from 'payload'
-import type { User, Media } from '@/payload-types'
-import { createMediaFromURL } from '../utils/media'
+import type { Payload } from "payload"
+import type { User, Media } from "@/payload-types"
+import { createMediaFromURL } from "../utils/media"
 import {
   createRichText,
   createParagraph,
   createTextNode,
   createEmptyParagraph,
-} from '../utils/richtext'
-import { createArticle } from '../utils/articles'
+} from "../utils/richtext"
+import { createArticle } from "../utils/articles"
 
 // Helper functions for custom blocks
 function createMyCustomBlock(data) {
   return {
-    type: 'block',
-    fields: { blockType: 'myBlock', ...data },
-    format: '',
+    type: "block",
+    fields: { blockType: "myBlock", ...data },
+    format: "",
     version: 2,
   }
 }
@@ -124,31 +128,38 @@ export const createMyFeatureArticle = async (
   // Create any additional media
   const customMedia = await createMediaFromURL(
     payload,
-    'https://example.com/image.jpg',
-    'Alt text',
-    { caption: createRichTextFromString('Caption text') },
+    "https://example.com/image.jpg",
+    "Alt text",
+    { caption: createRichTextFromString("Caption text") },
   )
 
   // Build content programmatically
   const content = createRichText([
-    createParagraph('Introduction paragraph'),
+    createParagraph("Introduction paragraph"),
     createEmptyParagraph(),
-    createMyCustomBlock({ /* data */ }),
+    createMyCustomBlock({
+      /* data */
+    }),
     createParagraph([
-      createTextNode('Text with '),
-      { type: 'inlineBlock', fields: { /* inline block data */ } },
-      createTextNode(' more text'),
+      createTextNode("Text with "),
+      {
+        type: "inlineBlock",
+        fields: {
+          /* inline block data */
+        },
+      },
+      createTextNode(" more text"),
     ]),
   ])
 
   // Create the article
   const article = await createArticle(payload, {
-    title: 'My Feature Demo',
+    title: "My Feature Demo",
     content,
     authors: [writer.id],
-    slug: 'my-feature-demo',
+    slug: "my-feature-demo",
     meta: {
-      description: 'Description of the feature',
+      description: "Description of the feature",
       image: mediaDocs[0]?.id,
     },
   })
@@ -160,12 +171,15 @@ export const createMyFeatureArticle = async (
 ## Example: Converting JSON to Seed
 
 **Given article JSON with:**
+
 - Title: "Example Article"
 - Content with paragraphs and media blocks
 - Media with captions (showing local URLs like `/api/media/file/...`)
 
 **AI should first ask:**
+
 > "I see this article uses 2 media items. The JSON shows local dev server URLs which won't work for seeding. Please provide external URLs for:
+>
 > 1. Media with alt text 'alt1' and caption 'Caption 1'
 > 2. Media with alt text 'alt2' and caption 'Caption 2'"
 
@@ -177,34 +191,34 @@ export const createExampleArticle = async (payload, writer, mediaDocs) => {
   const [media1, media2] = await Promise.all([
     createMediaFromURL(
       payload,
-      'https://example.com/images/image1.jpg', // External URL from user
-      'alt1',
-      { caption: createRichTextFromString('Caption 1') },
+      "https://example.com/images/image1.jpg", // External URL from user
+      "alt1",
+      { caption: createRichTextFromString("Caption 1") },
     ),
     createMediaFromURL(
       payload,
-      'https://cdn.example.com/image2.png', // External URL from user
-      'alt2',
-      { caption: createRichTextFromString('Caption 2') },
+      "https://cdn.example.com/image2.png", // External URL from user
+      "alt2",
+      { caption: createRichTextFromString("Caption 2") },
     ),
   ])
 
   // Build content
   const content = createRichText([
-    createParagraph('First paragraph from JSON'),
+    createParagraph("First paragraph from JSON"),
     createEmptyParagraph(),
     createMediaBlock(media1.id),
     createEmptyParagraph(),
-    createParagraph('Second paragraph from JSON'),
+    createParagraph("Second paragraph from JSON"),
   ])
 
   // Create article
   return await createArticle(payload, {
-    title: 'Example Article',
+    title: "Example Article",
     content,
     authors: [writer.id],
-    slug: 'example-article',
-    meta: { description: 'Example description', image: media1.id },
+    slug: "example-article",
+    meta: { description: "Example description", image: media1.id },
   })
 }
 ```
@@ -227,7 +241,7 @@ export const createExampleArticle = async (payload, writer, mediaDocs) => {
 Add your seed to `index.ts`:
 
 ```typescript
-import { createMyFeatureArticle } from './features/my-feature'
+import { createMyFeatureArticle } from "./features/my-feature"
 
 // In the seed() function:
 await createMyFeatureArticle(payload, writer1, mediaDocs)

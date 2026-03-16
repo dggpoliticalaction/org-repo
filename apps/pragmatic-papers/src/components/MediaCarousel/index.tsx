@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import { Media } from '@/components/Media'
-import RichText from '@/components/RichText'
+import { Media } from "@/components/Media"
+import RichText from "@/components/RichText"
 import {
   Carousel,
   CarouselContent,
@@ -9,10 +9,10 @@ import {
   CarouselNext,
   CarouselPrevious,
   type CarouselApi,
-} from '@/components/ui/carousel'
-import type { Media as MediaType } from '@/payload-types'
-import { cn } from '@/utilities/ui'
-import React, { useState } from 'react'
+} from "@/components/ui/carousel"
+import type { Media as MediaType } from "@/payload-types"
+import { cn } from "@/utilities/ui"
+import React, { useState } from "react"
 
 interface MediaCarouselProps {
   images: (MediaType | null)[]
@@ -43,7 +43,7 @@ const CarouselIndicators: React.FC<{
 }> = ({ count, current, api, className }) => {
   return (
     <div
-      className={cn('absolute bottom-10 left-0 right-0 z-10 flex justify-center gap-2', className)}
+      className={cn("absolute bottom-10 left-0 right-0 z-10 flex justify-center gap-2", className)}
     >
       {Array.from({ length: count }).map((_, idx) => (
         <button
@@ -51,8 +51,8 @@ const CarouselIndicators: React.FC<{
           onClick={() => api?.scrollTo(idx)}
           type="button"
           className={cn(
-            'inline-block h-2 w-2 rounded-sm bg-muted-foreground ring-2 ring-background transition-all',
-            idx === current ? 'scale-125 bg-primary' : 'opacity-40',
+            "inline-block h-2 w-2 rounded-sm bg-muted-foreground ring-2 ring-background transition-all",
+            idx === current ? "scale-125 bg-primary" : "opacity-40",
           )}
           aria-label={`Go to slide ${idx + 1}`}
         />
@@ -89,7 +89,7 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
 
     setCurrent(api.selectedScrollSnap())
 
-    api.on('select', () => {
+    api.on("select", () => {
       setCurrent(api.selectedScrollSnap())
     })
   }, [api, initialIndex])
@@ -103,13 +103,13 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
       <Carousel
         setApi={setApi}
         opts={{ loop: true, startIndex: initialIndex }}
-        className={cn('relative', containerClassName)}
+        className={cn("relative", containerClassName)}
       >
         <CarouselContent>
           {validImages.map((image, index) => (
             <CarouselItem key={index}>
               <figure>
-                <div className={cn('relative w-full rounded-sm', imageContainerClassName)}>
+                <div className={cn("relative w-full rounded-sm", imageContainerClassName)}>
                   <Media
                     resource={image}
                     imgClassName={imageClassName}
@@ -141,8 +141,8 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
           api={api}
           className={indicatorClassName}
         />
-        <CarouselPrevious className={navigationClassName?.previous || 'left-3 lg:-left-12'} />
-        <CarouselNext className={navigationClassName?.next || 'right-3 lg:-right-12'} />
+        <CarouselPrevious className={navigationClassName?.previous || "left-3 lg:-left-12"} />
+        <CarouselNext className={navigationClassName?.next || "right-3 lg:-right-12"} />
       </Carousel>
     </>
   )

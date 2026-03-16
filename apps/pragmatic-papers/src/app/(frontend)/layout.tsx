@@ -1,26 +1,26 @@
-import { AdminBar } from '@/components/AdminBar'
-import { Footer } from '@/Footer/Component'
-import { Header } from '@/Header/Component'
-import { getServerSideURL } from '@/utilities/getURL'
-import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { cn } from '@/utilities/ui'
-import { GoogleAnalytics } from '@next/third-parties/google'
-import { GeistMono } from 'geist/font/mono'
-import { GeistSans } from 'geist/font/sans'
-import type { Metadata } from 'next'
-import { ThemeProvider } from 'next-themes'
-import { Open_Sans, Source_Serif_4 } from 'next/font/google'
-import { draftMode } from 'next/headers'
-import React from 'react'
-import './globals.css'
+import { AdminBar } from "@/components/AdminBar"
+import { Footer } from "@/Footer/Component"
+import { Header } from "@/Header/Component"
+import { getServerSideURL } from "@/utilities/getURL"
+import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
+import { cn } from "@/utilities/ui"
+import { GoogleAnalytics } from "@next/third-parties/google"
+import { GeistMono } from "geist/font/mono"
+import { GeistSans } from "geist/font/sans"
+import type { Metadata } from "next"
+import { ThemeProvider } from "next-themes"
+import { Open_Sans, Source_Serif_4 } from "next/font/google"
+import { draftMode } from "next/headers"
+import React from "react"
+import "./globals.css"
 
 const sourceSerif4 = Source_Serif_4({
-  variable: '--font-serif',
-  subsets: ['latin'],
+  variable: "--font-serif",
+  subsets: ["latin"],
 })
 
 const openSans = Open_Sans({
-  subsets: ['latin'],
+  subsets: ["latin"],
 })
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -35,7 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         GeistMono.variable,
         sourceSerif4.className,
         openSans.className,
-        'scroll-smooth',
+        "scroll-smooth",
       )}
       lang="en"
       suppressHydrationWarning

@@ -1,11 +1,11 @@
-import Link from 'next/link'
-import React from 'react'
+import Link from "next/link"
+import React from "react"
 
-import { ImageMedia } from '@/components/Media/ImageMedia'
-import { Squiggle } from '@/components/ui/squiggle'
-import type { Article } from '@/payload-types'
-import { formatDateTime } from '@/utilities/formatDateTime'
-import { getSeparator } from '@/utilities/getSeparator'
+import { ImageMedia } from "@/components/Media/ImageMedia"
+import { Squiggle } from "@/components/ui/squiggle"
+import type { Article } from "@/payload-types"
+import { formatDateTime } from "@/utilities/formatDateTime"
+import { getSeparator } from "@/utilities/getSeparator"
 
 interface ArticleHeroProps {
   article: Article
@@ -14,7 +14,7 @@ interface ArticleHeroProps {
 export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
   const { publishedAt, title, heroImage, authors } = article
 
-  const filteredAuthors = (authors || []).filter((author) => typeof author === 'object')
+  const filteredAuthors = (authors || []).filter((author) => typeof author === "object")
 
   return (
     <div className="relative flex-col">
@@ -30,7 +30,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
         {filteredAuthors.length > 0 && (
           <div className="text-center text-lg">
             <p>
-              by{' '}
+              by{" "}
               {filteredAuthors.map(({ id, slug, name }, index) => (
                 <React.Fragment key={id}>
                   {getSeparator(index, filteredAuthors.length)}
