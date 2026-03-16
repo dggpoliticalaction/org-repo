@@ -1,15 +1,16 @@
 "use client"
 
-import { Media } from "@/components/Media"
-import RichText from "@/components/RichText"
+import { MediaBlock } from "@/blocks/MediaBlock/Component"
 import {
   Carousel,
   CarouselContent,
+  CarouselIndicators,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import type { Media as MediaType } from "@/payload-types"
 import { cn } from "@/utilities/ui"
 import React, { useState } from "react"
@@ -18,64 +19,58 @@ interface MediaCarouselProps {
   images: (MediaType | null)[]
   initialIndex?: number
   showCaptions?: boolean
-  containerClassName?: string
-  imageContainerClassName?: string
-  imageClassName?: string
-  pictureClassName?: string
-  navigationClassName?: {
-    previous?: string
-    next?: string
-  }
-  indicatorClassName?: string
   enableModal?: boolean
-  galleryData?: {
-    images: MediaType[]
-    startIndex: number
-  }
 }
 
-// Carousel navigation indicators
-const CarouselIndicators: React.FC<{
-  count: number
-  current: number
-  api?: CarouselApi
-  className?: string
-}> = ({ count, current, api, className }) => {
+// Inner carousel rendered inside the gallery lightbox modal — no modal recursion.
+const GalleryCarousel: React.FC<{ images: MediaType[]; initialIndex: number }> = ({
+  images,
+  initialIndex,
+}) => {
+  const [api, setApi] = useState<CarouselApi>()
+  const [current, setCurrent] = useState(initialIndex)
+
+  React.useEffect(() => {
+    if (!api) return
+    if (initialIndex > 0) api.scrollTo(initialIndex, true)
+    setCurrent(api.selectedScrollSnap())
+    api.on("select", () => setCurrent(api.selectedScrollSnap()))
+  }, [api, initialIndex])
+
   return (
-    <div
-      className={cn("absolute bottom-10 left-0 right-0 z-10 flex justify-center gap-2", className)}
-    >
-      {Array.from({ length: count }).map((_, idx) => (
-        <button
-          key={idx}
-          onClick={() => api?.scrollTo(idx)}
-          type="button"
-          className={cn(
-            "inline-block h-2 w-2 rounded-sm bg-muted-foreground ring-2 ring-background transition-all",
-            idx === current ? "scale-125 bg-primary" : "opacity-40",
-          )}
-          aria-label={`Go to slide ${idx + 1}`}
-        />
-      ))}
-    </div>
+    <Carousel setApi={setApi} opts={{ loop: true, startIndex: initialIndex }} className="w-full">
+      <CarouselContent>
+        {images.map((image, index) => (
+          <CarouselItem
+            key={index}
+            className="flex aspect-video w-full items-center justify-center"
+          >
+            <MediaBlock
+              media={image}
+              enableGutter={false}
+              className="h-full w-full"
+              imgClassName="not-prose object-contain"
+              sizes="100vw"
+            />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselIndicators count={images.length} current={current} />
+      <CarouselPrevious className="left-3" />
+      <CarouselNext className="right-3" />
+    </Carousel>
   )
 }
 
 export const MediaCarousel: React.FC<MediaCarouselProps> = ({
   images,
   initialIndex = 0,
-  showCaptions = true,
-  containerClassName,
-  imageContainerClassName,
-  imageClassName,
-  pictureClassName,
-  navigationClassName,
-  indicatorClassName,
   enableModal = false,
-  galleryData,
 }) => {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(initialIndex)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalIndex, setModalIndex] = useState(initialIndex)
 
   React.useEffect(() => {
     if (!api) {
@@ -98,51 +93,51 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
 
   if (!validImages.length) return null
 
+  const handleItemClick = (index: number) => {
+    setModalIndex(index)
+    setModalOpen(true)
+  }
+
   return (
     <>
+      {enableModal && (
+        <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+          <DialogContent className="[&>button]:rounded-xs max-w-7xl border-0 p-0 shadow-none [&>button]:right-2 [&>button]:top-2 [&>button]:bg-background [&>button_svg]:h-6 [&>button_svg]:w-6">
+            <DialogHeader className="sr-only">
+              <DialogTitle>Image Gallery</DialogTitle>
+            </DialogHeader>
+            <GalleryCarousel images={validImages} initialIndex={modalIndex} />
+          </DialogContent>
+        </Dialog>
+      )}
       <Carousel
         setApi={setApi}
         opts={{ loop: true, startIndex: initialIndex }}
-        className={cn("relative", containerClassName)}
+        className="-mx-5 md:-mx-8 xl:-mx-16"
       >
         <CarouselContent>
           {validImages.map((image, index) => (
-            <CarouselItem key={index}>
-              <figure>
-                <div className={cn("relative w-full rounded-sm", imageContainerClassName)}>
-                  <Media
-                    resource={image}
-                    imgClassName={imageClassName}
-                    pictureClassName={pictureClassName}
-                    className="h-full w-full"
-                    enableModal={enableModal}
-                    gallery={galleryData}
-                  />
-                </div>
-                {showCaptions && (
-                  <figcaption className="mt-3 min-h-[1.5rem] w-full text-center">
-                    {image.caption && (
-                      <RichText
-                        data={image.caption}
-                        enableGutter={false}
-                        enableProse={false}
-                        className="not-prose text-[0.95rem] text-muted-foreground"
-                      />
-                    )}
-                  </figcaption>
-                )}
-              </figure>
+            <CarouselItem
+              key={index}
+              className={cn(
+                "flex aspect-video w-full items-center justify-center",
+                enableModal && "cursor-pointer",
+              )}
+              onClick={enableModal ? () => handleItemClick(index) : undefined}
+            >
+              <MediaBlock
+                media={image}
+                enableGutter={false}
+                className="h-full w-full"
+                imgClassName="not-prose object-contain"
+                captionClassName="hidden"
+              />
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselIndicators
-          count={validImages.length}
-          current={current}
-          api={api}
-          className={indicatorClassName}
-        />
-        <CarouselPrevious className={navigationClassName?.previous || "left-3 lg:-left-12"} />
-        <CarouselNext className={navigationClassName?.next || "right-3 lg:-right-12"} />
+        <CarouselIndicators count={validImages.length} current={current} />
+        <CarouselPrevious className="left-3 lg:-left-12" />
+        <CarouselNext className="right-3 lg:-right-12" />
       </Carousel>
     </>
   )

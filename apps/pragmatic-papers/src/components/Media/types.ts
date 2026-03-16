@@ -5,10 +5,8 @@ import type { Media as MediaType } from "@/payload-types"
 
 export interface Props {
   alt?: string
-  className?: string
   fill?: boolean // for NextImage only
   htmlElement?: ElementType | null
-  pictureClassName?: string
   imgClassName?: string
   onClick?: () => void
   onLoad?: () => void
@@ -19,10 +17,4 @@ export interface Props {
   size?: string // for NextImage only
   src?: StaticImageData // for static media
   videoClassName?: string
-  enableModal?: boolean // Enable click to view full resolution in modal
-  gallery?: {
-    // Optional gallery context for carousel modal
-    images: MediaType[]
-    startIndex: number
-  }
 }

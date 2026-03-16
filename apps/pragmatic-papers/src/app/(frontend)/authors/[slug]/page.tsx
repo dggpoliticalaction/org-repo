@@ -1,15 +1,15 @@
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
+import { Media } from "@/components/Media"
 import { PageRange } from "@/components/PageRange"
 import { Pagination } from "@/components/Pagination"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
-import type { Article as ArticleType, Media, User, Volume } from "@/payload-types"
+import type { Article as ArticleType, Media as MediaType, User, Volume } from "@/payload-types"
 import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
-import Image from "next/image"
 import { getPayload } from "payload"
 import React, { cache } from "react"
 
@@ -177,8 +177,7 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
   const hasBiography = !!user.biography
 
   const profile = user.profileImage
-  const profileDoc = profile && typeof profile === "object" ? (profile as Media) : undefined
-  const profileSrc = profileDoc?.sizes?.square?.url || profileDoc?.url || undefined
+  const profileDoc = profile && typeof profile === "object" ? (profile as MediaType) : undefined
 
   return (
     <article className="container mb-16 max-w-3xl">
@@ -188,15 +187,9 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
       {draft && <LivePreviewListener />}
 
       <header className="flex flex-col items-center space-y-3 text-center">
-        {profileSrc && (
+        {profileDoc && (
           <div className="h-32 w-32 overflow-hidden rounded-full border border-border">
-            <Image
-              src={profileSrc}
-              alt={profileDoc?.alt || user.name || "Author avatar"}
-              width={128}
-              height={128}
-              className="h-full w-full object-cover"
-            />
+            <Media resource={profileDoc} size="128px" />
           </div>
         )}
         <h1 className="text-3xl font-bold md:text-4xl">{user.name || "Author"}</h1>

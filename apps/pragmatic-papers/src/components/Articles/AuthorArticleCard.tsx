@@ -26,14 +26,15 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
   return (
     <Card className={cn("relative h-full rounded-sm", className)}>
       <CardContent className="flex flex-row gap-4 p-4 sm:flex-row">
-        <div className="h-24 w-32 flex-shrink-0 overflow-hidden rounded border border-border bg-muted sm:h-28 sm:w-40">
+        <div className="h-24 w-32 flex-shrink-0 overflow-hidden rounded-sm border border-border bg-muted sm:h-28 sm:w-40">
           {metaImage && typeof metaImage !== "string" && (
-            <Media
-              resource={metaImage}
-              className="h-full w-full rounded-sm"
-              pictureClassName="h-full w-full"
-              imgClassName="h-full w-full object-cover"
-            />
+            <div className="aspect-[4/3]">
+              <Media
+                resource={metaImage}
+                imgClassName="h-full w-full object-cover"
+                size="(max-width: 640px) 128px, 160px"
+              />
+            </div>
           )}
         </div>
         <div className="flex h-24 min-w-0 flex-1 flex-col justify-between space-y-1 overflow-hidden sm:h-28">
