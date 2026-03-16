@@ -1,10 +1,10 @@
-import Link from "next/link"
 import React from "react"
 
 import type { Article } from "@/payload-types"
 
 import { Media } from "@/components/Media"
 import { cn } from "@/utilities/ui"
+import { HoverPrefetchLink } from "../Link/HoverPrefetchLink"
 
 export type CardPostData = Pick<Article, "slug" | "meta" | "title">
 
@@ -25,29 +25,25 @@ export const ArticleCard: React.FC<{
   const href = `/${relationTo}/${slug}`
 
   return (
-    <div className={cn("space-y-3", className)}>
-      {image && typeof image !== "string" && (
-        <div className="aspect-video md:aspect-[4/3]">
-          <Media media={image} sizes="(max-width: 640px) 25vw, 50vw" />
-        </div>
-      )}
-      <div className="flex flex-grow basis-3/4 flex-col sm:basis-auto">
+    <HoverPrefetchLink href={href} className="block">
+      <div className={cn("space-y-3", className)}>
+        {image && typeof image !== "string" && (
+          <Media
+            media={image}
+            variant="square"
+            imgClassName="aspect-[4/3]"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 352px"
+          />
+        )}
         {titleToUse && (
-          <div className="line-clamp-4 pb-1 font-sans text-xl font-extrabold">
-            <Link
-              className="transition-colors after:absolute after:inset-0 hover:text-brand"
-              href={href}
-            >
-              {titleToUse}
-            </Link>
-          </div>
+          <h3 className="font-display line-clamp-4 text-lg font-bold">{titleToUse}</h3>
         )}
         {description && (
-          <p className="line-clamp-2 pt-1 text-sm text-muted-foreground sm:line-clamp-5">
+          <p className="line-clamp-2 font-serif text-primary sm:line-clamp-3">
             {sanitizedDescription}
           </p>
         )}
       </div>
-    </div>
+    </HoverPrefetchLink>
   )
 }

@@ -24,13 +24,13 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
     className,
     enableGutter = true,
     imgClassName,
-    sizes: imgSizeFromProps,
+    sizes,
     media,
     disableInnerContainer,
   } = props
   if (typeof media === "number") return null
 
-  const imgSize = imgSizeFromProps ?? (breakout ? "100vw" : "(max-width: 1376px) 100vw, 1376px")
+  const imgSize = sizes ?? (breakout ? "100vw" : "(max-width: 1376px) 100vw, 1376px")
 
   let caption
   if (media && typeof media === "object") caption = media.caption
