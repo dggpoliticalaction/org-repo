@@ -64,7 +64,9 @@ async function waitForPostgres(timeoutMs = 60_000): Promise<void> {
 
 async function main() {
   if (!DEV_ADMIN_EMAIL || !DEV_ADMIN_PASSWORD || !process.env.DEV_ADMIN_NAME) {
-    console.error("\n❌ DEV_ADMIN_EMAIL, DEV_ADMIN_NAME, and DEV_ADMIN_PASSWORD must all be set in .env")
+    console.error(
+      "\n❌ DEV_ADMIN_EMAIL, DEV_ADMIN_NAME, and DEV_ADMIN_PASSWORD must all be set in .env",
+    )
     process.exit(1)
   }
 
