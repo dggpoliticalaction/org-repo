@@ -1,36 +1,33 @@
-import RichText from "@/components/RichText"
-import { cn } from "@/utilities/ui"
+import type { MediaBlock as MediaBlockProps } from "@/payload-types"
 import React from "react"
 
-import type { MediaBlock as MediaBlockProps } from "@/payload-types"
-
-import { type ImageMediaSizes } from "@/components/Media/ImageMedia"
-import { Media } from "../../components/Media"
+import { Media } from "@/components/Media"
+import RichText from "@/components/RichText"
+import { cn } from "@/utilities/ui"
 
 export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
   breakout?: boolean
-  captionClassName?: string
   className?: string
-  enableGutter?: boolean
   imgClassName?: string
-  sizes?: ImageMediaSizes
+  captionClassName?: string
+  enableGutter?: boolean
+  sizes?: string | undefined
   disableInnerContainer?: boolean
 }
 
-export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
+export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props }) => {
   const {
     breakout,
     captionClassName,
     className,
     enableGutter = true,
     imgClassName,
-    sizes,
     media,
     disableInnerContainer,
   } = props
   if (typeof media === "number") return null
 
-  const imgSize = sizes ?? (breakout ? "100vw" : "(max-width: 1376px) 100vw, 1376px")
+  sizes = sizes || breakout ? "(max-width: 768px) 100vw, 800px" : "(max-width: 768px) 100vw, 728px"
 
   let caption
   if (media && typeof media === "object") caption = media.caption
@@ -41,12 +38,12 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
       className={cn(
         {
           container: enableGutter,
-          "-mx-5 md:-mx-8 xl:-mx-16": breakout,
+          "lg:-mx-8 xl:-mx-16": breakout,
         },
         className,
       )}
     >
-      <Media className={imgClassName} media={media} sizes={imgSize} />
+      <Media className={imgClassName} media={media} sizes={sizes} />
       {caption && (
         <figcaption
           className={cn(

@@ -188,9 +188,13 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
 
       <header className="flex flex-col items-center space-y-3 text-center">
         {profileDoc && (
-          <div className="h-32 w-32 overflow-hidden rounded-full border border-border">
-            <Media media={profileDoc} sizes="128px" />
-          </div>
+          <Media
+            media={profileDoc}
+            variant="square"
+            sizes="128px"
+            className="h-32 w-32 rounded-full border border-border"
+            priority
+          />
         )}
         <h1 className="text-3xl font-bold md:text-4xl">{user.name || "Author"}</h1>
         {user.affiliation && <p className="text-sm text-muted-foreground">{user.affiliation}</p>}
