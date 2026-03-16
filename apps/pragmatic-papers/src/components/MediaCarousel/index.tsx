@@ -23,7 +23,7 @@ interface MediaCarouselProps {
 }
 
 // Inner carousel rendered inside the gallery lightbox modal — no modal recursion.
-const GalleryCarousel: React.FC<{ images: MediaType[]; initialIndex: number }> = ({
+export const GalleryCarousel: React.FC<{ images: MediaType[]; initialIndex: number }> = ({
   images,
   initialIndex,
 }) => {
@@ -124,6 +124,19 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
                 enableModal && "cursor-pointer",
               )}
               onClick={enableModal ? () => handleItemClick(index) : undefined}
+              onKeyDown={
+                enableModal
+                  ? (e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault()
+                        handleItemClick(index)
+                      }
+                    }
+                  : undefined
+              }
+              tabIndex={enableModal ? 0 : undefined}
+              role={enableModal ? "button" : undefined}
+              aria-label={enableModal ? `Open image ${index + 1} in gallery` : undefined}
             >
               <MediaBlock
                 media={image}
