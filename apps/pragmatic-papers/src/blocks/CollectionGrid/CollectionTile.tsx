@@ -64,7 +64,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
     <HoverPrefetchLink
       href={href}
       id={id ?? undefined}
-      className={cn("group flex flex-col gap-2 @container", isHorizontal && "flex-row", className)}
+      className={cn("group flex flex-col gap-2 @container", isHorizontal && "flex-row items-center", className)}
     >
       {showMedia && (
         <div
