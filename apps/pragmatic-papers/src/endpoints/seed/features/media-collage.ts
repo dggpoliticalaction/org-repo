@@ -46,6 +46,7 @@ export const createMediaCollageArticle = async (
   payload: Payload,
   writer: User,
   mediaDocs: Media[],
+  context?: Record<string, unknown>,
 ): Promise<number> => {
   // Create media with captions
   const [itsBadMedia, blueCoatMedia] = await Promise.all([
@@ -56,6 +57,7 @@ export const createMediaCollageArticle = async (
       {
         caption: createRichTextFromString("It's bad, what do you want me to say!"),
       },
+      context,
     ),
     createMediaFromURL(
       payload,
@@ -64,6 +66,7 @@ export const createMediaCollageArticle = async (
       {
         caption: createRichTextFromString("A snazzy blue jacket"),
       },
+      context,
     ),
   ])
 
@@ -119,7 +122,7 @@ export const createMediaCollageArticle = async (
         "Demonstration of the media collage feature with grid and carousel layouts, showing clickable images with captions.",
       image: mediaDocs[0]?.id,
     },
-  })
+  }, context)
 
   return article.id
 }

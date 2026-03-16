@@ -137,6 +137,7 @@ export const createFootnotesArticle = async (
   writers: User[],
   mediaDocs: Media[],
   referencedArticleId: number,
+  context?: Record<string, unknown>,
 ): Promise<number> => {
   validateWriters(writers)
 
@@ -155,7 +156,7 @@ export const createFootnotesArticle = async (
         "This article demonstrates the footnotes feature, showing how to add citations, references, and additional context to your articles.",
       image: mediaDocs[0]?.id,
     },
-  })
+  }, context)
 
   return article.id
 }

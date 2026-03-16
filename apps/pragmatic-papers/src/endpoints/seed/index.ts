@@ -27,6 +27,7 @@ export const seed = async (
   onProgress?: (message: string, step: number, total: number) => void,
 ): Promise<void> => {
   const ctx = {} as SeedContext
+  const seedContext = { disableRevalidate: true }
 
   const volume1Titles = [
     "The Trolley Problem Revisited: Moral Intuition in the Age of Autonomous Vehicles",
@@ -55,6 +56,7 @@ export const seed = async (
       fn: async () => {
         await payload.delete({
           collection: "users",
+          context: seedContext,
           where: {
             email: {
               in: [
@@ -67,10 +69,10 @@ export const seed = async (
             },
           },
         })
-        await payload.delete({ collection: "articles", where: {} })
-        await payload.delete({ collection: "volumes", where: {} })
-        await payload.delete({ collection: "media", where: {} })
-        await payload.delete({ collection: "pages", where: {} })
+        await payload.delete({ collection: "articles", context: seedContext, where: {} })
+        await payload.delete({ collection: "volumes", context: seedContext, where: {} })
+        await payload.delete({ collection: "media", context: seedContext, where: {} })
+        await payload.delete({ collection: "pages", context: seedContext, where: {} })
       },
     },
     {
@@ -80,17 +82,17 @@ export const seed = async (
           "https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed"
         const ALT = "Curving abstract shapes with an orange and blue gradient"
         ctx.media = await Promise.all([
-          createMediaFromURL(payload, `${IMAGE_BASE}/image-post1.webp`, ALT),
-          createMediaFromURL(payload, `${IMAGE_BASE}/image-post2.webp`, ALT),
-          createMediaFromURL(payload, `${IMAGE_BASE}/image-post3.webp`, ALT),
-          createMediaFromURL(payload, `${IMAGE_BASE}/image-hero1.webp`, ALT),
+          createMediaFromURL(payload, `${IMAGE_BASE}/image-post1.webp`, ALT, undefined, seedContext),
+          createMediaFromURL(payload, `${IMAGE_BASE}/image-post2.webp`, ALT, undefined, seedContext),
+          createMediaFromURL(payload, `${IMAGE_BASE}/image-post3.webp`, ALT, undefined, seedContext),
+          createMediaFromURL(payload, `${IMAGE_BASE}/image-hero1.webp`, ALT, undefined, seedContext),
         ])
       },
     },
     {
       name: "Creating users...",
       fn: async () => {
-        const { writer1, writer2 } = await createUsers(payload, ctx.media)
+        const { writer1, writer2 } = await createUsers(payload, ctx.media, seedContext)
         ctx.writer1 = writer1
         ctx.writer2 = writer2
         validateWriters([writer1, writer2])
@@ -114,7 +116,7 @@ export const seed = async (
               description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
               image: ctx.media[i % ctx.media.length]?.id,
             },
-          })
+          }, seedContext)
           ctx.volume1Articles.push(article.id)
         }
       },
@@ -137,7 +139,7 @@ export const seed = async (
               description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
               image: ctx.media[i % ctx.media.length]?.id,
             },
-          })
+          }, seedContext)
           ctx.volume2Articles.push(article.id)
         }
       },
@@ -152,11 +154,12 @@ export const seed = async (
               [ctx.writer1, ctx.writer2],
               ctx.media,
               ctx.volume1Articles[0]!,
+              seedContext,
             ),
-            createSocialEmbedArticle(payload, ctx.writer1, ctx.media),
-            createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media),
-            createMediaCollageArticle(payload, ctx.writer1, ctx.media),
-            createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media),
+            createSocialEmbedArticle(payload, ctx.writer1, ctx.media, seedContext),
+            createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media, seedContext),
+            createMediaCollageArticle(payload, ctx.writer1, ctx.media, seedContext),
+            createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, seedContext),
           ])
         ctx.featureArticles = [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks]
       },
@@ -196,13 +199,14 @@ export const seed = async (
             },
           ],
           ctx.media,
+          seedContext,
         )
       },
     },
     {
       name: "Creating pages & menus...",
       fn: async () => {
-        const homePage = await payload.create({ collection: "pages", data: homeStatic })
+        const homePage = await payload.create({ collection: "pages", context: seedContext, data: homeStatic })
         const {
           aboutPage,
           articlesPage,
@@ -210,7 +214,7 @@ export const seed = async (
           privacyPolicyPage,
           termsOfUsePage,
           volumesPage,
-        } = await createPages(payload)
+        } = await createPages(payload, seedContext)
         await createMenus(payload, {
           homePage,
           aboutPage,
@@ -219,7 +223,7 @@ export const seed = async (
           privacyPolicyPage,
           termsOfUsePage,
           volumesPage,
-        })
+        }, seedContext)
       },
     },
   ]

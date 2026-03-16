@@ -18,12 +18,14 @@ export const createVolumes = async (
   payload: Payload,
   volumeConfigs: VolumeConfig[],
   mediaDocs: Media[],
+  context?: Record<string, unknown>,
 ): Promise<CreateVolumesResult> => {
   const volumes: Volume[] = []
 
   for (const config of volumeConfigs) {
     const volume = await payload.create({
       collection: "volumes",
+      ...(context && { context }),
       data: {
         title: config.title,
         volumeNumber: config.volumeNumber,

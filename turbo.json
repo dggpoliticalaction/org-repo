@@ -54,6 +54,9 @@
     "dev:db-nuke": {
       "cache": false
     },
+    "dev:reseed": {
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "persistent": true
