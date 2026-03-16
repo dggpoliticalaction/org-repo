@@ -97,7 +97,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
 
         {/* Byline */}
         {showByline && authorNames && (
-          <p className="mt-1 line-clamp-1 font-sans text-sm text-muted-foreground">{authorNames}</p>
+          <p className="line-clamp-1 font-sans text-sm text-muted-foreground">{authorNames}</p>
         )}
 
         {/* Description */}
