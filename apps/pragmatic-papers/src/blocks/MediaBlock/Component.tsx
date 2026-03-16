@@ -13,9 +13,11 @@ export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
   captionClassName?: string
   className?: string
   enableGutter?: boolean
+  fill?: boolean
   imgClassName?: string
   sizes?: string
   staticImage?: StaticImageData
+  style?: React.CSSProperties
   disableInnerContainer?: boolean
 }
 
@@ -25,10 +27,12 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
     captionClassName,
     className,
     enableGutter = true,
+    fill,
     imgClassName,
     sizes: imgSizeFromProps,
     media,
     staticImage,
+    style,
     disableInnerContainer,
   } = props
 
@@ -43,12 +47,31 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
         {
           container: enableGutter,
           "-mx-5 md:-mx-8 xl:-mx-16": breakout,
+          "flex h-full flex-col": fill,
         },
         className,
       )}
+      style={style}
     >
-      {(media || staticImage) && (
-        <Media imgClassName={imgClassName} resource={media} src={staticImage} size={imgSize} />
+      {(media || staticImage) && fill ? (
+        <div className="relative flex-1">
+          <Media
+            fill
+            imgClassName={imgClassName}
+            resource={media}
+            src={staticImage}
+            size={imgSize}
+          />
+        </div>
+      ) : (
+        (media || staticImage) && (
+          <Media
+            imgClassName={imgClassName}
+            resource={media}
+            src={staticImage}
+            size={imgSize}
+          />
+        )
       )}
       {caption && (
         <figcaption
