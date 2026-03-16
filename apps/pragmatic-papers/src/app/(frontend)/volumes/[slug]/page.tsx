@@ -156,12 +156,10 @@ export default async function VolumePage({
         </div>
       )}
       <Squiggle className="mx-auto h-6 w-1/2" />
-      <div className="flex flex-col items-center gap-4 pt-8">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-          {actualArticles?.map((article) => (
-            <ArticleCard key={article.id} doc={article} relationTo="articles" />
-          ))}
-        </div>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        {actualArticles?.map((article) => (
+          <ArticleCard key={article.id} doc={article} relationTo="articles" />
+        ))}
       </div>
       <AuthorList aria-label="Volume Authors" authors={volumeAuthors} />
     </div>
