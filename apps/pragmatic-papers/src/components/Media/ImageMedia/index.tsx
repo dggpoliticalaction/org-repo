@@ -49,7 +49,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     imgClassName,
     priority,
     resource,
-    size: sizeFromProps,
+    sizes: sizeFromProps,
     src: srcFromProps,
     loading: loadingFromProps,
   } = props

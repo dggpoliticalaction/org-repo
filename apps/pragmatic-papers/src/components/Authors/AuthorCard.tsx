@@ -66,7 +66,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
               <Media
                 resource={profileDoc}
                 imgClassName="h-full w-full object-cover transition-opacity hover:opacity-80"
-                size="96px"
+                sizes="96px"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-primary text-lg font-semibold text-primary-foreground">

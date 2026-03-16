@@ -27,7 +27,7 @@ export const MediumImpactHero: React.FC<Page["hero"]> = ({ links, media, richTex
       <div className="container">
         {media && typeof media === "object" && (
           <div className="-mx-4 md:-mx-8 2xl:-mx-16">
-            <Media priority size="100vw" resource={media} />
+            <Media priority sizes="100vw" resource={media} />
             {media?.caption && (
               <div className="mt-3">
                 <RichText data={media.caption} enableGutter={false} />

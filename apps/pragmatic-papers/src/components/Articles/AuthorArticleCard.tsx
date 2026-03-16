@@ -32,7 +32,7 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
               <Media
                 resource={metaImage}
                 imgClassName="h-full w-full object-cover"
-                size="(max-width: 640px) 128px, 160px"
+                sizes="(max-width: 640px) 128px, 160px"
               />
             </div>
           )}
