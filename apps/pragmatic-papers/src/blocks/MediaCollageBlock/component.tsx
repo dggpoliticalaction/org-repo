@@ -33,7 +33,7 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
           <LightboxMediaBlock
             key={`${img.id}-${idx}`}
             media={media}
-            className={cn("not-prose", isLastOddItem && "mx-auto w-1/2 md:col-span-2")}
+            className={cn("not-prose", isLastOddItem && "mx-auto w-auto md:col-span-2 md:w-1/2")}
             sizes={
               isLastOddItem
                 ? "(max-width: 1376px) 100vw, 1376px"
