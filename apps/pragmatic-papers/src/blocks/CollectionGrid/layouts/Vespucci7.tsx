@@ -52,7 +52,7 @@ export const Vespucci7Layout: React.FC<LayoutProps> = ({ className, slots, ...pr
       </div>
 
       {/* Slots C–F — right column (25%), 4 tiles with no image */}
-      <div className="grid auto-rows-fr grid-cols-1 gap-6 md:col-span-2 md:grid-cols-2 lg:col-span-1 lg:col-start-3 lg:row-span-2 lg:row-start-1 lg:grid-cols-1">
+      <div className="grid grid-cols-1 gap-4 md:col-span-2 md:grid-cols-2 lg:col-span-1 lg:col-start-3 lg:row-span-2 lg:row-start-1 lg:grid-cols-1">
         <CollectionTile tile={c!} imagePosition="none" showByline />
         <CollectionTile tile={d!} imagePosition="none" showByline />
         <CollectionTile tile={e!} imagePosition="none" showByline />

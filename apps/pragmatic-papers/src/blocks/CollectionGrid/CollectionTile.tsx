@@ -64,11 +64,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
     <HoverPrefetchLink
       href={href}
       id={id ?? undefined}
-      className={cn(
-        "group flex flex-col gap-6 space-y-2 @container",
-        isHorizontal && "flex-row",
-        className,
-      )}
+      className={cn("group flex flex-col gap-2 @container", isHorizontal && "flex-row", className)}
     >
       {showMedia && (
         <div
@@ -89,7 +85,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       <div>
         {/* Kicker */}
         {kicker && (
-          <p className="mb-1 font-sans text-xs font-bold uppercase tracking-wider text-brand">
+          <p className="font-sans text-xs font-bold uppercase tracking-wider text-brand">
             {kicker}
           </p>
         )}
