@@ -81,10 +81,7 @@ const createHeroRichTextHeading = (pageTitle: string, tag: "h1" | "h2" | "h3" | 
   },
 })
 
-export const createPages = async (
-  payload: Payload,
-  context?: Record<string, unknown>,
-): Promise<CreatePagesResult> => {
+export const createPages = async (payload: Payload): Promise<CreatePagesResult> => {
   const pageConfigs: Record<
     "about" | "articles" | "contact" | "privacyPolicy" | "termsOfUse" | "volumes",
     PageConfig
@@ -137,7 +134,6 @@ export const createPages = async (
 
   const aboutPage = await payload.create({
     collection: "pages",
-    ...(context && { context }),
     data: {
       title: about.title,
       slug: about.slug,
@@ -171,7 +167,6 @@ export const createPages = async (
 
   const articlesPage = await payload.create({
     collection: "pages",
-    ...(context && { context }),
     data: {
       title: articles.title,
       slug: articles.slug,
@@ -203,7 +198,6 @@ export const createPages = async (
 
   const contactPage = await payload.create({
     collection: "pages",
-    ...(context && { context }),
     data: {
       title: contact.title,
       slug: contact.slug,
@@ -237,7 +231,6 @@ export const createPages = async (
 
   const privacyPolicyPage = await payload.create({
     collection: "pages",
-    ...(context && { context }),
     data: {
       title: privacyPolicy.title,
       slug: privacyPolicy.slug,
@@ -271,7 +264,6 @@ export const createPages = async (
 
   const termsOfUsePage = await payload.create({
     collection: "pages",
-    ...(context && { context }),
     data: {
       title: termsOfUse.title,
       slug: termsOfUse.slug,
@@ -305,7 +297,6 @@ export const createPages = async (
 
   const volumesPage = await payload.create({
     collection: "pages",
-    ...(context && { context }),
     data: {
       title: volumes.title,
       slug: volumes.slug,

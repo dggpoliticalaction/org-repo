@@ -114,7 +114,6 @@ export const createMathBlocksArticle = async (
   payload: Payload,
   writers: User[],
   mediaDocs: Media[],
-  context?: Record<string, unknown>,
 ): Promise<number> => {
   validateWriters(writers)
 
@@ -132,7 +131,7 @@ export const createMathBlocksArticle = async (
         "A guide to inline and display math rendering, demonstrating LaTeX equations from Bayes' theorem to the Schrödinger equation.",
       image: mediaDocs[0]?.id,
     },
-  }, context)
+  })
 
   return article.id
 }

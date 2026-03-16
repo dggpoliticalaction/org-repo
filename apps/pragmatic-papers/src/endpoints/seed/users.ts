@@ -10,23 +10,14 @@ export interface SeededUsers {
   writer2: User
 }
 
-export const createUsers = async (
-  payload: Payload,
-  media: Media[],
-  context?: Record<string, unknown>,
-): Promise<SeededUsers> => {
-  const devEmail = process.env.DEV_ADMIN_EMAIL
-  const devName = process.env.DEV_ADMIN_NAME
-  const devPassword = process.env.DEV_ADMIN_PASSWORD
-
-  // Create an admin user — uses DEV_ADMIN_* env vars if set, otherwise falls back to defaults
+export const createUsers = async (payload: Payload, media: Media[]): Promise<SeededUsers> => {
+  // Create an admin user (just in case you configured your admin account strangely)
   const admin = await payload.create({
     collection: "users",
-    ...(context && { context }),
     data: {
-      email: devEmail ?? "admin@example.com",
-      password: devPassword ?? "password123",
-      name: devName ?? "John Admin",
+      email: "admin@example.com",
+      password: "password123",
+      name: "John Admin",
       role: "admin",
       slug: "superadmin",
       profileImage: media[0]?.id,
@@ -35,7 +26,6 @@ export const createUsers = async (
 
   const chiefEditor = await payload.create({
     collection: "users",
-    ...(context && { context }),
     data: {
       email: "chiefeditor@example.com",
       password: "password123",
@@ -50,7 +40,6 @@ export const createUsers = async (
   const editor = await payload.create({
     collection: "users",
     draft: true,
-    ...(context && { context }),
     data: {
       email: "editor@example.com",
       password: "password123",
@@ -64,7 +53,6 @@ export const createUsers = async (
   const writer1 = await payload.create({
     collection: "users",
     draft: false,
-    ...(context && { context }),
     data: {
       email: "writer1@example.com",
       password: "password123",
@@ -108,7 +96,6 @@ export const createUsers = async (
   const writer2 = await payload.create({
     collection: "users",
     draft: false,
-    ...(context && { context }),
     data: {
       email: "writer2@example.com",
       password: "password123",

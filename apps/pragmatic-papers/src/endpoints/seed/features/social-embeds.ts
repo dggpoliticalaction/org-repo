@@ -224,7 +224,6 @@ export const createSocialEmbedArticle = async (
   payload: Payload,
   writer: User,
   mediaDocs: Media[],
-  context?: Record<string, unknown>,
 ): Promise<number> => {
   if (!writer?.id) {
     throw new Error("Writer must have an ID")
@@ -250,7 +249,6 @@ export const createSocialEmbedArticle = async (
       // Seed provides snapshots explicitly (including intentionally stale ones).
       // Skip the SocialEmbed url hook that would otherwise rebuild snapshots on create.
       skipSocialEmbedSnapshot: true,
-      ...context,
     },
   )
 
@@ -261,7 +259,6 @@ export const createLegacySocialEmbedArticle = async (
   payload: Payload,
   writer: User,
   mediaDocs: Media[],
-  context?: Record<string, unknown>,
 ): Promise<number> => {
   if (!writer?.id) {
     throw new Error("Writer must have an ID")
@@ -285,7 +282,6 @@ export const createLegacySocialEmbedArticle = async (
     },
     {
       skipSocialEmbedSnapshot: true,
-      ...context,
     },
   )
 

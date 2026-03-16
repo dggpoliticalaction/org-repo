@@ -48,13 +48,11 @@ export async function createMediaFromURL(
   url: string,
   alt: string,
   additionalData?: Partial<Omit<Media, "id" | "alt">>,
-  context?: Record<string, unknown>,
 ): Promise<Media> {
   const file = await fetchFileByURL(url)
 
   return await payload.create({
     collection: "media",
-    ...(context && { context }),
     data: {
       alt,
       ...additionalData,
