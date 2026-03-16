@@ -55,7 +55,8 @@
       "cache": false
     },
     "dev:reseed": {
-      "cache": false
+      "cache": false,
+      "env": ["DEV_ADMIN_EMAIL", "DEV_ADMIN_NAME", "DEV_ADMIN_PASSWORD"]
     },
     "dev": {
       "cache": false,
