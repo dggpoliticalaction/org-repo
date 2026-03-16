@@ -7,6 +7,9 @@ import { Squiggle } from "@/components/ui/squiggle"
 import type { Article, User } from "@/payload-types"
 import { formatDateTime } from "@/utilities/formatDateTime"
 import { generateMeta } from "@/utilities/generateMeta"
+import { JsonLd } from "@/components/JsonLd"
+import { getServerSideURL } from "@/utilities/getURL"
+import { buildCollectionPageJsonLd, buildBreadcrumbJsonLd } from "@/utilities/structuredData"
 import { toRoman } from "@/utilities/toRoman"
 import configPromise from "@payload-config"
 import type { Metadata } from "next"
@@ -93,7 +96,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = "" } = await paramsPromise
   const volume = await queryVolumeBySlug({ slug })
 
-  return generateMeta({ doc: volume })
+  return generateMeta({ doc: volume, path: `/volumes/${slug}` })
 }
 
 export default async function VolumePage({
@@ -105,6 +108,16 @@ export default async function VolumePage({
   const volume = await queryVolumeBySlug({ slug })
 
   if (!volume) return <PayloadRedirects url={url} />
+
+  const serverUrl = getServerSideURL()
+  const fullUrl = `${serverUrl}${url}`
+  const volumeTitle = `Volume ${toRoman(Number(volume.slug))}`
+  const breadcrumbItems = [
+    { name: "Home", url: serverUrl },
+    { name: "Volumes", url: `${serverUrl}/volumes` },
+    { name: volumeTitle, url: fullUrl },
+  ]
+
   const { publishedAt, editorsNote, articles } = volume
   if (
     articles?.filter((article: VolumeArticleRef) => typeof article === "number")?.length ??
@@ -128,6 +141,12 @@ export default async function VolumePage({
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-16">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd(volumeTitle, volume.description || "", fullUrl),
+          buildBreadcrumbJsonLd(breadcrumbItems),
+        ]}
+      />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
