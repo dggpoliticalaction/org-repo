@@ -2,6 +2,7 @@ import type { StaticImageData } from "next/image"
 import type { ElementType, Ref } from "react"
 
 import type { Media as MediaType } from "@/payload-types"
+import { type ImageMediaSizes } from "./ImageMedia"
 
 export interface Props {
   alt?: string
@@ -13,8 +14,8 @@ export interface Props {
   loading?: "lazy" | "eager" // for NextImage only
   priority?: boolean // for NextImage only
   ref?: Ref<HTMLImageElement | HTMLVideoElement | null>
-  resource?: MediaType | string | number | null // for Payload media
-  sizes?: string // for NextImage only
-  src?: StaticImageData // for static media
+  media?: MediaType // for Payload media
+  sizes?: ImageMediaSizes // for NextImage only
+  src?: string | StaticImageData // for static media
   videoClassName?: string
 }

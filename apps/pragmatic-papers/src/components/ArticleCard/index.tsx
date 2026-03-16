@@ -28,7 +28,7 @@ export const ArticleCard: React.FC<{
     <div className={cn("space-y-3", className)}>
       {image && typeof image !== "string" && (
         <div className="aspect-video md:aspect-[4/3]">
-          <Media resource={image} sizes="(max-width: 640px) 25vw, 50vw" />
+          <Media media={image} sizes="(max-width: 640px) 25vw, 50vw" />
         </div>
       )}
       <div className="flex flex-grow basis-3/4 flex-col sm:basis-auto">

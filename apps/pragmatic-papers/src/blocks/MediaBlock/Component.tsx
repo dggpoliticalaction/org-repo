@@ -1,11 +1,10 @@
-import type { StaticImageData } from "next/image"
-
 import RichText from "@/components/RichText"
 import { cn } from "@/utilities/ui"
 import React from "react"
 
 import type { MediaBlock as MediaBlockProps } from "@/payload-types"
 
+import { type ImageMediaSizes } from "@/components/Media/ImageMedia"
 import { Media } from "../../components/Media"
 
 export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
@@ -14,8 +13,7 @@ export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
   className?: string
   enableGutter?: boolean
   imgClassName?: string
-  sizes?: string
-  staticImage?: StaticImageData
+  sizes?: ImageMediaSizes
   disableInnerContainer?: boolean
 }
 
@@ -28,14 +26,15 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
     imgClassName,
     sizes: imgSizeFromProps,
     media,
-    staticImage,
     disableInnerContainer,
   } = props
+  if (typeof media === "number") return null
 
   const imgSize = imgSizeFromProps ?? (breakout ? "100vw" : "(max-width: 1376px) 100vw, 1376px")
 
   let caption
   if (media && typeof media === "object") caption = media.caption
+
   const Slot: React.ElementType = caption ? "figure" : "picture"
   return (
     <Slot
@@ -47,9 +46,7 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
         className,
       )}
     >
-      {(media || staticImage) && (
-        <Media imgClassName={imgClassName} resource={media} src={staticImage} sizes={imgSize} />
-      )}
+      <Media imgClassName={imgClassName} media={media} sizes={imgSize} />
       {caption && (
         <figcaption
           className={cn(
