@@ -2,8 +2,8 @@ import type { MediaBlock as MediaBlockProps } from "@/payload-types"
 import React from "react"
 
 import { Media } from "@/components/Media"
-import RichText from "@/components/RichText"
 import { cn } from "@/utilities/utils"
+import { convertLexicalToPlaintext } from "@payloadcms/richtext-lexical/plaintext"
 
 export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
   breakout?: boolean
@@ -47,18 +47,14 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props })
       {caption && (
         <figcaption
           className={cn(
+            "text-sm",
             {
               container: !disableInnerContainer,
             },
             captionClassName,
           )}
         >
-          <RichText
-            data={caption}
-            enableGutter={false}
-            enableProse={false}
-            className="text-muted-foreground text-center text-xs"
-          />
+          {convertLexicalToPlaintext({ data: caption })}
         </figcaption>
       )}
     </Slot>

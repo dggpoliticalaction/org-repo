@@ -144,9 +144,9 @@ export default async function VolumePage({
           <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
         </HoverPrefetchLink>
       )}
-      {editorsNote && <RichText enableGutter={false} data={editorsNote} />}
+      {editorsNote && <RichText className="mt-6" enableGutter={false} data={editorsNote} />}
       <Separator />
-      <section className="mt-10 space-y-4 border-t pt-8">
+      <section className="space-y-4">
         <h2 className="font-display text-lg font-bold">Articles in this volume</h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {actualArticles?.map((article) => (
