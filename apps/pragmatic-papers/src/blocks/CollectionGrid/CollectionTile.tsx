@@ -58,11 +58,17 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
     <HoverPrefetchLink
       href={href}
       id={id ?? undefined}
-      className={cn(isHorizontal && "flex-row items-center", className)}
+      className={cn(
+        "group flex flex-col gap-2 @container",
+        isHorizontal && "flex-row items-start",
+        className,
+      )}
     >
       {heroImage && (
         <div
           className={cn(
+            "aspect-video overflow-hidden rounded-sm",
+            isHorizontal ? "md:shrink-0 md:basis-1/2" : "w-full shrink",
             imagePosition === "left" && "md:order-first",
             imagePosition === "right" && "md:order-last",
           )}
@@ -70,7 +76,11 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
           <Media media={heroImage} className="hover:opacity-80" variant="medium" />
         </div>
       )}
-      <div>
+      <div
+        className={cn(
+          isHorizontal && "flex flex-col justify-center self-stretch @container md:basis-1/2",
+        )}
+      >
         {/* Kicker */}
         {kicker && (
           <p className="font-sans text-xs font-bold uppercase tracking-wider text-brand">
@@ -79,7 +89,9 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
         )}
 
         {/* Title — uses container queries to scale with available space */}
-        <h2>{overrideTitle || title}</h2>
+        <h2 className="font-display text-sm font-bold leading-tight text-primary hover:text-primary/80 @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl">
+          {overrideTitle || title}
+        </h2>
 
         {/* Byline */}
         {showByline && authorNames && (
