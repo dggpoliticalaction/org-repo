@@ -1,5 +1,5 @@
 import { AuthorList } from "@/components/Authors/AuthorList"
-import type { User } from "@/payload-types"
+import type { PopulatedAuthors, PopulatedAuthorsSelect } from "@/payload-types"
 import configPromise from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
@@ -16,9 +16,19 @@ export const metadata: Metadata = {
   },
 }
 
-async function queryAuthors(): Promise<User[]> {
+async function queryAuthors(): Promise<NonNullable<PopulatedAuthors>> {
   const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config: configPromise })
+
+  const select: PopulatedAuthorsSelect<true> = {
+    id: true,
+    name: true,
+    slug: true,
+    affiliation: true,
+    biography: true,
+    profileImage: true,
+    socials: true,
+  }
 
   const { docs } = await payload.find({
     collection: "users",
@@ -32,9 +42,18 @@ async function queryAuthors(): Promise<User[]> {
         in: ["writer", "editor", "chief-editor"],
       },
     },
+    select,
   })
 
-  return docs
+  return docs.map((doc) => ({
+    id: String(doc.id),
+    name: doc.name,
+    slug: doc.slug,
+    affiliation: doc.affiliation,
+    biography: doc.biography,
+    profileImage: doc.profileImage,
+    socials: doc.socials,
+  }))
 }
 
 export default async function AuthorsIndexPage(): Promise<React.ReactNode> {

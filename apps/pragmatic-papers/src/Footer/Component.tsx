@@ -11,7 +11,7 @@ export async function Footer(): Promise<React.ReactElement> {
 
   return (
     <footer className="container mt-auto">
-      <div className="flex flex-col gap-4 border-t border-border py-4 md:flex-row md:justify-between">
+      <div className="border-border flex flex-col gap-4 border-t py-4 md:flex-row md:justify-between">
         <Link className="mb-3 flex items-center md:mb-0" href="/">
           <Logo size="sm" />
         </Link>
