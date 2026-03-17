@@ -63,7 +63,7 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props })
       {caption && (
         <figcaption
           className={cn(
-            "text-primary mt-2 text-center font-serif",
+            "text-primary mt-2 line-clamp-1 text-center font-serif",
             {
               container: !disableInnerContainer,
             },
