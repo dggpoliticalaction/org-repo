@@ -25,7 +25,7 @@ export const LightboxMediaBlock: React.FC<LightboxMediaBlockProps> = ({
       <DialogTrigger className={cn("w-full", containerClassName)}>
         <MediaBlock media={media} enableGutter={false} className={className} {...props} />
       </DialogTrigger>
-      <DialogContent className="[&>button]:bg-background ml-1 max-h-[calc(100vh-2rem)] p-0 text-base shadow-none ring-0 sm:max-w-[calc(100%-2rem)] [&>button]:top-2 [&>button]:right-2 [&>button]:rounded-sm [&>button]:p-0.5 [&>button_svg]:size-6">
+      <DialogContent className="[&>button]:bg-background max-h-min p-0 text-base shadow-none ring-0 sm:max-w-max [&>button]:top-2 [&>button]:right-2 [&>button]:rounded-sm [&>button]:p-0.5 [&>button_svg]:size-6">
         <DialogHeader className="sr-only">
           <DialogTitle>{media.filename}</DialogTitle>
         </DialogHeader>
