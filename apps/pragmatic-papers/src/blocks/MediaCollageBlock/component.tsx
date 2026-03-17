@@ -8,26 +8,26 @@ import { cn } from "@/utilities/utils"
 import React from "react"
 import { LightboxMediaBlock } from "../MediaBlock/LightboxMediaBlock"
 
-export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, layout }) => {
+export const MediaCollageBlock: React.FC<MediaCollageBlockType> = (props) => {
+  const { layout } = props
+
+  const images = props.images.filter(
+    (img): img is { media: MediaType; id?: string | null } => typeof img.media !== "number",
+  )
+
   if (!images.length) return null
 
-  const validMedia = images
-    .map((img) => (typeof img.media === "number" ? null : img.media))
-    .filter((media): media is MediaType => media !== null)
-
   if (layout === "carousel") {
-    return <MediaCarousel images={validMedia} showCaptions enableModal />
+    return <MediaCarousel images={images} showCaptions enableModal />
   }
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2 lg:-mx-8 xl:-mx-16">
-      {images.map((img, idx) => {
-        const media = typeof img.media === "number" ? null : img.media
-        if (!media) return null
+      {images.map(({ media, id }, idx) => {
         const isLastOddItem = images.length % 2 !== 0 && idx === images.length - 1
         return (
           <LightboxMediaBlock
-            key={`${img.id}-${idx}`}
+            key={`${id}-${idx}`}
             media={media}
             containerClassName={cn(isLastOddItem && "mx-auto md:col-span-2 w-1/2")}
             className="not-prose"
