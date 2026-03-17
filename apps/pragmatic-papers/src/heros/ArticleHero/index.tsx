@@ -25,6 +25,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
             sizes="(max-width: 768px) 100vw, 1024px"
             media={heroImage}
             variant="large"
+            className="border shadow"
           />
         </div>
       )}

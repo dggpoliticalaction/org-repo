@@ -24,12 +24,13 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
 
   return (
     <Card className={cn("rounded-sm", className)}>
-      <CardContent className="flex flex-row gap-4">
-        <div className="border-border bg-muted h-24 w-32 shrink-0 overflow-hidden rounded-sm border">
+      <CardContent className="flex flex-col items-center gap-4 md:flex-row">
+        <div className="bg-muted shrink-0 overflow-hidden rounded-sm border md:h-24 md:w-32">
           {metaImage && typeof metaImage !== "string" && (
-            <HoverPrefetchLink href={href} className="aspect-[4/3]">
+            <HoverPrefetchLink href={href}>
               <Media
                 media={metaImage}
+                className="aspect-3/2 object-cover md:aspect-4/3"
                 variant="thumbnail"
                 sizes="(max-width: 640px) 128px, 160px"
               />

@@ -41,7 +41,7 @@ export const LightboxMediaBlock: React.FC<LightboxMediaBlockProps> = ({
           sizes="100vw"
           variant="xlarge"
           enableGutter={false}
-          imgClassName={isPortrait ? "max-h-[calc(90dvh-3.5rem)] w-auto" : undefined}
+          imgClassName={cn("border", isPortrait && "max-h-[calc(90dvh-3.5rem)] w-auto")}
         />
       </DialogContent>
     </Dialog>

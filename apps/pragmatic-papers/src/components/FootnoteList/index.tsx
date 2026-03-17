@@ -13,7 +13,7 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
   if (!footnotes || !footnotes.length) return null
   return (
     <>
-      <section className="border-border space-y-2 border-t pt-4">
+      <section className="space-y-2 border-t pt-4">
         <h3 className="text-xl font-semibold">Footnotes</h3>
         <ol className="list-inside list-decimal">
           {footnotes.map(({ index, note, attributionEnabled, link }) => {

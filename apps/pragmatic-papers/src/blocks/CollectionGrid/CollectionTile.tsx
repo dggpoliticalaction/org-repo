@@ -66,7 +66,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       {heroImage && (
         <div
           className={cn(
-            "aspect-video overflow-hidden rounded-sm",
+            "aspect-video overflow-hidden rounded-sm border",
             isHorizontal ? "md:basis-1/2" : "w-full shrink",
             imagePosition === "left" && "md:order-first",
             imagePosition === "right" && "md:order-last",

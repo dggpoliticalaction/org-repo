@@ -19,7 +19,7 @@ export function MegaMenu({ menu }: MegaMenuProps): React.ReactNode {
         align="center"
         //   className="hidden w-full max-w-full flex-none justify-center md:flex"
       >
-        <NavigationMenuList>
+        <NavigationMenuList className="space-x-1">
           {/* <NavigationMenuItem>
       <NavigationMenuTrigger>Item One</NavigationMenuTrigger>
       <NavigationMenuContent>

@@ -66,16 +66,16 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
               <LightboxMediaBlock
                 media={media}
                 enableGutter={false}
-                className="h-full w-full"
-                imgClassName="not-prose object-contain"
+                className="not-prose h-full w-full"
+                imgClassName="object-contain"
                 captionClassName="hidden"
               />
             ) : (
               <MediaBlock
                 media={media}
                 enableGutter={false}
-                className="h-full w-full"
-                imgClassName="not-prose object-contain"
+                className="not-prose h-full w-full"
+                imgClassName="object-contain"
                 captionClassName="hidden"
               />
             )}

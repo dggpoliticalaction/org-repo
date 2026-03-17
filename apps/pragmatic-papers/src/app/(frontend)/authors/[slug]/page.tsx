@@ -1,3 +1,9 @@
+import config from "@payload-config"
+import type { Metadata } from "next"
+import { draftMode } from "next/headers"
+import { getPayload } from "payload"
+import React, { cache } from "react"
+
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
@@ -7,13 +13,9 @@ import { Pagination } from "@/components/Pagination"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Separator } from "@/components/ui/separator"
 import type { Article as ArticleType, User, Volume } from "@/payload-types"
 import { getInitials } from "@/utilities/getInitials"
-import config from "@payload-config"
-import type { Metadata } from "next"
-import { draftMode } from "next/headers"
-import { getPayload } from "payload"
-import React, { cache } from "react"
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config })
@@ -183,8 +185,10 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
   const hasBiography = !!user.biography
 
   const profile = user.profileImage
-
+  const profileImageUrl =
+    typeof profile === "number" ? undefined : (profile?.sizes?.square?.url ?? undefined)
   const initials = getInitials(user.name || "Author")
+
   return (
     <article className="mx-auto max-w-3xl space-y-6 px-4">
       {/* Allows redirects for valid pages too */}
@@ -194,8 +198,9 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
 
       <header className="flex flex-col items-center space-y-3 text-center">
         {profile && (
-          <Avatar size="2xl" className="aspect-square hover:opacity-80">
+          <Avatar size="2xl" className="aspect-square border">
             <AvatarImage
+              src={profileImageUrl}
               render={<Media media={profile} variant="square" sizes="128px" priority />}
             />
             <AvatarFallback>{initials}</AvatarFallback>
@@ -213,18 +218,22 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
         </section>
       )}
 
+      <Separator className="my-16" />
+
       <section aria-label="Articles by this author">
-        <h2 className="mb-4 text-2xl font-semibold">Articles</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-2xl font-semibold">Articles</h2>
+          <PageRange
+            collection="articles"
+            currentPage={currentPage}
+            limit={ARTICLES_PER_PAGE}
+            totalDocs={totalDocs}
+          />
+        </div>
         {totalDocs === 0 ? (
           <p className="text-muted-foreground text-sm">Look out for this author's debut!</p>
         ) : (
           <>
-            <PageRange
-              collection="articles"
-              currentPage={currentPage}
-              limit={ARTICLES_PER_PAGE}
-              totalDocs={totalDocs}
-            />
             <div className="mt-4 flex flex-col gap-4">
               {articles.map((article) => {
                 const volume = volumeByArticleId.get(article.id)

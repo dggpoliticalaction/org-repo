@@ -30,7 +30,7 @@ export const ArticleCard: React.FC<{
           <Media
             media={image}
             variant="square"
-            className="aspect-[4/3]"
+            className="aspect-4/3 border object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 352px"
           />
         )}
