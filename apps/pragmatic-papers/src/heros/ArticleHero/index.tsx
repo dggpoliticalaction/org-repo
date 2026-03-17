@@ -50,7 +50,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
       {publishedAt && (
         <HoverPrefetchLink
           href={`/articles/${article.slug}`}
-          className="dark:text-brand-high-contrast font-serif font-bold text-brand underline-offset-4 hover:underline"
+          className="dark:text-brand-high-contrast text-brand font-serif font-bold underline-offset-4 hover:underline"
         >
           <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
         </HoverPrefetchLink>

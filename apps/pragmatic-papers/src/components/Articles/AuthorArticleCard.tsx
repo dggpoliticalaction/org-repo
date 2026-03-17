@@ -25,7 +25,7 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
   return (
     <Card className={cn("rounded-sm", className)}>
       <CardContent className="flex flex-row gap-4">
-        <div className="h-24 w-32 shrink-0 overflow-hidden rounded-sm border border-border bg-muted">
+        <div className="border-border bg-muted h-24 w-32 shrink-0 overflow-hidden rounded-sm border">
           {metaImage && typeof metaImage !== "string" && (
             <HoverPrefetchLink href={href} className="aspect-[4/3]">
               <Media
@@ -38,17 +38,17 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
         </div>
         <div className="flex flex-col gap-1">
           {title && (
-            <h3 className="font-display line-clamp-3 text-lg font-semibold text-primary hover:text-primary/80">
+            <h3 className="font-display text-primary hover:text-primary/80 line-clamp-3 text-lg font-semibold">
               <HoverPrefetchLink href={href}>{title}</HoverPrefetchLink>
             </h3>
           )}
           {description && (
-            <p className="line-clamp-2 font-serif text-sm text-primary">{description}</p>
+            <p className="text-primary line-clamp-2 font-serif text-sm">{description}</p>
           )}
           {volume && (
             <HoverPrefetchLink
               href={`/volumes/${volume.slug}`}
-              className="mt-auto line-clamp-1 text-sm text-muted-foreground underline-offset-2 hover:underline"
+              className="text-muted-foreground mt-auto line-clamp-1 text-sm underline-offset-2 hover:underline"
             >
               {volume.title ?? volume.slug}
             </HoverPrefetchLink>

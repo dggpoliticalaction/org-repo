@@ -52,15 +52,14 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
   const { slug, name, affiliation } = author
   const initials = getInitials(name || "Author")
   const bioSnippet = extractBioSnippet(author)
+  const profileImage = author.profileImage ?? undefined
 
   return (
     <Card className="rounded-xs">
       <CardContent className="flex flex-row gap-4">
         <HoverPrefetchLink href={`/authors/${slug}`} aria-label={name || "Author profile"}>
           <Avatar className="aspect-square h-24 w-24 hover:opacity-80">
-            <AvatarImage
-              render={<Media media={author.profileImage} sizes="96px" variant="square" />}
-            />
+            <AvatarImage render={<Media media={profileImage} sizes="96px" variant="square" />} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </HoverPrefetchLink>
@@ -69,19 +68,19 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
             <div className="flex flex-col md:flex-row md:items-center">
               <HoverPrefetchLink
                 href={`/authors/${slug}`}
-                className="font-display text-lg font-bold text-primary hover:text-primary/80"
+                className="font-display text-primary hover:text-primary/80 text-lg font-bold"
               >
                 {name}
               </HoverPrefetchLink>
               {affiliation && (
-                <span className="ml-1 text-sm font-normal text-muted-foreground">
+                <span className="text-muted-foreground ml-1 text-sm font-normal">
                   {" - "}
                   {affiliation}
                 </span>
               )}
             </div>
             {bioSnippet && (
-              <p className="line-clamp-2 font-serif text-sm text-primary">{bioSnippet}</p>
+              <p className="text-primary line-clamp-2 font-serif text-sm">{bioSnippet}</p>
             )}
           </div>
           <AuthorLinks socials={author.socials} />

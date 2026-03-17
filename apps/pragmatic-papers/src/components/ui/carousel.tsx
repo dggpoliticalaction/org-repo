@@ -241,7 +241,7 @@ export const CarouselIndicators: React.FC<{
 
   return (
     <div
-      className={cn("absolute bottom-10 left-0 right-0 z-10 flex justify-center gap-2", className)}
+      className={cn("absolute right-0 bottom-10 left-0 z-10 flex justify-center gap-2", className)}
     >
       {Array.from({ length: count }).map((_, idx) => (
         <button
@@ -249,8 +249,8 @@ export const CarouselIndicators: React.FC<{
           onClick={() => api?.scrollTo(idx)}
           type="button"
           className={cn(
-            "inline-block h-2 w-2 rounded-sm bg-muted-foreground ring-2 ring-background transition-all",
-            idx === current ? "scale-125 bg-primary" : "opacity-40",
+            "bg-muted-foreground ring-background inline-block h-2 w-2 rounded-sm ring-2 transition-all",
+            idx === current ? "bg-primary scale-125" : "opacity-40",
           )}
           aria-label={`Go to slide ${idx + 1}`}
           tabIndex={-1}
