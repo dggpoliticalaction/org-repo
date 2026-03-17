@@ -26,6 +26,30 @@ export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
 const converters: JSXConvertersFunction<DefaultNodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
+  link: ({ node, nodesToJSX }) => {
+    const children = nodesToJSX({ nodes: node.children })
+    const rel = node.fields.newTab ? "noopener noreferrer" : undefined
+    const target = node.fields.newTab ? "_blank" : undefined
+    const href =
+      node.fields.linkType === "internal"
+        ? internalDocToHref({ linkNode: node })
+        : (node.fields.url ?? "")
+    return (
+      <a className="underline underline-offset-2" href={href} rel={rel} target={target}>
+        {children}
+      </a>
+    )
+  },
+  autolink: ({ node, nodesToJSX }) => {
+    const children = nodesToJSX({ nodes: node.children })
+    const rel = node.fields.newTab ? "noopener noreferrer" : undefined
+    const target = node.fields.newTab ? "_blank" : undefined
+    return (
+      <a className="underline underline-offset-2" href={node.fields.url} rel={rel} target={target}>
+        {children}
+      </a>
+    )
+  },
   paragraph: ({ node, nodesToJSX }) => (
     <React.Fragment>{nodesToJSX({ nodes: node.children })}</React.Fragment>
   ),
