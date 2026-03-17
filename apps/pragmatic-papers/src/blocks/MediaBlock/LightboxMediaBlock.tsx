@@ -5,33 +5,31 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { cn } from "@/utilities/utils"
 import { MediaBlock, type StyledMediaBlockProps } from "./Component"
 
-interface LightboxMediaBlockProps extends StyledMediaBlockProps {
-  pictureClassName?: string
+export type LightboxMediaBlockProps = StyledMediaBlockProps & {
+  containerClassName?: string
 }
 
 export const LightboxMediaBlock: React.FC<LightboxMediaBlockProps> = ({
+  containerClassName,
   className,
   media,
   ...props
 }) => {
   if (typeof media === "number") return null
+
   return (
     <Dialog>
-      <DialogTrigger className="w-full">
+      <DialogTrigger className={cn("w-full", containerClassName)}>
         <MediaBlock media={media} enableGutter={false} className={className} {...props} />
       </DialogTrigger>
-      <DialogContent className="[&>button]:bg-background max-w-[100vw] border-0 p-0 text-sm shadow-none [&:has(>figure)>button]:top-6 [&>button]:top-2 [&>button]:right-2 [&>button]:rounded-sm [&>button_svg]:h-6 [&>button_svg]:w-6">
+      <DialogContent className="[&>button]:bg-background ml-1 max-h-[calc(100vh-2rem)] p-0 text-base shadow-none ring-0 sm:max-w-[calc(100%-2rem)] [&>button]:top-2 [&>button]:right-2 [&>button]:rounded-sm [&>button]:p-0.5 [&>button_svg]:size-6">
         <DialogHeader className="sr-only">
           <DialogTitle>{media.filename}</DialogTitle>
         </DialogHeader>
-        <MediaBlock
-          media={media}
-          imgClassName="w-full object-contain md:aspect-video"
-          sizes="100vw"
-          enableGutter={false}
-        />
+        <MediaBlock media={media} sizes="100vw" variant="xlarge" enableGutter={false} />
       </DialogContent>
     </Dialog>
   )

@@ -4,9 +4,11 @@ import { createArticle } from "../articles"
 import { createMediaFromURL } from "../media"
 import {
   createEmptyParagraph,
+  createLinkNode,
   createParagraph,
   createRichText,
   createRichTextFromString,
+  createTextNode,
 } from "../richtext"
 
 /**
@@ -54,7 +56,12 @@ export const createMediaCollageArticle = async (
       "https://wikicdn.destiny.gg/f/fd/ITSBAD.png",
       "It's bad, what do you want me to say!",
       {
-        caption: createRichTextFromString("It's bad, what do you want me to say!"),
+        caption: createRichText([
+          createParagraph([
+            createTextNode("It's bad, what do you want me to say! "),
+            createLinkNode("Learn more", "https://destiny.gg", true),
+          ]),
+        ]),
       },
     ),
     createMediaFromURL(

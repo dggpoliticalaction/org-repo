@@ -1,9 +1,16 @@
 import type { MediaBlock as MediaBlockProps } from "@/payload-types"
+import {
+  type JSXConvertersFunction,
+  LinkJSXConverter,
+  RichText,
+} from "@payloadcms/richtext-lexical/react"
 import React from "react"
 
 import { Media } from "@/components/Media"
+import { type ImageVariant } from "@/components/Media/ImageMedia"
+import { internalDocToHref } from "@/components/RichText"
 import { cn } from "@/utilities/utils"
-import { convertLexicalToPlaintext } from "@payloadcms/richtext-lexical/plaintext"
+import { type DefaultNodeTypes } from "@payloadcms/richtext-lexical"
 
 export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
   breakout?: boolean
@@ -13,7 +20,16 @@ export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
   enableGutter?: boolean
   sizes?: string | undefined
   disableInnerContainer?: boolean
+  variant?: ImageVariant
 }
+
+const converters: JSXConvertersFunction<DefaultNodeTypes> = ({ defaultConverters }) => ({
+  ...defaultConverters,
+  ...LinkJSXConverter({ internalDocToHref }),
+  paragraph: ({ node, nodesToJSX }) => (
+    <React.Fragment>{nodesToJSX({ nodes: node.children })}</React.Fragment>
+  ),
+})
 
 export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props }) => {
   const {
@@ -23,14 +39,14 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props })
     enableGutter = true,
     imgClassName,
     media,
+    variant = "medium",
     disableInnerContainer,
   } = props
   if (typeof media === "number") return null
 
-  sizes = sizes || breakout ? "(max-width: 768px) 100vw, 800px" : "(max-width: 768px) 100vw, 728px"
+  sizes = sizes || "(max-width: 768px) 100vw, 800px"
 
-  let caption
-  if (media && typeof media === "object") caption = media.caption
+  const { caption } = media
 
   const Slot: React.ElementType = caption ? "figure" : "picture"
   return (
@@ -43,18 +59,18 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props })
         className,
       )}
     >
-      <Media className={imgClassName} media={media} sizes={sizes} />
+      <Media className={imgClassName} media={media} sizes={sizes} variant={variant} />
       {caption && (
         <figcaption
           className={cn(
-            "text-sm",
+            "text-primary mt-2 text-center font-serif",
             {
               container: !disableInnerContainer,
             },
             captionClassName,
           )}
         >
-          {convertLexicalToPlaintext({ data: caption })}
+          <RichText converters={converters} data={caption} disableContainer />
         </figcaption>
       )}
     </Slot>
