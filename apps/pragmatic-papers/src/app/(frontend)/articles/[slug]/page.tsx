@@ -88,6 +88,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
         <RichText
           data={content}
           enableGutter={false}
+          className="drop-cap"
           parentDoc={{ collection: "articles", id: article.id }}
         />
       </MathJaxProvider>

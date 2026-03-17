@@ -32,8 +32,8 @@ import { default as default_80e5fdb60df5ca84bc544282529ce3be } from '../../../bl
 import { URLField as URLField_50bd533e6cc7d027cb7127769a4f2bf9 } from '@/blocks/SocialEmbed/components/URLField'
 import { FootnoteLabel as FootnoteLabel_2845bbc260cbb0202b7c6ec591d344dc } from '@/blocks/Footnote/FootnoteLabel'
 import { AlignFeatureClient as AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
-import { RowLabel as RowLabel_b9b9938cf466765c7ed61773d838e057 } from '@/fields/menu/RowLabel'
 import { TitleFieldComponent as TitleFieldComponent_5f38144a1c30609056230d234808018e } from '@/collections/Volumes/components/TitleField'
+import { RowLabel as RowLabel_b9b9938cf466765c7ed61773d838e057 } from '@/fields/menu/RowLabel'
 import { ColorPickerComponent as ColorPickerComponent_825329501481bc0e04bb53c75811d326 } from '@/fields/colorPicker/ColorPickerComponent'
 import { PaperIconAdmin as PaperIconAdmin_de5f3b464da8d97ce80441fdb9ee9751 } from '@/components/Logo/icons/PaperIcon'
 import { LogomarkIcon as LogomarkIcon_715cf00332be8c15b8f2b121ec0215b0 } from '@/components/Logo/icons/LogomarkIcon'
@@ -77,8 +77,8 @@ export const importMap = {
   "@/blocks/SocialEmbed/components/URLField#URLField": URLField_50bd533e6cc7d027cb7127769a4f2bf9,
   "@/blocks/Footnote/FootnoteLabel#FootnoteLabel": FootnoteLabel_2845bbc260cbb0202b7c6ec591d344dc,
   "@payloadcms/richtext-lexical/client#AlignFeatureClient": AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "@/fields/menu/RowLabel#RowLabel": RowLabel_b9b9938cf466765c7ed61773d838e057,
   "@/collections/Volumes/components/TitleField#TitleFieldComponent": TitleFieldComponent_5f38144a1c30609056230d234808018e,
+  "@/fields/menu/RowLabel#RowLabel": RowLabel_b9b9938cf466765c7ed61773d838e057,
   "@/fields/colorPicker/ColorPickerComponent#ColorPickerComponent": ColorPickerComponent_825329501481bc0e04bb53c75811d326,
   "@/components/Logo/icons/PaperIcon#PaperIconAdmin": PaperIconAdmin_de5f3b464da8d97ce80441fdb9ee9751,
   "@/components/Logo/icons/LogomarkIcon#LogomarkIcon": LogomarkIcon_715cf00332be8c15b8f2b121ec0215b0,

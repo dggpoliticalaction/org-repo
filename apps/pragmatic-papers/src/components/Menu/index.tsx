@@ -11,7 +11,7 @@ const menuVariants = cva("flex", {
   variants: {
     layout: {
       inline: "flex-row gap-2 items-center",
-      stacked: "flex-col gap-1 items-start",
+      stacked: "flex-col items-start",
       responsive: "flex-col gap-1 items-start md:flex-row md:gap-2 md:items-center",
     },
   },

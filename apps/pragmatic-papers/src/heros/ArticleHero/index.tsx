@@ -28,7 +28,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
           />
         </div>
       )}
-      <h1 className="text-3xl font-bold sm:text-4xl">{title}</h1>
+      <h1 className="mt-8 text-3xl font-bold sm:text-4xl">{title}</h1>
       {filteredAuthors.length > 0 && (
         <div className="text-lg">
           <p>

@@ -45,15 +45,18 @@ export type FootnotesField =
  * via the `definition` "CollectionGridLayout".
  */
 export type CollectionGridLayout =
-  | 'bernoulli-left'
-  | 'bernoulli-right'
-  | 'euler-2'
-  | 'euler-3'
-  | 'newton-4'
-  | 'euler-5'
-  | 'fibonacci-6'
-  | 'vespucci-7'
-  | 'fibonacci-7';
+  | (
+      | 'bernoulli-left'
+      | 'bernoulli-right'
+      | 'euler-2'
+      | 'euler-3'
+      | 'newton-4'
+      | 'euler-5'
+      | 'fibonacci-6'
+      | 'vespucci-7'
+      | 'fibonacci-7'
+    )
+  | null;
 /**
  * Fill each slot with a article or volume. The number of slots is determined by the chosen layout.
  *
@@ -595,7 +598,7 @@ export interface Topic {
  * via the `definition` "CollectionGridBlock".
  */
 export interface CollectionGridBlock {
-  layout: CollectionGridLayout;
+  layout?: CollectionGridLayout;
   slots: CollectionGridSlots;
   id?: string | null;
   blockName?: string | null;

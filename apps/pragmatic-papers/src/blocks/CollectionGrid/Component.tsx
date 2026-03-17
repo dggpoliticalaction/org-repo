@@ -25,10 +25,11 @@ const layouts = {
   "fibonacci-6": Fibonacci6Layout,
   "vespucci-7": Vespucci7Layout,
   "fibonacci-7": Fibonacci7Layout,
-} as const satisfies Record<CollectionGridLayout, React.FC<LayoutProps>>
+} as const satisfies Record<NonNullable<CollectionGridLayout>, React.FC<LayoutProps>>
 
 export const CollectionGridBlock: React.FC<CollectionGridBlockType> = async (props) => {
   const { layout, id, slots } = props
+  if (!layout) return null
   const LayoutComponent = layouts[layout]
   return (
     <LayoutComponent
