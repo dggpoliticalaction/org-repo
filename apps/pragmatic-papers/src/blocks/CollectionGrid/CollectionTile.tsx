@@ -3,7 +3,7 @@ import React from "react"
 
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { isMedia, Media } from "@/components/Media"
-import type { Article, CollectionGridSlots, Media as MediaType, Volume } from "@/payload-types"
+import type { Article, CollectionGridSlots, Media as MediaType } from "@/payload-types"
 import { cn } from "@/utilities/ui"
 
 export type ImagePosition = "above" | "below" | "left" | "right" | "none"
@@ -12,14 +12,6 @@ export interface CollectionTileProps extends React.ComponentProps<"div"> {
   tile: CollectionGridSlots[number]
   imagePosition?: ImagePosition
   showByline?: boolean
-}
-
-export const isArticle = (entry: Article | Volume): entry is Article => {
-  return "type" in entry && entry.type === "article"
-}
-
-export const isVolume = (entry: Article | Volume): entry is Volume => {
-  return "type" in entry && entry.type === "volume"
 }
 
 export const CollectionTile: React.FC<CollectionTileProps> = ({
@@ -42,6 +34,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
   if (
     imagePosition !== "none" &&
     isArticle(collection.value) &&
+    collection.relationTo === "articles" &&
     isMedia(collection.value.heroImage)
   ) {
     heroImage = collection.value.heroImage
@@ -67,7 +60,6 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       href={href}
       id={id ?? undefined}
       className={cn(
-        "@container group flex flex-col gap-2",
         isHorizontal && "flex-row items-center",
         className,
       )}
@@ -75,7 +67,6 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       {heroImage && (
         <div
           className={cn(
-            "aspect-video w-full shrink overflow-hidden rounded-sm",
             imagePosition === "left" && "md:order-first",
             imagePosition === "right" && "md:order-last",
           )}
@@ -92,9 +83,9 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
         )}
 
         {/* Title — uses container queries to scale with available space */}
-        <h3 className="font-display @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl text-sm font-bold leading-tight text-primary hover:text-primary/80">
+        <h2
           {overrideTitle || title}
-        </h3>
+        </h2>
 
         {/* Byline */}
         {showByline && authorNames && (
