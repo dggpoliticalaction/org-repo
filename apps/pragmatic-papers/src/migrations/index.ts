@@ -19,9 +19,7 @@ import * as migration_20260307_014204_enable_math_rendering from './20260307_014
 import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles';
 import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField';
 import * as migration_20260311_160239_rename_Users_role_user_to_member from './20260311_160239_rename_Users_role_user_to_member';
-import * as migration_20260314_063456_collection_grid from './20260314_063456_collection_grid';
 import * as migration_20260316_072557_add_blurdataurl from './20260316_072557_add_blurdataurl';
-import * as migration_20260317_032647_add_collections_for_the_last_time from './20260317_032647_add_collections_for_the_last_time';
 
 export const migrations = [
   {
@@ -130,18 +128,8 @@ export const migrations = [
     name: '20260311_160239_rename_Users_role_user_to_member',
   },
   {
-    up: migration_20260314_063456_collection_grid.up,
-    down: migration_20260314_063456_collection_grid.down,
-    name: '20260314_063456_collection_grid',
-  },
-  {
     up: migration_20260316_072557_add_blurdataurl.up,
     down: migration_20260316_072557_add_blurdataurl.down,
-    name: '20260316_072557_add_blurdataurl',
-  },
-  {
-    up: migration_20260317_032647_add_collections_for_the_last_time.up,
-    down: migration_20260317_032647_add_collections_for_the_last_time.down,
-    name: '20260317_032647_add_collections_for_the_last_time'
+    name: '20260316_072557_add_blurdataurl'
   },
 ];
