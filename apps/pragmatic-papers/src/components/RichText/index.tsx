@@ -52,7 +52,7 @@ type NodeTypes =
     >
   | SerializedInlineBlockNode<MathBlockProps | FootnoteBlockProps>
 
-export const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
+export const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }): string => {
   const { value, relationTo } = linkNode.fields.doc!
   if (typeof value !== "object") {
     throw new Error("Expected value to be an object")
