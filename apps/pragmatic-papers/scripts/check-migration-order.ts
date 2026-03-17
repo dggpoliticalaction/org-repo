@@ -1,6 +1,6 @@
-import { migrations } from '../src/migrations/index.js'
+import { migrations } from "../src/migrations/index.js"
 
-let previous = ''
+let previous = ""
 let failed = false
 
 for (const migration of migrations) {
@@ -17,5 +17,5 @@ for (const migration of migrations) {
 if (failed) {
   process.exit(1)
 } else {
-  console.warn('All migrations are in chronological order.')
+  console.warn("All migrations are in chronological order.")
 }
