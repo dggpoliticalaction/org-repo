@@ -89,7 +89,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
         )}
 
         {/* Title — uses container queries to scale with available space */}
-        <h2 className="font-display text-sm font-bold leading-tight text-primary hover:text-primary/80 @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl">
+        <h2 className="font-display text-balance text-sm font-bold leading-tight text-primary hover:text-primary/80 @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl">
           {overrideTitle || title}
         </h2>
 
