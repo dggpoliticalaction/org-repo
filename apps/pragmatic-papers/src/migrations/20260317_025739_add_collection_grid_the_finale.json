@@ -233,8 +233,7 @@
           "type": "enum_pages_blocks_collection_grid_layout",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false,
-          "default": "'vespucci-7'"
+          "notNull": false
         },
         "block_name": {
           "name": "block_name",
@@ -1845,8 +1844,7 @@
           "type": "enum__pages_v_blocks_collection_grid_layout",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false,
-          "default": "'vespucci-7'"
+          "notNull": false
         },
         "_uuid": {
           "name": "_uuid",
@@ -11716,6 +11714,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "85bfab66-2cc1-4515-9ebb-d372ae961020",
+  "id": "2768b916-5b7e-49d9-98f2-e030aa1c030f",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

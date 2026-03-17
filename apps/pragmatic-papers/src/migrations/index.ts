@@ -20,7 +20,7 @@ import * as migration_20260307_192044_add_topics_to_articles from './20260307_19
 import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField';
 import * as migration_20260311_160239_rename_Users_role_user_to_member from './20260311_160239_rename_Users_role_user_to_member';
 import * as migration_20260314_063456_collection_grid from './20260314_063456_collection_grid';
-import * as migration_20260317_002901_add_collection_grid from './20260317_002901_add_collection_grid';
+import * as migration_20260317_025739_add_collection_grid_the_finale from './20260317_025739_add_collection_grid_the_finale';
 
 export const migrations = [
   {
@@ -134,8 +134,8 @@ export const migrations = [
     name: '20260314_063456_collection_grid',
   },
   {
-    up: migration_20260317_002901_add_collection_grid.up,
-    down: migration_20260317_002901_add_collection_grid.down,
-    name: '20260317_002901_add_collection_grid'
+    up: migration_20260317_025739_add_collection_grid_the_finale.up,
+    down: migration_20260317_025739_add_collection_grid_the_finale.down,
+    name: '20260317_025739_add_collection_grid_the_finale'
   },
 ];

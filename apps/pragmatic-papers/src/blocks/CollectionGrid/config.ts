@@ -53,8 +53,7 @@ export const CollectionGrid: Block = {
       type: "select",
       interfaceName: "CollectionGridLayout",
       label: "Layout Preset",
-      required: true,
-      defaultValue: "vespucci-7",
+      required: false,
       options: Object.entries(layouts).map(([value, { label }]) => ({
         value,
         label,
