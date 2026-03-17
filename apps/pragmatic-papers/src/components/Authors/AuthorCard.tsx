@@ -56,9 +56,9 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
 
   return (
     <Card className="rounded-xs">
-      <CardContent className="flex flex-row gap-4">
         <HoverPrefetchLink href={`/authors/${slug}`} aria-label={name || "Author profile"}>
           <Avatar className="aspect-square h-24 w-24 hover:opacity-80">
+          <Avatar className="aspect-square size-24 hover:opacity-80">
             <AvatarImage render={<Media media={profileImage} sizes="96px" variant="square" />} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
@@ -75,6 +75,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
               {affiliation && (
                 <span className="text-muted-foreground ml-1 text-sm font-normal">
                   {" - "}
+                <span className="text-muted-foreground ml-1 line-clamp-1 text-sm font-normal">
                   {affiliation}
                 </span>
               )}

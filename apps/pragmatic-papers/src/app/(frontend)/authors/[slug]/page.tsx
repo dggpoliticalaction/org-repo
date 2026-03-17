@@ -194,17 +194,9 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
 
       <header className="flex flex-col items-center space-y-3 text-center">
         {profile && (
-          <Avatar className="aspect-square h-full w-32 hover:opacity-80">
+          <Avatar size="2xl" className="aspect-square hover:opacity-80">
             <AvatarImage
-              render={
-                <Media
-                  media={profile}
-                  variant="square"
-                  sizes="128px"
-                  className="border-border h-32 w-32 rounded-full border"
-                  priority
-                />
-              }
+              render={<Media media={profile} variant="square" sizes="128px" priority />}
             />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>

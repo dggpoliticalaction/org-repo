@@ -86,7 +86,7 @@ export const ImageMedia: React.FC<ImageMediaProps> = ({
   return (
     <NextImage
       {...props}
-      className={cn("h-full w-full rounded-xs object-cover", className)}
+      className={cn("h-full w-full rounded-sm object-cover", className)}
       src={src}
       alt={alt}
       width={width}

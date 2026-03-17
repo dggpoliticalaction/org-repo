@@ -28,7 +28,7 @@ type CopyrightProps = CopyrightPropsWithChildren | CopyrightPropsWithCopyright
  */
 export const Copyright: React.FC<CopyrightProps> = ({ className, copyright, ...props }) => {
   return (
-    <div className={cn("text-muted-foreground text-sm", className)} {...props}>
+    <div className={cn("text-sm", className)} {...props}>
       &copy; {new Date().getFullYear()} {copyright}
     </div>
   )

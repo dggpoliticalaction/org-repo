@@ -150,3 +150,11 @@
 @utility font-display {
   font-family: var(--font-sans);
 }
+
+@utility drop-cap {
+  p:first-child::first-letter {
+    initial-letter: 2;
+    margin-right: 0.25em;
+    font-weight: bold;
+  }
+}

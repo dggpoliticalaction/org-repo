@@ -57,26 +57,6 @@ export const createMenus = async (
             },
           },
         },
-        {
-          link: {
-            type: "reference",
-            label: "About",
-            reference: {
-              relationTo: "pages",
-              value: aboutPage.id,
-            },
-          },
-        },
-        {
-          link: {
-            type: "reference",
-            label: "Contact",
-            reference: {
-              relationTo: "pages",
-              value: contactPage.id,
-            },
-          },
-        },
       ],
       actionButton: {
         enabled: true,
@@ -99,6 +79,26 @@ export const createMenus = async (
         {
           link: {
             type: "reference",
+            label: "Contact",
+            reference: {
+              relationTo: "pages",
+              value: contactPage.id,
+            },
+          },
+        },
+        {
+          link: {
+            type: "reference",
+            label: "About",
+            reference: {
+              relationTo: "pages",
+              value: aboutPage.id,
+            },
+          },
+        },
+        {
+          link: {
+            type: "reference",
             label: "Privacy Policy",
             reference: {
               relationTo: "pages",
@@ -114,6 +114,13 @@ export const createMenus = async (
               relationTo: "pages",
               value: termsOfUsePage.id,
             },
+          },
+        },
+        {
+          link: {
+            type: "custom",
+            label: "Log In",
+            url: "/admin/login",
           },
         },
       ],

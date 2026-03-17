@@ -4,15 +4,15 @@ import { cn } from "@/utilities/utils"
 import { type VariantProps, cva } from "class-variance-authority"
 import React from "react"
 
-const menuVariants = cva("flex items-center", {
+const menuVariants = cva("flex", {
   defaultVariants: {
     layout: "responsive",
   },
   variants: {
     layout: {
-      inline: "flex-row gap-1",
-      stacked: "flex-col items-start",
-      responsive: "flex-col gap-1 md:flex-row md:gap-2",
+      inline: "flex-row gap-2 items-center",
+      stacked: "flex-col gap-1 items-start",
+      responsive: "flex-col gap-1 items-start md:flex-row md:gap-2 md:items-center",
     },
   },
 })
