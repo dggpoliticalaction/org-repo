@@ -139,7 +139,7 @@ const CarouselContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HT
     const { carouselRef, orientation } = useCarousel()
 
     return (
-      <div ref={carouselRef} className="overflow-hidden">
+      <div ref={carouselRef} className="h-full overflow-hidden">
         <div
           ref={ref}
           className={cn(
@@ -165,7 +165,7 @@ const CarouselItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
         role="group"
         aria-roledescription="slide"
         className={cn(
-          "min-w-0 shrink-0 grow-0 basis-full",
+          "min-h-0 min-w-0 shrink-0 grow-0 basis-full",
           orientation === "horizontal" ? "pl-4" : "pt-4",
           className,
         )}
@@ -231,5 +231,33 @@ const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<ty
   },
 )
 CarouselNext.displayName = "CarouselNext"
+
+export const CarouselIndicators: React.FC<{
+  count: number
+  current: number
+  className?: string
+}> = ({ count, current, className }) => {
+  const { api } = useCarousel()
+
+  return (
+    <div
+      className={cn("absolute bottom-10 left-0 right-0 z-10 flex justify-center gap-2", className)}
+    >
+      {Array.from({ length: count }).map((_, idx) => (
+        <button
+          key={idx}
+          onClick={() => api?.scrollTo(idx)}
+          type="button"
+          className={cn(
+            "inline-block h-2 w-2 rounded-sm bg-muted-foreground ring-2 ring-background transition-all",
+            idx === current ? "scale-125 bg-primary" : "opacity-40",
+          )}
+          aria-label={`Go to slide ${idx + 1}`}
+          tabIndex={-1}
+        />
+      ))}
+    </div>
+  )
+}
 
 export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi }

@@ -14,6 +14,7 @@ const NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https:
 const nextConfig = {
   output: "standalone",
   images: {
+    qualities: [80],
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL, NEXT_PUBLIC_SUPABASE_URL].map((item) => {
         const url = new URL(item)

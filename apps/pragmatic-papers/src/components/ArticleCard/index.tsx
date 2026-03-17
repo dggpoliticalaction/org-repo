@@ -17,29 +17,34 @@ export const ArticleCard: React.FC<{
   const { className, doc, relationTo, title: titleFromProps } = props
 
   const { slug, meta, title } = doc || {}
-  const { description, image: metaImage } = meta || {}
+  const { description, image } = meta || {}
 
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, " ") // replace non-breaking space with white space
   const href = `/${relationTo}/${slug}`
 
   return (
-    <div className={cn("space-y-2", className)}>
-      {metaImage && typeof metaImage !== "string" && (
-        <div className="bg-muted mb-2 flex aspect-3/2 items-center overflow-hidden rounded-sm hover:opacity-90">
-          <HoverPrefetchLink href={href}>
-            <Media resource={metaImage} imgClassName="object-cover min-h-[352px]" size="square" />
-          </HoverPrefetchLink>
-        </div>
-      )}
-      {titleToUse && (
-        <div className="font-display text-xl font-bold">
-          <HoverPrefetchLink href={href} className="hover:text-primary/80 transition-colors">
+    <HoverPrefetchLink href={href} className="block">
+      <div className={cn("space-y-3", className)}>
+        {image && typeof image !== "string" && (
+          <Media
+            media={image}
+            variant="square"
+            className="aspect-[4/3]"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 352px"
+          />
+        )}
+        {titleToUse && (
+          <h3 className="font-display line-clamp-4 text-xl font-bold hover:text-primary/80">
             {titleToUse}
-          </HoverPrefetchLink>
-        </div>
-      )}
-      {description && <p className="text-primary font-serif">{sanitizedDescription}</p>}
-    </div>
+          </h3>
+        )}
+        {description && (
+          <p className="line-clamp-2 font-serif text-primary sm:line-clamp-3">
+            {sanitizedDescription}
+          </p>
+        )}
+      </div>
+    </HoverPrefetchLink>
   )
 }

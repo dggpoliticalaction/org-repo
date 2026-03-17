@@ -1,10 +1,18 @@
+import type { User } from "@/payload-types"
+import React from "react"
+
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { Media } from "@/components/Media"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
-import type { User } from "@/payload-types"
-import { getInitials } from "@/utilities/getInitials"
+
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return ""
+  if (parts.length === 1) return parts[0]?.slice(0, 2).toUpperCase() || ""
+  return (parts[0]?.charAt(0) || "") + (parts[1]?.charAt(0) || "").toUpperCase()
+}
 
 function extractBioSnippet(author: User, maxLength = 255): string | undefined {
   const bio = author.biography as User["biography"] | string
@@ -49,15 +57,9 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
     <Card className="rounded-xs">
       <CardContent className="flex flex-row gap-4">
         <HoverPrefetchLink href={`/authors/${slug}`} aria-label={name || "Author profile"}>
-          <Avatar className="aspect-square h-full w-24 hover:opacity-80">
+          <Avatar className="aspect-square h-24 w-24 hover:opacity-80">
             <AvatarImage
-              render={
-                <Media
-                  resource={author.profileImage}
-                  imgClassName="object-cover min-h-[352px]"
-                  size="square"
-                />
-              }
+              render={<Media media={author.profileImage} sizes="96px" variant="square" />}
             />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
@@ -67,19 +69,19 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
             <div className="flex flex-col md:flex-row md:items-center">
               <HoverPrefetchLink
                 href={`/authors/${slug}`}
-                className="text-primary font-display hover:text-primary/80 text-lg font-bold"
+                className="font-display text-lg font-bold text-primary hover:text-primary/80"
               >
                 {name}
               </HoverPrefetchLink>
               {affiliation && (
-                <span className="text-muted-foreground ml-1 text-sm font-normal">
+                <span className="ml-1 text-sm font-normal text-muted-foreground">
                   {" - "}
                   {affiliation}
                 </span>
               )}
             </div>
             {bioSnippet && (
-              <p className="text-primary line-clamp-2 font-serif text-sm">{bioSnippet}</p>
+              <p className="line-clamp-2 font-serif text-sm text-primary">{bioSnippet}</p>
             )}
           </div>
           <AuthorLinks socials={author.socials} />

@@ -139,18 +139,21 @@ export default async function VolumePage({
       {publishedAt && (
         <HoverPrefetchLink
           href={`/volumes/${volume.slug}`}
-          className="text-brand dark:text-brand-high-contrast font-serif font-semibold underline-offset-4 hover:underline"
+          className="dark:text-brand-high-contrast font-serif font-semibold text-brand underline-offset-4 hover:underline"
         >
           <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
         </HoverPrefetchLink>
       )}
       {editorsNote && <RichText enableGutter={false} data={editorsNote} />}
       <Separator />
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-        {actualArticles?.map((article) => (
-          <ArticleCard key={article.id} doc={article} relationTo="articles" />
-        ))}
-      </div>
+      <section className="mt-10 space-y-4 border-t pt-8">
+        <h2 className="font-display text-lg font-bold">Articles in this volume</h2>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {actualArticles?.map((article) => (
+            <ArticleCard key={article.id} doc={article} relationTo="articles" />
+          ))}
+        </div>
+      </section>
       <AuthorList aria-label="Volume Authors" authors={volumeAuthors} />
     </article>
   )

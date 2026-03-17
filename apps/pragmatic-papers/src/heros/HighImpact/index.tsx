@@ -1,4 +1,3 @@
-"use client"
 import React from "react"
 
 import type { Page } from "@/payload-types"
@@ -29,11 +28,18 @@ export const HighImpactHero: React.FC<Page["hero"]> = ({ links, media, richText 
           )}
         </div>
       </div>
-      <div className="min-h-[80vh] select-none">
-        {media && typeof media === "object" && (
-          <Media fill imgClassName="-z-10 object-cover" priority resource={media} />
-        )}
-      </div>
+      {media && typeof media === "object" && (
+        <div className="min-h-[80vh] select-none">
+          <Media
+            fill
+            className="-z-10 object-cover"
+            priority
+            sizes="100vw"
+            media={media}
+            variant="xlarge"
+          />
+        </div>
+      )}
     </div>
   )
 }

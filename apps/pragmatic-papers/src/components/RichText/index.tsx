@@ -3,7 +3,7 @@ import { CallToActionBlock } from "@/blocks/CallToAction/Component"
 import { CodeBlock, type CodeBlockProps } from "@/blocks/Code/Component"
 import { FootnoteBlock } from "@/blocks/Footnote/Component"
 import { MathBlock, type MathBlockProps } from "@/blocks/Math/Component"
-import { MediaBlock } from "@/blocks/MediaBlock/Component"
+import { LightboxMediaBlock } from "@/blocks/MediaBlock/LightboxMediaBlock"
 import { MediaCollageBlock } from "@/blocks/MediaCollageBlock/component"
 import {
   BlueskyEmbedBlock,
@@ -67,16 +67,7 @@ function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunctio
     ...LinkJSXConverter({ internalDocToHref }),
     blocks: {
       banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
-      mediaBlock: ({ node }) => (
-        <MediaBlock
-          className="col-span-3 col-start-1"
-          imgClassName="m-0"
-          {...node.fields}
-          captionClassName="mx-auto max-w-3xl"
-          enableGutter={false}
-          disableInnerContainer
-        />
-      ),
+      mediaBlock: ({ node }) => <LightboxMediaBlock breakout {...node.fields} />,
       mediaCollage: ({ node }) => <MediaCollageBlock {...node.fields} />,
       code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
       cta: ({ node }) => <CallToActionBlock {...node.fields} />,
@@ -129,7 +120,7 @@ export default function RichText({
   return (
     <div
       className={cn(
-        "payload-richtext prose-neutral prose-headings:font-display font-serif",
+        "payload-richtext prose-headings:font-display prose-neutral font-serif",
         {
           container: enableGutter,
           "max-w-none": !enableGutter,

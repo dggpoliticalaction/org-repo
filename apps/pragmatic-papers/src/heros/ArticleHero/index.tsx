@@ -1,8 +1,7 @@
-import Link from "next/link"
 import React from "react"
 
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
-import { ImageMedia } from "@/components/Media/ImageMedia"
+import { Media } from "@/components/Media"
 import { Separator } from "@/components/ui/separator"
 import type { Article } from "@/payload-types"
 import { formatDateTime } from "@/utilities/formatDateTime"
@@ -20,10 +19,14 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
   return (
     <div className="relative flex flex-col gap-2">
       {heroImage && (
-        <ImageMedia
-          pictureClassName="object-cover aspect-video rounded-sm overflow-hidden min-h-[222px] md:min-h-[414px]"
-          resource={heroImage}
-        />
+        <div className="-mx-5 min-h-56 md:-mx-8 lg:-mx-16 xl:-mx-32">
+          <Media
+            priority
+            sizes="(max-width: 768px) 100vw, 1024px"
+            media={heroImage}
+            variant="large"
+          />
+        </div>
       )}
       <h1 className="text-3xl font-bold sm:text-4xl">{title}</h1>
       {filteredAuthors.length > 0 && (
@@ -33,9 +36,12 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
             {filteredAuthors.map(({ id, slug, name }, index) => (
               <React.Fragment key={id}>
                 {getSeparator(index, filteredAuthors.length)}
-                <Link href={`/authors/${slug}`} className="underline-offset-2 hover:underline">
+                <HoverPrefetchLink
+                  href={`/authors/${slug}`}
+                  className="underline-offset-2 hover:underline"
+                >
                   {name}
-                </Link>
+                </HoverPrefetchLink>
               </React.Fragment>
             ))}
           </p>
@@ -44,7 +50,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
       {publishedAt && (
         <HoverPrefetchLink
           href={`/articles/${article.slug}`}
-          className="text-brand dark:text-brand-high-contrast font-serif font-bold underline-offset-4 hover:underline"
+          className="dark:text-brand-high-contrast font-serif font-bold text-brand underline-offset-4 hover:underline"
         >
           <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
         </HoverPrefetchLink>
