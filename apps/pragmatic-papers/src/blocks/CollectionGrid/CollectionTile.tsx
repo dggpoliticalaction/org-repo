@@ -2,7 +2,7 @@ import { formatDistanceToNow } from "date-fns"
 import React from "react"
 
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
-import { Media } from "@/components/Media"
+import { isMedia, Media } from "@/components/Media"
 import type { Article, CollectionGridSlots, Media as MediaType, Volume } from "@/payload-types"
 import { cn } from "@/utilities/ui"
 
@@ -36,13 +36,15 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
   const { title, slug, publishedAt, meta } = collection.value
   const href = `/${collection.relationTo}/${slug}`
 
-  let showMedia = false
   let populatedAuthors: Article["populatedAuthors"] = []
   let heroImage: MediaType | null = null
 
-  if ("heroImage" in collection.value) {
-    heroImage = collection.value.heroImage as MediaType
-    showMedia = imagePosition !== "none" && !!heroImage
+  if (
+    imagePosition !== "none" &&
+    isArticle(collection.value) &&
+    isMedia(collection.value.heroImage)
+  ) {
+    heroImage = collection.value.heroImage
   }
 
   if ("populatedAuthors" in collection.value) {
@@ -64,9 +66,13 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
     <HoverPrefetchLink
       href={href}
       id={id ?? undefined}
-      className={cn("group flex flex-col gap-2 @container", isHorizontal && "flex-row items-center", className)}
+      className={cn(
+        "@container group flex flex-col gap-2",
+        isHorizontal && "flex-row items-center",
+        className,
+      )}
     >
-      {showMedia && (
+      {heroImage && (
         <div
           className={cn(
             "aspect-video w-full shrink overflow-hidden rounded-sm",
@@ -74,12 +80,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
             imagePosition === "right" && "md:order-last",
           )}
         >
-          <Media
-            resource={heroImage}
-            className="h-full w-full rounded-sm hover:opacity-80"
-            imgClassName="h-full w-full object-cover"
-            loading="lazy"
-          />
+          <Media media={heroImage} className="hover:opacity-80" variant="medium" />
         </div>
       )}
       <div>
@@ -91,7 +92,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
         )}
 
         {/* Title — uses container queries to scale with available space */}
-        <h3 className="font-display text-sm font-bold leading-tight text-primary hover:text-primary/80 @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl">
+        <h3 className="font-display @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl text-sm font-bold leading-tight text-primary hover:text-primary/80">
           {overrideTitle || title}
         </h3>
 

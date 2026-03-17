@@ -10,8 +10,10 @@ function isVideoMediaProps(props: VideoMediaProps | ImageMediaProps): props is V
   return props.media.mimeType?.includes("video") ?? false
 }
 
-export function isMedia(media: number | MediaType): media is MediaType {
-  return typeof media !== "number"
+export function isMedia(media: number | MediaType | undefined | null): media is MediaType {
+  if (!media) return false
+  if (typeof media === "number") return false
+  return true
 }
 
 export const Media: React.FC<VideoMediaProps | ImageMediaProps> = (props) => {
