@@ -20,6 +20,7 @@ import * as migration_20260307_192044_add_topics_to_articles from './20260307_19
 import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField';
 import * as migration_20260311_160239_rename_Users_role_user_to_member from './20260311_160239_rename_Users_role_user_to_member';
 import * as migration_20260316_072557_add_blurdataurl from './20260316_072557_add_blurdataurl';
+import * as migration_20260317_033620_add_collections_again_thanks_esp from './20260317_033620_add_collections_again_thanks_esp';
 
 export const migrations = [
   {
@@ -130,6 +131,11 @@ export const migrations = [
   {
     up: migration_20260316_072557_add_blurdataurl.up,
     down: migration_20260316_072557_add_blurdataurl.down,
-    name: '20260316_072557_add_blurdataurl'
+    name: '20260316_072557_add_blurdataurl',
+  },
+  {
+    up: migration_20260317_033620_add_collections_again_thanks_esp.up,
+    down: migration_20260317_033620_add_collections_again_thanks_esp.down,
+    name: '20260317_033620_add_collections_again_thanks_esp'
   },
 ];
