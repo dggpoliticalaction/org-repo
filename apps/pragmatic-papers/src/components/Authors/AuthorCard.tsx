@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import type { Media as MediaType, User } from "@/payload-types"
 import Link from "next/link"
 import React from "react"
+import { HoverPrefetchLink } from "../Link/HoverPrefetchLink"
 import { AuthorLinks } from "./AuthorLinks"
 
 function getInitials(name: string): string {
@@ -60,13 +61,14 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
   return (
     <Card className="rounded-sm">
       <CardContent className="flex flex-row gap-4 p-4">
-        <Link href={`/authors/${slug}`} aria-label={name || "Author profile"}>
+        <HoverPrefetchLink href={`/authors/${slug}`} aria-label={name || "Author profile"}>
           <div className="h-24 w-24 overflow-hidden rounded-sm border border-border bg-muted">
             {profileDoc ? (
               <Media
-                resource={profileDoc}
-                imgClassName="h-full w-full object-cover transition-opacity hover:opacity-80"
-                size="96px"
+                media={profileDoc}
+                className="hover:opacity-80"
+                sizes="96px"
+                variant="square"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-primary text-lg font-semibold text-primary-foreground">
@@ -74,7 +76,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
               </div>
             )}
           </div>
-        </Link>
+        </HoverPrefetchLink>
         <div className="flex h-24 flex-1 flex-col justify-between overflow-hidden">
           <div className="min-h-0 space-y-1">
             <div className="flex items-center justify-between">

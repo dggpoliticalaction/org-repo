@@ -30,9 +30,9 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
           {metaImage && typeof metaImage !== "string" && (
             <div className="aspect-[4/3]">
               <Media
-                resource={metaImage}
-                imgClassName="h-full w-full object-cover"
-                size="(max-width: 640px) 128px, 160px"
+                media={metaImage}
+                variant="thumbnail"
+                sizes="(max-width: 640px) 128px, 160px"
               />
             </div>
           )}

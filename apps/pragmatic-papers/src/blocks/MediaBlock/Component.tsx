@@ -1,42 +1,33 @@
-import type { StaticImageData } from "next/image"
-
-import RichText from "@/components/RichText"
-import { cn } from "@/utilities/ui"
+import type { MediaBlock as MediaBlockProps } from "@/payload-types"
 import React from "react"
 
-import type { MediaBlock as MediaBlockProps } from "@/payload-types"
-
-import { Media } from "../../components/Media"
+import { Media } from "@/components/Media"
+import RichText from "@/components/RichText"
+import { cn } from "@/utilities/ui"
 
 export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
   breakout?: boolean
-  captionClassName?: string
   className?: string
-  enableGutter?: boolean
-  fill?: boolean
   imgClassName?: string
-  sizes?: string
-  staticImage?: StaticImageData
-  style?: React.CSSProperties
+  captionClassName?: string
+  enableGutter?: boolean
+  sizes?: string | undefined
   disableInnerContainer?: boolean
 }
 
-export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
+export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props }) => {
   const {
     breakout,
     captionClassName,
     className,
     enableGutter = true,
-    fill,
     imgClassName,
-    sizes: imgSizeFromProps,
     media,
-    staticImage,
-    style,
     disableInnerContainer,
   } = props
+  if (typeof media === "number") return null
 
-  const imgSize = imgSizeFromProps ?? (breakout ? "100vw" : "(max-width: 1376px) 100vw, 1376px")
+  sizes = sizes || breakout ? "(max-width: 768px) 100vw, 800px" : "(max-width: 768px) 100vw, 728px"
 
   let caption
   if (media && typeof media === "object") caption = media.caption
@@ -46,28 +37,12 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = (props) => {
       className={cn(
         {
           container: enableGutter,
-          "-mx-5 md:-mx-8 xl:-mx-16": breakout,
-          "flex h-full flex-col": fill,
+          "lg:-mx-8 xl:-mx-16": breakout,
         },
         className,
       )}
-      style={style}
     >
-      {(media || staticImage) && fill ? (
-        <div className="relative flex-1">
-          <Media
-            fill
-            imgClassName={imgClassName}
-            resource={media}
-            src={staticImage}
-            size={imgSize}
-          />
-        </div>
-      ) : (
-        (media || staticImage) && (
-          <Media imgClassName={imgClassName} resource={media} src={staticImage} size={imgSize} />
-        )
-      )}
+      <Media className={imgClassName} media={media} sizes={sizes} />
       {caption && (
         <figcaption
           className={cn(

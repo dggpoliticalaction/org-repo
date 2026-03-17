@@ -24,7 +24,7 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
 
   // Grid layout
   return (
-    <div className="-mx-5 grid grid-cols-1 items-start gap-6 md:-mx-8 md:grid-cols-2 xl:-mx-16">
+    <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2 lg:-mx-8 xl:-mx-16">
       {images.map((img, idx) => {
         const media = typeof img.media === "number" ? null : img.media
         if (!media) return null
@@ -33,7 +33,7 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = ({ images, lay
           <LightboxMediaBlock
             key={`${img.id}-${idx}`}
             media={media}
-            className={cn("not-prose", isLastOddItem && "mx-auto w-1/2 md:col-span-2")}
+            className={cn("not-prose", isLastOddItem && "mx-auto w-auto md:col-span-2 md:w-1/2")}
             sizes={
               isLastOddItem
                 ? "(max-width: 1376px) 100vw, 1376px"

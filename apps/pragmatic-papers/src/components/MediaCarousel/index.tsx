@@ -56,7 +56,7 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
     <Carousel
       setApi={setApi}
       opts={{ loop: true, startIndex: initialIndex }}
-      className="-mx-5 md:-mx-8 xl:-mx-16"
+      className="lg:-mx-8 xl:-mx-16"
     >
       <CarouselContent>
         {validImages.map((image, index) => (
