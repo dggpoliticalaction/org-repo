@@ -3,7 +3,7 @@ import React from "react"
 
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { isMedia, Media } from "@/components/Media"
-import type { Article, CollectionGridSlots, Media as MediaType, Volume } from "@/payload-types"
+import type { Article, CollectionGridSlots, Media as MediaType } from "@/payload-types"
 import { cn } from "@/utilities/ui"
 
 export type ImagePosition = "above" | "below" | "left" | "right" | "none"
@@ -12,10 +12,6 @@ export interface CollectionTileProps extends React.ComponentProps<"div"> {
   tile: CollectionGridSlots[number]
   imagePosition?: ImagePosition
   showByline?: boolean
-}
-
-export const isArticle = (entry: Article | Volume): entry is Article => {
-  return "content" in entry && entry.content.root.type === "article"
 }
 
 export const CollectionTile: React.FC<CollectionTileProps> = ({
@@ -37,7 +33,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
 
   if (
     imagePosition !== "none" &&
-    isArticle(collection.value) &&
+    collection.relationTo === "articles" &&
     isMedia(collection.value.heroImage)
   ) {
     heroImage = collection.value.heroImage
