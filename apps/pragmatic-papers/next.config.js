@@ -13,6 +13,9 @@ const NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https:
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  experimental: {
+    viewTransition: true,
+  },
   images: {
     qualities: [80],
     remotePatterns: [

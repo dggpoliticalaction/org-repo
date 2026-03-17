@@ -56,7 +56,7 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props })
           <RichText
             data={caption}
             enableGutter={false}
-            className="text-center text-xs text-muted-foreground"
+            className="text-muted-foreground text-center text-xs"
           />
         </figcaption>
       )}

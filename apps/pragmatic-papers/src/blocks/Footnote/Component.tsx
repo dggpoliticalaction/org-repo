@@ -20,7 +20,7 @@ export const FootnoteBlock: React.FC<FootnoteBlockProps> = ({ note, index, class
       title={`Footnote ${index}: ${note}`}
     >
       <Link
-        className="border-none font-bold text-brand/80 hover:text-brand"
+        className="text-brand/80 hover:text-brand border-none font-bold"
         href={`#${describedById}`}
         aria-describedby={describedById}
       >

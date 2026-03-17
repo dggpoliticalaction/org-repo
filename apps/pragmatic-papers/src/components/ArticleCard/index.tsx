@@ -39,7 +39,7 @@ export const ArticleCard: React.FC<{
           <h3 className="font-display line-clamp-4 text-lg font-bold">{titleToUse}</h3>
         )}
         {description && (
-          <p className="line-clamp-2 font-serif text-primary sm:line-clamp-3">
+          <p className="text-primary line-clamp-2 font-serif sm:line-clamp-3">
             {sanitizedDescription}
           </p>
         )}

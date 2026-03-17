@@ -26,7 +26,7 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
   return (
     <Card className={cn("relative h-full rounded-sm", className)}>
       <CardContent className="flex flex-row gap-4 p-4 sm:flex-row">
-        <div className="h-24 w-32 flex-shrink-0 overflow-hidden rounded-sm border border-border bg-muted sm:h-28 sm:w-40">
+        <div className="border-border bg-muted h-24 w-32 flex-shrink-0 overflow-hidden rounded-sm border sm:h-28 sm:w-40">
           {metaImage && typeof metaImage !== "string" && (
             <div className="aspect-[4/3]">
               <Media
@@ -40,21 +40,21 @@ export const AuthorArticleCard: React.FC<AuthorArticleCardProps> = ({
         <div className="flex h-24 min-w-0 flex-1 flex-col justify-between space-y-1 overflow-hidden sm:h-28">
           <div className="min-h-0 space-y-1">
             {title && (
-              <h3 className="line-clamp-2 font-semibold text-foreground">
+              <h3 className="text-foreground line-clamp-2 font-semibold">
                 <Link
                   href={href}
-                  className="transition-colors after:absolute after:inset-0 hover:text-brand"
+                  className="hover:text-brand transition-colors after:absolute after:inset-0"
                 >
                   {title}
                 </Link>
               </h3>
             )}
             {sanitizedDescription && (
-              <p className="line-clamp-2 text-sm text-muted-foreground">{sanitizedDescription}</p>
+              <p className="text-muted-foreground line-clamp-2 text-sm">{sanitizedDescription}</p>
             )}
           </div>
           {volume && (
-            <p className="line-clamp-1 pt-1 text-xs text-muted-foreground">
+            <p className="text-muted-foreground line-clamp-1 pt-1 text-xs">
               <Link href={`/volumes/${volume.slug}`} className="underline-offset-2 hover:underline">
                 {volume.title ?? volume.slug}
               </Link>

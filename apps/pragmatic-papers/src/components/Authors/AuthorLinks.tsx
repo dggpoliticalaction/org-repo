@@ -89,7 +89,7 @@ export const AuthorLinks: React.FC<AuthorLinksProps> = ({ className, socials }) 
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground transition-colors"
             title={link.href}
           >
             <span className="sr-only">{link.label || link.href}</span>
