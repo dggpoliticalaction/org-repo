@@ -1,7 +1,7 @@
 import Link from "next/link"
 import React from "react"
 
-import { ImageMedia } from "@/components/Media/ImageMedia"
+import { Media } from "@/components/Media"
 import { Squiggle } from "@/components/ui/squiggle"
 import type { Article } from "@/payload-types"
 import { formatDateTime } from "@/utilities/formatDateTime"
@@ -19,13 +19,16 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
   return (
     <div className="relative flex-col">
       {heroImage && (
-        <ImageMedia
-          pictureClassName="object-cover w-full h-full"
-          imgClassName="pb-4"
-          resource={heroImage}
-        />
+        <div className="-mx-5 min-h-56 md:-mx-8 lg:-mx-16 xl:-mx-32">
+          <Media
+            priority
+            sizes="(max-width: 768px) 100vw, 1024px"
+            media={heroImage}
+            variant="large"
+          />
+        </div>
       )}
-      <div className="relative z-10 flex-col pb-4 dark:text-white">
+      <div className="relative z-10 mt-4 flex-col pb-4 dark:text-white">
         <h1 className="mb-6 text-center text-4xl font-bold">{title}</h1>
         {filteredAuthors.length > 0 && (
           <div className="text-center text-lg">

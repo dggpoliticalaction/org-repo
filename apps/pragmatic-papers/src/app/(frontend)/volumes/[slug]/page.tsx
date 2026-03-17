@@ -127,7 +127,7 @@ export default async function VolumePage({
   const volumeAuthors = await queryAuthorsByIds({ ids: Array.from(volumeAuthorIdSet) })
 
   return (
-    <div className="mx-auto max-w-3xl px-4 pb-16">
+    <article className="mx-auto max-w-3xl px-4">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
@@ -156,14 +156,15 @@ export default async function VolumePage({
         </div>
       )}
       <Squiggle className="mx-auto h-6 w-1/2" />
-      <div className="flex flex-col items-center gap-4 pt-8">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+      <section className="mt-10 space-y-4 border-t pt-8">
+        <h2 className="font-display text-lg font-bold">Articles in this volume</h2>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {actualArticles?.map((article) => (
             <ArticleCard key={article.id} doc={article} relationTo="articles" />
           ))}
         </div>
-      </div>
+      </section>
       <AuthorList aria-label="Volume Authors" authors={volumeAuthors} />
-    </div>
+    </article>
   )
 }

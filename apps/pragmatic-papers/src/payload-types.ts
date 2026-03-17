@@ -424,6 +424,10 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Base64 encoded blur placeholder (auto-generated)
+   */
+  blurDataURL?: string | null;
   createdBy?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
@@ -1483,6 +1487,7 @@ export interface VolumesSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  blurDataURL?: T;
   createdBy?: T;
   updatedAt?: T;
   createdAt?: T;
