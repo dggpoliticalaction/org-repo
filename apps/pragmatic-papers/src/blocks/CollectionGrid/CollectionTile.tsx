@@ -59,7 +59,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       href={href}
       id={id ?? undefined}
       className={cn(
-        "@container group flex flex-col gap-6",
+        "group flex flex-col gap-6 @container",
         isHorizontal && "flex-col items-start md:flex-row",
         className,
       )}
@@ -78,7 +78,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       )}
       <div
         className={cn(
-          isHorizontal && "@container flex flex-col justify-center self-stretch md:basis-1/2",
+          isHorizontal && "flex flex-col justify-center self-stretch @container md:basis-1/2",
         )}
       >
         {/* Kicker */}
@@ -89,7 +89,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
         )}
 
         {/* Title — uses container queries to scale with available space */}
-        <h2 className="font-display @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl text-balance text-sm font-bold leading-tight text-primary hover:text-primary/80">
+        <h2 className="font-display text-balance text-sm font-bold leading-tight text-primary hover:text-primary/80 @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl">
           {overrideTitle || title}
         </h2>
 
