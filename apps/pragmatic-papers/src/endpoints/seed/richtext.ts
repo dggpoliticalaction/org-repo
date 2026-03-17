@@ -92,6 +92,12 @@ export function createRichTextFromString(text: string): LexicalContent {
 }
 
 /**
+ * Alias for createRichTextFromString — creates a single-paragraph rich text block.
+ * Used by page seeds for Content block columns.
+ */
+export const createRichTextContent = createRichTextFromString
+
+/**
  * Creates a complete Lexical rich text structure from an array of paragraphs
  * Automatically adds empty paragraphs between each text paragraph for spacing
  */
