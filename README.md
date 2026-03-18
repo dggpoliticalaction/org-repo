@@ -32,7 +32,7 @@ pnpm
 
 1. [Clone the repo](https://github.com/digitalgroundgame/pragmatic-papers.git) and `cd` into it.
 
-2. Run `pnpm install`. The preinstall hook copies `apps/pragmatic-papers/.env` from `.env.example` if missing. If it exits asking for a token, configure `GH_TOKEN` (step 3) and run `pnpm install` again.
+2. Run `pnpm install`. The preinstall hook copies `apps/pragmatic-papers/.env` from `.env.example` if missing.
 
 3. Add a **GitHub Personal Access Token**. This is required to install packages from private GitHub Packages (e.g. `@digitalgroundgame/fonts`). Create a token at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope.
 
