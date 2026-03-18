@@ -1,4 +1,5 @@
-import type { User } from "@/payload-types"
+import type { PopulatedAuthors } from "@/payload-types"
+import { convertLexicalToPlaintext } from "@payloadcms/richtext-lexical/plaintext"
 import React from "react"
 
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
@@ -14,38 +15,17 @@ function getInitials(name: string): string {
   return (parts[0]?.charAt(0) || "") + (parts[1]?.charAt(0) || "").toUpperCase()
 }
 
-function extractBioSnippet(author: User, maxLength = 255): string | undefined {
-  const bio = author.biography as User["biography"] | string
-  if (!bio) return undefined
-
-  if (typeof bio === "string") {
-    const clean = bio.trim().replace(/\s+/g, " ")
-    if (!clean) return undefined
-    return clean.length > maxLength ? `${clean.slice(0, maxLength).trimEnd()}…` : clean
-  }
-
-  const root = bio.root
-  if (!root || !Array.isArray(root.children)) return undefined
-
-  let text = ""
-
-  for (const block of root.children) {
-    if (!block || typeof block !== "object" || !Array.isArray(block.children)) continue
-    for (const child of block.children) {
-      if (child && typeof child === "object" && typeof child.text === "string") {
-        text += child.text + " "
-      }
-    }
-  }
-
-  const clean = text.trim().replace(/\s+/g, " ")
-  if (!clean) return undefined
-
-  return clean.length > maxLength ? `${clean.slice(0, maxLength).trimEnd()}…` : clean
+function extractBioSnippet(
+  author: NonNullable<PopulatedAuthors>[number],
+  maxLength = 255,
+): string | undefined {
+  if (!author.biography) return
+  const text = convertLexicalToPlaintext({ data: author.biography })
+  return text.length > maxLength ? `${text.slice(0, maxLength).trimEnd()}…` : text
 }
 
 export interface AuthorCardProps {
-  author: User
+  author: NonNullable<PopulatedAuthors>[number]
 }
 
 export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
