@@ -31,6 +31,31 @@ const revalidateDoc = async (givenDoc: Article, payload: Payload) => {
     payload.logger.info(`Revalidating volume at path: ${volumePath}`)
     revalidatePath(volumePath)
   })
+
+  // Find and revalidate all authors that reference this article
+  if (givenDoc.authors) {
+    const authorIds = givenDoc.authors.map((author) =>
+      typeof author === "object" ? author.id : author,
+    )
+    const authors = await payload.find({
+      collection: "users",
+      where: {
+        id: {
+          in: authorIds,
+        },
+      },
+      select: {
+        slug: true,
+      },
+      depth: 0,
+    })
+
+    authors.docs.forEach((author) => {
+      const authorPath = `/authors/${author.slug}`
+      payload.logger.info(`Revalidating author at path: ${authorPath}`)
+      revalidatePath(authorPath)
+    })
+  }
 }
 
 export const revalidateArticle: CollectionAfterChangeHook<Article> = async ({
