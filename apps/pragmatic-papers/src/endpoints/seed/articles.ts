@@ -6,6 +6,7 @@ interface CreateArticleOptions {
   title: string
   content: LexicalContent
   authors: number[]
+  topics?: number[]
   slug: string
   heroImage?: number | null
   meta?: {
@@ -32,6 +33,7 @@ export async function createArticle(
       title: options.title,
       content: options.content,
       authors: options.authors,
+      topics: options.topics,
       heroImage: options.heroImage || undefined,
       _status: "published",
       publishedAt: new Date().toISOString(),

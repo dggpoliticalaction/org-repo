@@ -29,13 +29,12 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
 
   let populatedAuthors: Article["populatedAuthors"] = []
   let heroImage: MediaType | null = null
-
-  if (
-    imagePosition !== "none" &&
-    collection.relationTo === "articles" &&
-    isMedia(collection.value.heroImage)
-  ) {
-    heroImage = collection.value.heroImage
+  if (imagePosition !== "none") {
+    if (collection.relationTo === "articles" && isMedia(collection.value.heroImage)) {
+      heroImage = collection.value.heroImage
+    } else if (collection.value.meta?.image && isMedia(collection.value.meta.image)) {
+      heroImage = collection.value.meta.image
+    }
   }
 
   if ("populatedAuthors" in collection.value) {

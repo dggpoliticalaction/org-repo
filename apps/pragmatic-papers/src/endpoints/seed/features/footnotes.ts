@@ -137,6 +137,7 @@ export const createFootnotesArticle = async (
   writers: User[],
   mediaDocs: Media[],
   referencedArticleId: number,
+  topics: number[] = [],
 ): Promise<number> => {
   validateWriters(writers)
 
@@ -147,6 +148,7 @@ export const createFootnotesArticle = async (
     title,
     content: createArticleContentWithFootnotes(referencedArticleId),
     authors: [writer.id],
+    topics: topics,
     slug: "demonstrating-footnotes-comprehensive-guide",
     heroImage: mediaDocs[Math.floor(Math.random() * mediaDocs.length)]?.id,
     meta: {

@@ -114,6 +114,7 @@ export const createMathBlocksArticle = async (
   payload: Payload,
   writers: User[],
   mediaDocs: Media[],
+  topics: number[] = [],
 ): Promise<number> => {
   validateWriters(writers)
 
@@ -124,6 +125,7 @@ export const createMathBlocksArticle = async (
     title,
     content: createMathBlocksContent(),
     authors: [writer.id],
+    topics: topics,
     slug: "equations-in-context-demonstrating-inline-and-display-math",
     meta: {
       title,

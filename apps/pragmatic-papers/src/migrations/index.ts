@@ -23,6 +23,7 @@ import * as migration_20260316_072557_add_blurdataurl from './20260316_072557_ad
 import * as migration_20260317_033620_add_collections_again_thanks_esp from './20260317_033620_add_collections_again_thanks_esp';
 import * as migration_20260318_125059_revert_volume_autogen from './20260318_125059_revert_volume_autogen';
 import * as migration_20260318_152547_use_populate_authors_duh from './20260318_152547_use_populate_authors_duh';
+import * as migration_20260318_172936_topics_views from './20260318_172936_topics_views';
 
 export const migrations = [
   {
@@ -148,6 +149,11 @@ export const migrations = [
   {
     up: migration_20260318_152547_use_populate_authors_duh.up,
     down: migration_20260318_152547_use_populate_authors_duh.down,
-    name: '20260318_152547_use_populate_authors_duh'
+    name: '20260318_152547_use_populate_authors_duh',
+  },
+  {
+    up: migration_20260318_172936_topics_views.up,
+    down: migration_20260318_172936_topics_views.down,
+    name: '20260318_172936_topics_views'
   },
 ];
