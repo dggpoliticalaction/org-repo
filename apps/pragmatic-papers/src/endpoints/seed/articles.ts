@@ -1,5 +1,5 @@
-import type { Payload } from "payload"
 import type { Article, User } from "@/payload-types"
+import type { Payload } from "payload"
 import type { LexicalContent } from "./richtext"
 
 interface CreateArticleOptions {

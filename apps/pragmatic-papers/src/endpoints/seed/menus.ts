@@ -57,16 +57,25 @@ export const createMenus = async (
             },
           },
         },
-        {
-          link: {
-            type: "reference",
-            label: "About",
-            reference: {
-              relationTo: "pages",
-              value: aboutPage.id,
-            },
-          },
+      ],
+      actionButton: {
+        enabled: true,
+        link: {
+          type: "custom",
+          label: "Join Us",
+          url: "https://discord.gg/dggpol",
+          newTab: true,
         },
+        backgroundColor: "#ff401a",
+        textColor: "#ffffff",
+      },
+    },
+  })
+
+  await payload.updateGlobal({
+    slug: "footer",
+    data: {
+      navItems: [
         {
           link: {
             type: "reference",
@@ -77,25 +86,16 @@ export const createMenus = async (
             },
           },
         },
-      ],
-      actionButton: {
-        enabled: true,
-        link: {
-          type: "custom",
-          label: "Join Discord",
-          url: "https://discord.gg/dggpol",
-          newTab: true,
+        {
+          link: {
+            type: "reference",
+            label: "About",
+            reference: {
+              relationTo: "pages",
+              value: aboutPage.id,
+            },
+          },
         },
-        backgroundColor: "#5865F2",
-        textColor: "#E0E3FF",
-      },
-    },
-  })
-
-  await payload.updateGlobal({
-    slug: "footer",
-    data: {
-      navItems: [
         {
           link: {
             type: "reference",
@@ -114,6 +114,13 @@ export const createMenus = async (
               relationTo: "pages",
               value: termsOfUsePage.id,
             },
+          },
+        },
+        {
+          link: {
+            type: "custom",
+            label: "Log In",
+            url: "/admin/login",
           },
         },
       ],

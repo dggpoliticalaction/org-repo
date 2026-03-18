@@ -1,13 +1,15 @@
+import type { Media, User } from "@/payload-types"
 import type { Payload } from "payload"
-import type { User, Media } from "@/payload-types"
+import { createArticle } from "../articles"
 import { createMediaFromURL } from "../media"
 import {
-  createRichTextFromString,
-  createParagraph,
   createEmptyParagraph,
+  createLinkNode,
+  createParagraph,
   createRichText,
+  createRichTextFromString,
+  createTextNode,
 } from "../richtext"
-import { createArticle } from "../articles"
 
 /**
  * Helper to create a media block
@@ -55,7 +57,12 @@ export const createMediaCollageArticle = async (
       "https://wikicdn.destiny.gg/f/fd/ITSBAD.png",
       "It's bad, what do you want me to say!",
       {
-        caption: createRichTextFromString("It's bad, what do you want me to say!"),
+        caption: createRichText([
+          createParagraph([
+            createTextNode("It's bad, what do you want me to say! "),
+            createLinkNode("Learn more", "https://destiny.gg", true),
+          ]),
+        ]),
       },
     ),
     createMediaFromURL(

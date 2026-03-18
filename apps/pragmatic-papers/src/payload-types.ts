@@ -39,6 +39,51 @@ export type FootnotesField =
     }[]
   | null;
 /**
+ * Choose a layout preset that determines how article slots are arranged.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollectionGridLayout".
+ */
+export type CollectionGridLayout =
+  | (
+      | 'bernoulli-left'
+      | 'bernoulli-right'
+      | 'euler-2'
+      | 'euler-3'
+      | 'newton-4'
+      | 'euler-5'
+      | 'fibonacci-6'
+      | 'vespucci-7'
+      | 'fibonacci-7'
+    )
+  | null;
+/**
+ * Fill each slot with a article or volume. The number of slots is determined by the chosen layout.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollectionGridSlots".
+ */
+export type CollectionGridSlots = {
+  collection:
+    | {
+        relationTo: 'articles';
+        value: number | Article;
+      }
+    | {
+        relationTo: 'volumes';
+        value: number | Volume;
+      };
+  /**
+   * Optional short label above the title (e.g. "Breaking", "Opinion")
+   */
+  kicker?: string | null;
+  /**
+   * Optional override for the title in this slot
+   */
+  overrideTitle?: string | null;
+  id?: string | null;
+}[];
+/**
  * Supported timezones in IANA format.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -153,9 +198,10 @@ export interface Config {
     footer: FooterSelect<false> | FooterSelect<true>;
   };
   locale: null;
-  user: User & {
-    collection: 'users';
+  widgets: {
+    collections: CollectionsWidget;
   };
+  user: User;
   jobs: {
     tasks: {
       schedulePublish: TaskSchedulePublish;
@@ -239,7 +285,7 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | VolumeView | FormBlock)[];
+  layout: (CollectionGridBlock | CallToActionBlock | ContentBlock | MediaBlock | VolumeView | FormBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -265,10 +311,6 @@ export interface Page {
 export interface Volume {
   id: number;
   title: string;
-  /**
-   * When enabled, the title will be automatically generated from the article titles, separated by " • "
-   */
-  autoGenerateTitle?: boolean | null;
   volumeNumber: number;
   description: string;
   editorsNote?: {
@@ -382,6 +424,10 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Base64 encoded blur placeholder (auto-generated)
+   */
+  blurDataURL?: string | null;
   createdBy?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
@@ -501,6 +547,7 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -543,6 +590,17 @@ export interface Topic {
   slug: string;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollectionGridBlock".
+ */
+export interface CollectionGridBlock {
+  layout?: CollectionGridLayout;
+  slots: CollectionGridSlots;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'collectionGrid';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1219,6 +1277,7 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        collectionGrid?: T | CollectionGridBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
@@ -1238,6 +1297,26 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollectionGridBlock_select".
+ */
+export interface CollectionGridBlockSelect<T extends boolean = true> {
+  layout?: T;
+  slots?: T | CollectionGridSlotsSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollectionGridSlots_select".
+ */
+export interface CollectionGridSlotsSelect<T extends boolean = true> {
+  collection?: T;
+  kicker?: T;
+  overrideTitle?: T;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1383,7 +1462,6 @@ export interface LinkFieldSelect<T extends boolean = true> {
  */
 export interface VolumesSelect<T extends boolean = true> {
   title?: T;
-  autoGenerateTitle?: T;
   volumeNumber?: T;
   description?: T;
   editorsNote?: T;
@@ -1409,6 +1487,7 @@ export interface VolumesSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  blurDataURL?: T;
   createdBy?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1889,6 +1968,16 @@ export interface FooterSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
