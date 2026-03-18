@@ -85,9 +85,7 @@ export const ImageMedia: React.FC<ImageMediaProps> = ({
   }
 
   const objectPosition =
-    media.focalX != null && media.focalY != null
-      ? `${media.focalX}% ${media.focalY}%`
-      : undefined
+    media.focalX != null && media.focalY != null ? `${media.focalX}% ${media.focalY}%` : undefined
 
   style = objectPosition ? { ...style, objectPosition } : style
 
