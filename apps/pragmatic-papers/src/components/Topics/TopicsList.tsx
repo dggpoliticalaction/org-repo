@@ -1,6 +1,8 @@
 import { type Topic } from "@/payload-types"
-import { TopicBadge } from "./TopicsBadge"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
+import React from "react"
+import { HoverPrefetchLink } from "../Link/HoverPrefetchLink"
+import { Badge } from "../ui/badge"
 
 export interface TopicsListProps extends React.HTMLAttributes<HTMLElement> {
   topics: (number | Topic)[] | null | undefined
@@ -23,7 +25,16 @@ export const TopicsList: React.FC<TopicsListProps> = ({
     <section aria-label="Topics" className={cn("mt-6", className)} {...props}>
       <div className="flex flex-wrap gap-2">
         {resolvedTopics.map((topic) => (
-          <TopicBadge key={topic.id} topic={topic} className={badgeClassName} />
+          <Badge
+            key={topic.id}
+            variant="brand"
+            className={badgeClassName}
+            render={
+              <HoverPrefetchLink href={`/topics/${topic.slug}`} className="hover:underline">
+                {topic.name}
+              </HoverPrefetchLink>
+            }
+          />
         ))}
       </div>
     </section>

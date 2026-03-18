@@ -8,7 +8,7 @@ export interface SeedTopicConfig {
 
 const defaultTopics: SeedTopicConfig[] = [
   {
-    name: "Political",
+    name: "Politics",
     description: "literally a statement of fact but ok.",
   },
   {
@@ -19,6 +19,38 @@ const defaultTopics: SeedTopicConfig[] = [
   {
     name: "Cognitive Science",
     description: "Cross-disciplinary work on mind, behavior, and the science of thought.",
+  },
+  {
+    name: "Philosophy",
+    description: "Foundational questions about existence, knowledge, and ethics.",
+  },
+  {
+    name: "Ethics",
+    description: "Moral philosophy and the study of right conduct.",
+  },
+  {
+    name: "Epistemology",
+    description: "The nature of knowledge, belief, and justified true belief.",
+  },
+  {
+    name: "Neuroscience",
+    description: "The science of the brain and nervous system.",
+  },
+  {
+    name: "Digital Culture",
+    description: "How technology shapes society, identity, and communication.",
+  },
+  {
+    name: "Social Media",
+    description: "Platforms, influence, and the economics of attention.",
+  },
+  {
+    name: "Identity",
+    description: "Personal identity, self, and continuity across time and change.",
+  },
+  {
+    name: "Humor",
+    description: "The philosophy and psychology of humor, irony, and comedy.",
   },
 ]
 

@@ -1,7 +1,8 @@
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
+import { Pagination } from "@/components/Pagination"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
-import type { Article, Topic, Volume } from "@/payload-types"
+import type { Topic, Volume } from "@/payload-types"
 import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
@@ -10,7 +11,10 @@ import React, { cache } from "react"
 
 interface Args {
   params: Promise<{
-    slug?: string
+    slug: string
+  }>
+  searchParams: Promise<{
+    p?: string
   }>
 }
 
@@ -53,15 +57,17 @@ const queryTopicBySlug = cache(async (slug: string): Promise<Topic | null> => {
   return docs[0] || null
 })
 
-const queryArticlesByTopic = cache(async (topicId: number): Promise<Article[]> => {
+const ARTICLES_PER_PAGE = 5
+const queryArticlesByTopic = cache(async (topicId: number, page: number = 1) => {
   const { isEnabled: draft } = await draftMode()
 
   const payload = await getPayload({ config })
 
-  const { docs } = await payload.find({
+  return await payload.find({
     collection: "articles",
     draft,
-    limit: 1000,
+    limit: ARTICLES_PER_PAGE,
+    page,
     pagination: false,
     where: {
       topics: {
@@ -70,8 +76,6 @@ const queryArticlesByTopic = cache(async (topicId: number): Promise<Article[]> =
     },
     depth: 2,
   })
-
-  return docs
 })
 
 const queryVolumesForArticles = cache(async (articleIds: number[]): Promise<Volume[]> => {
@@ -117,15 +121,27 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   }
 }
 
-export default async function TopicPage({ params: paramsPromise }: Args): Promise<React.ReactNode> {
+export default async function TopicPage({
+  params: params,
+  searchParams,
+}: Args): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()
-  const { slug = "" } = await paramsPromise
+  const { slug = "" } = await params
+  const { p } = await searchParams
+  let page = Number(p) || 1
+  if (!Number.isInteger(page) || page < 1) page = 1
+
   const url = `/topics/${slug}`
   const topic = await queryTopicBySlug(slug)
 
   if (!topic) return <PayloadRedirects url={url} />
 
-  const articles = await queryArticlesByTopic(topic.id)
+  const {
+    docs: articles,
+    totalDocs,
+    totalPages,
+    page: currentPage,
+  } = await queryArticlesByTopic(topic.id, page)
   const articleIds = articles.map((article) => article.id).filter(Boolean)
   const volumes = await queryVolumesForArticles(articleIds)
 
@@ -146,27 +162,32 @@ export default async function TopicPage({ params: paramsPromise }: Args): Promis
   }
 
   return (
-    <article className="container mb-16 max-w-3xl">
+    <article className="mx-auto max-w-3xl space-y-6 px-4">
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
 
-      <header className="mb-8 space-y-3 text-center">
+      <header className="space-y-3 text-center">
         <h1 className="text-3xl font-bold md:text-4xl">Topic: {topic.name}</h1>
-        {topic.description && <p className="text-sm text-muted-foreground">{topic.description}</p>}
+        {topic.description && <p className="text-muted-foreground text-sm">{topic.description}</p>}
       </header>
 
       <section aria-label="Articles for this topic">
-        <h2 className="mb-4 text-2xl font-semibold">Articles</h2>
-        {articles.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No articles found for this topic yet.</p>
+        <h2 className="mb-3 text-2xl font-semibold">Articles</h2>
+        {totalDocs === 0 ? (
+          <p className="text-muted-foreground text-sm">No articles found for this topic yet.</p>
         ) : (
-          <div className="flex flex-col gap-4">
-            {articles.map((article) => {
-              const volume = volumeByArticleId.get(article.id)
-              return <AuthorArticleCard key={article.id} article={article} volume={volume} />
-            })}
-          </div>
+          <>
+            <div className="flex flex-col gap-4">
+              {articles.map((article) => {
+                const volume = volumeByArticleId.get(article.id)
+                return <AuthorArticleCard key={article.id} article={article} volume={volume} />
+              })}
+            </div>
+            {totalPages > 1 && currentPage && (
+              <Pagination page={currentPage} totalPages={totalPages} />
+            )}
+          </>
         )}
       </section>
     </article>
