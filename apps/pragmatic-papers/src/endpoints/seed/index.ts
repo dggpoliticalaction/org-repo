@@ -1,11 +1,11 @@
 import type { Media, User } from "@/payload-types"
 import type { Payload } from "payload"
 import { createArticle, getWriterOrThrow, validateWriters } from "./articles"
+import { createCollectionGridHomePage } from "./features/collection-grid"
 import { createFootnotesArticle } from "./features/footnotes"
 import { createMathBlocksArticle } from "./features/math-blocks"
 import { createMediaCollageArticle } from "./features/media-collage"
 import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from "./features/social-embeds"
-import { homeStatic } from "./home-static"
 import { createMediaFromURL } from "./media"
 import { createMenus } from "./menus"
 import { createPages } from "./pages"
@@ -71,6 +71,8 @@ export const seed = async (
         await payload.delete({ collection: "volumes", where: {} })
         await payload.delete({ collection: "media", where: {} })
         await payload.delete({ collection: "pages", where: {} })
+        await payload.delete({ collection: "forms", where: {} })
+        await payload.delete({ collection: "form-submissions", where: {} })
       },
     },
     {
@@ -202,7 +204,15 @@ export const seed = async (
     {
       name: "Creating pages & menus...",
       fn: async () => {
-        const homePage = await payload.create({ collection: "pages", data: homeStatic })
+        await createCollectionGridHomePage(
+          payload,
+          ctx.volume1Articles,
+          ctx.volume2Articles,
+          ctx.featureArticles,
+        )
+        const homePage = await payload
+          .find({ collection: "pages", where: { slug: { equals: "home" } }, limit: 1 })
+          .then((res) => res.docs[0]!)
         const {
           aboutPage,
           articlesPage,

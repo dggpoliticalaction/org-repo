@@ -8,11 +8,12 @@ import {
 import path from "path"
 import { fileURLToPath } from "url"
 
-import { anyone } from "../access/anyone"
-import { writer } from "@/access/writer"
 import { editorOrSelf } from "@/access/editorOrSelf"
+import { writer } from "@/access/writer"
+import { anyone } from "../access/anyone"
 
 import type { Media as MediaType } from "@/payload-types"
+import { generateBlurDataUrl } from "./Media/hooks/generateBlurDataUrl"
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -41,6 +42,15 @@ export const Media: CollectionConfig = {
       }),
     },
     {
+      name: "blurDataURL",
+      type: "text",
+      label: "Blur Placeholder",
+      admin: {
+        description: "Base64 encoded blur placeholder (auto-generated)",
+        readOnly: true,
+      },
+    },
+    {
       name: "createdBy",
       type: "relationship",
       relationTo: "users",
@@ -64,15 +74,13 @@ export const Media: CollectionConfig = {
           }
         }
       },
+      generateBlurDataUrl,
     ],
   },
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
     staticDir: path.resolve(dirname, "../../public/media"),
-
-    adminThumbnail: ({ doc }: { doc: unknown }) => {
-      return `${(doc as MediaType).sizes?.thumbnail?.url ?? ""}`
-    },
+    adminThumbnail: "thumbnail",
     formatOptions: {
       format: "webp",
     },

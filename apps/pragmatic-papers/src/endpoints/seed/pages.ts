@@ -1,6 +1,8 @@
 import type { Page } from "@/payload-types"
 import type { Payload } from "payload"
 
+import { createRichTextContent } from "./richtext"
+
 interface PageConfig {
   title: string
   slug: string
@@ -16,38 +18,6 @@ interface CreatePagesResult {
   termsOfUsePage: Page
   volumesPage: Page
 }
-
-const createRichTextContent = (content: string) => ({
-  root: {
-    children: [
-      {
-        children: [
-          {
-            detail: 0,
-            format: 0,
-            mode: "normal",
-            style: "",
-            text: content,
-            type: "text",
-            version: 1,
-          },
-        ],
-        direction: "ltr" as const,
-        format: "" as const,
-        indent: 0,
-        type: "paragraph",
-        version: 1,
-        textFormat: 0,
-        textStyle: "",
-      },
-    ],
-    direction: "ltr" as const,
-    format: "" as const,
-    indent: 0,
-    type: "root",
-    version: 1,
-  },
-})
 
 /** Hero richText with a heading containing the page name (for pageHero type). */
 const createHeroRichTextHeading = (pageTitle: string, tag: "h1" | "h2" | "h3" | "h4" = "h1") => ({
@@ -196,6 +166,48 @@ export const createPages = async (payload: Payload): Promise<CreatePagesResult> 
     },
   })
 
+  const contactForm = await payload.create({
+    collection: "forms",
+    data: {
+      title: "Contact Form",
+      fields: [
+        {
+          blockType: "text",
+          name: "name",
+          label: "Name",
+          required: true,
+          width: 100,
+        },
+        {
+          blockType: "email",
+          name: "email",
+          label: "Email",
+          required: true,
+          width: 100,
+        },
+        {
+          blockType: "text",
+          name: "subject",
+          label: "Subject",
+          required: true,
+          width: 100,
+        },
+        {
+          blockType: "textarea",
+          name: "message",
+          label: "Message",
+          required: true,
+          width: 100,
+        },
+      ],
+      submitButtonLabel: "Send Message",
+      confirmationType: "message",
+      confirmationMessage: createRichTextContent(
+        "Thank you for reaching out! We will get back to you as soon as possible.",
+      ),
+    },
+  })
+
   const contactPage = await payload.create({
     collection: "pages",
     data: {
@@ -217,6 +229,11 @@ export const createPages = async (payload: Payload): Promise<CreatePagesResult> 
               enableLink: false,
             },
           ],
+        },
+        {
+          blockType: "formBlock",
+          form: contactForm.id,
+          enableIntro: false,
         },
       ],
       meta: {

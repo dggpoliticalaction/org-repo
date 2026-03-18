@@ -33,6 +33,7 @@ import { checkArticles } from "./hooks/checkArticles"
 import { pushToWebhooks } from "./hooks/pushToWebhooks"
 import { revalidateArticle, revalidateDelete } from "./hooks/revalidateVolumes"
 import { setDefaultSeoTitle } from "./hooks/seoTitle"
+import { getNextVolumeNumber } from "./hooks/getNextVolumeNumber"
 
 export const Volumes: CollectionConfig = {
   slug: "volumes",
@@ -74,6 +75,7 @@ export const Volumes: CollectionConfig = {
             {
               name: "volumeNumber",
               type: "number",
+              defaultValue: getNextVolumeNumber,
               admin: {
                 position: "sidebar",
               },
