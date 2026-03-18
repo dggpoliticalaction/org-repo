@@ -1,10 +1,9 @@
+import type { Article } from "@/payload-types"
 import React from "react"
 
-import type { Article } from "@/payload-types"
-
+import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { Media } from "@/components/Media"
-import { cn } from "@/utilities/ui"
-import { HoverPrefetchLink } from "../Link/HoverPrefetchLink"
+import { cn } from "@/utilities/utils"
 
 export type CardPostData = Pick<Article, "slug" | "meta" | "title">
 
@@ -31,15 +30,17 @@ export const ArticleCard: React.FC<{
           <Media
             media={image}
             variant="square"
-            className="aspect-[4/3]"
+            className="aspect-4/3 border object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 352px"
           />
         )}
         {titleToUse && (
-          <h3 className="font-display line-clamp-4 text-lg font-bold">{titleToUse}</h3>
+          <h3 className="font-display hover:text-primary/80 line-clamp-4 text-xl font-bold">
+            {titleToUse}
+          </h3>
         )}
         {description && (
-          <p className="line-clamp-2 font-serif text-primary sm:line-clamp-3">
+          <p className="text-primary line-clamp-2 font-serif sm:line-clamp-3">
             {sanitizedDescription}
           </p>
         )}

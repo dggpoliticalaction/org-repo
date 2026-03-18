@@ -24,7 +24,7 @@ import type {
   SocialEmbedBlock as SocialEmbedBlockProps,
   SquiggleRuleBlock as SquiggleRuleBlockProps,
 } from "@/payload-types"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import type {
   DefaultNodeTypes,
   DefaultTypedEditorState,
@@ -52,7 +52,7 @@ type NodeTypes =
     >
   | SerializedInlineBlockNode<MathBlockProps | FootnoteBlockProps>
 
-const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
+export const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }): string => {
   const { value, relationTo } = linkNode.fields.doc!
   if (typeof value !== "object") {
     throw new Error("Expected value to be an object")
@@ -120,11 +120,11 @@ export default function RichText({
   return (
     <div
       className={cn(
-        "payload-richtext",
+        "payload-richtext prose-headings:font-display prose-neutral font-serif",
         {
           container: enableGutter,
           "max-w-none": !enableGutter,
-          "prose dark:prose-invert md:prose-md": enableProse,
+          "prose dark:prose-invert": enableProse,
         },
         className,
       )}
