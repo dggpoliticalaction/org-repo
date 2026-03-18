@@ -30,11 +30,25 @@ pnpm
 
 ### Quick Start
 
-1. Clone the repo and `cd` into it.
+1. [Clone the repo](https://github.com/digitalgroundgame/pragmatic-papers.git) and `cd` into it.
 
-2. Run `pnpm install`. The preinstall hook copies `apps/pragmatic-papers/.env` from `.env.example` if missing. If it exits asking for a token, add `GITHUB_TOKEN` to `.env` (step 3) and run `pnpm install` again.
+2. Run `pnpm install`. The preinstall hook copies `apps/pragmatic-papers/.env` from `.env.example` if missing. If it exits asking for a token, configure `GH_TOKEN` (step 3) and run `pnpm install` again.
 
-3. Add a **GitHub Personal Access Token** to `apps/pragmatic-papers/.env` as `GITHUB_TOKEN`. This is required to install packages from GitHub Packages (e.g. `@digitalgroundgame/fonts`). Create a token at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope.
+3. Add a **GitHub Personal Access Token**. This is required to install packages from private GitHub Packages (e.g. `@digitalgroundgame/fonts`). Create a token at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope.
+
+   ### Mac/Linux — add to ~/.npmrc:
+
+   ```
+   GH_TOKEN=ghp_your_token
+   ```
+
+   ### Windows — set a user environment variable:
+
+   ```powershell
+   [System.Environment]::SetEnvironmentVariable("GH_TOKEN", "ghp_your_token", "User")
+   ```
+
+   > **Tip:** Restart your terminal (and IDE if it runs the install) after setting environment variables so they take effect.
 
 4. Start dev:
 
@@ -56,13 +70,13 @@ pnpm
 Here are the most important scripts available in the root `package.json`:
 
 - `pnpm install`: Install dependencies (loads `.env` for org packages; creates `.env` from example if missing).
-- `pnpm build`: Build all applications.
-- `pnpm dev`: Start all applications in development mode.
+- `pnpm build`: Build application.
+- `pnpm dev`: Start application in development mode.
 - `pnpm dev:db`: Start the development docker containers.
 - `pnpm dev:db-down`: Stop the development docker containers.
 - `pnpm dev:db-nuke`: Stop the containers and remove the database volumes.
-- `pnpm lint`: Lint all applications.
-- `pnpm format`: Format all applications.
+- `pnpm lint`: Lint application.
+- `pnpm format`: Format application.
 - `pnpm check-types`: Run typescript to check for type errors.
 - `pnpm ci`: A script for running in a CI environment.
 

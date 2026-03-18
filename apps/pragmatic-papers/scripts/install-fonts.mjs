@@ -1,7 +1,7 @@
 import { cpSync, mkdirSync } from "fs"
 import { dirname, resolve } from "path"
 import { fileURLToPath } from "url"
-
+import { green } from "./ansi.mjs"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const src = resolve(
@@ -13,4 +13,4 @@ const dest = resolve(__dirname, "../public/fonts")
 mkdirSync(dest, { recursive: true })
 cpSync(src, dest, { recursive: true })
 
-console.log("\x1b[32m✓\x1b[0m Fonts copied to public/fonts")
+console.log(`${green("✓")} Fonts copied to public/fonts`)

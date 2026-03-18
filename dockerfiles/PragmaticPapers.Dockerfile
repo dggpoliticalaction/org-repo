@@ -34,9 +34,9 @@ COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 # Copy .npmrc for GitHub Packages (@digitalgroundgame) auth
 COPY --from=pruner /app/.npmrc ./.npmrc
-# GitHub Packages auth (set GITHUB_TOKEN as build arg in Coolify for staging/prod)
-ARG GITHUB_TOKEN
-ENV GITHUB_TOKEN=${GITHUB_TOKEN}
+# GitHub Packages auth (set GH_TOKEN as build arg in Coolify for staging/prod)
+ARG GH_TOKEN
+ENV GH_TOKEN=${GH_TOKEN}
 # Install dependencies with frozen lockfile
 # Using cache mount for pnpm store to speed up builds
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
@@ -177,7 +177,7 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'set -e' >> /app/start.sh && \
     # Source the build.env to get the potentially modified DATABASE_URI for preview deployments
     echo 'if [ -f /app/build.env ]; then . /app/build.env; fi' >> /app/start.sh && \
-    
+
     echo 'echo "========================================="' >> /app/start.sh && \
     echo 'echo "Starting Pragmatic Papers Application"' >> /app/start.sh && \
     echo 'echo "Node version: $(node --version)"' >> /app/start.sh && \
