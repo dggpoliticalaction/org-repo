@@ -9,6 +9,8 @@ import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997e
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { LinkFeatureClient as LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { SlotsField as SlotsField_35f5a6ee20cc4f48b51d355856e648f8 } from '@/blocks/CollectionGrid/components/SlotsField'
+import { SlotRowLabel as SlotRowLabel_5acbd006b7abec438595e7d3bb0b4bb1 } from '@/blocks/CollectionGrid/components/SlotRowLabel'
 import { OrderedListFeatureClient as OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { UnorderedListFeatureClient as UnorderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { IndentFeatureClient as IndentFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
@@ -30,8 +32,6 @@ import { default as default_80e5fdb60df5ca84bc544282529ce3be } from '../../../bl
 import { URLField as URLField_50bd533e6cc7d027cb7127769a4f2bf9 } from '@/blocks/SocialEmbed/components/URLField'
 import { FootnoteLabel as FootnoteLabel_2845bbc260cbb0202b7c6ec591d344dc } from '@/blocks/Footnote/FootnoteLabel'
 import { AlignFeatureClient as AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
-import { TitleFieldComponent as TitleFieldComponent_5f38144a1c30609056230d234808018e } from '@/collections/Volumes/components/TitleField'
-import { NumberSlugComponent as NumberSlugComponent_9af2be3fdd2360e76f1d8ca7ed18129c } from '@/fields/numberSlug/SlugComponent'
 import { RowLabel as RowLabel_b9b9938cf466765c7ed61773d838e057 } from '@/fields/menu/RowLabel'
 import { ColorPickerComponent as ColorPickerComponent_825329501481bc0e04bb53c75811d326 } from '@/fields/colorPicker/ColorPickerComponent'
 import { PaperIconAdmin as PaperIconAdmin_de5f3b464da8d97ce80441fdb9ee9751 } from '@/components/Logo/icons/PaperIcon'
@@ -53,6 +53,8 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#LinkFeatureClient": LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "@/blocks/CollectionGrid/components/SlotsField#SlotsField": SlotsField_35f5a6ee20cc4f48b51d355856e648f8,
+  "@/blocks/CollectionGrid/components/SlotRowLabel#SlotRowLabel": SlotRowLabel_5acbd006b7abec438595e7d3bb0b4bb1,
   "@payloadcms/richtext-lexical/client#OrderedListFeatureClient": OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#UnorderedListFeatureClient": UnorderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#IndentFeatureClient": IndentFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
@@ -74,8 +76,6 @@ export const importMap = {
   "@/blocks/SocialEmbed/components/URLField#URLField": URLField_50bd533e6cc7d027cb7127769a4f2bf9,
   "@/blocks/Footnote/FootnoteLabel#FootnoteLabel": FootnoteLabel_2845bbc260cbb0202b7c6ec591d344dc,
   "@payloadcms/richtext-lexical/client#AlignFeatureClient": AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "@/collections/Volumes/components/TitleField#TitleFieldComponent": TitleFieldComponent_5f38144a1c30609056230d234808018e,
-  "@/fields/numberSlug/SlugComponent#NumberSlugComponent": NumberSlugComponent_9af2be3fdd2360e76f1d8ca7ed18129c,
   "@/fields/menu/RowLabel#RowLabel": RowLabel_b9b9938cf466765c7ed61773d838e057,
   "@/fields/colorPicker/ColorPickerComponent#ColorPickerComponent": ColorPickerComponent_825329501481bc0e04bb53c75811d326,
   "@/components/Logo/icons/PaperIcon#PaperIconAdmin": PaperIconAdmin_de5f3b464da8d97ce80441fdb9ee9751,

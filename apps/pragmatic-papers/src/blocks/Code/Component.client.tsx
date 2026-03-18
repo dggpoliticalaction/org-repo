@@ -1,7 +1,7 @@
-'use client'
-import { Highlight, themes } from 'prism-react-renderer'
-import React from 'react'
-import { CopyButton } from './CopyButton'
+"use client"
+import { Highlight, themes } from "prism-react-renderer"
+import React from "react"
+import { CopyButton } from "./CopyButton"
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Props = {
@@ -9,16 +9,18 @@ type Props = {
   language?: string
 }
 
-export const Code: React.FC<Props> = ({ code, language = '' }) => {
+export const Code: React.FC<Props> = ({ code, language = "" }) => {
   if (!code) return null
 
   return (
     <Highlight code={code} language={language} theme={themes.vsDark}>
       {({ getLineProps, getTokenProps, tokens }) => (
-        <pre className="overflow-x-auto rounded border border-border bg-black p-4 text-xs">
+        <pre className="bg-background overflow-x-auto rounded-sm border p-4 text-xs">
           {tokens.map((line, i) => (
-            <div key={i} {...getLineProps({ className: 'table-row', line })}>
-              <span className="table-cell select-none text-right text-white/25">{i + 1}</span>
+            <div key={i} {...getLineProps({ className: "table-row", line })}>
+              <span className="text-muted-foreground table-cell text-right select-none">
+                {i + 1}
+              </span>
               <span className="table-cell pl-4">
                 {line.map((token, key) => (
                   <span key={key} {...getTokenProps({ token })} />

@@ -1,5 +1,5 @@
-import type { Access } from 'payload'
-import { isEditor } from './checkRole'
+import type { Access } from "payload"
+import { isEditor } from "./checkRole"
 
 export const editorOrSelf: Access = ({ req: { user } }) => {
   if (!user) {
@@ -18,5 +18,5 @@ export const restrictWritersToDraftOnly: Access = ({ req: { user }, data }) => {
     return false
   }
 
-  return isEditor(user) || (data?._status !== 'published' && { createdBy: { equals: user.id } })
+  return isEditor(user) || (data?._status !== "published" && { createdBy: { equals: user.id } })
 }

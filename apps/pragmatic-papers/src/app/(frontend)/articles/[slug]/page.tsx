@@ -1,20 +1,22 @@
-import { AuthorList } from '@/components/Authors/AuthorList'
-import { FootnoteList } from '@/components/FootnoteList'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { PayloadRedirects } from '@/components/PayloadRedirects'
-import RichText from '@/components/RichText'
-import { ArticleHero } from '@/heros/ArticleHero'
-import { generateMeta } from '@/utilities/generateMeta'
-import configPromise from '@payload-config'
-import type { Metadata } from 'next'
-import { draftMode } from 'next/headers'
-import { getPayload } from 'payload'
-import React, { cache } from 'react'
+import { AuthorList } from "@/components/Authors/AuthorList"
+import { FootnoteList } from "@/components/FootnoteList"
+import { LivePreviewListener } from "@/components/LivePreviewListener"
+import { PayloadRedirects } from "@/components/PayloadRedirects"
+import RichText from "@/components/RichText"
+import { Separator } from "@/components/ui/separator"
+import { ArticleHero } from "@/heros/ArticleHero"
+import { MathJaxProvider } from "@/providers/MathJaxProvider"
+import { generateMeta } from "@/utilities/generateMeta"
+import configPromise from "@payload-config"
+import type { Metadata } from "next"
+import { draftMode } from "next/headers"
+import { getPayload } from "payload"
+import React, { cache } from "react"
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
   const articles = await payload.find({
-    collection: 'articles',
+    collection: "articles",
     draft: false,
     limit: 1000,
     overrideAccess: false,
@@ -43,7 +45,7 @@ const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
   const payload = await getPayload({ config: configPromise })
 
   const result = await payload.find({
-    collection: 'articles',
+    collection: "articles",
     draft,
     limit: 1,
     overrideAccess: draft,
@@ -59,7 +61,7 @@ const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
 })
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
+  const { slug = "" } = await paramsPromise
   const article = await queryArticleBySlug({ slug })
 
   return generateMeta({ doc: article })
@@ -67,29 +69,33 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
 export default async function Article({ params: paramsPromise }: Args): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()
-  const { slug = '' } = await paramsPromise
-  const url = '/articles/' + slug
+  const { slug = "" } = await paramsPromise
+  const url = "/articles/" + slug
   const article = await queryArticleBySlug({ slug })
 
   if (!article) return <PayloadRedirects url={url} />
 
-  const { footnotes, content, authors } = article
+  const { footnotes, content, authors, enableMathRendering } = article
 
   return (
-    <article className="m-auto max-w-3xl p-5 pb-16">
+    <article className="mx-auto max-w-3xl space-y-6 px-4">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
 
       <ArticleHero article={article} />
-      <RichText
-        data={content}
-        enableGutter={false}
-        parentDoc={{ collection: 'articles', id: article.id }}
-      />
+      <MathJaxProvider enableMathRendering={enableMathRendering}>
+        <RichText
+          data={content}
+          enableGutter={false}
+          className="drop-cap"
+          parentDoc={{ collection: "articles", id: article.id }}
+        />
+      </MathJaxProvider>
       <FootnoteList footnotes={footnotes} />
       <AuthorList aria-label="Article Authors" authors={authors} />
+      <Separator className="mt-16" />
     </article>
   )
 }

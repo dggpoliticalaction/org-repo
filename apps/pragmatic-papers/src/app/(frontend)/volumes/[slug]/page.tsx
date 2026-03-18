@@ -1,27 +1,27 @@
-import { ArticleCard } from '@/components/ArticleCard'
-import { AuthorList } from '@/components/Authors/AuthorList'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { PayloadRedirects } from '@/components/PayloadRedirects'
-import RichText from '@/components/RichText'
-import { Squiggle } from '@/components/ui/squiggle'
-import type { Article, User } from '@/payload-types'
-import { formatDateTime } from '@/utilities/formatDateTime'
-import { generateMeta } from '@/utilities/generateMeta'
-import { toRoman } from '@/utilities/toRoman'
-import configPromise from '@payload-config'
-import type { Metadata } from 'next'
-import { draftMode } from 'next/headers'
-import type { Payload } from 'payload'
-import { getPayload } from 'payload'
-import React, { cache } from 'react'
-import PageClient from './page.client'
+import { ArticleCard } from "@/components/ArticleCard"
+import { AuthorList } from "@/components/Authors/AuthorList"
+import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
+import { LivePreviewListener } from "@/components/LivePreviewListener"
+import { PayloadRedirects } from "@/components/PayloadRedirects"
+import RichText from "@/components/RichText"
+import { Separator } from "@/components/ui/separator"
+import type { Article, User } from "@/payload-types"
+import { formatDateTime } from "@/utilities/formatDateTime"
+import { generateMeta } from "@/utilities/generateMeta"
+import { toRoman } from "@/utilities/toRoman"
+import configPromise from "@payload-config"
+import type { Metadata } from "next"
+import { draftMode } from "next/headers"
+import type { Payload } from "payload"
+import { getPayload } from "payload"
+import React, { cache } from "react"
 
 type VolumeArticleRef = number | Article
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config: configPromise })
   const volumes = await payload.find({
-    collection: 'volumes',
+    collection: "volumes",
     draft: false,
     limit: 1000,
     overrideAccess: false,
@@ -50,7 +50,7 @@ const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
   const payload: Payload = await getPayload({ config: configPromise })
 
   const result = await payload.find({
-    collection: 'volumes',
+    collection: "volumes",
     draft,
     limit: 1,
     overrideAccess: draft,
@@ -68,15 +68,15 @@ const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
 
 const queryAuthorsByIds = cache(async ({ ids }: { ids: (string | number)[] }): Promise<User[]> => {
   const numericIds = ids
-    .map((id) => (typeof id === 'string' ? Number(id) : id))
-    .filter((id): id is number => typeof id === 'number' && !Number.isNaN(id))
+    .map((id) => (typeof id === "string" ? Number(id) : id))
+    .filter((id): id is number => typeof id === "number" && !Number.isNaN(id))
 
   if (!numericIds.length) return []
 
   const payload = await getPayload({ config: configPromise })
 
   const result = (await payload.find({
-    collection: 'users',
+    collection: "users",
     limit: numericIds.length,
     pagination: false,
     where: {
@@ -91,7 +91,7 @@ const queryAuthorsByIds = cache(async ({ ids }: { ids: (string | number)[] }): P
 })
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
+  const { slug = "" } = await paramsPromise
   const volume = await queryVolumeBySlug({ slug })
 
   return generateMeta({ doc: volume })
@@ -101,20 +101,20 @@ export default async function VolumePage({
   params: paramsPromise,
 }: Args): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()
-  const { slug = '' } = await paramsPromise
-  const url = '/volumes/' + slug
+  const { slug = "" } = await paramsPromise
+  const url = "/volumes/" + slug
   const volume = await queryVolumeBySlug({ slug })
 
   if (!volume) return <PayloadRedirects url={url} />
   const { publishedAt, editorsNote, articles } = volume
   if (
-    articles?.filter((article: VolumeArticleRef) => typeof article === 'number')?.length ??
+    articles?.filter((article: VolumeArticleRef) => typeof article === "number")?.length ??
     0 > 0
   ) {
-    console.error('Fetching volume with unfetched articles', slug)
+    console.error("Fetching volume with unfetched articles", slug)
   }
   const actualArticles = articles?.filter(
-    (article: VolumeArticleRef): article is Article => typeof article !== 'number',
+    (article: VolumeArticleRef): article is Article => typeof article !== "number",
   )
   const volumeAuthorIdSet = new Set<string | number>()
   actualArticles?.forEach((article) => {
@@ -128,45 +128,33 @@ export default async function VolumePage({
   const volumeAuthors = await queryAuthorsByIds({ ids: Array.from(volumeAuthorIdSet) })
 
   return (
-    <div className="mx-auto max-w-3xl px-4 pb-16">
-      <PageClient />
-
+    <article className="mx-auto max-w-3xl space-y-6 px-4">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
-      <div className="relative flex items-end">
-        <div className="container pb-8 text-center">
-          <div>
-            <div>
-              <h1 className="mb-6 text-3xl md:text-5xl lg:text-6xl">{`Volume ${toRoman(Number(volume.slug))}`}</h1>
-            </div>
-
-            <div className="flex flex-col justify-center gap-4 md:flex-row md:gap-16">
-              {publishedAt && (
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm">Date Published</p>
-                  <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      {editorsNote && (
-        <div className="container w-full">
-          <RichText className="w-full" enableGutter={false} data={editorsNote} />
-        </div>
+      <h1 className="font-display mb-6 text-3xl font-bold md:text-5xl lg:text-6xl">
+        Volume <span className="font-serif font-semibold">{toRoman(Number(volume.slug))}</span>
+      </h1>
+      {publishedAt && (
+        <HoverPrefetchLink
+          href={`/volumes/${volume.slug}`}
+          className="dark:text-brand-high-contrast text-brand font-serif font-semibold underline-offset-4 hover:underline"
+        >
+          <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
+        </HoverPrefetchLink>
       )}
-      <Squiggle className="mx-auto h-6 w-1/2" />
-      <div className="flex flex-col items-center gap-4 pt-8">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+      {editorsNote && <RichText className="mt-6" enableGutter={false} data={editorsNote} />}
+      <Separator />
+      <section className="space-y-4">
+        <h2 className="font-display text-xl font-bold">Articles in this Volume</h2>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {actualArticles?.map((article) => (
             <ArticleCard key={article.id} doc={article} relationTo="articles" />
           ))}
         </div>
-      </div>
+      </section>
       <AuthorList aria-label="Volume Authors" authors={volumeAuthors} />
-    </div>
+    </article>
   )
 }

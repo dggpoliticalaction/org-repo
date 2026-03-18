@@ -1,12 +1,12 @@
-import React from 'react'
+import React from "react"
 
-import type { Page } from '@/payload-types'
+import type { Page } from "@/payload-types"
 
-import { CMSLink } from '@/components/Link'
-import { Media } from '@/components/Media'
-import RichText from '@/components/RichText'
+import { CMSLink } from "@/components/Link"
+import { Media } from "@/components/Media"
+import RichText from "@/components/RichText"
 
-export const MediumImpactHero: React.FC<Page['hero']> = ({ links, media, richText }) => {
+export const MediumImpactHero: React.FC<Page["hero"]> = ({ links, media, richText }) => {
   return (
     <div className="">
       <div className="container mb-8">
@@ -25,13 +25,13 @@ export const MediumImpactHero: React.FC<Page['hero']> = ({ links, media, richTex
         )}
       </div>
       <div className="container">
-        {media && typeof media === 'object' && (
-          <div>
+        {media && typeof media === "object" && (
+          <div className="-mx-5 md:-mx-8 lg:-mx-16 xl:-mx-32">
             <Media
-              className="-mx-4 md:-mx-8 2xl:-mx-16"
-              imgClassName=""
+              media={media}
+              sizes="(max-width: 768px) 100vw, 1024px"
+              variant="large"
               priority
-              resource={media}
             />
             {media?.caption && (
               <div className="mt-3">

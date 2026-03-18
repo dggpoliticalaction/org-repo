@@ -1,4 +1,4 @@
-import type { Block } from 'payload'
+import type { Block } from "payload"
 
 import {
   FixedToolbarFeature,
@@ -8,20 +8,20 @@ import {
   lexicalEditor,
   OrderedListFeature,
   UnorderedListFeature,
-} from '@payloadcms/richtext-lexical'
+} from "@payloadcms/richtext-lexical"
 
 export const VolumeView: Block = {
-  slug: 'volumeView',
-  interfaceName: 'VolumeView',
+  slug: "volumeView",
+  interfaceName: "VolumeView",
   fields: [
     {
-      name: 'introContent',
-      type: 'richText',
+      name: "introContent",
+      type: "richText",
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
           return [
             ...rootFeatures,
-            HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+            HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
             FixedToolbarFeature(),
             InlineToolbarFeature(),
             OrderedListFeature(),
@@ -30,61 +30,61 @@ export const VolumeView: Block = {
           ]
         },
       }),
-      label: 'Intro Content',
+      label: "Intro Content",
     },
     {
-      name: 'populateBy',
-      type: 'select',
-      defaultValue: 'collection',
+      name: "populateBy",
+      type: "select",
+      defaultValue: "collection",
       options: [
         {
-          label: 'Collection',
-          value: 'collection',
+          label: "Collection",
+          value: "collection",
         },
         {
-          label: 'Individual Selection',
-          value: 'selection',
+          label: "Individual Selection",
+          value: "selection",
         },
       ],
     },
     {
-      name: 'relationTo',
-      type: 'select',
+      name: "relationTo",
+      type: "select",
       admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'collection',
+        condition: (_, siblingData) => siblingData.populateBy === "collection",
       },
-      defaultValue: 'volumes',
-      label: 'Collections To Show',
+      defaultValue: "volumes",
+      label: "Collections To Show",
       options: [
         {
-          label: 'Volumes',
-          value: 'volumes',
+          label: "Volumes",
+          value: "volumes",
         },
       ],
     },
     {
-      name: 'limit',
-      type: 'number',
+      name: "limit",
+      type: "number",
       admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'collection',
+        condition: (_, siblingData) => siblingData.populateBy === "collection",
         step: 1,
       },
       defaultValue: 6,
-      label: 'Limit',
+      label: "Limit",
     },
     {
-      name: 'selectedDocs',
-      type: 'relationship',
+      name: "selectedDocs",
+      type: "relationship",
       admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'selection',
+        condition: (_, siblingData) => siblingData.populateBy === "selection",
       },
       hasMany: true,
-      label: 'Selection',
-      relationTo: ['volumes'],
+      label: "Selection",
+      relationTo: ["volumes"],
     },
   ],
   labels: {
-    plural: 'Volume Views',
-    singular: 'Volume View',
+    plural: "Volume Views",
+    singular: "Volume View",
   },
 }

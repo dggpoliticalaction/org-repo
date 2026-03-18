@@ -1,10 +1,10 @@
-import type { SocialAdapter } from '@/blocks/SocialEmbed/adapters/base.adapter'
-import { blueskyAdapter } from '@/blocks/SocialEmbed/adapters/bluesky.adapter'
-import { redditAdapter } from '@/blocks/SocialEmbed/adapters/reddit.adapter'
-import { tiktokAdapter } from '@/blocks/SocialEmbed/adapters/tiktok.adapter'
-import { twitterAdapter } from '@/blocks/SocialEmbed/adapters/twitter.adapter'
-import { youtubeAdapter } from '@/blocks/SocialEmbed/adapters/youtube.adapter'
-import type { SocialPlatform } from '@/payload-types'
+import type { SocialAdapter } from "@/blocks/SocialEmbed/adapters/base.adapter"
+import { blueskyAdapter } from "@/blocks/SocialEmbed/adapters/bluesky.adapter"
+import { redditAdapter } from "@/blocks/SocialEmbed/adapters/reddit.adapter"
+import { tiktokAdapter } from "@/blocks/SocialEmbed/adapters/tiktok.adapter"
+import { twitterAdapter } from "@/blocks/SocialEmbed/adapters/twitter.adapter"
+import { youtubeAdapter } from "@/blocks/SocialEmbed/adapters/youtube.adapter"
+import type { SocialPlatform } from "@/payload-types"
 
 /**
  * Registry mapping social platforms to their adapters.

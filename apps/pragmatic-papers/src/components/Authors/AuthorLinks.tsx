@@ -1,8 +1,8 @@
-import type { MenuField } from '@/payload-types'
-import { cn } from '@/utilities/ui'
-import { Github, Globe, Linkedin, type LucideIcon, Twitter } from 'lucide-react'
+import type { MenuField } from "@/payload-types"
+import { cn } from "@/utilities/utils"
+import { Github, Globe, Linkedin, type LucideIcon, Twitter } from "lucide-react"
 
-export type SocialIconKey = 'twitter' | 'linkedin' | 'github' | 'generic'
+export type SocialIconKey = "twitter" | "linkedin" | "github" | "generic"
 
 export const SocialIconMap: Record<SocialIconKey, LucideIcon> = {
   twitter: Twitter,
@@ -25,13 +25,13 @@ export interface AuthorLinksProps {
 
 export function normalizeExternalUrl(raw: string): string {
   const trimmed = raw.trim()
-  if (!trimmed) return ''
+  if (!trimmed) return ""
 
   // If the string already looks like it has a scheme, leave it as-is
   if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) return trimmed
 
   // Otherwise, assume HTTPS and strip leading slashes
-  return `https://${trimmed.replace(/^\/+/, '')}`
+  return `https://${trimmed.replace(/^\/+/, "")}`
 }
 
 export function deriveAuthorSocialLinks(entries: MenuField): AuthorSocialLink[] {
@@ -41,12 +41,12 @@ export function deriveAuthorSocialLinks(entries: MenuField): AuthorSocialLink[] 
   for (const { link, id } of entries) {
     if (!link) continue
 
-    if (link.type !== 'custom' || !link.url) continue
+    if (link.type !== "custom" || !link.url) continue
 
     const href = normalizeExternalUrl(link.url)
     if (!href) continue
 
-    let host = ''
+    let host = ""
     try {
       const urlObj = new URL(href)
       host = urlObj.hostname.toLowerCase()
@@ -54,14 +54,14 @@ export function deriveAuthorSocialLinks(entries: MenuField): AuthorSocialLink[] 
       // Non-HTTP(S) URL like mailto:, just treat as generic
     }
 
-    let icon: SocialIconKey = 'generic'
+    let icon: SocialIconKey = "generic"
 
-    if (host.includes('twitter.com') || host.endsWith('x.com')) {
-      icon = 'twitter'
-    } else if (host.includes('linkedin.com')) {
-      icon = 'linkedin'
-    } else if (host.includes('github.com')) {
-      icon = 'github'
+    if (host.includes("twitter.com") || host.endsWith("x.com")) {
+      icon = "twitter"
+    } else if (host.includes("linkedin.com")) {
+      icon = "linkedin"
+    } else if (host.includes("github.com")) {
+      icon = "github"
     }
 
     links.push({
@@ -80,7 +80,7 @@ export const AuthorLinks: React.FC<AuthorLinksProps> = ({ className, socials }) 
   const links = deriveAuthorSocialLinks(socials)
   if (!links.length) return null
   return (
-    <nav aria-label="Author Links" className={cn('flex flex-wrap gap-3', className)}>
+    <nav aria-label="Author Links" className={cn("flex flex-wrap gap-3", className)}>
       {links.map((link) => {
         const Icon = SocialIconMap[link.icon] || Globe
         return (
@@ -89,7 +89,7 @@ export const AuthorLinks: React.FC<AuthorLinksProps> = ({ className, socials }) 
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground transition-colors"
             title={link.href}
           >
             <span className="sr-only">{link.label || link.href}</span>
