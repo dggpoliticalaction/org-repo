@@ -83,7 +83,7 @@ export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField =
         fields: [
           {
             label: reference.label || "Document to link to",
-            relationTo: ["pages", "volumes", "articles"],
+            relationTo: ["pages", "volumes", "articles", "topics"],
             name: "reference",
             type: "relationship",
             required: true,
