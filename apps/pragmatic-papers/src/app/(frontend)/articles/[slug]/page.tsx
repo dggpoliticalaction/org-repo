@@ -93,9 +93,9 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
           parentDoc={{ collection: "articles", id: article.id }}
         />
       </MathJaxProvider>
-      <Separator className="mt-16" />
       <FootnoteList footnotes={footnotes} />
       <AuthorList aria-label="Article Authors" authors={authors} />
+      <Separator className="mt-16" />
     </article>
   )
 }

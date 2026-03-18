@@ -13,6 +13,7 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
   if (!footnotes || !footnotes.length) return null
   return (
     <>
+      <Separator />
       <section className="space-y-2 border-t pt-4">
         <h3 className="text-xl font-semibold">Footnotes</h3>
         <ol className="list-inside list-decimal">
@@ -36,7 +37,6 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
           })}
         </ol>
       </section>
-      <Separator />
     </>
   )
 }

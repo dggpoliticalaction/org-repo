@@ -16,6 +16,7 @@ export const AuthorList: React.FC<AuthorListProps> = ({ authors, ...props }) => 
 
   return (
     <>
+      <Separator />
       <section aria-label="Authors" className="space-y-6" {...props}>
         <h3 className="text-xl font-bold">
           Meet the Author{filteredAuthors.length > 1 ? "s" : ""}
@@ -26,7 +27,6 @@ export const AuthorList: React.FC<AuthorListProps> = ({ authors, ...props }) => 
           ))}
         </div>
       </section>
-      <Separator />
     </>
   )
 }
