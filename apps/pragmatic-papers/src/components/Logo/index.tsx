@@ -1,13 +1,13 @@
 import { LogomarkIcon } from "@/components/Logo/icons/LogomarkIcon"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import { type VariantProps, cva } from "class-variance-authority"
 import React from "react"
 
 const logoVariants = cva("w-auto text-foreground", {
   variants: {
     size: {
-      default: "h-6 sm:h-7 md:h-8 lg:h-9 xl:h-10",
-      sm: "h-5 sm:h-6 md:h-7 lg:h-8 xl:h-9",
+      default: "h-6 sm:h-7 md:h-8 lg:h-8.5",
+      sm: "h-5 sm:h-6 md:h-7 lg:h-8",
     },
   },
   defaultVariants: {

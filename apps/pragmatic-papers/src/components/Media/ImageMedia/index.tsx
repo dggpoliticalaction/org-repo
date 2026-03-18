@@ -3,7 +3,7 @@ import NextImage, { type ImageProps } from "next/image"
 import React from "react"
 
 import { getMediaUrl } from "@/utilities/getMediaUrl"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 
 // A base64 encoded image to use as a placeholder while the image is loading
 const placeholderBlur =
@@ -61,6 +61,7 @@ export const ImageMedia: React.FC<ImageMediaProps> = ({
   priority, // TODO rename to `preload` after upgrading to Next.js 16
   loading,
   fill,
+  style,
   ...props
 }) => {
   if (!media.url) return null
@@ -83,10 +84,16 @@ export const ImageMedia: React.FC<ImageMediaProps> = ({
     height = undefined
   }
 
+  const objectPosition =
+    media.focalX != null && media.focalY != null ? `${media.focalX}% ${media.focalY}%` : undefined
+
+  style = objectPosition ? { ...style, objectPosition } : style
+
   return (
     <NextImage
       {...props}
-      className={cn("rounded-xs h-full w-full object-cover", className)}
+      style={style}
+      className={cn("rounded-sm", className)}
       src={src}
       alt={alt}
       width={width}

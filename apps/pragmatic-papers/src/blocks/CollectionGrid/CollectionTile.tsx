@@ -4,8 +4,7 @@ import React from "react"
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { isMedia, Media } from "@/components/Media"
 import type { Article, CollectionGridSlots, Media as MediaType } from "@/payload-types"
-import { cn } from "@/utilities/ui"
-
+import { cn } from "@/utilities/utils"
 export type ImagePosition = "above" | "below" | "left" | "right" | "none"
 
 export interface CollectionTileProps extends React.ComponentProps<"div"> {
@@ -59,7 +58,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       href={href}
       id={id ?? undefined}
       className={cn(
-        "group flex flex-col gap-6 @container",
+        "group @container flex flex-col gap-6",
         isHorizontal && "flex-col items-start md:flex-row",
         className,
       )}
@@ -67,44 +66,48 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       {heroImage && (
         <div
           className={cn(
-            "aspect-video overflow-hidden rounded-sm",
+            "aspect-video overflow-hidden rounded-sm border",
             isHorizontal ? "md:basis-1/2" : "w-full shrink",
             imagePosition === "left" && "md:order-first",
             imagePosition === "right" && "md:order-last",
           )}
         >
-          <Media media={heroImage} className="hover:opacity-80" variant="medium" />
+          <Media
+            media={heroImage}
+            className="h-full w-full object-cover object-center hover:opacity-80"
+            variant="medium"
+          />
         </div>
       )}
       <div
         className={cn(
-          isHorizontal && "flex flex-col justify-center self-stretch @container md:basis-1/2",
+          isHorizontal && "@container flex flex-col justify-center self-stretch md:basis-1/2",
         )}
       >
         {/* Kicker */}
         {kicker && (
-          <p className="font-sans text-xs font-bold uppercase tracking-wider text-brand">
+          <p className="text-brand font-serif text-xs font-bold tracking-wider uppercase">
             {kicker}
           </p>
         )}
 
         {/* Title — uses container queries to scale with available space */}
-        <h2 className="font-display text-balance text-sm font-bold leading-tight text-primary hover:text-primary/80 @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl">
+        <h2 className="font-display text-primary hover:text-primary/80 text-sm leading-tight font-bold text-balance @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl">
           {overrideTitle || title}
         </h2>
 
         {/* Byline */}
         {showByline && authorNames && (
-          <p className="line-clamp-1 font-sans text-sm text-muted-foreground">{authorNames}</p>
+          <p className="text-muted-foreground line-clamp-1 font-sans text-sm">{authorNames}</p>
         )}
 
         {/* Description */}
         {meta?.description && (
-          <p className="mt-2 line-clamp-3 font-serif text-sm text-primary">{meta!.description}</p>
+          <p className="text-primary mt-2 line-clamp-3 font-serif text-sm">{meta!.description}</p>
         )}
 
         {/* Timestamp */}
-        {timeAgo && <p className="mt-1 font-sans text-xs text-muted-foreground">{timeAgo}</p>}
+        {timeAgo && <p className="text-muted-foreground mt-1 font-sans text-xs">{timeAgo}</p>}
       </div>
     </HoverPrefetchLink>
   )

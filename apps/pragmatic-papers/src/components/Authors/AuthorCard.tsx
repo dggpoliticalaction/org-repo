@@ -1,21 +1,17 @@
-import { Media } from "@/components/Media"
-import { Card, CardContent } from "@/components/ui/card"
-import type { Media as MediaType, User } from "@/payload-types"
-import Link from "next/link"
+import type { User } from "@/payload-types"
 import React from "react"
-import { HoverPrefetchLink } from "../Link/HoverPrefetchLink"
-import { AuthorLinks } from "./AuthorLinks"
+
+import { AuthorLinks } from "@/components/Authors/AuthorLinks"
+import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
+import { Media } from "@/components/Media"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Card, CardContent } from "@/components/ui/card"
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean)
   if (parts.length === 0) return ""
   if (parts.length === 1) return parts[0]?.slice(0, 2).toUpperCase() || ""
   return (parts[0]?.charAt(0) || "") + (parts[1]?.charAt(0) || "").toUpperCase()
-}
-
-function extractProfileDoc(author: User): MediaType | undefined {
-  const profile = author.profileImage
-  return profile && typeof profile === "object" ? (profile as MediaType) : undefined
 }
 
 function extractBioSnippet(author: User, maxLength = 255): string | undefined {
@@ -56,46 +52,39 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
   const { slug, name, affiliation } = author
   const initials = getInitials(name || "Author")
   const bioSnippet = extractBioSnippet(author)
-  const profileDoc = extractProfileDoc(author)
+  const profileImage = author.profileImage ?? undefined
+  const profileImageUrl =
+    typeof profileImage === "number" ? undefined : (profileImage?.sizes?.square?.url ?? undefined)
 
   return (
     <Card className="rounded-sm">
-      <CardContent className="flex flex-row gap-4 p-4">
+      <CardContent className="flex flex-col gap-4 sm:flex-row">
         <HoverPrefetchLink href={`/authors/${slug}`} aria-label={name || "Author profile"}>
-          <div className="h-24 w-24 overflow-hidden rounded-sm border border-border bg-muted">
-            {profileDoc ? (
-              <Media
-                media={profileDoc}
-                className="hover:opacity-80"
-                sizes="96px"
-                variant="square"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-primary text-lg font-semibold text-primary-foreground">
-                {initials}
-              </div>
-            )}
-          </div>
+          <Avatar size="xl" className="aspect-square border hover:opacity-80">
+            <AvatarImage
+              src={profileImageUrl}
+              render={<Media media={profileImage} sizes="96px" variant="square" />}
+            />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
         </HoverPrefetchLink>
-        <div className="flex h-24 flex-1 flex-col justify-between overflow-hidden">
-          <div className="min-h-0 space-y-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-foreground">
-                  <Link href={`/authors/${slug}`} className="transition-colors hover:text-brand">
-                    {name}
-                  </Link>
-                  {affiliation && (
-                    <span className="ml-1 text-sm font-normal text-muted-foreground">
-                      {" - "}
-                      {affiliation}
-                    </span>
-                  )}
-                </h3>
-              </div>
+        <div className="flex flex-col justify-between space-y-2">
+          <div className="flex-1 space-y-1">
+            <div className="flex flex-col md:flex-row md:items-center">
+              <HoverPrefetchLink
+                href={`/authors/${slug}`}
+                className="font-display text-primary hover:text-primary/80 text-lg font-bold"
+              >
+                {name}
+              </HoverPrefetchLink>
+              {affiliation && (
+                <span className="text-muted-foreground ml-1 line-clamp-1 text-sm font-normal">
+                  {affiliation}
+                </span>
+              )}
             </div>
             {bioSnippet && (
-              <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{bioSnippet}</p>
+              <p className="text-primary line-clamp-2 font-serif text-sm">{bioSnippet}</p>
             )}
           </div>
           <AuthorLinks socials={author.socials} />

@@ -1,5 +1,6 @@
 import type React from "react"
 
+import { Separator } from "@/components/ui/separator"
 import type {
   CollectionGridBlock as CollectionGridBlockType,
   CollectionGridLayout,
@@ -25,16 +26,20 @@ const layouts = {
   "fibonacci-6": Fibonacci6Layout,
   "vespucci-7": Vespucci7Layout,
   "fibonacci-7": Fibonacci7Layout,
-} as const satisfies Record<CollectionGridLayout, React.FC<LayoutProps>>
+} as const satisfies Record<NonNullable<CollectionGridLayout>, React.FC<LayoutProps>>
 
 export const CollectionGridBlock: React.FC<CollectionGridBlockType> = async (props) => {
   const { layout, id, slots } = props
+  if (!layout) return null
   const LayoutComponent = layouts[layout]
   return (
-    <LayoutComponent
-      id={id ?? undefined}
-      className="container mb-10 items-stretch md:mb-20 lg:mb-40"
-      slots={slots}
-    />
+    <>
+      <LayoutComponent
+        id={id ?? undefined}
+        className="container mb-10 items-stretch md:mb-20 lg:mb-40"
+        slots={slots}
+      />
+      <Separator className="container mx-auto mb-10 px-4 last-of-type:mb-10 md:mb-20 lg:mb-40" />
+    </>
   )
 }
