@@ -7,7 +7,7 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [
-        "GH_TOKEN",
+        "GH_FONT_READ",
         "NODE_ENV",
         "S3_ENDPOINT",
         "S3_REGION",
@@ -61,7 +61,7 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [
-        "GH_TOKEN",
+        "GH_FONT_READ",
         "NODE_ENV",
         "S3_ENDPOINT",
         "S3_REGION",

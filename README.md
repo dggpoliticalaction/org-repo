@@ -39,13 +39,13 @@ pnpm
    ### Mac/Linux — add to ~/.npmrc:
 
    ```
-   GH_TOKEN=ghp_your_token
+   GH_FONT_READ=ghp_your_token
    ```
 
    ### Windows — set a user environment variable:
 
    ```powershell
-   [System.Environment]::SetEnvironmentVariable("GH_TOKEN", "ghp_your_token", "User")
+   [System.Environment]::SetEnvironmentVariable("GH_FONT_READ", "ghp_your_token", "User")
    ```
 
    > **Tip:** Restart your terminal (and IDE if it runs the install) after setting environment variables so they take effect.

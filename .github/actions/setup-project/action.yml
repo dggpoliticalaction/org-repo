@@ -5,6 +5,10 @@ inputs:
   node-version:
     description: Node.js version
     required: true
+  gh-font-read-token:
+    description: "GitHub Token for private font packages"
+    required: false
+    default: ""
   restore-nextjs-cache:
     description: Whether to restore Next.js build cache
     required: false
@@ -25,6 +29,8 @@ runs:
         cache: pnpm
 
     - name: Install dependencies
-      if: steps.cache-node-modules.outputs.cache-hit != 'true'
       shell: bash
       run: pnpm install --frozen-lockfile
+      env:
+        # This maps the input to the env var your .npmrc expects
+        GH_FONT_READ: ${{ inputs.gh-font-read-token }}
