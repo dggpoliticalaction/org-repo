@@ -11,34 +11,22 @@ import { VolumesView } from "@/components/VolumesView"
 
 export const VolumeViewBlock: React.FC<
   VolumeBlockProps & {
-    id?: string
-    searchParamsPromise: Promise<{ p?: string }>
+    id?: string | null
+    pageNumber?: number
   }
 > = async (props) => {
-  const {
-    id,
-    introContent,
-    populateBy,
-    selectedDocs,
-    searchParamsPromise,
-    limit: limitFromProps,
-  } = props
+  const { id, introContent, populateBy, selectedDocs, pageNumber, limit: limitFromProps } = props
 
   if (populateBy === "collection") {
     const payload = await getPayload({ config: configPromise })
 
     const limit = limitFromProps || 6
-    const { p: pageNumber } = await searchParamsPromise
-
-    let sanitizedPageNumber = Number(pageNumber)
-
-    if (!Number.isInteger(sanitizedPageNumber)) sanitizedPageNumber = 0
 
     const { docs, page, totalDocs, totalPages } = await payload.find({
       collection: "volumes",
       depth: 1,
       limit,
-      page: sanitizedPageNumber,
+      page: pageNumber,
       overrideAccess: false,
       select: {
         title: true,
@@ -53,7 +41,7 @@ export const VolumeViewBlock: React.FC<
     })
 
     return (
-      <div className="mx-auto my-4 max-w-xl space-y-8 px-4" id={id}>
+      <div className="mx-auto my-4 max-w-xl space-y-8 px-4" id={id ?? undefined}>
         {introContent && (
           <RichText className="font-display" data={introContent} enableGutter={false} />
         )}

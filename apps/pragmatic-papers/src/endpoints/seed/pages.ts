@@ -166,6 +166,48 @@ export const createPages = async (payload: Payload): Promise<CreatePagesResult> 
     },
   })
 
+  const contactForm = await payload.create({
+    collection: "forms",
+    data: {
+      title: "Contact Form",
+      fields: [
+        {
+          blockType: "text",
+          name: "name",
+          label: "Name",
+          required: true,
+          width: 100,
+        },
+        {
+          blockType: "email",
+          name: "email",
+          label: "Email",
+          required: true,
+          width: 100,
+        },
+        {
+          blockType: "text",
+          name: "subject",
+          label: "Subject",
+          required: true,
+          width: 100,
+        },
+        {
+          blockType: "textarea",
+          name: "message",
+          label: "Message",
+          required: true,
+          width: 100,
+        },
+      ],
+      submitButtonLabel: "Send Message",
+      confirmationType: "message",
+      confirmationMessage: createRichTextContent(
+        "Thank you for reaching out! We will get back to you as soon as possible.",
+      ),
+    },
+  })
+
   const contactPage = await payload.create({
     collection: "pages",
     data: {
@@ -187,6 +229,11 @@ export const createPages = async (payload: Payload): Promise<CreatePagesResult> 
               enableLink: false,
             },
           ],
+        },
+        {
+          blockType: "formBlock",
+          form: contactForm.id,
+          enableIntro: false,
         },
       ],
       meta: {

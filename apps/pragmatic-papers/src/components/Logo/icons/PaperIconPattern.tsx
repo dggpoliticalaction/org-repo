@@ -30,8 +30,8 @@ export const PaperIconPattern: React.FC<React.ComponentProps<"svg">> = ({
             attributeName="patternTransform"
             type="translate"
             from="0 0"
-            to="64 64"
-            dur="10s"
+            to="64 -64"
+            dur="6s"
             repeatCount="indefinite"
             additive="sum"
           />
