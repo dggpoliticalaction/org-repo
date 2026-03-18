@@ -1,5 +1,6 @@
 import { copyFileSync, existsSync } from "fs"
 import { dirname, resolve } from "path"
+import process from "process"
 import { fileURLToPath } from "url"
 import { green, yellow } from "./ansi.mjs"
 
@@ -13,7 +14,9 @@ if (!existsSync(env)) {
     process.exit(0)
   }
   copyFileSync(example, env)
+  // eslint-disable-next-line no-console
   console.log(`${green("✓")} Copied .env.example → .env`)
 } else {
+  // eslint-disable-next-line no-console
   console.log(`${green("✓")} .env already exists, skipping.`)
 }

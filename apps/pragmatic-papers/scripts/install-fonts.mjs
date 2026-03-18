@@ -13,4 +13,5 @@ const dest = resolve(__dirname, "../public/fonts")
 mkdirSync(dest, { recursive: true })
 cpSync(src, dest, { recursive: true })
 
+// eslint-disable-next-line no-console
 console.log(`${green("✓")} Fonts copied to public/fonts`)
