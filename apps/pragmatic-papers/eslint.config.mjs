@@ -6,4 +6,10 @@ export default [
   {
     ignores: ["src/migrations/**"],
   },
+  {
+    files: ["scripts/**"],
+    rules: {
+      "no-console": "off",
+    },
+  },
 ]

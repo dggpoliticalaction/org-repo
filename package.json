@@ -5,6 +5,7 @@
     "build": "turbo run build",
     "dev:install": "turbo run dev:install",
     "dev:db-nuke": "turbo run dev:db-nuke",
+    "dev:reseed": "turbo run dev:reseed --ui=stream && turbo run dev:db dev:install dev:next",
     "dev:db": "turbo run dev:db",
     "dev:db-down": "turbo run dev:db-down",
     "dev": "turbo run dev:install dev:db dev:next",
