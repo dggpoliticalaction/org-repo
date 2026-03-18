@@ -19,10 +19,9 @@ import * as migration_20260307_014204_enable_math_rendering from './20260307_014
 import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles';
 import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField';
 import * as migration_20260311_160239_rename_Users_role_user_to_member from './20260311_160239_rename_Users_role_user_to_member';
-import * as migration_20260315_010753_volume_title_backto_default from './20260315_010753_volume_title_backto_default';
 import * as migration_20260316_072557_add_blurdataurl from './20260316_072557_add_blurdataurl';
 import * as migration_20260317_033620_add_collections_again_thanks_esp from './20260317_033620_add_collections_again_thanks_esp';
-import * as migration_20260318_124341_revert_volume_title from './20260318_124341_revert_volume_title';
+import * as migration_20260318_125059_revert_volume_autogen from './20260318_125059_revert_volume_autogen';
 
 export const migrations = [
   {
@@ -131,11 +130,6 @@ export const migrations = [
     name: '20260311_160239_rename_Users_role_user_to_member',
   },
   {
-    up: migration_20260315_010753_volume_title_backto_default.up,
-    down: migration_20260315_010753_volume_title_backto_default.down,
-    name: '20260315_010753_volume_title_backto_default',
-  },
-  {
     up: migration_20260316_072557_add_blurdataurl.up,
     down: migration_20260316_072557_add_blurdataurl.down,
     name: '20260316_072557_add_blurdataurl',
@@ -146,8 +140,8 @@ export const migrations = [
     name: '20260317_033620_add_collections_again_thanks_esp',
   },
   {
-    up: migration_20260318_124341_revert_volume_title.up,
-    down: migration_20260318_124341_revert_volume_title.down,
-    name: '20260318_124341_revert_volume_title'
+    up: migration_20260318_125059_revert_volume_autogen.up,
+    down: migration_20260318_125059_revert_volume_autogen.down,
+    name: '20260318_125059_revert_volume_autogen'
   },
 ];
