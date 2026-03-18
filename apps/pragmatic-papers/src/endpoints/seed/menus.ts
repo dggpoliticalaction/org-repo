@@ -62,12 +62,12 @@ export const createMenus = async (
         enabled: true,
         link: {
           type: "custom",
-          label: "Discord",
+          label: "Join Us",
           url: "https://discord.gg/dggpol",
           newTab: true,
         },
-        backgroundColor: "#5865F2",
-        textColor: "#E0E3FF",
+        backgroundColor: "#ff401a",
+        textColor: "#ffffff",
       },
     },
   })
