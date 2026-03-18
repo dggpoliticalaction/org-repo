@@ -19,7 +19,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
   return (
     <div>
       {heroImage && (
-        <div className="container min-h-56">
+        <div className="container min-h-56 px-0">
           <Media
             priority
             sizes="100vw"
