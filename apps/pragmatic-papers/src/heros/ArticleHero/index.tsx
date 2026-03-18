@@ -12,9 +12,7 @@ interface ArticleHeroProps {
 }
 
 export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
-  const { publishedAt, title, heroImage, authors } = article
-
-  const filteredAuthors = (authors || []).filter((author) => typeof author === "object")
+  const { publishedAt, title, heroImage, populatedAuthors } = article
 
   return (
     <div className="relative flex flex-col gap-2">
@@ -29,33 +27,24 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
           />
         </div>
       )}
-      <h1 className="font-display mt-8 text-4xl font-bold sm:text-6xl">{title}</h1>
-      {filteredAuthors.length > 0 && (
-        <div className="text-lg">
-          <p>
-            by{" "}
-            {filteredAuthors.map(({ id, slug, name }, index) => (
-              <React.Fragment key={id}>
-                {getSeparator(index, filteredAuthors.length)}
-                <HoverPrefetchLink
-                  href={`/authors/${slug}`}
-                  className="underline-offset-2 hover:underline"
-                >
-                  {name}
-                </HoverPrefetchLink>
-              </React.Fragment>
-            ))}
-          </p>
-        </div>
-      )}
-      {publishedAt && (
-        <HoverPrefetchLink
-          href={`/articles/${article.slug}`}
-          className="dark:text-brand-high-contrast text-brand font-serif font-bold underline-offset-4 hover:underline"
-        >
-          <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
-        </HoverPrefetchLink>
-      )}
+      <h1 className="font-display mt-8 text-3xl font-bold sm:text-4xl">{title}</h1>
+      <div className="dark:text-brand-high-contrast text-brand flex gap-2 font-serif font-bold underline-offset-4">
+        {populatedAuthors &&
+          populatedAuthors.map(({ id, slug, name }, index) => (
+            <React.Fragment key={id}>
+              {getSeparator(index, populatedAuthors.length)}
+              <HoverPrefetchLink href={`/authors/${slug}`} className="hover:underline">
+                {name}
+              </HoverPrefetchLink>
+            </React.Fragment>
+          ))}
+        {"•"}
+        {publishedAt && (
+          <HoverPrefetchLink href={`/articles/${article.slug}`} className="hover:underline">
+            <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
+          </HoverPrefetchLink>
+        )}
+      </div>
       <Separator className="my-4" />
     </div>
   )

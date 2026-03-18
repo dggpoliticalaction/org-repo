@@ -75,7 +75,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
-  const { footnotes, content, authors, enableMathRendering } = article
+  const { footnotes, content, populatedAuthors, enableMathRendering } = article
 
   return (
     <article className="mx-auto max-w-3xl space-y-6 px-4">
@@ -94,7 +94,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
         />
       </MathJaxProvider>
       <FootnoteList footnotes={footnotes} />
-      <AuthorList aria-label="Article Authors" authors={authors} />
+      <AuthorList aria-label="Article Authors" authors={populatedAuthors} />
       <Separator className="mt-16" />
     </article>
   )
