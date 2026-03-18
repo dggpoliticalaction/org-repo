@@ -27,10 +27,10 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
         cache: pnpm
+        registry-url: "https://npm.pkg.github.com"
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.gh-font-read-token }}
 
     - name: Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
-      env:
-        # This maps the input to the env var your .npmrc expects
-        GH_FONT_READ: ${{ inputs.gh-font-read-token }}
