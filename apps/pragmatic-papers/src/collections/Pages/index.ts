@@ -1,15 +1,16 @@
 import type { CollectionConfig } from "payload"
 
+import { authenticatedOrPublished } from "@/access/authenticatedOrPublished"
+import { CollectionGrid } from "@/blocks/CollectionGrid/config"
+import { CallToAction } from "@/blocks/CallToAction/config"
+import { Content } from "@/blocks/Content/config"
+import { FormBlock } from "@/blocks/Form/config"
+import { MediaBlock } from "@/blocks/MediaBlock/config"
 import { VolumeView } from "@/blocks/VolumeViewBlock/config"
 import { hero } from "@/heros/config"
+import { populatePublishedAt } from "@/hooks/populatePublishedAt"
+import { generatePreviewPath } from "@/utilities/generatePreviewPath"
 import { slugField } from "payload"
-import { authenticatedOrPublished } from "../../access/authenticatedOrPublished"
-import { CallToAction } from "../../blocks/CallToAction/config"
-import { Content } from "../../blocks/Content/config"
-import { FormBlock } from "../../blocks/Form/config"
-import { MediaBlock } from "../../blocks/MediaBlock/config"
-import { populatePublishedAt } from "../../hooks/populatePublishedAt"
-import { generatePreviewPath } from "../../utilities/generatePreviewPath"
 import { revalidateDelete, revalidatePage } from "./hooks/revalidatePage"
 
 import { admin } from "@/access/admins"
@@ -72,7 +73,7 @@ export const Pages: CollectionConfig<"pages"> = {
             {
               name: "layout",
               type: "blocks",
-              blocks: [CallToAction, Content, MediaBlock, VolumeView, FormBlock],
+              blocks: [CollectionGrid, CallToAction, Content, MediaBlock, VolumeView, FormBlock],
               required: true,
               admin: {
                 initCollapsed: true,

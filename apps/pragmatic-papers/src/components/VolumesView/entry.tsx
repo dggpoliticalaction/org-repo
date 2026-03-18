@@ -1,6 +1,4 @@
-"use client"
 import { cn } from "@/utilities/ui"
-import useClickableCard from "@/utilities/useClickableCard"
 import Link from "next/link"
 import React from "react"
 
@@ -25,7 +23,6 @@ export const Entry: React.FC<{
   relationTo?: "volumes"
   title?: string
 }> = (props) => {
-  const { card: entry, link } = useClickableCard({})
   const { className, doc, relationTo, title: titleFromProps } = props
 
   const { slug, description, title, volumeNumber, publishedAt } = doc || {}
@@ -37,7 +34,7 @@ export const Entry: React.FC<{
   const dateToString = formatWithOptions({ locale: enUS }, "MMMM dd")
 
   return (
-    <article className={cn("overflow-hidden hover:cursor-pointer", className)} ref={entry.ref}>
+    <article className={cn("relative overflow-hidden", className)}>
       <div className="group">
         <div className="text-left text-sm">
           <span className="pe-2">Volume {toRoman(volumeNumber ?? 1)}</span>
@@ -48,9 +45,8 @@ export const Entry: React.FC<{
         {titleToUse && (
           <h3 className="my-6 text-center">
             <Link
-              className="text-xl font-bold transition-colors group-hover:text-brand md:text-3xl"
+              className="text-xl font-bold transition-colors after:absolute after:inset-0 group-hover:text-brand md:text-3xl"
               href={href}
-              ref={link.ref}
             >
               {titleToUse}
             </Link>

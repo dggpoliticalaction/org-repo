@@ -1,59 +1,52 @@
-import type { StaticImageData } from "next/image"
-
-import RichText from "@/components/RichText"
-import { cn } from "@/utilities/ui"
+import type { MediaBlock as MediaBlockProps } from "@/payload-types"
 import React from "react"
 
-import type { MediaBlock as MediaBlockProps } from "@/payload-types"
+import { Media } from "@/components/Media"
+import RichText from "@/components/RichText"
+import { cn } from "@/utilities/ui"
 
-import { Media } from "../../components/Media"
-
-type Props = MediaBlockProps & {
+export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
   breakout?: boolean
-  captionClassName?: string
   className?: string
-  enableGutter?: boolean
   imgClassName?: string
-  staticImage?: StaticImageData
+  captionClassName?: string
+  enableGutter?: boolean
+  sizes?: string | undefined
   disableInnerContainer?: boolean
 }
 
-export const MediaBlock: React.FC<Props> = (props) => {
+export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props }) => {
   const {
+    breakout,
     captionClassName,
     className,
     enableGutter = true,
     imgClassName,
     media,
-    staticImage,
     disableInnerContainer,
   } = props
+  if (typeof media === "number") return null
+
+  sizes = sizes || breakout ? "(max-width: 768px) 100vw, 800px" : "(max-width: 768px) 100vw, 728px"
 
   let caption
   if (media && typeof media === "object") caption = media.caption
 
+  const Slot: React.ElementType = caption ? "figure" : "picture"
   return (
-    <figure
+    <Slot
       className={cn(
-        "",
         {
           container: enableGutter,
+          "lg:-mx-8 xl:-mx-16": breakout,
         },
         className,
       )}
     >
-      {(media || staticImage) && (
-        <Media
-          imgClassName={cn("border border-border rounded-sm", imgClassName)}
-          resource={media}
-          src={staticImage}
-          enableModal
-        />
-      )}
+      <Media className={imgClassName} media={media} sizes={sizes} />
       {caption && (
         <figcaption
           className={cn(
-            "mt-3 text-center",
             {
               container: !disableInnerContainer,
             },
@@ -63,11 +56,10 @@ export const MediaBlock: React.FC<Props> = (props) => {
           <RichText
             data={caption}
             enableGutter={false}
-            enableProse={false}
-            className="not-prose text-[0.95rem] text-muted-foreground"
+            className="text-center text-xs text-muted-foreground"
           />
         </figcaption>
       )}
-    </figure>
+    </Slot>
   )
 }

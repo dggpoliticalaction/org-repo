@@ -2,13 +2,13 @@
  * Utility functions for creating Lexical rich text structures
  */
 
+import type { SerializedParagraphNode, SerializedTextNode } from "@payloadcms/richtext-lexical"
 import type {
   ElementFormatType,
   SerializedEditorState,
   SerializedElementNode,
   SerializedLexicalNode,
 } from "@payloadcms/richtext-lexical/lexical"
-import type { SerializedParagraphNode, SerializedTextNode } from "@payloadcms/richtext-lexical"
 
 // Re-export commonly used types
 export type { SerializedLexicalNode }
@@ -90,6 +90,12 @@ export function createRichTextFromString(text: string): LexicalContent {
     },
   }
 }
+
+/**
+ * Alias for createRichTextFromString — creates a single-paragraph rich text block.
+ * Used by page seeds for Content block columns.
+ */
+export const createRichTextContent = createRichTextFromString
 
 /**
  * Creates a complete Lexical rich text structure from an array of paragraphs

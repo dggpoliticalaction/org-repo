@@ -1,13 +1,15 @@
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
+import { Media } from "@/components/Media"
+import { PageRange } from "@/components/PageRange"
+import { Pagination } from "@/components/Pagination"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
-import type { Article as ArticleType, Media, User, Volume } from "@/payload-types"
+import type { Article as ArticleType, Media as MediaType, User, Volume } from "@/payload-types"
 import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
-import Image from "next/image"
 import { getPayload } from "payload"
 import React, { cache } from "react"
 
@@ -42,6 +44,9 @@ interface Args {
   params: Promise<{
     slug?: string
   }>
+  searchParams: Promise<{
+    p?: string
+  }>
 }
 
 const queryUserBySlug = cache(async (slug: string): Promise<User | null> => {
@@ -74,16 +79,17 @@ const queryUserBySlug = cache(async (slug: string): Promise<User | null> => {
   return docs[0] || null
 })
 
-const queryArticlesByAuthor = cache(async (userId: number): Promise<ArticleType[]> => {
+const ARTICLES_PER_PAGE = 5
+const queryArticlesByAuthor = cache(async (userId: number, page: number = 1) => {
   const { isEnabled: draft } = await draftMode()
 
   const payload = await getPayload({ config })
 
-  const { docs } = await payload.find({
+  return payload.find({
     collection: "articles",
     draft,
-    limit: 1000,
-    pagination: false,
+    limit: ARTICLES_PER_PAGE,
+    page,
     where: {
       authors: {
         equals: userId,
@@ -91,8 +97,6 @@ const queryArticlesByAuthor = cache(async (userId: number): Promise<ArticleType[
     },
     depth: 2,
   })
-
-  return docs
 })
 
 const queryVolumesForArticles = cache(async (articleIds: number[]): Promise<Volume[]> => {
@@ -139,16 +143,19 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   }
 }
 
-export default async function AuthorPage({
-  params: paramsPromise,
-}: Args): Promise<React.ReactNode> {
+export default async function AuthorPage({ params, searchParams }: Args): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()
-  const { slug = "" } = await paramsPromise
+  const { slug = "" } = await params
+  const { p } = await searchParams
+  let page = Number(p) || 1
+  if (!Number.isInteger(page) || page < 1) page = 1
+
   const user = await queryUserBySlug(slug)
   const url = `/authors/${slug}`
   if (!user) return <PayloadRedirects url={url} />
 
-  const articles = await queryArticlesByAuthor(user.id)
+  const articlesResult = await queryArticlesByAuthor(user.id, page)
+  const { docs: articles, totalDocs, totalPages, page: currentPage } = articlesResult
   const articleIds = articles.map((article) => article.id).filter(Boolean)
   const volumes = await queryVolumesForArticles(articleIds)
 
@@ -170,8 +177,7 @@ export default async function AuthorPage({
   const hasBiography = !!user.biography
 
   const profile = user.profileImage
-  const profileDoc = profile && typeof profile === "object" ? (profile as Media) : undefined
-  const profileSrc = profileDoc?.sizes?.square?.url || profileDoc?.url || undefined
+  const profileDoc = profile && typeof profile === "object" ? (profile as MediaType) : undefined
 
   return (
     <article className="container mb-16 max-w-3xl">
@@ -181,16 +187,14 @@ export default async function AuthorPage({
       {draft && <LivePreviewListener />}
 
       <header className="flex flex-col items-center space-y-3 text-center">
-        {profileSrc && (
-          <div className="h-32 w-32 overflow-hidden rounded-full border border-border">
-            <Image
-              src={profileSrc}
-              alt={profileDoc?.alt || user.name || "Author avatar"}
-              width={128}
-              height={128}
-              className="h-full w-full object-cover"
-            />
-          </div>
+        {profileDoc && (
+          <Media
+            media={profileDoc}
+            variant="square"
+            sizes="128px"
+            className="h-32 w-32 rounded-full border border-border"
+            priority
+          />
         )}
         <h1 className="text-3xl font-bold md:text-4xl">{user.name || "Author"}</h1>
         {user.affiliation && <p className="text-sm text-muted-foreground">{user.affiliation}</p>}
@@ -206,15 +210,26 @@ export default async function AuthorPage({
 
       <section aria-label="Articles by this author">
         <h2 className="mb-4 text-2xl font-semibold">Articles</h2>
-        {articles.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No articles found for this author yet.</p>
+        {totalDocs === 0 ? (
+          <p className="text-sm text-muted-foreground">Look out for this author's debut!</p>
         ) : (
-          <div className="flex flex-col gap-4">
-            {articles.map((article) => {
-              const volume = volumeByArticleId.get(article.id)
-              return <AuthorArticleCard key={article.id} article={article} volume={volume} />
-            })}
-          </div>
+          <>
+            <PageRange
+              collection="articles"
+              currentPage={currentPage}
+              limit={ARTICLES_PER_PAGE}
+              totalDocs={totalDocs}
+            />
+            <div className="mt-4 flex flex-col gap-4">
+              {articles.map((article) => {
+                const volume = volumeByArticleId.get(article.id)
+                return <AuthorArticleCard key={article.id} article={article} volume={volume} />
+              })}
+            </div>
+            {totalPages > 1 && currentPage && (
+              <Pagination page={currentPage} totalPages={totalPages} />
+            )}
+          </>
         )}
       </section>
     </article>

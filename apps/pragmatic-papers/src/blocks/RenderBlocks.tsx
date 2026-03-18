@@ -2,16 +2,18 @@ import React, { Fragment } from "react"
 
 import type { Page } from "@/payload-types"
 
+import { CollectionGridBlock } from "@/blocks/CollectionGrid/Component"
 import { CallToActionBlock } from "@/blocks/CallToAction/Component"
 import { ContentBlock } from "@/blocks/Content/Component"
 import { FormBlock } from "@/blocks/Form/Component"
+import { MathBlock } from "@/blocks/Math/Component"
 import { MediaBlock } from "@/blocks/MediaBlock/Component"
 import { VolumeViewBlock } from "@/blocks/VolumeViewBlock/component"
-import { MathBlock } from "@/blocks/Math/Component"
 
 const blockComponents = {
   InlineMathBlock: MathBlock,
   DisplayMathBlock: MathBlock,
+  collectionGrid: CollectionGridBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
   formBlock: FormBlock,
@@ -35,7 +37,7 @@ export const RenderBlocks: React.FC<{
 
           if (blockType == "volumeView") {
             return (
-              <div className="my-4" key={index}>
+              <div className="mx-auto my-4 max-w-3xl" key={index}>
                 <VolumeViewBlock
                   {...block}
                   id={block.id ?? undefined}
@@ -44,12 +46,16 @@ export const RenderBlocks: React.FC<{
                 />
               </div>
             )
+          } else if (blockType === "collectionGrid") {
+            return (
+              <CollectionGridBlock key={block.id || index} id={block.id ?? undefined} {...block} />
+            )
           } else if (blockType && blockType in blockComponents) {
             const Block = blockComponents[blockType]
 
             if (Block) {
               return (
-                <div className="my-4" key={index}>
+                <div className="mx-auto my-4 max-w-3xl" key={index}>
                   {/* @ts-expect-error there may be some mismatch between the expected types here */}
                   <Block {...block} disableInnerContainer />
                 </div>
