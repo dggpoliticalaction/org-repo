@@ -31,27 +31,25 @@ export const AdminBarClient: React.FC<PayloadAdminBarProps> = (props) => {
   }
 
   return (
-    <div className="bg-foreground text-background h-8 w-full">
-      <PayloadAdminBar
-        {...props}
-        unstyled
-        className="container flex gap-1.5 px-6 py-2 text-xs"
-        classNames={{
-          logo: "hover:text-brand",
-          user: "hidden md:inline underline-offset-2 hover:underline",
-          controls: "flex ml-auto gap-1.5 underline-offset-2 hover:underline",
-          create: "hidden md:inline underline-offset-2 hover:underline",
-          edit: "hidden md:inline underline-offset-2 hover:underline",
-          preview: "underline-offset-2 hover:underline",
-          logout: "underline-offset-2 hover:underline",
-        }}
-        cmsURL={getClientSideURL()}
-        collectionSlug={collection}
-        collectionLabels={collectionLabels}
-        logo={<PaperIcon className="size-4" />}
-        // onAuthChange={onAuthChange}
-        onPreviewExit={onPreviewExit}
-      />
-    </div>
+    <PayloadAdminBar
+      {...props}
+      unstyled
+      className="container flex gap-1.5 px-6 py-2 text-xs"
+      classNames={{
+        logo: "hover:text-brand",
+        user: "hidden md:inline underline-offset-2 hover:underline",
+        controls: "flex ml-auto gap-1.5 underline-offset-2 hover:underline",
+        create: "hidden md:inline underline-offset-2 hover:underline",
+        edit: "hidden md:inline underline-offset-2 hover:underline",
+        preview: "underline-offset-2 hover:underline",
+        logout: "underline-offset-2 hover:underline",
+      }}
+      cmsURL={getClientSideURL()}
+      collectionSlug={collection}
+      collectionLabels={collectionLabels}
+      logo={<PaperIcon className="size-4" />}
+      // onAuthChange={onAuthChange}
+      onPreviewExit={onPreviewExit}
+    />
   )
 }

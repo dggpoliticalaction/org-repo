@@ -26,50 +26,36 @@ Node.js version 20.9.0+
 pnpm
 ```
 
-### [Development Wiki](https://github.com/dggpoliticalaction/org-repo/wiki)
+### [Development Wiki](https://github.com/digitalgroundgame/pragmatic-papers/wiki)
 
 ### Quick Start
 
-1. First clone the repo if you have not done so already and then change directory into org-repo.
+1. Clone the repo and `cd` into it.
 
-    ```Bash
-    git clone https://github.com/dggpoliticalaction/org-repo.git
-    cd org-repo
-    ```
+2. Run `pnpm install`. The preinstall hook copies `apps/pragmatic-papers/.env` from `.env.example` if missing. If it exits asking for a token, add `GITHUB_TOKEN` to `.env` (step 3) and run `pnpm install` again.
 
-2. This repository uses `pnpm` as a package manager. install the dependencies:
+3. Add a **GitHub Personal Access Token** to `apps/pragmatic-papers/.env` as `GITHUB_TOKEN`. This is required to install packages from GitHub Packages (e.g. `@digitalgroundgame/fonts`). Create a token at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope.
 
-    ```Bash
-    pnpm install
-    ```
+4. Start dev:
 
-3. Copy the example .env files
+   ```bash
+   pnpm dev
+   ```
 
-    ```Bash
-    cp apps/pragmatic-papers/.env.example apps/pragmatic-papers/.env
-    ```
-
-4. Start dev environment
-
-    ```Bash
-    pnpm dev
-    ```
-
-5. Use a browser to access the application,
-
-    [http://localhost:8000](http://localhost:8000)
+5. Open [http://localhost:8000](http://localhost:8000).
 
 > [!NOTE]
 > **Dev:Migrations**
 >
 > You do not need to run migrations against your development database, because Drizzle will have already pushed your changes to your database for you.
 >
->Payload uses Drizzle ORM's powerful push mode to automatically sync data changes to your database for you while in development mode. By default, this is enabled and is the suggested workflow to using Postgres and Payload while doing local development.
+> Payload uses Drizzle ORM's powerful push mode to automatically sync data changes to your database for you while in development mode. By default, this is enabled and is the suggested workflow to using Postgres and Payload while doing local development.
 
 ### Development Scripts
 
 Here are the most important scripts available in the root `package.json`:
 
+- `pnpm install`: Install dependencies (loads `.env` for org packages; creates `.env` from example if missing).
 - `pnpm build`: Build all applications.
 - `pnpm dev`: Start all applications in development mode.
 - `pnpm dev:db`: Start the development docker containers.

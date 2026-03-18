@@ -7,6 +7,7 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [
+        "GITHUB_TOKEN",
         "NODE_ENV",
         "S3_ENDPOINT",
         "S3_REGION",
@@ -37,14 +38,11 @@
     "check-types": {
       "dependsOn": ["^check-types"]
     },
-    "dev:install": {
-      "cache": false
-    },
     "dev:db": {
       "cache": false
     },
     "dev:next": {
-      "dependsOn": ["^dev:install", "^dev:db"],
+      "dependsOn": ["^dev:db"],
       "cache": false,
       "persistent": true
     },
@@ -63,6 +61,7 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [
+        "GITHUB_TOKEN",
         "NODE_ENV",
         "S3_ENDPOINT",
         "S3_REGION",

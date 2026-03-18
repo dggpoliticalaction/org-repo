@@ -148,7 +148,7 @@
 }
 
 @utility font-display {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
 }
 
 @utility drop-cap {

@@ -32,6 +32,11 @@ WORKDIR /app
 # Copy pruned lockfile and package.json files from pruner stage
 COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+# Copy .npmrc for GitHub Packages (@digitalgroundgame) auth
+COPY --from=pruner /app/.npmrc ./.npmrc
+# GitHub Packages auth (set GITHUB_TOKEN as build arg in Coolify for staging/prod)
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 # Install dependencies with frozen lockfile
 # Using cache mount for pnpm store to speed up builds
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \

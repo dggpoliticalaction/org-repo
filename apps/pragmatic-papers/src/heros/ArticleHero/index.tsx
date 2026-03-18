@@ -19,7 +19,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
   return (
     <div className="relative flex flex-col gap-2">
       {heroImage && (
-        <div className="-mx-5 min-h-56 md:-mx-8 lg:-mx-16 xl:-mx-32">
+        <div className="min-h-56 md:-mx-8 lg:-mx-16 xl:-mx-32">
           <Media
             priority
             sizes="(max-width: 768px) 100vw, 1024px"
@@ -29,7 +29,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
           />
         </div>
       )}
-      <h1 className="mt-8 text-3xl font-bold sm:text-4xl">{title}</h1>
+      <h1 className="font-display mt-8 text-4xl font-bold sm:text-6xl">{title}</h1>
       {filteredAuthors.length > 0 && (
         <div className="text-lg">
           <p>
