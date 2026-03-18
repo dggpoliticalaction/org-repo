@@ -32,6 +32,8 @@ WORKDIR /app
 # Copy pruned lockfile and package.json files from pruner stage
 COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+# Copy pruned source code from pruner
+COPY --from=pruner /app/out/full/ .
 # Copy .npmrc for GitHub Packages (@digitalgroundgame) auth
 COPY --from=pruner /app/.npmrc ./.npmrc
 # GitHub Packages auth (set GH_FONT_READ as build arg in Coolify for staging/prod)
@@ -54,8 +56,6 @@ RUN apk add --no-cache postgresql-client
 
 # Copy installed node_modules from installer
 COPY --from=installer /app/ .
-# Copy pruned source code from pruner
-COPY --from=pruner /app/out/full/ .
 
 # Copy database utility scripts
 COPY dockerfiles/scripts/modify-database-uri.sh /usr/local/bin/modify-database-uri.sh
