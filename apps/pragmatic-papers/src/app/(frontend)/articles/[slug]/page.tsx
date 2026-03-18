@@ -3,6 +3,7 @@ import { FootnoteList } from "@/components/FootnoteList"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
+import { Separator } from "@/components/ui/separator"
 import { ArticleHero } from "@/heros/ArticleHero"
 import { MathJaxProvider } from "@/providers/MathJaxProvider"
 import { generateMeta } from "@/utilities/generateMeta"
@@ -77,7 +78,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   const { footnotes, content, populatedAuthors, enableMathRendering } = article
 
   return (
-    <article className="m-auto max-w-3xl p-5 pb-16">
+    <article className="mx-auto max-w-3xl space-y-6 px-4">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
@@ -94,6 +95,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
       </MathJaxProvider>
       <FootnoteList footnotes={footnotes} />
       <AuthorList aria-label="Article Authors" authors={populatedAuthors} />
+      <Separator className="mt-16" />
     </article>
   )
 }

@@ -1,5 +1,5 @@
 import type { FootnoteBlock as FootnoteBlockType } from "@/payload-types"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import Link from "next/link"
 import React from "react"
 
@@ -20,7 +20,7 @@ export const FootnoteBlock: React.FC<FootnoteBlockProps> = ({ note, index, class
       title={`Footnote ${index}: ${note}`}
     >
       <Link
-        className="text-brand/80 hover:text-brand border-none font-bold"
+        className="text-brand/80 hover:text-brand dark:text-brand-high-contrast font-semibold underline-offset-6 hover:underline"
         href={`#${describedById}`}
         aria-describedby={describedById}
       >

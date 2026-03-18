@@ -4,8 +4,7 @@ import React from "react"
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { isMedia, Media } from "@/components/Media"
 import type { Article, CollectionGridSlots, Media as MediaType } from "@/payload-types"
-import { cn } from "@/utilities/ui"
-
+import { cn } from "@/utilities/utils"
 export type ImagePosition = "above" | "below" | "left" | "right" | "none"
 
 export interface CollectionTileProps extends React.ComponentProps<"div"> {
@@ -67,13 +66,17 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       {heroImage && (
         <div
           className={cn(
-            "aspect-video overflow-hidden rounded-sm",
+            "aspect-video overflow-hidden rounded-sm border",
             isHorizontal ? "md:basis-1/2" : "w-full shrink",
             imagePosition === "left" && "md:order-first",
             imagePosition === "right" && "md:order-last",
           )}
         >
-          <Media media={heroImage} className="hover:opacity-80" variant="medium" />
+          <Media
+            media={heroImage}
+            className="h-full w-full object-cover object-center hover:opacity-80"
+            variant="medium"
+          />
         </div>
       )}
       <div
@@ -83,7 +86,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       >
         {/* Kicker */}
         {kicker && (
-          <p className="text-brand font-sans text-xs font-bold tracking-wider uppercase">
+          <p className="text-brand font-serif text-xs font-bold tracking-wider uppercase">
             {kicker}
           </p>
         )}

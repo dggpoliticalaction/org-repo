@@ -1,14 +1,12 @@
 import type { PopulatedAuthors } from "@/payload-types"
 import { convertLexicalToPlaintext } from "@payloadcms/richtext-lexical/plaintext"
-import Link from "next/link"
 import React from "react"
 
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { Media } from "@/components/Media"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
-
-type Author = NonNullable<PopulatedAuthors>[number]
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean)
@@ -17,7 +15,10 @@ function getInitials(name: string): string {
   return (parts[0]?.charAt(0) || "") + (parts[1]?.charAt(0) || "").toUpperCase()
 }
 
-function extractBioSnippet(author: Author, maxLength = 255): string | undefined {
+function extractBioSnippet(
+  author: NonNullable<PopulatedAuthors>[number],
+  maxLength = 255,
+): string | undefined {
   if (!author.biography) return
   const text = convertLexicalToPlaintext({ data: author.biography })
   return text.length > maxLength ? `${text.slice(0, maxLength).trimEnd()}…` : text
@@ -31,46 +32,39 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
   const { slug, name, affiliation } = author
   const initials = getInitials(name || "Author")
   const bioSnippet = extractBioSnippet(author)
-  const profileDoc = author.profileImage
+  const profileImage = author.profileImage ?? undefined
+  const profileImageUrl =
+    typeof profileImage === "number" ? undefined : (profileImage?.sizes?.square?.url ?? undefined)
 
   return (
     <Card className="rounded-sm">
-      <CardContent className="flex flex-row gap-4 p-4">
+      <CardContent className="flex flex-col gap-4 sm:flex-row">
         <HoverPrefetchLink href={`/authors/${slug}`} aria-label={name || "Author profile"}>
-          <div className="border-border bg-muted h-24 w-24 overflow-hidden rounded-sm border">
-            {profileDoc ? (
-              <Media
-                media={profileDoc}
-                className="hover:opacity-80"
-                sizes="96px"
-                variant="square"
-              />
-            ) : (
-              <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center text-lg font-semibold">
-                {initials}
-              </div>
-            )}
-          </div>
+          <Avatar size="xl" className="aspect-square border hover:opacity-80">
+            <AvatarImage
+              src={profileImageUrl}
+              render={<Media media={profileImage} sizes="96px" variant="square" />}
+            />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
         </HoverPrefetchLink>
-        <div className="flex h-24 flex-1 flex-col justify-between overflow-hidden">
-          <div className="min-h-0 space-y-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-foreground font-semibold">
-                  <Link href={`/authors/${slug}`} className="hover:text-brand transition-colors">
-                    {name}
-                  </Link>
-                  {affiliation && (
-                    <span className="text-muted-foreground ml-1 text-sm font-normal">
-                      {" - "}
-                      {affiliation}
-                    </span>
-                  )}
-                </h3>
-              </div>
+        <div className="flex flex-col justify-between space-y-2">
+          <div className="flex-1 space-y-1">
+            <div className="flex flex-col md:flex-row md:items-center">
+              <HoverPrefetchLink
+                href={`/authors/${slug}`}
+                className="font-display text-primary hover:text-primary/80 text-lg font-bold"
+              >
+                {name}
+              </HoverPrefetchLink>
+              {affiliation && (
+                <span className="text-muted-foreground ml-1 line-clamp-1 text-sm font-normal">
+                  {affiliation}
+                </span>
+              )}
             </div>
             {bioSnippet && (
-              <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{bioSnippet}</p>
+              <p className="text-primary line-clamp-2 font-serif text-sm">{bioSnippet}</p>
             )}
           </div>
           <AuthorLinks socials={author.socials} />

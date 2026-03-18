@@ -1,6 +1,7 @@
 import { adminOrSelf } from "@/access/adminOrSelf"
 import { admin, adminFieldLevel } from "@/access/admins"
 import { staff } from "@/access/staff"
+import { revalidateUser } from "@/collections/Users/hooks/revalidateUser"
 import { menu } from "@/fields/menu"
 import {
   FixedToolbarFeature,
@@ -11,7 +12,6 @@ import {
   OrderedListFeature,
   UnorderedListFeature,
 } from "@payloadcms/richtext-lexical"
-import { revalidateUser } from "@/collections/Users/hooks/revalidateUser"
 import { slugField, type CollectionConfig } from "payload"
 
 export const Users: CollectionConfig = {

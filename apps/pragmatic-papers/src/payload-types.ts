@@ -227,9 +227,10 @@ export interface Config {
     footer: FooterSelect<false> | FooterSelect<true>;
   };
   locale: null;
-  user: User & {
-    collection: 'users';
+  widgets: {
+    collections: CollectionsWidget;
   };
+  user: User;
   jobs: {
     tasks: {
       schedulePublish: TaskSchedulePublish;
@@ -339,10 +340,6 @@ export interface Page {
 export interface Volume {
   id: number;
   title: string;
-  /**
-   * When enabled, the title will be automatically generated from the article titles, separated by " • "
-   */
-  autoGenerateTitle?: boolean | null;
   volumeNumber: number;
   description: string;
   editorsNote?: {
@@ -574,6 +571,7 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1504,7 +1502,6 @@ export interface FootnotesFieldSelect<T extends boolean = true> {
  */
 export interface VolumesSelect<T extends boolean = true> {
   title?: T;
-  autoGenerateTitle?: T;
   volumeNumber?: T;
   description?: T;
   editorsNote?: T;
@@ -2003,6 +2000,16 @@ export interface FooterSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

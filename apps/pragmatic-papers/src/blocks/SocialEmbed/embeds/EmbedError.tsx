@@ -21,7 +21,7 @@ export function EmbedError({ url, message, displayName }: EmbedErrorProps): Reac
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="focus-visible:ring-ring inline-flex items-center gap-1 rounded-sm shadow-none hover:underline focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          className="focus-visible:ring-ring inline-flex items-center gap-1 rounded-sm shadow-none hover:underline focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden"
         >
           <span>Click to view on {displayName}</span>
           <ExternalLink className="inline-block h-4 w-4" aria-hidden="true" />

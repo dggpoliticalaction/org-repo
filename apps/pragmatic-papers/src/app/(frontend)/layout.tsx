@@ -3,40 +3,28 @@ import { Footer } from "@/Footer/Component"
 import { Header } from "@/Header/Component"
 import { getServerSideURL } from "@/utilities/getURL"
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import { GoogleAnalytics } from "@next/third-parties/google"
-import { GeistMono } from "geist/font/mono"
-import { GeistSans } from "geist/font/sans"
 import type { Metadata } from "next"
 import { ThemeProvider } from "next-themes"
-import { Open_Sans, Source_Serif_4 } from "next/font/google"
-import { draftMode } from "next/headers"
+import { Geist } from "next/font/google"
 import React from "react"
 import "./globals.css"
 
-const sourceSerif4 = Source_Serif_4({
-  variable: "--font-serif",
+const geist = Geist({
+  weight: ["400", "600"],
   subsets: ["latin"],
+  variable: "--font-sans",
 })
 
-const openSans = Open_Sans({
-  subsets: ["latin"],
-})
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { isEnabled } = await draftMode()
-  const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
-
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}): Promise<React.ReactElement> {
   return (
     <html
-      className={cn(
-        GeistSans.variable,
-        GeistMono.variable,
-        sourceSerif4.className,
-        openSans.className,
-        "scroll-smooth",
-      )}
+      className={cn(geist.variable)}
       lang="en"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
@@ -59,26 +47,22 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           type="application/rss+xml"
         />
       </head>
-      <body>
+      <body className="flex min-h-screen flex-col">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <AdminBar
-            adminBarProps={{
-              preview: isEnabled,
-            }}
-          />
+          <AdminBar />
           <Header />
-          <main role="main" className="mt-4">
+          <main role="main" className="my-8 flex-1">
             {children}
           </main>
           <Footer />
         </ThemeProvider>
       </body>
-      <GoogleAnalytics gaId={googleAnalyticsId} />
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
     </html>
   )
 }

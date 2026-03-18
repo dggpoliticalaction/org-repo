@@ -1,12 +1,10 @@
-import { cn } from "@/utilities/ui"
-import Link from "next/link"
+import type { Volume } from "@/payload-types"
+import { cn } from "@/utilities/utils"
 import React from "react"
 
-import type { Volume } from "@/payload-types"
-
-import { formatWithOptions } from "date-fns/fp"
-import { enUS } from "date-fns/locale"
-
+import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
+import { Separator } from "@/components/ui/separator"
+import { formatDateTime } from "@/utilities/formatDateTime"
 import { toRoman } from "@/utilities/toRoman"
 
 // import { Media } from '@/components/Media'
@@ -31,35 +29,31 @@ export const Entry: React.FC<{
   const sanitizedDescription = description?.replace(/\s/g, " ") // replace non-breaking space with white space
   const href = `/${relationTo}/${slug}`
 
-  const dateToString = formatWithOptions({ locale: enUS }, "MMMM dd")
-
   return (
-    <article className={cn("relative overflow-hidden", className)}>
-      <div className="group">
-        <div className="text-left text-sm">
-          <span className="pe-2">Volume {toRoman(volumeNumber ?? 1)}</span>
-          <span className="text-brand">
-            {publishedAt ? dateToString(Date.parse(publishedAt)) : ""}
-          </span>
-        </div>
-        {titleToUse && (
-          <h3 className="my-6 text-center">
-            <Link
-              className="group-hover:text-brand text-xl font-bold transition-colors after:absolute after:inset-0 md:text-3xl"
-              href={href}
-            >
-              {titleToUse}
-            </Link>
-          </h3>
+    <div className={cn("group space-y-2 overflow-hidden", className)}>
+      {titleToUse && (
+        <h3 className="font-display text-primary group-hover:text-primary/80 text-xl font-bold transition-colors md:text-3xl">
+          <HoverPrefetchLink href={href}>{titleToUse}</HoverPrefetchLink>
+        </h3>
+      )}
+      <div className="text-brand dark:text-brand-high-contrast flex gap-2 text-left font-serif text-sm">
+        {volumeNumber && <span className="font-semibold">Volume {toRoman(volumeNumber)}</span>}
+        <span>•</span>
+        {publishedAt && (
+          <HoverPrefetchLink
+            href={href}
+            className="font-semibold underline-offset-2 hover:underline"
+          >
+            <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
+          </HoverPrefetchLink>
         )}
-        <div className="text-justify">
-          {description && (
-            <div className="text-muted-foreground my-3 text-sm md:text-base">
-              {description && <p>{sanitizedDescription}</p>}
-            </div>
-          )}
-        </div>
       </div>
-    </article>
+      {description && (
+        <div className="text-primary my-6 max-w-3xl font-serif">
+          {description && <p>{sanitizedDescription}</p>}
+        </div>
+      )}
+      <Separator />
+    </div>
   )
 }

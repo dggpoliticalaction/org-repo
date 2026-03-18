@@ -71,6 +71,8 @@ export const seed = async (
         await payload.delete({ collection: "volumes", where: {} })
         await payload.delete({ collection: "media", where: {} })
         await payload.delete({ collection: "pages", where: {} })
+        await payload.delete({ collection: "forms", where: {} })
+        await payload.delete({ collection: "form-submissions", where: {} })
       },
     },
     {

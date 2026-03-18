@@ -1,12 +1,12 @@
-import { Button, type ButtonProps } from "@/components/ui/button"
-import { cn } from "@/utilities/ui"
+import { type ButtonProps } from "@/components/ui/button"
+import { cn } from "@/utilities/utils"
 import Link from "next/link"
 import React from "react"
 
+import { LinkButton } from "@/components/ui/link-button"
 import type { Article, Page, Volume } from "@/payload-types"
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type CMSLinkType = {
+interface CMSLinkType {
   appearance?: "inline" | ButtonProps["variant"]
   children?: React.ReactNode
   className?: string
@@ -30,7 +30,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     label,
     newTab,
     reference,
-    size: sizeFromProps,
+    size,
     url,
   } = props
 
@@ -43,7 +43,6 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   if (!href) return null
 
-  const size = appearance === "link" ? "clear" : sizeFromProps
   const newTabProps = newTab ? { rel: "noopener noreferrer", target: "_blank" } : {}
 
   /* Ensure we don't break any styles set by richText */
@@ -57,11 +56,15 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
   }
 
   return (
-    <Button asChild className={className} size={size} variant={appearance}>
-      <Link className={cn(className)} href={href || url || ""} {...newTabProps}>
-        {label && label}
-        {children && children}
-      </Link>
-    </Button>
+    <LinkButton
+      className={cn(className, appearance === "link" && "h-auto px-0 py-0")}
+      size={size}
+      variant={appearance}
+      href={href || url || ""}
+      {...newTabProps}
+    >
+      {label && label}
+      {children && children}
+    </LinkButton>
   )
 }

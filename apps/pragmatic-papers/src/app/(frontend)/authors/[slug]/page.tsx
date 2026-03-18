@@ -1,3 +1,9 @@
+import config from "@payload-config"
+import type { Metadata } from "next"
+import { draftMode } from "next/headers"
+import { getPayload } from "payload"
+import React, { cache } from "react"
+
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
@@ -6,12 +12,10 @@ import { PageRange } from "@/components/PageRange"
 import { Pagination } from "@/components/Pagination"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
-import type { Article as ArticleType, Media as MediaType, User, Volume } from "@/payload-types"
-import config from "@payload-config"
-import type { Metadata } from "next"
-import { draftMode } from "next/headers"
-import { getPayload } from "payload"
-import React, { cache } from "react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Separator } from "@/components/ui/separator"
+import type { Article as ArticleType, User, Volume } from "@/payload-types"
+import { getInitials } from "@/utilities/getInitials"
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config })
@@ -42,7 +46,7 @@ export async function generateStaticParams(): Promise<{ slug: string | null | un
 
 interface Args {
   params: Promise<{
-    slug?: string
+    slug: string
   }>
   searchParams: Promise<{
     p?: string
@@ -124,7 +128,7 @@ const queryVolumesForArticles = cache(async (articleIds: number[]): Promise<Volu
 })
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
-  const { slug = "" } = await params
+  const { slug } = await params
   const user = await queryUserBySlug(slug)
 
   const name = user?.name || "Author"
@@ -154,8 +158,12 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
   const url = `/authors/${slug}`
   if (!user) return <PayloadRedirects url={url} />
 
-  const articlesResult = await queryArticlesByAuthor(user.id, page)
-  const { docs: articles, totalDocs, totalPages, page: currentPage } = articlesResult
+  const {
+    docs: articles,
+    totalDocs,
+    totalPages,
+    page: currentPage,
+  } = await queryArticlesByAuthor(user.id, page)
   const articleIds = articles.map((article) => article.id).filter(Boolean)
   const volumes = await queryVolumesForArticles(articleIds)
 
@@ -177,24 +185,26 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
   const hasBiography = !!user.biography
 
   const profile = user.profileImage
-  const profileDoc = profile && typeof profile === "object" ? (profile as MediaType) : undefined
+  const profileImageUrl =
+    typeof profile === "number" ? undefined : (profile?.sizes?.square?.url ?? undefined)
+  const initials = getInitials(user.name || "Author")
 
   return (
-    <article className="container mb-16 max-w-3xl">
+    <article className="mx-auto max-w-3xl space-y-6 px-4">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
 
       <header className="flex flex-col items-center space-y-3 text-center">
-        {profileDoc && (
-          <Media
-            media={profileDoc}
-            variant="square"
-            sizes="128px"
-            className="border-border h-32 w-32 rounded-full border"
-            priority
-          />
+        {profile && (
+          <Avatar size="2xl" className="aspect-square border">
+            <AvatarImage
+              src={profileImageUrl}
+              render={<Media media={profile} variant="square" sizes="128px" priority />}
+            />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
         )}
         <h1 className="text-3xl font-bold md:text-4xl">{user.name || "Author"}</h1>
         {user.affiliation && <p className="text-muted-foreground text-sm">{user.affiliation}</p>}
@@ -208,18 +218,22 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
         </section>
       )}
 
+      <Separator className="my-16" />
+
       <section aria-label="Articles by this author">
-        <h2 className="mb-4 text-2xl font-semibold">Articles</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-2xl font-semibold">Articles</h2>
+          <PageRange
+            collection="articles"
+            currentPage={currentPage}
+            limit={ARTICLES_PER_PAGE}
+            totalDocs={totalDocs}
+          />
+        </div>
         {totalDocs === 0 ? (
           <p className="text-muted-foreground text-sm">Look out for this author's debut!</p>
         ) : (
           <>
-            <PageRange
-              collection="articles"
-              currentPage={currentPage}
-              limit={ARTICLES_PER_PAGE}
-              totalDocs={totalDocs}
-            />
             <div className="mt-4 flex flex-col gap-4">
               {articles.map((article) => {
                 const volume = volumeByArticleId.get(article.id)

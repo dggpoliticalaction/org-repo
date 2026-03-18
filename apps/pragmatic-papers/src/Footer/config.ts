@@ -1,6 +1,6 @@
-import { adminFieldLevel } from "@/access/admins"
 import type { GlobalConfig } from "payload"
 
+import { adminFieldLevel } from "@/access/admins"
 import { menu } from "@/fields/menu"
 import { revalidateFooter } from "./hooks/revalidateFooter"
 

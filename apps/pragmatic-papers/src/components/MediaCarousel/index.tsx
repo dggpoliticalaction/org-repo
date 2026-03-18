@@ -15,13 +15,11 @@ import type { Media as MediaType } from "@/payload-types"
 import React, { useState } from "react"
 
 interface MediaCarouselProps {
-  images: (MediaType | null)[]
+  images: { media: MediaType; id?: string | null }[]
   initialIndex?: number
   showCaptions?: boolean
   enableModal?: boolean
 }
-
-// Carousel navigation indicators
 
 export const MediaCarousel: React.FC<MediaCarouselProps> = ({
   images,
@@ -59,25 +57,25 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({
       className="lg:-mx-8 xl:-mx-16"
     >
       <CarouselContent>
-        {validImages.map((image, index) => (
+        {validImages.map(({ media, id }, index) => (
           <CarouselItem
-            key={index}
+            key={`${id}-${index}`}
             className="flex aspect-video w-full items-center justify-center"
           >
             {enableModal ? (
               <LightboxMediaBlock
-                media={image}
+                media={media}
                 enableGutter={false}
-                className="h-full w-full"
-                imgClassName="not-prose object-contain"
+                className="not-prose h-full w-full"
+                imgClassName="object-contain"
                 captionClassName="hidden"
               />
             ) : (
               <MediaBlock
-                media={image}
+                media={media}
                 enableGutter={false}
-                className="h-full w-full"
-                imgClassName="not-prose object-contain"
+                className="not-prose h-full w-full"
+                imgClassName="object-contain"
                 captionClassName="hidden"
               />
             )}

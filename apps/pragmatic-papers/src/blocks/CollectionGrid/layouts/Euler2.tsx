@@ -1,6 +1,6 @@
 import React from "react"
 
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import { CollectionTile } from "../CollectionTile"
 import type { LayoutDefinition, LayoutProps } from "../types"
 
