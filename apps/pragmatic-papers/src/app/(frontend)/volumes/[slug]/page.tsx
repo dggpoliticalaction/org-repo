@@ -99,8 +99,8 @@ export default async function VolumePage({
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
-      <h1 className="font-display mb-6 text-3xl font-bold md:text-5xl lg:text-6xl">
-        Volume <span className="font-serif font-semibold">{toRoman(Number(volume.slug))}</span>
+      <h1 className="font-display mb-6 text-3xl font-bold md:text-5xl lg:text-7xl">
+        Volume {toRoman(Number(volume.slug))}
       </h1>
       {publishedAt && (
         <HoverPrefetchLink
@@ -113,7 +113,7 @@ export default async function VolumePage({
       {editorsNote && <RichText className="mt-6" enableGutter={false} data={editorsNote} />}
       <Separator />
       <section className="space-y-4">
-        <h2 className="font-display text-xl font-bold">Articles in this Volume</h2>
+        <h2 className="font-display text-5xl font-bold">Articles in this Volume</h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {articles?.map((article) => (
             <ArticleCard key={article.id} doc={article} relationTo="articles" />

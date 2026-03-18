@@ -148,7 +148,8 @@
 }
 
 @utility font-display {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
+  letter-spacing: 0.05rem;
 }
 
 @utility drop-cap {
