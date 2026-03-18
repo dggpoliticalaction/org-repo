@@ -21,6 +21,7 @@ import * as migration_20260310_030303_update_volume_slugField from './20260310_0
 import * as migration_20260311_160239_rename_Users_role_user_to_member from './20260311_160239_rename_Users_role_user_to_member';
 import * as migration_20260316_072557_add_blurdataurl from './20260316_072557_add_blurdataurl';
 import * as migration_20260317_033620_add_collections_again_thanks_esp from './20260317_033620_add_collections_again_thanks_esp';
+import * as migration_20260318_125059_revert_volume_autogen from './20260318_125059_revert_volume_autogen';
 
 export const migrations = [
   {
@@ -136,6 +137,11 @@ export const migrations = [
   {
     up: migration_20260317_033620_add_collections_again_thanks_esp.up,
     down: migration_20260317_033620_add_collections_again_thanks_esp.down,
-    name: '20260317_033620_add_collections_again_thanks_esp'
+    name: '20260317_033620_add_collections_again_thanks_esp',
+  },
+  {
+    up: migration_20260318_125059_revert_volume_autogen.up,
+    down: migration_20260318_125059_revert_volume_autogen.down,
+    name: '20260318_125059_revert_volume_autogen'
   },
 ];
