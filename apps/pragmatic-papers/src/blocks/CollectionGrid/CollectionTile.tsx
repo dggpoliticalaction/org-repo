@@ -72,7 +72,11 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
             imagePosition === "right" && "md:order-last",
           )}
         >
-          <Media media={heroImage} className="hover:opacity-80" variant="medium" />
+          <Media
+            media={heroImage}
+            className="h-full w-full object-cover object-center hover:opacity-80"
+            variant="medium"
+          />
         </div>
       )}
       <div

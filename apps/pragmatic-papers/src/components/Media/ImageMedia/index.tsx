@@ -61,6 +61,7 @@ export const ImageMedia: React.FC<ImageMediaProps> = ({
   priority, // TODO rename to `preload` after upgrading to Next.js 16
   loading,
   fill,
+  style,
   ...props
 }) => {
   if (!media.url) return null
@@ -83,9 +84,17 @@ export const ImageMedia: React.FC<ImageMediaProps> = ({
     height = undefined
   }
 
+  const objectPosition =
+    media.focalX != null && media.focalY != null
+      ? `${media.focalX * 100}% ${media.focalY * 100}%`
+      : undefined
+
+  style = objectPosition ? { ...style, objectPosition } : style
+
   return (
     <NextImage
       {...props}
+      style={style}
       className={cn("rounded-sm", className)}
       src={src}
       alt={alt}
