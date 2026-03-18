@@ -24,23 +24,21 @@ export const MediumImpactHero: React.FC<Page["hero"]> = ({ links, media, richTex
           </ul>
         )}
       </div>
-      <div className="container">
-        {media && typeof media === "object" && (
-          <div className="-mx-5 md:-mx-8 lg:-mx-16 xl:-mx-32">
-            <Media
-              media={media}
-              sizes="(max-width: 768px) 100vw, 1024px"
-              variant="large"
-              priority
-            />
-            {media?.caption && (
-              <div className="mt-3">
-                <RichText data={media.caption} enableGutter={false} />
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      {media && typeof media === "object" && (
+        <div>
+          <Media
+            media={media}
+            sizes="100vw"
+            variant="large"
+            priority
+          />
+          {media?.caption && (
+            <div className="container mt-3">
+              <RichText data={media.caption} enableGutter={false} />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

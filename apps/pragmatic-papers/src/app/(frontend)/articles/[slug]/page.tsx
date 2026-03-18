@@ -78,24 +78,26 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   const { footnotes, content, authors, enableMathRendering } = article
 
   return (
-    <article className="mx-auto max-w-3xl space-y-6 px-4">
+    <article>
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
 
       <ArticleHero article={article} />
-      <MathJaxProvider enableMathRendering={enableMathRendering}>
-        <RichText
-          data={content}
-          enableGutter={false}
-          className="drop-cap"
-          parentDoc={{ collection: "articles", id: article.id }}
-        />
-      </MathJaxProvider>
-      <FootnoteList footnotes={footnotes} />
-      <AuthorList aria-label="Article Authors" authors={authors} />
-      <Separator className="mt-16" />
+      <div className="mx-auto max-w-3xl space-y-6 px-4">
+        <MathJaxProvider enableMathRendering={enableMathRendering}>
+          <RichText
+            data={content}
+            enableGutter={false}
+            className="drop-cap"
+            parentDoc={{ collection: "articles", id: article.id }}
+          />
+        </MathJaxProvider>
+        <FootnoteList footnotes={footnotes} />
+        <AuthorList aria-label="Article Authors" authors={authors} />
+        <Separator className="mt-16" />
+      </div>
     </article>
   )
 }
