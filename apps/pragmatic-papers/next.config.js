@@ -13,6 +13,7 @@ const NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https:
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  transpilePackages: ["@digitalgroundgame/fonts"],
   images: {
     qualities: [80],
     remotePatterns: [

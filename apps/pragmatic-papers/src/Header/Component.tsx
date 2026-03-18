@@ -126,7 +126,6 @@ export async function Header(): Promise<React.JSX.Element> {
           </div>
         </div>
       </header>
-      {/* <Menu menu={navItems} layout="inline" className="hidden justify-center py-3 lg:flex" /> */}
       <MegaMenu menu={navItems} />
     </>
   )

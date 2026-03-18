@@ -1,9 +1,9 @@
 import { AuthorList } from "@/components/Authors/AuthorList"
 import { FootnoteList } from "@/components/FootnoteList"
-import { TopicsList } from "@/components/Topics/TopicsList"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
+import { TopicsList } from "@/components/Topics/TopicsList"
 import { Separator } from "@/components/ui/separator"
 import { ArticleHero } from "@/heros/ArticleHero"
 import { MathJaxProvider } from "@/providers/MathJaxProvider"
@@ -76,7 +76,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
-  const { footnotes, content, authors, enableMathRendering, topics } = article
+  const { footnotes, content, populatedAuthors, enableMathRendering, topics } = article
 
   return (
     <article className="mx-auto max-w-3xl space-y-6 px-4">
@@ -96,7 +96,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
       </MathJaxProvider>
       <FootnoteList footnotes={footnotes} />
       <TopicsList topics={topics} className="mt-8" />
-      <AuthorList aria-label="Article Authors" authors={authors} />
+      <AuthorList aria-label="Article Authors" authors={populatedAuthors} />
       <Separator className="mt-16" />
     </article>
   )

@@ -18,6 +18,35 @@ export type MenuField =
   | null;
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PopulatedAuthors".
+ */
+export type PopulatedAuthors =
+  | {
+      id: string;
+      name?: string | null;
+      slug: string;
+      affiliation?: string | null;
+      biography?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      profileImage?: (number | null) | Media;
+      socials?: MenuField;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "FootnotesField".
  */
 export type FootnotesField =
@@ -385,12 +414,7 @@ export interface Article {
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
   createdBy?: (number | null) | User;
-  populatedAuthors?:
-    | {
-        id?: string | null;
-        name?: string | null;
-      }[]
-    | null;
+  populatedAuthors?: PopulatedAuthors;
   topics?: (number | Topic)[] | null;
   footnotes?: FootnotesField;
   /**
@@ -1420,12 +1444,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   publishedAt?: T;
   authors?: T;
   createdBy?: T;
-  populatedAuthors?:
-    | T
-    | {
-        id?: T;
-        name?: T;
-      };
+  populatedAuthors?: T | PopulatedAuthorsSelect<T>;
   topics?: T;
   footnotes?: T | FootnotesFieldSelect<T>;
   generateSlug?: T;
@@ -1436,12 +1455,22 @@ export interface ArticlesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "FootnotesField_select".
+ * via the `definition` "PopulatedAuthors_select".
  */
-export interface FootnotesFieldSelect<T extends boolean = true> {
-  note?: T;
-  index?: T;
-  attributionEnabled?: T;
+export interface PopulatedAuthorsSelect<T extends boolean = true> {
+  id?: T;
+  name?: T;
+  slug?: T;
+  affiliation?: T;
+  biography?: T;
+  profileImage?: T;
+  socials?: T | MenuFieldSelect<T>;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuField_select".
+ */
+export interface MenuFieldSelect<T extends boolean = true> {
   link?: T | LinkFieldSelect<T>;
   id?: T;
 }
@@ -1455,6 +1484,17 @@ export interface LinkFieldSelect<T extends boolean = true> {
   reference?: T;
   url?: T;
   label?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FootnotesField_select".
+ */
+export interface FootnotesFieldSelect<T extends boolean = true> {
+  note?: T;
+  index?: T;
+  attributionEnabled?: T;
+  link?: T | LinkFieldSelect<T>;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1624,14 +1664,6 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MenuField_select".
- */
-export interface MenuFieldSelect<T extends boolean = true> {
-  link?: T | LinkFieldSelect<T>;
-  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

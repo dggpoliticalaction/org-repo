@@ -86,24 +86,24 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       >
         {/* Kicker */}
         {kicker && (
-          <p className="text-brand font-serif text-xs font-bold tracking-wider uppercase">
+          <p className="text-brand font-serif text-sm font-bold tracking-wider uppercase">
             {kicker}
           </p>
         )}
 
         {/* Title — uses container queries to scale with available space */}
-        <h2 className="font-display text-primary hover:text-primary/80 text-sm leading-tight font-bold text-balance @xs:text-base @sm:text-lg @md:text-xl @lg:text-2xl @2xl:text-3xl">
+        <h2 className="text-primary hover:text-primary/80 font-display text-2xl leading-none font-bold text-balance @xs:text-2xl @sm:text-3xl @md:text-4xl @lg:text-5xl">
           {overrideTitle || title}
         </h2>
 
         {/* Byline */}
         {showByline && authorNames && (
-          <p className="text-muted-foreground line-clamp-1 font-sans text-sm">{authorNames}</p>
+          <p className="text-muted-foreground mt-1 line-clamp-1 font-sans text-sm">{authorNames}</p>
         )}
 
         {/* Description */}
         {meta?.description && (
-          <p className="text-primary mt-2 line-clamp-3 font-serif text-sm">{meta!.description}</p>
+          <p className="text-primary text-md mt-1 line-clamp-3 font-serif">{meta!.description}</p>
         )}
 
         {/* Timestamp */}

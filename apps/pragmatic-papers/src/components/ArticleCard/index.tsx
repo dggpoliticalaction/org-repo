@@ -35,7 +35,7 @@ export const ArticleCard: React.FC<{
           />
         )}
         {titleToUse && (
-          <h3 className="font-display hover:text-primary/80 line-clamp-4 text-xl font-bold">
+          <h3 className="font-display hover:text-primary/80 line-clamp-4 text-3xl leading-none font-bold">
             {titleToUse}
           </h3>
         )}

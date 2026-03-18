@@ -26,57 +26,57 @@ Node.js version 20.9.0+
 pnpm
 ```
 
-### [Development Wiki](https://github.com/dggpoliticalaction/org-repo/wiki)
+### [Development Wiki](https://github.com/digitalgroundgame/pragmatic-papers/wiki)
 
 ### Quick Start
 
-1. First clone the repo if you have not done so already and then change directory into org-repo.
+1. [Clone the repo](https://github.com/digitalgroundgame/pragmatic-papers.git) and `cd` into it.
 
-    ```Bash
-    git clone https://github.com/dggpoliticalaction/org-repo.git
-    cd org-repo
-    ```
+2. Run `pnpm install`. The preinstall hook copies `apps/pragmatic-papers/.env` from `.env.example` if missing.
 
-2. This repository uses `pnpm` as a package manager. install the dependencies:
+3. Add a **GitHub Personal Access Token**. This is required to install packages from private GitHub Packages (e.g. `@digitalgroundgame/fonts`). Create a token at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope.
 
-    ```Bash
-    pnpm install
-    ```
+   ### Mac/Linux — add to ~/.npmrc:
 
-3. Copy the example .env files
+   ```
+   GH_FONT_READ=ghp_your_token
+   ```
 
-    ```Bash
-    cp apps/pragmatic-papers/.env.example apps/pragmatic-papers/.env
-    ```
+   ### Windows — set a user environment variable:
 
-4. Start dev environment
+   ```powershell
+   [System.Environment]::SetEnvironmentVariable("GH_FONT_READ", "ghp_your_token", "User")
+   ```
 
-    ```Bash
-    pnpm dev
-    ```
+   > **Tip:** Restart your terminal (and IDE if it runs the install) after setting environment variables so they take effect.
 
-5. Use a browser to access the application,
+4. Start dev:
 
-    [http://localhost:8000](http://localhost:8000)
+   ```bash
+   pnpm dev
+   ```
+
+5. Open [http://localhost:8000](http://localhost:8000).
 
 > [!NOTE]
 > **Dev:Migrations**
 >
 > You do not need to run migrations against your development database, because Drizzle will have already pushed your changes to your database for you.
 >
->Payload uses Drizzle ORM's powerful push mode to automatically sync data changes to your database for you while in development mode. By default, this is enabled and is the suggested workflow to using Postgres and Payload while doing local development.
+> Payload uses Drizzle ORM's powerful push mode to automatically sync data changes to your database for you while in development mode. By default, this is enabled and is the suggested workflow to using Postgres and Payload while doing local development.
 
 ### Development Scripts
 
 Here are the most important scripts available in the root `package.json`:
 
-- `pnpm build`: Build all applications.
-- `pnpm dev`: Start all applications in development mode.
+- `pnpm install`: Install dependencies (loads `.env` for org packages; creates `.env` from example if missing).
+- `pnpm build`: Build application.
+- `pnpm dev`: Start application in development mode.
 - `pnpm dev:db`: Start the development docker containers.
 - `pnpm dev:db-down`: Stop the development docker containers.
 - `pnpm dev:db-nuke`: Stop the containers and remove the database volumes.
-- `pnpm lint`: Lint all applications.
-- `pnpm format`: Format all applications.
+- `pnpm lint`: Lint application.
+- `pnpm format`: Format application.
 - `pnpm check-types`: Run typescript to check for type errors.
 - `pnpm ci`: A script for running in a CI environment.
 

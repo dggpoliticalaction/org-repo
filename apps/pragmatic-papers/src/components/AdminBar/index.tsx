@@ -8,5 +8,9 @@ export async function AdminBar(): Promise<React.ReactNode> {
   const { isEnabled } = await draftMode()
   const { user } = await getAuth()
   if (!user) return null
-  return <AdminBarClient preview={isEnabled} />
+  return (
+    <div className="h-8 w-full bg-black text-white">
+      <AdminBarClient preview={isEnabled} />
+    </div>
+  )
 }
