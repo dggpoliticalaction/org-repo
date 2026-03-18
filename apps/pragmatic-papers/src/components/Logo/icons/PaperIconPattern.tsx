@@ -1,7 +1,8 @@
 import { cn } from "@/utilities/utils"
 import React from "react"
 
-export const PaperIconPattern: React.FC<React.ComponentProps<"svg">> = ({
+export const PaperIconPattern: React.FC<React.ComponentProps<"svg"> & { id: string }> = ({
+  id,
   fill = "currentColor",
   className,
   style,
@@ -15,7 +16,7 @@ export const PaperIconPattern: React.FC<React.ComponentProps<"svg">> = ({
     >
       <defs>
         <pattern
-          id="paper-icon-pattern"
+          id={id}
           width="64"
           height="64"
           patternUnits="userSpaceOnUse"
@@ -37,7 +38,7 @@ export const PaperIconPattern: React.FC<React.ComponentProps<"svg">> = ({
           />
         </pattern>
       </defs>
-      <rect width="100%" height="100%" fill="url(#paper-icon-pattern)" />
+      <rect width="100%" height="100%" fill={`url(#${id})`} />
     </svg>
   )
 }
