@@ -10,17 +10,26 @@ export async function Footer(): Promise<React.ReactElement> {
   const { navItems }: Footer = await getCachedGlobal("footer", 1)()
 
   return (
-    <footer className="container mt-auto">
-      <div className="flex flex-col gap-4 border-t border-border py-4 md:flex-row md:justify-between">
-        <Link className="mb-3 flex items-center md:mb-0" href="/">
+    <footer className="container mt-8 space-y-1 py-2">
+      <div className="flex flex-row items-center justify-between gap-2 border-t pt-2">
+        <Link href="/" className="flex-1">
           <Logo size="sm" />
         </Link>
-        <div className="flex w-full flex-col-reverse items-start justify-between md:flex-row md:items-center">
-          <Menu menu={navItems} />
+        <div className="flex flex-row items-center gap-2">
           <ModeToggle />
         </div>
       </div>
-      <Copyright className="mb-4" copyright="Pragmatic Papers" />
+      <div className="flex flex-col-reverse items-start gap-1 md:flex-row md:items-center md:justify-between md:gap-2">
+        <a
+          href="https://www.digitalgroundgame.org"
+          className="underline-offset-4 hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Copyright copyright="Digital Ground Game" />
+        </a>
+        <Menu menu={navItems} />
+      </div>
     </footer>
   )
 }

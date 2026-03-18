@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import NextImage, { type ImageProps } from "next/image"
 import { useState } from "react"
 
