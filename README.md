@@ -36,7 +36,7 @@ pnpm
 
 3. Add a **GitHub Personal Access Token**. This is required to install packages from private GitHub Packages (e.g. `@digitalgroundgame/fonts`). Create a token at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope.
 
-   ### Mac/Linux — add to ~/.npmrc:
+   ### Mac/Linux — add to ~/.zshrc:
 
    ```
    GH_FONT_READ=ghp_your_token
