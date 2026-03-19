@@ -592,6 +592,10 @@ export interface LinkField {
     | ({
         relationTo: 'articles';
         value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'topics';
+        value: number | Topic;
       } | null);
   url?: string | null;
   label?: string | null;
