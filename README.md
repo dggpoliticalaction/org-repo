@@ -34,9 +34,13 @@ pnpm
 
 2. Run `pnpm install`. The preinstall hook copies `apps/pragmatic-papers/.env` from `.env.example` if missing.
 
-3. Add a **GitHub Personal Access Token**. This is required to install packages from private GitHub Packages (e.g. `@digitalgroundgame/fonts`). Create a token at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope.
+3. Add a **Classic GitHub Personal Access Token (PAT)**. 
 
-   ### Mac/Linux — add to ~/.npmrc:
+   This is required to install packages from private GitHub Packages (e.g. `@digitalgroundgame/fonts`). 
+
+   Create a __Classic Token__ at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope.
+
+   ### Mac/Linux — add to ~/.zshrc (or the environment of whatever shell you're using):
 
    ```
    GH_FONT_READ=ghp_your_token
