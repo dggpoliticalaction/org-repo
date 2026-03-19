@@ -1,11 +1,12 @@
-import type { Payload } from "payload"
 import type { Article, User } from "@/payload-types"
+import type { Payload } from "payload"
 import type { LexicalContent } from "./richtext"
 
 interface CreateArticleOptions {
   title: string
   content: LexicalContent
   authors: number[]
+  topics?: number[]
   slug: string
   heroImage?: number | null
   meta?: {
@@ -32,6 +33,7 @@ export async function createArticle(
       title: options.title,
       content: options.content,
       authors: options.authors,
+      topics: options.topics,
       heroImage: options.heroImage || undefined,
       _status: "published",
       publishedAt: new Date().toISOString(),

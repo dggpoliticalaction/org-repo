@@ -1,8 +1,8 @@
 import type { Media, User } from "@/payload-types"
 import type { Payload } from "payload"
-import type { SerializedLexicalNode } from "../richtext"
-import { createParagraph, createEmptyParagraph, createRichText, createTextNode } from "../richtext"
 import { createArticle, validateWriters } from "../articles"
+import type { SerializedLexicalNode } from "../richtext"
+import { createEmptyParagraph, createParagraph, createRichText, createTextNode } from "../richtext"
 
 /**
  * Creates an inline math block node (renders LaTeX within a paragraph)
@@ -114,6 +114,7 @@ export const createMathBlocksArticle = async (
   payload: Payload,
   writers: User[],
   mediaDocs: Media[],
+  topics: number[] = [],
 ): Promise<number> => {
   validateWriters(writers)
 
@@ -124,6 +125,7 @@ export const createMathBlocksArticle = async (
     title,
     content: createMathBlocksContent(),
     authors: [writer.id],
+    topics: topics,
     slug: "equations-in-context-demonstrating-inline-and-display-math",
     meta: {
       title,

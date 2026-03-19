@@ -1,15 +1,16 @@
 import type { Media, User } from "@/payload-types"
 import type { Payload } from "payload"
 import { createArticle, getWriterOrThrow, validateWriters } from "./articles"
+import { createCollectionGridHomePage } from "./features/collection-grid"
 import { createFootnotesArticle } from "./features/footnotes"
 import { createMathBlocksArticle } from "./features/math-blocks"
 import { createMediaCollageArticle } from "./features/media-collage"
 import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from "./features/social-embeds"
-import { homeStatic } from "./home-static"
 import { createMediaFromURL } from "./media"
 import { createMenus } from "./menus"
 import { createPages } from "./pages"
 import { createLoremIpsumContent, generateLoremIpsumParagraph } from "./richtext"
+import { createTopics } from "./topics"
 import { createUsers } from "./users"
 import { createVolumes } from "./volumes"
 
@@ -17,6 +18,7 @@ interface SeedContext {
   media: Media[]
   writer1: User
   writer2: User
+  topics: number[]
   volume1Articles: number[]
   volume2Articles: number[]
   featureArticles: number[]
@@ -69,8 +71,11 @@ export const seed = async (
         })
         await payload.delete({ collection: "articles", where: {} })
         await payload.delete({ collection: "volumes", where: {} })
+        await payload.delete({ collection: "topics", where: {} })
         await payload.delete({ collection: "media", where: {} })
         await payload.delete({ collection: "pages", where: {} })
+        await payload.delete({ collection: "forms", where: {} })
+        await payload.delete({ collection: "form-submissions", where: {} })
       },
     },
     {
@@ -97,16 +102,34 @@ export const seed = async (
       },
     },
     {
+      name: "Creating topics...",
+      fn: async () => {
+        const topics = await createTopics(payload)
+        ctx.topics = topics.map((topic) => topic.id)
+      },
+    },
+    {
       name: "Creating Volume 1 articles...",
       fn: async () => {
         const writers = [ctx.writer1, ctx.writer2]
         ctx.volume1Articles = []
+        // 0 Politics, 1 Memes, 2 Cognitive Science, 3 Philosophy, 4 Ethics, 5 Epistemology,
+        // 6 Neuroscience, 7 Digital Culture, 8 Social Media, 9 Identity, 10 Humor
+        const volume1TopicSets: number[][] = [
+          [ctx.topics[4]!, ctx.topics[3]!, ctx.topics[0]!], // Trolley Problem: Ethics, Philosophy, Politics
+          [ctx.topics[6]!, ctx.topics[3]!, ctx.topics[2]!], // Free Will: Neuroscience, Philosophy, Cognitive Science
+          [ctx.topics[8]!, ctx.topics[3]!, ctx.topics[7]!], // Plato's Cave: Social Media, Philosophy, Digital Culture
+          [ctx.topics[3]!, ctx.topics[9]!, ctx.topics[2]!], // Ship of Theseus: Philosophy, Identity, Cognitive Science
+          [ctx.topics[4]!, ctx.topics[3]!, ctx.topics[0]!], // Beauvoir: Ethics, Philosophy, Politics
+          [ctx.topics[5]!, ctx.topics[3]!, ctx.topics[0]!], // Epistemic Injustice: Epistemology, Philosophy, Politics
+        ]
         for (let i = 0; i < volume1Titles.length; i++) {
           const title = volume1Titles[i]!
           const article = await createArticle(payload, {
             title,
             content: createLoremIpsumContent(Math.floor(Math.random() * 8) + 3),
             authors: [getWriterOrThrow(writers, i).id],
+            topics: volume1TopicSets[i]!,
             slug: titleToSlug(title),
             heroImage: ctx.media[i % ctx.media.length]?.id,
             meta: {
@@ -124,12 +147,18 @@ export const seed = async (
       fn: async () => {
         const writers = [ctx.writer1, ctx.writer2]
         ctx.volume2Articles = []
+        const volume2TopicSets: number[][] = [
+          [ctx.topics[1]!, ctx.topics[2]!, ctx.topics[7]!], // Dawkins vs Blackmore: Memes, Cognitive Science, Digital Culture
+          [ctx.topics[1]!, ctx.topics[7]!, ctx.topics[8]!, ctx.topics[10]!], // Irony as Ideology: Memes, Digital Culture, Social Media, Humor
+          [ctx.topics[1]!, ctx.topics[7]!], // Half-Life of Virality: Memes, Digital Culture
+        ]
         for (let i = 0; i < volume2Titles.length; i++) {
           const title = volume2Titles[i]!
           const article = await createArticle(payload, {
             title,
             content: createLoremIpsumContent(Math.floor(Math.random() * 8) + 3),
             authors: [getWriterOrThrow(writers, i).id],
+            topics: volume2TopicSets[i]!,
             slug: titleToSlug(title),
             heroImage: ctx.media[i % ctx.media.length]?.id,
             meta: {
@@ -152,11 +181,27 @@ export const seed = async (
               [ctx.writer1, ctx.writer2],
               ctx.media,
               ctx.volume1Articles[0]!,
+              [ctx.topics[0]!, ctx.topics[3]!, ctx.topics[4]!],
             ),
-            createSocialEmbedArticle(payload, ctx.writer1, ctx.media),
-            createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media),
-            createMediaCollageArticle(payload, ctx.writer1, ctx.media),
-            createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media),
+            createSocialEmbedArticle(payload, ctx.writer1, ctx.media, [
+              ctx.topics[0]!,
+              ctx.topics[1]!,
+              ctx.topics[7]!,
+            ]),
+            createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media, [
+              ctx.topics[0]!,
+              ctx.topics[1]!,
+              ctx.topics[10]!,
+            ]),
+            createMediaCollageArticle(payload, ctx.writer1, ctx.media, [
+              ctx.topics[3]!,
+              ctx.topics[7]!,
+            ]),
+            createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+              ctx.topics[2]!,
+              ctx.topics[3]!,
+              ctx.topics[5]!,
+            ]),
           ])
         ctx.featureArticles = [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks]
       },
@@ -202,7 +247,15 @@ export const seed = async (
     {
       name: "Creating pages & menus...",
       fn: async () => {
-        const homePage = await payload.create({ collection: "pages", data: homeStatic })
+        await createCollectionGridHomePage(
+          payload,
+          ctx.volume1Articles,
+          ctx.volume2Articles,
+          ctx.featureArticles,
+        )
+        const homePage = await payload
+          .find({ collection: "pages", where: { slug: { equals: "home" } }, limit: 1 })
+          .then((res) => res.docs[0]!)
         const {
           aboutPage,
           articlesPage,

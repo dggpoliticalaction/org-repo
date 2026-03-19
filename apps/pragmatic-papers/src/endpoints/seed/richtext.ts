@@ -3,12 +3,16 @@
  */
 
 import type {
+  SerializedLinkNode,
+  SerializedParagraphNode,
+  SerializedTextNode,
+} from "@payloadcms/richtext-lexical"
+import type {
   ElementFormatType,
   SerializedEditorState,
   SerializedElementNode,
   SerializedLexicalNode,
 } from "@payloadcms/richtext-lexical/lexical"
-import type { SerializedParagraphNode, SerializedTextNode } from "@payloadcms/richtext-lexical"
 
 // Re-export commonly used types
 export type { SerializedLexicalNode }
@@ -31,6 +35,25 @@ export function createTextNode(text: string, format = 0): SerializedTextNode {
     style: "",
     text,
     type: "text",
+    version: 1,
+  }
+}
+
+/**
+ * Creates a link node for use within paragraphs
+ */
+export function createLinkNode(text: string, url: string, newTab = false): SerializedLinkNode {
+  return {
+    children: [createTextNode(text)],
+    direction: "ltr" as const,
+    fields: {
+      linkType: "custom" as const,
+      newTab,
+      url,
+    },
+    format: "" as const,
+    indent: 0,
+    type: "link" as const,
     version: 1,
   }
 }
@@ -90,6 +113,12 @@ export function createRichTextFromString(text: string): LexicalContent {
     },
   }
 }
+
+/**
+ * Alias for createRichTextFromString — creates a single-paragraph rich text block.
+ * Used by page seeds for Content block columns.
+ */
+export const createRichTextContent = createRichTextFromString
 
 /**
  * Creates a complete Lexical rich text structure from an array of paragraphs

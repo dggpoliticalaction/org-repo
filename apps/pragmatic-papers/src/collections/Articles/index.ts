@@ -20,6 +20,7 @@ import { generateFootnotes } from "@/collections/Articles/hooks/generateFootnote
 import { populateAuthors } from "@/collections/Articles/hooks/populateAuthors"
 import { revalidateArticle, revalidateDelete } from "@/collections/Articles/hooks/revalidateArticle"
 import { footnotesArrayField } from "@/fields/footnotes"
+import { menu } from "@/fields/menu"
 import { type Article } from "@/payload-types"
 import { generatePreviewPath } from "@/utilities/generatePreviewPath"
 import {
@@ -235,6 +236,7 @@ export const Articles: CollectionConfig = {
     // GraphQL will also not return mutated user data that differs from the underlying schema
     {
       name: "populatedAuthors",
+      interfaceName: "PopulatedAuthors",
       type: "array",
       access: {
         update: () => false,
@@ -247,11 +249,35 @@ export const Articles: CollectionConfig = {
         {
           name: "id",
           type: "text",
+          required: true,
         },
         {
           name: "name",
           type: "text",
         },
+        {
+          name: "slug",
+          type: "text",
+          required: true,
+        },
+        {
+          name: "affiliation",
+          type: "text",
+        },
+        {
+          name: "biography",
+          type: "richText",
+        },
+        {
+          name: "profileImage",
+          type: "upload",
+          relationTo: "media",
+        },
+        menu({
+          name: "socials",
+          label: "Socials",
+          maxRows: 6,
+        }),
       ],
     },
     {

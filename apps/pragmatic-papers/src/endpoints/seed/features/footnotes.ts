@@ -1,7 +1,7 @@
 import type { Media, User } from "@/payload-types"
 import type { Payload } from "payload"
-import { createParagraph, createEmptyParagraph, createRichText, createTextNode } from "../richtext"
 import { createArticle, validateWriters } from "../articles"
+import { createEmptyParagraph, createParagraph, createRichText, createTextNode } from "../richtext"
 
 const createArticleContentWithFootnotes = (referencedArticleId: number) => {
   const children = [
@@ -137,6 +137,7 @@ export const createFootnotesArticle = async (
   writers: User[],
   mediaDocs: Media[],
   referencedArticleId: number,
+  topics: number[] = [],
 ): Promise<number> => {
   validateWriters(writers)
 
@@ -147,6 +148,7 @@ export const createFootnotesArticle = async (
     title,
     content: createArticleContentWithFootnotes(referencedArticleId),
     authors: [writer.id],
+    topics: topics,
     slug: "demonstrating-footnotes-comprehensive-guide",
     heroImage: mediaDocs[Math.floor(Math.random() * mediaDocs.length)]?.id,
     meta: {
