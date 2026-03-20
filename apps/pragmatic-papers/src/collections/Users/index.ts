@@ -38,7 +38,7 @@ export const Users: CollectionConfig = {
       type: "text",
       required: false,
       admin: {
-        condition: ({ id }) => Boolean(id),
+        condition: ({ data }) => Boolean(data?.id),
       },
     },
     {
@@ -59,14 +59,14 @@ export const Users: CollectionConfig = {
       }),
       required: false,
       admin: {
-        condition: ({ id }) => Boolean(id),
+        condition: ({ data }) => Boolean(data?.id),
       },
     },
     slugField({
       useAsSlug: "name",
       overrides: (field) => {
         field.admin = {
-          condition: ({ id }) => Boolean(id),
+          condition: ({ data }) => Boolean(data?.id),
           position: "sidebar",
         }
         return field
@@ -78,7 +78,7 @@ export const Users: CollectionConfig = {
       relationTo: "media",
       required: false,
       admin: {
-        condition: ({ id }) => Boolean(id),
+        condition: ({ data }) => Boolean(data?.id),
         position: "sidebar",
       },
     },
@@ -87,7 +87,7 @@ export const Users: CollectionConfig = {
       label: "Socials",
       maxRows: 6,
       admin: {
-        condition: ({ id }) => Boolean(id),
+        condition: ({ data }) => Boolean(data?.id),
         position: "sidebar",
       },
     }),
