@@ -1,7 +1,7 @@
-import { getServerSideSitemap } from 'next-sitemap'
-import { getPayload } from 'payload'
-import config from '@payload-config'
-import { unstable_cache } from 'next/cache'
+import { getServerSideSitemap } from "next-sitemap"
+import { getPayload } from "payload"
+import config from "@payload-config"
+import { unstable_cache } from "next/cache"
 
 const getVolumesSitemap = unstable_cache(
   async () => {
@@ -9,10 +9,10 @@ const getVolumesSitemap = unstable_cache(
     const SITE_URL =
       process.env.NEXT_PUBLIC_SERVER_URL ||
       process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-      'https://example.com'
+      "https://example.com"
 
     const results = await payload.find({
-      collection: 'volumes',
+      collection: "volumes",
       overrideAccess: false,
       draft: false,
       depth: 0,
@@ -20,7 +20,7 @@ const getVolumesSitemap = unstable_cache(
       pagination: false,
       where: {
         _status: {
-          equals: 'published',
+          equals: "published",
         },
       },
       select: {
@@ -36,7 +36,7 @@ const getVolumesSitemap = unstable_cache(
           .filter((page) => Boolean(page?.slug))
           .map((page) => {
             return {
-              loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}/volumes/${page?.slug}`,
+              loc: page?.slug === "home" ? `${SITE_URL}/` : `${SITE_URL}/volumes/${page?.slug}`,
               lastmod: page.updatedAt || dateFallback,
             }
           })
@@ -44,9 +44,9 @@ const getVolumesSitemap = unstable_cache(
 
     return sitemap
   },
-  ['volumes-sitemap'],
+  ["volumes-sitemap"],
   {
-    tags: ['volumes-sitemap'],
+    tags: ["volumes-sitemap"],
   },
 )
 

@@ -1,0 +1,23 @@
+import React from "react"
+
+import { CollectionTile } from "../CollectionTile"
+import { type LayoutDefinition, type LayoutProps } from "../types"
+
+export const BernoulliRight: LayoutDefinition = {
+  label: "Bernoulli Right",
+  slotDescriptions: ["Featured Image Right"],
+}
+
+/**
+ * Bernoulli Right Layout
+ *
+ * A single article with the image on the left and the title block on the right.
+ */
+export const BernoulliRightLayout: React.FC<LayoutProps> = ({ slots, ...props }) => {
+  const [featured] = slots
+  return (
+    <section {...props}>
+      <CollectionTile tile={featured!} imagePosition="right" />
+    </section>
+  )
+}

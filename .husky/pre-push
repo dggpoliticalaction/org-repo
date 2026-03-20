@@ -1,1 +1,1 @@
-turbo run check-types
+turbo run lint:fix format:fix check-types

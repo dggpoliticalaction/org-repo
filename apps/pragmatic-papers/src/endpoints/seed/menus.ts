@@ -1,5 +1,5 @@
-import type { Page } from '@/payload-types'
-import type { Payload } from 'payload'
+import type { Page } from "@/payload-types"
+import type { Payload } from "payload"
 
 interface CreateMenusParams {
   aboutPage: Page
@@ -24,56 +24,36 @@ export const createMenus = async (
   }: CreateMenusParams,
 ): Promise<void> => {
   await payload.updateGlobal({
-    slug: 'header',
+    slug: "header",
     data: {
       navItems: [
         {
           link: {
-            type: 'reference',
-            label: 'Home',
+            type: "reference",
+            label: "Home",
             reference: {
-              relationTo: 'pages',
+              relationTo: "pages",
               value: homePage.id,
             },
           },
         },
         {
           link: {
-            type: 'reference',
-            label: 'Volumes',
+            type: "reference",
+            label: "Volumes",
             reference: {
-              relationTo: 'pages',
+              relationTo: "pages",
               value: volumesPage.id,
             },
           },
         },
         {
           link: {
-            type: 'reference',
-            label: 'Articles',
+            type: "reference",
+            label: "Articles",
             reference: {
-              relationTo: 'pages',
+              relationTo: "pages",
               value: articlesPage.id,
-            },
-          },
-        },
-        {
-          link: {
-            type: 'reference',
-            label: 'About',
-            reference: {
-              relationTo: 'pages',
-              value: aboutPage.id,
-            },
-          },
-        },
-        {
-          link: {
-            type: 'reference',
-            label: 'Contact',
-            reference: {
-              relationTo: 'pages',
-              value: contactPage.id,
             },
           },
         },
@@ -81,39 +61,66 @@ export const createMenus = async (
       actionButton: {
         enabled: true,
         link: {
-          type: 'custom',
-          label: 'Join Discord',
-          url: 'https://discord.gg/dggpol',
+          type: "custom",
+          label: "Join Us",
+          url: "https://discord.gg/dggpol",
           newTab: true,
         },
-        backgroundColor: '#5865F2',
-        textColor: '#E0E3FF',
+        backgroundColor: "#ff401a",
+        textColor: "#ffffff",
       },
     },
   })
 
   await payload.updateGlobal({
-    slug: 'footer',
+    slug: "footer",
     data: {
       navItems: [
         {
           link: {
-            type: 'reference',
-            label: 'Privacy Policy',
+            type: "reference",
+            label: "Contact",
             reference: {
-              relationTo: 'pages',
+              relationTo: "pages",
+              value: contactPage.id,
+            },
+          },
+        },
+        {
+          link: {
+            type: "reference",
+            label: "About",
+            reference: {
+              relationTo: "pages",
+              value: aboutPage.id,
+            },
+          },
+        },
+        {
+          link: {
+            type: "reference",
+            label: "Privacy Policy",
+            reference: {
+              relationTo: "pages",
               value: privacyPolicyPage.id,
             },
           },
         },
         {
           link: {
-            type: 'reference',
-            label: 'Terms of Use',
+            type: "reference",
+            label: "Terms of Use",
             reference: {
-              relationTo: 'pages',
+              relationTo: "pages",
               value: termsOfUsePage.id,
             },
+          },
+        },
+        {
+          link: {
+            type: "custom",
+            label: "Log In",
+            url: "/admin/login",
           },
         },
       ],

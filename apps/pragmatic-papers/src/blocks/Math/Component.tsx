@@ -1,10 +1,10 @@
-import React from 'react'
+import React from "react"
 
-import { MathJax } from 'better-react-mathjax'
+import { MathJax } from "better-react-mathjax/esm"
 
 export interface MathBlockProps {
   math: string
-  blockType: 'inlineMathBlock' | 'displayMathBlock'
+  blockType: "inlineMathBlock" | "displayMathBlock"
 }
 
 export const MathBlock: React.FC<MathBlockProps> = (props) => {
@@ -12,7 +12,7 @@ export const MathBlock: React.FC<MathBlockProps> = (props) => {
 
   if (!math) return null
 
-  const isInline = blockType === 'inlineMathBlock'
+  const isInline = blockType === "inlineMathBlock"
 
   return (
     <>

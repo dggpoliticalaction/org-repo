@@ -1,4 +1,4 @@
-import { slugField, type CollectionConfig } from 'payload'
+import { slugField, type CollectionConfig } from "payload"
 
 import {
   AlignFeature,
@@ -12,31 +12,31 @@ import {
   lexicalEditor,
   OrderedListFeature,
   UnorderedListFeature,
-} from '@payloadcms/richtext-lexical'
+} from "@payloadcms/richtext-lexical"
 
-import { editor } from '@/access/editor'
-import { Banner } from '@/blocks/Banner/config'
-import { Code } from '@/blocks/Code/config'
-import { MediaBlock } from '@/blocks/MediaBlock/config'
-import { SquiggleRule } from '@/blocks/SquiggleRule/config'
+import { editor } from "@/access/editor"
+import { Banner } from "@/blocks/Banner/config"
+import { Code } from "@/blocks/Code/config"
+import { MediaBlock } from "@/blocks/MediaBlock/config"
+import { SquiggleRule } from "@/blocks/SquiggleRule/config"
 
-import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
-import { generatePreviewPath } from '@/utilities/generatePreviewPath'
+import { authenticatedOrPublished } from "@/access/authenticatedOrPublished"
+import { generatePreviewPath } from "@/utilities/generatePreviewPath"
 import {
   MetaDescriptionField,
   MetaImageField,
   MetaTitleField,
   OverviewField,
   PreviewField,
-} from '@payloadcms/plugin-seo/fields'
-import { checkArticles } from './hooks/checkArticles'
-import { generateTitle } from './hooks/generateTitle'
-import { pushToWebhooks } from './hooks/pushToWebhooks'
-import { revalidateArticle, revalidateDelete } from './hooks/revalidateVolumes'
-import { setDefaultSeoTitle } from './hooks/seoTitle'
+} from "@payloadcms/plugin-seo/fields"
+import { checkArticles } from "./hooks/checkArticles"
+import { pushToWebhooks } from "./hooks/pushToWebhooks"
+import { revalidateArticle, revalidateDelete } from "./hooks/revalidateVolumes"
+import { setDefaultSeoTitle } from "./hooks/seoTitle"
+import { getNextVolumeNumber } from "./hooks/getNextVolumeNumber"
 
 export const Volumes: CollectionConfig = {
-  slug: 'volumes',
+  slug: "volumes",
   access: {
     create: editor,
     delete: editor,
@@ -44,80 +44,57 @@ export const Volumes: CollectionConfig = {
     update: editor,
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'volumeNumber', 'publishedAt', 'description'],
+    useAsTitle: "title",
+    defaultColumns: ["title", "volumeNumber", "publishedAt", "description"],
     livePreview: {
       url: ({ data, req }) =>
         generatePreviewPath({
           slug: data?.slug,
-          collection: 'volumes',
+          collection: "volumes",
           req,
         }),
     },
     preview: (data, { req }) =>
       generatePreviewPath({
         slug: data?.slug as string,
-        collection: 'volumes',
+        collection: "volumes",
         req,
       }),
   },
   fields: [
     {
-      name: 'title',
-      type: 'textarea',
+      name: "title",
+      type: "text",
       required: true,
-      hooks: {
-        beforeChange: [generateTitle],
-      },
-      admin: {
-        components: {
-          Field: {
-            path: '@/collections/Volumes/components/TitleField#TitleFieldComponent',
-            clientProps: {
-              checkboxFieldPath: 'autoGenerateTitle',
-            },
-          },
-        },
-      },
     },
     {
-      name: 'autoGenerateTitle',
-      type: 'checkbox',
-      label: 'Auto-generate title from articles',
-      defaultValue: true,
-      admin: {
-        description:
-          'When enabled, the title will be automatically generated from the article titles, separated by " • "',
-        position: 'sidebar',
-      },
-    },
-    {
-      type: 'tabs',
+      type: "tabs",
       tabs: [
         {
           fields: [
             {
-              name: 'volumeNumber',
-              type: 'number',
+              name: "volumeNumber",
+              type: "number",
+              defaultValue: getNextVolumeNumber,
               admin: {
-                position: 'sidebar',
+                position: "sidebar",
               },
               required: true,
             },
             {
-              name: 'description',
-              type: 'textarea',
+              name: "description",
+              type: "textarea",
               required: true,
             },
             {
-              name: 'editorsNote',
-              type: 'richText',
+              name: "editorsNote",
+              type: "richText",
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => {
                   return [
                     ...rootFeatures,
                     AlignFeature(),
-                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+                    HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
                     BlocksFeature({ blocks: [Banner, Code, MediaBlock, SquiggleRule] }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
@@ -132,35 +109,35 @@ export const Volumes: CollectionConfig = {
               label: "Editor's Note",
             },
             {
-              name: 'articles',
-              type: 'relationship',
+              name: "articles",
+              type: "relationship",
               hasMany: true,
-              relationTo: 'articles',
+              relationTo: "articles",
               admin: {
-                description: 'Select and order articles for this volume',
+                description: "Select and order articles for this volume",
                 allowCreate: false,
                 isSortable: true,
-                sortOptions: '-publishedAt',
+                sortOptions: "-publishedAt",
               },
               validate: checkArticles,
             },
           ],
-          label: 'Content',
+          label: "Content",
         },
         {
-          name: 'meta',
-          label: 'SEO',
+          name: "meta",
+          label: "SEO",
           fields: [
             OverviewField({
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
-              imagePath: 'meta.image',
+              titlePath: "meta.title",
+              descriptionPath: "meta.description",
+              imagePath: "meta.image",
             }),
             MetaTitleField({
               hasGenerateFn: true,
             }),
             MetaImageField({
-              relationTo: 'media',
+              relationTo: "media",
             }),
 
             MetaDescriptionField({}),
@@ -169,27 +146,27 @@ export const Volumes: CollectionConfig = {
               hasGenerateFn: true,
 
               // field paths to match the target field for data
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
+              titlePath: "meta.title",
+              descriptionPath: "meta.description",
             }),
           ],
         },
       ],
     },
     {
-      name: 'publishedAt',
-      type: 'date',
+      name: "publishedAt",
+      type: "date",
       admin: {
         date: {
-          pickerAppearance: 'dayAndTime',
+          pickerAppearance: "dayAndTime",
         },
-        position: 'sidebar',
+        position: "sidebar",
       },
       hooks: {
         beforeChange: [
           // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
           ({ siblingData, value }) => {
-            if (siblingData._status === 'published' && !value) {
+            if (siblingData._status === "published" && !value) {
               return new Date()
             }
             return value
@@ -198,8 +175,8 @@ export const Volumes: CollectionConfig = {
       },
     },
     slugField({
-      useAsSlug: 'volumeNumber',
-      slugify: ({ valueToSlugify }) => String(valueToSlugify || ''),
+      useAsSlug: "volumeNumber",
+      slugify: ({ valueToSlugify }) => String(valueToSlugify || ""),
     }),
   ],
   hooks: {

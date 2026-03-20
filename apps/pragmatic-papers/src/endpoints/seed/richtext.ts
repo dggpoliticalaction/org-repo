@@ -3,15 +3,16 @@
  */
 
 import type {
+  SerializedLinkNode,
+  SerializedParagraphNode,
+  SerializedTextNode,
+} from "@payloadcms/richtext-lexical"
+import type {
   ElementFormatType,
   SerializedEditorState,
   SerializedElementNode,
   SerializedLexicalNode,
-} from '@payloadcms/richtext-lexical/lexical'
-import type {
-  SerializedParagraphNode,
-  SerializedTextNode,
-} from '@payloadcms/richtext-lexical'
+} from "@payloadcms/richtext-lexical/lexical"
 
 // Re-export commonly used types
 export type { SerializedLexicalNode }
@@ -30,10 +31,29 @@ export function createTextNode(text: string, format = 0): SerializedTextNode {
   return {
     detail: 0,
     format,
-    mode: 'normal',
-    style: '',
+    mode: "normal",
+    style: "",
     text,
-    type: 'text',
+    type: "text",
+    version: 1,
+  }
+}
+
+/**
+ * Creates a link node for use within paragraphs
+ */
+export function createLinkNode(text: string, url: string, newTab = false): SerializedLinkNode {
+  return {
+    children: [createTextNode(text)],
+    direction: "ltr" as const,
+    fields: {
+      linkType: "custom" as const,
+      newTab,
+      url,
+    },
+    format: "" as const,
+    indent: 0,
+    type: "link" as const,
     version: 1,
   }
 }
@@ -43,23 +63,23 @@ export function createTextNode(text: string, format = 0): SerializedTextNode {
  */
 export function createParagraph(
   text: string | SerializedTextNode | (SerializedTextNode | Record<string, unknown>)[],
-  format: ElementFormatType = '',
+  format: ElementFormatType = "",
 ): SerializedParagraphNode {
   const children = Array.isArray(text)
     ? (text as SerializedTextNode[])
-    : typeof text === 'string'
+    : typeof text === "string"
       ? [createTextNode(text)]
       : [text]
 
   return {
     children,
-    direction: 'ltr',
+    direction: "ltr",
     format,
     indent: 0,
-    type: 'paragraph',
+    type: "paragraph",
     version: 1,
     textFormat: 0,
-    textStyle: '',
+    textStyle: "",
   }
 }
 
@@ -70,9 +90,9 @@ export function createEmptyParagraph(): SerializedElementNode {
   return {
     children: [],
     direction: null,
-    format: '',
+    format: "",
     indent: 0,
-    type: 'paragraph',
+    type: "paragraph",
     version: 1,
     textFormat: 0,
   }
@@ -85,14 +105,20 @@ export function createRichTextFromString(text: string): LexicalContent {
   return {
     root: {
       children: [createParagraph(text)],
-      direction: 'ltr',
-      format: '',
+      direction: "ltr",
+      format: "",
       indent: 0,
-      type: 'root',
+      type: "root",
       version: 1,
     },
   }
 }
+
+/**
+ * Alias for createRichTextFromString — creates a single-paragraph rich text block.
+ * Used by page seeds for Content block columns.
+ */
+export const createRichTextContent = createRichTextFromString
 
 /**
  * Creates a complete Lexical rich text structure from an array of paragraphs
@@ -115,10 +141,10 @@ export function createRichTextFromParagraphs(
   return {
     root: {
       children,
-      direction: 'ltr',
-      format: '',
+      direction: "ltr",
+      format: "",
       indent: 0,
-      type: 'root',
+      type: "root",
       version: 1,
     },
   }
@@ -132,10 +158,10 @@ export function createRichText(children: SerializedLexicalNode[]): LexicalConten
   return {
     root: {
       children,
-      direction: 'ltr',
-      format: '',
+      direction: "ltr",
+      format: "",
       indent: 0,
-      type: 'root',
+      type: "root",
       version: 1,
     },
   }
@@ -145,10 +171,10 @@ export function createRichText(children: SerializedLexicalNode[]): LexicalConten
  * Generates Lorem Ipsum sentences
  */
 const LOREM_IPSUMS = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-  'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur; yee wins.',
-  'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur; yee wins.",
+  "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 ]
 
 /**
@@ -157,7 +183,7 @@ const LOREM_IPSUMS = [
 export function generateLoremIpsumParagraph(numberOfSentences: number): string {
   return Array.from({ length: numberOfSentences }, () => {
     return LOREM_IPSUMS[Math.floor(Math.random() * LOREM_IPSUMS.length)]
-  }).join(' ')
+  }).join(" ")
 }
 
 /**

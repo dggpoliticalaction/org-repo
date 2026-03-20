@@ -2,15 +2,15 @@ import {
   fetchYouTubeOEmbed,
   sanitizeYouTubeHtml,
   YOUTUBE_DISPLAY_NAME,
-} from '@/blocks/SocialEmbed/adapters/youtube.adapter'
-import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
-import type { SocialEmbedBlock } from '@/payload-types'
-import { isFailure } from '@/utilities/results'
+} from "@/blocks/SocialEmbed/adapters/youtube.adapter"
+import { EmbedError } from "@/blocks/SocialEmbed/embeds/EmbedError"
+import type { SocialEmbedBlock } from "@/payload-types"
+import { isFailure } from "@/utilities/results"
 
 export async function YouTubeEmbedBlock(props: SocialEmbedBlock): Promise<React.ReactNode> {
   const { url, snapshot } = props
 
-  if (snapshot?.status && snapshot.status !== 'ok') {
+  if (snapshot?.status && snapshot.status !== "ok") {
     return (
       <EmbedError
         url={url}

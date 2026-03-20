@@ -1,6 +1,6 @@
-import type { User } from '@/payload-types'
-import { revalidatePath } from 'next/cache'
-import type { CollectionAfterChangeHook } from 'payload'
+import type { User } from "@/payload-types"
+import { revalidatePath } from "next/cache"
+import type { CollectionAfterChangeHook } from "payload"
 
 export const revalidateUser: CollectionAfterChangeHook<User> = async ({
   doc,
@@ -24,17 +24,17 @@ export const revalidateUser: CollectionAfterChangeHook<User> = async ({
   }
 
   payload.logger.info(`Revalidating authors index at path: /authors`)
-  revalidatePath('/authors')
+  revalidatePath("/authors")
 
   // Find all published articles where this user is an author and revalidate them
   const articles = await payload.find({
-    collection: 'articles',
+    collection: "articles",
     where: {
       authors: {
         equals: doc.id,
       },
       _status: {
-        equals: 'published',
+        equals: "published",
       },
     },
     select: {
@@ -56,9 +56,9 @@ export const revalidateUser: CollectionAfterChangeHook<User> = async ({
     const articleIds = articles.docs.map((a) => a.id)
 
     const volumes = await payload.find({
-      collection: 'volumes',
+      collection: "volumes",
       where: {
-        'articles.id': {
+        "articles.id": {
           in: articleIds,
         },
       },

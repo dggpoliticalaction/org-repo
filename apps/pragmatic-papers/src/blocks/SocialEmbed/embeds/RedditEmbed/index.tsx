@@ -2,12 +2,12 @@ import {
   REDDIT_DISPLAY_NAME,
   fetchRedditOEmbed,
   sanitizeRedditHtml,
-} from '@/blocks/SocialEmbed/adapters/reddit.adapter'
-import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
-import { RedditEmbedClient } from '@/blocks/SocialEmbed/embeds/RedditEmbed/client'
-import { shouldEnhance } from '@/blocks/SocialEmbed/helpers/snapshotFreshness'
-import type { SocialEmbedBlock } from '@/payload-types'
-import { isFailure } from '@/utilities/results'
+} from "@/blocks/SocialEmbed/adapters/reddit.adapter"
+import { EmbedError } from "@/blocks/SocialEmbed/embeds/EmbedError"
+import { RedditEmbedClient } from "@/blocks/SocialEmbed/embeds/RedditEmbed/client"
+import { shouldEnhance } from "@/blocks/SocialEmbed/helpers/snapshotFreshness"
+import type { SocialEmbedBlock } from "@/payload-types"
+import { isFailure } from "@/utilities/results"
 
 export async function RedditEmbedBlock(props: SocialEmbedBlock): Promise<React.ReactNode> {
   const { url, snapshot, id } = props
@@ -35,7 +35,7 @@ export async function RedditEmbedBlock(props: SocialEmbedBlock): Promise<React.R
     <div className="my-8 flex min-h-[240px] items-center justify-center">
       <div
         id={id}
-        className="w-full max-w-[550px] [&>div]:!my-0"
+        className="w-full max-w-[550px] [&>div]:my-0!"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: html }}
       />
