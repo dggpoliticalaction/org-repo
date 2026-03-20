@@ -58,3 +58,6 @@ jobs:
 
       - name: Check migration order
         run: pnpm --filter pragmatic-papers exec tsx scripts/check-migration-order.ts
+
+      - name: Check for pending migrations
+        run: echo "n" | pnpm --filter pragmatic-papers migrate:create | grep "No schema changes detected"
