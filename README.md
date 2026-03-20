@@ -34,25 +34,30 @@ pnpm
 
 2. Run `pnpm install`. The preinstall hook copies `apps/pragmatic-papers/.env` from `.env.example` if missing.
 
-3. Add a **Classic GitHub Personal Access Token (PAT)**. 
+3. **(Optional) Install private fonts.**
 
-   This is required to install packages from private GitHub Packages (e.g. `@digitalgroundgame/fonts`). 
+   The `@digitalgroundgame/fonts` package contains the proprietary display font. It is optional — the site works without it, falling back to system fonts. If you don't have access, skip this step.
 
-   Create a __Classic Token__ at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope.
+   If you do have access, create a **Classic GitHub Personal Access Token (PAT)** at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope, then add one of the following to your **global** `~/.npmrc` (create the file if it doesn't exist):
 
-   ### Mac/Linux — add to ~/.zshrc (or the environment of whatever shell you're using):
-
+   **Option A — hardcode the token directly:**
    ```
-   GH_FONT_READ=ghp_your_token
-   ```
-
-   ### Windows — set a user environment variable:
-
-   ```powershell
-   [System.Environment]::SetEnvironmentVariable("GH_FONT_READ", "ghp_your_token", "User")
+   //npm.pkg.github.com/:_authToken=ghp_your_token_here
    ```
 
-   > **Tip:** Restart your terminal (and IDE if it runs the install) after setting environment variables so they take effect.
+   **Option B — reference a shell environment variable (e.g. in `~/.zshrc` or `~/.bashrc`):**
+   ```
+   # ~/.zshrc or ~/.bashrc
+   export GH_FONT_READ=ghp_your_token_here
+   ```
+   ```
+   # ~/.npmrc
+   //npm.pkg.github.com/:_authToken=${GH_FONT_READ}
+   ```
+
+   > **Never commit tokens.** Both options store credentials on your machine only — not in the project's `.npmrc`.
+
+   Re-run `pnpm install` after adding the token. You should see `✓ Fonts copied to public/fonts` in the output.
 
 4. Start dev:
 

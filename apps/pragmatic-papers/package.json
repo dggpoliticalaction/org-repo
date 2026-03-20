@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
-    "@digitalgroundgame/fonts": "1.2.0",
     "@next/third-parties": "^15.3.6",
     "@payloadcms/admin-bar": "^3.79.0",
     "@payloadcms/db-postgres": "^3.79.0",
@@ -92,6 +91,9 @@
     "tailwindcss": "^4.2.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
+  },
+  "optionalDependencies": {
+    "@digitalgroundgame/fonts": "1.2.0"
   },
   "engines": {
     "node": ">=22",
