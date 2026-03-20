@@ -13,11 +13,11 @@ export const BernoulliLeft: LayoutDefinition = {
  *
  * A single article with the image on the right and the title block on the left.
  */
-export const BernoulliLeftLayout: React.FC<LayoutProps> = ({ slots, ...props }) => {
+export const BernoulliLeftLayout: React.FC<LayoutProps> = ({ slots, priority, ...props }) => {
   const [featured] = slots
   return (
     <section {...props}>
-      <CollectionTile tile={featured!} imagePosition="left" />
+      <CollectionTile tile={featured!} imagePosition="left" priority={priority} />
     </section>
   )
 }

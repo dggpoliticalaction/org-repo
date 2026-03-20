@@ -11,12 +11,14 @@ export interface CollectionTileProps extends React.ComponentProps<"div"> {
   tile: CollectionGridSlots[number]
   imagePosition?: ImagePosition
   showByline?: boolean
+  priority?: boolean
 }
 
 export const CollectionTile: React.FC<CollectionTileProps> = ({
   tile,
   imagePosition = "above",
   showByline = false,
+  priority,
   className,
 }) => {
   if (!tile) return null
@@ -75,6 +77,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
             media={heroImage}
             className="h-full w-full object-cover object-center hover:opacity-80"
             variant="medium"
+            priority={priority}
           />
         </div>
       )}

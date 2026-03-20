@@ -15,11 +15,11 @@ export const Euler2: LayoutDefinition = {
  * 2 articles in a single row, each with an image above.
  * Responsive: 1 column on mobile, 2 equal columns on md+.
  */
-export const Euler2Layout: React.FC<LayoutProps> = ({ className, slots, ...props }) => {
+export const Euler2Layout: React.FC<LayoutProps> = ({ className, slots, priority, ...props }) => {
   return (
     <section className={cn("grid grid-cols-1 gap-6 md:grid-cols-2", className)} {...props}>
       {slots.map((slot, index) => (
-        <CollectionTile key={slot?.id ?? index} tile={slot} />
+        <CollectionTile key={slot?.id ?? index} tile={slot} priority={priority} />
       ))}
     </section>
   )

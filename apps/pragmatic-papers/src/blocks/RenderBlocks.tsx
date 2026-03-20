@@ -14,26 +14,31 @@ interface RenderBlocksProps {
   pageNumber?: number
 }
 
-export const RenderBlocks: React.FC<RenderBlocksProps> = ({ blocks, pageNumber }) => (
-  <>
-    {blocks.map((block, index) => {
-      const { blockType } = block
-      const key = `block-${block.id || index}`
-      if (blockType === "collectionGrid") {
-        return <CollectionGridBlock key={key} {...block} />
-      } else if (blockType === "content") {
-        return <ContentBlock key={key} {...block} />
-      } else if (blockType === "cta") {
-        return <CallToActionBlock key={key} {...block} />
-      } else if (blockType === "formBlock") {
-        if (typeof block.form === "number") return null
-        return <FormBlock key={key} {...block} />
-      } else if (blockType === "mediaBlock") {
-        return <MediaBlock key={key} {...block} />
-      } else if (blockType == "volumeView") {
-        return <VolumeViewBlock key={key} {...block} pageNumber={pageNumber} />
-      }
-      return null
-    })}
-  </>
-)
+export const RenderBlocks: React.FC<RenderBlocksProps> = ({ blocks, pageNumber }) => {
+  let collectionGridCount = 0
+  return (
+    <>
+      {blocks.map((block, index) => {
+        const { blockType } = block
+        const key = `block-${block.id || index}`
+        if (blockType === "collectionGrid") {
+          const isFirst = collectionGridCount === 0
+          collectionGridCount++
+          return <CollectionGridBlock key={key} {...block} priority={isFirst} />
+        } else if (blockType === "content") {
+          return <ContentBlock key={key} {...block} />
+        } else if (blockType === "cta") {
+          return <CallToActionBlock key={key} {...block} />
+        } else if (blockType === "formBlock") {
+          if (typeof block.form === "number") return null
+          return <FormBlock key={key} {...block} />
+        } else if (blockType === "mediaBlock") {
+          return <MediaBlock key={key} {...block} />
+        } else if (blockType == "volumeView") {
+          return <VolumeViewBlock key={key} {...block} pageNumber={pageNumber} />
+        }
+        return null
+      })}
+    </>
+  )
+}
