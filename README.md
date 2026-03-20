@@ -1,13 +1,6 @@
-# Pragmatic-Papers Website
+# The Pragmatic Papers
 
-This repo once contained apps for the discord bot and dggpolitical action website, but it now only contains the website for pragmaticpapers.com.
-
-## What's inside?
-
-- `pragmatic-papers`: the Pragmatic Papers website built with payloadcms and Typescript.
-- `@repo/ui`: a React component library shared by the web applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+The website for [https://pragmaticpapers.com](https://pragmaticpapers.com/).
 
 ### Utilities
 
@@ -22,7 +15,7 @@ This repo has some additional tools:
 
 ```Bash
 docker
-Node.js version 20.9.0+
+Node.js version 22+
 pnpm
 ```
 
