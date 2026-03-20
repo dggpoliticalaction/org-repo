@@ -7,7 +7,7 @@ import { cn } from "@/utilities/utils"
 import { GoogleAnalytics } from "@next/third-parties/google"
 import type { Metadata } from "next"
 import { ThemeProvider } from "next-themes"
-import { Geist } from "next/font/google"
+import { Geist, Libertinus_Serif } from "next/font/google"
 import localFont from "next/font/local"
 import React from "react"
 import "./globals.css"
@@ -16,6 +16,7 @@ const FKScreamer = localFont({
   src: "../../../public/fonts/FKScreamer-Bold.woff2",
   weight: "700",
   display: "swap",
+  fallback: ["fantasy", "sans-serif"],
   variable: "--font-display",
 })
 
@@ -23,13 +24,15 @@ const geist = Geist({
   weight: ["400", "600"],
   subsets: ["latin"],
   variable: "--font-sans",
+  fallback: ["Helvetica", "Arial", "sans-serif"],
 })
 
-// const libertinusSerif = Libertinus_Serif({
-//   weight: ["400", "700"],
-//   subsets: ["latin"],
-//   variable: "--font-serif",
-// })
+const libertinusSerif = Libertinus_Serif({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  fallback: ["Times New Roman", "serif"],
+  variable: "--font-serif",
+})
 
 export default async function RootLayout({
   children,
@@ -38,7 +41,7 @@ export default async function RootLayout({
 }): Promise<React.ReactElement> {
   return (
     <html
-      className={cn(FKScreamer.variable, geist.variable)}
+      className={cn(FKScreamer.variable, geist.variable, libertinusSerif.variable)}
       lang="en"
       suppressHydrationWarning
       data-scroll-behavior="smooth"

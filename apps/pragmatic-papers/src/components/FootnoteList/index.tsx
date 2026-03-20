@@ -15,7 +15,7 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
     <>
       <Separator />
       <section className="space-y-2">
-        <h3 className="font-display text-3xl font-bold">Sources</h3>
+        <h3 className="text-2xl md:text-3xl">Sources</h3>
         <ol className="list-inside list-decimal font-serif">
           {footnotes.map(({ index, note, attributionEnabled, link }) => {
             const url = getLinkFieldUrl(link)

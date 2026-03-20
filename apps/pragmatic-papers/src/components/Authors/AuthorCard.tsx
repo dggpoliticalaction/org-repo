@@ -51,12 +51,14 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
         <div className="flex flex-col justify-between space-y-2">
           <div className="flex-1 space-y-1">
             <div className="flex flex-col md:flex-row md:items-center">
-              <HoverPrefetchLink
-                href={`/authors/${slug}`}
-                className="font-display text-primary hover:text-primary/80 text-xl font-bold"
-              >
-                {name}
-              </HoverPrefetchLink>
+              <h3 className="text-2xl">
+                <HoverPrefetchLink
+                  href={`/authors/${slug}`}
+                  className="text-primary hover:text-primary/80"
+                >
+                  {name}
+                </HoverPrefetchLink>
+              </h3>
               {affiliation && (
                 <span className="text-muted-foreground ml-1 line-clamp-1 text-sm font-normal">
                   {affiliation}
