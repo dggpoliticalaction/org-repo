@@ -26,14 +26,12 @@ Turborepo monorepo for **Pragmatic Papers**, a Next.js 15 website with Payload C
   - `pnpm payload generate:types` — regenerate Payload TypeScript types
   - `pnpm payload generate:importmap` — regenerate Payload import map
   - `pnpm payload migrate` — run database migrations
-  - `pnpm payload migrate:create` — create a new migration
-
+  - `pnpm payload migrate:create "migation_name"` — create a new migration. Pass a name as the first argument.
 
 ## Architecture
 
 ### Monorepo Structure
 - **`apps/pragmatic-papers/`** — Main Next.js + Payload CMS application
-- **`packages/ui/`** — Shared React component library (button, card, code)
 - **`packages/eslint-config/`** — Shared ESLint configs (base, next-js, react-internal)
 - **`packages/typescript-config/`** — Shared tsconfig presets (base, nextjs, react-library)
 
@@ -45,8 +43,8 @@ Turborepo monorepo for **Pragmatic Papers**, a Next.js 15 website with Payload C
 - **`access/`** — Access control hooks (authenticatedOrPublished, editorOrSelf, writer)
 - **`app/(frontend)/`** — Public-facing Next.js pages using App Router
 - **`app/(payload)/`** — Payload admin panel routes
-- **`components/`** — React components for rendering blocks, pagination, rich text; `components/ui/` uses shadcn/ui
-- **`providers/`** — Context providers (theme, live preview)
+- **`components/`** — Reusable React components for layouts, pagination, etc; `components/ui/` uses shadcn/ui;
+- **`providers/`** — Context providers (MathJaxProvider)
 - **`migrations/`** — Drizzle database migrations
 
 ### Path Aliases
@@ -84,7 +82,7 @@ Turborepo monorepo for **Pragmatic Papers**, a Next.js 15 website with Payload C
 - **Two rendering systems**: `RenderBlocks` renders page layout blocks (Content, CTA, MediaBlock, Form, VolumeView); `RichText` renders Lexical inline/rich-text blocks (Banner, Code, Math, Footnote, SocialEmbed, SquiggleRule)
 
 ### Data Fetching Patterns
-- Use `getPayload({ config: configPromise })` with `configPromise` imported from `@payload-config`
+- Use `getPayloadConfig` imported from `@/utilities/getPayloadConfig`
 - Wrap data queries in `React.cache()` for per-request deduplication
 - Use `unstable_cache` with cache tags for long-lived caching (globals, redirects, sitemaps)
 - Always respect `draftMode()` — pass `draft` and `overrideAccess: draft` into Payload queries
@@ -92,18 +90,16 @@ Turborepo monorepo for **Pragmatic Papers**, a Next.js 15 website with Payload C
 - Metadata: use `generateMeta({ doc })` from `@/utilities/generateMeta`
 - Static generation: implement `generateStaticParams()` with `overrideAccess: false` and `draft: false`
 
-
-
 ### Turbo Configuration (`turbo.json`)
 - **Environment variables**: Any new `process.env.*` variable **must** be added to the `env` array in both the `build` and `ci` tasks in `turbo.json`. Without this, Turbo's cache won't invalidate when the variable changes, causing stale builds.
 - The `build` and `ci` tasks are cached; `dev:*` tasks are not cached.
-- `dev:next` depends on `dev:install` and `dev:db` completing first.
+- `dev:next` depends on `dev:db` completing first.
 
 ### Key Patterns
 - **Database in dev**: Drizzle "push" mode auto-syncs schema changes — no manual migrations needed during development
-- **Styling**: TailwindCSS with CSS variables (HSL) for theming
+- **Styling**: TailwindCSS with CSS variables for theming
 - **Content rendering**: Blocks system with Lexical rich text editor; each block has a config and a React component
-- **Pre-commit hooks**: Husky + lint-staged runs Prettier and ESLint (`--max-warnings 0`) on staged files
+- **Pre-push hooks**: Husky + lint-staged runs ESLint (`--max-warnings 0`), Prettier, tsc (`--no-emit`) on committed files
 - **Colocation**: Prefer colocating logic near where it's used. `src/utilities/` is only for genuinely reusable helpers shared across multiple features (e.g. `generateMeta`, `getURL`, `toRoman`, `cn`). Don't put single-use logic there.
 
 ### Testing your changes
