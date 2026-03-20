@@ -31,7 +31,12 @@ export const Vespucci7: LayoutDefinition = {
  *
  * Desktop (lg:grid-cols-3 — 25%/50%/25%)
  */
-export const Vespucci7Layout: React.FC<LayoutProps> = ({ className, slots, priority, ...props }) => {
+export const Vespucci7Layout: React.FC<LayoutProps> = ({
+  className,
+  slots,
+  priority,
+  ...props
+}) => {
   const [featured, a, b, c, d, e, f] = slots
 
   return (

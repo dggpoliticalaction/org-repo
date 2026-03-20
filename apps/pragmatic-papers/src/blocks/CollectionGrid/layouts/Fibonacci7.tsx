@@ -20,7 +20,12 @@ export const Fibonacci7: LayoutDefinition = {
 /**
  * Desktop (lg:grid-cols-4)
  */
-export const Fibonacci7Layout: React.FC<LayoutProps> = ({ className, slots, priority, ...props }) => {
+export const Fibonacci7Layout: React.FC<LayoutProps> = ({
+  className,
+  slots,
+  priority,
+  ...props
+}) => {
   const [featured, a, b, c, d, e, f] = slots
 
   return (

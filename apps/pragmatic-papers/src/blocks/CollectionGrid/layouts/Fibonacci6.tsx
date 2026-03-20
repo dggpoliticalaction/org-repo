@@ -32,7 +32,12 @@ export const Fibonacci6: LayoutDefinition = {
  *
  * Desktop (lg:grid-cols-4)
  */
-export const Fibonacci6Layout: React.FC<LayoutProps> = ({ className, slots, priority, ...props }) => {
+export const Fibonacci6Layout: React.FC<LayoutProps> = ({
+  className,
+  slots,
+  priority,
+  ...props
+}) => {
   const [featured, a, b, c, d, e] = slots
   return (
     <section
