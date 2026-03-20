@@ -94,16 +94,12 @@ export const Articles: CollectionConfig = {
       type: "text",
       required: true,
     },
+    // START TABS FIELDS
     {
       type: "tabs",
       tabs: [
         {
           fields: [
-            {
-              name: "heroImage",
-              type: "upload",
-              relationTo: "media",
-            },
             {
               name: "content",
               type: "richText",
@@ -180,6 +176,15 @@ export const Articles: CollectionConfig = {
           ],
         },
       ],
+    },
+    // END TABS FIELDS
+    {
+      name: "heroImage",
+      type: "upload",
+      relationTo: "media",
+      admin: {
+        position: "sidebar",
+      },
     },
     {
       name: "enableMathRendering",
