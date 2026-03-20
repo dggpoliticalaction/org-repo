@@ -54,3 +54,6 @@ devenv.local.nix
 
 # act files
 .actrc
+
+# claude files
+.claude
