@@ -34,10 +34,6 @@ export const Users: CollectionConfig = {
       type: "text",
     },
     {
-      name: "test",
-      type: "text",
-    },
-    {
       name: "affiliation",
       type: "text",
       required: false,
