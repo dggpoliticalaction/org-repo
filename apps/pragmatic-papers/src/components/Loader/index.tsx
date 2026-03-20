@@ -1,18 +1,17 @@
 "use client"
 
 import { cn } from "@/utilities/utils"
-import Lottie from "lottie-react"
+import Lottie, { type LottieComponentProps } from "lottie-react"
 
-import animationData from "./loader.json"
+import loader2 from "./loader-light.json"
+import loader from "./loader.json"
 
-export const Loader: React.FC<React.ComponentProps<"div">> = ({ className, ...props }) => {
-  return (
-    <div className={cn("flex min-h-16 w-full items-center justify-center", className)} {...props}>
-      <Lottie
-        animationData={animationData}
-        className="aspect-25/3 w-xs opacity-25 brightness-0 dark:invert"
-        loop
-      />
-    </div>
-  )
+type LoaderProps = Omit<LottieComponentProps, "animationData">
+
+export const Loader: React.FC<LoaderProps> = ({ className, ...props }) => {
+  return <Lottie animationData={loader} className={cn("aspect-25/3", className)} loop {...props} />
+}
+
+export const LoaderLight: React.FC<LoaderProps> = ({ className, ...props }) => {
+  return <Lottie animationData={loader2} className={cn("aspect-25/3", className)} loop {...props} />
 }

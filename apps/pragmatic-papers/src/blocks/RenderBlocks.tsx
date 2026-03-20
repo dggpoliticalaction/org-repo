@@ -64,7 +64,10 @@ interface RenderBlocksProps {
 export const RenderBlocks: React.FC<RenderBlocksProps> = ({ blocks, pageNumber }) => (
   <>
     {blocks.map((block, index) => (
-      <Suspense key={`block-${block.id || index}`} fallback={<BlockFallback {...block} />}>
+      <Suspense
+        key={`block-${block.id || index}`}
+        fallback={<Loader className="mx-auto my-16 w-48" />}
+      >
         <RenderBlock block={block} pageNumber={pageNumber} />
       </Suspense>
     ))}
