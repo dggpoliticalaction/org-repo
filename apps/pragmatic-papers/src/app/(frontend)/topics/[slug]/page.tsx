@@ -169,9 +169,7 @@ export default async function TopicPage({
 
       <header className="space-y-3 text-center">
         <h1 className="text-4xl md:text-5xl">Topic: {topic.name}</h1>
-        {topic.description && (
-          <p className="text-muted-foreground text-sm">{topic.description}</p>
-        )}
+        {topic.description && <p className="text-muted-foreground text-sm">{topic.description}</p>}
       </header>
 
       <section aria-label="Articles for this topic">
