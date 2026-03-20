@@ -386,7 +386,6 @@ export interface Volume {
 export interface Article {
   id: number;
   title: string;
-  heroImage?: (number | null) | Media;
   content: {
     root: {
       type: string;
@@ -410,6 +409,7 @@ export interface Article {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  heroImage?: (number | null) | Media;
   enableMathRendering?: boolean | null;
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
@@ -592,6 +592,10 @@ export interface LinkField {
     | ({
         relationTo: 'articles';
         value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'topics';
+        value: number | Topic;
       } | null);
   url?: string | null;
   label?: string | null;
@@ -1431,7 +1435,6 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface ArticlesSelect<T extends boolean = true> {
   title?: T;
-  heroImage?: T;
   content?: T;
   meta?:
     | T
@@ -1440,6 +1443,7 @@ export interface ArticlesSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  heroImage?: T;
   enableMathRendering?: T;
   publishedAt?: T;
   authors?: T;
