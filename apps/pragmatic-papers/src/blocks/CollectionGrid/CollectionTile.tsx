@@ -10,17 +10,15 @@ export type ImagePosition = "above" | "below" | "left" | "right" | "none"
 export interface CollectionTileProps extends React.ComponentProps<"div"> {
   tile: CollectionGridSlots[number]
   imagePosition?: ImagePosition
-  showByline?: boolean
 }
 
 export const CollectionTile: React.FC<CollectionTileProps> = ({
   tile,
   imagePosition = "above",
-  showByline = false,
   className,
 }) => {
   if (!tile) return null
-  const { id, collection, kicker, overrideTitle } = tile
+  const { id, collection, kicker, overrideTitle, showByline } = tile
 
   if (typeof collection.value === "number") return null
 

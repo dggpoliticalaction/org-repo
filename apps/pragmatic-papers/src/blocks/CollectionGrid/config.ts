@@ -102,12 +102,26 @@ export const CollectionGrid: Block = {
           filterOptions: { _status: { equals: "published" } },
         },
         {
-          name: "kicker",
-          type: "text",
-          label: "Kicker",
-          admin: {
-            description: 'Optional short label above the title (e.g. "Breaking", "Opinion")',
-          },
+          type: "row",
+          fields: [
+            {
+              name: "kicker",
+              type: "text",
+              label: "Kicker",
+              admin: {
+                description: 'Optional short label above the title (e.g. "Breaking", "Opinion")',
+              },
+            },
+            {
+              name: "showByline",
+              type: "checkbox",
+              label: "Show Byline",
+              defaultValue: false,
+              admin: {
+                description: "Show the author names for this slot",
+              },
+            },
+          ],
         },
         {
           name: "overrideTitle",
