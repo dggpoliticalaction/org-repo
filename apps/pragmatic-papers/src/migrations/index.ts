@@ -24,6 +24,7 @@ import * as migration_20260317_033620_add_collections_again_thanks_esp from './2
 import * as migration_20260318_125059_revert_volume_autogen from './20260318_125059_revert_volume_autogen';
 import * as migration_20260318_152547_use_populate_authors_duh from './20260318_152547_use_populate_authors_duh';
 import * as migration_20260318_172936_topics_views from './20260318_172936_topics_views';
+import * as migration_20260321_000000_add_copyright_to_footer from './20260321_000000_add_copyright_to_footer';
 
 export const migrations = [
   {
@@ -154,6 +155,11 @@ export const migrations = [
   {
     up: migration_20260318_172936_topics_views.up,
     down: migration_20260318_172936_topics_views.down,
-    name: '20260318_172936_topics_views'
+    name: '20260318_172936_topics_views',
+  },
+  {
+    up: migration_20260321_000000_add_copyright_to_footer.up,
+    down: migration_20260321_000000_add_copyright_to_footer.down,
+    name: '20260321_000000_add_copyright_to_footer',
   },
 ];
