@@ -57,7 +57,7 @@ Set the variable in your shell:
   ```
   Alternatively, open **System Properties → Advanced → Environment Variables** (search "environment variables" in the Start menu) and add `GH_FONT_READ` under "User variables".
 
-Restart your terminal after setting the variable.[text](url)
+Restart your terminal after setting the variable.
 
 Re-run `pnpm install` after setting up your credentials. You should see `✓ Fonts copied to public/fonts` in the output.
 
