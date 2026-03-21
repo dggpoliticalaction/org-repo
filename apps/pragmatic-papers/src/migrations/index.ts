@@ -15,7 +15,16 @@ import * as migration_20260217_013724_header_footer_redesign from './20260217_01
 import * as migration_20260303_233515_auto_generate_volume_title from './20260303_233515_auto_generate_volume_title';
 import * as migration_20260304_215356_feature_authors from './20260304_215356_feature_authors';
 import * as migration_20260305_050800_action_button_needed_more_migrations from './20260305_050800_action_button_needed_more_migrations';
+import * as migration_20260307_014204_enable_math_rendering from './20260307_014204_enable_math_rendering';
+import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles';
 import * as migration_20260309_002357 from './20260309_002357';
+import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField';
+import * as migration_20260311_160239_rename_Users_role_user_to_member from './20260311_160239_rename_Users_role_user_to_member';
+import * as migration_20260316_072557_add_blurdataurl from './20260316_072557_add_blurdataurl';
+import * as migration_20260317_033620_add_collections_again_thanks_esp from './20260317_033620_add_collections_again_thanks_esp';
+import * as migration_20260318_125059_revert_volume_autogen from './20260318_125059_revert_volume_autogen';
+import * as migration_20260318_152547_use_populate_authors_duh from './20260318_152547_use_populate_authors_duh';
+import * as migration_20260318_172936_topics_views from './20260318_172936_topics_views';
 
 export const migrations = [
   {
@@ -104,8 +113,53 @@ export const migrations = [
     name: '20260305_050800_action_button_needed_more_migrations',
   },
   {
+    up: migration_20260307_014204_enable_math_rendering.up,
+    down: migration_20260307_014204_enable_math_rendering.down,
+    name: '20260307_014204_enable_math_rendering',
+  },
+  {
+    up: migration_20260307_192044_add_topics_to_articles.up,
+    down: migration_20260307_192044_add_topics_to_articles.down,
+    name: '20260307_192044_add_topics_to_articles',
+  },
+  {
     up: migration_20260309_002357.up,
     down: migration_20260309_002357.down,
-    name: '20260309_002357'
+    name: '20260309_002357',
+  },
+  {
+    up: migration_20260310_030303_update_volume_slugField.up,
+    down: migration_20260310_030303_update_volume_slugField.down,
+    name: '20260310_030303_update_volume_slugField',
+  },
+  {
+    up: migration_20260311_160239_rename_Users_role_user_to_member.up,
+    down: migration_20260311_160239_rename_Users_role_user_to_member.down,
+    name: '20260311_160239_rename_Users_role_user_to_member',
+  },
+  {
+    up: migration_20260316_072557_add_blurdataurl.up,
+    down: migration_20260316_072557_add_blurdataurl.down,
+    name: '20260316_072557_add_blurdataurl',
+  },
+  {
+    up: migration_20260317_033620_add_collections_again_thanks_esp.up,
+    down: migration_20260317_033620_add_collections_again_thanks_esp.down,
+    name: '20260317_033620_add_collections_again_thanks_esp',
+  },
+  {
+    up: migration_20260318_125059_revert_volume_autogen.up,
+    down: migration_20260318_125059_revert_volume_autogen.down,
+    name: '20260318_125059_revert_volume_autogen',
+  },
+  {
+    up: migration_20260318_152547_use_populate_authors_duh.up,
+    down: migration_20260318_152547_use_populate_authors_duh.down,
+    name: '20260318_152547_use_populate_authors_duh',
+  },
+  {
+    up: migration_20260318_172936_topics_views.up,
+    down: migration_20260318_172936_topics_views.down,
+    name: '20260318_172936_topics_views',
   },
 ];

@@ -1,121 +1,285 @@
-import type { Payload } from 'payload'
-import { createArticles } from './articles'
-import { createFootnotesArticle } from './features/footnotes'
-import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from './features/social-embeds'
-import { homeStatic } from './home-static'
-import { createMedia } from './media'
-import { createMenus } from './menus'
-import { createPages } from './pages'
-import { createUsers } from './users'
-import { createVolumes } from './volumes'
+import type { Media, User } from "@/payload-types"
+import type { Payload } from "payload"
+import { createArticle, getWriterOrThrow, validateWriters } from "./articles"
+import { createCollectionGridHomePage } from "./features/collection-grid"
+import { createFootnotesArticle } from "./features/footnotes"
+import { createMathBlocksArticle } from "./features/math-blocks"
+import { createMediaCollageArticle } from "./features/media-collage"
+import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from "./features/social-embeds"
+import { createMediaFromURL } from "./media"
+import { createMenus } from "./menus"
+import { createPages } from "./pages"
+import { createLoremIpsumContent, generateLoremIpsumParagraph } from "./richtext"
+import { createTopics } from "./topics"
+import { createUsers } from "./users"
+import { createVolumes } from "./volumes"
 
-export const seed = async (payload: Payload): Promise<void> => {
-  // Delete all content before seeding
-  await payload.delete({
-    collection: 'users',
-    where: {
-      email: {
-        in: [
-          'admin@example.com',
-          'editor@example.com',
-          'writer1@example.com',
-          'writer2@example.com',
-        ],
+interface SeedContext {
+  media: Media[]
+  writer1: User
+  writer2: User
+  topics: number[]
+  volume1Articles: number[]
+  volume2Articles: number[]
+  featureArticles: number[]
+}
+
+export const seed = async (
+  payload: Payload,
+  onProgress?: (message: string, step: number, total: number) => void,
+): Promise<void> => {
+  const ctx = {} as SeedContext
+
+  const volume1Titles = [
+    "The Trolley Problem Revisited: Moral Intuition in the Age of Autonomous Vehicles",
+    "Free Will and Determinism: Can Neuroscience Settle the Debate?",
+    "Plato's Cave in the Digital Age: Social Media as Manufactured Reality",
+    "The Ship of Theseus and Personal Identity: Who Are You After a Decade?",
+    "Simone de Beauvoir's Ethics of Ambiguity and the Modern Workplace",
+    "Epistemic Injustice: Why Some Voices Are Silenced in Public Discourse",
+  ]
+
+  const volume2Titles = [
+    "Dawkins vs. Blackmore: What Counts as a Meme in the Attention Economy?",
+    "Irony as Ideology: How the Internet Weaponised Humour",
+    "The Half-Life of Virality: Why Memes Die and What Survives",
+  ]
+
+  const titleToSlug = (title: string) =>
+    title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+
+  const steps: { name: string; fn: () => Promise<void> }[] = [
+    {
+      name: "Clearing existing data...",
+      fn: async () => {
+        await payload.delete({
+          collection: "users",
+          where: {
+            email: {
+              in: [
+                "admin@example.com",
+                "chiefeditor@example.com",
+                "editor@example.com",
+                "writer1@example.com",
+                "writer2@example.com",
+              ],
+            },
+          },
+        })
+        await payload.delete({ collection: "articles", where: {} })
+        await payload.delete({ collection: "volumes", where: {} })
+        await payload.delete({ collection: "topics", where: {} })
+        await payload.delete({ collection: "media", where: {} })
+        await payload.delete({ collection: "pages", where: {} })
+        await payload.delete({ collection: "forms", where: {} })
+        await payload.delete({ collection: "form-submissions", where: {} })
       },
     },
-  })
-
-  await payload.delete({
-    collection: 'articles',
-    where: {},
-  })
-
-  await payload.delete({
-    collection: 'volumes',
-    where: {},
-  })
-
-  await payload.delete({
-    collection: 'media',
-    where: {},
-  })
-
-  await payload.delete({
-    collection: 'pages',
-    where: {},
-  })
-
-  // Begin seeding
-
-  const media = await createMedia(payload)
-
-  const { writer1, writer2 } = await createUsers(payload, media)
-
-  const [volume1Articles, volume2Articles] = await createArticles(
-    payload,
-    [writer1, writer2],
-    [
-      {
-        volumeNumber: 1,
-        numberOfArticles: 6,
+    {
+      name: "Uploading media...",
+      fn: async () => {
+        const IMAGE_BASE =
+          "https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed"
+        const ALT = "Curving abstract shapes with an orange and blue gradient"
+        ctx.media = await Promise.all([
+          createMediaFromURL(payload, `${IMAGE_BASE}/image-post1.webp`, ALT),
+          createMediaFromURL(payload, `${IMAGE_BASE}/image-post2.webp`, ALT),
+          createMediaFromURL(payload, `${IMAGE_BASE}/image-post3.webp`, ALT),
+          createMediaFromURL(payload, `${IMAGE_BASE}/image-hero1.webp`, ALT),
+        ])
       },
-      {
-        volumeNumber: 2,
-        numberOfArticles: 3,
+    },
+    {
+      name: "Creating users...",
+      fn: async () => {
+        const { writer1, writer2 } = await createUsers(payload, ctx.media)
+        ctx.writer1 = writer1
+        ctx.writer2 = writer2
+        validateWriters([writer1, writer2])
       },
-    ],
-    media,
-  )
+    },
+    {
+      name: "Creating topics...",
+      fn: async () => {
+        const topics = await createTopics(payload)
+        ctx.topics = topics.map((topic) => topic.id)
+      },
+    },
+    {
+      name: "Creating Volume 1 articles...",
+      fn: async () => {
+        const writers = [ctx.writer1, ctx.writer2]
+        ctx.volume1Articles = []
+        // 0 Politics, 1 Memes, 2 Cognitive Science, 3 Philosophy, 4 Ethics, 5 Epistemology,
+        // 6 Neuroscience, 7 Digital Culture, 8 Social Media, 9 Identity, 10 Humor
+        const volume1TopicSets: number[][] = [
+          [ctx.topics[4]!, ctx.topics[3]!, ctx.topics[0]!], // Trolley Problem: Ethics, Philosophy, Politics
+          [ctx.topics[6]!, ctx.topics[3]!, ctx.topics[2]!], // Free Will: Neuroscience, Philosophy, Cognitive Science
+          [ctx.topics[8]!, ctx.topics[3]!, ctx.topics[7]!], // Plato's Cave: Social Media, Philosophy, Digital Culture
+          [ctx.topics[3]!, ctx.topics[9]!, ctx.topics[2]!], // Ship of Theseus: Philosophy, Identity, Cognitive Science
+          [ctx.topics[4]!, ctx.topics[3]!, ctx.topics[0]!], // Beauvoir: Ethics, Philosophy, Politics
+          [ctx.topics[5]!, ctx.topics[3]!, ctx.topics[0]!], // Epistemic Injustice: Epistemology, Philosophy, Politics
+        ]
+        for (let i = 0; i < volume1Titles.length; i++) {
+          const title = volume1Titles[i]!
+          const article = await createArticle(payload, {
+            title,
+            content: createLoremIpsumContent(Math.floor(Math.random() * 8) + 3),
+            authors: [getWriterOrThrow(writers, i).id],
+            topics: volume1TopicSets[i]!,
+            slug: titleToSlug(title),
+            heroImage: ctx.media[i % ctx.media.length]?.id,
+            meta: {
+              title,
+              description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
+              image: ctx.media[i % ctx.media.length]?.id,
+            },
+          })
+          ctx.volume1Articles.push(article.id)
+        }
+      },
+    },
+    {
+      name: "Creating Volume 2 articles...",
+      fn: async () => {
+        const writers = [ctx.writer1, ctx.writer2]
+        ctx.volume2Articles = []
+        const volume2TopicSets: number[][] = [
+          [ctx.topics[1]!, ctx.topics[2]!, ctx.topics[7]!], // Dawkins vs Blackmore: Memes, Cognitive Science, Digital Culture
+          [ctx.topics[1]!, ctx.topics[7]!, ctx.topics[8]!, ctx.topics[10]!], // Irony as Ideology: Memes, Digital Culture, Social Media, Humor
+          [ctx.topics[1]!, ctx.topics[7]!], // Half-Life of Virality: Memes, Digital Culture
+        ]
+        for (let i = 0; i < volume2Titles.length; i++) {
+          const title = volume2Titles[i]!
+          const article = await createArticle(payload, {
+            title,
+            content: createLoremIpsumContent(Math.floor(Math.random() * 8) + 3),
+            authors: [getWriterOrThrow(writers, i).id],
+            topics: volume2TopicSets[i]!,
+            slug: titleToSlug(title),
+            heroImage: ctx.media[i % ctx.media.length]?.id,
+            meta: {
+              title,
+              description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
+              image: ctx.media[i % ctx.media.length]?.id,
+            },
+          })
+          ctx.volume2Articles.push(article.id)
+        }
+      },
+    },
+    {
+      name: "Creating feature articles...",
+      fn: async () => {
+        const [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks] =
+          await Promise.all([
+            createFootnotesArticle(
+              payload,
+              [ctx.writer1, ctx.writer2],
+              ctx.media,
+              ctx.volume1Articles[0]!,
+              [ctx.topics[0]!, ctx.topics[3]!, ctx.topics[4]!],
+            ),
+            createSocialEmbedArticle(payload, ctx.writer1, ctx.media, [
+              ctx.topics[0]!,
+              ctx.topics[1]!,
+              ctx.topics[7]!,
+            ]),
+            createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media, [
+              ctx.topics[0]!,
+              ctx.topics[1]!,
+              ctx.topics[10]!,
+            ]),
+            createMediaCollageArticle(payload, ctx.writer1, ctx.media, [
+              ctx.topics[3]!,
+              ctx.topics[7]!,
+            ]),
+            createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+              ctx.topics[2]!,
+              ctx.topics[3]!,
+              ctx.topics[5]!,
+            ]),
+          ])
+        ctx.featureArticles = [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks]
+      },
+    },
+    {
+      name: "Creating volumes...",
+      fn: async () => {
+        await createVolumes(
+          payload,
+          [
+            {
+              volumeNumber: 1,
+              title: "Volume 1: Foundations of Philosophy",
+              description:
+                "A comprehensive collection of foundational philosophy papers covering various topics.",
+              editorsNoteContent:
+                "This inaugural volume brings together six groundbreaking papers that lay the foundation for future research.",
+              articleIds: ctx.volume1Articles,
+            },
+            {
+              volumeNumber: 2,
+              title: "Volume 2: Advanced Studies in Memes",
+              description:
+                "A focused collection of three in-depth research papers exploring advanced topics in memes.",
+              editorsNoteContent:
+                "This volume presents three comprehensive studies that push the boundaries of current research in memes.",
+              articleIds: ctx.volume2Articles,
+            },
+            {
+              volumeNumber: 3,
+              title: "Volume 3: Feature Demonstrations",
+              description:
+                "A collection of articles demonstrating the platform's feature set, including footnotes, social embeds, and media collages.",
+              editorsNoteContent:
+                "This volume showcases the full range of content features available to authors on Pragmatic Papers.",
+              articleIds: ctx.featureArticles,
+            },
+          ],
+          ctx.media,
+        )
+      },
+    },
+    {
+      name: "Creating pages & menus...",
+      fn: async () => {
+        await createCollectionGridHomePage(
+          payload,
+          ctx.volume1Articles,
+          ctx.volume2Articles,
+          ctx.featureArticles,
+        )
+        const homePage = await payload
+          .find({ collection: "pages", where: { slug: { equals: "home" } }, limit: 1 })
+          .then((res) => res.docs[0]!)
+        const {
+          aboutPage,
+          articlesPage,
+          contactPage,
+          privacyPolicyPage,
+          termsOfUsePage,
+          volumesPage,
+        } = await createPages(payload)
+        await createMenus(payload, {
+          homePage,
+          aboutPage,
+          articlesPage,
+          contactPage,
+          privacyPolicyPage,
+          termsOfUsePage,
+          volumesPage,
+        })
+      },
+    },
+  ]
 
-  if (!volume1Articles || !volume2Articles) {
-    throw new Error('Failed to create articles for one or more volumes')
+  for (let i = 0; i < steps.length; i++) {
+    const { name, fn } = steps[i]!
+    onProgress?.(name, i + 1, steps.length)
+    await fn()
   }
-
-  await createVolumes(
-    payload,
-    [
-      {
-        volumeNumber: 1,
-        title: 'Volume 1: Foundations of Philosophy',
-        description:
-          'A comprehensive collection of foundational philosophy papers covering various topics.',
-        editorsNoteContent:
-          'This inaugural volume brings together six groundbreaking papers that lay the foundation for future research.',
-        articleIds: volume1Articles,
-      },
-      {
-        volumeNumber: 2,
-        title: 'Volume 2: Advanced Studies in Memes',
-        description:
-          'A focused collection of three in-depth research papers exploring advanced topics in memes.',
-        editorsNoteContent:
-          'This volume presents three comprehensive studies that push the boundaries of current research in memes.',
-        articleIds: volume2Articles,
-      },
-    ],
-    media,
-  )
-
-  // Create a standalone article demonstrating the footnotes feature
-  await createFootnotesArticle(payload, [writer1, writer2], media, volume1Articles[0]!)
-
-  // The homepage is literally a "page" in Payload.
-  const homePage = await payload.create({
-    collection: 'pages',
-    data: homeStatic,
-  })
-
-  // Create pages for menus
-  const { aboutPage, contactPage, privacyPolicyPage, termsOfUsePage } = await createPages(payload)
-
-  await createMenus(payload, {
-    homePage,
-    aboutPage,
-    contactPage,
-    privacyPolicyPage,
-    termsOfUsePage,
-  })
-
-  await createSocialEmbedArticle(payload, writer1)
-  await createLegacySocialEmbedArticle(payload, writer1)
 }

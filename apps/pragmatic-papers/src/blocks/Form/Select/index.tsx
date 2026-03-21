@@ -1,19 +1,19 @@
-import type { SelectField } from '@payloadcms/plugin-form-builder/types'
-import type { Control, FieldErrorsImpl } from 'react-hook-form'
+import type { SelectField } from "@payloadcms/plugin-form-builder/types"
+import type { Control, FieldErrorsImpl } from "react-hook-form"
 
-import { Label } from '@/components/ui/label'
+import { Label } from "@/components/ui/label"
 import {
   Select as SelectComponent,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import React from 'react'
-import { Controller } from 'react-hook-form'
+} from "@/components/ui/select"
+import React from "react"
+import { Controller } from "react-hook-form"
 
-import { Error } from '../Error'
-import { Width } from '../Width'
+import { Error } from "../Error"
+import { Width } from "../Width"
 
 export const Select: React.FC<
   SelectField & {
