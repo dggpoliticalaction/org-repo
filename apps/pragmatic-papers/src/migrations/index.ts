@@ -17,6 +17,7 @@ import * as migration_20260304_215356_feature_authors from './20260304_215356_fe
 import * as migration_20260305_050800_action_button_needed_more_migrations from './20260305_050800_action_button_needed_more_migrations';
 import * as migration_20260307_014204_enable_math_rendering from './20260307_014204_enable_math_rendering';
 import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles';
+import * as migration_20260309_002357 from './20260309_002357';
 import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField';
 import * as migration_20260311_160239_rename_Users_role_user_to_member from './20260311_160239_rename_Users_role_user_to_member';
 import * as migration_20260316_072557_add_blurdataurl from './20260316_072557_add_blurdataurl';
@@ -24,6 +25,7 @@ import * as migration_20260317_033620_add_collections_again_thanks_esp from './2
 import * as migration_20260318_125059_revert_volume_autogen from './20260318_125059_revert_volume_autogen';
 import * as migration_20260318_152547_use_populate_authors_duh from './20260318_152547_use_populate_authors_duh';
 import * as migration_20260318_172936_topics_views from './20260318_172936_topics_views';
+import * as migration_20260321_032916 from './20260321_032916';
 
 export const migrations = [
   {
@@ -122,6 +124,11 @@ export const migrations = [
     name: '20260307_192044_add_topics_to_articles',
   },
   {
+    up: migration_20260309_002357.up,
+    down: migration_20260309_002357.down,
+    name: '20260309_002357',
+  },
+  {
     up: migration_20260310_030303_update_volume_slugField.up,
     down: migration_20260310_030303_update_volume_slugField.down,
     name: '20260310_030303_update_volume_slugField',
@@ -154,6 +161,11 @@ export const migrations = [
   {
     up: migration_20260318_172936_topics_views.up,
     down: migration_20260318_172936_topics_views.down,
-    name: '20260318_172936_topics_views'
+    name: '20260318_172936_topics_views',
+  },
+  {
+    up: migration_20260321_032916.up,
+    down: migration_20260321_032916.down,
+    name: '20260321_032916'
   },
 ];
