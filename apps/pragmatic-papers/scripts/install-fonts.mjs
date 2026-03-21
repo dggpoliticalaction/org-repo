@@ -15,7 +15,7 @@ const placeholder = resolve(dest, "FKScreamer-Bold.woff2")
 
 mkdirSync(dest, { recursive: true })
 
-if (!process.env.GH_FONT_READ || !existsSync(src)) {
+if (!existsSync(src)) {
   if (!existsSync(placeholder)) {
     writeFileSync(placeholder, "")
   }
