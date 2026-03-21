@@ -35,7 +35,7 @@ export const ArticleCard: React.FC<{
           />
         )}
         {titleToUse && (
-          <h3 className="hover:text-primary/80 line-clamp-4 text-3xl">{titleToUse}</h3>
+          <h3 className="hover:text-primary/80 line-clamp-4 md:text-2xl">{titleToUse}</h3>
         )}
         {description && (
           <p className="text-primary line-clamp-2 font-serif sm:line-clamp-3">

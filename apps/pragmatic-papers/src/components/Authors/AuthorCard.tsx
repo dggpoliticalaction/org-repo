@@ -50,8 +50,8 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
         </HoverPrefetchLink>
         <div className="flex flex-col justify-between space-y-2">
           <div className="flex-1 space-y-1">
-            <div className="flex flex-col md:flex-row md:items-center">
-              <h3 className="text-2xl">
+            <div className="flex flex-col md:flex-row md:items-end">
+              <h3 className="text-pretty md:text-2xl">
                 <HoverPrefetchLink
                   href={`/authors/${slug}`}
                   className="text-primary hover:text-primary/80"

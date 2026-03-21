@@ -62,7 +62,7 @@ export default async function AuthorsIndexPage(): Promise<React.ReactNode> {
   return (
     <article className="mx-auto max-w-3xl space-y-6 px-4">
       <header className="mb-8 text-center">
-        <h1 className="mb-2 text-4xl md:text-5xl">Authors</h1>
+        <h1 className="mb-2">Authors</h1>
         <p className="text-muted-foreground text-sm">
           Learn more about Pragmatic Papers contributors and explore their work.
         </p>

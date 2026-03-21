@@ -3,6 +3,7 @@ import React from "react"
 import type { Page } from "@/payload-types"
 
 import RichText from "@/components/RichText"
+import { Separator } from "@/components/ui/separator"
 
 type PageHeroType =
   | {
@@ -16,10 +17,9 @@ type PageHeroType =
 
 export const PageHero: React.FC<PageHeroType> = ({ children, richText }) => {
   return (
-    <div className="flex justify-center">
-      <div className="text-center">
-        {children || (richText && <RichText data={richText} enableGutter={false} />)}
-      </div>
+    <div className="mx-auto max-w-xl px-4">
+      {children || (richText && <RichText data={richText} enableGutter={false} />)}
+      <Separator className="my-6" />
     </div>
   )
 }
