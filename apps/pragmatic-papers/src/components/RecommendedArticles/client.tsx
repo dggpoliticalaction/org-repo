@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import Link from "next/link"
+import { useEffect, useMemo, useState } from "react"
 
-const VARIANT_COOKIE = 'pp_rec_variant'
-const VIEWED_STORAGE_KEY = 'pp_viewed_articles'
+const VARIANT_COOKIE = "pp_rec_variant"
+const VIEWED_STORAGE_KEY = "pp_viewed_articles"
 const DISPLAY_COUNT = 4
-const VARIANTS = ['engagement', 'recency', 'random'] as const
+const VARIANTS = ["engagement", "recency", "random"] as const
 type Variant = (typeof VARIANTS)[number]
 
 interface RankedArticle {
@@ -24,7 +24,7 @@ interface Props {
 }
 
 function getCookie(name: string): string | null {
-  if (typeof document === 'undefined') return null
+  if (typeof document === "undefined") return null
   const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`))
   return match?.[1] ? decodeURIComponent(match[1]) : null
 }
@@ -67,14 +67,13 @@ function markAsViewed(slug: string): void {
 function sortByVariant(articles: RankedArticle[], variant: Variant): RankedArticle[] {
   const copy = [...articles]
   switch (variant) {
-    case 'engagement':
+    case "engagement":
       return copy.sort((a, b) => b.engagementScore - a.engagementScore)
-    case 'recency':
+    case "recency":
       return copy.sort(
-        (a, b) =>
-          new Date(b.publishedAt || 0).getTime() - new Date(a.publishedAt || 0).getTime(),
+        (a, b) => new Date(b.publishedAt || 0).getTime() - new Date(a.publishedAt || 0).getTime(),
       )
-    case 'random':
+    case "random":
       // Fisher-Yates shuffle
       for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1))
@@ -97,10 +96,10 @@ export function RecommendedArticlesClient({ rankings, currentArticleSlug }: Prop
     markAsViewed(currentArticleSlug)
 
     // Set GA4 custom dimension for A/B analysis
-    if (typeof window !== 'undefined' && 'gtag' in window) {
+    if (typeof window !== "undefined" && "gtag" in window) {
       ;(window as unknown as { gtag: (...args: unknown[]) => void }).gtag(
-        'set',
-        'user_properties',
+        "set",
+        "user_properties",
         { recommendation_variant: v },
       )
     }
@@ -131,7 +130,7 @@ export function RecommendedArticlesClient({ rankings, currentArticleSlug }: Prop
       {/* Desktop sidebar */}
       <aside className="hidden xl:block" aria-label="Recommended articles">
         <div className="sticky top-24">
-          <h2 className="mb-4 border-b pb-2 font-sans text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          <h2 className="text-muted-foreground mb-4 border-b pb-2 font-sans text-xs font-bold tracking-wider uppercase">
             Recommended
           </h2>
           <div className="flex flex-col gap-4">
@@ -144,7 +143,7 @@ export function RecommendedArticlesClient({ rankings, currentArticleSlug }: Prop
 
       {/* Mobile / tablet bottom section */}
       <section className="mt-12 border-t pt-8 xl:hidden" aria-label="Recommended articles">
-        <h2 className="mb-4 font-sans text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        <h2 className="text-muted-foreground mb-4 font-sans text-xs font-bold tracking-wider uppercase">
           Recommended
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -157,21 +156,15 @@ export function RecommendedArticlesClient({ rankings, currentArticleSlug }: Prop
   )
 }
 
-function RecommendationCard({
-  article,
-  compact,
-}: {
-  article: RankedArticle
-  compact?: boolean
-}) {
+function RecommendationCard({ article, compact }: { article: RankedArticle; compact?: boolean }) {
   return (
     <Link
       href={`/articles/${article.slug}`}
-      className={`group block ${compact ? '' : 'rounded-lg'}`}
+      className={`group block ${compact ? "" : "rounded-lg"}`}
     >
       {article.metaImage && (
         <div
-          className={`overflow-hidden rounded ${compact ? 'mb-2 aspect-[16/9]' : 'mb-3 aspect-[4/3]'}`}
+          className={`overflow-hidden rounded ${compact ? "mb-2 aspect-[16/9]" : "mb-3 aspect-[4/3]"}`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -182,14 +175,12 @@ function RecommendationCard({
         </div>
       )}
       <h3
-        className={`font-sans font-semibold leading-snug transition-colors group-hover:text-brand ${compact ? 'text-sm' : 'text-base'}`}
+        className={`group-hover:text-brand font-sans leading-snug font-semibold transition-colors ${compact ? "text-sm" : "text-base"}`}
       >
         {article.title}
       </h3>
       {!compact && article.metaDescription && (
-        <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-          {article.metaDescription}
-        </p>
+        <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{article.metaDescription}</p>
       )}
     </Link>
   )

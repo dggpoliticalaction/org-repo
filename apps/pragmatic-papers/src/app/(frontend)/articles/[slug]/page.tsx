@@ -81,7 +81,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   return (
     <div className="m-auto max-w-3xl p-5 pb-16 xl:flex xl:max-w-6xl xl:gap-12">
-      <article className="min-w-0 max-w-3xl flex-1 space-y-6">
+      <article className="max-w-3xl min-w-0 flex-1 space-y-6">
         {/* Allows redirects for valid pages too */}
         <PayloadRedirects disableNotFound url={url} />
 

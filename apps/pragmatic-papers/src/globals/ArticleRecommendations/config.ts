@@ -1,40 +1,41 @@
-import type { GlobalConfig } from 'payload'
+import type { GlobalConfig } from "payload"
 
 export const ArticleRecommendations: GlobalConfig = {
-  slug: 'article-recommendations',
+  slug: "article-recommendations",
   access: {
     read: () => true,
   },
   admin: {
-    group: 'System',
+    group: "System",
   },
   fields: [
     {
-      name: 'lastUpdated',
-      type: 'date',
+      name: "lastUpdated",
+      type: "date",
       admin: { readOnly: true },
     },
     {
-      name: 'rankings',
-      type: 'array',
+      name: "rankings",
+      type: "array",
       maxRows: 20,
       admin: {
         readOnly: true,
-        description: 'Ranked articles by engagement score. Updated automatically by the recommendations script.',
+        description:
+          "Ranked articles by engagement score. Updated automatically by the recommendations script.",
       },
       fields: [
         {
-          name: 'article',
-          type: 'relationship',
-          relationTo: 'articles',
+          name: "article",
+          type: "relationship",
+          relationTo: "articles",
           required: true,
         },
         {
-          name: 'engagementScore',
-          type: 'number',
+          name: "engagementScore",
+          type: "number",
           required: true,
           admin: {
-            description: 'Volume-normalized scrolledUsers * recency decay',
+            description: "Volume-normalized scrolledUsers * recency decay",
           },
         },
       ],
