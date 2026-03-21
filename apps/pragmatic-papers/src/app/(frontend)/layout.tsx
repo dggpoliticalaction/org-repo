@@ -23,6 +23,7 @@ const FKScreamer = localFont({
 const geist = Geist({
   weight: ["400", "600"],
   subsets: ["latin"],
+  fallback: ["Helvetica", "Arial", "sans-serif"],
   variable: "--font-sans",
   fallback: ["Helvetica", "Arial", "sans-serif"],
 })
