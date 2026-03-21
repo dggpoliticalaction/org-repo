@@ -5,7 +5,6 @@ import { PayloadRedirects } from "@/components/PayloadRedirects"
 import { RecommendedArticles } from "@/components/RecommendedArticles"
 import RichText from "@/components/RichText"
 import { TopicsList } from "@/components/Topics/TopicsList"
-import { Separator } from "@/components/ui/separator"
 import { ArticleHero } from "@/heros/ArticleHero"
 import { MathJaxProvider } from "@/providers/MathJaxProvider"
 import { generateMeta } from "@/utilities/generateMeta"
@@ -80,8 +79,8 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   const { footnotes, content, populatedAuthors, enableMathRendering, topics } = article
 
   return (
-    <div className="m-auto max-w-3xl p-5 pb-16 xl:flex xl:max-w-6xl xl:gap-12">
-      <article className="max-w-3xl min-w-0 flex-1 space-y-6">
+    <div className="m-auto max-w-3xl p-5 pb-16">
+      <article className="space-y-6">
         {/* Allows redirects for valid pages too */}
         <PayloadRedirects disableNotFound url={url} />
 
@@ -99,7 +98,6 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
         <FootnoteList footnotes={footnotes} />
         <TopicsList topics={topics} className="mt-8" />
         <AuthorList aria-label="Article Authors" authors={populatedAuthors} />
-        <Separator className="mt-16" />
       </article>
 
       <RecommendedArticles currentArticleSlug={slug} />

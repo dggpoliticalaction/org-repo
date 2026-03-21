@@ -25,6 +25,7 @@ const MIN_TOTAL_USERS = 10
 const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000
 
 const DRY_RUN = process.argv.includes("--dry-run")
+const LOCAL_DEV = process.argv.includes("--local")
 
 // ---------------------------------------------------------------------------
 // Types
@@ -325,6 +326,51 @@ function logRankings(scored: ScoredArticle[], logger: { info: (msg: string) => v
 async function main(): Promise<void> {
   const awaitedConfig = (await import(payloadConfigPath)).default
   const payload = await getPayload({ config: awaitedConfig })
+
+  if (LOCAL_DEV) {
+    payload.logger.info("=== LOCAL DEV MODE — inserting random articles ===\n")
+
+    const articles = await payload.find({
+      collection: "articles",
+      draft: false,
+      limit: 1000,
+      pagination: false,
+      overrideAccess: true,
+      select: {
+        slug: true,
+        title: true,
+      },
+    })
+
+    if (articles.docs.length === 0) {
+      payload.logger.error("No published articles found in the database.")
+      process.exit(1)
+    }
+
+    // Shuffle and pick up to MAX_RANKINGS random articles
+    const shuffled = articles.docs.sort(() => Math.random() - 0.5)
+    const selected = shuffled.slice(0, MAX_RANKINGS)
+
+    const topRankings = selected.map((article) => ({
+      article: article.id,
+      engagementScore: Math.round(Math.random() * 1_000_000) / 1_000_000,
+    }))
+
+    await payload.updateGlobal({
+      slug: "article-recommendations",
+      data: {
+        lastUpdated: new Date().toISOString(),
+        rankings: topRankings,
+      },
+    })
+
+    payload.logger.info(`Inserted ${topRankings.length} random articles as recommendations:`)
+    for (const article of selected) {
+      payload.logger.info(`  - ${article.title} (${article.slug})`)
+    }
+
+    process.exit(0)
+  }
 
   const propertyId = process.env.GA4_PROPERTY_ID
   const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL

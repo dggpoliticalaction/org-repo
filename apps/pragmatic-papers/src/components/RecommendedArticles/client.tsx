@@ -1,7 +1,8 @@
 "use client"
 
-import Link from "next/link"
 import React, { useEffect, useMemo, useState } from "react"
+
+import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 
 const VARIANT_COOKIE = "pp_rec_variant"
 const VIEWED_STORAGE_KEY = "pp_viewed_articles"
@@ -87,31 +88,29 @@ function sortByVariant(articles: RankedArticle[], variant: Variant): RankedArtic
 
 function RecommendationCard({ article, compact }: { article: RankedArticle; compact?: boolean }) {
   return (
-    <Link
+    <HoverPrefetchLink
       href={`/articles/${article.slug}`}
-      className={`group block ${compact ? "" : "rounded-lg"}`}
+      className="group flex flex-col gap-2"
     >
       {article.metaImage && (
-        <div
-          className={`overflow-hidden rounded ${compact ? "mb-2 aspect-[16/9]" : "mb-3 aspect-[4/3]"}`}
-        >
+        <div className="aspect-video overflow-hidden rounded-sm border">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={article.metaImage}
             alt=""
-            className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+            className="h-full w-full object-cover object-center group-hover:opacity-80"
           />
         </div>
       )}
       <h3
-        className={`group-hover:text-brand font-sans leading-snug font-semibold transition-colors ${compact ? "text-sm" : "text-base"}`}
+        className={`text-primary group-hover:text-primary/80 font-display leading-none font-bold ${compact ? "text-base" : "text-lg"}`}
       >
         {article.title}
       </h3>
       {!compact && article.metaDescription && (
-        <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{article.metaDescription}</p>
+        <p className="text-primary line-clamp-2 font-serif text-sm">{article.metaDescription}</p>
       )}
-    </Link>
+    </HoverPrefetchLink>
   )
 }
 
@@ -160,26 +159,11 @@ export function RecommendedArticlesClient({
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className="hidden xl:block" aria-label="Recommended articles">
-        <div className="sticky top-24">
-          <h2 className="text-muted-foreground mb-4 border-b pb-2 font-sans text-xs font-bold tracking-wider uppercase">
-            Recommended
-          </h2>
-          <div className="flex flex-col gap-4">
-            {articles.map((article) => (
-              <RecommendationCard key={article.slug} article={article} compact />
-            ))}
-          </div>
-        </div>
-      </aside>
-
-      {/* Mobile / tablet bottom section */}
-      <section className="mt-12 border-t pt-8 xl:hidden" aria-label="Recommended articles">
+      <section className="mt-12 border-t pt-8" aria-label="Recommended articles">
         <h2 className="text-muted-foreground mb-4 font-sans text-xs font-bold tracking-wider uppercase">
           Recommended
         </h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {articles.map((article) => (
             <RecommendationCard key={article.slug} article={article} />
           ))}
