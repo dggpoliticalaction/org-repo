@@ -16,12 +16,14 @@ const FKScreamer = localFont({
   src: "../../../public/fonts/FKScreamer-Bold.woff2",
   weight: "700",
   display: "swap",
+  fallback: ["fantasy", "sans-serif"],
   variable: "--font-display",
 })
 
 const geist = Geist({
   weight: ["400", "600"],
   subsets: ["latin"],
+  fallback: ["Helvetica", "Arial", "sans-serif"],
   variable: "--font-sans",
 })
 
