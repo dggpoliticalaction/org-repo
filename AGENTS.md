@@ -26,7 +26,7 @@ Turborepo monorepo for **Pragmatic Papers**, a Next.js 15 website with Payload C
   - `pnpm payload generate:types` — regenerate Payload TypeScript types
   - `pnpm payload generate:importmap` — regenerate Payload import map
   - `pnpm payload migrate` — run database migrations
-  - `pnpm payload migrate:create "migation_name"` — create a new migration. Pass a name as the first argument. Requires Postgres running (`pnpm dev:db` first). If Docker is unavailable (e.g. in CI/agent environments), write the migration SQL by hand following the patterns in existing migration files.
+  - `pnpm payload migrate:create "migation_name"` — create a new migration. Pass a name as the first argument.
 
 ## Architecture
 
