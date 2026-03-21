@@ -18,7 +18,13 @@ export const Footer: GlobalConfig = {
       maxRows: 6,
       labels: { singular: "Menu Item", plural: "Menu Items" },
     }),
-    link({ label: "Copyright", name: "copyright" }),
+    link({
+      label: "Copyright",
+      name: "copyright",
+      admin: {
+        description: 'The copyright symbol (©) and current year are automatically prepended to the label.',
+      },
+    }),
   ],
   hooks: {
     afterChange: [revalidateFooter],
