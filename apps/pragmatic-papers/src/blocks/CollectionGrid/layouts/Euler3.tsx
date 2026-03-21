@@ -15,11 +15,11 @@ export const Euler3: LayoutDefinition = {
  * 3 articles in a single row, each with an image above.
  * Responsive: 1 column on mobile, 3 equal columns on md+.
  */
-export const Euler3Layout: React.FC<LayoutProps> = ({ className, slots, priority, ...props }) => {
+export const Euler3Layout: React.FC<LayoutProps> = ({ className, slots, priority, loading, ...props }) => {
   return (
     <section className={cn("grid grid-cols-1 gap-6 md:grid-cols-3", className)} {...props}>
       {slots.map((slot, index) => (
-        <CollectionTile key={slot?.id ?? index} tile={slot} priority={priority} />
+        <CollectionTile key={slot?.id ?? index} tile={slot} priority={index === 0 ? priority : undefined} loading={index === 0 ? undefined : loading} />
       ))}
     </section>
   )

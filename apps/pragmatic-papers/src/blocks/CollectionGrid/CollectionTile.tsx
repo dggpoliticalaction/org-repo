@@ -12,6 +12,7 @@ export interface CollectionTileProps extends React.ComponentProps<"div"> {
   imagePosition?: ImagePosition
   showByline?: boolean
   priority?: boolean
+  loading?: "eager" | "lazy"
 }
 
 export const CollectionTile: React.FC<CollectionTileProps> = ({
@@ -19,6 +20,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
   imagePosition = "above",
   showByline = false,
   priority,
+  loading,
   className,
 }) => {
   if (!tile) return null
@@ -78,6 +80,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
             className="h-full w-full object-cover object-center hover:opacity-80"
             variant="medium"
             priority={priority}
+            loading={loading}
           />
         </div>
       )}

@@ -35,6 +35,7 @@ export const Vespucci7Layout: React.FC<LayoutProps> = ({
   className,
   slots,
   priority,
+  loading,
   ...props
 }) => {
   const [featured, a, b, c, d, e, f] = slots
@@ -53,8 +54,8 @@ export const Vespucci7Layout: React.FC<LayoutProps> = ({
 
       {/* Slots A + B — left column (25%), spans 2 rows */}
       <div className="grid grid-cols-1 gap-6 md:col-span-2 md:grid-cols-2 lg:order-first lg:col-span-1 lg:row-span-2 lg:grid-cols-1">
-        <CollectionTile tile={a!} priority={priority} />
-        <CollectionTile tile={b!} priority={priority} />
+        <CollectionTile tile={a!} loading={loading} />
+        <CollectionTile tile={b!} loading={loading} />
       </div>
 
       {/* Slots C–F — right column (25%), 4 tiles with no image */}

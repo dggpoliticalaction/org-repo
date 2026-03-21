@@ -18,7 +18,7 @@ export const Newton4: LayoutDefinition = {
  * Newton 4 Layout
  * Desktop: 75%/25% two-column split
  */
-export const Newton4Layout: React.FC<LayoutProps> = ({ className, slots, priority, ...props }) => {
+export const Newton4Layout: React.FC<LayoutProps> = ({ className, slots, priority, loading, ...props }) => {
   const [featured, a, b, c] = slots
 
   return (
@@ -28,7 +28,7 @@ export const Newton4Layout: React.FC<LayoutProps> = ({ className, slots, priorit
 
       {/* Right column — 3 stacked tiles (25%) */}
       <div className="grid grid-cols-1 gap-6">
-        <CollectionTile tile={a!} priority={priority} />
+        <CollectionTile tile={a!} loading={loading} />
         <CollectionTile tile={b!} imagePosition="none" />
         <CollectionTile tile={c!} imagePosition="none" />
       </div>

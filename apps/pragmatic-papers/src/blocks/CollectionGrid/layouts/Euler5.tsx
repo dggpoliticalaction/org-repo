@@ -21,7 +21,7 @@ export const Euler5: LayoutDefinition = {
  * 5 articles in a single row, each with an image above.
  * Responsive: 1 column on mobile, 2 on sm, 3 on md, 5 equal columns on lg+.
  */
-export const Euler5Layout: React.FC<LayoutProps> = ({ className, slots, priority, ...props }) => {
+export const Euler5Layout: React.FC<LayoutProps> = ({ className, slots, priority, loading, ...props }) => {
   return (
     <section
       className={cn(
@@ -31,7 +31,7 @@ export const Euler5Layout: React.FC<LayoutProps> = ({ className, slots, priority
       {...props}
     >
       {slots.map((slot, index) => (
-        <CollectionTile key={slot?.id ?? index} tile={slot} priority={priority} />
+        <CollectionTile key={slot?.id ?? index} tile={slot} priority={index === 0 ? priority : undefined} loading={index === 0 ? undefined : loading} />
       ))}
     </section>
   )
