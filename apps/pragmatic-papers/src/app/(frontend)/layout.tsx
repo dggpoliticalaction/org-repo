@@ -25,7 +25,6 @@ const geist = Geist({
   subsets: ["latin"],
   fallback: ["Helvetica", "Arial", "sans-serif"],
   variable: "--font-sans",
-  fallback: ["Helvetica", "Arial", "sans-serif"],
 })
 
 const libertinusSerif = Libertinus_Serif({
