@@ -88,10 +88,7 @@ function sortByVariant(articles: RankedArticle[], variant: Variant): RankedArtic
 
 function RecommendationCard({ article, compact }: { article: RankedArticle; compact?: boolean }) {
   return (
-    <HoverPrefetchLink
-      href={`/articles/${article.slug}`}
-      className="group flex flex-col gap-2"
-    >
+    <HoverPrefetchLink href={`/articles/${article.slug}`} className="group flex flex-col gap-2">
       {article.metaImage && (
         <div className="aspect-video overflow-hidden rounded-sm border">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -159,7 +156,28 @@ export function RecommendedArticlesClient({
 
   return (
     <>
-      <section className="mt-12 border-t pt-8" aria-label="Recommended articles">
+      {/* Desktop sidebar */}
+      <aside
+        className="hidden pt-64 pl-32 xl:col-start-3 xl:row-start-1 xl:block"
+        aria-label="Recommended articles"
+      >
+        <div className="sticky top-20 max-w-56">
+          <h2 className="text-muted-foreground mb-4 border-b pb-2 font-sans text-xs font-bold tracking-wider uppercase">
+            Recommended
+          </h2>
+          <div className="flex flex-col gap-6">
+            {articles.map((article) => (
+              <RecommendationCard key={article.slug} article={article} compact />
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      {/* Mobile / tablet bottom section */}
+      <section
+        className="mt-12 border-t pt-8 xl:col-start-2 xl:hidden"
+        aria-label="Recommended articles"
+      >
         <h2 className="text-muted-foreground mb-4 font-sans text-xs font-bold tracking-wider uppercase">
           Recommended
         </h2>
