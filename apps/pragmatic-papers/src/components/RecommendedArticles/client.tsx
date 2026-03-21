@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 
 const VARIANT_COOKIE = "pp_rec_variant"
 const VIEWED_STORAGE_KEY = "pp_viewed_articles"
@@ -85,7 +85,37 @@ function sortByVariant(articles: RankedArticle[], variant: Variant): RankedArtic
   }
 }
 
-export function RecommendedArticlesClient({ rankings, currentArticleSlug }: Props) {
+function RecommendationCard({ article, compact }: { article: RankedArticle; compact?: boolean }) {
+  return (
+    <Link
+      href={`/articles/${article.slug}`}
+      className={`group block ${compact ? "" : "rounded-lg"}`}
+    >
+      {article.metaImage && (
+        <div
+          className={`overflow-hidden rounded ${compact ? "mb-2 aspect-[16/9]" : "mb-3 aspect-[4/3]"}`}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={article.metaImage}
+            alt=""
+            className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+          />
+        </div>
+      )}
+      <h3
+        className={`group-hover:text-brand font-sans leading-snug font-semibold transition-colors ${compact ? "text-sm" : "text-base"}`}
+      >
+        {article.title}
+      </h3>
+      {!compact && article.metaDescription && (
+        <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{article.metaDescription}</p>
+      )}
+    </Link>
+  )
+}
+
+export function RecommendedArticlesClient({ rankings, currentArticleSlug }: Props): React.ReactNode {
   const [variant, setVariant] = useState<Variant | null>(null)
 
   useEffect(() => {
@@ -153,35 +183,5 @@ export function RecommendedArticlesClient({ rankings, currentArticleSlug }: Prop
         </div>
       </section>
     </>
-  )
-}
-
-function RecommendationCard({ article, compact }: { article: RankedArticle; compact?: boolean }) {
-  return (
-    <Link
-      href={`/articles/${article.slug}`}
-      className={`group block ${compact ? "" : "rounded-lg"}`}
-    >
-      {article.metaImage && (
-        <div
-          className={`overflow-hidden rounded ${compact ? "mb-2 aspect-[16/9]" : "mb-3 aspect-[4/3]"}`}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={article.metaImage}
-            alt=""
-            className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
-          />
-        </div>
-      )}
-      <h3
-        className={`group-hover:text-brand font-sans leading-snug font-semibold transition-colors ${compact ? "text-sm" : "text-base"}`}
-      >
-        {article.title}
-      </h3>
-      {!compact && article.metaDescription && (
-        <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{article.metaDescription}</p>
-      )}
-    </Link>
   )
 }

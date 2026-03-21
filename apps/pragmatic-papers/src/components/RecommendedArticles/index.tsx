@@ -1,5 +1,6 @@
 import type { Article } from "@/payload-types"
 import configPromise from "@payload-config"
+import React from "react"
 import { getPayload } from "payload"
 import { RecommendedArticlesClient } from "./client"
 
@@ -7,7 +8,7 @@ interface RecommendedArticlesProps {
   currentArticleSlug: string
 }
 
-export async function RecommendedArticles({ currentArticleSlug }: RecommendedArticlesProps) {
+export async function RecommendedArticles({ currentArticleSlug }: RecommendedArticlesProps): Promise<React.ReactNode> {
   const payload = await getPayload({ config: configPromise })
 
   const recommendations = await payload.findGlobal({
