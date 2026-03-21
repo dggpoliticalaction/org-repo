@@ -15,9 +15,9 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
   const { publishedAt, title, heroImage, populatedAuthors } = article
 
   return (
-    <div className="relative flex flex-col gap-2">
+    <div className="relative flex flex-col gap-2 md:-mx-10 lg:-mx-32 xl:-mx-44">
       {heroImage && (
-        <div className="min-h-56 md:-mx-8 lg:-mx-16 xl:-mx-32">
+        <div className="min-h-56">
           <Media
             priority
             sizes="(max-width: 768px) 100vw, 1024px"

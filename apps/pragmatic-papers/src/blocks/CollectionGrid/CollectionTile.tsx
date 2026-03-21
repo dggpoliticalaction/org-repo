@@ -57,7 +57,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       href={href}
       id={id ?? undefined}
       className={cn(
-        "group @container flex flex-col gap-6",
+        "group @container flex flex-col gap-x-6 gap-y-2",
         isHorizontal && "flex-col items-start md:flex-row",
         className,
       )}
@@ -65,8 +65,8 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       {heroImage && (
         <div
           className={cn(
-            "aspect-video overflow-hidden rounded-sm border",
-            isHorizontal ? "md:basis-1/2" : "w-full shrink",
+            "aspect-video w-full overflow-hidden rounded-sm border",
+            isHorizontal ? "md:basis-1/2" : "shrink",
             imagePosition === "left" && "md:order-first",
             imagePosition === "right" && "md:order-last",
           )}
@@ -102,7 +102,9 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
 
         {/* Description */}
         {meta?.description && (
-          <p className="text-primary text-md mt-1 line-clamp-3 font-serif">{meta!.description}</p>
+          <p className="text-primary mt-1 line-clamp-3 font-serif text-lg leading-tight">
+            {meta!.description}
+          </p>
         )}
 
         {/* Timestamp */}
