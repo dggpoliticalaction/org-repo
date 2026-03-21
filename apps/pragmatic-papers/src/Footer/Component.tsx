@@ -1,4 +1,3 @@
-import { CMSLink } from "@/components/Link/CMSLink2"
 import { Logo } from "@/components/Logo"
 import { Menu } from "@/components/Menu"
 import { ModeToggle } from "@/components/ModeToggle"
@@ -21,11 +20,7 @@ export async function Footer(): Promise<React.ReactElement> {
         </div>
       </div>
       <div className="flex flex-col-reverse items-start gap-1 md:flex-row md:items-center md:justify-between md:gap-2">
-        {copyright && (
-          <CMSLink link={copyright} className="underline-offset-4 hover:underline">
-            <Copyright>{copyright.label}</Copyright>
-          </CMSLink>
-        )}
+        <Copyright copyright={copyright} />
         <Menu menu={navItems} />
       </div>
     </footer>
