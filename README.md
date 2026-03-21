@@ -24,18 +24,72 @@ This repo uses some additional tools:
 ### Quick Start
 
 1. [Clone the repo](https://github.com/digitalgroundgame/pragmatic-papers.git) and `cd` into it.
-
 2. Run `pnpm install`. The preinstall hook copies `apps/pragmatic-papers/.env` from `.env.example` if missing.
-
-3. _(Optional)_ Set up the private display font — see [Private Font Setup](#private-font-setup) below.
-
+3. *(Optional)* Set up the private display font — see [Private Font Setup](#private-font-setup) below.
 4. Start dev:
-
-   ```bash
+  ```bash
    pnpm dev
-   ```
-
+  ```
 5. Open [http://localhost:8000](http://localhost:8000).
+
+## Private Font Setup
+
+The `@digitalgroundgame/fonts` package contains the proprietary display font. It is optional — the site works without it, falling back to system fonts. If you don't have access, skip this section.
+
+If you do have access, create a **Classic GitHub Personal Access Token (PAT)** at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope.
+
+Set `GH_FONT_READ` in your environment, it will be referenced by our project's `.npmrc`:
+
+```
+//npm.pkg.github.com/:_authToken=${GH_FONT_READ}
+```
+
+Set the variable in your shell:
+
+- **Mac/Linux** — add to `~/.zshrc` or `~/.bashrc`:
+  ```bash
+  # ~/.zshrc
+  export GH_FONT_READ=ghp_your_token_here
+  ```
+- **Windows (PowerShell)** — set permanently for your user:
+  ```powershell
+  [System.Environment]::SetEnvironmentVariable("GH_FONT_READ", "ghp_your_token_here", "User")
+  ```
+  Alternatively, open **System Properties → Advanced → Environment Variables** (search "environment variables" in the Start menu) and add `GH_FONT_READ` under "User variables".
+
+Restart your terminal after setting the variable.[text](url)
+
+Re-run `pnpm install` after setting up your credentials. You should see `✓ Fonts copied to public/fonts` in the output.
+
+> [!WARNING]
+> You will see console warnings until GH_FONT_READ is set as an environment variable during development.
+
+## Seeding the Database
+
+In order to see some basic content and website functionality it is key to seed your development database with mock content.
+
+1. Navigate to `http://localhost:8000/admin`
+2. Create a new user. The credentials don't matter here as its local.
+3. When you land on the dashboard click the `Seed your database` link.
+4. Wait a few moments and now your website will have some example content when returning to browsing `http://localhost:8000`
+
+> [!TIP]
+> If your docker database ever gets into a unrecoverable state, or you are switch branches that have different database schemas, be sure to run `pnpm dev:db-nuke` to blow away your database and start fresh.
+
+Read more about [Seeding The Database](https://github.com/digitalgroundgame/pragmatic-papers/wiki/Seeding-the-Database)
+
+## Helpful Commands
+
+Here are the most important scripts available in the root `package.json`:
+
+- `pnpm dev`: Start the application in development mode.
+- `pnpm dev:db`: Start the development docker container. This happens automatically when running `pnpm dev`.
+- `pnpm dev:db-down`: Stop the development docker container.
+- `pnpm dev:db-nuke`: Stop the container *and* remove the database volume.
+- `pnpm lint`: Lint files with `eslint`.
+- `pnpm format`: Format files with `prettier`.
+- `pnpm check-types`: Runs typescript compiler in no emit mode to check for type errors.
+- `pnpm migrate:create "name_of_migration"`: Create the necessary migrations for your Pull Request, if the underlying data has changed. This is necessary in order to deploy your Pull Request on to our staging environment.
 
 > [!NOTE]
 > **Development Migrations**
@@ -44,41 +98,14 @@ This repo uses some additional tools:
 >
 > Payload uses Drizzle ORM's powerful push mode to automatically sync data changes to your database for you while in development mode. By default, this is enabled and is the suggested workflow to using Postgres and Payload while doing local development.
 
-## Private Font Setup
-
-The `@digitalgroundgame/fonts` package contains the proprietary display font. It is optional — the site works without it, falling back to system fonts. If you don't have access, skip this section.
-
-If you do have access, create a **Classic GitHub Personal Access Token (PAT)** at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope, then add the following to your global `~/.npmrc` (create the file if it doesn't exist):  
-
-```
-//npm.pkg.github.com/:_authToken=ghp_your_token_here
-```
-
-> **Never commit tokens.** Store installation credentials in your global `~/.npmrc` only — not in the project's `.npmrc`.
-
-Re-run `pnpm install` after setting up your credentials. You should see `✓ Fonts copied to public/fonts` in the output.
-
-## Development Scripts
-
-Here are the most important scripts available in the root `package.json`:
-
-- `pnpm install`: Install dependencies (loads `.env` for org packages; creates `.env` from example if missing).
-- `pnpm build`: Build application.
-- `pnpm dev`: Start application in development mode.
-- `pnpm dev:db`: Start the development docker containers.
-- `pnpm dev:db-down`: Stop the development docker containers.
-- `pnpm dev:db-nuke`: Stop the containers and remove the database volumes.
-- `pnpm lint`: Lint application.
-- `pnpm format`: Format application.
-- `pnpm check-types`: Run typescript to check for type errors.
-- `pnpm ci`: A script for running in a CI environment.
-
 ### Production Migrations
 
 Migrations will be required for non-development database environments.
+
 - Please refer to the offical [Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)
 
 ## Useful Links
 
 - [Payload Documentation](https://payloadcms.com/docs/getting-started/what-is-payload)
-  - [Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)
+- [Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)
+
