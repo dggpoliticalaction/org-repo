@@ -28,6 +28,8 @@ Turborepo monorepo for **Pragmatic Papers**, a Next.js 15 website with Payload C
   - `pnpm payload migrate` — run database migrations
   - `pnpm payload migrate:create "migation_name"` — create a new migration. Pass a name as the first argument.
 
+> **Important for agents**: Always use `pnpm payload generate:types` to regenerate `payload-types.ts` after changing collections, globals, or fields — never edit it by hand. Always use `pnpm payload migrate:create "<name>"` to generate migration files — never write them manually. Both commands require the Postgres container to be running (`pnpm dev:db` first).
+
 ## Architecture
 
 ### Monorepo Structure
