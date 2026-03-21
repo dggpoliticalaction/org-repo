@@ -39,6 +39,7 @@ COPY --from=pruner /app/.npmrc ./.npmrc
 # GitHub Packages auth (set GH_FONT_READ as build arg in Coolify for staging/prod)
 ARG GH_FONT_READ
 ENV GH_FONT_READ=${GH_FONT_READ}
+
 # Install dependencies with frozen lockfile
 # Using cache mount for pnpm store to speed up builds
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
