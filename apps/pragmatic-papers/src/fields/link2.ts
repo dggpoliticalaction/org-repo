@@ -18,6 +18,7 @@ interface LinkFields {
 
 type LinkProps = Omit<NamedGroupField, "fields" | "name" | "type" | "interfaceName"> & {
   component?: LinkFields
+  name?: string
 }
 
 /**
@@ -26,12 +27,12 @@ type LinkProps = Omit<NamedGroupField, "fields" | "name" | "type" | "interfaceNa
  * @param props - The props for the base link field
  * @returns The link field
  */
-export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField => {
+export const link = ({ component = {}, name = "link", ...props }: LinkProps = {}): GroupField => {
   const { type = {}, newTab = {}, reference = {}, url = {}, label = {} } = component
   return {
     label: "Link",
     ...props,
-    name: "link",
+    name,
     type: "group",
     interfaceName: "LinkField",
     fields: [
