@@ -18,7 +18,13 @@ export const Newton4: LayoutDefinition = {
  * Newton 4 Layout
  * Desktop: 75%/25% two-column split
  */
-export const Newton4Layout: React.FC<LayoutProps> = ({ className, slots, priority, loading, ...props }) => {
+export const Newton4Layout: React.FC<LayoutProps> = ({
+  className,
+  slots,
+  priority,
+  loading,
+  ...props
+}) => {
   const [featured, a, b, c] = slots
 
   return (
