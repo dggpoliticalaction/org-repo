@@ -15,16 +15,13 @@ interface RenderBlocksProps {
 }
 
 export const RenderBlocks: React.FC<RenderBlocksProps> = ({ blocks, pageNumber }) => {
-  let collectionGridCount = 0
   return (
     <>
       {blocks.map((block, index) => {
         const { blockType } = block
         const key = `block-${block.id || index}`
         if (blockType === "collectionGrid") {
-          const isFirst = collectionGridCount === 0
-          collectionGridCount++
-          return <CollectionGridBlock key={key} {...block} priority={isFirst} />
+          return <CollectionGridBlock key={key} {...block} priority={index === 0} />
         } else if (blockType === "content") {
           return <ContentBlock key={key} {...block} />
         } else if (blockType === "cta") {
