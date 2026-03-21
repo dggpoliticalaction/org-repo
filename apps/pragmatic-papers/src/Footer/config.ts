@@ -22,7 +22,8 @@ export const Footer: GlobalConfig = {
       label: "Copyright",
       name: "copyright",
       admin: {
-        description: 'The copyright symbol (©) and current year are automatically prepended to the label.',
+        description:
+          "The copyright symbol (©) and current year are automatically prepended to the label.",
       },
     }),
   ],
