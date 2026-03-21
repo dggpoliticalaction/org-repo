@@ -115,7 +115,10 @@ function RecommendationCard({ article, compact }: { article: RankedArticle; comp
   )
 }
 
-export function RecommendedArticlesClient({ rankings, currentArticleSlug }: Props): React.ReactNode {
+export function RecommendedArticlesClient({
+  rankings,
+  currentArticleSlug,
+}: Props): React.ReactNode {
   const [variant, setVariant] = useState<Variant | null>(null)
 
   useEffect(() => {

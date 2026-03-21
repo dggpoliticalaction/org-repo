@@ -8,7 +8,9 @@ interface RecommendedArticlesProps {
   currentArticleSlug: string
 }
 
-export async function RecommendedArticles({ currentArticleSlug }: RecommendedArticlesProps): Promise<React.ReactNode> {
+export async function RecommendedArticles({
+  currentArticleSlug,
+}: RecommendedArticlesProps): Promise<React.ReactNode> {
   const payload = await getPayload({ config: configPromise })
 
   const recommendations = await payload.findGlobal({
