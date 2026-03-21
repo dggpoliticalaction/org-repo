@@ -1,5 +1,6 @@
 import type { Page } from "@/payload-types"
 import type { Payload } from "payload"
+import { createOrUpdatePage } from "../pages"
 
 /**
  * Creates the home page with CollectionGrid blocks and saves it to the `pages` collection.
@@ -34,11 +35,9 @@ export async function createCollectionGridHomePage(
   volume2ArticleIds: number[],
   featureArticleIds: number[],
 ): Promise<Page> {
-  return await payload.create({
-    collection: "pages",
-    data: {
-      title: "Home",
-      slug: "home",
+  return await createOrUpdatePage(payload, {
+    title: "Home",
+    slug: "home",
       generateSlug: false,
       _status: "published",
       publishedAt: new Date().toISOString(),
@@ -477,6 +476,5 @@ export async function createCollectionGridHomePage(
         image: null,
         description: "Home page",
       },
-    },
   })
 }
