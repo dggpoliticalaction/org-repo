@@ -8,9 +8,10 @@ interface CopyrightProps {
 }
 
 export const Copyright: React.FC<CopyrightProps> = ({ className, copyright }) => {
+  if (!copyright) return null
   return (
     <CMSLink
-      link={copyright ?? undefined}
+      link={copyright}
       className={cn("text-sm underline-offset-4 hover:underline", className)}
     >
       &copy; {new Date().getFullYear()} {copyright?.label}
