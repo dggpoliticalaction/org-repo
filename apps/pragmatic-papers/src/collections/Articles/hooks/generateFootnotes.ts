@@ -21,10 +21,7 @@ const getDedupeKey = (fields: FootnoteBlock): string => {
   return `${fields.note}|${refId}`
 }
 
-const collectByNode = (
-  node: SerializedLexicalNode,
-  into: Map<string, FootnoteFields>,
-): void => {
+const collectByNode = (node: SerializedLexicalNode, into: Map<string, FootnoteFields>): void => {
   if (!node || typeof node !== "object") return
 
   if (node.type === "inlineBlock") {
