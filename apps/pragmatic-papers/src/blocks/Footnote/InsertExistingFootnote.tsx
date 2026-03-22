@@ -2,7 +2,7 @@
 
 import type { FootnotesField } from "@/payload-types"
 import { useDocumentInfo, useField } from "@payloadcms/ui"
-import React, { useCallback, useMemo, useState } from "react"
+import React, { useMemo, useState } from "react"
 
 export const InsertExistingFootnote: React.FC = () => {
   const { data } = useDocumentInfo()
@@ -16,25 +16,22 @@ export const InsertExistingFootnote: React.FC = () => {
 
   const footnotes = useMemo(() => (data?.footnotes as NonNullable<FootnotesField>) ?? [], [data])
 
-  const handleSelect = useCallback(
-    (value: string) => {
-      setSelected(value)
-      if (!value) return
+  const handleSelect = (value: string) => {
+    setSelected(value)
+    if (!value) return
 
-      const footnote = footnotes[Number(value)]
-      if (!footnote) return
+    const footnote = footnotes[Number(value)]
+    if (!footnote) return
 
-      setNote(footnote.note)
-      setAttributionEnabled(footnote.attributionEnabled)
+    setNote(footnote.note)
+    setAttributionEnabled(footnote.attributionEnabled)
 
-      if (footnote.attributionEnabled && footnote.link) {
-        setLinkType(footnote.link.type ?? "custom")
-        setLinkUrl(footnote.link.url ?? "")
-        setLinkNewTab(footnote.link.newTab ?? false)
-      }
-    },
-    [footnotes, setNote, setAttributionEnabled, setLinkType, setLinkUrl, setLinkNewTab],
-  )
+    if (footnote.attributionEnabled && footnote.link) {
+      setLinkType(footnote.link.type ?? "custom")
+      setLinkUrl(footnote.link.url ?? "")
+      setLinkNewTab(footnote.link.newTab ?? false)
+    }
+  }
 
   if (!footnotes.length) return null
 
