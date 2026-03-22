@@ -14,10 +14,7 @@ export const InsertExistingFootnote: React.FC = () => {
   const { setValue: setLinkUrl } = useField<string>({ path: "link.url" })
   const { setValue: setLinkNewTab } = useField<boolean>({ path: "link.newTab" })
 
-  const footnotes = useMemo(
-    () => (data?.footnotes as NonNullable<FootnotesField>) ?? [],
-    [data],
-  )
+  const footnotes = useMemo(() => (data?.footnotes as NonNullable<FootnotesField>) ?? [], [data])
 
   const handleSelect = useCallback(
     (value: string) => {
