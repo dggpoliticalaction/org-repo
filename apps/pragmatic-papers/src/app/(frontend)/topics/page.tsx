@@ -7,9 +7,6 @@ import { draftMode } from "next/headers"
 import { getPayload } from "payload"
 import React, { cache } from "react"
 
-export const dynamic = "force-static"
-export const revalidate = 600
-
 export const metadata: Metadata = {
   title: "Topics | Pragmatic Papers",
   description: "Browse all topics on Pragmatic Papers.",
@@ -53,14 +50,14 @@ export default async function TopicsPage({ searchParams }: Args): Promise<React.
     <article className="mx-auto max-w-3xl space-y-6 px-4 pt-10 pb-20">
       {draft && <LivePreviewListener />}
 
-      <header className="space-y-3 text-center">
-        <h1 className="text-3xl font-bold md:text-4xl">Topics</h1>
+      <header className="space-y-3">
+        <h1>Topics</h1>
         <p className="text-muted-foreground text-sm">Browse all topics</p>
       </header>
 
       <section aria-label="All topics" className="mt-8">
         {topics.length === 0 ? (
-          <p className="mt-8 text-center text-sm text-muted-foreground">No topics found.</p>
+          <p className="text-muted-foreground text-sm">No topics found.</p>
         ) : (
           <>
             <div className="mt-8 flex justify-center">
