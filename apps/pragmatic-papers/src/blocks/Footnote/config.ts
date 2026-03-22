@@ -27,7 +27,9 @@ export const FootnoteBlock: Block = {
       component: {
         note: {
           admin: {
-            condition: (_, s) => !s?.sourceId,
+            components: {
+              Field: "@/blocks/Footnote/NoteField#NoteField",
+            },
           },
         },
         attributionEnabled: {

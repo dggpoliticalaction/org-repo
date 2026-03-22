@@ -2172,7 +2172,7 @@ export interface FootnoteBlock {
   /**
    * Footnote text.
    */
-  note?: string | null;
+  note: string;
   /**
    * Auto-generated on save.
    */
