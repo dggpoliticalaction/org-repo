@@ -2,7 +2,7 @@
 
 import type { FootnotesField } from "@/payload-types"
 import { useDocumentInfo, useField } from "@payloadcms/ui"
-import React, { useMemo, useState } from "react"
+import React, { useState } from "react"
 
 export const InsertExistingFootnote: React.FC = () => {
   const { data } = useDocumentInfo()
@@ -14,7 +14,7 @@ export const InsertExistingFootnote: React.FC = () => {
   const { setValue: setLinkUrl } = useField<string>({ path: "link.url" })
   const { setValue: setLinkNewTab } = useField<boolean>({ path: "link.newTab" })
 
-  const footnotes = useMemo(() => (data?.footnotes as NonNullable<FootnotesField>) ?? [], [data])
+  const footnotes = (data?.footnotes as NonNullable<FootnotesField>) ?? []
 
   const handleSelect = (value: string) => {
     setSelected(value)
