@@ -28,8 +28,10 @@ const layouts = {
   "fibonacci-7": Fibonacci7Layout,
 } as const satisfies Record<NonNullable<CollectionGridLayout>, React.FC<LayoutProps>>
 
-export const CollectionGridBlock: React.FC<CollectionGridBlockType> = async (props) => {
-  const { layout, id, slots } = props
+export const CollectionGridBlock: React.FC<
+  CollectionGridBlockType & { priority?: boolean }
+> = async (props) => {
+  const { layout, id, slots, priority } = props
   if (!layout) return null
   const LayoutComponent = layouts[layout]
   return (
@@ -38,6 +40,8 @@ export const CollectionGridBlock: React.FC<CollectionGridBlockType> = async (pro
         id={id ?? undefined}
         className="container mb-10 items-stretch md:mb-20 lg:mb-40"
         slots={slots}
+        priority={priority}
+        loading={priority ? "eager" : undefined}
       />
       <Separator className="container mx-auto mb-10 px-4 last-of-type:mb-10 md:mb-20 lg:mb-40" />
     </>
