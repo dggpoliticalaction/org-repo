@@ -278,7 +278,12 @@ async function createArticle(payload: Payload, options: CreateArticleOptions): P
         // Minimal-fields fallback: strip relationships, rich text, and uploads
         return await payload.create({
           collection: "articles",
-          data: { title: options.title, slug: options.slug, _status: "published", publishedAt: new Date().toISOString() },
+          data: {
+            title: options.title,
+            slug: options.slug,
+            _status: "published",
+            publishedAt: new Date().toISOString(),
+          },
         })
       }
 
@@ -311,7 +316,10 @@ async function createUser(payload: Payload, data: UserData, label: string): Prom
       `Failed to create ${label} with full data, retrying with minimal fields. Error: ${err instanceof Error ? err.message : String(err)}`,
     )
     const { email, password, name, role, slug } = data
-    return await payload.create({ collection: "users", data: { email, password, name, role, ...(slug ? { slug } : {}) } })
+    return await payload.create({
+      collection: "users",
+      data: { email, password, name, role, ...(slug ? { slug } : {}) },
+    })
   }
 }
 ```
@@ -362,7 +370,10 @@ async function createOrUpdateVolume(payload: Payload, data: VolumeData): Promise
     try {
       if (isLastAttempt) {
         const { title, volumeNumber, description, slug, _status, publishedAt } = data
-        return await payload.create({ collection: "volumes", data: { title, volumeNumber, description, slug, _status, publishedAt } })
+        return await payload.create({
+          collection: "volumes",
+          data: { title, volumeNumber, description, slug, _status, publishedAt },
+        })
       }
 
       return await payload.create({ collection: "volumes", data })
@@ -371,7 +382,11 @@ async function createOrUpdateVolume(payload: Payload, data: VolumeData): Promise
 
       if (message.toLowerCase().includes("slug")) {
         // slug conflict → upsert regardless of attempt
-        const existing = await payload.find({ collection: "volumes", where: { slug: { equals: data.slug } }, limit: 1 })
+        const existing = await payload.find({
+          collection: "volumes",
+          where: { slug: { equals: data.slug } },
+          limit: 1,
+        })
         const doc = existing.docs[0]
         if (!doc) throw err
         payload.logger.warn(`Volume slug "${data.slug}" already exists, updating.`)
@@ -379,10 +394,14 @@ async function createOrUpdateVolume(payload: Payload, data: VolumeData): Promise
       }
 
       if (attempt < maxAttempts) {
-        payload.logger.warn(`Volume create attempt ${attempt}/${maxAttempts} failed for "${data.slug}", retrying. Error: ${message}`)
+        payload.logger.warn(
+          `Volume create attempt ${attempt}/${maxAttempts} failed for "${data.slug}", retrying. Error: ${message}`,
+        )
         await new Promise((resolve) => setTimeout(resolve, 500 * attempt))
       } else {
-        payload.logger.warn(`Failed to create volume "${data.slug}" with full data, retrying with minimal fields. Error: ${message}`)
+        payload.logger.warn(
+          `Failed to create volume "${data.slug}" with full data, retrying with minimal fields. Error: ${message}`,
+        )
       }
     }
   }
@@ -397,7 +416,7 @@ Payload always calls `docWithFilenameExists` before uploading, which runs a `bui
 
 Two things work together to handle this:
 
-1. **Timestamp prefix** — prefixing filenames with `Date.now()` ensures the name is always unique, so Payload never tries to generate an incremented name (e.g. `image-post1-2.webp`) which would trigger a *second* `buildQuery` call and a second crash.
+1. **Timestamp prefix** — prefixing filenames with `Date.now()` ensures the name is always unique, so Payload never tries to generate an incremented name (e.g. `image-post1-2.webp`) which would trigger a _second_ `buildQuery` call and a second crash.
 
 2. **Retry loop in `createMediaFromURL`** — if the initial `docWithFilenameExists` query crashes due to a hot-reload-reset adapter, the retry lets the adapter reinitialise before the next attempt.
 
@@ -427,12 +446,12 @@ This surfaces `Seed step "Creating volumes..." failed: ...` instead of a raw sta
 
 These field types are known to cause internal Drizzle errors in v3.79.1 when the DB is in a partially-cleaned state. Always strip them from fallback retry data:
 
-| Field type | Example | Safe to strip in fallback? |
-|---|---|---|
-| `array` | `socials`, `links` | Yes — typically optional |
-| `richText` | `biography`, `editorsNote` | Yes — typically optional |
-| `upload` / `relationship` | `profileImage`, `meta.image`, `articles` | Yes — use `null` or omit |
-| `blocks` | page `layout` | Caution — may be required |
+| Field type                | Example                                  | Safe to strip in fallback? |
+| ------------------------- | ---------------------------------------- | -------------------------- |
+| `array`                   | `socials`, `links`                       | Yes — typically optional   |
+| `richText`                | `biography`, `editorsNote`               | Yes — typically optional   |
+| `upload` / `relationship` | `profileImage`, `meta.image`, `articles` | Yes — use `null` or omit   |
+| `blocks`                  | page `layout`                            | Caution — may be required  |
 
 Scalar fields (`text`, `number`, `select`, `date`, `checkbox`) are safe and should always be included in the fallback.
 
