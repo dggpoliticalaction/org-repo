@@ -2166,6 +2166,10 @@ export interface InlineMathBlock {
  */
 export interface FootnoteBlock {
   /**
+   * The Optional ID of an existing footnote to link to. Hidden in the admin UI.
+   */
+  sourceId?: string | null;
+  /**
    * Footnote text.
    */
   note: string;
@@ -2176,7 +2180,7 @@ export interface FootnoteBlock {
   /**
    * Optionally add a source link to the footnote.
    */
-  attributionEnabled: boolean;
+  attributionEnabled?: boolean | null;
   link?: LinkField;
   id?: string | null;
   blockName?: string | null;

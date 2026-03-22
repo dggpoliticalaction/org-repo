@@ -8,16 +8,17 @@ import type {
   TextFieldSingleValidation,
 } from "payload"
 
-interface LinkFields {
-  label?: Partial<TextField>
-  newTab?: Partial<CheckboxField>
-  reference?: Partial<SingleRelationshipField>
-  type?: Partial<RadioField>
-  url?: Partial<TextField>
-}
-
-type LinkProps = Omit<NamedGroupField, "fields" | "name" | "type" | "interfaceName"> & {
-  component?: LinkFields
+export type LinkFieldOverrides = Omit<
+  NamedGroupField,
+  "fields" | "name" | "type" | "interfaceName"
+> & {
+  component?: {
+    label?: Partial<TextField>
+    newTab?: Partial<CheckboxField>
+    reference?: Partial<SingleRelationshipField>
+    type?: Partial<RadioField>
+    url?: Partial<TextField>
+  }
 }
 
 /**
@@ -26,7 +27,7 @@ type LinkProps = Omit<NamedGroupField, "fields" | "name" | "type" | "interfaceNa
  * @param props - The props for the base link field
  * @returns The link field
  */
-export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField => {
+export const link = ({ component = {}, ...props }: LinkFieldOverrides = {}): GroupField => {
   const { type = {}, newTab = {}, reference = {}, url = {}, label = {} } = component
   return {
     label: "Link",

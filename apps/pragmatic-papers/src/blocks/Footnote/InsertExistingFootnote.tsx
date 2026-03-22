@@ -1,57 +1,48 @@
 "use client"
 
 import type { FootnotesField } from "@/payload-types"
-import { useDocumentInfo, useField } from "@payloadcms/ui"
+import { type ReactSelectOption, ReactSelect, useDocumentInfo, useField } from "@payloadcms/ui"
 import React, { useState } from "react"
 
 export const InsertExistingFootnote: React.FC = () => {
   const { data } = useDocumentInfo()
-  const [selected, setSelected] = useState("")
+  const [selected, setSelected] = useState<ReactSelectOption | undefined>(undefined)
 
+  const { setValue: setSourceId } = useField<string>({ path: "sourceId" })
   const { setValue: setNote } = useField<string>({ path: "note" })
-  const { setValue: setAttributionEnabled } = useField<boolean>({ path: "attributionEnabled" })
-  const { setValue: setLinkType } = useField<string>({ path: "link.type" })
-  const { setValue: setLinkUrl } = useField<string>({ path: "link.url" })
-  const { setValue: setLinkNewTab } = useField<boolean>({ path: "link.newTab" })
 
   const footnotes = (data?.footnotes as NonNullable<FootnotesField>) ?? []
 
-  const handleSelect = (value: string) => {
-    setSelected(value)
-    if (!value) return
+  const handleChange = (value: ReactSelectOption | ReactSelectOption[]) => {
+    const option = Array.isArray(value) ? value[0] : value
+    setSelected(option)
+    if (!option) return
 
-    const footnote = footnotes[Number(value)]
+    const footnote = footnotes[Number(option.value)]
     if (!footnote) return
 
+    setSourceId(footnote.id ?? "")
     setNote(footnote.note)
-    setAttributionEnabled(footnote.attributionEnabled)
-
-    if (footnote.attributionEnabled && footnote.link) {
-      setLinkType(footnote.link.type ?? "custom")
-      setLinkUrl(footnote.link.url ?? "")
-      setLinkNewTab(footnote.link.newTab ?? false)
-    }
   }
 
   if (!footnotes.length) return null
 
+  const options: ReactSelectOption[] = footnotes.map((footnote, i) => ({
+    label: footnote.note.length > 80 ? `${footnote.note.slice(0, 80)}…` : footnote.note,
+    value: String(i),
+  }))
+
   return (
     <div className="field-type">
       <div className="label-wrapper">
-        <label className="field-label">Insert Existing Footnote</label>
+        <label className="field-label">Link to Existing Footnote</label>
       </div>
-      <select
+      <ReactSelect
+        onChange={handleChange}
+        options={options}
+        placeholder="— Select a footnote to link —"
         value={selected}
-        onChange={(e) => handleSelect(e.target.value)}
-        style={{ width: "100%" }}
-      >
-        <option value="">— Select a footnote to copy —</option>
-        {footnotes.map((footnote, i) => (
-          <option key={footnote.id ?? i} value={String(i)}>
-            {footnote.note.length > 80 ? `${footnote.note.slice(0, 80)}…` : footnote.note}
-          </option>
-        ))}
-      </select>
+      />
     </div>
   )
 }
