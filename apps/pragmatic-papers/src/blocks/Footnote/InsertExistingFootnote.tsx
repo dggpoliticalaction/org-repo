@@ -18,14 +18,20 @@ export const InsertExistingFootnote: React.FC = () => {
   useEffect(() => {
     if (!id || collectionSlug !== "articles") return
 
-    fetch(`/api/articles/${id}?depth=0&draft=true`)
+    const controller = new AbortController()
+
+    fetch(`/api/articles/${id}?depth=0&draft=true`, { signal: controller.signal })
       .then((r) => r.json())
       .then((data: { footnotes?: FootnotesField }) => {
         setFootnotes(data.footnotes ?? ([] as NonNullable<FootnotesField>))
       })
-      .catch(() => {
-        // Silently fail — article may not be saved yet
+      .catch((err: unknown) => {
+        if (err instanceof Error && err.name !== "AbortError") {
+          setFootnotes([])
+        }
       })
+
+    return () => controller.abort()
   }, [id, collectionSlug])
 
   const handleSelect = useCallback(
@@ -62,7 +68,7 @@ export const InsertExistingFootnote: React.FC = () => {
       >
         <option value="">— Select a footnote to copy —</option>
         {footnotes.map((footnote, i) => (
-          <option key={i} value={String(i)}>
+          <option key={footnote.id ?? i} value={String(i)}>
             {footnote.note.length > 80 ? `${footnote.note.slice(0, 80)}…` : footnote.note}
           </option>
         ))}

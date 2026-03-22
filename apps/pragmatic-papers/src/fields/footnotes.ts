@@ -25,15 +25,6 @@ const prependHttpsHook: FieldHook = ({ siblingData, value }) => {
 
 export const footnoteFields = (): Field[] => [
   {
-    name: "insertExistingFootnote",
-    type: "ui",
-    admin: {
-      components: {
-        Field: "@/blocks/Footnote/InsertExistingFootnote#InsertExistingFootnote",
-      },
-    },
-  },
-  {
     name: "note",
     type: "textarea",
     required: true,
