@@ -25,6 +25,15 @@ const prependHttpsHook: FieldHook = ({ siblingData, value }) => {
 
 export const footnoteFields = (): Field[] => [
   {
+    name: "insertExistingFootnote",
+    type: "ui",
+    admin: {
+      components: {
+        Field: "@/blocks/Footnote/InsertExistingFootnote#InsertExistingFootnote",
+      },
+    },
+  },
+  {
     name: "note",
     type: "textarea",
     required: true,
@@ -90,6 +99,6 @@ export const footnotesArrayField = (): ArrayField => ({
   },
   admin: {
     readOnly: true,
-    hidden: true,
+    condition: (data) => Boolean(data?.footnotes?.length),
   },
 })

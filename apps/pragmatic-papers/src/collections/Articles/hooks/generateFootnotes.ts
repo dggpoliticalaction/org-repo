@@ -6,11 +6,25 @@ import type {
 } from "@payloadcms/richtext-lexical/lexical"
 import type { CollectionBeforeChangeHook } from "payload"
 
+const getDedupeKey = (fields: FootnoteBlock): string => {
+  if (!fields.attributionEnabled || !fields.link) {
+    return fields.note
+  }
+  if (fields.link.type === "custom") {
+    return `${fields.note}|${fields.link.url ?? ""}`
+  }
+  const ref = fields.link.reference
+  const refId =
+    typeof ref?.value === "string" ? ref.value : ((ref?.value as { id?: string } | null)?.id ?? "")
+  return `${fields.note}|${refId}`
+}
+
 export const collectFootnotes = (editorState?: SerializedEditorState | null): FootnotesField => {
   if (!editorState || typeof editorState !== "object") return []
 
   let footnoteIndex = 0
   const result: FootnotesField = []
+  const seen = new Map<string, number>()
 
   const visitNode = (node: SerializedLexicalNode) => {
     if (!node || typeof node !== "object") return
@@ -19,9 +33,16 @@ export const collectFootnotes = (editorState?: SerializedEditorState | null): Fo
       const inlineNode = node as SerializedInlineBlockNode<FootnoteBlock>
 
       if (inlineNode.fields.blockType === "footnote") {
-        footnoteIndex += 1
-        inlineNode.fields.index = footnoteIndex
-        result.push(inlineNode.fields)
+        const key = getDedupeKey(inlineNode.fields)
+
+        if (seen.has(key)) {
+          inlineNode.fields.index = seen.get(key)!
+        } else {
+          footnoteIndex += 1
+          inlineNode.fields.index = footnoteIndex
+          seen.set(key, footnoteIndex)
+          result.push(inlineNode.fields)
+        }
       }
     }
 
