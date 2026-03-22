@@ -262,9 +262,9 @@ await createMyFeatureArticle(payload, writer1, mediaDocs)
 
 **All `payload.create` calls in seeds should have a fallback.** A seed that crashes halfway is worse than a seed that succeeds with slightly less data — a partial seed corrupts the `ctx` state that downstream steps depend on.
 
-### Pattern 1: Retry loop with minimal-fields fallback
+### Pattern 1: Retry loop with backoff
 
-For any `payload.create` that can be affected by a hot-reload mid-seed, use a retry loop with exponential backoff. Hot-reload errors are transient, so retrying with the same data is usually sufficient — don't strip fields on the final attempt for versioned collections, as required fields (like `authors`) will cause type errors and stripping `content` produces a useless document.
+For any `payload.create` that can be affected by a hot-reload mid-seed, use a retry loop with exponential backoff. Hot-reload errors are transient — retrying with the same data is sufficient. Don't strip fields on the final attempt for collections where required fields (like `authors`) would cause type errors or where stripping core content produces a useless document.
 
 ```typescript
 async function createArticle(payload: Payload, options: CreateArticleOptions): Promise<Article> {
@@ -343,7 +343,7 @@ async function createOrUpdatePage(payload: Payload, data: PageData): Promise<Pag
 
 See: `pages.ts` → `createOrUpdatePage`, `volumes.ts` → `createOrUpdateVolume`
 
-Combine both patterns for versioned collections: retry loop for Drizzle errors, slug-conflict upsert handled inline, minimal-fields strip only on the final attempt:
+Volumes combine both patterns — retry loop for Drizzle errors, slug-conflict upsert handled inline, and a minimal-fields strip on the final attempt. Stripping is safe here because `editorsNote` (richText) and `articles` (relationship) are optional, unlike articles where `content` and `authors` are core:
 
 ```typescript
 async function createOrUpdateVolume(payload: Payload, data: VolumeData): Promise<Volume> {
