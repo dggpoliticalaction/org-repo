@@ -20,7 +20,13 @@ export const Fibonacci7: LayoutDefinition = {
 /**
  * Desktop (lg:grid-cols-4)
  */
-export const Fibonacci7Layout: React.FC<LayoutProps> = ({ className, slots, ...props }) => {
+export const Fibonacci7Layout: React.FC<LayoutProps> = ({
+  className,
+  slots,
+  priority,
+  loading,
+  ...props
+}) => {
   const [featured, a, b, c, d, e, f] = slots
 
   return (
@@ -33,11 +39,12 @@ export const Fibonacci7Layout: React.FC<LayoutProps> = ({ className, slots, ...p
         className="md:col-span-2 lg:col-span-3"
         tile={featured!}
         imagePosition="right"
+        priority={priority}
       />
 
       {/* Slot D + E + F — right column: D then E, F (no image) */}
       <div className="flex flex-col gap-6 lg:row-span-2">
-        <CollectionTile tile={d!} />
+        <CollectionTile tile={d!} loading={loading} />
         <CollectionTile tile={e!} imagePosition="none" showByline />
         <CollectionTile tile={f!} imagePosition="none" showByline />
       </div>
