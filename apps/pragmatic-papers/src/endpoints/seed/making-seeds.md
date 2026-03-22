@@ -246,3 +246,203 @@ import { createMyFeatureArticle } from "./features/my-feature"
 // In the seed() function:
 await createMyFeatureArticle(payload, writer1, mediaDocs)
 ```
+
+---
+
+## Error Handling in Seeds
+
+> **Background:** `@payloadcms/drizzle@3.79.1` has a known bug in `buildQuery` and `transformArray` that causes `TypeError: Cannot read properties of undefined (reading '_uuid')` or `...(reading 'id')` when the Drizzle adapter's internal `tables` map has an undefined entry. Two things trigger this during seeding:
+>
+> 1. **Next.js hot-reloads** — the dev server recompiles mid-seed (triggered by `Generating import map` cycles), which resets the Drizzle adapter state. The very next `payload.create` / `payload.find` call after a recompile hits the uninitialised adapter.
+> 2. **Partially-cleaned DB state** — when `payload.delete` is called on a versioned collection, Payload's internal version cleanup can fail silently, leaving orphaned records. Subsequent operations (e.g. `enforceMaxVersions` → `findVersions`) then crash in `buildQuery`.
+>
+> The seed runs on a live dev server against a real Postgres instance, so either trigger can surface on any re-seed run. Seeds must handle them gracefully.
+
+### The Golden Rule
+
+**All `payload.create` calls in seeds should have a fallback.** A seed that crashes halfway is worse than a seed that succeeds with slightly less data — a partial seed corrupts the `ctx` state that downstream steps depend on.
+
+### Pattern 1: Retry loop with backoff
+
+For any `payload.create` that can be affected by a hot-reload mid-seed, use a retry loop with exponential backoff. Hot-reload errors are transient — retrying with the same data is sufficient. Don't strip fields on the final attempt for collections where required fields (like `authors`) would cause type errors or where stripping core content produces a useless document.
+
+```typescript
+async function createArticle(payload: Payload, options: CreateArticleOptions): Promise<Article> {
+  const maxAttempts = 3
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await payload.create({ collection: "articles", data: { ...options } })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      if (attempt < maxAttempts) {
+        payload.logger.warn(
+          `Article create attempt ${attempt}/${maxAttempts} failed for "${options.slug}", retrying. Error: ${message}`,
+        )
+        await new Promise((resolve) => setTimeout(resolve, 500 * attempt))
+      } else {
+        throw err
+      }
+    }
+  }
+
+  throw new Error(`Failed to create article "${options.slug}" after ${maxAttempts} attempts`)
+}
+```
+
+For non-versioned collections without hot-reload risk (e.g. users), a single try/catch with an immediate minimal-fields retry is sufficient:
+
+```typescript
+async function createUser(payload: Payload, data: UserData, label: string): Promise<User> {
+  try {
+    return await payload.create({ collection: "users", data })
+  } catch (err) {
+    payload.logger.warn(
+      `Failed to create ${label} with full data, retrying with minimal fields. Error: ${err instanceof Error ? err.message : String(err)}`,
+    )
+    const { email, password, name, role, slug } = data
+    return await payload.create({
+      collection: "users",
+      data: { email, password, name, role, ...(slug ? { slug } : {}) },
+    })
+  }
+}
+```
+
+See: `articles.ts` → `createArticle`, `users.ts` → `createUser`
+
+### Pattern 2: Create-or-update (for versioned collections with unique slugs)
+
+Versioned collections (Pages, Volumes) have `drafts.autosave: true`. When a document is deleted, Payload tries to clean up its versions. If that version cleanup fails internally (a known Drizzle bug), the page/volume row IS deleted but version records linger. On the next seed run, creating the same slug succeeds at the DB level but Payload's unique validation rejects it.
+
+Use a create-or-update pattern: try `payload.create`, and if the error mentions "slug", find the existing document by slug and `payload.update` it instead.
+
+```typescript
+async function createOrUpdatePage(payload: Payload, data: PageData): Promise<Page> {
+  try {
+    return await payload.create({ collection: "pages", data })
+  } catch (err) {
+    const isSlugConflict = err instanceof Error && err.message.toLowerCase().includes("slug")
+    if (!isSlugConflict) throw err
+
+    const existing = await payload.find({
+      collection: "pages",
+      where: { slug: { equals: data.slug } },
+      limit: 1,
+    })
+    const existingPage = existing.docs[0]
+    if (!existingPage) throw err
+
+    payload.logger.warn(
+      `Page slug "${data.slug}" already exists (id: ${existingPage.id}), updating instead of creating.`,
+    )
+    return await payload.update({ collection: "pages", id: existingPage.id, data })
+  }
+}
+```
+
+See: `pages.ts` → `createOrUpdatePage`, `volumes.ts` → `createOrUpdateVolume`
+
+Volumes combine both patterns — retry loop for Drizzle errors, slug-conflict upsert handled inline, and a minimal-fields strip on the final attempt. Stripping is safe here because `editorsNote` (richText) and `articles` (relationship) are optional, unlike articles where `content` and `authors` are core:
+
+```typescript
+async function createOrUpdateVolume(payload: Payload, data: VolumeData): Promise<Volume> {
+  const maxAttempts = 3
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const isLastAttempt = attempt === maxAttempts
+
+    try {
+      if (isLastAttempt) {
+        const { title, volumeNumber, description, slug, _status, publishedAt } = data
+        return await payload.create({
+          collection: "volumes",
+          data: { title, volumeNumber, description, slug, _status, publishedAt },
+        })
+      }
+
+      return await payload.create({ collection: "volumes", data })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+
+      if (message.toLowerCase().includes("slug")) {
+        // slug conflict → upsert regardless of attempt
+        const existing = await payload.find({
+          collection: "volumes",
+          where: { slug: { equals: data.slug } },
+          limit: 1,
+        })
+        const doc = existing.docs[0]
+        if (!doc) throw err
+        payload.logger.warn(`Volume slug "${data.slug}" already exists, updating.`)
+        return await payload.update({ collection: "volumes", id: doc.id, data })
+      }
+
+      if (attempt < maxAttempts) {
+        payload.logger.warn(
+          `Volume create attempt ${attempt}/${maxAttempts} failed for "${data.slug}", retrying. Error: ${message}`,
+        )
+        await new Promise((resolve) => setTimeout(resolve, 500 * attempt))
+      } else {
+        payload.logger.warn(
+          `Failed to create volume "${data.slug}" with full data, retrying with minimal fields. Error: ${message}`,
+        )
+      }
+    }
+  }
+
+  throw new Error(`Failed to create volume "${data.slug}" after ${maxAttempts} attempts`)
+}
+```
+
+### Pattern 3: Unique filenames for media uploads
+
+Payload always calls `docWithFilenameExists` before uploading, which runs a `buildQuery` to check for conflicts. If the adapter has been reset by a hot-reload, this query crashes regardless of whether there is actually a conflict.
+
+Two things work together to handle this:
+
+1. **Timestamp prefix** — prefixing filenames with `Date.now()` ensures the name is always unique, so Payload never tries to generate an incremented name (e.g. `image-post1-2.webp`) which would trigger a _second_ `buildQuery` call and a second crash.
+
+2. **Retry loop in `createMediaFromURL`** — if the initial `docWithFilenameExists` query crashes due to a hot-reload-reset adapter, the retry lets the adapter reinitialise before the next attempt.
+
+```typescript
+const baseName = url.split("/").pop() || `file-${Date.now()}`
+const name = `${Date.now()}-${baseName}` // e.g. 1774132662098-image-post1.webp
+```
+
+See: `media.ts` → `fetchFileByURL`, `createMediaFromURL`
+
+### Pattern 4: Wrap each step with context in `index.ts`
+
+The main seed loop wraps each step so failures include the step name:
+
+```typescript
+try {
+  await fn()
+} catch (err) {
+  const message = err instanceof Error ? err.message : String(err)
+  throw new Error(`Seed step "${name}" failed: ${message}`, { cause: err })
+}
+```
+
+This surfaces `Seed step "Creating volumes..." failed: ...` instead of a raw stack trace, making it immediately clear which step to investigate.
+
+### Field types that trigger Drizzle bugs
+
+These field types are known to cause internal Drizzle errors in v3.79.1 when the DB is in a partially-cleaned state. Always strip them from fallback retry data:
+
+| Field type                | Example                                  | Safe to strip in fallback? |
+| ------------------------- | ---------------------------------------- | -------------------------- |
+| `array`                   | `socials`, `links`                       | Yes — typically optional   |
+| `richText`                | `biography`, `editorsNote`               | Yes — typically optional   |
+| `upload` / `relationship` | `profileImage`, `meta.image`, `articles` | Yes — use `null` or omit   |
+| `blocks`                  | page `layout`                            | Caution — may be required  |
+
+Scalar fields (`text`, `number`, `select`, `date`, `checkbox`) are safe and should always be included in the fallback.
+
+### What NOT to do
+
+- **Don't swallow errors silently** — always `payload.logger.warn` before retrying so the partial fallback is visible in logs
+- **Don't omit required fields** in fallback data — check the collection config for `required: true` fields
+- **Don't assume `payload.delete({ collection, where: {} })` is clean** — Drizzle version cleanup can fail silently, leaving orphaned records that cause conflicts on the next run
+- **Don't pass `undefined` to relationship fields** — use `null` explicitly; `undefined` can trigger internal type errors in Payload's relationship processor
