@@ -89,7 +89,9 @@ export const footnotesArrayField = (): ArrayField => ({
     update: () => false,
   },
   admin: {
-    readOnly: true,
     condition: (data) => Boolean(data?.footnotes?.length),
+    components: {
+      Field: "@/blocks/Footnote/FootnotesPreview#FootnotesPreview",
+    },
   },
 })
