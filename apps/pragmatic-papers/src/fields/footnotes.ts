@@ -90,6 +90,6 @@ export const footnotesArrayField = (): ArrayField => ({
   },
   admin: {
     readOnly: true,
-    hidden: true,
+    condition: (data) => Boolean(data?.footnotes?.length),
   },
 })
