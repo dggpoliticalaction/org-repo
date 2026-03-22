@@ -7,7 +7,8 @@ import { TopicsList } from "@/components/Topics/TopicsList"
 import { Separator } from "@/components/ui/separator"
 import { ArticleHero } from "@/heros/ArticleHero"
 import { MathJaxProvider } from "@/providers/MathJaxProvider"
-import { generateMeta } from "@/utilities/generateMeta"
+import { getMediaUrl } from "@/utilities/getMediaUrl"
+import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
 import configPromise from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
@@ -65,7 +66,32 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = "" } = await paramsPromise
   const article = await queryArticleBySlug({ slug })
 
-  return generateMeta({ doc: article })
+  if (!article) return {}
+
+  const ogImage =
+    typeof article.meta?.image === "object" && article.meta?.image?.sizes?.og?.url
+      ? getMediaUrl(article.meta.image.sizes.og.url)
+      : undefined
+
+  const title = article.meta?.title || article.title || "Pragmatic Papers"
+  const description = article.meta?.description || undefined
+
+  const og = mergeOpenGraph({
+    description: description || "",
+    title,
+    url: `/articles/${slug}`,
+  })
+
+  return {
+    title,
+    description,
+    openGraph: {
+      ...og,
+      // When an explicit meta image exists, use it; otherwise let opengraph-image.tsx
+      // generate the per-article branded OG image automatically.
+      images: ogImage ? [{ url: ogImage }] : undefined,
+    },
+  }
 }
 
 export default async function Article({ params: paramsPromise }: Args): Promise<React.ReactNode> {
