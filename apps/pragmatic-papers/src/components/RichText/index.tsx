@@ -102,7 +102,8 @@ function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunctio
   })
 }
 
-interface RichTextProps extends React.HTMLAttributes<HTMLDivElement> {
+interface RichTextProps {
+  className?: string
   data: DefaultTypedEditorState
   enableGutter?: boolean
   enableProse?: boolean
@@ -115,22 +116,17 @@ export default function RichText({
   enableGutter = true,
   data,
   parentDoc,
-  ...rest
 }: RichTextProps): React.ReactNode {
   return (
-    <div
+    <ConvertRichText
       className={cn(
-        "payload-richtext prose-headings:font-display prose-neutral font-serif",
-        {
-          container: enableGutter,
-          "max-w-none": !enableGutter,
-          "prose dark:prose-invert": enableProse,
-        },
+        "payload-richtext prose-xl prose-neutral font-serif leading-snug",
+        enableGutter ? "container" : "max-w-none",
+        enableProse && "prose dark:prose-invert",
         className,
       )}
-      {...rest}
-    >
-      <ConvertRichText converters={createJsxConverters(parentDoc)} data={data} disableContainer />
-    </div>
+      converters={createJsxConverters(parentDoc)}
+      data={data}
+    />
   )
 }
