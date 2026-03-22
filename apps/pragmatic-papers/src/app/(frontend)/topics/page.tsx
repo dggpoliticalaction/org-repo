@@ -47,7 +47,7 @@ export default async function TopicsPage({ searchParams }: Args): Promise<React.
   const { docs: topics, totalPages, page: currentPage } = await queryTopics(page)
 
   return (
-    <article className="mx-auto max-w-3xl space-y-6 px-4 pt-10 pb-20">
+    <article className="mx-auto max-w-3xl space-y-6 px-4">
       {draft && <LivePreviewListener />}
 
       <header className="space-y-3">
