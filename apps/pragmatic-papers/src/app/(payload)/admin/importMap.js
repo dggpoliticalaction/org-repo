@@ -32,7 +32,6 @@ import { default as default_80e5fdb60df5ca84bc544282529ce3be } from '../../../bl
 import { URLField as URLField_50bd533e6cc7d027cb7127769a4f2bf9 } from '@/blocks/SocialEmbed/components/URLField'
 import { ReferenceNotice as ReferenceNotice_913f0a870c4353969cac4985fe3c8eef } from '@/blocks/Footnote/ReferenceNotice'
 import { InsertExistingFootnote as InsertExistingFootnote_db99466ae238816ffbf3d225ae3be5e8 } from '@/blocks/Footnote/InsertExistingFootnote'
-import { NoteField as NoteField_ef7a8c46b8e9dfd2221f291fae4db1c4 } from '@/blocks/Footnote/NoteField'
 import { FootnoteLabel as FootnoteLabel_2845bbc260cbb0202b7c6ec591d344dc } from '@/blocks/Footnote/FootnoteLabel'
 import { AlignFeatureClient as AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { FootnotesPreview as FootnotesPreview_78f98036fa74f92e38dd688ebeae2fd5 } from '@/blocks/Footnote/FootnotesPreview'
@@ -80,7 +79,6 @@ export const importMap = {
   "@/blocks/SocialEmbed/components/URLField#URLField": URLField_50bd533e6cc7d027cb7127769a4f2bf9,
   "@/blocks/Footnote/ReferenceNotice#ReferenceNotice": ReferenceNotice_913f0a870c4353969cac4985fe3c8eef,
   "@/blocks/Footnote/InsertExistingFootnote#InsertExistingFootnote": InsertExistingFootnote_db99466ae238816ffbf3d225ae3be5e8,
-  "@/blocks/Footnote/NoteField#NoteField": NoteField_ef7a8c46b8e9dfd2221f291fae4db1c4,
   "@/blocks/Footnote/FootnoteLabel#FootnoteLabel": FootnoteLabel_2845bbc260cbb0202b7c6ec591d344dc,
   "@payloadcms/richtext-lexical/client#AlignFeatureClient": AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/blocks/Footnote/FootnotesPreview#FootnotesPreview": FootnotesPreview_78f98036fa74f92e38dd688ebeae2fd5,

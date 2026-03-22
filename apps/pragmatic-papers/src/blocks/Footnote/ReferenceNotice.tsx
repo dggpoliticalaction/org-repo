@@ -1,11 +1,41 @@
 "use client"
 
+import type { FootnotesField } from "@/payload-types"
+import { useDocumentInfo, useField } from "@payloadcms/ui"
 import React from "react"
 
-export const ReferenceNotice: React.FC = () => (
-  <div className="field-type">
-    <p style={{ fontSize: "0.875rem", margin: 0, opacity: 0.7 }}>
-      ↗ Reference footnote — content syncs from the original on save.
-    </p>
-  </div>
-)
+export const ReferenceNotice: React.FC = () => {
+  const { value: sourceId } = useField<string>({ path: "sourceId" })
+  const { value: formNote } = useField<string>({ path: "note" })
+  const { value: index } = useField<number>({ path: "index" })
+  const { data } = useDocumentInfo()
+
+  const footnotes = (data?.footnotes as NonNullable<FootnotesField>) ?? []
+  const footnote = footnotes.find((f) => f.id === sourceId)
+
+  const note = footnote?.note ?? formNote
+  const attributionUrl =
+    footnote?.attributionEnabled && footnote.link?.type === "custom" ? footnote.link.url : null
+
+  return (
+    <div className="field-type">
+      <div className="label-wrapper">
+        <label className="field-label">Linked Footnote:</label>
+      </div>
+      <p
+        style={{
+          fontSize: "0.875rem",
+          margin: 0,
+          opacity: 0.7,
+          padding: "2rem",
+          border: "1px solid #e0e0e0",
+          borderRadius: "0.5rem",
+        }}
+      >
+        {index && <span>{`${index}. `}</span>}
+        {note}
+        {attributionUrl && <span>{attributionUrl}</span>}
+      </p>
+    </div>
+  )
+}

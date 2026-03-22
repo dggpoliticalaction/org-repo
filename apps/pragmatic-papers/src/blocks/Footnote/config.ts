@@ -23,21 +23,11 @@ export const FootnoteBlock: Block = {
         },
       },
     },
-    {
-      name: "insertExistingFootnote",
-      type: "ui",
-      admin: {
-        condition: (_, siblingData) => !siblingData?.sourceId,
-        components: {
-          Field: "@/blocks/Footnote/InsertExistingFootnote#InsertExistingFootnote",
-        },
-      },
-    },
     ...footnoteFields({
       component: {
         note: {
           admin: {
-            components: { Field: "@/blocks/Footnote/NoteField#NoteField" },
+            condition: (_, s) => !s?.sourceId,
           },
         },
         attributionEnabled: {
@@ -52,6 +42,16 @@ export const FootnoteBlock: Block = {
         },
       },
     }),
+    {
+      name: "insertExistingFootnote",
+      type: "ui",
+      admin: {
+        condition: (_, s) => !s?.sourceId && !s?.note,
+        components: {
+          Field: "@/blocks/Footnote/InsertExistingFootnote#InsertExistingFootnote",
+        },
+      },
+    },
   ],
   graphQL: {
     singularName: "FootnoteBlock",
