@@ -2,11 +2,10 @@
 
 import type { FootnotesField } from "@/payload-types"
 import { useDocumentInfo, useField } from "@payloadcms/ui"
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 
 export const InsertExistingFootnote: React.FC = () => {
-  const { id, collectionSlug } = useDocumentInfo()
-  const [footnotes, setFootnotes] = useState<NonNullable<FootnotesField>>([])
+  const { data } = useDocumentInfo()
   const [selected, setSelected] = useState("")
 
   const { setValue: setNote } = useField<string>({ path: "note" })
@@ -15,24 +14,10 @@ export const InsertExistingFootnote: React.FC = () => {
   const { setValue: setLinkUrl } = useField<string>({ path: "link.url" })
   const { setValue: setLinkNewTab } = useField<boolean>({ path: "link.newTab" })
 
-  useEffect(() => {
-    if (!id || collectionSlug !== "articles") return
-
-    const controller = new AbortController()
-
-    fetch(`/api/articles/${id}?depth=0&draft=true`, { signal: controller.signal })
-      .then((r) => r.json())
-      .then((data: { footnotes?: FootnotesField }) => {
-        setFootnotes(data.footnotes ?? ([] as NonNullable<FootnotesField>))
-      })
-      .catch((err: unknown) => {
-        if (err instanceof Error && err.name !== "AbortError") {
-          setFootnotes([])
-        }
-      })
-
-    return () => controller.abort()
-  }, [id, collectionSlug])
+  const footnotes = useMemo(
+    () => (data?.footnotes as NonNullable<FootnotesField>) ?? [],
+    [data],
+  )
 
   const handleSelect = useCallback(
     (value: string) => {
@@ -54,7 +39,7 @@ export const InsertExistingFootnote: React.FC = () => {
     [footnotes, setNote, setAttributionEnabled, setLinkType, setLinkUrl, setLinkNewTab],
   )
 
-  if (!footnotes?.length) return null
+  if (!footnotes.length) return null
 
   return (
     <div className="field-type">
