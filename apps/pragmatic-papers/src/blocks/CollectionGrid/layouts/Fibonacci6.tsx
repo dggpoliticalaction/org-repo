@@ -32,7 +32,13 @@ export const Fibonacci6: LayoutDefinition = {
  *
  * Desktop (lg:grid-cols-4)
  */
-export const Fibonacci6Layout: React.FC<LayoutProps> = ({ className, slots, ...props }) => {
+export const Fibonacci6Layout: React.FC<LayoutProps> = ({
+  className,
+  slots,
+  priority,
+  loading,
+  ...props
+}) => {
   const [featured, a, b, c, d, e] = slots
   return (
     <section
@@ -44,11 +50,12 @@ export const Fibonacci6Layout: React.FC<LayoutProps> = ({ className, slots, ...p
         className="md:col-span-2 lg:col-span-3"
         tile={featured!}
         imagePosition="right"
+        priority={priority}
       />
 
       {/* Slots D + E — right column: both image above */}
       <div className="flex flex-col gap-6 lg:row-span-2">
-        <CollectionTile tile={d!} />
+        <CollectionTile tile={d!} loading={loading} />
         <CollectionTile tile={e!} imagePosition="none" />
       </div>
 
