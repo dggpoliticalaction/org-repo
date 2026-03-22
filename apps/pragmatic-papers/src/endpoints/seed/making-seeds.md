@@ -264,29 +264,14 @@ await createMyFeatureArticle(payload, writer1, mediaDocs)
 
 ### Pattern 1: Retry loop with minimal-fields fallback
 
-For any `payload.create` that can be affected by a hot-reload mid-seed, use a retry loop with exponential backoff. Strip rich fields (relationships, richText, uploads, arrays) only on the final attempt as a last resort.
+For any `payload.create` that can be affected by a hot-reload mid-seed, use a retry loop with exponential backoff. Hot-reload errors are transient, so retrying with the same data is usually sufficient — don't strip fields on the final attempt for versioned collections, as required fields (like `authors`) will cause type errors and stripping `content` produces a useless document.
 
 ```typescript
 async function createArticle(payload: Payload, options: CreateArticleOptions): Promise<Article> {
   const maxAttempts = 3
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    const isLastAttempt = attempt === maxAttempts
-
     try {
-      if (isLastAttempt) {
-        // Minimal-fields fallback: strip relationships, rich text, and uploads
-        return await payload.create({
-          collection: "articles",
-          data: {
-            title: options.title,
-            slug: options.slug,
-            _status: "published",
-            publishedAt: new Date().toISOString(),
-          },
-        })
-      }
-
       return await payload.create({ collection: "articles", data: { ...options } })
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)

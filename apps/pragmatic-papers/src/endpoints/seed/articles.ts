@@ -35,23 +35,7 @@ export async function createArticle(
   const maxAttempts = 3
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    const isLastAttempt = attempt === maxAttempts
-
     try {
-      if (isLastAttempt) {
-        // Minimal-fields fallback: strip relationships, rich text, and uploads
-        return await payload.create({
-          collection: "articles",
-          ...(context && { context }),
-          data: {
-            title: options.title,
-            _status: "published",
-            publishedAt: new Date().toISOString(),
-            slug: options.slug,
-          },
-        })
-      }
-
       return await payload.create({
         collection: "articles",
         ...(context && { context }),
