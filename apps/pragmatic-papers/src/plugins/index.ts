@@ -21,15 +21,23 @@ export const generateTitle: GenerateTitle<Volume | Article | Page | Topic> = ({ 
       ? `Volume ${toRoman(doc.volumeNumber)} | Pragmatic Papers`
       : "Pragmatic Papers"
   }
-  if ('name' in doc && doc.name) return `${doc.name} | Pragmatic Papers`
-  if ('title' in doc && doc.title) return `${doc.title} | Pragmatic Papers`
+  if ("name" in doc && doc.name) return `${doc.name} | Pragmatic Papers`
+  if ("title" in doc && doc.title) return `${doc.title} | Pragmatic Papers`
   return "Pragmatic Papers"
 }
 
-const generateURL: GenerateURL<Volume | Article | Page | Topic> = ({ doc }) => {
+const generateURL: GenerateURL<Volume | Article | Page | Topic> = ({ doc, collectionSlug }) => {
   const url = getServerSideURL()
+  const slug = doc?.slug
 
-  return doc?.slug ? `${url}/${doc.slug}` : url
+  if (!slug) return url
+
+  // Pages are at the root, other collections have their slug prefixed
+  if (collectionSlug === "pages" || !collectionSlug) {
+    return `${url}/${slug}`
+  }
+
+  return `${url}/${collectionSlug}/${slug}`
 }
 
 export const plugins: Plugin[] = [

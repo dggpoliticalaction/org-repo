@@ -68,7 +68,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = "" } = await paramsPromise
   const volume = await queryVolumeBySlug({ slug })
 
-  return generateMeta({ doc: volume })
+  return generateMeta({ doc: volume, url: volume?.slug ? `/volumes/${volume.slug}` : undefined })
 }
 
 export default async function VolumePage({

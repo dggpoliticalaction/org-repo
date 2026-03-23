@@ -65,7 +65,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = "" } = await paramsPromise
   const article = await queryArticleBySlug({ slug })
 
-  return generateMeta({ doc: article })
+  return generateMeta({ doc: article, url: article?.slug ? `/articles/${article.slug}` : undefined })
 }
 
 export default async function Article({ params: paramsPromise }: Args): Promise<React.ReactNode> {

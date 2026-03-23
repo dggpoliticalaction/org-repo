@@ -107,7 +107,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug = "" } = await params
   const topic = await queryTopicBySlug(slug)
 
-  return generateMeta({ doc: topic })
+  return generateMeta({ doc: topic, url: topic?.slug ? `/topics/${topic.slug}` : undefined })
 }
 
 export default async function TopicPage({
