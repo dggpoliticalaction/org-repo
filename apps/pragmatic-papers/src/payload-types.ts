@@ -468,6 +468,14 @@ export interface Topic {
    * Optional description for this topic
    */
   description?: string | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -1699,6 +1707,13 @@ export interface WebhooksSelect<T extends boolean = true> {
 export interface TopicsSelect<T extends boolean = true> {
   name?: T;
   description?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;

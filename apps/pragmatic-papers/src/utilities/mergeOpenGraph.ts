@@ -8,6 +8,7 @@ const defaultOpenGraph: Metadata["openGraph"] = {
   images: [
     {
       url: `${getServerSideURL()}/the-pragmatic-papers-opengraph-image.png`,
+      alt: `The Pragmatic Papers icon: a large white "P" on the left, paired with a white panel on the right containing the wordmark "The Pragmatic Papers" in bold condensed type — all on an orange-red background.`,
     },
   ],
   siteName: "The Pragmatic Papers",

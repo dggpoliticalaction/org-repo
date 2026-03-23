@@ -26,6 +26,7 @@ import * as migration_20260318_152547_use_populate_authors_duh from './20260318_
 import * as migration_20260318_172936_topics_views from './20260318_172936_topics_views';
 import * as migration_20260321_165911_add_copyright_to_footer_global from './20260321_165911_add_copyright_to_footer_global';
 import * as migration_20260323_024225_add_showByline_to_admin from './20260323_024225_add_showByline_to_admin';
+import * as migration_20260323_043247_add_seo_to_topics from './20260323_043247_add_seo_to_topics';
 
 export const migrations = [
   {
@@ -167,5 +168,10 @@ export const migrations = [
     up: migration_20260323_024225_add_showByline_to_admin.up,
     down: migration_20260323_024225_add_showByline_to_admin.down,
     name: '20260323_024225_add_showByline_to_admin',
+  },
+  {
+    up: migration_20260323_043247_add_seo_to_topics.up,
+    down: migration_20260323_043247_add_seo_to_topics.down,
+    name: '20260323_043247_add_seo_to_topics'
   },
 ];

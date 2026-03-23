@@ -3,6 +3,7 @@ import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { Pagination } from "@/components/Pagination"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import type { Topic, Volume } from "@/payload-types"
+import { generateMeta } from "@/utilities/generateMeta"
 import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
@@ -106,19 +107,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug = "" } = await params
   const topic = await queryTopicBySlug(slug)
 
-  const name = topic?.name || "Topic"
-  const title = `${name} - Pragmatic Papers`
-  const description = topic?.description || undefined
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      url: `/topics/${slug}`,
-    },
-  }
+  return generateMeta({ doc: topic, canonicalPath: `/topics/${slug}` })
 }
 
 export default async function TopicPage({
