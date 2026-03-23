@@ -27,7 +27,10 @@ const collectByNode = (node: SerializedLexicalNode, into: Map<string, FootnoteFi
   if (node.type === "inlineBlock") {
     const inlineNode = node as SerializedInlineBlockNode<FootnoteBlock>
     const fields = inlineNode.fields as FootnoteFields
-    if (fields.blockType === "footnote" && !fields.sourceId && fields.id) {
+    if (fields.blockType === "footnote" && !fields.sourceId) {
+      if (!fields.id) {
+        fields.id = crypto.randomUUID()
+      }
       into.set(fields.id, fields)
     }
   }
