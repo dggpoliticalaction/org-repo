@@ -3,6 +3,7 @@ import React from "react"
 
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { isMedia, Media } from "@/components/Media"
+import type { ImageVariant } from "@/components/Media/ImageMedia"
 import type { Article, CollectionGridSlots, Media as MediaType } from "@/payload-types"
 import { cn } from "@/utilities/utils"
 export type ImagePosition = "above" | "below" | "left" | "right" | "none"
@@ -12,6 +13,8 @@ export interface CollectionTileProps extends React.ComponentProps<"div"> {
   imagePosition?: ImagePosition
   priority?: boolean
   loading?: "eager" | "lazy"
+  sizes?: string
+  variant?: ImageVariant
 }
 
 export const CollectionTile: React.FC<CollectionTileProps> = ({
@@ -20,6 +23,8 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
   priority,
   loading,
   className,
+  sizes = "(max-width: 768px) 100vw, 920px",
+  variant = "medium",
 }) => {
   if (!tile) return null
   const { id, collection, kicker, overrideTitle, showByline } = tile
@@ -76,7 +81,8 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
           <Media
             media={heroImage}
             className="h-full w-full object-cover object-center hover:opacity-80"
-            variant="medium"
+            variant={variant}
+            sizes={sizes}
             priority={priority}
             loading={loading}
           />

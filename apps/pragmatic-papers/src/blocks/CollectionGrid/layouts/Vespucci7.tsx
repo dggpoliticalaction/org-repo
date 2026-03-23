@@ -50,6 +50,8 @@ export const Vespucci7Layout: React.FC<LayoutProps> = ({
         className="h-full md:col-span-2 md:row-span-2 lg:col-span-1 lg:row-span-2"
         tile={featured!}
         priority={priority}
+        sizes="(max-width: 768px) 100vw, 600px"
+        variant="medium"
       />
 
       {/* Slots A + B — left column (25%), spans 2 rows */}
@@ -60,10 +62,30 @@ export const Vespucci7Layout: React.FC<LayoutProps> = ({
 
       {/* Slots C–F — right column (25%), 4 tiles with no image */}
       <div className="grid grid-cols-1 gap-4 md:col-span-2 md:grid-cols-2 lg:col-span-1 lg:col-start-3 lg:row-span-2 lg:row-start-1 lg:grid-cols-1">
-        <CollectionTile tile={c!} imagePosition="none" />
-        <CollectionTile tile={d!} imagePosition="none" />
-        <CollectionTile tile={e!} imagePosition="none" />
-        <CollectionTile tile={f!} imagePosition="none" />
+        <CollectionTile
+          tile={c!}
+          imagePosition="none"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 300px"
+          variant="medium"
+        />
+        <CollectionTile
+          tile={d!}
+          imagePosition="none"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 300px"
+          variant="medium"
+        />
+        <CollectionTile
+          tile={e!}
+          imagePosition="none"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 300px"
+          variant="medium"
+        />
+        <CollectionTile
+          tile={f!}
+          imagePosition="none"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 300px"
+          variant="medium"
+        />
       </div>
     </section>
   )
