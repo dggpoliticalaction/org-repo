@@ -32,6 +32,7 @@ const libertinusSerif = Libertinus_Serif({
   subsets: ["latin"],
   fallback: ["Times New Roman", "serif"],
   variable: "--font-serif",
+  adjustFontFallback: false,
 })
 
 export default async function RootLayout({
