@@ -40,6 +40,7 @@ If you do have access, create a **Classic GitHub Personal Access Token (PAT)** a
 
 Set `GH_FONT_READ` in your environment, it will be referenced by our project's `.npmrc`:
 
+### Requirements
 ```
 //npm.pkg.github.com/:_authToken=${GH_FONT_READ}
 ```
