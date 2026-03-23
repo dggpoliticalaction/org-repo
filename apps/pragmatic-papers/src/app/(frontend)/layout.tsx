@@ -1,37 +1,37 @@
-import { AdminBar } from '@/components/AdminBar'
-import { Footer } from '@/Footer/Component'
-import { Header } from '@/Header/Component'
-import { getServerSideURL } from '@/utilities/getURL'
-import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { cn } from '@/utilities/utils'
-import { GoogleAnalytics } from '@next/third-parties/google'
-import type { Metadata } from 'next'
-import { ThemeProvider } from 'next-themes'
-import { Geist, Libertinus_Serif } from 'next/font/google'
-import localFont from 'next/font/local'
-import React from 'react'
-import './globals.css'
+import { AdminBar } from "@/components/AdminBar"
+import { Footer } from "@/Footer/Component"
+import { Header } from "@/Header/Component"
+import { getServerSideURL } from "@/utilities/getURL"
+import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
+import { cn } from "@/utilities/utils"
+import { GoogleAnalytics } from "@next/third-parties/google"
+import type { Metadata } from "next"
+import { ThemeProvider } from "next-themes"
+import { Geist, Libertinus_Serif } from "next/font/google"
+import localFont from "next/font/local"
+import React from "react"
+import "./globals.css"
 
 const FKScreamer = localFont({
-  src: '../../../public/fonts/FKScreamer-Bold.woff2',
-  weight: '700',
-  display: 'swap',
-  fallback: ['fantasy', 'sans-serif'],
-  variable: '--font-display',
+  src: "../../../public/fonts/FKScreamer-Bold.woff2",
+  weight: "700",
+  display: "swap",
+  fallback: ["fantasy", "sans-serif"],
+  variable: "--font-display",
 })
 
 const geist = Geist({
-  weight: ['400', '600'],
-  subsets: ['latin'],
-  fallback: ['Helvetica', 'Arial', 'sans-serif'],
-  variable: '--font-sans',
+  weight: ["400", "600"],
+  subsets: ["latin"],
+  fallback: ["Helvetica", "Arial", "sans-serif"],
+  variable: "--font-sans",
 })
 
 const libertinusSerif = Libertinus_Serif({
-  weight: ['400', '700'],
-  subsets: ['latin'],
-  fallback: ['Times New Roman', 'serif'],
-  variable: '--font-serif',
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  fallback: ["Times New Roman", "serif"],
+  variable: "--font-serif",
   adjustFontFallback: false,
 })
 
