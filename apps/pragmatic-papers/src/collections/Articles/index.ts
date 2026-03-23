@@ -145,6 +145,7 @@ export const Articles: CollectionConfig = {
               label: false,
               required: true,
             },
+            footnotesArrayField(),
           ],
           label: "Content",
         },
@@ -294,7 +295,6 @@ export const Articles: CollectionConfig = {
       hasMany: true,
       relationTo: "topics",
     },
-    footnotesArrayField(),
     slugField(),
   ],
   hooks: {
