@@ -1,14 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-import { generateBlurDataUrlFromBuffer } from "@/collections/Media/utilities/generateBlurDataUrlFromBuffer"
 import type { RegenerateBlurResponse } from "@/collections/Media/types"
+import { getBlurDataUrlFromBuffer } from "@/utilities/getBlurDataUrlFromBuffer"
 import { getPayloadConfig } from "@/utilities/getPayloadConfig"
 import { getServerSideURL } from "@/utilities/getURL"
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
-) {
+): Promise<NextResponse> {
   const payload = await getPayloadConfig()
   const { id } = await params
 
@@ -47,7 +47,7 @@ export async function POST(
   }
 
   const imageBuffer = Buffer.from(await imageResponse.arrayBuffer())
-  const blurDataURL = await generateBlurDataUrlFromBuffer(imageBuffer)
+  const blurDataURL = await getBlurDataUrlFromBuffer(imageBuffer)
 
   await payload.update({
     collection: "media",
