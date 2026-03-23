@@ -107,6 +107,10 @@ export type CollectionGridSlots = {
    */
   kicker?: string | null;
   /**
+   * Show the author names for this slot
+   */
+  showByline?: boolean | null;
+  /**
    * Optional override for the title in this slot
    */
   overrideTitle?: string | null;
@@ -1343,6 +1347,7 @@ export interface CollectionGridBlockSelect<T extends boolean = true> {
 export interface CollectionGridSlotsSelect<T extends boolean = true> {
   collection?: T;
   kicker?: T;
+  showByline?: T;
   overrideTitle?: T;
   id?: T;
 }
@@ -1970,6 +1975,7 @@ export interface ActionButtonField {
 export interface Footer {
   id: number;
   navItems?: MenuField;
+  copyright?: LinkField;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2001,6 +2007,7 @@ export interface ActionButtonFieldSelect<T extends boolean = true> {
  */
 export interface FooterSelect<T extends boolean = true> {
   navItems?: T | MenuFieldSelect<T>;
+  copyright?: T | LinkFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
