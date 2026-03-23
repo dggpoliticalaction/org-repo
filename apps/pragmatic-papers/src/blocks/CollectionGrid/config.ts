@@ -60,6 +60,14 @@ export const CollectionGrid: Block = {
       })),
       admin: {
         description: "Choose a layout preset that determines how article slots are arranged.",
+        components: {
+          Field: {
+            path: "@/blocks/CollectionGrid/components/LayoutSelectField#LayoutSelectField",
+            clientProps: {
+              slotCounts,
+            },
+          },
+        },
       },
     },
     {
