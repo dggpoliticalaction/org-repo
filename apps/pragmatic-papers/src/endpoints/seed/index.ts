@@ -280,6 +280,11 @@ export const seed = async (
   for (let i = 0; i < steps.length; i++) {
     const { name, fn } = steps[i]!
     onProgress?.(name, i + 1, steps.length)
-    await fn()
+    try {
+      await fn()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      throw new Error(`Seed step "${name}" failed: ${message}`, { cause: err })
+    }
   }
 }

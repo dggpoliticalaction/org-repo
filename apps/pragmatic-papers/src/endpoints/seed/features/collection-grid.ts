@@ -1,5 +1,6 @@
 import type { Page } from "@/payload-types"
 import type { Payload } from "payload"
+import { createOrUpdatePage } from "../pages"
 
 /**
  * Creates the home page with CollectionGrid blocks and saves it to the `pages` collection.
@@ -34,449 +35,446 @@ export async function createCollectionGridHomePage(
   volume2ArticleIds: number[],
   featureArticleIds: number[],
 ): Promise<Page> {
-  return await payload.create({
-    collection: "pages",
-    data: {
-      title: "Home",
-      slug: "home",
-      generateSlug: false,
-      _status: "published",
-      publishedAt: new Date().toISOString(),
-      hero: {
-        type: "none",
+  return await createOrUpdatePage(payload, {
+    title: "Home",
+    slug: "home",
+    generateSlug: false,
+    _status: "published",
+    publishedAt: new Date().toISOString(),
+    hero: {
+      type: "none",
+    },
+    layout: [
+      {
+        blockType: "collectionGrid",
+        blockName: "Vespucci 7",
+        layout: "vespucci-7",
+        slots: [
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[0]!,
+            },
+            kicker: "Ethics",
+            overrideTitle: "The Trolley Problem Today",
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[1]!,
+            },
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[2]!,
+            },
+            kicker: "Society",
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[3]!,
+            },
+            kicker: null,
+            overrideTitle: "Who Are You After a Decade?",
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[4]!,
+            },
+            kicker: "From the archive",
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[5]!,
+            },
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume2ArticleIds[1]!,
+            },
+            kicker: "Memes",
+            overrideTitle: "Irony as Ideology",
+          },
+        ],
       },
-      layout: [
-        {
-          blockType: "collectionGrid",
-          blockName: "Vespucci 7",
-          layout: "vespucci-7",
-          slots: [
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[0]!,
-              },
-              kicker: "Ethics",
-              overrideTitle: "The Trolley Problem Today",
+      {
+        blockType: "collectionGrid",
+        blockName: "Fibonacci 7",
+        layout: "fibonacci-7",
+        slots: [
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[0]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[1]!,
-              },
-              kicker: null,
-              overrideTitle: null,
+            kicker: "Philosophy",
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[0]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[2]!,
-              },
-              kicker: "Society",
-              overrideTitle: null,
+            kicker: null,
+            overrideTitle: "Moral Intuition in the Age of Autonomous Vehicles",
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[1]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[3]!,
-              },
-              kicker: null,
-              overrideTitle: "Who Are You After a Decade?",
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[2]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[4]!,
-              },
-              kicker: "From the archive",
-              overrideTitle: null,
+            kicker: "Digital age",
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[3]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[5]!,
-              },
-              kicker: null,
-              overrideTitle: null,
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[4]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume2ArticleIds[1]!,
-              },
-              kicker: "Memes",
-              overrideTitle: "Irony as Ideology",
+            kicker: "Workplace ethics",
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[5]!,
             },
-          ],
-        },
-        {
-          blockType: "collectionGrid",
-          blockName: "Fibonacci 7",
-          layout: "fibonacci-7",
-          slots: [
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[0]!,
-              },
-              kicker: "Philosophy",
-              overrideTitle: null,
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume2ArticleIds[0]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[0]!,
-              },
-              kicker: null,
-              overrideTitle: "Moral Intuition in the Age of Autonomous Vehicles",
+            kicker: null,
+            overrideTitle: null,
+          },
+        ],
+      },
+      {
+        blockType: "collectionGrid",
+        blockName: "Euler 3",
+        layout: "euler-3",
+        slots: [
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[0]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[1]!,
-              },
-              kicker: null,
-              overrideTitle: null,
+            kicker: "Featured",
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[4]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[2]!,
-              },
-              kicker: "Digital age",
-              overrideTitle: null,
+            kicker: "Beauvoir",
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume2ArticleIds[1]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[3]!,
-              },
-              kicker: null,
-              overrideTitle: null,
+            kicker: null,
+            overrideTitle: "How the Internet Weaponised Humour",
+          },
+        ],
+      },
+      {
+        blockType: "collectionGrid",
+        blockName: "Newton 4",
+        layout: "newton-4",
+        slots: [
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[2]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[4]!,
-              },
-              kicker: "Workplace ethics",
-              overrideTitle: null,
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume2ArticleIds[0]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[5]!,
-              },
-              kicker: null,
-              overrideTitle: null,
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume2ArticleIds[1]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume2ArticleIds[0]!,
-              },
-              kicker: null,
-              overrideTitle: null,
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[0]!,
             },
-          ],
-        },
-        {
-          blockType: "collectionGrid",
-          blockName: "Euler 3",
-          layout: "euler-3",
-          slots: [
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[0]!,
-              },
-              kicker: "Featured",
-              overrideTitle: null,
-            },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[4]!,
-              },
-              kicker: "Beauvoir",
-              overrideTitle: null,
-            },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume2ArticleIds[1]!,
-              },
-              kicker: null,
-              overrideTitle: "How the Internet Weaponised Humour",
-            },
-          ],
-        },
-        {
-          blockType: "collectionGrid",
-          blockName: "Newton 4",
-          layout: "newton-4",
-          slots: [
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[2]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume2ArticleIds[0]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume2ArticleIds[1]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[0]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-          ],
-        },
+            kicker: null,
+            overrideTitle: null,
+          },
+        ],
+      },
 
-        {
-          blockType: "collectionGrid",
-          blockName: "Euler 5",
-          layout: "euler-5",
-          slots: [
-            {
-              collection: {
-                relationTo: "articles",
-                value: featureArticleIds[3]!,
-              },
-              kicker: null,
-              overrideTitle: null,
+      {
+        blockType: "collectionGrid",
+        blockName: "Euler 5",
+        layout: "euler-5",
+        slots: [
+          {
+            collection: {
+              relationTo: "articles",
+              value: featureArticleIds[3]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[1]!,
-              },
-              kicker: null,
-              overrideTitle: null,
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[1]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: featureArticleIds[2]!,
-              },
-              kicker: null,
-              overrideTitle: null,
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: featureArticleIds[2]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[5]!,
-              },
-              kicker: null,
-              overrideTitle: null,
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[5]!,
             },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[3]!,
-              },
-              kicker: null,
-              overrideTitle: null,
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[3]!,
             },
-          ],
+            kicker: null,
+            overrideTitle: null,
+          },
+        ],
+      },
+      {
+        blockType: "collectionGrid",
+        blockName: "Fibonacci 6",
+        layout: "fibonacci-6",
+        slots: [
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[1]!,
+            },
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[0]!,
+            },
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[2]!,
+            },
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[5]!,
+            },
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume2ArticleIds[0]!,
+            },
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[3]!,
+            },
+            kicker: null,
+            overrideTitle: null,
+          },
+        ],
+      },
+      {
+        blockType: "collectionGrid",
+        blockName: "Euler 2",
+        layout: "euler-2",
+        slots: [
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[3]!,
+            },
+            kicker: null,
+            overrideTitle: null,
+          },
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume2ArticleIds[1]!,
+            },
+            kicker: null,
+            overrideTitle: null,
+          },
+        ],
+      },
+      {
+        blockType: "collectionGrid",
+        blockName: "Bernoulli Left",
+        layout: "bernoulli-left",
+        slots: [
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[0]!,
+            },
+            kicker: null,
+            overrideTitle: null,
+          },
+        ],
+      },
+      {
+        blockType: "collectionGrid",
+        blockName: "Bernoulli Right",
+        layout: "bernoulli-right",
+        slots: [
+          {
+            collection: {
+              relationTo: "articles",
+              value: volume1ArticleIds[1]!,
+            },
+            kicker: null,
+            overrideTitle: null,
+          },
+        ],
+      },
+      {
+        blockType: "cta",
+        blockName: "Subscribe CTA",
+        richText: {
+          root: {
+            children: [
+              {
+                children: [
+                  {
+                    detail: 0,
+                    format: 0,
+                    mode: "normal",
+                    style: "",
+                    text: "Stay up to date with Pragmatic Papers",
+                    type: "text",
+                    version: 1,
+                  },
+                ],
+                direction: "ltr" as const,
+                format: "" as const,
+                indent: 0,
+                tag: "h3",
+                type: "heading",
+                version: 1,
+              },
+              {
+                children: [
+                  {
+                    detail: 0,
+                    format: 0,
+                    mode: "normal",
+                    style: "",
+                    text: "Get the latest articles, volumes, and updates delivered straight to you.",
+                    type: "text",
+                    version: 1,
+                  },
+                ],
+                direction: "ltr" as const,
+                format: "" as const,
+                indent: 0,
+                type: "paragraph",
+                version: 1,
+                textFormat: 0,
+                textStyle: "",
+              },
+            ],
+            direction: "ltr" as const,
+            format: "" as const,
+            indent: 0,
+            type: "root",
+            version: 1,
+          },
         },
-        {
-          blockType: "collectionGrid",
-          blockName: "Fibonacci 6",
-          layout: "fibonacci-6",
-          slots: [
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[1]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[0]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[2]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[5]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume2ArticleIds[0]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[3]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-          ],
-        },
-        {
-          blockType: "collectionGrid",
-          blockName: "Euler 2",
-          layout: "euler-2",
-          slots: [
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[3]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume2ArticleIds[1]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-          ],
-        },
-        {
-          blockType: "collectionGrid",
-          blockName: "Bernoulli Left",
-          layout: "bernoulli-left",
-          slots: [
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[0]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-          ],
-        },
-        {
-          blockType: "collectionGrid",
-          blockName: "Bernoulli Right",
-          layout: "bernoulli-right",
-          slots: [
-            {
-              collection: {
-                relationTo: "articles",
-                value: volume1ArticleIds[1]!,
-              },
-              kicker: null,
-              overrideTitle: null,
-            },
-          ],
-        },
-        {
-          blockType: "cta",
-          blockName: "Subscribe CTA",
-          richText: {
-            root: {
-              children: [
-                {
-                  children: [
-                    {
-                      detail: 0,
-                      format: 0,
-                      mode: "normal",
-                      style: "",
-                      text: "Stay up to date with Pragmatic Papers",
-                      type: "text",
-                      version: 1,
-                    },
-                  ],
-                  direction: "ltr" as const,
-                  format: "" as const,
-                  indent: 0,
-                  tag: "h3",
-                  type: "heading",
-                  version: 1,
-                },
-                {
-                  children: [
-                    {
-                      detail: 0,
-                      format: 0,
-                      mode: "normal",
-                      style: "",
-                      text: "Get the latest articles, volumes, and updates delivered straight to you.",
-                      type: "text",
-                      version: 1,
-                    },
-                  ],
-                  direction: "ltr" as const,
-                  format: "" as const,
-                  indent: 0,
-                  type: "paragraph",
-                  version: 1,
-                  textFormat: 0,
-                  textStyle: "",
-                },
-              ],
-              direction: "ltr" as const,
-              format: "" as const,
-              indent: 0,
-              type: "root",
-              version: 1,
+        links: [
+          {
+            link: {
+              type: "custom",
+              url: "https://discord.gg/dggpol",
+              label: "Join Us",
+              appearance: "default",
+              newTab: true,
             },
           },
-          links: [
-            {
-              link: {
-                type: "custom",
-                url: "https://discord.gg/dggpol",
-                label: "Join Us",
-                appearance: "default",
-                newTab: true,
-              },
-            },
-          ],
-        },
-      ],
-      meta: {
-        title: "Home",
-        image: null,
-        description: "Home page",
+        ],
       },
+    ],
+    meta: {
+      title: "Home",
+      image: null,
+      description: "Home page",
     },
   })
 }
