@@ -30,6 +30,8 @@ export const Euler2Layout: React.FC<LayoutProps> = ({
           tile={slot}
           priority={index === 0 ? priority : undefined}
           loading={index === 0 ? undefined : loading}
+          sizes="(max-width: 768px) 100vw, 620px"
+          variant="medium"
         />
       ))}
     </section>
