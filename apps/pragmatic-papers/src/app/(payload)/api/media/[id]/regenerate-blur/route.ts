@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 
 import { generateBlurDataUrlFromBuffer } from "@/collections/Media/utilities/generateBlurDataUrlFromBuffer"
+import type { RegenerateBlurResponse } from "@/collections/Media/types"
 import { getPayloadConfig } from "@/utilities/getPayloadConfig"
 import { getServerSideURL } from "@/utilities/getURL"
 
@@ -56,5 +57,5 @@ export async function POST(
     user,
   })
 
-  return NextResponse.json({ blurDataURL })
+  return NextResponse.json<RegenerateBlurResponse>({ blurDataURL })
 }

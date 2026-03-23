@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react"
 import type { TextFieldClientProps } from "payload"
 import { Button, FieldLabel, TextInput, useDocumentInfo, useField } from "@payloadcms/ui"
 
+import type { RegenerateBlurResponse } from "../types"
+
 export const BlurDataURLField: React.FC<TextFieldClientProps> = ({ field, path }) => {
   const { label } = field
   const fieldPath = path || field.name
@@ -27,7 +29,7 @@ export const BlurDataURLField: React.FC<TextFieldClientProps> = ({ field, path }
       try {
         const response = await fetch(`/api/media/${id}/regenerate-blur`, { method: "POST" })
         if (response.ok) {
-          const { blurDataURL } = (await response.json()) as { blurDataURL: string }
+          const { blurDataURL } = (await response.json()) as RegenerateBlurResponse
           setValue(blurDataURL)
         }
       } finally {
