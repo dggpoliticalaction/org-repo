@@ -17,6 +17,25 @@ import { getServerSideURL } from "./getURL"
 
 const SITE_URL = getServerSideURL()
 
+const htmlConverters: HTMLConvertersFunction = ({ defaultConverters }) => ({
+  ...defaultConverters,
+  inlineBlocks: {
+    ...defaultConverters.inlineBlocks,
+    inlineMathBlock: ({ node }: { node: SerializedInlineBlockNode }) => {
+      const math = (node.fields as { math?: string })?.math || ""
+      return `<span class="math">\\(${math}\\)</span>`
+    },
+    footnote: ({ node }: { node: SerializedInlineBlockNode }) => {
+      const fields = node.fields as FootnoteBlockType
+      const index = typeof fields.index === "number" ? fields.index : ""
+      const note = fields.note || ""
+      const referenceId = `footnote-ref-${index}`
+      const describedById = `footnote-${index}`
+      return `<sup id="${referenceId}" title="Footnote ${index}: ${note}"><a href="#${describedById}">[${index}]</a></sup>`
+    },
+  },
+})
+
 const getMediaUrl = (url: string) => {
   if (url.startsWith("http://") || url.startsWith("https://")) {
     return url
