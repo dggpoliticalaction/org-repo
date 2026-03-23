@@ -29,7 +29,7 @@ export const LightboxMediaBlock: React.FC<LightboxMediaBlockProps> = ({
       </DialogTrigger>
       <DialogContent
         className={cn(
-          "[&>button]:bg-background p-0 text-base shadow-none ring-0 sm:max-w-7xl [&>button]:top-2 [&>button]:right-2 [&>button]:rounded-sm [&>button]:p-0.5 [&>button_svg]:size-6 w-screen",
+          "[&>button]:bg-background w-screen p-0 text-base shadow-none ring-0 sm:max-w-7xl [&>button]:top-2 [&>button]:right-2 [&>button]:rounded-sm [&>button]:p-0.5 [&>button_svg]:size-6",
           isPortrait ? "max-h-[90dvh] overflow-hidden" : "max-h-full",
         )}
       >
