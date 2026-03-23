@@ -644,33 +644,6 @@ export interface CollectionGridBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "LinkField".
- */
-export interface LinkField {
-  type?: ('reference' | 'custom') | null;
-  newTab?: boolean | null;
-  reference?:
-    | ({
-        relationTo: 'pages';
-        value: number | Page;
-      } | null)
-    | ({
-        relationTo: 'volumes';
-        value: number | Volume;
-      } | null)
-    | ({
-        relationTo: 'articles';
-        value: number | Article;
-      } | null);
-  url?: string | null;
-  label?: string | null;
-  /**
-   * Choose how the link should be rendered.
-   */
-  appearance?: ('default' | 'outline') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
