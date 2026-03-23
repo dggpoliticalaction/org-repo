@@ -3,12 +3,12 @@ import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { Pagination } from "@/components/Pagination"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import type { Topic, Volume } from "@/payload-types"
+import { generateMeta } from "@/utilities/generateMeta"
 import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
 import { getPayload } from "payload"
 import React, { cache } from "react"
-import { generateMeta } from "@/utilities/generateMeta"
 
 interface Args {
   params: Promise<{
@@ -107,7 +107,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug = "" } = await params
   const topic = await queryTopicBySlug(slug)
 
-  return generateMeta({ doc: topic })
+  return generateMeta({ doc: topic, canonicalPath: `/topics/${slug}` })
 }
 
 export default async function TopicPage({
