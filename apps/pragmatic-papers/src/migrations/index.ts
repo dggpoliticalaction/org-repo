@@ -1,30 +1,31 @@
-import * as migration_20250703_194534_init from './20250703_194534_init'
-import * as migration_20250705_042423_volume_update from './20250705_042423_volume_update'
-import * as migration_20250705_185916_add_media_access_control from './20250705_185916_add_media_access_control'
-import * as migration_20250705_213213_remove_unused_volume_relation from './20250705_213213_remove_unused_volume_relation'
-import * as migration_20250707_010714_remove_posts from './20250707_010714_remove_posts'
-import * as migration_20250708_020740_update_payload from './20250708_020740_update_payload'
-import * as migration_20250708_042411_update_media_image_sizes from './20250708_042411_update_media_image_sizes'
-import * as migration_20250708_212941_remove_medium_compat_size from './20250708_212941_remove_medium_compat_size'
-import * as migration_20250726_210541_implement_webhooks from './20250726_210541_implement_webhooks'
-import * as migration_20260109_081334_upgrade_payload_3_70_0 from './20260109_081334_upgrade_payload_3_70_0'
-import * as migration_20260110_021152_discord_header_button from './20260110_021152_discord_header_button'
-import * as migration_20260111_055750_slug_field_update from './20260111_055750_slug_field_update'
-import * as migration_20260117_020339_footnotes from './20260117_020339_footnotes'
-import * as migration_20260217_013724_header_footer_redesign from './20260217_013724_header_footer_redesign'
-import * as migration_20260303_233515_auto_generate_volume_title from './20260303_233515_auto_generate_volume_title'
-import * as migration_20260304_215356_feature_authors from './20260304_215356_feature_authors'
-import * as migration_20260305_050800_action_button_needed_more_migrations from './20260305_050800_action_button_needed_more_migrations'
-import * as migration_20260307_014204_enable_math_rendering from './20260307_014204_enable_math_rendering'
-import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles'
-import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField'
-import * as migration_20260311_160239_rename_Users_role_user_to_member from './20260311_160239_rename_Users_role_user_to_member'
-import * as migration_20260316_072557_add_blurdataurl from './20260316_072557_add_blurdataurl'
-import * as migration_20260317_033620_add_collections_again_thanks_esp from './20260317_033620_add_collections_again_thanks_esp'
-import * as migration_20260318_125059_revert_volume_autogen from './20260318_125059_revert_volume_autogen'
-import * as migration_20260318_152547_use_populate_authors_duh from './20260318_152547_use_populate_authors_duh'
-import * as migration_20260318_172936_topics_views from './20260318_172936_topics_views'
-import * as migration_20260321_165911_add_copyright_to_footer_global from './20260321_165911_add_copyright_to_footer_global'
+import * as migration_20250703_194534_init from './20250703_194534_init';
+import * as migration_20250705_042423_volume_update from './20250705_042423_volume_update';
+import * as migration_20250705_185916_add_media_access_control from './20250705_185916_add_media_access_control';
+import * as migration_20250705_213213_remove_unused_volume_relation from './20250705_213213_remove_unused_volume_relation';
+import * as migration_20250707_010714_remove_posts from './20250707_010714_remove_posts';
+import * as migration_20250708_020740_update_payload from './20250708_020740_update_payload';
+import * as migration_20250708_042411_update_media_image_sizes from './20250708_042411_update_media_image_sizes';
+import * as migration_20250708_212941_remove_medium_compat_size from './20250708_212941_remove_medium_compat_size';
+import * as migration_20250726_210541_implement_webhooks from './20250726_210541_implement_webhooks';
+import * as migration_20260109_081334_upgrade_payload_3_70_0 from './20260109_081334_upgrade_payload_3_70_0';
+import * as migration_20260110_021152_discord_header_button from './20260110_021152_discord_header_button';
+import * as migration_20260111_055750_slug_field_update from './20260111_055750_slug_field_update';
+import * as migration_20260117_020339_footnotes from './20260117_020339_footnotes';
+import * as migration_20260217_013724_header_footer_redesign from './20260217_013724_header_footer_redesign';
+import * as migration_20260303_233515_auto_generate_volume_title from './20260303_233515_auto_generate_volume_title';
+import * as migration_20260304_215356_feature_authors from './20260304_215356_feature_authors';
+import * as migration_20260305_050800_action_button_needed_more_migrations from './20260305_050800_action_button_needed_more_migrations';
+import * as migration_20260307_014204_enable_math_rendering from './20260307_014204_enable_math_rendering';
+import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles';
+import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField';
+import * as migration_20260311_160239_rename_Users_role_user_to_member from './20260311_160239_rename_Users_role_user_to_member';
+import * as migration_20260316_072557_add_blurdataurl from './20260316_072557_add_blurdataurl';
+import * as migration_20260317_033620_add_collections_again_thanks_esp from './20260317_033620_add_collections_again_thanks_esp';
+import * as migration_20260318_125059_revert_volume_autogen from './20260318_125059_revert_volume_autogen';
+import * as migration_20260318_152547_use_populate_authors_duh from './20260318_152547_use_populate_authors_duh';
+import * as migration_20260318_172936_topics_views from './20260318_172936_topics_views';
+import * as migration_20260321_165911_add_copyright_to_footer_global from './20260321_165911_add_copyright_to_footer_global';
+import * as migration_20260323_024225_add_showByline_to_admin from './20260323_024225_add_showByline_to_admin';
 
 export const migrations = [
   {
@@ -162,4 +163,9 @@ export const migrations = [
     down: migration_20260321_165911_add_copyright_to_footer_global.down,
     name: '20260321_165911_add_copyright_to_footer_global',
   },
-]
+  {
+    up: migration_20260323_024225_add_showByline_to_admin.up,
+    down: migration_20260323_024225_add_showByline_to_admin.down,
+    name: '20260323_024225_add_showByline_to_admin',
+  },
+];
