@@ -46,8 +46,10 @@ export const Media: CollectionConfig = {
       type: "text",
       label: "Blur Placeholder",
       admin: {
+        components: {
+          Field: "@/collections/Media/components/BlurDataURLField#BlurDataURLField",
+        },
         description: "Base64 encoded blur placeholder (auto-generated)",
-        readOnly: true,
       },
     },
     {
