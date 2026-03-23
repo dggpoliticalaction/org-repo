@@ -468,11 +468,6 @@ export interface Topic {
    * Optional description for this topic
    */
   description?: string | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
   meta?: {
     title?: string | null;
     /**
@@ -481,6 +476,11 @@ export interface Topic {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -1707,8 +1707,6 @@ export interface WebhooksSelect<T extends boolean = true> {
 export interface TopicsSelect<T extends boolean = true> {
   name?: T;
   description?: T;
-  generateSlug?: T;
-  slug?: T;
   meta?:
     | T
     | {
@@ -1716,6 +1714,8 @@ export interface TopicsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  generateSlug?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }
