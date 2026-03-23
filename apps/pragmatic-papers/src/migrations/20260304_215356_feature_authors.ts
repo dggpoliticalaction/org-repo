@@ -35,9 +35,12 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
     counter INT;
   BEGIN
     FOR r IN SELECT id, name FROM users LOOP
-      base_slug := trim(r.name);
+      base_slug := trim(COALESCE(r.name, ''));
       base_slug := regexp_replace(base_slug, '[^a-zA-Z0-9[:space:]]', '', 'g');
-      base_slug := lower(regexp_replace(base_slug, '\s+', '-', 'g'));
+      base_slug := lower(regexp_replace(base_slug, '\\s+', '-', 'g'));
+      IF base_slug = '' THEN
+        base_slug := 'user-' || r.id;
+      END IF;
       candidate := base_slug;
       counter := 2;
       WHILE EXISTS (SELECT 1 FROM users WHERE slug = candidate) LOOP
