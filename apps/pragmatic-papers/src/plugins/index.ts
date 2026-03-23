@@ -21,8 +21,8 @@ export const generateTitle: GenerateTitle<Volume | Article | Page | Topic> = ({ 
       ? `Volume ${toRoman(doc.volumeNumber)} | Pragmatic Papers`
       : "Pragmatic Papers"
   }
-  if ('name' in doc && doc.name) return `${doc.name} | Pragmatic Papers`
-  if ('title' in doc && doc.title) return `${doc.title} | Pragmatic Papers`
+  if ("name" in doc && doc.name) return `${doc.name} | Pragmatic Papers`
+  if ("title" in doc && doc.title) return `${doc.title} | Pragmatic Papers`
   return "Pragmatic Papers"
 }
 
