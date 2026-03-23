@@ -63,7 +63,8 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     slug,
   })
 
-  return generateMeta({ doc: page })
+  const canonicalPath = slug === "home" ? "/" : `/${slug}`
+  return generateMeta({ doc: page, canonicalPath })
 }
 
 interface Args {
