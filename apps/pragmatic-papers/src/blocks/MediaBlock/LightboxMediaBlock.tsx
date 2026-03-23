@@ -20,8 +20,6 @@ export const LightboxMediaBlock: React.FC<LightboxMediaBlockProps> = ({
 }) => {
   if (typeof media === "number") return null
 
-  const isPortrait = (media.height ?? 0) > (media.width ?? 0)
-
   return (
     <Dialog>
       <DialogTrigger className={cn("w-full", containerClassName)}>
@@ -29,8 +27,8 @@ export const LightboxMediaBlock: React.FC<LightboxMediaBlockProps> = ({
       </DialogTrigger>
       <DialogContent
         className={cn(
-          "[&>button]:bg-background w-screen p-0 text-base shadow-none ring-0 sm:max-w-7xl [&>button]:top-2 [&>button]:right-2 [&>button]:rounded-sm [&>button]:p-0.5 [&>button_svg]:size-6",
-          isPortrait ? "max-h-[90dvh] overflow-hidden" : "max-h-full",
+          "[&>button]:bg-background h-screen w-screen p-0 text-base shadow-none ring-0 sm:max-w-none [&>button]:top-2 [&>button]:right-2 [&>button]:rounded-sm [&>button]:p-0.5 [&>button_svg]:size-6",
+          "flex items-center justify-center",
         )}
       >
         <DialogHeader className="sr-only">
@@ -41,7 +39,8 @@ export const LightboxMediaBlock: React.FC<LightboxMediaBlockProps> = ({
           sizes="100vw"
           variant="xlarge"
           enableGutter={false}
-          imgClassName={cn("border", isPortrait && "max-h-[calc(90dvh-3.5rem)] w-auto")}
+          className="max-h-full max-w-full"
+          imgClassName="h-auto w-auto max-h-[calc(100dvh-3.5rem)] max-w-[calc(100dvw-3.5rem)] object-contain border-0"
         />
       </DialogContent>
     </Dialog>
