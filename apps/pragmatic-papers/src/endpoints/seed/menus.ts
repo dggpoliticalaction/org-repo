@@ -75,6 +75,12 @@ export const createMenus = async (
   await payload.updateGlobal({
     slug: "footer",
     data: {
+      copyright: {
+        type: "custom",
+        label: "Digital Ground Game",
+        url: "https://digitalgroundgame.org",
+        newTab: true,
+      },
       navItems: [
         {
           link: {
