@@ -1,5 +1,5 @@
 "use client"
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import type { TextFieldClientProps } from "payload"
 import { Button, FieldLabel, TextInput, useDocumentInfo, useField } from "@payloadcms/ui"
 
@@ -9,19 +9,31 @@ export const BlurDataURLField: React.FC<TextFieldClientProps> = ({ field, path }
   const { value, setValue } = useField<string>({ path: fieldPath })
   const { id } = useDocumentInfo()
   const [isLoading, setIsLoading] = useState(false)
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const handleRegenerate = useCallback(async () => {
-    if (!id || isLoading) return
-    setIsLoading(true)
-    try {
-      const response = await fetch(`/api/media/${id}/regenerate-blur`, { method: "POST" })
-      if (response.ok) {
-        const { blurDataURL } = (await response.json()) as { blurDataURL: string }
-        setValue(blurDataURL)
-      }
-    } finally {
-      setIsLoading(false)
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current)
     }
+  }, [])
+
+  const handleRegenerate = useCallback(() => {
+    if (!id || isLoading) return
+
+    if (debounceTimer.current) clearTimeout(debounceTimer.current)
+
+    debounceTimer.current = setTimeout(async () => {
+      setIsLoading(true)
+      try {
+        const response = await fetch(`/api/media/${id}/regenerate-blur`, { method: "POST" })
+        if (response.ok) {
+          const { blurDataURL } = (await response.json()) as { blurDataURL: string }
+          setValue(blurDataURL)
+        }
+      } finally {
+        setIsLoading(false)
+      }
+    }, 500)
   }, [id, isLoading, setValue])
 
   return (
