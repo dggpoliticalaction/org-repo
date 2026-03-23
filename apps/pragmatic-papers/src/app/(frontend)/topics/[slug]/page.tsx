@@ -167,13 +167,13 @@ export default async function TopicPage({
 
       {draft && <LivePreviewListener />}
 
-      <header className="space-y-3 text-center">
-        <h1 className="text-3xl font-bold md:text-4xl">Topic: {topic.name}</h1>
+      <header className="space-y-3">
+        <h1>Topic: {topic.name}</h1>
         {topic.description && <p className="text-muted-foreground text-sm">{topic.description}</p>}
       </header>
 
       <section aria-label="Articles for this topic">
-        <h2 className="mb-3 text-2xl font-semibold">Articles</h2>
+        <h2 className="mb-3">Articles</h2>
         {totalDocs === 0 ? (
           <p className="text-muted-foreground text-sm">No articles found for this topic yet.</p>
         ) : (
