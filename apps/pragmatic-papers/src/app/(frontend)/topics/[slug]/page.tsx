@@ -8,6 +8,7 @@ import type { Metadata } from "next"
 import { draftMode } from "next/headers"
 import { getPayload } from "payload"
 import React, { cache } from "react"
+import { generateMeta } from "@/utilities/generateMeta"
 
 interface Args {
   params: Promise<{
@@ -106,19 +107,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug = "" } = await params
   const topic = await queryTopicBySlug(slug)
 
-  const name = topic?.name || "Topic"
-  const title = `${name} - Pragmatic Papers`
-  const description = topic?.description || undefined
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      url: `/topics/${slug}`,
-    },
-  }
+  return generateMeta({ doc: topic })
 }
 
 export default async function TopicPage({

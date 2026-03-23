@@ -1,4 +1,11 @@
 import type { CollectionConfig } from "payload"
+import {
+  MetaDescriptionField,
+  MetaImageField,
+  MetaTitleField,
+  OverviewField,
+  PreviewField,
+} from "@payloadcms/plugin-seo/fields"
 import { slugField } from "payload"
 import { editor } from "@/access/editor"
 import { anyone } from "@/access/anyone"
@@ -18,18 +25,51 @@ export const Topics: CollectionConfig = {
   },
   fields: [
     {
-      name: "name",
-      type: "text",
-      required: true,
-      unique: true,
+      type: "tabs",
+      tabs: [
+        {
+          label: "Content",
+          fields: [
+            {
+              name: "name",
+              type: "text",
+              required: true,
+              unique: true,
+            },
+            {
+              name: "description",
+              type: "textarea",
+              admin: {
+                description: "Optional description for this topic",
+              },
+            },
+            slugField({ useAsSlug: "name" }),
+          ],
+        },
+        {
+          name: "meta",
+          label: "SEO",
+          fields: [
+            OverviewField({
+              titlePath: "meta.title",
+              descriptionPath: "meta.description",
+              imagePath: "meta.image",
+            }),
+            MetaTitleField({
+              hasGenerateFn: true,
+            }),
+            MetaImageField({
+              relationTo: "media",
+            }),
+            MetaDescriptionField({}),
+            PreviewField({
+              hasGenerateFn: true,
+              titlePath: "meta.title",
+              descriptionPath: "meta.description",
+            }),
+          ],
+        },
+      ],
     },
-    {
-      name: "description",
-      type: "textarea",
-      admin: {
-        description: "Optional description for this topic",
-      },
-    },
-    slugField({ useAsSlug: "name" }),
   ],
 }
