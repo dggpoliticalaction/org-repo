@@ -63,7 +63,10 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     slug,
   })
 
-  return generateMeta({ doc: page, url: page?.slug ? (page.slug === "home" ? "/" : `/${page.slug}`) : undefined })
+  return generateMeta({
+    doc: page,
+    url: page?.slug ? (page.slug === "home" ? "/" : `/${page.slug}`) : undefined,
+  })
 }
 
 interface Args {

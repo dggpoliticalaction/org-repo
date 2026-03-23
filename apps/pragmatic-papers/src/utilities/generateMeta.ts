@@ -28,7 +28,11 @@ export const generateMeta = async (args: {
           ]
         : undefined,
       title,
-      url: passedUrl ? `${getServerSideURL()}${passedUrl}` : (Array.isArray(doc?.slug) ? `${getServerSideURL()}/${doc?.slug.join("/")}` : getServerSideURL()),
+      url: passedUrl
+        ? `${getServerSideURL()}${passedUrl}`
+        : Array.isArray(doc?.slug)
+          ? `${getServerSideURL()}/${doc?.slug.join("/")}`
+          : getServerSideURL(),
     }),
     title,
   }
