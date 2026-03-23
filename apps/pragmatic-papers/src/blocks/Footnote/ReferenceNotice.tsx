@@ -32,7 +32,7 @@ export const ReferenceNotice: React.FC = () => {
       >
         {index && <span>{`${index}. `}</span>}
         {note}
-        {attributionUrl && <span>{`| ${attributionUrl}`}</span>}
+        {attributionUrl && <span>{` | ${attributionUrl}`}</span>}
       </p>
       <p style={{ marginTop: "0.5rem", opacity: 0.5 }}>
         To make changes, delete this footnote block and re-add it.
