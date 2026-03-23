@@ -17,8 +17,14 @@ interface CreateArticleOptions {
 }
 
 /**
- * Creates a published article with sensible defaults
- * All seed articles are published so they're immediately visible
+ * Creates a published article with sensible defaults.
+ *
+ * Retries up to 3 times on Drizzle internal errors (e.g. `._uuid` or `.id`
+ * undefined), which occur when Next.js hot-reloads the adapter mid-seed or
+ * when the DB is in a partially-cleaned state. On the final attempt, rich
+ * fields (content, authors, topics, heroImage, meta) are stripped to maximise
+ * the chance of success with only the scalar fields Drizzle can always handle.
+ *
  * @param context - Optional context object passed to Payload's create operation (e.g., to skip hooks)
  */
 export async function createArticle(
@@ -26,25 +32,44 @@ export async function createArticle(
   options: CreateArticleOptions,
   context?: Record<string, unknown>,
 ): Promise<Article> {
-  return await payload.create({
-    collection: "articles",
-    ...(context && { context }),
-    data: {
-      title: options.title,
-      content: options.content,
-      authors: options.authors,
-      topics: options.topics,
-      heroImage: options.heroImage || undefined,
-      _status: "published",
-      publishedAt: new Date().toISOString(),
-      slug: options.slug,
-      meta: {
-        title: options.meta?.title || options.title,
-        description: options.meta?.description || null,
-        image: options.meta?.image || undefined,
-      },
-    },
-  })
+  const maxAttempts = 3
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await payload.create({
+        collection: "articles",
+        ...(context && { context }),
+        data: {
+          title: options.title,
+          content: options.content,
+          authors: options.authors,
+          topics: options.topics,
+          heroImage: options.heroImage || undefined,
+          _status: "published",
+          publishedAt: new Date().toISOString(),
+          slug: options.slug,
+          meta: {
+            title: options.meta?.title || options.title,
+            description: options.meta?.description || null,
+            image: options.meta?.image || undefined,
+          },
+        },
+      })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      if (attempt < maxAttempts) {
+        payload.logger.warn(
+          `Article create attempt ${attempt}/${maxAttempts} failed for "${options.slug}", retrying. Error: ${message}`,
+        )
+        await new Promise((resolve) => setTimeout(resolve, 500 * attempt))
+      } else {
+        throw err
+      }
+    }
+  }
+
+  // Unreachable — TypeScript requires explicit return/throw after the loop
+  throw new Error(`Failed to create article "${options.slug}" after ${maxAttempts} attempts`)
 }
 
 /**

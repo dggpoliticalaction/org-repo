@@ -29,6 +29,7 @@
     "ci": "payload migrate && pnpm build",
     "migrate": "payload migrate",
     "migrate:create": "payload migrate:create",
+    "migrate:redo": "node scripts/redo-last-migration.mjs",
     "migrate:status": "payload migrate:status"
   },
   "dependencies": {
