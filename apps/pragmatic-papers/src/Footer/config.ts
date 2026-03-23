@@ -1,30 +1,31 @@
-import type { GlobalConfig } from 'payload'
+import type { GlobalConfig } from "payload"
 
-import { link } from '@/fields/link'
-import { revalidateFooter } from './hooks/revalidateFooter'
+import { adminFieldLevel } from "@/access/admins"
+import { link } from "@/fields/link2"
+import { menu } from "@/fields/menu"
+import { revalidateFooter } from "./hooks/revalidateFooter"
 
 export const Footer: GlobalConfig = {
-  slug: 'footer',
+  slug: "footer",
   access: {
     read: () => true,
+    update: adminFieldLevel,
   },
   fields: [
-    {
-      name: 'navItems',
-      type: 'array',
-      fields: [
-        link({
-          appearances: false,
-        }),
-      ],
+    menu({
+      name: "navItems",
+      label: "Navigation Items",
       maxRows: 6,
+      labels: { singular: "Menu Item", plural: "Menu Items" },
+    }),
+    link({
+      label: "Copyright",
+      name: "copyright",
       admin: {
-        initCollapsed: true,
-        components: {
-          RowLabel: '@/Footer/RowLabel#RowLabel',
-        },
+        description:
+          "The copyright symbol (©) and current year are automatically prepended to the label.",
       },
-    },
+    }),
   ],
   hooks: {
     afterChange: [revalidateFooter],

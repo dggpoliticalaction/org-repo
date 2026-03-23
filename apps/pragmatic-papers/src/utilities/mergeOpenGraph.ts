@@ -1,20 +1,21 @@
-import type { Metadata } from 'next'
-import { getServerSideURL } from './getURL'
+import type { Metadata } from "next"
+import { getServerSideURL } from "./getURL"
 
-const defaultOpenGraph: Metadata['openGraph'] = {
-  type: 'website',
+const defaultOpenGraph: Metadata["openGraph"] = {
+  type: "website",
   description:
-    'Pragmatic, community-driven articles focusing on new, politics, economics and more.',
+    "Pragmatic, community-driven articles focusing on news, politics, economics, and more.",
   images: [
     {
-      url: `${getServerSideURL()}/pragmaticpapers-logo-dark-og.png`,
+      url: `${getServerSideURL()}/the-pragmatic-papers-opengraph-image.png`,
+      alt: `The Pragmatic Papers icon: a large white "P" on the left, paired with a white panel on the right containing the wordmark "The Pragmatic Papers" in bold condensed type — all on an orange-red background.`,
     },
   ],
-  siteName: 'Pragmatic Papers',
-  title: 'Pragmatic Papers',
+  siteName: "The Pragmatic Papers",
+  title: "The Pragmatic Papers",
 }
 
-export const mergeOpenGraph = (og?: Metadata['openGraph']): Metadata['openGraph'] => {
+export const mergeOpenGraph = (og?: Metadata["openGraph"]): Metadata["openGraph"] => {
   return {
     ...defaultOpenGraph,
     ...og,

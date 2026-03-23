@@ -3,14 +3,12 @@ import type {
   GroupField,
   NamedGroupField,
   RadioField,
-  SelectField,
   SingleRelationshipField,
   TextField,
   TextFieldSingleValidation,
-} from 'payload'
+} from "payload"
 
 interface LinkFields {
-  appearance?: Partial<SelectField>
   label?: Partial<TextField>
   newTab?: Partial<CheckboxField>
   reference?: Partial<SingleRelationshipField>
@@ -18,8 +16,12 @@ interface LinkFields {
   url?: Partial<TextField>
 }
 
-type LinkProps = Omit<NamedGroupField, 'fields' | 'name' | 'type' | 'interfaceName'> & {
+export type LinkFieldOverrides = Omit<
+  NamedGroupField,
+  "fields" | "name" | "type" | "interfaceName"
+> & {
   component?: LinkFields
+  name?: string
 }
 
 /**
@@ -28,42 +30,39 @@ type LinkProps = Omit<NamedGroupField, 'fields' | 'name' | 'type' | 'interfaceNa
  * @param props - The props for the base link field
  * @returns The link field
  */
-export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField => {
-  const {
-    type = {},
-    newTab = {},
-    reference = {},
-    url = {},
-    label = {},
-    appearance = {},
-  } = component
+export const link = ({
+  component = {},
+  name = "link",
+  ...props
+}: LinkFieldOverrides = {}): GroupField => {
+  const { type = {}, newTab = {}, reference = {}, url = {}, label = {} } = component
   return {
-    label: 'Link',
+    label: "Link",
     ...props,
-    name: 'link',
-    type: 'group',
-    interfaceName: 'LinkField',
+    name,
+    type: "group",
+    interfaceName: "LinkField",
     fields: [
       {
-        type: 'row',
+        type: "row",
         fields: [
           {
-            label: 'Type',
-            name: 'type',
-            type: 'radio',
-            defaultValue: type.defaultValue || 'reference',
+            label: "Type",
+            name: "type",
+            type: "radio",
+            defaultValue: type.defaultValue || "reference",
             options: [
               {
-                label: 'Internal link',
-                value: 'reference',
+                label: "Internal link",
+                value: "reference",
               },
               {
-                label: 'Custom URL',
-                value: 'custom',
+                label: "Custom URL",
+                value: "custom",
               },
             ],
             admin: {
-              layout: 'horizontal',
+              layout: "horizontal",
               style: {
                 flex: 1,
                 ...type.admin?.style,
@@ -73,14 +72,14 @@ export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField =
           },
           {
             ...newTab,
-            name: 'newTab',
-            type: 'checkbox',
-            label: 'Open in new tab',
+            name: "newTab",
+            type: "checkbox",
+            label: "Open in new tab",
             admin: {
               ...newTab.admin,
               style: {
                 flex: 1,
-                alignSelf: 'flex-end',
+                alignSelf: "flex-end",
                 ...newTab.admin?.style,
               },
             },
@@ -88,62 +87,42 @@ export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField =
         ],
       },
       {
-        type: 'row',
+        type: "row",
         fields: [
           {
-            label: reference.label || 'Document to link to',
-            relationTo: ['pages', 'volumes', 'articles'],
-            name: 'reference',
-            type: 'relationship',
+            label: reference.label || "Document to link to",
+            relationTo: ["pages", "volumes", "articles", "topics"],
+            name: "reference",
+            type: "relationship",
             required: true,
             admin: {
-              condition: (_, siblingData) => siblingData?.type === 'reference',
+              condition: (_, siblingData) => siblingData?.type === "reference",
             },
           },
           {
-            label: url.label || 'Custom URL',
-            name: 'url',
-            type: 'text',
+            label: url.label || "Custom URL",
+            name: "url",
+            type: "text",
             required: true,
             hooks: { ...url.hooks },
             admin: {
-              condition: (_, siblingData) => siblingData?.type === 'custom',
+              condition: (_, siblingData) => siblingData?.type === "custom",
               ...url.admin,
             },
           },
           {
-            label: label.label || 'Label',
+            label: label.label || "Label",
             admin: {
               ...label.admin,
             },
             hooks: { ...label.hooks },
             hasMany: false,
             validate: label.validate as TextFieldSingleValidation,
-            name: 'label',
-            type: 'text',
+            name: "label",
+            type: "text",
             required: false,
           },
         ],
-      },
-      {
-        defaultValue: appearance.defaultValue || 'default',
-        options: appearance.options || [
-          {
-            label: 'Default',
-            value: 'default',
-          },
-          {
-            label: 'Outline',
-            value: 'outline',
-          },
-        ],
-        name: 'appearance',
-        type: 'select',
-        admin: {
-          description: 'Choose how the link should be rendered.',
-          hidden: true,
-          ...appearance.admin,
-        },
       },
     ],
   }

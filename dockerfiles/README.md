@@ -9,8 +9,6 @@ Docker configurations for deploying applications to staging, preview, and produc
 **Dockerfiles:**
 
 - `PragmaticPapers.Dockerfile` - Pragmatic Papers (Next.js + Payload CMS)
-- `DigitalGroundGame.Dockerfile` - DGG Political Action (Next.js + Payload CMS)
-- `DiscordBot.Dockerfile` - Discord Bot
 
 **Environment Template:**
 
@@ -29,7 +27,6 @@ openssl rand -base64 32  # For PAYLOAD_SECRET
 - **Type:** Dockerfile
 - **Dockerfile:**
   - Pragmatic Papers: `dockerfiles/PragmaticPapers.Dockerfile`
-  - DGG Political Action: `dockerfiles/DigitalGroundGame.Dockerfile`
 - **Base directory:** `/`
 
 ### 3. Set Environment Variables
@@ -140,7 +137,7 @@ Use managed PostgreSQL service (AWS RDS, Supabase, Neon, etc.) for all deploymen
 
 ## 🗄️ Database Configuration
 
-Both Pragmatic Papers and DGG Political Action use PostgreSQL exclusively for Docker deployments.
+Pragmatic Papers uses PostgreSQL exclusively for Docker deployments.
 
 ### PostgreSQL Configuration
 

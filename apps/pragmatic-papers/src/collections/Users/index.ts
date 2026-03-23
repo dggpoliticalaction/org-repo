@@ -1,6 +1,8 @@
-import type { CollectionConfig } from 'payload'
-
-import { authenticated } from '../../access/authenticated'
+import { adminOrSelf } from "@/access/adminOrSelf"
+import { admin, adminFieldLevel } from "@/access/admins"
+import { staff } from "@/access/staff"
+import { revalidateUser } from "@/collections/Users/hooks/revalidateUser"
+import { menu } from "@/fields/menu"
 import {
   FixedToolbarFeature,
   HeadingFeature,
@@ -9,37 +11,45 @@ import {
   lexicalEditor,
   OrderedListFeature,
   UnorderedListFeature,
-} from '@payloadcms/richtext-lexical'
-import { admin, adminFieldLevel } from '@/access/admins'
-import { adminOrSelf } from '@/access/adminOrSelf'
+} from "@payloadcms/richtext-lexical"
+import { slugField, type CollectionConfig } from "payload"
+import { userExists } from "./hooks/userExists"
 
 export const Users: CollectionConfig = {
-  slug: 'users',
+  slug: "users",
   access: {
-    admin: authenticated,
+    admin: staff,
     create: admin,
     delete: admin,
-    read: authenticated,
+    read: adminOrSelf,
     update: adminOrSelf,
   },
   admin: {
-    defaultColumns: ['name', 'role', 'email'],
-    useAsTitle: 'name',
+    defaultColumns: ["name", "role", "email"],
+    useAsTitle: "name",
   },
   auth: true,
   fields: [
     {
-      name: 'name',
-      type: 'text',
+      name: "name",
+      type: "text",
     },
     {
-      name: 'biography',
-      type: 'richText',
+      name: "affiliation",
+      type: "text",
+      required: false,
+      admin: {
+        condition: userExists,
+      },
+    },
+    {
+      name: "biography",
+      type: "richText",
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
           return [
             ...rootFeatures,
-            HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+            HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
             FixedToolbarFeature(),
             InlineToolbarFeature(),
             OrderedListFeature(),
@@ -49,38 +59,76 @@ export const Users: CollectionConfig = {
         },
       }),
       required: false,
+      admin: {
+        condition: userExists,
+      },
     },
+    slugField({
+      useAsSlug: "name",
+      overrides: (field) => {
+        field.admin = {
+          condition: userExists,
+          position: "sidebar",
+        }
+        return field
+      },
+    }),
     {
-      name: 'role',
-      type: 'select',
+      name: "profileImage",
+      type: "upload",
+      relationTo: "media",
+      required: false,
+      admin: {
+        condition: userExists,
+        position: "sidebar",
+      },
+    },
+    menu({
+      name: "socials",
+      label: "Socials",
+      maxRows: 6,
+      admin: {
+        condition: userExists,
+        position: "sidebar",
+      },
+    }),
+    {
+      name: "role",
+      type: "select",
       saveToJWT: true,
-      defaultValue: 'user',
+      defaultValue: "member",
       access: {
         update: adminFieldLevel,
       },
+      admin: {
+        position: "sidebar",
+      },
       options: [
         {
-          label: 'Admin',
-          value: 'admin',
+          label: "Admin",
+          value: "admin",
         },
         {
-          label: 'Chief Editor',
-          value: 'chief-editor',
+          label: "Chief Editor",
+          value: "chief-editor",
         },
         {
-          label: 'Editor',
-          value: 'editor',
+          label: "Editor",
+          value: "editor",
         },
         {
-          label: 'Writer',
-          value: 'writer',
+          label: "Writer",
+          value: "writer",
         },
         {
-          label: 'User',
-          value: 'user',
+          label: "Member",
+          value: "member",
         },
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidateUser],
+  },
   timestamps: true,
 }

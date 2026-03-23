@@ -1,29 +1,35 @@
-import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
-import { editorFieldLevel } from '@/access/editor'
-import { editorOrSelf, restrictWritersToDraftOnly } from '@/access/editorOrSelf'
-import { writer } from '@/access/writer'
-import { Banner } from '@/blocks/Banner/config'
-import { BlueSkyEmbed } from '@/blocks/BlueSkyEmbed/config'
-import { Code } from '@/blocks/Code/config'
-import { FootnoteBlock } from '@/blocks/Footnote/config'
-import { DisplayMathBlock, InlineMathBlock } from '@/blocks/Math/config'
-import { MediaBlock } from '@/blocks/MediaBlock/config'
-import { RedditEmbed } from '@/blocks/RedditEmbed/config'
-import { SquiggleRule } from '@/blocks/SquiggleRule/config'
-import { TikTokEmbed } from '@/blocks/TikTokEmbed/config'
-import { TwitterEmbed } from '@/blocks/TwitterEmbed/config'
-import { YouTubeEmbed } from '@/blocks/YouTubeEmbed/config'
-import { generateFootnotes } from '@/collections/Articles/hooks/generateFootnotes'
-import { footnotesArrayField } from '@/fields/footnotes'
-import { type Article } from '@/payload-types'
-import { generatePreviewPath } from '@/utilities/generatePreviewPath'
+import { authenticatedOrPublished } from "@/access/authenticatedOrPublished"
+import { editorFieldLevel } from "@/access/editor"
+import { editorOrSelf, restrictWritersToDraftOnly } from "@/access/editorOrSelf"
+import { writer } from "@/access/writer"
+import { Banner } from "@/blocks/Banner/config"
+import { Code } from "@/blocks/Code/config"
+import { FootnoteBlock } from "@/blocks/Footnote/config"
+import { DisplayMathBlock, InlineMathBlock } from "@/blocks/Math/config"
+import { MediaBlock } from "@/blocks/MediaBlock/config"
+import { MediaCollageBlock } from "@/blocks/MediaCollageBlock/config"
+import { SocialEmbed } from "@/blocks/SocialEmbed/config"
+import { LegacyBlueskyEmbed } from "@/blocks/SocialEmbed/embeds/BlueskyEmbed/config"
+import { LegacyRedditEmbed } from "@/blocks/SocialEmbed/embeds/RedditEmbed/config"
+import { LegacyTikTokEmbed } from "@/blocks/SocialEmbed/embeds/TikTokEmbed/config"
+import { LegacyTwitterEmbed } from "@/blocks/SocialEmbed/embeds/TwitterEmbed/config"
+import { LegacyYouTubeEmbed } from "@/blocks/SocialEmbed/embeds/YouTubeEmbed/config"
+import { SquiggleRule } from "@/blocks/SquiggleRule/config"
+import { detectMathBlocks } from "@/collections/Articles/hooks/detectMathBlocks"
+import { generateFootnotes } from "@/collections/Articles/hooks/generateFootnotes"
+import { populateAuthors } from "@/collections/Articles/hooks/populateAuthors"
+import { revalidateArticle, revalidateDelete } from "@/collections/Articles/hooks/revalidateArticle"
+import { footnotesArrayField } from "@/fields/footnotes"
+import { menu } from "@/fields/menu"
+import { type Article } from "@/payload-types"
+import { generatePreviewPath } from "@/utilities/generatePreviewPath"
 import {
   MetaDescriptionField,
   MetaImageField,
   MetaTitleField,
   OverviewField,
   PreviewField,
-} from '@payloadcms/plugin-seo/fields'
+} from "@payloadcms/plugin-seo/fields"
 import {
   AlignFeature,
   BlockquoteFeature,
@@ -41,14 +47,23 @@ import {
   SubscriptFeature,
   SuperscriptFeature,
   UnorderedListFeature,
-} from '@payloadcms/richtext-lexical'
-import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
-import { slugField } from 'payload'
-import { populateAuthors } from './hooks/populateAuthors'
-import { revalidateArticle, revalidateDelete } from './hooks/revalidateArticle'
+} from "@payloadcms/richtext-lexical"
+import type { CollectionBeforeChangeHook, CollectionConfig, FieldHook } from "payload"
+import { slugField } from "payload"
+
+const setPublishedAtDefault: FieldHook<Article, Article["publishedAt"]> = ({
+  siblingData,
+  value,
+}) => {
+  if (siblingData && siblingData._status === "published" && !value) {
+    return new Date().toISOString()
+  }
+
+  return value
+}
 
 export const Articles: CollectionConfig = {
-  slug: 'articles',
+  slug: "articles",
   access: {
     create: writer,
     delete: editorOrSelf,
@@ -56,60 +71,59 @@ export const Articles: CollectionConfig = {
     update: restrictWritersToDraftOnly,
   },
   admin: {
-    defaultColumns: ['title', 'slug', 'updatedAt'],
+    defaultColumns: ["title", "slug", "updatedAt"],
     livePreview: {
       url: ({ data, req }) =>
         generatePreviewPath({
           slug: data?.slug,
-          collection: 'articles',
+          collection: "articles",
           req,
         }),
     },
     preview: (data, { req }) =>
       generatePreviewPath({
         slug: data?.slug as string,
-        collection: 'articles',
+        collection: "articles",
         req,
       }),
-    useAsTitle: 'title',
+    useAsTitle: "title",
   },
   fields: [
     {
-      name: 'title',
-      type: 'text',
+      name: "title",
+      type: "text",
       required: true,
     },
+    // START TABS FIELDS
     {
-      type: 'tabs',
+      type: "tabs",
       tabs: [
         {
           fields: [
             {
-              name: 'heroImage',
-              type: 'upload',
-              relationTo: 'media',
-            },
-            {
-              name: 'content',
-              type: 'richText',
+              name: "content",
+              type: "richText",
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => {
                   return [
                     ...rootFeatures,
                     AlignFeature(),
-                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+                    HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
                     BlocksFeature({
                       blocks: [
                         Banner,
                         Code,
                         MediaBlock,
+                        MediaCollageBlock,
                         DisplayMathBlock,
                         SquiggleRule,
-                        TwitterEmbed,
-                        YouTubeEmbed,
-                        RedditEmbed,
-                        BlueSkyEmbed,
-                        TikTokEmbed,
+                        SocialEmbed,
+                        // Legacy blocks for backward compatibility with existing content
+                        LegacyBlueskyEmbed,
+                        LegacyRedditEmbed,
+                        LegacyTikTokEmbed,
+                        LegacyTwitterEmbed,
+                        LegacyYouTubeEmbed,
                       ],
                       inlineBlocks: [InlineMathBlock, FootnoteBlock],
                     }),
@@ -131,23 +145,24 @@ export const Articles: CollectionConfig = {
               label: false,
               required: true,
             },
+            footnotesArrayField(),
           ],
-          label: 'Content',
+          label: "Content",
         },
         {
-          name: 'meta',
-          label: 'SEO',
+          name: "meta",
+          label: "SEO",
           fields: [
             OverviewField({
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
-              imagePath: 'meta.image',
+              titlePath: "meta.title",
+              descriptionPath: "meta.description",
+              imagePath: "meta.image",
             }),
             MetaTitleField({
               hasGenerateFn: true,
             }),
             MetaImageField({
-              relationTo: 'media',
+              relationTo: "media",
             }),
 
             MetaDescriptionField({}),
@@ -156,50 +171,64 @@ export const Articles: CollectionConfig = {
               hasGenerateFn: true,
 
               // field paths to match the target field for data
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
+              titlePath: "meta.title",
+              descriptionPath: "meta.description",
             }),
           ],
         },
       ],
     },
+    // END TABS FIELDS
     {
-      name: 'publishedAt',
-      type: 'date',
+      name: "heroImage",
+      type: "upload",
+      relationTo: "media",
+      admin: {
+        position: "sidebar",
+      },
+    },
+    {
+      name: "enableMathRendering",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: "publishedAt",
+      type: "date",
       access: {
         update: editorFieldLevel,
       },
       admin: {
         date: {
-          pickerAppearance: 'dayAndTime',
+          pickerAppearance: "dayAndTime",
         },
-        position: 'sidebar',
+        position: "sidebar",
       },
       hooks: {
-        beforeChange: [
-          // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-          ({ siblingData, value }) => {
-            if (siblingData._status === 'published' && !value) {
-              return new Date()
-            }
-            return value
-          },
-        ],
+        beforeChange: [setPublishedAtDefault],
       },
     },
     {
-      name: 'authors',
-      type: 'relationship',
+      name: "authors",
+      type: "relationship",
       admin: {
-        position: 'sidebar',
+        position: "sidebar",
       },
       hasMany: true,
-      relationTo: 'users',
+      relationTo: "users",
+      filterOptions: {
+        role: {
+          in: ["writer", "editor", "chief-editor"],
+        },
+      },
     },
     {
-      name: 'createdBy',
-      type: 'relationship',
-      relationTo: 'users',
+      name: "createdBy",
+      type: "relationship",
+      relationTo: "users",
       access: {
         update: () => false,
       },
@@ -212,8 +241,9 @@ export const Articles: CollectionConfig = {
     // This is because the `user` collection has access control locked to protect user privacy
     // GraphQL will also not return mutated user data that differs from the underlying schema
     {
-      name: 'populatedAuthors',
-      type: 'array',
+      name: "populatedAuthors",
+      interfaceName: "PopulatedAuthors",
+      type: "array",
       access: {
         update: () => false,
       },
@@ -223,23 +253,55 @@ export const Articles: CollectionConfig = {
       },
       fields: [
         {
-          name: 'id',
-          type: 'text',
+          name: "id",
+          type: "text",
+          required: true,
         },
         {
-          name: 'name',
-          type: 'text',
+          name: "name",
+          type: "text",
         },
+        {
+          name: "slug",
+          type: "text",
+          required: true,
+        },
+        {
+          name: "affiliation",
+          type: "text",
+        },
+        {
+          name: "biography",
+          type: "richText",
+        },
+        {
+          name: "profileImage",
+          type: "upload",
+          relationTo: "media",
+        },
+        menu({
+          name: "socials",
+          label: "Socials",
+          maxRows: 6,
+        }),
       ],
     },
-    footnotesArrayField(),
+    {
+      name: "topics",
+      type: "relationship",
+      admin: {
+        position: "sidebar",
+      },
+      hasMany: true,
+      relationTo: "topics",
+    },
     slugField(),
   ],
   hooks: {
     beforeChange: [
       (args: Parameters<CollectionBeforeChangeHook<Article>>[0]): Partial<Article> | void => {
         const { req, operation, data } = args
-        if (operation === 'create') {
+        if (operation === "create") {
           if (req.user) {
             data.createdBy = req.user.id
             return data
@@ -247,6 +309,7 @@ export const Articles: CollectionConfig = {
         }
       },
       generateFootnotes,
+      detectMathBlocks,
     ],
     afterChange: [revalidateArticle],
     afterRead: [populateAuthors],
@@ -254,9 +317,7 @@ export const Articles: CollectionConfig = {
   },
   versions: {
     drafts: {
-      autosave: {
-        interval: 100, // We set this interval for optimal live preview
-      },
+      autosave: true,
       schedulePublish: true,
     },
     maxPerDoc: 50,

@@ -1,30 +1,32 @@
-import { revalidateRedirects } from '@/hooks/revalidateRedirects'
-import type { Article, Page, Volume } from '@/payload-types'
-import { getServerSideURL } from '@/utilities/getURL'
-import { toRoman } from '@/utilities/toRoman'
-import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
-import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
-import { redirectsPlugin } from '@payloadcms/plugin-redirects'
-import { seoPlugin } from '@payloadcms/plugin-seo'
-import { type GenerateTitle, type GenerateURL } from '@payloadcms/plugin-seo/types'
-import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
-import { s3Storage } from '@payloadcms/storage-s3'
-import { type Plugin } from 'payload'
+import { revalidateRedirects } from "@/hooks/revalidateRedirects"
+import type { Article, Page, Topic, Volume } from "@/payload-types"
+import { getServerSideURL } from "@/utilities/getURL"
+import { toRoman } from "@/utilities/toRoman"
+import { formBuilderPlugin } from "@payloadcms/plugin-form-builder"
+import { nestedDocsPlugin } from "@payloadcms/plugin-nested-docs"
+import { redirectsPlugin } from "@payloadcms/plugin-redirects"
+import { seoPlugin } from "@payloadcms/plugin-seo"
+import { type GenerateTitle, type GenerateURL } from "@payloadcms/plugin-seo/types"
+import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from "@payloadcms/richtext-lexical"
+import { s3Storage } from "@payloadcms/storage-s3"
+import { type Plugin } from "payload"
 
-function isVolume(obj: Volume | Article | Page): obj is Volume {
+function isVolume(obj: Volume | Article | Page | Topic): obj is Volume {
   return (obj as Volume).volumeNumber !== undefined
 }
 
-export const generateTitle: GenerateTitle<Volume | Article | Page> = ({ doc }) => {
+export const generateTitle: GenerateTitle<Volume | Article | Page | Topic> = ({ doc }) => {
   if (isVolume(doc)) {
     return doc?.volumeNumber
       ? `Volume ${toRoman(doc.volumeNumber)} | Pragmatic Papers`
-      : 'Pragmatic Papers'
+      : "Pragmatic Papers"
   }
-  return doc?.title ? `${doc.title} | Pragmatic Papers` : 'Pragmatic Papers'
+  if ("name" in doc && doc.name) return `${doc.name} | Pragmatic Papers`
+  if ("title" in doc && doc.title) return `${doc.title} | Pragmatic Papers`
+  return "Pragmatic Papers"
 }
 
-const generateURL: GenerateURL<Volume | Article | Page> = ({ doc }) => {
+const generateURL: GenerateURL<Volume | Article | Page | Topic> = ({ doc }) => {
   const url = getServerSideURL()
 
   return doc?.slug ? `${url}/${doc.slug}` : url
@@ -32,16 +34,16 @@ const generateURL: GenerateURL<Volume | Article | Page> = ({ doc }) => {
 
 export const plugins: Plugin[] = [
   redirectsPlugin({
-    collections: ['pages', 'volumes', 'articles'],
+    collections: ["pages", "volumes", "articles"],
     overrides: {
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
-          if ('name' in field && field.name === 'from') {
+          if ("name" in field && field.name === "from") {
             return {
               ...field,
               admin: {
-                description: 'You will need to rebuild the website when changing this field.',
+                description: "You will need to rebuild the website when changing this field.",
               },
             }
           }
@@ -57,8 +59,8 @@ export const plugins: Plugin[] = [
     },
   }),
   nestedDocsPlugin({
-    collections: ['categories'],
-    generateURL: (docs) => docs.reduce((url, doc) => `${url}/${doc.slug}`, ''),
+    collections: ["categories"],
+    generateURL: (docs) => docs.reduce((url, doc) => `${url}/${doc.slug}`, ""),
   }),
   seoPlugin({
     generateTitle,
@@ -71,7 +73,7 @@ export const plugins: Plugin[] = [
     formOverrides: {
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
-          if ('name' in field && field.name === 'confirmationMessage') {
+          if ("name" in field && field.name === "confirmationMessage") {
             return {
               ...field,
               editor: lexicalEditor({
@@ -79,7 +81,7 @@ export const plugins: Plugin[] = [
                   return [
                     ...rootFeatures,
                     FixedToolbarFeature(),
-                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+                    HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
                   ]
                 },
               }),
@@ -102,7 +104,7 @@ export const plugins: Plugin[] = [
     // Enable S3 storage only when not using local storage
     // For staging/preview: set USE_LOCAL_STORAGE=true to use local file system
     // For production: set USE_LOCAL_STORAGE=false (or leave unset) to use S3
-    enabled: process.env.USE_LOCAL_STORAGE !== 'true',
+    enabled: process.env.USE_LOCAL_STORAGE !== "true",
     collections: {
       media: {
         disablePayloadAccessControl: true,
@@ -119,15 +121,15 @@ export const plugins: Plugin[] = [
         },
       },
     },
-    bucket: process.env.S3_BUCKET || '',
+    bucket: process.env.S3_BUCKET || "",
     config: {
       forcePathStyle: true,
       credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+        accessKeyId: process.env.S3_ACCESS_KEY_ID || "",
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || "",
       },
       region: process.env.S3_REGION,
-      endpoint: process.env.S3_ENDPOINT || '',
+      endpoint: process.env.S3_ENDPOINT || "",
     },
     clientUploads: true,
   }),

@@ -1,0 +1,21 @@
+.url-field-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+
+  .url-field-icon {
+    position: absolute;
+    top: 2.7em;
+    right: 0.5em;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    background-color: var(--theme-elevation-150);
+    border-radius: 50%;
+    box-shadow: 0 0 0.5rem 0.1rem rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
+  }
+}

@@ -1,5 +1,6 @@
-import type { Payload } from 'payload'
-import type { Media, Volume } from '@/payload-types'
+import type { Media, Volume } from "@/payload-types"
+import { createRichTextFromString } from "./richtext"
+import type { Payload, RequiredDataFromCollectionSlug } from "payload"
 
 interface VolumeConfig {
   volumeNumber: number
@@ -13,37 +14,62 @@ interface CreateVolumesResult {
   volumes: Volume[]
 }
 
-const createEditorsNote = (content: string) => ({
-  root: {
-    children: [
-      {
-        children: [
-          {
-            detail: 0,
-            format: 0,
-            mode: 'normal',
-            style: '',
-            text: content,
-            type: 'text',
-            version: 1,
-          },
-        ],
-        direction: 'ltr' as const,
-        format: '' as const,
-        indent: 0,
-        type: 'paragraph',
-        version: 1,
-        textFormat: 0,
-        textStyle: '',
-      },
-    ],
-    direction: 'ltr' as const,
-    format: '' as const,
-    indent: 0,
-    type: 'root',
-    version: 1,
-  },
-})
+type VolumeData = RequiredDataFromCollectionSlug<"volumes">
+
+async function createOrUpdateVolume(payload: Payload, data: VolumeData): Promise<Volume> {
+  const maxAttempts = 3
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const isLastAttempt = attempt === maxAttempts
+
+    try {
+      if (isLastAttempt) {
+        // Minimal-fields fallback: strip relationships and rich text
+        const { title, volumeNumber, description, slug, _status, publishedAt } = data
+        return await payload.create({
+          collection: "volumes",
+          data: { title, volumeNumber, description, slug, _status, publishedAt },
+        })
+      }
+
+      return await payload.create({ collection: "volumes", data })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      const isSlugConflict = message.toLowerCase().includes("slug")
+
+      if (isSlugConflict) {
+        const existing = await payload.find({
+          collection: "volumes",
+          where: { slug: { equals: data.slug } },
+          limit: 1,
+        })
+
+        const existingVolume = existing.docs[0]
+        if (!existingVolume) throw err
+
+        payload.logger.warn(
+          `Volume slug "${data.slug}" already exists (id: ${existingVolume.id}), updating instead of creating.`,
+        )
+
+        return await payload.update({ collection: "volumes", id: existingVolume.id, data })
+      }
+
+      if (attempt < maxAttempts) {
+        payload.logger.warn(
+          `Volume create attempt ${attempt}/${maxAttempts} failed for "${data.slug}", retrying. Error: ${message}`,
+        )
+        await new Promise((resolve) => setTimeout(resolve, 500 * attempt))
+      } else {
+        payload.logger.warn(
+          `Failed to create volume "${data.slug}" with full data, retrying with minimal fields. Error: ${message}`,
+        )
+      }
+    }
+  }
+
+  // Unreachable — TypeScript requires explicit return/throw after the loop
+  throw new Error(`Failed to create volume "${data.slug}" after ${maxAttempts} attempts`)
+}
 
 export const createVolumes = async (
   payload: Payload,
@@ -53,21 +79,20 @@ export const createVolumes = async (
   const volumes: Volume[] = []
 
   for (const config of volumeConfigs) {
-    const volume = await payload.create({
-      collection: 'volumes',
-      data: {
+    const mediaDoc = mediaDocs[config.volumeNumber % mediaDocs.length]
+    const volume = await createOrUpdateVolume(payload, {
+      title: config.title,
+      volumeNumber: config.volumeNumber,
+      description: config.description,
+      editorsNote: createRichTextFromString(config.editorsNoteContent),
+      articles: config.articleIds,
+      slug: config.volumeNumber.toString(),
+      _status: "published",
+      publishedAt: new Date().toISOString(),
+      meta: {
         title: config.title,
-        volumeNumber: config.volumeNumber,
         description: config.description,
-        editorsNote: createEditorsNote(config.editorsNoteContent),
-        articles: config.articleIds,
-        _status: 'published',
-        publishedAt: new Date().toISOString(),
-        meta: {
-          title: config.title,
-          description: config.description,
-          image: mediaDocs[config.volumeNumber % mediaDocs.length]?.id,
-        },
+        image: mediaDoc?.id ?? null,
       },
     })
     volumes.push(volume)
