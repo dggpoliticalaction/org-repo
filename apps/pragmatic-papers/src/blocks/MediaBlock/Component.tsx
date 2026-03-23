@@ -76,6 +76,7 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props })
   return (
     <Slot
       className={cn(
+        "block",
         {
           container: enableGutter,
           "lg:-mx-8 xl:-mx-16": breakout,

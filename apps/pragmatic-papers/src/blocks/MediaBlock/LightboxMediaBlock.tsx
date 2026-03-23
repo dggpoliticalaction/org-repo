@@ -25,12 +25,7 @@ export const LightboxMediaBlock: React.FC<LightboxMediaBlockProps> = ({
       <DialogTrigger className={cn("w-full", containerClassName)}>
         <MediaBlock media={media} enableGutter={false} className={className} {...props} />
       </DialogTrigger>
-      <DialogContent
-        className={cn(
-          "[&>button]:bg-background h-screen w-screen p-0 text-base shadow-none ring-0 sm:max-w-none [&>button]:top-2 [&>button]:right-2 [&>button]:rounded-sm [&>button]:p-0.5 [&>button_svg]:size-6",
-          "flex items-center justify-center",
-        )}
-      >
+      <DialogContent className="w-auto max-w-none sm:max-w-none flex items-center justify-center p-0 border-none rounded-none bg-transparent shadow-none ring-0">
         <DialogHeader className="sr-only">
           <DialogTitle>{media.filename}</DialogTitle>
         </DialogHeader>
@@ -40,7 +35,7 @@ export const LightboxMediaBlock: React.FC<LightboxMediaBlockProps> = ({
           variant="xlarge"
           enableGutter={false}
           className="max-h-full max-w-full"
-          imgClassName="h-auto w-auto max-h-[calc(100dvh-3.5rem)] max-w-[calc(100dvw-3.5rem)] object-contain border-0"
+          imgClassName="h-auto w-auto max-h-[calc(100dvh-3.5rem)] max-w-[calc(100dvw-3.5rem)] object-contain"
         />
       </DialogContent>
     </Dialog>
