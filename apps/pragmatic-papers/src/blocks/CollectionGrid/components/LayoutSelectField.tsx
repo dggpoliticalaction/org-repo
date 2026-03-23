@@ -1,5 +1,5 @@
 "use client"
-import { SelectField, useForm, useFormFields } from "@payloadcms/ui"
+import { SelectField, useField, useForm, useFormFields } from "@payloadcms/ui"
 import type { SelectFieldClientProps } from "payload"
 import React, { useEffect, useRef } from "react"
 
@@ -37,7 +37,7 @@ export const LayoutSelectField: React.FC<LayoutSelectFieldProps> = (props) => {
 
   const { addFieldRow, removeFieldRow } = useForm()
 
-  const layoutValue = useFormFields(([fields]) => fields[path || "layout"]?.value as string | undefined)
+  const { value: layoutValue } = useField<string>({ path: path! })
 
   // Keep a ref to the current slot row count so the effect below doesn't
   // need to subscribe to it (avoiding re-runs every time a row is added).
