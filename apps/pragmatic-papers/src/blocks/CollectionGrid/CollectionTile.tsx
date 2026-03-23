@@ -24,7 +24,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
   if (!tile) return null
   const { id, collection, kicker, overrideTitle, showByline } = tile
 
-  if (typeof collection.value === "number") return null
+  if (!collection || typeof collection.value === "number") return null
 
   const { title, slug, publishedAt, meta } = collection.value
   const href = `/${collection.relationTo}/${slug}`
