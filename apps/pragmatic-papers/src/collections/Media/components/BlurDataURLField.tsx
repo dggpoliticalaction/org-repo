@@ -1,5 +1,5 @@
 "use client"
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import type { TextFieldClientProps } from "payload"
 import { Button, FieldLabel, TextInput, useDocumentInfo, useField } from "@payloadcms/ui"
 
@@ -17,7 +17,7 @@ export const BlurDataURLField: React.FC<TextFieldClientProps> = ({ field, path }
     }
   }, [])
 
-  const handleRegenerate = useCallback(() => {
+  const handleRegenerate = () => {
     if (!id || isLoading) return
 
     if (debounceTimer.current) clearTimeout(debounceTimer.current)
@@ -34,7 +34,7 @@ export const BlurDataURLField: React.FC<TextFieldClientProps> = ({ field, path }
         setIsLoading(false)
       }
     }, 500)
-  }, [id, isLoading, setValue])
+  }
 
   return (
     <div>
