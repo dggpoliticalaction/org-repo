@@ -45,8 +45,8 @@ export const Fibonacci7Layout: React.FC<LayoutProps> = ({
       {/* Slot D + E + F — right column: D then E, F (no image) */}
       <div className="flex flex-col gap-6 lg:row-span-2">
         <CollectionTile tile={d!} loading={loading} />
-        <CollectionTile tile={e!} imagePosition="none" showByline />
-        <CollectionTile tile={f!} imagePosition="none" showByline />
+        <CollectionTile tile={e!} imagePosition="none" />
+        <CollectionTile tile={f!} imagePosition="none" />
       </div>
 
       {/* Slots A, B, C — image above, 3 cols under featured */}
