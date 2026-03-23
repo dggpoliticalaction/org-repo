@@ -87,7 +87,7 @@ Turborepo monorepo for **Pragmatic Papers**, a Next.js 15 website with Payload C
 - Use `unstable_cache` with cache tags for long-lived caching (globals, redirects, sitemaps)
 - Always respect `draftMode()` — pass `draft` and `overrideAccess: draft` into Payload queries
 - Next.js 15: `params` and `searchParams` are `Promise`s (must be `await`ed)
-- Metadata: use `generateMeta({ doc })` from `@/utilities/generateMeta`
+- Metadata: use `generateMeta({ doc, canonicalPath })` from `@/utilities/generateMeta`
 - Static generation: implement `generateStaticParams()` with `overrideAccess: false` and `draft: false`
 
 ### Turbo Configuration (`turbo.json`)
