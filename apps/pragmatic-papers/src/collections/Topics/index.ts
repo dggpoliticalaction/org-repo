@@ -1,4 +1,6 @@
-import type { CollectionConfig } from "payload"
+import { anyone } from "@/access/anyone"
+import { editor } from "@/access/editor"
+import { writer } from "@/access/writer"
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -6,10 +8,8 @@ import {
   OverviewField,
   PreviewField,
 } from "@payloadcms/plugin-seo/fields"
+import type { CollectionConfig } from "payload"
 import { slugField } from "payload"
-import { editor } from "@/access/editor"
-import { anyone } from "@/access/anyone"
-import { writer } from "@/access/writer"
 
 export const Topics: CollectionConfig = {
   slug: "topics",
@@ -43,7 +43,6 @@ export const Topics: CollectionConfig = {
                 description: "Optional description for this topic",
               },
             },
-            slugField({ useAsSlug: "name" }),
           ],
         },
         {
@@ -71,5 +70,6 @@ export const Topics: CollectionConfig = {
         },
       ],
     },
+    slugField({ useAsSlug: "name" }),
   ],
 }
