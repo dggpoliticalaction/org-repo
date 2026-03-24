@@ -34,6 +34,9 @@ export const Media: CollectionConfig = {
     read: anyone,
     update: editorOrSelf,
   },
+  admin: {
+    defaultColumns: ["filename", "alt", "caption"],
+  },
   fields: [
     {
       name: "alt",

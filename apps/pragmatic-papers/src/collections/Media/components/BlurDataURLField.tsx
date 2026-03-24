@@ -42,18 +42,18 @@ export const BlurDataURLField: React.FC<TextFieldClientProps> = ({ field, path }
   return (
     <div>
       <FieldLabel htmlFor={`field-${fieldPath}`} label={label} />
-      <div style={{ alignItems: "center", display: "flex", gap: "var(--spacing-xs)" }}>
+      <div style={{ alignItems: "center", display: "flex", gap: "8px" }}>
         <div style={{ flex: 1 }}>
           <TextInput onChange={setValue} path={fieldPath} readOnly value={value ?? ""} />
         </div>
         <Button
-          buttonStyle="secondary"
+          buttonStyle="subtle"
           disabled={!id || isLoading}
           onClick={handleRegenerate}
-          size="small"
+          size="large"
         >
           <RefreshCcwIcon style={{ width: "16px", height: "16px", marginRight: "4px" }} />
-          {isLoading ? "Regenerating..." : "Regenerate"}
+          <span style={{ width: "140px" }}>{isLoading ? "Loading..." : "Regenerate"}</span>
         </Button>
       </div>
     </div>
