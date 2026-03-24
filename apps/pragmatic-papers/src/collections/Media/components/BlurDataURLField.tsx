@@ -1,8 +1,9 @@
 "use client"
-import React, { useEffect, useRef, useState } from "react"
-import type { TextFieldClientProps } from "payload"
 import { Button, FieldLabel, TextInput, useDocumentInfo, useField } from "@payloadcms/ui"
+import type { TextFieldClientProps } from "payload"
+import React, { useEffect, useRef, useState } from "react"
 
+import { RefreshCcwIcon } from "lucide-react"
 import type { RegenerateBlurResponse } from "../types"
 
 export const BlurDataURLField: React.FC<TextFieldClientProps> = ({ field, path }) => {
@@ -51,6 +52,7 @@ export const BlurDataURLField: React.FC<TextFieldClientProps> = ({ field, path }
           onClick={handleRegenerate}
           size="small"
         >
+          <RefreshCcwIcon style={{ width: "16px", height: "16px", marginRight: "4px" }} />
           {isLoading ? "Regenerating..." : "Regenerate"}
         </Button>
       </div>
