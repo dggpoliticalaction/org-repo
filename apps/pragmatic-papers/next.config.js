@@ -15,6 +15,14 @@ const nextConfig = {
   output: "standalone",
   images: {
     qualities: [80],
+    // Disable AVIF to avoid Vary: Accept conflicts with Cloudflare's Free plan cache.
+    // Cloudflare ignores Vary headers, so it would serve whichever format it cached first
+    // (AVIF or WebP) to all browsers. Payload already converts uploads to WebP at rest,
+    // so AVIF re-encoding adds overhead with no meaningful quality benefit.
+    formats: ["image/webp"],
+    // Safe to use a long TTL because updatedAt is appended to every image URL in
+    // getMediaUrl(), providing natural cache busting whenever an image is replaced.
+    minimumCacheTTL: 2592000, // 30 days
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL, NEXT_PUBLIC_SUPABASE_URL].map((item) => {
         const url = new URL(item)
