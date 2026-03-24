@@ -37,9 +37,7 @@ export async function POST(
     return NextResponse.json({ error: "Media has no URL" }, { status: 400 })
   }
 
-  const imageUrl = media.url.startsWith("http")
-    ? media.url
-    : `${getServerSideURL()}${media.url}`
+  const imageUrl = media.url.startsWith("http") ? media.url : `${getServerSideURL()}${media.url}`
 
   const imageResponse = await fetch(imageUrl)
   if (!imageResponse.ok) {

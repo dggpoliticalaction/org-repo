@@ -1,3 +1,3 @@
-export type RegenerateBlurResponse = {
+export interface RegenerateBlurResponse {
   blurDataURL: string
 }
