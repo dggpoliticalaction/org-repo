@@ -1,4 +1,4 @@
-import { MigrateDownArgs, MigrateUpArgs, sql } from '@payloadcms/db-postgres'
+import { MigrateDownArgs, MigrateUpArgs, sql } from '@payloadcms/db-postgres';
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
@@ -44,7 +44,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "users_rels_articles_id_idx" ON "users_rels" USING btree ("articles_id");
   ALTER TABLE "users" ADD CONSTRAINT "users_profile_image_id_media_id_fk" FOREIGN KEY ("profile_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   CREATE UNIQUE INDEX "users_slug_idx" ON "users" USING btree ("slug");
-  CREATE INDEX "users_profile_image_idx" ON "users" USING btree ("profile_image_id");`)
+  CREATE INDEX "users_profile_image_idx" ON "users" USING btree ("profile_image_id");`);
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
@@ -61,5 +61,5 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "users" DROP COLUMN "generate_slug";
   ALTER TABLE "users" DROP COLUMN "slug";
   ALTER TABLE "users" DROP COLUMN "profile_image_id";
-  DROP TYPE "public"."enum_users_socials_link_type";`)
+  DROP TYPE "public"."enum_users_socials_link_type";`);
 }

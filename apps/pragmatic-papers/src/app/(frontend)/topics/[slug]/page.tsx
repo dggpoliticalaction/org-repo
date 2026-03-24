@@ -46,6 +46,7 @@ const queryTopicBySlug = cache(async (slug: string): Promise<Topic | null> => {
     collection: "topics",
     draft,
     limit: 1,
+    overrideAccess: draft,
     pagination: false,
     where: {
       slug: {
@@ -69,6 +70,7 @@ const queryArticlesByTopic = cache(async (topicId: number, page: number = 1) => 
     draft,
     limit: ARTICLES_PER_PAGE,
     page,
+    overrideAccess: draft,
     pagination: false,
     where: {
       topics: {

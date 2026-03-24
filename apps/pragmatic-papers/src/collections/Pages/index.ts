@@ -1,8 +1,8 @@
 import type { CollectionConfig } from "payload"
 
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished"
-import { CallToAction } from "@/blocks/CallToAction/config"
 import { CollectionGrid } from "@/blocks/CollectionGrid/config"
+import { CallToAction } from "@/blocks/CallToAction/config"
 import { Content } from "@/blocks/Content/config"
 import { FormBlock } from "@/blocks/Form/config"
 import { MediaBlock } from "@/blocks/MediaBlock/config"

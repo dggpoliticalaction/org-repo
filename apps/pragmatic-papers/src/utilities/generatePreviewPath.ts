@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { CollectionSlug, PayloadRequest } from "payload"
+import { PayloadRequest, CollectionSlug } from "payload"
 
 const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
   pages: "",
