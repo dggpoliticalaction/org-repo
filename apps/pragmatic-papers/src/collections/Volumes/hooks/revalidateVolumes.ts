@@ -3,8 +3,9 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from "paylo
 import { revalidatePath, revalidateTag } from "next/cache"
 
 import type { Article } from "@/payload-types"
+import { purgeCloudflareCache } from "@/utilities/purgeCloudflareCache"
 
-export const revalidateArticle: CollectionAfterChangeHook<Article> = ({
+export const revalidateArticle: CollectionAfterChangeHook<Article> = async ({
   doc,
   previousDoc,
   req: { payload, context },
@@ -18,6 +19,7 @@ export const revalidateArticle: CollectionAfterChangeHook<Article> = ({
       revalidatePath(path)
       revalidatePath("/feed.volumes")
       revalidateTag("volumes-sitemap")
+      await purgeCloudflareCache([path, "/feed.volumes"], payload.logger)
     }
 
     // If the article was previously published, we need to revalidate the old path
@@ -29,18 +31,23 @@ export const revalidateArticle: CollectionAfterChangeHook<Article> = ({
       revalidatePath(oldPath)
       revalidatePath("/feed.volumes")
       revalidateTag("volumes-sitemap")
+      await purgeCloudflareCache([oldPath, "/feed.volumes"], payload.logger)
     }
   }
   return doc
 }
 
-export const revalidateDelete: CollectionAfterDeleteHook<Article> = ({ doc, req: { context } }) => {
+export const revalidateDelete: CollectionAfterDeleteHook<Article> = async ({
+  doc,
+  req: { payload, context },
+}) => {
   if (!context.disableRevalidate) {
     const path = `/volumes/${doc?.slug}`
 
     revalidatePath(path)
     revalidatePath("/feed.volumes")
     revalidateTag("volumes-sitemap")
+    await purgeCloudflareCache([path, "/feed.volumes"], payload.logger)
   }
 
   return doc

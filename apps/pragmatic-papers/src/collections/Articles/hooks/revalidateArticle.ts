@@ -3,6 +3,7 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, Payload } fr
 import { revalidatePath, revalidateTag } from "next/cache"
 
 import type { Article } from "../../../payload-types"
+import { purgeCloudflareCache } from "../../../utilities/purgeCloudflareCache"
 
 const revalidateDoc = async (givenDoc: Article, payload: Payload) => {
   const path = `/articles/${givenDoc.slug}`
@@ -26,11 +27,14 @@ const revalidateDoc = async (givenDoc: Article, payload: Payload) => {
     depth: 0,
   })
 
-  volumes.docs.forEach((volume) => {
-    const volumePath = `/volumes/${volume.slug}`
+  const volumePaths = volumes.docs.map((volume) => `/volumes/${volume.slug}`)
+
+  volumePaths.forEach((volumePath) => {
     payload.logger.info(`Revalidating volume at path: ${volumePath}`)
     revalidatePath(volumePath)
   })
+
+  await purgeCloudflareCache([path, "/feed.articles", ...volumePaths], payload.logger)
 }
 
 export const revalidateArticle: CollectionAfterChangeHook<Article> = async ({
