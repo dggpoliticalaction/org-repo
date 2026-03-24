@@ -1,5 +1,5 @@
 import { revalidateRedirects } from "@/hooks/revalidateRedirects"
-import type { Article, Page, Topic, Volume } from "@/payload-types"
+import type { Article, Page, Volume, Topic } from "@/payload-types"
 import { getServerSideURL } from "@/utilities/getURL"
 import { toRoman } from "@/utilities/toRoman"
 import { formBuilderPlugin } from "@payloadcms/plugin-form-builder"
