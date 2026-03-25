@@ -21,17 +21,14 @@ export async function purgeCloudflareCache(
   const files = paths.map((path) => `${baseUrl}${path}`)
 
   try {
-    const res = await fetch(
-      `https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${apiToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ files }),
+    const res = await fetch(`https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${apiToken}`,
+        "Content-Type": "application/json",
       },
-    )
+      body: JSON.stringify({ files }),
+    })
 
     if (!res.ok) {
       const text = await res.text()
