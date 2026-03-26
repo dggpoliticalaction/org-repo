@@ -62,8 +62,11 @@ export const Menu: React.FC<MenuProps> = ({ menu, className, layout, slot, ...pr
         {menu.map(({ link, id }, index) => {
           const isStacked = layout === "stacked"
           return (
-            <li key={id || `menu-item-${index}`} className={cn(menuItemVariants({ layout }))}>
-              <Slot className="w-full">
+            <li
+              key={id || `menu-item-${index}`}
+              className={cn(menuItemVariants({ layout }), slot && "[&>button]:w-full")}
+            >
+              <Slot>
                 <CMSLink
                   link={link}
                   className={cn(
