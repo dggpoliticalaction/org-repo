@@ -167,9 +167,21 @@
 }
 
 @utility drop-cap {
-  p:first-child::first-letter {
-    initial-letter: 2;
-    margin-right: 0.25em;
+  & > p:first-child::first-letter {
+    float: left;
+    font-size: 3em;
+    line-height: 0.9;
+    margin-right: 0.05em;
     font-weight: bold;
+  }
+
+  @supports (initial-letter: 2) {
+    & > p:first-child::first-letter {
+      float: none;
+      font-size: revert;
+      line-height: revert;
+      initial-letter: 2;
+      margin-right: 0.15em;
+    }
   }
 }

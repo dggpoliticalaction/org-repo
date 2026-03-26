@@ -14,7 +14,7 @@ export const generateMeta = async (args: {
   const ogImage =
     typeof doc?.meta?.image === "object" ? getMediaUrl(doc?.meta?.image?.sizes?.og?.url) : undefined
 
-  const title = doc?.meta?.title ? doc?.meta?.title : "Pragmatic Papers"
+  const title = doc?.meta?.title ? doc?.meta?.title : "The Pragmatic Papers"
   const canonicalUrl = `${getServerSideURL()}${canonicalPath}`
 
   return {

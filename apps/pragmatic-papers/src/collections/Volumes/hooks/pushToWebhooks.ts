@@ -1,6 +1,6 @@
 import { type Volume } from "@/payload-types"
-import { getPayload, type CollectionAfterChangeHook } from "payload"
 import config from "@payload-config"
+import { getPayload, type CollectionAfterChangeHook } from "payload"
 import { env } from "process"
 import { Volumes } from ".."
 
@@ -28,7 +28,7 @@ export const pushToWebhooks: CollectionAfterChangeHook<Volume> = async (args) =>
       },
       body: JSON.stringify({
         content: url,
-        username: "Pragmatic Papers",
+        username: "The Pragmatic Papers",
         avatar_url: `${env.NEXT_PUBLIC_SERVER_URL}/android-chrome-192x192.png`,
       }),
     }).catch((e) => {

@@ -1,6 +1,8 @@
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { Pagination } from "@/components/Pagination"
 import { TopicsList } from "@/components/Topics/TopicsList"
+import { getServerSideURL } from "@/utilities/getURL"
+import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
 import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
@@ -8,13 +10,13 @@ import { getPayload } from "payload"
 import React, { cache } from "react"
 
 export const metadata: Metadata = {
-  title: "Topics | Pragmatic Papers",
+  title: "Topics | The Pragmatic Papers",
   description: "Browse all topics on Pragmatic Papers.",
-  openGraph: {
-    title: "Topics | Pragmatic Papers",
+  openGraph: mergeOpenGraph({
+    title: "Topics | The Pragmatic Papers",
     description: "Browse all topics on Pragmatic Papers.",
-    url: "/topics",
-  },
+    url: `${getServerSideURL()}/topics`,
+  }),
 }
 
 const TOPICS_PER_PAGE = 50
