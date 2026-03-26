@@ -1,8 +1,10 @@
 import { AdminBar } from "@/components/AdminBar"
 import { Footer } from "@/Footer/Component"
 import { Header } from "@/Header/Component"
+import { getServerSideURL } from "@/utilities/getURL"
 import { cn } from "@/utilities/utils"
 import { GoogleAnalytics } from "@next/third-parties/google"
+import type { Metadata } from "next"
 import { ThemeProvider } from "next-themes"
 import { Geist } from "next/font/google"
 import localFont from "next/font/local"
@@ -72,4 +74,8 @@ export default async function RootLayout({
       <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
     </html>
   )
+}
+
+export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
 }
