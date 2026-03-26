@@ -22,7 +22,8 @@ export const Header: GlobalConfig = {
       maxRows: 4,
       labels: { singular: "Action", plural: "Actions" },
       admin: {
-        description: 'Buttons shown in the header top-right. Use "Branded" variant for the donation button.',
+        description:
+          'Buttons shown in the header top-right. Use "Branded" variant for the donation button.',
       },
     }),
   ],

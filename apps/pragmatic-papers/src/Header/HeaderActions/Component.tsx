@@ -13,11 +13,7 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({ actions, className
       {actions.map(({ link, id }, index) => {
         if (!link) return null
         return (
-          <CMSButton
-            key={id || `action-${index}`}
-            link={link}
-            variant={link.variant ?? "default"}
-          >
+          <CMSButton key={id || `action-${index}`} link={link} variant={link.variant ?? "default"}>
             {link.label || "Action"}
           </CMSButton>
         )
