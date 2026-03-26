@@ -1,4 +1,4 @@
-import type { Volume, VolumeView as VolumeBlockProps } from "@/payload-types"
+import type { Volume, VolumeView } from "@/payload-types"
 
 import RichText from "@/components/RichText"
 import configPromise from "@payload-config"
@@ -8,13 +8,14 @@ import React from "react"
 import { PageRange } from "@/components/PageRange"
 import { PaginationVolumes } from "@/components/PaginationVolumes"
 import { VolumesView } from "@/components/VolumesView"
+import { Skeleton } from "@/components/ui/skeleton"
 
-export const VolumeViewBlock: React.FC<
-  VolumeBlockProps & {
-    id?: string | null
-    pageNumber?: number
-  }
-> = async (props) => {
+interface VolumeViewBlockProps extends VolumeView {
+  id?: string | null
+  pageNumber?: number
+}
+
+export const VolumeViewBlock: React.FC<VolumeViewBlockProps> = async (props) => {
   const { id, introContent, populateBy, selectedDocs, pageNumber, limit: limitFromProps } = props
 
   if (populateBy === "collection") {
@@ -56,9 +57,9 @@ export const VolumeViewBlock: React.FC<
     )
   } else {
     if (selectedDocs?.length) {
-      const volumes = selectedDocs.map((post) => {
-        if (typeof post.value === "object") return post.value
-      }) as Volume[]
+      const volumes = selectedDocs
+        .map((post) => (typeof post.value !== "number" ? post.value : undefined))
+        .filter((volume): volume is Volume => volume !== undefined)
 
       return (
         <div className="my-4" id={`block-${id}`}>
@@ -72,4 +73,31 @@ export const VolumeViewBlock: React.FC<
       )
     }
   }
+}
+
+/**
+ * Skeleton fallback matching VolumeViewBlock structure.
+ * Structure mirrors Entry: title, meta, description (my-6), separator.
+ * ~200px per entry so 3 volumes + page text ≈ 600px.
+ */
+export const VolumeViewSkeleton: React.FC<VolumeView> = ({ id, limit }) => {
+  const count = limit ?? 6
+  return (
+    <div className="relative mx-auto my-4 max-w-xl space-y-8 overflow-hidden rounded-xl px-4">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={`${id ?? ""}-skeleton-entry-${i}`} className="group space-y-2 overflow-hidden">
+          <Skeleton className="h-9 w-2/3" />
+          <Skeleton className="h-5 w-1/3" />
+          <div className="my-6 space-y-2">
+            <Skeleton className="h-5 w-full" />
+            <Skeleton className="h-5 w-5/6" />
+          </div>
+          <Skeleton className="h-px w-full shrink-0" />
+        </div>
+      ))}
+      <div className="text-center">
+        <Skeleton className="mx-auto h-5 w-48" />
+      </div>
+    </div>
+  )
 }
