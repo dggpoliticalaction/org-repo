@@ -21,7 +21,7 @@ export const RenderBlocks: React.FC<RenderBlocksProps> = ({ blocks, pageNumber }
         const { blockType } = block
         const key = `block-${block.id || index}`
         if (blockType === "collectionGrid") {
-          return <CollectionGridBlock key={key} {...block} priority={index === 0} />
+          return <CollectionGridBlock key={key} {...block} priority={index === 0 || index === 1} />
         } else if (blockType === "content") {
           return <ContentBlock key={key} {...block} />
         } else if (blockType === "cta") {
