@@ -61,7 +61,7 @@ export default async function TopicsPage({ searchParams }: Args): Promise<React.
         ) : (
           <>
             <div className="mt-8 flex justify-center">
-              <TopicsList topics={topics} className="!mt-0" badgeClassName="px-3 py-1 text-base" />
+              <TopicsList topics={topics} className="mt-0!" badgeClassName="px-3 py-1 text-base" />
             </div>
             {totalPages > 1 && currentPage && (
               <div className="mt-8 flex justify-center">
