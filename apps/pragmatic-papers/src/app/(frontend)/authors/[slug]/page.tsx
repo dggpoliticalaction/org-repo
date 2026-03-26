@@ -2,7 +2,7 @@ import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
 import { getPayload } from "payload"
-import React, { cache } from "react"
+import React, { cache, Suspense } from "react"
 
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
@@ -113,7 +113,7 @@ const queryVolumesForArticles = cache(async (articleIds: number[]): Promise<Volu
   const { docs } = await payload.find({
     collection: "volumes",
     draft,
-    limit: 1000,
+    limit: ARTICLES_PER_PAGE,
     overrideAccess: draft,
     pagination: false,
     where: {
@@ -147,23 +147,19 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   }
 }
 
-export default async function AuthorPage({ params, searchParams }: Args): Promise<React.ReactNode> {
-  const { isEnabled: draft } = await draftMode()
-  const { slug = "" } = await params
-  const { p } = await searchParams
-  let page = Number(p) || 1
-  if (!Number.isInteger(page) || page < 1) page = 1
-
-  const user = await queryUserBySlug(slug)
-  const url = `/authors/${slug}`
-  if (!user) return <PayloadRedirects url={url} />
-
+async function AuthorArticles({
+  userId,
+  page,
+}: {
+  userId: number
+  page: number
+}): Promise<React.ReactNode> {
   const {
     docs: articles,
     totalDocs,
     totalPages,
     page: currentPage,
-  } = await queryArticlesByAuthor(user.id, page)
+  } = await queryArticlesByAuthor(userId, page)
   const articleIds = articles.map((article) => article.id).filter(Boolean)
   const volumes = await queryVolumesForArticles(articleIds)
 
@@ -181,6 +177,44 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
       }
     }
   }
+
+  return (
+    <>
+      <PageRange
+        collection="articles"
+        currentPage={currentPage}
+        limit={ARTICLES_PER_PAGE}
+        totalDocs={totalDocs}
+      />
+      {totalDocs === 0 ? (
+        <p className="text-muted-foreground text-sm">Look out for this author's debut!</p>
+      ) : (
+        <>
+          <div className="mt-4 flex flex-col gap-4">
+            {articles.map((article) => {
+              const volume = volumeByArticleId.get(article.id)
+              return <AuthorArticleCard key={article.id} article={article} volume={volume} />
+            })}
+          </div>
+          {totalPages > 1 && currentPage && (
+            <Pagination page={currentPage} totalPages={totalPages} />
+          )}
+        </>
+      )}
+    </>
+  )
+}
+
+export default async function AuthorPage({ params, searchParams }: Args): Promise<React.ReactNode> {
+  const { isEnabled: draft } = await draftMode()
+  const { slug = "" } = await params
+  const { p } = await searchParams
+  let page = Number(p) || 1
+  if (!Number.isInteger(page) || page < 1) page = 1
+
+  const user = await queryUserBySlug(slug)
+  const url = `/authors/${slug}`
+  if (!user) return <PayloadRedirects url={url} />
 
   const hasBiography = !!user.biography
 
@@ -221,30 +255,10 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
       <Separator className="my-16" />
 
       <section aria-label="Articles by this author">
-        <div className="mb-4 flex items-center justify-between">
-          <h2>Articles</h2>
-          <PageRange
-            collection="articles"
-            currentPage={currentPage}
-            limit={ARTICLES_PER_PAGE}
-            totalDocs={totalDocs}
-          />
-        </div>
-        {totalDocs === 0 ? (
-          <p className="text-muted-foreground text-sm">Look out for this author's debut!</p>
-        ) : (
-          <>
-            <div className="mt-4 flex flex-col gap-4">
-              {articles.map((article) => {
-                const volume = volumeByArticleId.get(article.id)
-                return <AuthorArticleCard key={article.id} article={article} volume={volume} />
-              })}
-            </div>
-            {totalPages > 1 && currentPage && (
-              <Pagination page={currentPage} totalPages={totalPages} />
-            )}
-          </>
-        )}
+        <h2 className="mb-4">Articles</h2>
+        <Suspense>
+          <AuthorArticles userId={user.id} page={page} />
+        </Suspense>
       </section>
     </article>
   )
