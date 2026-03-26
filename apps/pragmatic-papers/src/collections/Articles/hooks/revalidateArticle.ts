@@ -31,6 +31,32 @@ const revalidateDoc = async (givenDoc: Article, payload: Payload) => {
     payload.logger.info(`Revalidating volume at path: ${volumePath}`)
     revalidatePath(volumePath)
   })
+
+  // Find and revalidate all topic pages that reference this article
+  const topicIds = givenDoc.topics
+    ?.map((t) => (typeof t === "object" && t !== null ? t.id : t))
+    .filter(Boolean)
+
+  if (topicIds?.length) {
+    const topics = await payload.find({
+      collection: "topics",
+      where: {
+        id: {
+          in: topicIds,
+        },
+      },
+      select: {
+        slug: true,
+      },
+      depth: 0,
+    })
+
+    topics.docs.forEach((topic) => {
+      const topicPath = `/topics/${topic.slug}`
+      payload.logger.info(`Revalidating topic at path: ${topicPath}`)
+      revalidatePath(topicPath)
+    })
+  }
 }
 
 export const revalidateArticle: CollectionAfterChangeHook<Article> = async ({
