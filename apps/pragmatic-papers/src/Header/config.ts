@@ -23,7 +23,7 @@ export const Header: GlobalConfig = {
       labels: { singular: "Action", plural: "Actions" },
       admin: {
         description:
-          'Buttons shown in the header top-right. Use "Branded" variant for the donation button.',
+          'Buttons shown in the header top-right. Use "Branded" variant for most important button.',
       },
     }),
   ],
