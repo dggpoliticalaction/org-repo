@@ -52,9 +52,7 @@ export default async function TopicLayout({ params, children }: Args): Promise<R
 
       <header className="space-y-3">
         <h1>Topic: {topic.name}</h1>
-        {topic.description && (
-          <p className="text-muted-foreground text-sm">{topic.description}</p>
-        )}
+        {topic.description && <p className="text-muted-foreground text-sm">{topic.description}</p>}
       </header>
 
       <section aria-label="Articles for this topic">
