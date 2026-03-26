@@ -11,6 +11,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TYPE "public"."enum_header_actions_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum_header_actions_link_variant" AS ENUM('link', 'default', 'outline', 'ghost', 'branded');
   CREATE TYPE "public"."enum_footer_nav_items_link_variant" AS ENUM('link', 'default', 'outline', 'ghost', 'branded');
+  CREATE TYPE "public"."enum_footer_socials_link_variant" AS ENUM('link', 'default', 'outline', 'ghost', 'branded');
   CREATE TYPE "public"."enum_footer_copyright_variant" AS ENUM('link', 'default', 'outline', 'ghost', 'branded');
   CREATE TABLE "header_actions" (
   	"_order" integer NOT NULL,
@@ -18,9 +19,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"id" varchar PRIMARY KEY NOT NULL,
   	"link_type" "enum_header_actions_link_type" DEFAULT 'reference',
   	"link_new_tab" boolean,
+  	"link_variant" "enum_header_actions_link_variant" DEFAULT 'link',
   	"link_url" varchar,
-  	"link_label" varchar,
-  	"link_variant" "enum_header_actions_link_variant" DEFAULT 'link'
+  	"link_label" varchar
   );
   
   ALTER TABLE "articles_footnotes" ADD COLUMN "link_variant" "enum_articles_footnotes_link_variant" DEFAULT 'link';
@@ -30,6 +31,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "users_socials" ADD COLUMN "link_variant" "enum_users_socials_link_variant" DEFAULT 'link';
   ALTER TABLE "header_nav_items" ADD COLUMN "link_variant" "enum_header_nav_items_link_variant" DEFAULT 'link';
   ALTER TABLE "footer_nav_items" ADD COLUMN "link_variant" "enum_footer_nav_items_link_variant" DEFAULT 'link';
+  ALTER TABLE "footer_socials" ADD COLUMN "link_variant" "enum_footer_socials_link_variant" DEFAULT 'link';
   ALTER TABLE "footer" ADD COLUMN "copyright_variant" "enum_footer_copyright_variant" DEFAULT 'link';
   ALTER TABLE "header_actions" ADD CONSTRAINT "header_actions_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."header"("id") ON DELETE cascade ON UPDATE no action;
   CREATE INDEX "header_actions_order_idx" ON "header_actions" USING btree ("_order");
@@ -66,6 +68,7 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "users_socials" DROP COLUMN "link_variant";
   ALTER TABLE "header_nav_items" DROP COLUMN "link_variant";
   ALTER TABLE "footer_nav_items" DROP COLUMN "link_variant";
+  ALTER TABLE "footer_socials" DROP COLUMN "link_variant";
   ALTER TABLE "footer" DROP COLUMN "copyright_variant";
   DROP TYPE "public"."enum_articles_footnotes_link_variant";
   DROP TYPE "public"."enum_articles_populated_authors_socials_link_variant";
@@ -76,5 +79,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum_header_actions_link_type";
   DROP TYPE "public"."enum_header_actions_link_variant";
   DROP TYPE "public"."enum_footer_nav_items_link_variant";
+  DROP TYPE "public"."enum_footer_socials_link_variant";
   DROP TYPE "public"."enum_footer_copyright_variant";`)
 }

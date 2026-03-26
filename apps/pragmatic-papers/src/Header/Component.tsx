@@ -14,6 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { HeaderActions } from "@/Header/HeaderActions/Component"
 import type { Footer, Header } from "@/payload-types"
 import { getCachedGlobal } from "@/utilities/getGlobals"
 import { SearchIcon, TextSearch, User, XIcon } from "lucide-react"
