@@ -1,5 +1,7 @@
 import { AuthorList } from "@/components/Authors/AuthorList"
 import type { PopulatedAuthors, PopulatedAuthorsSelect } from "@/payload-types"
+import { getServerSideURL } from "@/utilities/getURL"
+import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
 import configPromise from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
@@ -9,11 +11,11 @@ import React from "react"
 export const metadata: Metadata = {
   title: "Authors — Pragmatic Papers",
   description: "Discover all Pragmatic Papers authors and explore their published work.",
-  openGraph: {
+  openGraph: mergeOpenGraph({
     title: "Authors — Pragmatic Papers",
     description: "Discover all Pragmatic Papers authors and explore their published work.",
-    url: "/authors",
-  },
+    url: `${getServerSideURL()}/authors`,
+  }),
 }
 
 async function queryAuthors(): Promise<NonNullable<PopulatedAuthors>> {
