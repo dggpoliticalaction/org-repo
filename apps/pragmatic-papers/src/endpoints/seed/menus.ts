@@ -139,6 +139,48 @@ export const createMenus = async (
           },
         },
       ],
+      socials: [
+        {
+          link: {
+            type: "custom",
+            label: "X",
+            url: "https://x.com/PragPapers",
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: "custom",
+            label: "Instagram",
+            url: "https://www.instagram.com/pragmaticpapers/",
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: "custom",
+            label: "Reddit",
+            url: "https://www.reddit.com/user/ThePragmaticPapers/",
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: "custom",
+            label: "Bluesky",
+            url: "https://bsky.app/profile/thepragmaticpapers.bsky.social",
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: "custom",
+            label: "Substack",
+            url: "https://substack.com/@thepragmaticpapers",
+            newTab: true,
+          },
+        },
+      ],
     },
   })
 }
