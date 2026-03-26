@@ -13,7 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { ActionButton } from "@/Header/ActionButton/Component"
+import { HeaderActions } from "@/Header/HeaderActions/Component"
 import type { Header } from "@/payload-types"
 import { getCachedGlobal } from "@/utilities/getGlobals"
 import { SearchIcon, TextSearch, User, XIcon } from "lucide-react"
@@ -21,7 +21,7 @@ import Link from "next/link"
 import React from "react"
 
 export async function Header(): Promise<React.JSX.Element> {
-  const { navItems, actionButton }: Header = await getCachedGlobal("header", 1)()
+  const { navItems, actions }: Header = await getCachedGlobal("header", 1)()
 
   return (
     <>
@@ -79,15 +79,7 @@ export async function Header(): Promise<React.JSX.Element> {
               <Logo />
             </Link>
             <div className="flex items-center justify-end gap-2">
-              <ActionButton className="hidden lg:flex" button={actionButton} />
-              {/* <LinkButton
-                variant="outline"
-                className="hover:bg-foreground/10 hidden lg:flex"
-                href="/admin/login"
-                prefetch={false}
-              >
-                Log In
-              </LinkButton> */}
+              <HeaderActions actions={actions} className="hidden lg:flex" />
               <Sheet>
                 <SheetTrigger
                   className="lg:hidden"
@@ -109,7 +101,7 @@ export async function Header(): Promise<React.JSX.Element> {
                     <SheetTitle>Account</SheetTitle>
                   </SheetHeader>
                   <div className="w-full space-y-2 px-4">
-                    <ActionButton button={actionButton} className="w-full" />
+                    <HeaderActions actions={actions} className="w-full" />
                     <LinkButton
                       variant="outline"
                       size="lg"

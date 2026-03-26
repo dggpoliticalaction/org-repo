@@ -437,6 +437,7 @@ export interface Article {
 export interface LinkField {
   type?: ('reference' | 'custom') | null;
   newTab?: boolean | null;
+  variant?: ('link' | 'default' | 'outline' | 'ghost' | 'branded') | null;
   reference?:
     | ({
         relationTo: 'pages';
@@ -1488,6 +1489,7 @@ export interface FootnotesFieldSelect<T extends boolean = true> {
 export interface LinkFieldSelect<T extends boolean = true> {
   type?: T;
   newTab?: T;
+  variant?: T;
   reference?: T;
   url?: T;
   label?: T;
@@ -1962,26 +1964,9 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface Header {
   id: number;
   navItems?: MenuField;
-  actionButton: ActionButtonField;
+  actions?: MenuField;
   updatedAt?: string | null;
   createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ActionButtonField".
- */
-export interface ActionButtonField {
-  enabled: boolean;
-  link?: LinkField;
-  /**
-   * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-   */
-  backgroundColor?: string | null;
-  /**
-   * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-   */
-  textColor?: string | null;
-  variant?: ('default' | 'outline' | 'ghost' | 'link') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2000,21 +1985,10 @@ export interface Footer {
  */
 export interface HeaderSelect<T extends boolean = true> {
   navItems?: T | MenuFieldSelect<T>;
-  actionButton?: T | ActionButtonFieldSelect<T>;
+  actions?: T | MenuFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ActionButtonField_select".
- */
-export interface ActionButtonFieldSelect<T extends boolean = true> {
-  enabled?: T;
-  link?: T | LinkFieldSelect<T>;
-  backgroundColor?: T;
-  textColor?: T;
-  variant?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
