@@ -8,7 +8,7 @@ import Link from "next/link"
 import { Copyright } from "./Copyright"
 
 export async function Footer(): Promise<React.ReactElement> {
-  const { navItems, socials, copyright }: Footer = await getCachedGlobal("footer", 1)()
+  const { id, navItems, socials, copyright }: Footer = await getCachedGlobal("footer", 1)()
 
   return (
     <footer className="container mt-8 space-y-1 py-2">
@@ -17,7 +17,7 @@ export async function Footer(): Promise<React.ReactElement> {
           <Logo size="sm" />
         </Link>
         <div className="flex flex-row items-center gap-2">
-          <SocialLinks socials={socials} />
+          <SocialLinks parentId={id} socials={socials} aria-label="Footer Social Links" />
           <ModeToggle />
         </div>
       </div>
