@@ -27,6 +27,7 @@ import * as migration_20260318_172936_topics_views from './20260318_172936_topic
 import * as migration_20260321_165911_add_copyright_to_footer_global from './20260321_165911_add_copyright_to_footer_global';
 import * as migration_20260323_024225_add_showByline_to_admin from './20260323_024225_add_showByline_to_admin';
 import * as migration_20260323_043247_add_seo_to_topics from './20260323_043247_add_seo_to_topics';
+import * as migration_20260326_061304_add_social_links_component_to_footer from './20260326_061304_add_social_links_component_to_footer';
 
 export const migrations = [
   {
@@ -172,6 +173,11 @@ export const migrations = [
   {
     up: migration_20260323_043247_add_seo_to_topics.up,
     down: migration_20260323_043247_add_seo_to_topics.down,
-    name: '20260323_043247_add_seo_to_topics'
+    name: '20260323_043247_add_seo_to_topics',
+  },
+  {
+    up: migration_20260326_061304_add_social_links_component_to_footer.up,
+    down: migration_20260326_061304_add_social_links_component_to_footer.down,
+    name: '20260326_061304_add_social_links_component_to_footer'
   },
 ];
