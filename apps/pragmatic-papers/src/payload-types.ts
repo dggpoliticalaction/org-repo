@@ -1990,6 +1990,7 @@ export interface ActionButtonField {
 export interface Footer {
   id: number;
   navItems?: MenuField;
+  socials?: MenuField;
   copyright?: LinkField;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -2022,6 +2023,7 @@ export interface ActionButtonFieldSelect<T extends boolean = true> {
  */
 export interface FooterSelect<T extends boolean = true> {
   navItems?: T | MenuFieldSelect<T>;
+  socials?: T | MenuFieldSelect<T>;
   copyright?: T | LinkFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;

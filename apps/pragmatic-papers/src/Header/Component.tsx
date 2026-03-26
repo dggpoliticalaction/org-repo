@@ -2,6 +2,7 @@ import { Logo } from "@/components/Logo"
 import { PaperIcon } from "@/components/Logo/icons/PaperIcon"
 import { MegaMenu } from "@/components/MegaMenu"
 import { Menu } from "@/components/Menu"
+import { SocialLinks } from "@/components/SocialLinks"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { LinkButton } from "@/components/ui/link-button"
@@ -14,14 +15,17 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { ActionButton } from "@/Header/ActionButton/Component"
-import type { Header } from "@/payload-types"
+import type { Footer, Header } from "@/payload-types"
 import { getCachedGlobal } from "@/utilities/getGlobals"
 import { SearchIcon, TextSearch, User, XIcon } from "lucide-react"
 import Link from "next/link"
 import React from "react"
 
 export async function Header(): Promise<React.JSX.Element> {
-  const { navItems, actionButton }: Header = await getCachedGlobal("header", 1)()
+  const [{ navItems, actionButton }, { socials }]: [Header, Footer] = await Promise.all([
+    getCachedGlobal("header", 1)(),
+    getCachedGlobal("footer", 1)(),
+  ])
 
   return (
     <>
@@ -69,6 +73,7 @@ export async function Header(): Promise<React.JSX.Element> {
                   </Button>
                 </div>
                 <Menu menu={navItems} layout="stacked" slot={SheetClose} />
+                <SocialLinks socials={socials} className="px-4 py-3" />
               </SheetContent>
             </Sheet>
             <Link
