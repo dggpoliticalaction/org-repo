@@ -58,17 +58,26 @@ export const createMenus = async (
           },
         },
       ],
-      actionButton: {
-        enabled: true,
-        link: {
-          type: "custom",
-          label: "Join Us",
-          url: "https://discord.gg/dggpol",
-          newTab: true,
+      actions: [
+        {
+          link: {
+            type: "custom",
+            label: "Donate",
+            url: "https://example.com/donate",
+            newTab: true,
+            variant: "branded",
+          },
         },
-        backgroundColor: "#ff401a",
-        textColor: "#ffffff",
-      },
+        {
+          link: {
+            type: "custom",
+            label: "Join Us",
+            url: "https://discord.gg/dggpol",
+            newTab: true,
+            variant: "outline",
+          },
+        },
+      ],
     },
   })
 

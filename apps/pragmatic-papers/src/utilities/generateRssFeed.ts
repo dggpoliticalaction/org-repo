@@ -175,14 +175,14 @@ const formatVolumeContent = (volume: Volume) => {
 }
 
 const createBaseFeedConfig = (type: "Articles" | "Volumes") => ({
-  title: `Pragmatic Papers - ${type}`,
-  description: `Latest ${type.toLowerCase()} from Pragmatic Papers`,
+  title: `The Pragmatic Papers - ${type}`,
+  description: `Latest ${type.toLowerCase()} from The Pragmatic Papers`,
   id: SITE_URL,
   link: SITE_URL,
   language: "en",
   favicon: `${SITE_URL}/favicon.ico`,
   copyright: `All rights reserved ${new Date().getFullYear()}`,
-  generator: "Pragmatic Papers",
+  generator: "The Pragmatic Papers",
   updated: new Date(),
   feedLinks: {
     atom: `${SITE_URL}/feed.${type.toLowerCase()}`,

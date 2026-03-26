@@ -1,7 +1,7 @@
-import { getServerSideSitemap } from "next-sitemap"
-import { getPayload } from "payload"
 import config from "@payload-config"
+import { getServerSideSitemap } from "next-sitemap"
 import { unstable_cache } from "next/cache"
+import { getPayload } from "payload"
 
 const getArticlesSitemap = unstable_cache(
   async () => {
@@ -42,7 +42,7 @@ const getArticlesSitemap = unstable_cache(
               lastmod: page.updatedAt || dateFallback,
               news: {
                 title: page.title,
-                publicationName: "Pragmatic Papers",
+                publicationName: "The Pragmatic Papers",
                 publicationLanguage: "en",
                 date: page.publishedAt ?? dateFallback,
               },
