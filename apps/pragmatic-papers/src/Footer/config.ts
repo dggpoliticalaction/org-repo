@@ -18,6 +18,12 @@ export const Footer: GlobalConfig = {
       maxRows: 6,
       labels: { singular: "Menu Item", plural: "Menu Items" },
     }),
+    menu({
+      name: "socials",
+      label: "Social Links",
+      maxRows: 10,
+      labels: { singular: "Social Link", plural: "Social Links" },
+    }),
     link({
       label: "Copyright",
       name: "copyright",

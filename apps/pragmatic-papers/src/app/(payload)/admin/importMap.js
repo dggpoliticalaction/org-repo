@@ -38,6 +38,7 @@ import { FootnoteLabel as FootnoteLabel_2845bbc260cbb0202b7c6ec591d344dc } from 
 import { AlignFeatureClient as AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { FootnotesPreview as FootnotesPreview_78f98036fa74f92e38dd688ebeae2fd5 } from '@/blocks/Footnote/FootnotesPreview'
 import { RowLabel as RowLabel_b9b9938cf466765c7ed61773d838e057 } from '@/fields/menu/RowLabel'
+import { BlurDataURLField as BlurDataURLField_3bf98f0d72a9b7fcf13045923bb48189 } from '@/collections/Media/components/BlurDataURLField'
 import { PaperIconAdmin as PaperIconAdmin_de5f3b464da8d97ce80441fdb9ee9751 } from '@/components/Logo/icons/PaperIcon'
 import { LogomarkIcon as LogomarkIcon_715cf00332be8c15b8f2b121ec0215b0 } from '@/components/Logo/icons/LogomarkIcon'
 import { default as default_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
@@ -86,6 +87,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#AlignFeatureClient": AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/blocks/Footnote/FootnotesPreview#FootnotesPreview": FootnotesPreview_78f98036fa74f92e38dd688ebeae2fd5,
   "@/fields/menu/RowLabel#RowLabel": RowLabel_b9b9938cf466765c7ed61773d838e057,
+  "@/collections/Media/components/BlurDataURLField#BlurDataURLField": BlurDataURLField_3bf98f0d72a9b7fcf13045923bb48189,
   "@/components/Logo/icons/PaperIcon#PaperIconAdmin": PaperIconAdmin_de5f3b464da8d97ce80441fdb9ee9751,
   "@/components/Logo/icons/LogomarkIcon#LogomarkIcon": LogomarkIcon_715cf00332be8c15b8f2b121ec0215b0,
   "@/components/BeforeDashboard#default": default_1a7510af427896d367a49dbf838d2de6,

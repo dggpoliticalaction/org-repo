@@ -1,5 +1,5 @@
 import { revalidateRedirects } from "@/hooks/revalidateRedirects"
-import type { Article, Page, Volume, Topic } from "@/payload-types"
+import type { Article, Page, Topic, Volume } from "@/payload-types"
 import { getServerSideURL } from "@/utilities/getURL"
 import { toRoman } from "@/utilities/toRoman"
 import { formBuilderPlugin } from "@payloadcms/plugin-form-builder"
@@ -18,12 +18,12 @@ function isVolume(obj: Volume | Article | Page | Topic): obj is Volume {
 export const generateTitle: GenerateTitle<Volume | Article | Page | Topic> = ({ doc }) => {
   if (isVolume(doc)) {
     return doc?.volumeNumber
-      ? `Volume ${toRoman(doc.volumeNumber)} | Pragmatic Papers`
-      : "Pragmatic Papers"
+      ? `Volume ${toRoman(doc.volumeNumber)} | The Pragmatic Papers`
+      : "The Pragmatic Papers"
   }
-  if ("name" in doc && doc.name) return `${doc.name} | Pragmatic Papers`
-  if ("title" in doc && doc.title) return `${doc.title} | Pragmatic Papers`
-  return "Pragmatic Papers"
+  if ("name" in doc && doc.name) return `${doc.name} | The Pragmatic Papers`
+  if ("title" in doc && doc.title) return `${doc.title} | The Pragmatic Papers`
+  return "The Pragmatic Papers"
 }
 
 const generateURL: GenerateURL<Volume | Article | Page | Topic> = ({ doc }) => {

@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import { draftMode } from "next/headers"
 import { getPayload } from "payload"
 import React, { cache } from "react"
+import { getServerSideURL } from "@/utilities/getURL"
+import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
 
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
@@ -139,11 +141,11 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   return {
     title,
     description,
-    openGraph: {
+    openGraph: mergeOpenGraph({
       title,
       description,
-      url: `/authors/${slug}`,
-    },
+      url: `${getServerSideURL()}/authors/${slug}`,
+    }),
   }
 }
 
