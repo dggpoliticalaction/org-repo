@@ -3,6 +3,7 @@ import type {
   GroupField,
   NamedGroupField,
   RadioField,
+  SelectField,
   SingleRelationshipField,
   TextField,
   TextFieldSingleValidation,
@@ -14,6 +15,7 @@ interface LinkFields {
   reference?: Partial<SingleRelationshipField>
   type?: Partial<RadioField>
   url?: Partial<TextField>
+  variant?: Omit<Partial<SelectField>, "type" | "hasMany" | "validate">
 }
 
 export type LinkFieldOverrides = Omit<
@@ -35,7 +37,7 @@ export const link = ({
   name = "link",
   ...props
 }: LinkFieldOverrides = {}): GroupField => {
-  const { type = {}, newTab = {}, reference = {}, url = {}, label = {} } = component
+  const { type = {}, newTab = {}, reference = {}, url = {}, label = {}, variant = {} } = component
   return {
     label: "Link",
     ...props,
@@ -78,11 +80,25 @@ export const link = ({
             admin: {
               ...newTab.admin,
               style: {
-                flex: 1,
-                alignSelf: "flex-end",
+                alignSelf: "center",
+                marginTop: "12px",
                 ...newTab.admin?.style,
               },
             },
+          },
+          {
+            label: "Appearance",
+            name: "variant",
+            type: "select",
+            defaultValue: "link",
+            options: [
+              { label: "Link", value: "link" },
+              { label: "Default", value: "default" },
+              { label: "Outline", value: "outline" },
+              { label: "Ghost", value: "ghost" },
+              { label: "Branded", value: "branded" },
+            ],
+            ...variant,
           },
         ],
       },
