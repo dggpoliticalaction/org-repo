@@ -10,10 +10,10 @@ import { getPayload } from "payload"
 import React, { cache } from "react"
 
 export const metadata: Metadata = {
-  title: "Topics | Pragmatic Papers",
+  title: "Topics | The Pragmatic Papers",
   description: "Browse all topics on Pragmatic Papers.",
   openGraph: mergeOpenGraph({
-    title: "Topics | Pragmatic Papers",
+    title: "Topics | The Pragmatic Papers",
     description: "Browse all topics on Pragmatic Papers.",
     url: `${getServerSideURL()}/topics`,
   }),
