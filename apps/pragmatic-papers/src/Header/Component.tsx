@@ -103,10 +103,13 @@ export async function Header(): Promise<React.JSX.Element> {
                     <div className="bg-brand flex aspect-square items-center justify-center rounded-sm p-2">
                       <PaperIcon className="text-white" />
                     </div>
-                    <SheetTitle>Account</SheetTitle>
+                    <SheetTitle className="text-3xl">Account</SheetTitle>
                   </SheetHeader>
                   <div className="w-full space-y-2 px-4">
-                    <HeaderActions actions={actions} className="w-full" />
+                    <HeaderActions
+                      actions={actions}
+                      className="w-full justify-center [&>a]:w-1/2"
+                    />
                     <LinkButton
                       variant="outline"
                       size="lg"
