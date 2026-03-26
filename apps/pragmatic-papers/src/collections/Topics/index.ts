@@ -1,6 +1,7 @@
 import { anyone } from "@/access/anyone"
 import { editor } from "@/access/editor"
 import { writer } from "@/access/writer"
+import { revalidateTopic, revalidateTopicDelete } from "@/collections/Topics/hooks/revalidateTopic"
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -72,4 +73,8 @@ export const Topics: CollectionConfig = {
     },
     slugField({ useAsSlug: "name" }),
   ],
+  hooks: {
+    afterChange: [revalidateTopic],
+    afterDelete: [revalidateTopicDelete],
+  },
 }
