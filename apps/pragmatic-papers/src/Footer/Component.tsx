@@ -12,7 +12,7 @@ export async function Footer(): Promise<React.ReactElement> {
 
   return (
     <footer className="container mt-8 space-y-1 py-2">
-      <div className="flex flex-row items-center justify-between gap-2 border-t pt-2">
+      <div className="flex flex-col justify-between gap-2 border-t pt-2 md:flex-row md:items-center">
         <Link href="/" className="flex-1">
           <Logo size="sm" />
         </Link>
