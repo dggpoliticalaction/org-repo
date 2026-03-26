@@ -8,23 +8,34 @@ import {
 import path from "path"
 import { fileURLToPath } from "url"
 
+import { anyone } from "@/access/anyone"
 import { editorOrSelf } from "@/access/editorOrSelf"
 import { writer } from "@/access/writer"
-import { anyone } from "../access/anyone"
 
 import type { Media as MediaType } from "@/payload-types"
-import { generateBlurDataUrl } from "./Media/hooks/generateBlurDataUrl"
+import { regenerateBlurHandler } from "./endpoints/regenerateBlur"
+import { generateBlurDataUrl } from "./hooks/generateBlurDataUrl"
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export const Media: CollectionConfig = {
   slug: "media",
+  endpoints: [
+    {
+      path: "/:id/regenerate-blur",
+      method: "post",
+      handler: regenerateBlurHandler,
+    },
+  ],
   access: {
     create: writer,
     delete: editorOrSelf,
     read: anyone,
     update: editorOrSelf,
+  },
+  admin: {
+    defaultColumns: ["filename", "alt", "caption"],
   },
   fields: [
     {
@@ -46,8 +57,10 @@ export const Media: CollectionConfig = {
       type: "text",
       label: "Blur Placeholder",
       admin: {
+        components: {
+          Field: "@/collections/Media/components/BlurDataURLField#BlurDataURLField",
+        },
         description: "Base64 encoded blur placeholder (auto-generated)",
-        readOnly: true,
       },
     },
     {
@@ -79,7 +92,7 @@ export const Media: CollectionConfig = {
   },
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
-    staticDir: path.resolve(dirname, "../../public/media"),
+    staticDir: path.resolve(dirname, "../../../public/media"),
     adminThumbnail: "thumbnail",
     formatOptions: {
       format: "webp",
