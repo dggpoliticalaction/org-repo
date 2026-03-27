@@ -1,5 +1,5 @@
 import type { User } from "@/payload-types"
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import type { CollectionAfterChangeHook } from "payload"
 
 export const revalidateUser: CollectionAfterChangeHook<User> = async ({
@@ -25,6 +25,9 @@ export const revalidateUser: CollectionAfterChangeHook<User> = async ({
 
   payload.logger.info(`Revalidating authors index at path: /authors`)
   revalidatePath("/authors")
+
+  payload.logger.info(`Revalidating authors-sitemap`)
+  revalidateTag("authors-sitemap")
 
   // Find all published articles where this user is an author and revalidate them
   const articles = await payload.find({

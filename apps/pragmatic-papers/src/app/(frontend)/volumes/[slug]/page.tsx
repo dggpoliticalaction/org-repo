@@ -1,5 +1,6 @@
 import { ArticleCard } from "@/components/ArticleCard"
 import { AuthorList } from "@/components/Authors/AuthorList"
+import { JsonLd } from "@/components/JsonLd"
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
@@ -8,6 +9,8 @@ import { Separator } from "@/components/ui/separator"
 import type { Article } from "@/payload-types"
 import { formatDateTime } from "@/utilities/formatDateTime"
 import { generateMeta } from "@/utilities/generateMeta"
+import { getServerSideURL } from "@/utilities/getURL"
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/utilities/structuredData"
 import { toRoman } from "@/utilities/toRoman"
 import configPromise from "@payload-config"
 import type { Metadata } from "next"
@@ -80,9 +83,21 @@ export default async function VolumePage({
   const volume = await queryVolumeBySlug({ slug })
 
   if (!volume) return <PayloadRedirects url={url} />
+
+  const serverUrl = getServerSideURL()
+  const fullUrl = `${serverUrl}${url}`
+  const volumeTitle = `Volume ${toRoman(Number(volume.slug))}`
+  const breadcrumbItems = [
+    { name: "Home", url: serverUrl },
+    { name: "Volumes", url: `${serverUrl}/volumes` },
+    { name: volumeTitle, url: fullUrl },
+  ]
+
   const { publishedAt, editorsNote } = volume
 
   const articles = volume.articles?.filter((a): a is Article => typeof a !== "number")
+
+  if (!articles) return <PayloadRedirects url={url} />
 
   const seen = new Set<string>()
   const volumeAuthors = articles
@@ -95,6 +110,12 @@ export default async function VolumePage({
 
   return (
     <article className="mx-auto max-w-3xl space-y-3 px-4">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd(volumeTitle, volume.description || "", fullUrl),
+          buildBreadcrumbJsonLd(breadcrumbItems),
+        ]}
+      />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 

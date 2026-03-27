@@ -1,13 +1,6 @@
-import config from "@payload-config"
-import type { Metadata } from "next"
-import { draftMode } from "next/headers"
-import { getPayload } from "payload"
-import React, { cache } from "react"
-import { getServerSideURL } from "@/utilities/getURL"
-import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
-
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
+import { JsonLd } from "@/components/JsonLd"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { Media } from "@/components/Media"
 import { PageRange } from "@/components/PageRange"
@@ -18,6 +11,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import type { Article as ArticleType, User, Volume } from "@/payload-types"
 import { getInitials } from "@/utilities/getInitials"
+import { getMediaUrl } from "@/utilities/getMediaUrl"
+import { getServerSideURL } from "@/utilities/getURL"
+import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
+import { buildBreadcrumbJsonLd, buildPersonJsonLd } from "@/utilities/structuredData"
+import config from "@payload-config"
+import type { Metadata } from "next"
+import { draftMode } from "next/headers"
+import { getPayload } from "payload"
+import React, { cache } from "react"
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   const payload = await getPayload({ config })
@@ -136,7 +138,17 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const name = user?.name || "Author"
   const title = `${name} — Pragmatic Papers`
 
-  const description = user?.affiliation || undefined
+  const affiliationPart = user?.affiliation ? `, ${user.affiliation}` : ""
+  const description = `Articles and contributions by ${name}${affiliationPart}. Read their work on Pragmatic Papers.`
+
+  const profileImage = user?.profileImage
+  const ogImage =
+    profileImage && typeof profileImage !== "number"
+      ? getMediaUrl(profileImage.sizes?.og?.url || profileImage.url)
+      : undefined
+
+  const serverUrl = getServerSideURL()
+  const canonicalUrl = `${serverUrl}/authors/${slug}`
 
   return {
     title,
@@ -144,8 +156,19 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
     openGraph: mergeOpenGraph({
       title,
       description,
-      url: `${getServerSideURL()}/authors/${slug}`,
+      url: `/authors/${slug}`,
+      type: "profile",
+      images: ogImage ? [{ url: ogImage }] : undefined,
     }),
+    twitter: {
+      card: "summary",
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
   }
 }
 
@@ -191,8 +214,17 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
     typeof profile === "number" ? undefined : (profile?.sizes?.square?.url ?? undefined)
   const initials = getInitials(user.name || "Author")
 
+  const serverUrl = getServerSideURL()
+  const fullUrl = `${serverUrl}${url}`
+  const breadcrumbItems = [
+    { name: "Home", url: serverUrl },
+    { name: "Authors", url: `${serverUrl}/authors` },
+    { name: user.name || "Author", url: fullUrl },
+  ]
+
   return (
     <article className="mx-auto max-w-3xl space-y-6 px-4">
+      <JsonLd data={[buildPersonJsonLd(user, fullUrl), buildBreadcrumbJsonLd(breadcrumbItems)]} />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 

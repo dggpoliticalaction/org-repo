@@ -8,9 +8,16 @@ import { getPayload, type RequiredDataFromCollectionSlug } from "payload"
 import { cache, Suspense } from "react"
 
 import { RenderBlocks } from "@/blocks/RenderBlocks"
+import { JsonLd } from "@/components/JsonLd"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { RenderHero } from "@/heros/RenderHero"
 import { generateMeta } from "@/utilities/generateMeta"
+import { getServerSideURL } from "@/utilities/getURL"
+import {
+  buildBreadcrumbJsonLd,
+  buildOrganizationJsonLd,
+  buildWebSiteJsonLd,
+} from "@/utilities/structuredData"
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -97,8 +104,20 @@ export default async function Page({ params, searchParams }: Args): Promise<Reac
 
   const { hero, layout } = page
 
+  const serverUrl = getServerSideURL()
+  const isHome = slug === "home"
+  const breadcrumbItems = isHome
+    ? [{ name: "Home", url: serverUrl }]
+    : [
+        { name: "Home", url: serverUrl },
+        { name: page.meta?.title || slug, url: `${serverUrl}/${slug}` },
+      ]
+  const jsonLdData = isHome
+    ? [buildWebSiteJsonLd(), buildOrganizationJsonLd(), buildBreadcrumbJsonLd(breadcrumbItems)]
+    : [buildBreadcrumbJsonLd(breadcrumbItems)]
   return (
     <article>
+      <JsonLd data={jsonLdData} />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 

@@ -3,22 +3,31 @@ import { getPayload } from "payload"
 import config from "@payload-config"
 import { unstable_cache } from "next/cache"
 
-const getPagesSitemap = unstable_cache(
+const getAuthorsSitemap = unstable_cache(
   async () => {
     const payload = await getPayload({ config })
     const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL
 
     const results = await payload.find({
-      collection: "pages",
-      overrideAccess: false,
+      collection: "users",
+      overrideAccess: true,
       draft: false,
       depth: 0,
       limit: 1000,
       pagination: false,
       where: {
-        _status: {
-          equals: "published",
-        },
+        and: [
+          {
+            role: {
+              in: ["writer", "editor", "chief-editor"],
+            },
+          },
+          {
+            slug: {
+              not_equals: null,
+            },
+          },
+        ],
       },
       select: {
         slug: true,
@@ -30,25 +39,23 @@ const getPagesSitemap = unstable_cache(
 
     const sitemap = results.docs
       ? results.docs
-          .filter((page) => Boolean(page?.slug))
-          .map((page) => {
-            return {
-              loc: page?.slug === "home" ? SITE_URL : `${SITE_URL}/${page?.slug}`,
-              lastmod: page.updatedAt || dateFallback,
-            }
-          })
+          .filter((user) => Boolean(user?.slug))
+          .map((user) => ({
+            loc: `${SITE_URL}/authors/${user.slug}`,
+            lastmod: user.updatedAt || dateFallback,
+          }))
       : []
 
     return sitemap
   },
-  ["pages-sitemap"],
+  ["authors-sitemap"],
   {
-    tags: ["pages-sitemap"],
+    tags: ["authors-sitemap"],
   },
 )
 
 export async function GET(): Promise<Response> {
-  const sitemap = await getPagesSitemap()
+  const sitemap = await getAuthorsSitemap()
 
   return getServerSideSitemap(sitemap)
 }
