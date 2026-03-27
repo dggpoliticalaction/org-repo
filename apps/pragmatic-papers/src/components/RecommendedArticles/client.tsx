@@ -88,10 +88,7 @@ function sortByVariant(articles: RankedArticle[], variant: Variant): RankedArtic
 
 function RecommendationCard({ article, compact }: { article: RankedArticle; compact?: boolean }) {
   return (
-    <HoverPrefetchLink
-      href={`/articles/${article.slug}`}
-      className="group flex flex-col gap-2"
-    >
+    <HoverPrefetchLink href={`/articles/${article.slug}`} className="group flex flex-col gap-2">
       {article.metaImage && (
         <div className="aspect-video overflow-hidden rounded-sm border">
           {/* eslint-disable-next-line @next/next/no-img-element */}
