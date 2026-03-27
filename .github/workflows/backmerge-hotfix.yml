@@ -8,8 +8,13 @@ on:
 
 jobs:
   back-merge:
+    # Only run if merged and it was a hotfix branch
     if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'hotfix/')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,10 +24,21 @@ jobs:
       - name: Create Back-merge PR
         env:
           GH_TOKEN: ${{ github.token }}
-          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
-          PR_TITLE: "chore: back-merge ${{ github.event.pull_request.head.ref }} to dev"
+          # Create the specific name required by your Step 7 instructions at pragmatic-papers/wiki/Creating-Hotfix-Releases
+          NEW_BRANCH: "chore/back-merge-${{ github.event.pull_request.head.ref }}"
         run: |
-          # Define the instruction body
+          # 1. Setup git identity
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 2. Create the new chore branch from main (to get the latest hotfix + tags)
+          git checkout main
+          git checkout -b "$NEW_BRANCH"
+
+          # 3. Push the new branch to origin
+          git push origin "$NEW_BRANCH"
+
+          # 4. Create the PR body following your template
           PR_BODY=$(cat <<EOF
           Automated back-merge of hotfix merged into main.
           
@@ -32,25 +48,23 @@ jobs:
           # 1. Sync your local
           git fetch origin
           
-          # 2. Checkout the hotfix
-          git checkout $HEAD_BRANCH
+          # 2. Checkout this back-merge branch
+          git checkout $NEW_BRANCH
           
           # 3. Pull the latest dev to resolve conflicts locally
           git pull origin dev
           
           # 4. Resolve & Push
-          # Fix the conflicts in your editor (e.g., Zed), then:
           git add .
           git commit -m "chore: resolve conflicts with dev"
-          git push origin $HEAD_BRANCH
+          git push origin $NEW_BRANCH
           \`\`\`
-          
-          The PR to dev will update automatically after you push.
           EOF
           )
 
+          # 5. Create the PR to dev
           gh pr create \
             --base dev \
-            --head "$HEAD_BRANCH" \
-            --title "$PR_TITLE" \
+            --head "$NEW_BRANCH" \
+            --title "chore: back-merge ${{ github.event.pull_request.head.ref }} to dev" \
             --body "$PR_BODY"
