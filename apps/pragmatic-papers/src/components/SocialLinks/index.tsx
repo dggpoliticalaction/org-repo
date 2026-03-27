@@ -56,7 +56,7 @@ export function SocialLinks({
       aria-label={ariaLabel || "Social Links"}
       className={cn("flex flex-row items-center gap-2", className)}
     >
-      <ul className="flex flex-row items-center gap-2">
+      <ul className="flex flex-row flex-wrap items-center gap-2">
         {links.map(({ id, href, platform, label }) => {
           const Icon = iconMap[platform] ?? Globe
           return (

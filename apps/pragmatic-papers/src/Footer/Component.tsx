@@ -16,7 +16,7 @@ export async function Footer(): Promise<React.ReactElement> {
         <Link href="/" className="flex-1">
           <Logo size="sm" />
         </Link>
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row flex-wrap items-center gap-2">
           <SocialLinks parentId={id} socials={socials} aria-label="Footer Social Links" />
           <ModeToggle />
         </div>
