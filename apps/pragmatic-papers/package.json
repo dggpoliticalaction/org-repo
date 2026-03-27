@@ -1,7 +1,7 @@
 {
   "name": "pragmatic-papers",
-  "version": "1.0.0",
-  "description": "Website template for Payload",
+  "version": "2.0.4",
+  "description": "The Pragmatic Papers",
   "license": "MIT",
   "type": "module",
   "scripts": {
