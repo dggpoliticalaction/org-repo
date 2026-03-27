@@ -31,7 +31,9 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // Font files and font-service.css are consumed cross-domain (e.g. ActBlue embeds).
+        // Font files are stable (no hash in filename) — cache for 1 year.
+        // On a font version bump, purge Cloudflare cache manually or change the filename.
+        // CORS headers allow cross-domain consumption (e.g. ActBlue embeds).
         // Licensed under Florian Karsten Typefaces Enterprise EULA — unlimited domain self-hosting permitted.
         source: "/fonts/:path*",
         headers: [
@@ -39,14 +41,32 @@ const nextConfig = {
             key: "Access-Control-Allow-Origin",
             value: "*",
           },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+          {
+            key: "CDN-Cache-Control",
+            value: "max-age=31536000, immutable",
+          },
         ],
       },
       {
+        // font-service.css references a stable font URL — cache for 1 year.
+        // Purge Cloudflare cache if the @font-face declaration changes.
         source: "/font-service.css",
         headers: [
           {
             key: "Access-Control-Allow-Origin",
             value: "*",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+          {
+            key: "CDN-Cache-Control",
+            value: "max-age=31536000, immutable",
           },
         ],
       },
