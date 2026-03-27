@@ -1,8 +1,8 @@
-import Link from "next/link"
 import React from "react"
 
-import { ImageMedia } from "@/components/Media/ImageMedia"
-import { Squiggle } from "@/components/ui/squiggle"
+import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
+import { Media } from "@/components/Media"
+import { Separator } from "@/components/ui/separator"
 import type { Article } from "@/payload-types"
 import { formatDateTime } from "@/utilities/formatDateTime"
 import { getSeparator } from "@/utilities/getSeparator"
@@ -12,43 +12,40 @@ interface ArticleHeroProps {
 }
 
 export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
-  const { publishedAt, title, heroImage, authors } = article
-
-  const filteredAuthors = (authors || []).filter((author) => typeof author === "object")
+  const { publishedAt, title, heroImage, populatedAuthors } = article
 
   return (
-    <div className="relative flex-col">
+    <div className="relative flex flex-col gap-2 md:-mx-10 lg:-mx-32 xl:-mx-44">
       {heroImage && (
-        <ImageMedia
-          pictureClassName="object-cover w-full h-full"
-          imgClassName="pb-4"
-          resource={heroImage}
-        />
+        <div className="min-h-56">
+          <Media
+            priority
+            sizes="(max-width: 768px) 100vw, 1024px"
+            media={heroImage}
+            variant="large"
+            className="border shadow"
+          />
+        </div>
       )}
-      <div className="relative z-10 flex-col pb-4 dark:text-white">
-        <h1 className="mb-6 text-center text-4xl font-bold">{title}</h1>
-        {filteredAuthors.length > 0 && (
-          <div className="text-center text-lg">
-            <p>
-              by{" "}
-              {filteredAuthors.map(({ id, slug, name }, index) => (
-                <React.Fragment key={id}>
-                  {getSeparator(index, filteredAuthors.length)}
-                  <Link href={`/authors/${slug}`} className="underline-offset-2 hover:underline">
-                    {name}
-                  </Link>
-                </React.Fragment>
-              ))}
-            </p>
-          </div>
-        )}
+      <h1 className="mt-8">{title}</h1>
+      <div className="dark:text-brand-high-contrast text-brand flex gap-2 font-serif font-bold underline-offset-4">
+        {populatedAuthors &&
+          populatedAuthors.map(({ id, slug, name }, index) => (
+            <React.Fragment key={id}>
+              {getSeparator(index, populatedAuthors.length)}
+              <HoverPrefetchLink href={`/authors/${slug}`} className="hover:underline">
+                {name}
+              </HoverPrefetchLink>
+            </React.Fragment>
+          ))}
+        {"•"}
         {publishedAt && (
-          <div className="text-center text-sm italic">
+          <HoverPrefetchLink href={`/articles/${article.slug}`} className="hover:underline">
             <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
-          </div>
+          </HoverPrefetchLink>
         )}
-        <Squiggle className="mx-auto h-6 max-w-xs" />
       </div>
+      <Separator className="my-4" />
     </div>
   )
 }

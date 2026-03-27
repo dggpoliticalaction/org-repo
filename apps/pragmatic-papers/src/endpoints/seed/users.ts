@@ -1,5 +1,5 @@
 import type { Media, User } from "@/payload-types"
-import type { Payload } from "payload"
+import type { Payload, RequiredDataFromCollection } from "payload"
 import { createRichTextFromString } from "./richtext"
 
 export interface SeededUsers {
@@ -10,11 +10,28 @@ export interface SeededUsers {
   writer2: User
 }
 
+type UserData = RequiredDataFromCollection<User> &
+  Omit<Partial<User>, keyof RequiredDataFromCollection<User>>
+
+export async function createUser(payload: Payload, data: UserData, label: string): Promise<User> {
+  try {
+    return await payload.create({ collection: "users", data })
+  } catch (err) {
+    payload.logger.warn(
+      `Failed to create ${label} with full data, retrying with minimal fields. Error: ${err instanceof Error ? err.message : String(err)}`,
+    )
+    const { email, password, name, role, slug } = data
+    return await payload.create({
+      collection: "users",
+      data: { email, password, name, role, slug },
+    })
+  }
+}
+
 export const createUsers = async (payload: Payload, media: Media[]): Promise<SeededUsers> => {
-  // Create an admin user (just in case you configured your admin account strangely)
-  const admin = await payload.create({
-    collection: "users",
-    data: {
+  const admin = await createUser(
+    payload,
+    {
       email: "admin@example.com",
       password: "password123",
       name: "John Admin",
@@ -22,11 +39,12 @@ export const createUsers = async (payload: Payload, media: Media[]): Promise<See
       slug: "superadmin",
       profileImage: media[0]?.id,
     },
-  })
+    "admin",
+  )
 
-  const chiefEditor = await payload.create({
-    collection: "users",
-    data: {
+  const chiefEditor = await createUser(
+    payload,
+    {
       email: "chiefeditor@example.com",
       password: "password123",
       name: "Jane Chief",
@@ -34,13 +52,12 @@ export const createUsers = async (payload: Payload, media: Media[]): Promise<See
       slug: "chiefjane",
       profileImage: media[1]?.id,
     },
-  })
+    "chiefEditor",
+  )
 
-  // It's helpful to see what an editor can see with restricted access
-  const editor = await payload.create({
-    collection: "users",
-    draft: true,
-    data: {
+  const editor = await createUser(
+    payload,
+    {
       email: "editor@example.com",
       password: "password123",
       name: "Stacy The Editor",
@@ -48,12 +65,12 @@ export const createUsers = async (payload: Payload, media: Media[]): Promise<See
       slug: "stacytheeditor",
       profileImage: media[2]?.id,
     },
-  })
+    "editor",
+  )
 
-  const writer1 = await payload.create({
-    collection: "users",
-    draft: false,
-    data: {
+  const writer1 = await createUser(
+    payload,
+    {
       email: "writer1@example.com",
       password: "password123",
       name: "Teagan Wordsmith",
@@ -91,12 +108,12 @@ export const createUsers = async (payload: Payload, media: Media[]): Promise<See
         },
       ],
     },
-  })
+    "writer1",
+  )
 
-  const writer2 = await payload.create({
-    collection: "users",
-    draft: false,
-    data: {
+  const writer2 = await createUser(
+    payload,
+    {
       email: "writer2@example.com",
       password: "password123",
       name: "Sienna Scribe",
@@ -134,7 +151,8 @@ export const createUsers = async (payload: Payload, media: Media[]): Promise<See
         },
       ],
     },
-  })
+    "writer2",
+  )
 
   return { admin, chiefEditor, editor, writer1, writer2 }
 }

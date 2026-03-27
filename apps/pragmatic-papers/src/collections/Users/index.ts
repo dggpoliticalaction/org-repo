@@ -1,6 +1,7 @@
 import { adminOrSelf } from "@/access/adminOrSelf"
 import { admin, adminFieldLevel } from "@/access/admins"
 import { staff } from "@/access/staff"
+import { revalidateUser } from "@/collections/Users/hooks/revalidateUser"
 import { menu } from "@/fields/menu"
 import {
   FixedToolbarFeature,
@@ -11,8 +12,8 @@ import {
   OrderedListFeature,
   UnorderedListFeature,
 } from "@payloadcms/richtext-lexical"
-import { revalidateUser } from "@/collections/Users/hooks/revalidateUser"
 import { slugField, type CollectionConfig } from "payload"
+import { userExists } from "./hooks/userExists"
 
 export const Users: CollectionConfig = {
   slug: "users",
@@ -38,7 +39,7 @@ export const Users: CollectionConfig = {
       type: "text",
       required: false,
       admin: {
-        condition: ({ id }) => Boolean(id),
+        condition: userExists,
       },
     },
     {
@@ -59,14 +60,14 @@ export const Users: CollectionConfig = {
       }),
       required: false,
       admin: {
-        condition: ({ id }) => Boolean(id),
+        condition: userExists,
       },
     },
     slugField({
       useAsSlug: "name",
       overrides: (field) => {
         field.admin = {
-          condition: ({ id }) => Boolean(id),
+          condition: userExists,
           position: "sidebar",
         }
         return field
@@ -78,7 +79,7 @@ export const Users: CollectionConfig = {
       relationTo: "media",
       required: false,
       admin: {
-        condition: ({ id }) => Boolean(id),
+        condition: userExists,
         position: "sidebar",
       },
     },
@@ -87,7 +88,7 @@ export const Users: CollectionConfig = {
       label: "Socials",
       maxRows: 6,
       admin: {
-        condition: ({ id }) => Boolean(id),
+        condition: userExists,
         position: "sidebar",
       },
     }),

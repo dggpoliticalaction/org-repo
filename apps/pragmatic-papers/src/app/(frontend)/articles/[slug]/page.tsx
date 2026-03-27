@@ -1,12 +1,14 @@
 import { AuthorList } from "@/components/Authors/AuthorList"
 import { FootnoteList } from "@/components/FootnoteList"
+import { JsonLd } from "@/components/JsonLd"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
+import { TopicsList } from "@/components/Topics/TopicsList"
+import { Separator } from "@/components/ui/separator"
 import { ArticleHero } from "@/heros/ArticleHero"
 import { MathJaxProvider } from "@/providers/MathJaxProvider"
 import { generateMeta } from "@/utilities/generateMeta"
-import { JsonLd } from "@/components/JsonLd"
 import { getServerSideURL } from "@/utilities/getURL"
 import { buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/utilities/structuredData"
 import configPromise from "@payload-config"
@@ -66,7 +68,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = "" } = await paramsPromise
   const article = await queryArticleBySlug({ slug })
 
-  return generateMeta({ doc: article, path: `/articles/${slug}` })
+  return generateMeta({ doc: article, canonicalPath: `/articles/${slug}` })
 }
 
 export default async function Article({ params: paramsPromise }: Args): Promise<React.ReactNode> {
@@ -77,7 +79,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   if (!article) return <PayloadRedirects url={url} />
 
-  const { footnotes, content, authors, enableMathRendering } = article
+  const { footnotes, content, populatedAuthors, enableMathRendering, topics } = article
 
   const serverUrl = getServerSideURL()
   const fullUrl = `${serverUrl}${url}`
@@ -87,7 +89,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   ]
 
   return (
-    <article className="m-auto max-w-3xl p-5 pb-16">
+    <article className="mx-auto max-w-2xl space-y-6 px-4">
       <JsonLd
         data={[buildArticleJsonLd(article, fullUrl), buildBreadcrumbJsonLd(breadcrumbItems)]}
       />
@@ -101,11 +103,14 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
         <RichText
           data={content}
           enableGutter={false}
+          className="drop-cap"
           parentDoc={{ collection: "articles", id: article.id }}
         />
       </MathJaxProvider>
       <FootnoteList footnotes={footnotes} />
-      <AuthorList aria-label="Article Authors" authors={authors} />
+      <TopicsList topics={topics} className="mt-8" />
+      <AuthorList aria-label="Article Authors" authors={populatedAuthors} />
+      <Separator className="mt-16" />
     </article>
   )
 }

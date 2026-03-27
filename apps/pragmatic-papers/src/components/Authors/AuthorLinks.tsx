@@ -1,5 +1,5 @@
 import type { MenuField } from "@/payload-types"
-import { cn } from "@/utilities/ui"
+import { cn } from "@/utilities/utils"
 import { Github, Globe, Linkedin, type LucideIcon, Twitter } from "lucide-react"
 
 export type SocialIconKey = "twitter" | "linkedin" | "github" | "generic"
@@ -89,7 +89,7 @@ export const AuthorLinks: React.FC<AuthorLinksProps> = ({ className, socials }) 
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground transition-colors"
             title={link.href}
           >
             <span className="sr-only">{link.label || link.href}</span>

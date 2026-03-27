@@ -2,8 +2,8 @@ import type { Media, SocialEmbedBlock, User } from "@/payload-types"
 import type { Payload } from "payload"
 import { createArticle } from "../articles"
 import {
-  createParagraph,
   createEmptyParagraph,
+  createParagraph,
   createRichText,
   generateLoremIpsumParagraphs,
   type SerializedLexicalNode,
@@ -224,6 +224,7 @@ export const createSocialEmbedArticle = async (
   payload: Payload,
   writer: User,
   mediaDocs: Media[],
+  topics: number[] = [],
 ): Promise<number> => {
   if (!writer?.id) {
     throw new Error("Writer must have an ID")
@@ -237,6 +238,7 @@ export const createSocialEmbedArticle = async (
       title,
       content: createSocialEmbedContent(),
       authors: [writer.id],
+      topics: topics,
       slug: "social-media-embed-test-all-variations",
       heroImage: mediaDocs[Math.floor(Math.random() * mediaDocs.length)]?.id,
       meta: {
@@ -259,6 +261,7 @@ export const createLegacySocialEmbedArticle = async (
   payload: Payload,
   writer: User,
   mediaDocs: Media[],
+  topics: number[] = [],
 ): Promise<number> => {
   if (!writer?.id) {
     throw new Error("Writer must have an ID")
@@ -272,6 +275,7 @@ export const createLegacySocialEmbedArticle = async (
       title,
       content: createLegacySocialEmbedContent(),
       authors: [writer.id],
+      topics: topics,
       slug: "legacy-social-media-embed-test-all-variations",
       heroImage: mediaDocs[Math.floor(Math.random() * mediaDocs.length)]?.id,
       meta: {

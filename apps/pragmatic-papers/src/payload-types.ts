@@ -8,16 +8,6 @@
 
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MenuField".
- */
-export type MenuField =
-  | {
-      link?: LinkField;
-      id?: string | null;
-    }[]
-  | null;
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "FootnotesField".
  */
 export type FootnotesField =
@@ -38,6 +28,94 @@ export type FootnotesField =
       id?: string | null;
     }[]
   | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuField".
+ */
+export type MenuField =
+  | {
+      link?: LinkField;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PopulatedAuthors".
+ */
+export type PopulatedAuthors =
+  | {
+      id: string;
+      name?: string | null;
+      slug: string;
+      affiliation?: string | null;
+      biography?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      profileImage?: (number | null) | Media;
+      socials?: MenuField;
+    }[]
+  | null;
+/**
+ * Choose a layout preset that determines how article slots are arranged.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollectionGridLayout".
+ */
+export type CollectionGridLayout =
+  | (
+      | 'bernoulli-left'
+      | 'bernoulli-right'
+      | 'euler-2'
+      | 'euler-3'
+      | 'newton-4'
+      | 'euler-5'
+      | 'fibonacci-6'
+      | 'vespucci-7'
+      | 'fibonacci-7'
+    )
+  | null;
+/**
+ * Fill each slot with a article or volume. The number of slots is determined by the chosen layout.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollectionGridSlots".
+ */
+export type CollectionGridSlots = {
+  collection:
+    | {
+        relationTo: 'articles';
+        value: number | Article;
+      }
+    | {
+        relationTo: 'volumes';
+        value: number | Volume;
+      };
+  /**
+   * Optional short label above the title (e.g. "Breaking", "Opinion")
+   */
+  kicker?: string | null;
+  /**
+   * Show the author names for this slot
+   */
+  showByline?: boolean | null;
+  /**
+   * Optional override for the title in this slot
+   */
+  overrideTitle?: string | null;
+  id?: string | null;
+}[];
 /**
  * Supported timezones in IANA format.
  *
@@ -153,9 +231,10 @@ export interface Config {
     footer: FooterSelect<false> | FooterSelect<true>;
   };
   locale: null;
-  user: User & {
-    collection: 'users';
+  widgets: {
+    collections: CollectionsWidget;
   };
+  user: User;
   jobs: {
     tasks: {
       schedulePublish: TaskSchedulePublish;
@@ -239,7 +318,7 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | VolumeView | FormBlock)[];
+  layout: (CollectionGridBlock | CallToActionBlock | ContentBlock | MediaBlock | VolumeView | FormBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -265,10 +344,6 @@ export interface Page {
 export interface Volume {
   id: number;
   title: string;
-  /**
-   * When enabled, the title will be automatically generated from the article titles, separated by " • "
-   */
-  autoGenerateTitle?: boolean | null;
   volumeNumber: number;
   description: string;
   editorsNote?: {
@@ -315,7 +390,6 @@ export interface Volume {
 export interface Article {
   id: number;
   title: string;
-  heroImage?: (number | null) | Media;
   content: {
     root: {
       type: string;
@@ -331,6 +405,7 @@ export interface Article {
     };
     [k: string]: unknown;
   };
+  footnotes?: FootnotesField;
   meta?: {
     title?: string | null;
     /**
@@ -339,18 +414,13 @@ export interface Article {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  heroImage?: (number | null) | Media;
   enableMathRendering?: boolean | null;
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
   createdBy?: (number | null) | User;
-  populatedAuthors?:
-    | {
-        id?: string | null;
-        name?: string | null;
-      }[]
-    | null;
+  populatedAuthors?: PopulatedAuthors;
   topics?: (number | Topic)[] | null;
-  footnotes?: FootnotesField;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -359,6 +429,61 @@ export interface Article {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkField".
+ */
+export interface LinkField {
+  type?: ('reference' | 'custom') | null;
+  newTab?: boolean | null;
+  variant?: ('link' | 'default' | 'outline' | 'ghost' | 'branded') | null;
+  reference?:
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'volumes';
+        value: number | Volume;
+      } | null)
+    | ({
+        relationTo: 'articles';
+        value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'topics';
+        value: number | Topic;
+      } | null);
+  url?: string | null;
+  label?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topics".
+ */
+export interface Topic {
+  id: number;
+  name: string;
+  /**
+   * Optional description for this topic
+   */
+  description?: string | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -382,6 +507,10 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Base64 encoded blur placeholder (auto-generated)
+   */
+  blurDataURL?: string | null;
   createdBy?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
@@ -501,48 +630,18 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "LinkField".
+ * via the `definition` "CollectionGridBlock".
  */
-export interface LinkField {
-  type?: ('reference' | 'custom') | null;
-  newTab?: boolean | null;
-  reference?:
-    | ({
-        relationTo: 'pages';
-        value: number | Page;
-      } | null)
-    | ({
-        relationTo: 'volumes';
-        value: number | Volume;
-      } | null)
-    | ({
-        relationTo: 'articles';
-        value: number | Article;
-      } | null);
-  url?: string | null;
-  label?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "topics".
- */
-export interface Topic {
-  id: number;
-  name: string;
-  /**
-   * Optional description for this topic
-   */
-  description?: string | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
+export interface CollectionGridBlock {
+  layout?: CollectionGridLayout;
+  slots: CollectionGridSlots;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'collectionGrid';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1219,6 +1318,7 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        collectionGrid?: T | CollectionGridBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
@@ -1238,6 +1338,27 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollectionGridBlock_select".
+ */
+export interface CollectionGridBlockSelect<T extends boolean = true> {
+  layout?: T;
+  slots?: T | CollectionGridSlotsSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollectionGridSlots_select".
+ */
+export interface CollectionGridSlotsSelect<T extends boolean = true> {
+  collection?: T;
+  kicker?: T;
+  showByline?: T;
+  overrideTitle?: T;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1328,8 +1449,8 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface ArticlesSelect<T extends boolean = true> {
   title?: T;
-  heroImage?: T;
   content?: T;
+  footnotes?: T | FootnotesFieldSelect<T>;
   meta?:
     | T
     | {
@@ -1337,18 +1458,13 @@ export interface ArticlesSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  heroImage?: T;
   enableMathRendering?: T;
   publishedAt?: T;
   authors?: T;
   createdBy?: T;
-  populatedAuthors?:
-    | T
-    | {
-        id?: T;
-        name?: T;
-      };
+  populatedAuthors?: T | PopulatedAuthorsSelect<T>;
   topics?: T;
-  footnotes?: T | FootnotesFieldSelect<T>;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -1373,9 +1489,31 @@ export interface FootnotesFieldSelect<T extends boolean = true> {
 export interface LinkFieldSelect<T extends boolean = true> {
   type?: T;
   newTab?: T;
+  variant?: T;
   reference?: T;
   url?: T;
   label?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PopulatedAuthors_select".
+ */
+export interface PopulatedAuthorsSelect<T extends boolean = true> {
+  id?: T;
+  name?: T;
+  slug?: T;
+  affiliation?: T;
+  biography?: T;
+  profileImage?: T;
+  socials?: T | MenuFieldSelect<T>;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuField_select".
+ */
+export interface MenuFieldSelect<T extends boolean = true> {
+  link?: T | LinkFieldSelect<T>;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1383,7 +1521,6 @@ export interface LinkFieldSelect<T extends boolean = true> {
  */
 export interface VolumesSelect<T extends boolean = true> {
   title?: T;
-  autoGenerateTitle?: T;
   volumeNumber?: T;
   description?: T;
   editorsNote?: T;
@@ -1409,6 +1546,7 @@ export interface VolumesSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  blurDataURL?: T;
   createdBy?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1548,14 +1686,6 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MenuField_select".
- */
-export interface MenuFieldSelect<T extends boolean = true> {
-  link?: T | LinkFieldSelect<T>;
-  id?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "webhooks_select".
  */
 export interface WebhooksSelect<T extends boolean = true> {
@@ -1579,6 +1709,13 @@ export interface WebhooksSelect<T extends boolean = true> {
 export interface TopicsSelect<T extends boolean = true> {
   name?: T;
   description?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -1827,26 +1964,9 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface Header {
   id: number;
   navItems?: MenuField;
-  actionButton: ActionButtonField;
+  actions?: MenuField;
   updatedAt?: string | null;
   createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ActionButtonField".
- */
-export interface ActionButtonField {
-  enabled: boolean;
-  link?: LinkField;
-  /**
-   * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-   */
-  backgroundColor?: string | null;
-  /**
-   * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-   */
-  textColor?: string | null;
-  variant?: ('default' | 'outline' | 'ghost' | 'link') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1855,6 +1975,8 @@ export interface ActionButtonField {
 export interface Footer {
   id: number;
   navItems?: MenuField;
+  socials?: MenuField;
+  copyright?: LinkField;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1864,21 +1986,10 @@ export interface Footer {
  */
 export interface HeaderSelect<T extends boolean = true> {
   navItems?: T | MenuFieldSelect<T>;
-  actionButton?: T | ActionButtonFieldSelect<T>;
+  actions?: T | MenuFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ActionButtonField_select".
- */
-export interface ActionButtonFieldSelect<T extends boolean = true> {
-  enabled?: T;
-  link?: T | LinkFieldSelect<T>;
-  backgroundColor?: T;
-  textColor?: T;
-  variant?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1886,9 +1997,21 @@ export interface ActionButtonFieldSelect<T extends boolean = true> {
  */
 export interface FooterSelect<T extends boolean = true> {
   navItems?: T | MenuFieldSelect<T>;
+  socials?: T | MenuFieldSelect<T>;
+  copyright?: T | LinkFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2041,6 +2164,10 @@ export interface InlineMathBlock {
  */
 export interface FootnoteBlock {
   /**
+   * The Optional ID of an existing footnote to link to. Hidden in the admin UI.
+   */
+  sourceId?: string | null;
+  /**
    * Footnote text.
    */
   note: string;
@@ -2051,7 +2178,7 @@ export interface FootnoteBlock {
   /**
    * Optionally add a source link to the footnote.
    */
-  attributionEnabled: boolean;
+  attributionEnabled?: boolean | null;
   link?: LinkField;
   id?: string | null;
   blockName?: string | null;

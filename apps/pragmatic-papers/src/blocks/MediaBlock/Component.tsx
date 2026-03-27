@@ -1,73 +1,102 @@
-import type { StaticImageData } from "next/image"
-
-import RichText from "@/components/RichText"
-import { cn } from "@/utilities/ui"
+import type { MediaBlock as MediaBlockProps } from "@/payload-types"
+import {
+  type JSXConvertersFunction,
+  LinkJSXConverter,
+  RichText,
+} from "@payloadcms/richtext-lexical/react"
 import React from "react"
 
-import type { MediaBlock as MediaBlockProps } from "@/payload-types"
+import { Media } from "@/components/Media"
+import { type ImageVariant } from "@/components/Media/ImageMedia"
+import { internalDocToHref } from "@/components/RichText"
+import { cn } from "@/utilities/utils"
+import { type DefaultNodeTypes } from "@payloadcms/richtext-lexical"
 
-import { Media } from "../../components/Media"
-
-type Props = MediaBlockProps & {
+export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
   breakout?: boolean
-  captionClassName?: string
   className?: string
-  enableGutter?: boolean
   imgClassName?: string
-  staticImage?: StaticImageData
+  captionClassName?: string
+  enableGutter?: boolean
+  sizes?: string | undefined
   disableInnerContainer?: boolean
+  variant?: ImageVariant
 }
 
-export const MediaBlock: React.FC<Props> = (props) => {
+const converters: JSXConvertersFunction<DefaultNodeTypes> = ({ defaultConverters }) => ({
+  ...defaultConverters,
+  ...LinkJSXConverter({ internalDocToHref }),
+  link: ({ node, nodesToJSX }) => {
+    const children = nodesToJSX({ nodes: node.children })
+    const rel = node.fields.newTab ? "noopener noreferrer" : undefined
+    const target = node.fields.newTab ? "_blank" : undefined
+    const href =
+      node.fields.linkType === "internal"
+        ? internalDocToHref({ linkNode: node })
+        : (node.fields.url ?? "")
+    return (
+      <a className="underline underline-offset-2" href={href} rel={rel} target={target}>
+        {children}
+      </a>
+    )
+  },
+  autolink: ({ node, nodesToJSX }) => {
+    const children = nodesToJSX({ nodes: node.children })
+    const rel = node.fields.newTab ? "noopener noreferrer" : undefined
+    const target = node.fields.newTab ? "_blank" : undefined
+    return (
+      <a className="underline underline-offset-2" href={node.fields.url} rel={rel} target={target}>
+        {children}
+      </a>
+    )
+  },
+  paragraph: ({ node, nodesToJSX }) => (
+    <React.Fragment>{nodesToJSX({ nodes: node.children })}</React.Fragment>
+  ),
+})
+
+export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props }) => {
   const {
+    breakout,
     captionClassName,
     className,
     enableGutter = true,
     imgClassName,
     media,
-    staticImage,
+    variant = "medium",
     disableInnerContainer,
   } = props
+  if (typeof media === "number") return null
 
-  let caption
-  if (media && typeof media === "object") caption = media.caption
+  sizes = sizes || "(max-width: 768px) 100vw, 800px"
 
+  const { caption } = media
+
+  const Slot: React.ElementType = caption ? "figure" : "picture"
   return (
-    <figure
+    <Slot
       className={cn(
-        "",
         {
           container: enableGutter,
+          "lg:-mx-8 xl:-mx-16": breakout,
         },
         className,
       )}
     >
-      {(media || staticImage) && (
-        <Media
-          imgClassName={cn("border border-border rounded-sm", imgClassName)}
-          resource={media}
-          src={staticImage}
-          enableModal
-        />
-      )}
+      <Media className={cn("border", imgClassName)} media={media} sizes={sizes} variant={variant} />
       {caption && (
         <figcaption
           className={cn(
-            "mt-3 text-center",
+            "text-primary my-1.5 line-clamp-1 text-center font-serif",
             {
               container: !disableInnerContainer,
             },
             captionClassName,
           )}
         >
-          <RichText
-            data={caption}
-            enableGutter={false}
-            enableProse={false}
-            className="not-prose text-[0.95rem] text-muted-foreground"
-          />
+          <RichText converters={converters} data={caption} disableContainer />
         </figcaption>
       )}
-    </figure>
+    </Slot>
   )
 }

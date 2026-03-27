@@ -3,6 +3,7 @@ import type {
   GroupField,
   NamedGroupField,
   RadioField,
+  SelectField,
   SingleRelationshipField,
   TextField,
   TextFieldSingleValidation,
@@ -14,10 +15,15 @@ interface LinkFields {
   reference?: Partial<SingleRelationshipField>
   type?: Partial<RadioField>
   url?: Partial<TextField>
+  variant?: Omit<Partial<SelectField>, "type" | "hasMany" | "validate">
 }
 
-type LinkProps = Omit<NamedGroupField, "fields" | "name" | "type" | "interfaceName"> & {
+export type LinkFieldOverrides = Omit<
+  NamedGroupField,
+  "fields" | "name" | "type" | "interfaceName"
+> & {
   component?: LinkFields
+  name?: string
 }
 
 /**
@@ -26,12 +32,16 @@ type LinkProps = Omit<NamedGroupField, "fields" | "name" | "type" | "interfaceNa
  * @param props - The props for the base link field
  * @returns The link field
  */
-export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField => {
-  const { type = {}, newTab = {}, reference = {}, url = {}, label = {} } = component
+export const link = ({
+  component = {},
+  name = "link",
+  ...props
+}: LinkFieldOverrides = {}): GroupField => {
+  const { type = {}, newTab = {}, reference = {}, url = {}, label = {}, variant = {} } = component
   return {
     label: "Link",
     ...props,
-    name: "link",
+    name,
     type: "group",
     interfaceName: "LinkField",
     fields: [
@@ -70,11 +80,25 @@ export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField =
             admin: {
               ...newTab.admin,
               style: {
-                flex: 1,
-                alignSelf: "flex-end",
+                alignSelf: "center",
+                marginTop: "12px",
                 ...newTab.admin?.style,
               },
             },
+          },
+          {
+            label: "Appearance",
+            name: "variant",
+            type: "select",
+            defaultValue: "link",
+            options: [
+              { label: "Link", value: "link" },
+              { label: "Default", value: "default" },
+              { label: "Outline", value: "outline" },
+              { label: "Ghost", value: "ghost" },
+              { label: "Branded", value: "branded" },
+            ],
+            ...variant,
           },
         ],
       },
@@ -83,7 +107,7 @@ export const link = ({ component = {}, ...props }: LinkProps = {}): GroupField =
         fields: [
           {
             label: reference.label || "Document to link to",
-            relationTo: ["pages", "volumes", "articles"],
+            relationTo: ["pages", "volumes", "articles", "topics"],
             name: "reference",
             type: "relationship",
             required: true,

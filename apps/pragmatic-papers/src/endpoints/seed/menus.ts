@@ -57,16 +57,40 @@ export const createMenus = async (
             },
           },
         },
+      ],
+      actions: [
         {
           link: {
-            type: "reference",
-            label: "About",
-            reference: {
-              relationTo: "pages",
-              value: aboutPage.id,
-            },
+            type: "custom",
+            label: "Donate",
+            url: "https://example.com/donate",
+            newTab: true,
+            variant: "branded",
           },
         },
+        {
+          link: {
+            type: "custom",
+            label: "Join Us",
+            url: "https://discord.gg/dggpol",
+            newTab: true,
+            variant: "outline",
+          },
+        },
+      ],
+    },
+  })
+
+  await payload.updateGlobal({
+    slug: "footer",
+    data: {
+      copyright: {
+        type: "custom",
+        label: "Digital Ground Game",
+        url: "https://digitalgroundgame.org",
+        newTab: true,
+      },
+      navItems: [
         {
           link: {
             type: "reference",
@@ -77,25 +101,16 @@ export const createMenus = async (
             },
           },
         },
-      ],
-      actionButton: {
-        enabled: true,
-        link: {
-          type: "custom",
-          label: "Join Discord",
-          url: "https://discord.gg/dggpol",
-          newTab: true,
+        {
+          link: {
+            type: "reference",
+            label: "About",
+            reference: {
+              relationTo: "pages",
+              value: aboutPage.id,
+            },
+          },
         },
-        backgroundColor: "#5865F2",
-        textColor: "#E0E3FF",
-      },
-    },
-  })
-
-  await payload.updateGlobal({
-    slug: "footer",
-    data: {
-      navItems: [
         {
           link: {
             type: "reference",
@@ -114,6 +129,55 @@ export const createMenus = async (
               relationTo: "pages",
               value: termsOfUsePage.id,
             },
+          },
+        },
+        {
+          link: {
+            type: "custom",
+            label: "Log In",
+            url: "/admin/login",
+          },
+        },
+      ],
+      socials: [
+        {
+          link: {
+            type: "custom",
+            label: "X",
+            url: "https://x.com/PragPapers",
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: "custom",
+            label: "Instagram",
+            url: "https://www.instagram.com/pragmaticpapers/",
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: "custom",
+            label: "Reddit",
+            url: "https://www.reddit.com/user/ThePragmaticPapers/",
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: "custom",
+            label: "Bluesky",
+            url: "https://bsky.app/profile/thepragmaticpapers.bsky.social",
+            newTab: true,
+          },
+        },
+        {
+          link: {
+            type: "custom",
+            label: "Substack",
+            url: "https://substack.com/@thepragmaticpapers",
+            newTab: true,
           },
         },
       ],
