@@ -3,10 +3,13 @@
 
    Usage:
      <link rel="stylesheet" href="https://pragmaticpapers.com/font-service.css">
+
+   Then use in your CSS:
+     font-family: FK Screamer, fantasy;
 */
 
 @font-face {
-  font-family: "FK Screamer";
+  font-family: FK Screamer;
   src: url("https://pragmaticpapers.com/fonts/FKScreamer-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
