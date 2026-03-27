@@ -1,0 +1,29 @@
+name: "Auto Back-merge Hotfix to Dev"
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  back-merge:
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'hotfix/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create Back-merge PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_TITLE: "chore: back-merge ${{ github.event.pull_request.head.ref }} to dev"
+        run: |
+          gh pr create \
+            --base dev \
+            --head "$HEAD_BRANCH" \
+            --title "$PR_TITLE" \
+            --body "Automated back-merge of hotfix merged into main. Please resolve any conflicts with the existing changes in dev."
