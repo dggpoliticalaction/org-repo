@@ -65,7 +65,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = "" } = await paramsPromise
   const article = await queryArticleBySlug({ slug })
 
-  return generateMeta({ doc: article })
+  return generateMeta({ doc: article, canonicalPath: `/articles/${slug}` })
 }
 
 export default async function Article({ params: paramsPromise }: Args): Promise<React.ReactNode> {
@@ -79,7 +79,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   const { footnotes, content, populatedAuthors, enableMathRendering, topics } = article
 
   return (
-    <div className="m-auto max-w-3xl p-5 pb-16">
+    <div className="mx-auto max-w-2xl px-4 pb-16">
       <article className="space-y-6">
         {/* Allows redirects for valid pages too */}
         <PayloadRedirects disableNotFound url={url} />

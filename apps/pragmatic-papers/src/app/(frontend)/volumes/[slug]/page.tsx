@@ -68,7 +68,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = "" } = await paramsPromise
   const volume = await queryVolumeBySlug({ slug })
 
-  return generateMeta({ doc: volume })
+  return generateMeta({ doc: volume, canonicalPath: `/volumes/${slug}` })
 }
 
 export default async function VolumePage({
@@ -94,26 +94,24 @@ export default async function VolumePage({
     })
 
   return (
-    <article className="mx-auto max-w-3xl space-y-6 px-4">
+    <article className="mx-auto max-w-3xl space-y-3 px-4">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
-      <h1 className="font-display mb-6 text-3xl font-bold md:text-5xl lg:text-7xl">
-        Volume {toRoman(Number(volume.slug))}
-      </h1>
+      <h1 className="text-6xl lg:text-7xl">Volume {toRoman(Number(volume.slug))}</h1>
       {publishedAt && (
         <HoverPrefetchLink
           href={`/volumes/${volume.slug}`}
-          className="dark:text-brand-high-contrast text-brand font-serif font-semibold underline-offset-4 hover:underline"
+          className="dark:text-brand-high-contrast text-brand block font-serif font-semibold underline-offset-4 hover:underline"
         >
           <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
         </HoverPrefetchLink>
       )}
-      {editorsNote && <RichText className="mt-6" enableGutter={false} data={editorsNote} />}
-      <Separator />
+      {editorsNote && <RichText className="drop-cap" enableGutter={false} data={editorsNote} />}
+      <Separator className="my-6" />
       <section className="space-y-4">
-        <h2 className="font-display text-5xl font-bold">Articles in this Volume</h2>
+        <h2>Articles in this Volume</h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {articles?.map((article) => (
             <ArticleCard key={article.id} doc={article} relationTo="articles" />

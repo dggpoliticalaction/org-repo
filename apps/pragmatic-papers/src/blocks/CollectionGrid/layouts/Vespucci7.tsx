@@ -31,7 +31,13 @@ export const Vespucci7: LayoutDefinition = {
  *
  * Desktop (lg:grid-cols-3 — 25%/50%/25%)
  */
-export const Vespucci7Layout: React.FC<LayoutProps> = ({ className, slots, ...props }) => {
+export const Vespucci7Layout: React.FC<LayoutProps> = ({
+  className,
+  slots,
+  priority,
+  loading,
+  ...props
+}) => {
   const [featured, a, b, c, d, e, f] = slots
 
   return (
@@ -43,20 +49,43 @@ export const Vespucci7Layout: React.FC<LayoutProps> = ({ className, slots, ...pr
       <CollectionTile
         className="h-full md:col-span-2 md:row-span-2 lg:col-span-1 lg:row-span-2"
         tile={featured!}
+        priority={priority}
+        sizes="(max-width: 768px) 100vw, 600px"
+        variant="medium"
       />
 
       {/* Slots A + B — left column (25%), spans 2 rows */}
       <div className="grid grid-cols-1 gap-6 md:col-span-2 md:grid-cols-2 lg:order-first lg:col-span-1 lg:row-span-2 lg:grid-cols-1">
-        <CollectionTile tile={a!} />
-        <CollectionTile tile={b!} />
+        <CollectionTile tile={a!} loading={loading} />
+        <CollectionTile tile={b!} loading={loading} />
       </div>
 
       {/* Slots C–F — right column (25%), 4 tiles with no image */}
       <div className="grid grid-cols-1 gap-4 md:col-span-2 md:grid-cols-2 lg:col-span-1 lg:col-start-3 lg:row-span-2 lg:row-start-1 lg:grid-cols-1">
-        <CollectionTile tile={c!} imagePosition="none" showByline />
-        <CollectionTile tile={d!} imagePosition="none" showByline />
-        <CollectionTile tile={e!} imagePosition="none" showByline />
-        <CollectionTile tile={f!} imagePosition="none" showByline />
+        <CollectionTile
+          tile={c!}
+          imagePosition="none"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 300px"
+          variant="medium"
+        />
+        <CollectionTile
+          tile={d!}
+          imagePosition="none"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 300px"
+          variant="medium"
+        />
+        <CollectionTile
+          tile={e!}
+          imagePosition="none"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 300px"
+          variant="medium"
+        />
+        <CollectionTile
+          tile={f!}
+          imagePosition="none"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 300px"
+          variant="medium"
+        />
       </div>
     </section>
   )

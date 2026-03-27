@@ -1,5 +1,7 @@
 import { AuthorList } from "@/components/Authors/AuthorList"
 import type { PopulatedAuthors, PopulatedAuthorsSelect } from "@/payload-types"
+import { getServerSideURL } from "@/utilities/getURL"
+import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
 import configPromise from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
@@ -9,11 +11,11 @@ import React from "react"
 export const metadata: Metadata = {
   title: "Authors — Pragmatic Papers",
   description: "Discover all Pragmatic Papers authors and explore their published work.",
-  openGraph: {
+  openGraph: mergeOpenGraph({
     title: "Authors — Pragmatic Papers",
     description: "Discover all Pragmatic Papers authors and explore their published work.",
-    url: "/authors",
-  },
+    url: `${getServerSideURL()}/authors`,
+  }),
 }
 
 async function queryAuthors(): Promise<NonNullable<PopulatedAuthors>> {
@@ -62,7 +64,7 @@ export default async function AuthorsIndexPage(): Promise<React.ReactNode> {
   return (
     <article className="mx-auto max-w-3xl space-y-6 px-4">
       <header className="mb-8 text-center">
-        <h1 className="mb-2 text-3xl font-bold md:text-4xl">Authors</h1>
+        <h1 className="mb-2">Authors</h1>
         <p className="text-muted-foreground text-sm">
           Learn more about Pragmatic Papers contributors and explore their work.
         </p>

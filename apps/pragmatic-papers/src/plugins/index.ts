@@ -1,5 +1,5 @@
 import { revalidateRedirects } from "@/hooks/revalidateRedirects"
-import type { Article, Page, Volume } from "@/payload-types"
+import type { Article, Page, Topic, Volume } from "@/payload-types"
 import { getServerSideURL } from "@/utilities/getURL"
 import { toRoman } from "@/utilities/toRoman"
 import { formBuilderPlugin } from "@payloadcms/plugin-form-builder"
@@ -11,20 +11,22 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from "@payloadcms/
 import { s3Storage } from "@payloadcms/storage-s3"
 import { type Plugin } from "payload"
 
-function isVolume(obj: Volume | Article | Page): obj is Volume {
+function isVolume(obj: Volume | Article | Page | Topic): obj is Volume {
   return (obj as Volume).volumeNumber !== undefined
 }
 
-export const generateTitle: GenerateTitle<Volume | Article | Page> = ({ doc }) => {
+export const generateTitle: GenerateTitle<Volume | Article | Page | Topic> = ({ doc }) => {
   if (isVolume(doc)) {
     return doc?.volumeNumber
-      ? `Volume ${toRoman(doc.volumeNumber)} | Pragmatic Papers`
-      : "Pragmatic Papers"
+      ? `Volume ${toRoman(doc.volumeNumber)} | The Pragmatic Papers`
+      : "The Pragmatic Papers"
   }
-  return doc?.title ? `${doc.title} | Pragmatic Papers` : "Pragmatic Papers"
+  if ("name" in doc && doc.name) return `${doc.name} | The Pragmatic Papers`
+  if ("title" in doc && doc.title) return `${doc.title} | The Pragmatic Papers`
+  return "The Pragmatic Papers"
 }
 
-const generateURL: GenerateURL<Volume | Article | Page> = ({ doc }) => {
+const generateURL: GenerateURL<Volume | Article | Page | Topic> = ({ doc }) => {
   const url = getServerSideURL()
 
   return doc?.slug ? `${url}/${doc.slug}` : url

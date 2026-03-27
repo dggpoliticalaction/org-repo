@@ -3,6 +3,7 @@ import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { Pagination } from "@/components/Pagination"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import type { Topic, Volume } from "@/payload-types"
+import { generateMeta } from "@/utilities/generateMeta"
 import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
@@ -45,6 +46,7 @@ const queryTopicBySlug = cache(async (slug: string): Promise<Topic | null> => {
     collection: "topics",
     draft,
     limit: 1,
+    overrideAccess: draft,
     pagination: false,
     where: {
       slug: {
@@ -68,6 +70,7 @@ const queryArticlesByTopic = cache(async (topicId: number, page: number = 1) => 
     draft,
     limit: ARTICLES_PER_PAGE,
     page,
+    overrideAccess: draft,
     pagination: false,
     where: {
       topics: {
@@ -106,19 +109,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug = "" } = await params
   const topic = await queryTopicBySlug(slug)
 
-  const name = topic?.name || "Topic"
-  const title = `${name} - Pragmatic Papers`
-  const description = topic?.description || undefined
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      url: `/topics/${slug}`,
-    },
-  }
+  return generateMeta({ doc: topic, canonicalPath: `/topics/${slug}` })
 }
 
 export default async function TopicPage({
@@ -167,13 +158,13 @@ export default async function TopicPage({
 
       {draft && <LivePreviewListener />}
 
-      <header className="space-y-3 text-center">
-        <h1 className="text-3xl font-bold md:text-4xl">Topic: {topic.name}</h1>
+      <header className="space-y-3">
+        <h1>Topic: {topic.name}</h1>
         {topic.description && <p className="text-muted-foreground text-sm">{topic.description}</p>}
       </header>
 
       <section aria-label="Articles for this topic">
-        <h2 className="mb-3 text-2xl font-semibold">Articles</h2>
+        <h2 className="mb-3">Articles</h2>
         {totalDocs === 0 ? (
           <p className="text-muted-foreground text-sm">No articles found for this topic yet.</p>
         ) : (

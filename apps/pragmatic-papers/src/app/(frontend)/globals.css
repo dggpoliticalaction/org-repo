@@ -86,6 +86,7 @@
 
 @theme inline {
   --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -139,6 +140,24 @@
   html {
     @apply scroll-smooth font-sans;
   }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display leading-none font-bold tracking-wide text-balance;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl;
+  }
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
 }
 
 @utility container {
@@ -147,15 +166,22 @@
   max-width: 80rem;
 }
 
-@utility font-display {
-  font-family: var(--font-display);
-  letter-spacing: 0.05rem;
-}
-
 @utility drop-cap {
-  p:first-child::first-letter {
-    initial-letter: 2;
-    margin-right: 0.25em;
+  & > p:first-child::first-letter {
+    float: left;
+    font-size: 3em;
+    line-height: 0.9;
+    margin-right: 0.05em;
     font-weight: bold;
+  }
+
+  @supports (initial-letter: 2) {
+    & > p:first-child::first-letter {
+      float: none;
+      font-size: revert;
+      line-height: revert;
+      initial-letter: 2;
+      margin-right: 0.15em;
+    }
   }
 }

@@ -26,6 +26,11 @@ import * as migration_20260318_125059_revert_volume_autogen from './20260318_125
 import * as migration_20260318_152547_use_populate_authors_duh from './20260318_152547_use_populate_authors_duh';
 import * as migration_20260318_172936_topics_views from './20260318_172936_topics_views';
 import * as migration_20260321_032916 from './20260321_032916';
+import * as migration_20260321_165911_add_copyright_to_footer_global from './20260321_165911_add_copyright_to_footer_global';
+import * as migration_20260323_024225_add_showByline_to_admin from './20260323_024225_add_showByline_to_admin';
+import * as migration_20260323_043247_add_seo_to_topics from './20260323_043247_add_seo_to_topics';
+import * as migration_20260326_061304_add_social_links_component_to_footer from './20260326_061304_add_social_links_component_to_footer';
+import * as migration_20260326_115012_header_actions_array from './20260326_115012_header_actions_array';
 
 export const migrations = [
   {
@@ -166,6 +171,31 @@ export const migrations = [
   {
     up: migration_20260321_032916.up,
     down: migration_20260321_032916.down,
-    name: '20260321_032916'
+    name: '20260321_032916',
+  },
+  {
+    up: migration_20260321_165911_add_copyright_to_footer_global.up,
+    down: migration_20260321_165911_add_copyright_to_footer_global.down,
+    name: '20260321_165911_add_copyright_to_footer_global',
+  },
+  {
+    up: migration_20260323_024225_add_showByline_to_admin.up,
+    down: migration_20260323_024225_add_showByline_to_admin.down,
+    name: '20260323_024225_add_showByline_to_admin',
+  },
+  {
+    up: migration_20260323_043247_add_seo_to_topics.up,
+    down: migration_20260323_043247_add_seo_to_topics.down,
+    name: '20260323_043247_add_seo_to_topics',
+  },
+  {
+    up: migration_20260326_061304_add_social_links_component_to_footer.up,
+    down: migration_20260326_061304_add_social_links_component_to_footer.down,
+    name: '20260326_061304_add_social_links_component_to_footer',
+  },
+  {
+    up: migration_20260326_115012_header_actions_array.up,
+    down: migration_20260326_115012_header_actions_array.down,
+    name: '20260326_115012_header_actions_array'
   },
 ];

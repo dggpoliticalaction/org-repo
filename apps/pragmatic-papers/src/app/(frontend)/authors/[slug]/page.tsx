@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import { draftMode } from "next/headers"
 import { getPayload } from "payload"
 import React, { cache } from "react"
+import { getServerSideURL } from "@/utilities/getURL"
+import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
 
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
@@ -139,11 +141,11 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   return {
     title,
     description,
-    openGraph: {
+    openGraph: mergeOpenGraph({
       title,
       description,
-      url: `/authors/${slug}`,
-    },
+      url: `${getServerSideURL()}/authors/${slug}`,
+    }),
   }
 }
 
@@ -206,14 +208,14 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         )}
-        <h1 className="text-3xl font-bold md:text-4xl">{user.name || "Author"}</h1>
+        <h1>{user.name || "Author"}</h1>
         {user.affiliation && <p className="text-muted-foreground text-sm">{user.affiliation}</p>}
         <AuthorLinks socials={user.socials} />
       </header>
 
       {hasBiography && (
         <section className="mb-10" aria-label="Author biography">
-          <h2 className="mb-3 text-2xl font-semibold">Bio</h2>
+          <h2 className="mb-3">Bio</h2>
           <RichText enableGutter={false} data={user.biography as ArticleType["content"]} />
         </section>
       )}
@@ -222,7 +224,7 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
 
       <section aria-label="Articles by this author">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-semibold">Articles</h2>
+          <h2>Articles</h2>
           <PageRange
             collection="articles"
             currentPage={currentPage}

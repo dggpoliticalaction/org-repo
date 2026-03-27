@@ -3,6 +3,7 @@ import React from "react"
 
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { isMedia, Media } from "@/components/Media"
+import type { ImageVariant } from "@/components/Media/ImageMedia"
 import type { Article, CollectionGridSlots, Media as MediaType } from "@/payload-types"
 import { cn } from "@/utilities/utils"
 export type ImagePosition = "above" | "below" | "left" | "right" | "none"
@@ -10,19 +11,25 @@ export type ImagePosition = "above" | "below" | "left" | "right" | "none"
 export interface CollectionTileProps extends React.ComponentProps<"div"> {
   tile: CollectionGridSlots[number]
   imagePosition?: ImagePosition
-  showByline?: boolean
+  priority?: boolean
+  loading?: "eager" | "lazy"
+  sizes?: string
+  variant?: ImageVariant
 }
 
 export const CollectionTile: React.FC<CollectionTileProps> = ({
   tile,
   imagePosition = "above",
-  showByline = false,
+  priority,
+  loading,
   className,
+  sizes = "(max-width: 768px) 100vw, 920px",
+  variant = "medium",
 }) => {
   if (!tile) return null
-  const { id, collection, kicker, overrideTitle } = tile
+  const { id, collection, kicker, overrideTitle, showByline } = tile
 
-  if (typeof collection.value === "number") return null
+  if (!collection || typeof collection.value === "number") return null
 
   const { title, slug, publishedAt, meta } = collection.value
   const href = `/${collection.relationTo}/${slug}`
@@ -57,7 +64,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       href={href}
       id={id ?? undefined}
       className={cn(
-        "group @container flex flex-col gap-6",
+        "group @container flex flex-col gap-x-6 gap-y-2",
         isHorizontal && "flex-col items-start md:flex-row",
         className,
       )}
@@ -65,8 +72,8 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
       {heroImage && (
         <div
           className={cn(
-            "aspect-video overflow-hidden rounded-sm border",
-            isHorizontal ? "md:basis-1/2" : "w-full shrink",
+            "aspect-video w-full overflow-hidden rounded-sm border",
+            isHorizontal ? "md:basis-1/2" : "shrink",
             imagePosition === "left" && "md:order-first",
             imagePosition === "right" && "md:order-last",
           )}
@@ -74,7 +81,10 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
           <Media
             media={heroImage}
             className="h-full w-full object-cover object-center hover:opacity-80"
-            variant="medium"
+            variant={variant}
+            sizes={sizes}
+            priority={priority}
+            loading={loading}
           />
         </div>
       )}
@@ -91,7 +101,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
         )}
 
         {/* Title — uses container queries to scale with available space */}
-        <h2 className="text-primary hover:text-primary/80 font-display text-2xl leading-none font-bold text-balance @xs:text-2xl @sm:text-3xl @md:text-4xl @lg:text-5xl">
+        <h2 className="text-primary hover:text-primary/80 text-2xl text-balance @xs:text-2xl @sm:text-3xl @md:text-4xl @lg:text-5xl">
           {overrideTitle || title}
         </h2>
 
@@ -102,7 +112,9 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
 
         {/* Description */}
         {meta?.description && (
-          <p className="text-primary text-md mt-1 line-clamp-3 font-serif">{meta!.description}</p>
+          <p className="text-primary mt-1 line-clamp-3 font-serif text-lg leading-tight">
+            {meta!.description}
+          </p>
         )}
 
         {/* Timestamp */}

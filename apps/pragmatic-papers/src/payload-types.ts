@@ -8,6 +8,28 @@
 
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FootnotesField".
+ */
+export type FootnotesField =
+  | {
+      /**
+       * Footnote text.
+       */
+      note: string;
+      /**
+       * Auto-generated on save.
+       */
+      index?: number | null;
+      /**
+       * Optionally add a source link to the footnote.
+       */
+      attributionEnabled: boolean;
+      link?: LinkField;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "MenuField".
  */
 export type MenuField =
@@ -43,28 +65,6 @@ export type PopulatedAuthors =
       } | null;
       profileImage?: (number | null) | Media;
       socials?: MenuField;
-    }[]
-  | null;
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "FootnotesField".
- */
-export type FootnotesField =
-  | {
-      /**
-       * Footnote text.
-       */
-      note: string;
-      /**
-       * Auto-generated on save.
-       */
-      index?: number | null;
-      /**
-       * Optionally add a source link to the footnote.
-       */
-      attributionEnabled: boolean;
-      link?: LinkField;
-      id?: string | null;
     }[]
   | null;
 /**
@@ -106,6 +106,10 @@ export type CollectionGridSlots = {
    * Optional short label above the title (e.g. "Breaking", "Opinion")
    */
   kicker?: string | null;
+  /**
+   * Show the author names for this slot
+   */
+  showByline?: boolean | null;
   /**
    * Optional override for the title in this slot
    */
@@ -403,6 +407,7 @@ export interface Article {
     };
     [k: string]: unknown;
   };
+  footnotes?: FootnotesField;
   meta?: {
     title?: string | null;
     /**
@@ -418,7 +423,6 @@ export interface Article {
   createdBy?: (number | null) | User;
   populatedAuthors?: PopulatedAuthors;
   topics?: (number | Topic)[] | null;
-  footnotes?: FootnotesField;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -427,6 +431,61 @@ export interface Article {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkField".
+ */
+export interface LinkField {
+  type?: ('reference' | 'custom') | null;
+  newTab?: boolean | null;
+  variant?: ('link' | 'default' | 'outline' | 'ghost' | 'branded') | null;
+  reference?:
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'volumes';
+        value: number | Volume;
+      } | null)
+    | ({
+        relationTo: 'articles';
+        value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'topics';
+        value: number | Topic;
+      } | null);
+  url?: string | null;
+  label?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topics".
+ */
+export interface Topic {
+  id: number;
+  name: string;
+  /**
+   * Optional description for this topic
+   */
+  description?: string | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -574,52 +633,6 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "LinkField".
- */
-export interface LinkField {
-  type?: ('reference' | 'custom') | null;
-  newTab?: boolean | null;
-  reference?:
-    | ({
-        relationTo: 'pages';
-        value: number | Page;
-      } | null)
-    | ({
-        relationTo: 'volumes';
-        value: number | Volume;
-      } | null)
-    | ({
-        relationTo: 'articles';
-        value: number | Article;
-      } | null)
-    | ({
-        relationTo: 'topics';
-        value: number | Topic;
-      } | null);
-  url?: string | null;
-  label?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "topics".
- */
-export interface Topic {
-  id: number;
-  name: string;
-  /**
-   * Optional description for this topic
-   */
-  description?: string | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1345,6 +1358,7 @@ export interface CollectionGridBlockSelect<T extends boolean = true> {
 export interface CollectionGridSlotsSelect<T extends boolean = true> {
   collection?: T;
   kicker?: T;
+  showByline?: T;
   overrideTitle?: T;
   id?: T;
 }
@@ -1438,6 +1452,7 @@ export interface FormBlockSelect<T extends boolean = true> {
 export interface ArticlesSelect<T extends boolean = true> {
   title?: T;
   content?: T;
+  footnotes?: T | FootnotesFieldSelect<T>;
   meta?:
     | T
     | {
@@ -1452,12 +1467,34 @@ export interface ArticlesSelect<T extends boolean = true> {
   createdBy?: T;
   populatedAuthors?: T | PopulatedAuthorsSelect<T>;
   topics?: T;
-  footnotes?: T | FootnotesFieldSelect<T>;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FootnotesField_select".
+ */
+export interface FootnotesFieldSelect<T extends boolean = true> {
+  note?: T;
+  index?: T;
+  attributionEnabled?: T;
+  link?: T | LinkFieldSelect<T>;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkField_select".
+ */
+export interface LinkFieldSelect<T extends boolean = true> {
+  type?: T;
+  newTab?: T;
+  variant?: T;
+  reference?: T;
+  url?: T;
+  label?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1477,28 +1514,6 @@ export interface PopulatedAuthorsSelect<T extends boolean = true> {
  * via the `definition` "MenuField_select".
  */
 export interface MenuFieldSelect<T extends boolean = true> {
-  link?: T | LinkFieldSelect<T>;
-  id?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "LinkField_select".
- */
-export interface LinkFieldSelect<T extends boolean = true> {
-  type?: T;
-  newTab?: T;
-  reference?: T;
-  url?: T;
-  label?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "FootnotesField_select".
- */
-export interface FootnotesFieldSelect<T extends boolean = true> {
-  note?: T;
-  index?: T;
-  attributionEnabled?: T;
   link?: T | LinkFieldSelect<T>;
   id?: T;
 }
@@ -1696,6 +1711,13 @@ export interface WebhooksSelect<T extends boolean = true> {
 export interface TopicsSelect<T extends boolean = true> {
   name?: T;
   description?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -1944,26 +1966,9 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface Header {
   id: number;
   navItems?: MenuField;
-  actionButton: ActionButtonField;
+  actions?: MenuField;
   updatedAt?: string | null;
   createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ActionButtonField".
- */
-export interface ActionButtonField {
-  enabled: boolean;
-  link?: LinkField;
-  /**
-   * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-   */
-  backgroundColor?: string | null;
-  /**
-   * Select a color using the color picker or enter a HEX code (e.g., #FF5733)
-   */
-  textColor?: string | null;
-  variant?: ('default' | 'outline' | 'ghost' | 'link') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1972,6 +1977,8 @@ export interface ActionButtonField {
 export interface Footer {
   id: number;
   navItems?: MenuField;
+  socials?: MenuField;
+  copyright?: LinkField;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2004,21 +2011,10 @@ export interface ArticleRecommendation {
  */
 export interface HeaderSelect<T extends boolean = true> {
   navItems?: T | MenuFieldSelect<T>;
-  actionButton?: T | ActionButtonFieldSelect<T>;
+  actions?: T | MenuFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ActionButtonField_select".
- */
-export interface ActionButtonFieldSelect<T extends boolean = true> {
-  enabled?: T;
-  link?: T | LinkFieldSelect<T>;
-  backgroundColor?: T;
-  textColor?: T;
-  variant?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2026,6 +2022,8 @@ export interface ActionButtonFieldSelect<T extends boolean = true> {
  */
 export interface FooterSelect<T extends boolean = true> {
   navItems?: T | MenuFieldSelect<T>;
+  socials?: T | MenuFieldSelect<T>;
+  copyright?: T | LinkFieldSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2208,6 +2206,10 @@ export interface InlineMathBlock {
  */
 export interface FootnoteBlock {
   /**
+   * The Optional ID of an existing footnote to link to. Hidden in the admin UI.
+   */
+  sourceId?: string | null;
+  /**
    * Footnote text.
    */
   note: string;
@@ -2218,7 +2220,7 @@ export interface FootnoteBlock {
   /**
    * Optionally add a source link to the footnote.
    */
-  attributionEnabled: boolean;
+  attributionEnabled?: boolean | null;
   link?: LinkField;
   id?: string | null;
   blockName?: string | null;

@@ -1,6 +1,7 @@
 import { socialEmbedBlockToHTML } from "@/blocks/SocialEmbed/helpers/socialEmbedBlockToHTML"
 import type {
   Article,
+  DisplayMathBlock,
   FootnoteBlock,
   Media,
   MediaBlock,
@@ -55,6 +56,12 @@ const mediaCollageBlockToHTML = ({
   return imgs ? `<figure style="display:flex;flex-wrap:wrap;gap:0.5em;">${imgs}</figure>` : ""
 }
 
+function displayMathBlockToHTML({ node }: { node: SerializedBlockNode<DisplayMathBlock> }): string {
+  const { math } = node.fields
+  if (!math) return ""
+  return `<p class="math display-math">\\[${math}\\]</p>`
+}
+
 const htmlConverters: HTMLConvertersFunction = ({ defaultConverters }) => ({
   ...defaultConverters,
   blocks: {
@@ -67,6 +74,7 @@ const htmlConverters: HTMLConvertersFunction = ({ defaultConverters }) => ({
     tiktokEmbed: socialEmbedBlockToHTML,
     twitterEmbed: socialEmbedBlockToHTML,
     youtubeEmbed: socialEmbedBlockToHTML,
+    displayMathBlock: displayMathBlockToHTML,
   },
   inlineBlocks: {
     ...defaultConverters.inlineBlocks,
@@ -167,14 +175,14 @@ const formatVolumeContent = (volume: Volume) => {
 }
 
 const createBaseFeedConfig = (type: "Articles" | "Volumes") => ({
-  title: `Pragmatic Papers - ${type}`,
-  description: `Latest ${type.toLowerCase()} from Pragmatic Papers`,
+  title: `The Pragmatic Papers - ${type}`,
+  description: `Latest ${type.toLowerCase()} from The Pragmatic Papers`,
   id: SITE_URL,
   link: SITE_URL,
   language: "en",
   favicon: `${SITE_URL}/favicon.ico`,
   copyright: `All rights reserved ${new Date().getFullYear()}`,
-  generator: "Pragmatic Papers",
+  generator: "The Pragmatic Papers",
   updated: new Date(),
   feedLinks: {
     atom: `${SITE_URL}/feed.${type.toLowerCase()}`,

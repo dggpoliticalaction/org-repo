@@ -2,6 +2,7 @@ import { Logo } from "@/components/Logo"
 import { PaperIcon } from "@/components/Logo/icons/PaperIcon"
 import { MegaMenu } from "@/components/MegaMenu"
 import { Menu } from "@/components/Menu"
+import { SocialLinks } from "@/components/SocialLinks"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { LinkButton } from "@/components/ui/link-button"
@@ -13,15 +14,18 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { ActionButton } from "@/Header/ActionButton/Component"
-import type { Header } from "@/payload-types"
+import { HeaderActions } from "@/Header/HeaderActions/Component"
+import type { Footer, Header } from "@/payload-types"
 import { getCachedGlobal } from "@/utilities/getGlobals"
 import { SearchIcon, TextSearch, User, XIcon } from "lucide-react"
 import Link from "next/link"
 import React from "react"
 
 export async function Header(): Promise<React.JSX.Element> {
-  const { navItems, actionButton }: Header = await getCachedGlobal("header", 1)()
+  const [{ navItems, actions }, { socials }]: [Header, Footer] = await Promise.all([
+    getCachedGlobal("header", 1)(),
+    getCachedGlobal("footer", 1)(),
+  ])
 
   return (
     <>
@@ -69,6 +73,7 @@ export async function Header(): Promise<React.JSX.Element> {
                   </Button>
                 </div>
                 <Menu menu={navItems} layout="stacked" slot={SheetClose} />
+                <SocialLinks socials={socials} className="px-4 py-3" />
               </SheetContent>
             </Sheet>
             <Link
@@ -79,15 +84,7 @@ export async function Header(): Promise<React.JSX.Element> {
               <Logo />
             </Link>
             <div className="flex items-center justify-end gap-2">
-              <ActionButton className="hidden lg:flex" button={actionButton} />
-              {/* <LinkButton
-                variant="outline"
-                className="hover:bg-foreground/10 hidden lg:flex"
-                href="/admin/login"
-                prefetch={false}
-              >
-                Log In
-              </LinkButton> */}
+              <HeaderActions actions={actions} className="hidden lg:flex" />
               <Sheet>
                 <SheetTrigger
                   className="lg:hidden"
@@ -106,10 +103,13 @@ export async function Header(): Promise<React.JSX.Element> {
                     <div className="bg-brand flex aspect-square items-center justify-center rounded-sm p-2">
                       <PaperIcon className="text-white" />
                     </div>
-                    <SheetTitle>Account</SheetTitle>
+                    <SheetTitle className="text-3xl">Account</SheetTitle>
                   </SheetHeader>
                   <div className="w-full space-y-2 px-4">
-                    <ActionButton button={actionButton} className="w-full" />
+                    <HeaderActions
+                      actions={actions}
+                      className="w-full justify-center [&>a]:w-1/2"
+                    />
                     <LinkButton
                       variant="outline"
                       size="lg"
