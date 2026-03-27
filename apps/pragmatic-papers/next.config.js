@@ -31,6 +31,26 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // Font files and font-service.css are consumed cross-domain (e.g. ActBlue embeds).
+        // Licensed under Florian Karsten Typefaces Enterprise EULA — unlimited domain self-hosting permitted.
+        source: "/fonts/:path*",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
+          },
+        ],
+      },
+      {
+        source: "/font-service.css",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
+          },
+        ],
+      },
+      {
         // Payload admin panel: never cache — always requires a fresh authenticated response.
         // CDN-Cache-Control is Vercel-specific and prevents edge caching in addition to the browser.
         source: "/admin/:path*",

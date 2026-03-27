@@ -1,0 +1,14 @@
+/* Font service stylesheet for cross-domain consumers (e.g. ActBlue embeds).
+   Licensed under Florian Karsten Typefaces Enterprise EULA (Section C2 — unlimited domain self-hosting).
+
+   Usage:
+     <link rel="stylesheet" href="https://pragmaticpapers.com/font-service.css">
+*/
+
+@font-face {
+  font-family: "FK Screamer";
+  src: url("https://pragmaticpapers.com/fonts/FKScreamer-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
