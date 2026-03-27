@@ -22,8 +22,35 @@ jobs:
           HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
           PR_TITLE: "chore: back-merge ${{ github.event.pull_request.head.ref }} to dev"
         run: |
+          # Define the instruction body
+          PR_BODY=$(cat <<EOF
+          Automated back-merge of hotfix merged into main.
+          
+          **If there are conflicts with the existing PRs in dev, follow these steps to resolve:**
+          
+          \`\`\`bash
+          # 1. Sync your local
+          git fetch origin
+          
+          # 2. Checkout the hotfix
+          git checkout $HEAD_BRANCH
+          
+          # 3. Pull the latest dev to resolve conflicts locally
+          git pull origin dev
+          
+          # 4. Resolve & Push
+          # Fix the conflicts in your editor (e.g., Zed), then:
+          git add .
+          git commit -m "chore: resolve conflicts with dev"
+          git push origin $HEAD_BRANCH
+          \`\`\`
+          
+          The PR to dev will update automatically after you push.
+          EOF
+          )
+
           gh pr create \
             --base dev \
             --head "$HEAD_BRANCH" \
             --title "$PR_TITLE" \
-            --body "Automated back-merge of hotfix merged into main. Please resolve any conflicts with the existing changes in dev."
+            --body "$PR_BODY"
