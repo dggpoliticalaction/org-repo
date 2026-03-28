@@ -48,8 +48,8 @@ importers:
         specifier: ^3.79.0
         version: 3.79.1(@types/react@19.1.8)(monaco-editor@0.52.2)(next@15.4.11(@babel/core@7.29.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(payload@3.79.1(graphql@16.12.0)(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
       '@payloadcms/plugin-nested-docs':
-        specifier: ^3.79.0
-        version: 3.79.1(payload@3.79.1(graphql@16.12.0)(typescript@5.9.3))
+        specifier: ^3.80.0
+        version: 3.80.0(payload@3.79.1(graphql@16.12.0)(typescript@5.9.3))
       '@payloadcms/plugin-redirects':
         specifier: ^3.79.0
         version: 3.79.1(payload@3.79.1(graphql@16.12.0)(typescript@5.9.3))
@@ -1807,10 +1807,10 @@ packages:
       react: ^19.0.1 || ^19.1.2 || ^19.2.1
       react-dom: ^19.0.1 || ^19.1.2 || ^19.2.1
 
-  '@payloadcms/plugin-nested-docs@3.79.1':
-    resolution: {integrity: sha512-Tu211v0vz+zZl5o0iG6pFOiZcAs+BF68miCoCT/R5fvjGEuqOqB2j7psBwf4XOgm2swO/OLHZygQaCuGw/l3cg==}
+  '@payloadcms/plugin-nested-docs@3.80.0':
+    resolution: {integrity: sha512-yugNTkY+gjdgHxbu6Cgn8EIEu99917XqFBTv9/6P9BmSe6rF9VcCZ5Bw8wrXaQIIzRQ8PNC5AqajATDImvINmw==}
     peerDependencies:
-      payload: 3.79.1
+      payload: 3.80.0
 
   '@payloadcms/plugin-redirects@3.79.1':
     resolution: {integrity: sha512-g7LlTF5B2wDawcD2367WvqCy8g4/BbApGuVN3avOBtNEyWEhDQ3jh0fbo6Coxoy7VU0y2l8JfkBcGtJp7IdK0g==}
@@ -5838,6 +5838,18 @@ packages:
       utf-8-validate:
         optional: true
 
+  ws@8.20.0:
+    resolution: {integrity: sha512-sAt8BhgNbzCtgGbt2OxmpuryO63ZoDk/sqaB/znQm94T4fCEsy/yV+7CdC1kJhOU9lboAEU7R3kquuycDoibVA==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   wsl-utils@0.3.1:
     resolution: {integrity: sha512-g/eziiSUNBSsdDJtCLB8bdYEUMj4jR7AGeUo96p/3dTafgjHhpF4RiCFPiRILwjQoDXx5MqkBr4fwWtR3Ky4Wg==}
     engines: {node: '>=20'}
@@ -7560,7 +7572,7 @@ snapshots:
   '@libsql/isomorphic-ws@0.1.5':
     dependencies:
       '@types/ws': 8.18.1
-      ws: 8.19.0
+      ws: 8.20.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -7873,7 +7885,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@payloadcms/plugin-nested-docs@3.79.1(payload@3.79.1(graphql@16.12.0)(typescript@5.9.3))':
+  '@payloadcms/plugin-nested-docs@3.80.0(payload@3.79.1(graphql@16.12.0)(typescript@5.9.3))':
     dependencies:
       payload: 3.79.1(graphql@16.12.0)(typescript@5.9.3)
 
@@ -12595,6 +12607,9 @@ snapshots:
   wrappy@1.0.2: {}
 
   ws@8.19.0: {}
+
+  ws@8.20.0:
+    optional: true
 
   wsl-utils@0.3.1:
     dependencies:
