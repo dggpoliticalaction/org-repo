@@ -1,4 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # Dependencies
 node_modules
 .pnp
@@ -57,3 +58,12 @@ devenv.local.nix
 
 # claude files
 .claude
+
+# Payload default media upload directory
+public/media/
+
+public/mathjax
+
+public/robots.txt
+public/sitemap*.xml
+public/fonts/
