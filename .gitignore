@@ -29,6 +29,12 @@ dist
 # Fonts (generated at install time)
 public/fonts
 
+# Generated content
+public/media/
+public/mathjax
+public/robots.txt
+public/sitemap*.xml
+
 # Databases
 *.db
 
