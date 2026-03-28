@@ -15,10 +15,8 @@
     "dev:db-down": "docker compose -p pragmatic-papers -f docker-compose.yml down",
     "dev:next": "cross-env NODE_OPTIONS=--no-deprecation next dev -p 8000",
     "dev": "docker compose -p pragmatic-papers -f docker-compose.yml up & cross-env NODE_OPTIONS=--no-deprecation next dev -p 8000",
-    "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
-    "ii": "cross-env NODE_OPTIONS=--no-deprecation pnpm install",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
     "lint:ci": "cross-env NODE_OPTIONS=--no-deprecation eslint . --max-warnings 0",
     "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation eslint --fix .",
@@ -112,8 +110,8 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4.2.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.34.0"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.2"
   },
   "optionalDependencies": {
     "@digitalgroundgame/fonts": "1.2.0"
