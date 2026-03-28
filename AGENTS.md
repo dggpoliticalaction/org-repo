@@ -100,7 +100,8 @@ This file provides guidance to tools like Claude Code (claude.ai/code) when work
 - **Database in dev**: Drizzle "push" mode auto-syncs schema changes — no manual migrations needed during development
 - **Styling**: TailwindCSS with CSS variables for theming
 - **Content rendering**: Blocks system with Lexical rich text editor; each block has a config and a React component
-- **Pre-push hooks**: Husky + lint-staged runs ESLint (`--max-warnings 0`), Prettier, tsc (`--no-emit`) on committed files
+- **Pre-push hooks**: Husky runs full checks on all files (`lint:fix`, `format:fix`, `check-types`) before pushing
+- **Pre-commit hooks**: lint-staged runs ESLint + Prettier on staged files only (fast, ~1-2 seconds)
 - **Colocation**: Prefer colocating logic near where it's used. `src/utilities/` is only for genuinely reusable helpers shared across multiple features (e.g. `generateMeta`, `getURL`, `toRoman`, `cn`). Don't put single-use logic there.
 
 ### Testing your changes
