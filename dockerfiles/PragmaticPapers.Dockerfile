@@ -157,10 +157,16 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 # PERSISTENCE FIX: Copy the unique DATABASE_URI from the Builder stage to the Runner stage
 COPY --from=builder --chown=nextjs:nodejs /tmp/build.env /app/build.env
 
-# Prepare media directory for local storage deployments
-RUN mkdir -p /app/public/media && \
-    chown -R nextjs:nodejs /app/public/media && \
-    chmod -R 755 /app/public/media
+# Symlink new flat-repo media path → legacy Coolify persistent-volume mount path.
+# Coolify mounts persistent storage at /app/apps/pragmatic-papers/public/media
+# (old monorepo destination — left unchanged in Coolify UI).
+# Symlinking /app/public/media → that directory ensures Payload writes land on
+# the persistent volume without any Coolify config change.
+RUN mkdir -p /app/apps/pragmatic-papers/public/media && \
+    chown -R nextjs:nodejs /app/apps/pragmatic-papers/public && \
+    chmod -R 755 /app/apps/pragmatic-papers/public/media && \
+    rm -rf /app/public/media && \
+    ln -sf /app/apps/pragmatic-papers/public/media /app/public/media
 
 # STARTUP SCRIPT: Sources the isolated DB URI if it exists, otherwise uses defaults
 RUN echo '#!/bin/sh' > /app/start.sh && \

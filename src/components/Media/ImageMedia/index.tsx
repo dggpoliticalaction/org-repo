@@ -2,7 +2,6 @@ import type { Media as MediaType } from "@/payload-types"
 import NextImage, { type ImageProps } from "next/image"
 import React from "react"
 
-import { getMediaUrl } from "@/utilities/getMediaUrl"
 import { cn } from "@/utilities/utils"
 
 // A base64 encoded image to use as a placeholder while the image is loading
@@ -28,29 +27,17 @@ function getMediaByVariant(
  * ImageMedia
  * TODO: Rename ImageMedia to `CMSImage`
  *
- * This component passes a **relative** `src` (e.g. `/media/...`) to Next.js Image.
- * The `getMediaUrl` utility constructs the full URL by prepending the base URL from env vars
- * (NEXT_PUBLIC_SERVER_URL). Next.js then optimizes this using `remotePatterns` configured
- * in next.config.js — no custom `loader` needed.
+ * Passes the Payload media URL directly to Next.js Image without making it absolute.
  *
- * Flow:
- *   1. Resource URL from Payload: `/media/image-123.jpg`
- *   2. getMediaUrl() adds base URL: `https://yourdomain.com/media/image-123.jpg`
- *   3. Next.js Image optimizes via remotePatterns: `/_next/image?url=...&w=1200&q=75`
+ * - **Relative paths** (local storage: `/media/filename`, `/api/media/file/filename`):
+ *   passed as-is. Next.js `_next/image` fetches them via `http://localhost:PORT` internally,
+ *   avoiding self-referential external HTTP requests through the reverse proxy (hairpin NAT).
  *
- * If your storage/plugin returns **external CDN URLs** (e.g. `https://cdn.example.com/...`),
- * choose ONE of the following:
- *   A) Allow the remote host in next.config.js:
- *      images: { remotePatterns: [{ protocol: 'https', hostname: 'cdn.example.com' }] }
- *   B) Provide a **custom loader** for CDN-specific transforms:
- *      const imageLoader: ImageLoader = ({ src, width, quality }) =>
- *        `https://cdn.example.com${src}?w=${width}&q=${quality ?? 75}`
- *      <Image loader={imageLoader} src="/media/hero.jpg" width={1200} height={600} alt="" />
- *   C) Skip optimization:
- *      <Image unoptimized src="https://cdn.example.com/hero.jpg" width={1200} height={600} alt="" />
+ * - **Absolute URLs** (S3/Supabase: `https://cdn.example.com/...`):
+ *   passed through unchanged. The hostname must be listed in `remotePatterns` in next.config.js.
  *
- * TL;DR: Template uses relative URLs + getMediaUrl() to construct full URLs, then relies on
- * remotePatterns for optimization. Only add `loader` if using external CDNs with custom transforms.
+ * For og:image / RSS feed usage, `getMediaUrl()` (in generateMeta / generateRssFeed) still
+ * produces absolute URLs as required.
  */
 export const ImageMedia: React.FC<ImageMediaProps> = ({
   media,
@@ -65,7 +52,18 @@ export const ImageMedia: React.FC<ImageMediaProps> = ({
   ...props
 }) => {
   if (!media.url) return null
-  let src = getMediaUrl(media.url, media.updatedAt)
+
+  // Build src without making relative paths absolute.
+  // Relative paths (local storage: /media/filename or /api/media/file/filename) are passed
+  // directly to Next.js <Image> so _next/image fetches them via http://localhost:PORT
+  // internally — no external round-trip through the Coolify proxy.
+  // Absolute S3/Supabase URLs pass through unchanged and are fetched from the CDN.
+  const buildSrc = (url: string | null | undefined): string => {
+    if (!url) return ""
+    return media.updatedAt ? `${url}?${media.updatedAt}` : url
+  }
+
+  let src = buildSrc(media.url)
   const alt = media.alt || "" // TODO: alt should be required
   let width = media.width ?? undefined
   let height = media.height ?? undefined
@@ -74,7 +72,7 @@ export const ImageMedia: React.FC<ImageMediaProps> = ({
 
   if (variant) {
     const mediaBySize = getMediaByVariant(media, variant)
-    src = getMediaUrl(mediaBySize?.url, media.updatedAt) || src
+    src = buildSrc(mediaBySize?.url) || src
     width = mediaBySize?.width || width
     height = mediaBySize?.height || height
   }
