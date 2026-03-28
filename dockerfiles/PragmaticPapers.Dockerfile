@@ -158,9 +158,16 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /tmp/build.env /app/build.env
 
 # Prepare media directory for local storage deployments
-RUN mkdir -p /app/public/media && \
-    chown -R nextjs:nodejs /app/public/media && \
-    chmod -R 755 /app/public/media
+#//TODO: After publishing to dev, change coolify persistent storage.
+#   Update Coolify's persistent storage from:
+#       /app/apps/pragmatic-papers/public/media
+#   to:
+#       /app/public/media
+RUN mkdir -p /app/apps/pragmatic-papers/public/media && \
+    chown -R nextjs:nodejs /app/apps/pragmatic-papers/public && \
+    chmod -R 755 /app/apps/pragmatic-papers/public/media && \
+    rm -rf /app/public/media && \
+    ln -sf /app/apps/pragmatic-papers/public/media /app/public/media
 
 # STARTUP SCRIPT: Sources the isolated DB URI if it exists, otherwise uses defaults
 RUN echo '#!/bin/sh' > /app/start.sh && \
