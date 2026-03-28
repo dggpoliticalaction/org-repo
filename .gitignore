@@ -26,6 +26,9 @@ out/
 build
 dist
 
+# Fonts (generated at install time)
+public/fonts
+
 # Databases
 *.db
 

@@ -118,7 +118,8 @@ RUN /usr/local/bin/modify-database-uri.sh && \
 # Runs migrations and then builds
 # Source the potentially modified DATABASE_URI before building
 RUN . /tmp/build.env && \
-    pnpm install --frozen-lockfile
+    pnpm install --frozen-lockfile && \
+    pnpm build
 
 # ============================================
 # Runner stage - minimal production runtime
