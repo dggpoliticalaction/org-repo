@@ -14,9 +14,9 @@ if (!existsSync(env)) {
     process.exit(0)
   }
   copyFileSync(example, env)
-  console.log(`${green("✓")} Copied .env.example → .env`)
+  console.warn(`${green("✓")} Copied .env.example → .env`)
 } else {
-  console.log(`${green("✓")} .env already exists, skipping.`)
+  console.warn(`${green("✓")} .env already exists, skipping.`)
 }
 
 const npmrc = resolve(__dirname, "../.npmrc")
@@ -31,5 +31,5 @@ enable-pre-post-scripts=true
 //npm.pkg.github.com/:_authToken=${token}
 `
   writeFileSync(npmrc, npmrcContent)
-  console.log(`${green("✓")} Created .npmrc with GitHub token`)
+  console.warn(`${green("✓")} Created .npmrc with GitHub token`)
 }
