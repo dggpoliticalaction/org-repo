@@ -115,10 +115,10 @@ RUN /usr/local/bin/modify-database-uri.sh && \
     fi
 
 # Build application with migrations
-# Uses the 'ci' script which runs migrations and then builds
+# Runs migrations and then builds
 # Source the potentially modified DATABASE_URI before building
 RUN . /tmp/build.env && \
-    pnpm ci
+    pnpm install --frozen-lockfile
 
 # ============================================
 # Runner stage - minimal production runtime
