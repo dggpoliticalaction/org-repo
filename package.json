@@ -1,10 +1,9 @@
 {
   "name": "pragmatic-papers",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "The Pragmatic Papers",
   "license": "MIT",
   "type": "module",
-  "packageManager": "pnpm@10.13.1",
   "scripts": {
     "preinstall": "node scripts/copy-env.mjs",
     "postinstall": "node scripts/install-fonts.mjs",
@@ -14,7 +13,8 @@
     "dev:db": "docker compose -p pragmatic-papers -f docker-compose.yml up",
     "dev:db-down": "docker compose -p pragmatic-papers -f docker-compose.yml down",
     "dev:next": "cross-env NODE_OPTIONS=--no-deprecation next dev -p 8000",
-    "dev": "docker compose -p pragmatic-papers -f docker-compose.yml up & cross-env NODE_OPTIONS=--no-deprecation next dev -p 8000",
+    "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
+    "dev": "pnpm dev:db && pnpm dev:next",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
@@ -23,7 +23,7 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload",
-    "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && pnpm install",
+    "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm install",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "check-types": "cross-env NODE_OPTIONS=--no-deprecation tsc --noEmit",
     "ci": "payload migrate && pnpm build",
@@ -116,6 +116,7 @@
   "optionalDependencies": {
     "@digitalgroundgame/fonts": "1.2.0"
   },
+  "packageManager": "pnpm@10.13.1",
   "engines": {
     "node": ">=22",
     "pnpm": "^10"

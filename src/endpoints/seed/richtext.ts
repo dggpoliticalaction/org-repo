@@ -200,3 +200,52 @@ export function createLoremIpsumContent(numberOfParagraphs: number): LexicalCont
   const paragraphs = generateLoremIpsumParagraphs(numberOfParagraphs)
   return createRichTextFromParagraphs(paragraphs, true)
 }
+
+/**
+ * Creates a table cell node (renders as <th> when headerState > 0, <td> otherwise)
+ */
+export function createTableCellNode(text: string, headerState: 0 | 1 = 0): SerializedLexicalNode {
+  const node = {
+    type: "tablecell",
+    version: 1,
+    direction: "ltr",
+    format: "",
+    indent: 0,
+    headerState,
+    colSpan: 1,
+    rowSpan: 1,
+    backgroundColor: null,
+    children: [createParagraph(text)],
+  }
+  return node
+}
+
+/**
+ * Creates a table row node
+ */
+export function createTableRowNode(cells: SerializedLexicalNode[]): SerializedLexicalNode {
+  const node = {
+    type: "tablerow",
+    version: 1,
+    direction: null,
+    format: "",
+    indent: 0,
+    children: cells,
+  }
+  return node
+}
+
+/**
+ * Creates a table node
+ */
+export function createTableNode(rows: SerializedLexicalNode[]): SerializedLexicalNode {
+  const node = {
+    type: "table",
+    version: 1,
+    direction: null,
+    format: "",
+    indent: 0,
+    children: rows,
+  }
+  return node
+}
