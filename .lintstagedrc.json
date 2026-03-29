@@ -1,4 +1,7 @@
 {
-  "*.{js,jsx,ts,tsx}": ["pnpm dlx prettier --write", "pnpm dlx eslint --fix --max-warnings 0"],
-  "*.{json,css,md}": ["pnpm dlx prettier --write"]
+  "*.{ts,tsx,js,jsx,mjs}": [
+    "cross-env NODE_OPTIONS=--no-deprecation eslint --fix --cache --max-warnings 0"
+  ],
+  "*.{ts,tsx}": ["cross-env NODE_OPTIONS=--no-deprecation prettier --write"],
+  "*.{json,css,md,yaml,yml}": ["cross-env NODE_OPTIONS=--no-deprecation prettier --write"]
 }

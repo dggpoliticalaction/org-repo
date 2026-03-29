@@ -33,17 +33,6 @@
     "migrate:status": "payload migrate:status",
     "prepare": "husky"
   },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx,mjs}": [
-      "cross-env NODE_OPTIONS=--no-deprecation eslint --fix --cache --max-warnings 0"
-    ],
-    "*.{ts,tsx}": [
-      "cross-env NODE_OPTIONS=--no-deprecation prettier --write"
-    ],
-    "*.{json,css,md,yaml,yml}": [
-      "cross-env NODE_OPTIONS=--no-deprecation prettier --write"
-    ]
-  },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
     "@next/third-parties": "^15.3.6",
