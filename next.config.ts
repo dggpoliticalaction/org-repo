@@ -2,7 +2,7 @@ import { withPayload } from "@payloadcms/next/withPayload"
 import type { NextConfig } from "next"
 
 const NEXT_PUBLIC_SERVER_URL = new URL(
-  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
+  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000",
 )
 
 const NEXT_PUBLIC_SUPABASE_URL = new URL(
@@ -13,7 +13,18 @@ const nextConfig: NextConfig = {
   output: "standalone",
   images: {
     qualities: [80],
-    remotePatterns: [NEXT_PUBLIC_SERVER_URL, NEXT_PUBLIC_SUPABASE_URL],
+    remotePatterns: [
+      {
+        protocol: NEXT_PUBLIC_SERVER_URL.protocol.slice(0, -1) as "http" | "https",
+        hostname: NEXT_PUBLIC_SERVER_URL.hostname,
+        port: NEXT_PUBLIC_SERVER_URL.port,
+      },
+      {
+        protocol: NEXT_PUBLIC_SUPABASE_URL.protocol.slice(0, -1) as "http" | "https",
+        hostname: NEXT_PUBLIC_SUPABASE_URL.hostname,
+        port: NEXT_PUBLIC_SUPABASE_URL.port,
+      },
+    ],
   },
   reactStrictMode: true,
   redirects: async () => [
