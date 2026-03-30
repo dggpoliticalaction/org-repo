@@ -14,7 +14,7 @@ export const FootnotesPreview: React.FC = () => {
   return (
     <div className="field-type">
       <div className="label-wrapper">
-        <label className="field-label">Footnotes</label>
+        <p className="field-label">Footnotes</p>
       </div>
       <ol
         style={{

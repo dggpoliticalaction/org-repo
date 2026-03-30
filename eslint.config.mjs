@@ -1,6 +1,7 @@
 import js from "@eslint/js"
 import eslintConfigPrettier from "eslint-config-prettier"
 import pluginNext from "@next/eslint-plugin-next"
+import jsxA11y from "eslint-plugin-jsx-a11y"
 import pluginReact from "eslint-plugin-react"
 import pluginReactHooks from "eslint-plugin-react-hooks"
 import globals from "globals"
@@ -52,6 +53,7 @@ export default [
       "react/display-name": "off",
       // Additions not in recommended
       "react/jsx-boolean-value": ["error", "never"],
+      "react/jsx-curly-brace-presence": ["error", { props: "never", children: "ignore" }],
       "react/no-danger": "warn",
       "react/prefer-es6-class": "error",
       "react/prefer-stateless-function": "warn",
@@ -93,6 +95,7 @@ export default [
       ],
     },
   },
+  jsxA11y.flatConfigs.recommended,
   pluginNext.flatConfig.recommended,
   pluginNext.flatConfig.coreWebVitals,
   {

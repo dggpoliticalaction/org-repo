@@ -20,7 +20,7 @@ export const ReferenceNotice: React.FC = () => {
   return (
     <div className="field-type">
       <div className="label-wrapper">
-        <label className="field-label">Linked Footnote:</label>
+        <p className="field-label">Linked Footnote:</p>
       </div>
       <p
         style={{
