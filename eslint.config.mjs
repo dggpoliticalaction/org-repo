@@ -110,7 +110,14 @@ export default [
     },
   },
   {
-    ignores: ["dist/**", "node_modules/**", ".next/**", "out/**", "**/next-env.d.ts", "src/migrations/**"],
+    ignores: [
+      "dist/**",
+      "node_modules/**",
+      ".next/**",
+      "out/**",
+      "**/next-env.d.ts",
+      "src/migrations/**",
+    ],
   },
   // Prettier config must be last to disable conflicting rules
   eslintConfigPrettier,
