@@ -1,33 +1,40 @@
 import { withPayload } from "@payloadcms/next/withPayload"
+import type { NextConfig } from "next"
 
-import redirects from "./redirects.js"
+const NEXT_PUBLIC_SERVER_URL = new URL(
+  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
+)
 
-const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : process.env.__NEXT_PRIVATE_ORIGIN ||
-    process.env.NEXT_PUBLIC_SERVER_URL ||
-    "http://localhost:3000"
+const NEXT_PUBLIC_SUPABASE_URL = new URL(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "https://example.com",
+)
 
-const NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://example.com"
-
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   output: "standalone",
   images: {
     qualities: [80],
-    remotePatterns: [
-      ...[NEXT_PUBLIC_SERVER_URL, NEXT_PUBLIC_SUPABASE_URL].map((item) => {
-        const url = new URL(item)
-
-        return {
-          hostname: url.hostname,
-          protocol: url.protocol.replace(":", ""),
-        }
-      }),
-    ],
+    remotePatterns: [NEXT_PUBLIC_SERVER_URL, NEXT_PUBLIC_SUPABASE_URL],
   },
   reactStrictMode: true,
-  redirects,
+  redirects: async () => [
+    {
+      destination: "/ie-incompatible.html",
+      has: [
+        {
+          type: "header",
+          key: "user-agent",
+          value: "(.*Trident.*)", // all ie browsers
+        },
+      ],
+      permanent: false,
+      source: "/:path((?!ie-incompatible.html$).*)", // all pages except the incompatibility page
+    },
+    {
+      source: "/iceout/:state*",
+      destination: "https://iceout.org/en/location/report",
+      permanent: false,
+    },
+  ],
   async headers() {
     return [
       {
