@@ -1,10 +1,10 @@
+import { getServerSideURL } from "@/utilities/getURL"
+import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
 import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
 import { getPayload } from "payload"
 import React, { cache } from "react"
-import { getServerSideURL } from "@/utilities/getURL"
-import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
 
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
@@ -233,7 +233,7 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
           />
         </div>
         {totalDocs === 0 ? (
-          <p className="text-muted-foreground text-sm">Look out for this author's debut!</p>
+          <p className="text-muted-foreground text-sm">{`Look out for this author's debut!`}</p>
         ) : (
           <>
             <div className="mt-4 flex flex-col gap-4">
