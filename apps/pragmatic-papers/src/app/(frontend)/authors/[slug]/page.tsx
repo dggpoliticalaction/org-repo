@@ -138,18 +138,13 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
 
   const description = user?.affiliation || undefined
 
-  const canonicalUrl = `${getServerSideURL()}/authors/${slug}`
-
   return {
-    alternates: {
-      canonical: canonicalUrl,
-    },
     title,
     description,
     openGraph: mergeOpenGraph({
       title,
       description,
-      url: canonicalUrl,
+      url: `${getServerSideURL()}/authors/${slug}`,
     }),
   }
 }
