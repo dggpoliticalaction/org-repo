@@ -1,1 +1,2 @@
-turbo lint-staged check-types
+pnpm lint-staged
+pnpm check-types
