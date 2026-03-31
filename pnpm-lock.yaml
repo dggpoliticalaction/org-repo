@@ -198,9 +198,6 @@ importers:
       tsx:
         specifier: ^4.19.2
         version: 4.21.0
-      turbo:
-        specifier: ^2.9.2
-        version: 2.9.2
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -2139,36 +2136,6 @@ packages:
 
   '@ts-morph/common@0.27.0':
     resolution: {integrity: sha512-Wf29UqxWDpc+i61k3oIOzcUfQt79PIT9y/MWfAGlrkjg6lBC1hwDECLXPVJAhWjiGbfBCxZd65F/LIZF3+jeJQ==}
-
-  '@turbo/darwin-64@2.9.2':
-    resolution: {integrity: sha512-yg0qdthTUuV/K0oJB9t8YGweW1hOefQ+NTiSA6gw/mwAqqifCvAXH/kDkvVj/fFP9+wzoQ4WjyAF5/syDbCIHA==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@turbo/darwin-arm64@2.9.2':
-    resolution: {integrity: sha512-x4H9U8cXZob3oqTleKOEdY89OCWwLX3qVRpW0NeZg+CHDXemYD+PhACjwjvh7orIlhmmq2Lk+7iO7b34kphFig==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@turbo/linux-64@2.9.2':
-    resolution: {integrity: sha512-fxbpor8zvRtaf75sfloNTaBkl487JECSVDrXXMGlwR3+Qmq7yStUE+ccQddPu+nKqYD46QxDspk8KZvT78SBSg==}
-    cpu: [x64]
-    os: [linux]
-
-  '@turbo/linux-arm64@2.9.2':
-    resolution: {integrity: sha512-ufMQcCQMi8kzHbEA+FihPaRdrPQC1vUO0LQ9oU/LGWlnc+RVyDlvH9l9x0BWoS7HLyHK8hbqLf3O2ml/ZLMEIw==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@turbo/windows-64@2.9.2':
-    resolution: {integrity: sha512-SOELKum/pjdJWKQb+RU/OEAlNtWJKfjjYUA9QhYxBvIT26SyfWgY+ecZ7QlVWt+xnEdQyC6BkYlWR546KxPO5w==}
-    cpu: [x64]
-    os: [win32]
-
-  '@turbo/windows-arm64@2.9.2':
-    resolution: {integrity: sha512-qPFjErR4MrKo71lNfqgUNaajftZN2nyaOsSxMSb2NI+5r/zlB26yjXUKYvADGg4EWvaLTJPIzgZDT9ZX+WN9bw==}
-    cpu: [arm64]
-    os: [win32]
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -5486,10 +5453,6 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  turbo@2.9.2:
-    resolution: {integrity: sha512-DUUWysctg/vax8W05UJcyrHm4LvxtX0umAT4bZB5lab4inNXTbwoYSFpdgqzBxON23j8ls3xGxvx0kwQz6Q8wQ==}
-    hasBin: true
-
   tw-animate-css@1.4.0:
     resolution: {integrity: sha512-7bziOlRqH0hJx80h/3mbicLW7o8qLsH5+RaLR2t+OHM3D0JlWGODQKQ4cxbK7WlvmUxpcj6Kgu6EKqjrGFe3QQ==}
 
@@ -8241,24 +8204,6 @@ snapshots:
       fast-glob: 3.3.3
       minimatch: 10.2.4
       path-browserify: 1.0.1
-
-  '@turbo/darwin-64@2.9.2':
-    optional: true
-
-  '@turbo/darwin-arm64@2.9.2':
-    optional: true
-
-  '@turbo/linux-64@2.9.2':
-    optional: true
-
-  '@turbo/linux-arm64@2.9.2':
-    optional: true
-
-  '@turbo/windows-64@2.9.2':
-    optional: true
-
-  '@turbo/windows-arm64@2.9.2':
-    optional: true
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
@@ -11945,15 +11890,6 @@ snapshots:
       get-tsconfig: 4.13.0
     optionalDependencies:
       fsevents: 2.3.3
-
-  turbo@2.9.2:
-    optionalDependencies:
-      '@turbo/darwin-64': 2.9.2
-      '@turbo/darwin-arm64': 2.9.2
-      '@turbo/linux-64': 2.9.2
-      '@turbo/linux-arm64': 2.9.2
-      '@turbo/windows-64': 2.9.2
-      '@turbo/windows-arm64': 2.9.2
 
   tw-animate-css@1.4.0: {}
 

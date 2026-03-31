@@ -14,7 +14,7 @@
     "dev:db-down": "docker compose -p pragmatic-papers -f docker-compose.yml down",
     "dev:next": "cross-env NODE_OPTIONS=--no-deprecation next dev -p 8000",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
-    "dev": "turbo run dev:db dev:next",
+    "dev": "docker compose -p pragmatic-papers -f docker-compose.yml up & cross-env NODE_OPTIONS=--no-deprecation next dev -p 8000",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
@@ -99,7 +99,6 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4.2.1",
     "tsx": "^4.19.2",
-    "turbo": "^2.9.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.2"
   },
