@@ -65,7 +65,7 @@ export const homeStatic: RequiredDataFromCollectionSlug<"pages"> = {
                           format: 0,
                           mode: "normal",
                           style: "",
-                          text: "Seed the database from the admin",
+                          text: "Seed the database from the admin and pray",
                           type: "text",
                           version: 1,
                         },
