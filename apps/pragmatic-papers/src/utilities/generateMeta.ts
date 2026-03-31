@@ -18,6 +18,9 @@ export const generateMeta = async (args: {
   const canonicalUrl = `${getServerSideURL()}${canonicalPath}`
 
   return {
+    alternates: {
+      canonical: canonicalUrl,
+    },
     description: doc?.meta?.description,
     openGraph: mergeOpenGraph({
       description: doc?.meta?.description || "",
