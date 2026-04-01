@@ -33,7 +33,10 @@ const getPagesSitemap = unstable_cache(
           .filter((page) => Boolean(page?.slug))
           .map((page) => {
             return {
-              loc: page?.slug === "home" ? SITE_URL : `${SITE_URL}/${page?.slug}`,
+              loc:
+                page?.slug === "home"
+                  ? `${SITE_URL}`.replace(/\/$/, "")
+                  : `${SITE_URL}/${page?.slug}`,
               lastmod: page.updatedAt || dateFallback,
             }
           })
