@@ -8,7 +8,6 @@ module.exports = {
     "/articles-sitemap.xml",
     "/pages-sitemap.xml",
     "/volumes-sitemap.xml",
-    "/authors-sitemap.xml",
     "/*",
     "/volumes/*",
     "/articles/*",
@@ -25,7 +24,6 @@ module.exports = {
       `${SITE_URL}/pages-sitemap.xml`,
       `${SITE_URL}/articles-sitemap.xml`,
       `${SITE_URL}/volumes-sitemap.xml`,
-      `${SITE_URL}/authors-sitemap.xml`,
     ],
   },
 }
