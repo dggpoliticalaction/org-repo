@@ -22,7 +22,7 @@ if (!existsSync(env)) {
 }
 
 const npmrc = resolve(__dirname, "../.npmrc")
-const npmrcContent = readFileSync(npmrc, "utf-8")
+const npmrcContent = existsSync(npmrc) ? readFileSync(npmrc, "utf-8") : ""
 if (npmrcContent.includes("//npm.pkg.github.com/:_authToken=")) {
   console.warn(gray("○ .npmrc GitHub token already set"))
   process.exit(0)
