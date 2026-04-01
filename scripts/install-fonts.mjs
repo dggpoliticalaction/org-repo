@@ -2,7 +2,7 @@ import { cpSync, existsSync, mkdirSync, writeFileSync } from "fs"
 import { dirname, resolve } from "path"
 import process from "process"
 import { fileURLToPath } from "url"
-import { green, yellow } from "./ansi.mjs"
+import { blue, gray, green, yellow } from "./ansi.mjs"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -13,18 +13,21 @@ const src = resolve(
 const dest = resolve(__dirname, "../public/fonts")
 const placeholder = resolve(dest, "FKScreamer-Bold.woff2")
 
+console.warn(`${blue("●")} Installing fonts...`)
 mkdirSync(dest, { recursive: true })
 
-if (!existsSync(src)) {
-  if (!existsSync(placeholder)) {
-    writeFileSync(placeholder, "")
-  }
-  // eslint-disable-next-line no-console
-  console.log(`${yellow("⚠")} GH_FONT_READ not set — private fonts disabled, using placeholder.`)
+if (existsSync(placeholder)) {
+  console.warn(gray("○ Fonts already installed"))
   process.exit(0)
 }
 
-cpSync(src, dest, { recursive: true })
+if (existsSync(src)) {
+  cpSync(src, dest, { recursive: true })
+  console.warn(`${green("✔")} Fonts copied to public/fonts`)
+  process.exit(0)
+}
 
-// eslint-disable-next-line no-console
-console.log(`${green("✓")} Fonts copied to public/fonts`)
+console.warn(`${yellow("⚠")} @digitalgroundgame/fonts not found`)
+writeFileSync(placeholder, "")
+console.warn(`${green("✔")} Created placeholder font file`)
+process.exit(0)
