@@ -72,7 +72,7 @@ export const createMenus = async (
           link: {
             type: "custom",
             label: "Join Us",
-            url: "https://discord.gg/dggpol",
+            url: "https://discord.gg/digitalgroundgame",
             newTab: true,
             variant: "outline",
           },

@@ -462,7 +462,7 @@ export async function createCollectionGridHomePage(
           {
             link: {
               type: "custom",
-              url: "https://discord.gg/dggpol",
+              url: "https://discord.gg/digitalgroundgame",
               label: "Join Us",
               appearance: "default",
               newTab: true,
