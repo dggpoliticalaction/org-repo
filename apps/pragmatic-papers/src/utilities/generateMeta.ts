@@ -41,9 +41,6 @@ export const generateMeta = async (args: {
       description: description || undefined,
       images: ogImage ? [ogImage] : undefined,
     },
-    alternates: {
-      canonical: canonicalUrl,
-    },
     title,
   }
 }
