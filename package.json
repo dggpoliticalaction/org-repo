@@ -105,6 +105,7 @@
   "optionalDependencies": {
     "@digitalgroundgame/fonts": "1.2.0"
   },
+  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=22",
     "pnpm": "^10"
