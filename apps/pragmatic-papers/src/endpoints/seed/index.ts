@@ -3,6 +3,7 @@ import type { Payload } from "payload"
 import { createArticle, getWriterOrThrow, validateWriters } from "./articles"
 import { createCollectionGridHomePage } from "./features/collection-grid"
 import { createFootnotesArticle } from "./features/footnotes"
+import { createLexicalTablesArticle } from "./features/lexical-tables"
 import { createMathBlocksArticle } from "./features/math-blocks"
 import { createMediaCollageArticle } from "./features/media-collage"
 import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from "./features/social-embeds"
@@ -174,7 +175,7 @@ export const seed = async (
     {
       name: "Creating feature articles...",
       fn: async () => {
-        const [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks] =
+        const [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks, lexicalTables] =
           await Promise.all([
             createFootnotesArticle(
               payload,
@@ -202,8 +203,20 @@ export const seed = async (
               ctx.topics[3]!,
               ctx.topics[5]!,
             ]),
+            createLexicalTablesArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+              ctx.topics[3]!,
+              ctx.topics[4]!,
+              ctx.topics[5]!,
+            ]),
           ])
-        ctx.featureArticles = [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks]
+        ctx.featureArticles = [
+          footnotes,
+          socialEmbed,
+          legacySocialEmbed,
+          mediaCollage,
+          mathBlocks,
+          lexicalTables,
+        ]
       },
     },
     {

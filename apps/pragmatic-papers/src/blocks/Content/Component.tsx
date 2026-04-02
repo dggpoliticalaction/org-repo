@@ -6,8 +6,6 @@ import type { ContentBlock as ContentBlockProps } from "@/payload-types"
 
 import { CMSLink } from "@/components/Link"
 
-import "./style.scss"
-
 export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
   const { columns } = props
 

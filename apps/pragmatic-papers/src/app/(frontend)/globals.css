@@ -185,3 +185,30 @@
     }
   }
 }
+
+.lexical-table-container {
+  @apply my-6 overflow-x-auto [-webkit-overflow-scrolling:touch] sm:overflow-x-visible md:-mx-4 lg:-mx-8;
+}
+
+.lexical-table {
+  @apply w-full caption-bottom text-lg;
+}
+
+.lexical-table-row {
+  @apply hover:bg-muted/50 border-b transition-colors last:border-none;
+}
+
+/* applies to both th and td */
+.lexical-table-cell {
+  @apply border-none! p-2! align-middle wrap-break-word [&_p]:m-0;
+}
+
+/* th */
+.lexical-table-cell-header-1 {
+  @apply text-foreground h-10 text-left font-bold;
+}
+
+/* td */
+.lexical-table-cell-header-0 {
+  @apply text-foreground;
+}
