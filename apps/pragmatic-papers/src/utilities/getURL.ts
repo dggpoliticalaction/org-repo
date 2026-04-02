@@ -2,7 +2,7 @@ import canUseDOM from "./canUseDOM"
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getServerSideURL = () => {
-  return process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000"
+  return process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000"
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
