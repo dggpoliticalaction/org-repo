@@ -25,9 +25,8 @@ COPY .npmrc ./.npmrc
 ARG GH_FONT_READ
 ENV GH_FONT_READ=${GH_FONT_READ}
 
-# Install dependencies
+# Install dependencies with frozen lockfile
 # Using cache mount for pnpm store to speed up builds
-# Use --no-frozen-lockfile because optional dependencies may fail compatibility check locally
 # Set CI=true to prevent pnpm from requiring TTY
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     CI=true pnpm install --frozen-lockfile
