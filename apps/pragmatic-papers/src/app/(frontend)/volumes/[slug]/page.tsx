@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator"
 import type { Article } from "@/payload-types"
 import { formatDateTime } from "@/utilities/formatDateTime"
 import { generateMeta } from "@/utilities/generateMeta"
-import { getServerSideURL } from "@/utilities/getURL"
 import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/utilities/structuredData"
 import { toRoman } from "@/utilities/toRoman"
 import configPromise from "@payload-config"
@@ -84,14 +83,7 @@ export default async function VolumePage({
 
   if (!volume) return <PayloadRedirects url={url} />
 
-  const serverUrl = getServerSideURL()
-  const fullUrl = `${serverUrl}${url}`
   const volumeTitle = `Volume ${toRoman(Number(volume.slug))}`
-  const breadcrumbItems = [
-    { name: "Home", url: serverUrl },
-    { name: "Volumes", url: `${serverUrl}/volumes` },
-    { name: volumeTitle, url: fullUrl },
-  ]
 
   const { publishedAt, editorsNote } = volume
 
@@ -112,8 +104,11 @@ export default async function VolumePage({
     <article className="mx-auto max-w-3xl space-y-3 px-4">
       <JsonLd
         data={[
-          buildCollectionPageJsonLd(volumeTitle, volume.description || "", fullUrl),
-          buildBreadcrumbJsonLd(breadcrumbItems),
+          buildCollectionPageJsonLd(volumeTitle, volume.description || "", url),
+          buildBreadcrumbJsonLd([
+            { name: "Volumes", path: "/volumes" },
+            { name: volumeTitle, path: url },
+          ]),
         ]}
       />
       {/* Allows redirects for valid pages too */}

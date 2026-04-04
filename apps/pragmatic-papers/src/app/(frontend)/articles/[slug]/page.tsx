@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator"
 import { ArticleHero } from "@/heros/ArticleHero"
 import { MathJaxProvider } from "@/providers/MathJaxProvider"
 import { generateMeta } from "@/utilities/generateMeta"
-import { getServerSideURL } from "@/utilities/getURL"
 import { buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/utilities/structuredData"
 import configPromise from "@payload-config"
 import type { Metadata } from "next"
@@ -81,17 +80,13 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   const { footnotes, content, populatedAuthors, enableMathRendering, topics } = article
 
-  const serverUrl = getServerSideURL()
-  const fullUrl = `${serverUrl}${url}`
-  const breadcrumbItems = [
-    { name: "Home", url: serverUrl },
-    { name: article.meta?.title || article.title, url: fullUrl },
-  ]
-
   return (
     <article className="mx-auto max-w-2xl space-y-6 px-4">
       <JsonLd
-        data={[buildArticleJsonLd(article, fullUrl), buildBreadcrumbJsonLd(breadcrumbItems)]}
+        data={[
+          buildArticleJsonLd(article, url),
+          buildBreadcrumbJsonLd([{ name: article.meta?.title || article.title, path: url }]),
+        ]}
       />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />

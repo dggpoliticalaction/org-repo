@@ -77,7 +77,7 @@ function getImageUrl(media: Media | number | null | undefined): string | undefin
   return getMediaUrl(media.sizes?.og?.url || media.url) || undefined
 }
 
-export function buildArticleJsonLd(article: Article, url: string): ArticleJsonLd {
+export function buildArticleJsonLd(article: Article, path: string): ArticleJsonLd {
   const serverUrl = getServerSideURL()
   const authors = (article.authors || [])
     .filter((a): a is User => typeof a !== "number")
@@ -109,7 +109,7 @@ export function buildArticleJsonLd(article: Article, url: string): ArticleJsonLd
     image: image || undefined,
     mainEntityOfPage: {
       "@type": "WebPage" as const,
-      "@id": url,
+      "@id": `${serverUrl}${path}`,
     },
   }
 }
@@ -139,7 +139,8 @@ export function buildWebSiteJsonLd(): WebSiteJsonLd {
   }
 }
 
-export function buildPersonJsonLd(user: User, url: string): PersonJsonLd {
+export function buildPersonJsonLd(user: User, path: string): PersonJsonLd {
+  const serverUrl = getServerSideURL()
   const image = getImageUrl(user.profileImage)
   const sameAs = (user.socials || [])
     .map((s) => (s.link?.type === "custom" ? s.link.url : null))
@@ -149,7 +150,7 @@ export function buildPersonJsonLd(user: User, url: string): PersonJsonLd {
     "@context": "https://schema.org" as const,
     "@type": "Person" as const,
     name: user.name || undefined,
-    url,
+    url: `${serverUrl}${path}`,
     image: image || undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
     affiliation: user.affiliation
@@ -158,15 +159,22 @@ export function buildPersonJsonLd(user: User, url: string): PersonJsonLd {
   }
 }
 
-export function buildBreadcrumbJsonLd(items: { name: string; url: string }[]): BreadcrumbJsonLd {
+export function buildBreadcrumbJsonLd(
+  items?: { name: string; path: string }[],
+): BreadcrumbJsonLd {
+  const serverUrl = getServerSideURL()
+  const allItems = [
+    { name: "Home", item: serverUrl },
+    ...(items ?? []).map((item) => ({ name: item.name, item: `${serverUrl}${item.path}` })),
+  ]
   return {
     "@context": "https://schema.org" as const,
     "@type": "BreadcrumbList" as const,
-    itemListElement: items.map((item, index) => ({
+    itemListElement: allItems.map((entry, index) => ({
       "@type": "ListItem" as const,
       position: index + 1,
-      name: item.name,
-      item: item.url,
+      name: entry.name,
+      item: entry.item,
     })),
   }
 }
@@ -174,13 +182,14 @@ export function buildBreadcrumbJsonLd(items: { name: string; url: string }[]): B
 export function buildCollectionPageJsonLd(
   title: string,
   description: string,
-  url: string,
+  path: string,
 ): CollectionPageJsonLd {
+  const serverUrl = getServerSideURL()
   return {
     "@context": "https://schema.org" as const,
     "@type": "CollectionPage" as const,
     name: title,
     description,
-    url,
+    url: `${serverUrl}${path}`,
   }
 }

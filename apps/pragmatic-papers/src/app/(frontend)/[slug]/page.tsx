@@ -12,7 +12,6 @@ import { JsonLd } from "@/components/JsonLd"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { RenderHero } from "@/heros/RenderHero"
 import { generateMeta } from "@/utilities/generateMeta"
-import { getServerSideURL } from "@/utilities/getURL"
 import {
   buildBreadcrumbJsonLd,
   buildOrganizationJsonLd,
@@ -104,17 +103,10 @@ export default async function Page({ params, searchParams }: Args): Promise<Reac
 
   const { hero, layout } = page
 
-  const serverUrl = getServerSideURL()
-  const isHome = slug === "home"
-  const breadcrumbItems = isHome
-    ? [{ name: "Home", url: serverUrl }]
-    : [
-        { name: "Home", url: serverUrl },
-        { name: page.meta?.title || slug, url: `${serverUrl}/${slug}` },
-      ]
-  const jsonLdData = isHome
-    ? [buildWebSiteJsonLd(), buildOrganizationJsonLd(), buildBreadcrumbJsonLd(breadcrumbItems)]
-    : [buildBreadcrumbJsonLd(breadcrumbItems)]
+  const jsonLdData =
+    slug === "home"
+      ? [buildWebSiteJsonLd(), buildOrganizationJsonLd(), buildBreadcrumbJsonLd()]
+      : [buildBreadcrumbJsonLd([{ name: page.meta?.title || slug, path: `/${slug}` }])]
   return (
     <article>
       <JsonLd data={jsonLdData} />
