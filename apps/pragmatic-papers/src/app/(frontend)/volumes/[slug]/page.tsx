@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import type { Article } from "@/payload-types"
 import { formatDateTime } from "@/utilities/formatDateTime"
 import { generateMeta } from "@/utilities/generateMeta"
-import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/utilities/structuredData"
+import { buildBreadcrumbJsonLd, buildVolumeJsonLd } from "@/utilities/structuredData"
 import { toRoman } from "@/utilities/toRoman"
 import configPromise from "@payload-config"
 import type { Metadata } from "next"
@@ -104,7 +104,7 @@ export default async function VolumePage({
     <article className="mx-auto max-w-3xl space-y-3 px-4">
       <JsonLd
         data={[
-          buildCollectionPageJsonLd(volumeTitle, volume.description || "", url),
+          buildVolumeJsonLd(volume, url),
           buildBreadcrumbJsonLd([
             { name: "Volumes", path: "/volumes" },
             { name: volumeTitle, path: url },

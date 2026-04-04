@@ -1,4 +1,4 @@
-import type { Article, Media, Topic, User } from "@/payload-types"
+import type { Article, Media, Topic, User, Volume } from "@/payload-types"
 import { getMediaUrl } from "@/utilities/getMediaUrl"
 import { getServerSideURL } from "@/utilities/getURL"
 import type {
@@ -156,5 +156,25 @@ export function buildCollectionPageJsonLd(
     name: title,
     description,
     url: `${SERVER_URL}${path}`,
+  }
+}
+
+export function buildVolumeJsonLd(
+  volume: Volume,
+  path: string,
+): WithContext<PublicationVolumeLeaf> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "PublicationVolume",
+    name: volume.title,
+    description: volume.description || undefined,
+    volumeNumber: volume.volumeNumber,
+    datePublished: volume.publishedAt ?? undefined,
+    url: `${SERVER_URL}${path}`,
+    isPartOf: {
+      "@type": "Periodical",
+      name: SITE_NAME,
+      url: SERVER_URL,
+    } satisfies PeriodicalLeaf,
   }
 }
