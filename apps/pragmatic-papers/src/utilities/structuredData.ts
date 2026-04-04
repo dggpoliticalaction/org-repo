@@ -1,4 +1,4 @@
-import type { Article, Media, User } from "@/payload-types"
+import type { Article, Media, Topic, User } from "@/payload-types"
 import { getMediaUrl } from "@/utilities/getMediaUrl"
 import { getServerSideURL } from "@/utilities/getURL"
 import type {
@@ -35,6 +35,10 @@ export function buildArticleJsonLd(article: Article, path: string): WithContext<
       }),
     )
 
+  const keywords = (article.topics || [])
+    .filter((t): t is Topic => typeof t !== "number")
+    .map((t) => t.name)
+
   const image = getImageUrl(article.meta?.image || article.heroImage)
   const publisher: OrganizationLeaf = {
     "@type": "Organization",
@@ -49,10 +53,13 @@ export function buildArticleJsonLd(article: Article, path: string): WithContext<
   return {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: (article.meta?.title || article.title) || undefined,
+    headline: article.meta?.title || article.title || undefined,
     description: article.meta?.description || undefined,
     datePublished: article.publishedAt ?? article.createdAt,
     dateModified: article.updatedAt,
+    inLanguage: "en-US",
+    isAccessibleForFree: true,
+    keywords: keywords.length > 0 ? keywords.join(", ") : undefined,
     author: authors.length > 0 ? authors : undefined,
     publisher,
     image: image || undefined,
@@ -99,9 +106,7 @@ export function buildPersonJsonLd(user: User, path: string): WithContext<PersonL
     url: `${SERVER_URL}${path}`,
     image: image || undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
-    affiliation: user.affiliation
-      ? { "@type": "Organization", name: user.affiliation }
-      : undefined,
+    affiliation: user.affiliation ? { "@type": "Organization", name: user.affiliation } : undefined,
   }
 }
 
