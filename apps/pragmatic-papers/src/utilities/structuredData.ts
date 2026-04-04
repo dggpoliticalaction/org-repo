@@ -56,7 +56,7 @@ export function buildArticleJsonLd(article: Article, path: string): WithContext<
   return {
     "@context": "https://schema.org",
     "@type": "Article",
-    "@id": fullUrl,
+    "@id": `${fullUrl}#article`,
     headline: article.meta?.title || article.title || undefined,
     description: article.meta?.description || undefined,
     datePublished: article.publishedAt ?? article.createdAt,
@@ -69,6 +69,9 @@ export function buildArticleJsonLd(article: Article, path: string): WithContext<
     isPartOf: article.populatedVolume?.id
       ? ({
           "@type": "PublicationVolume",
+          "@id": article.populatedVolume.slug
+            ? `${SERVER_URL}/volumes/${article.populatedVolume.slug}#volume`
+            : undefined,
           name: article.populatedVolume.title ?? `Volume ${article.populatedVolume.volumeNumber}`,
           volumeNumber: article.populatedVolume.volumeNumber ?? undefined,
           isPartOf: { "@type": "Periodical", "@id": PERIODICAL_ID } satisfies PeriodicalLeaf,
@@ -188,14 +191,16 @@ export function buildVolumeJsonLd(
   volume: Volume,
   path: string,
 ): WithContext<PublicationVolumeLeaf> {
+  const fullUrl = `${SERVER_URL}${path}`
   return {
     "@context": "https://schema.org",
     "@type": "PublicationVolume",
+    "@id": `${fullUrl}#volume`,
     name: volume.title,
     description: volume.description || undefined,
     volumeNumber: volume.volumeNumber,
     datePublished: volume.publishedAt ?? undefined,
-    url: `${SERVER_URL}${path}`,
+    url: fullUrl,
     isPartOf: { "@type": "Periodical", "@id": PERIODICAL_ID } satisfies PeriodicalLeaf,
   }
 }
