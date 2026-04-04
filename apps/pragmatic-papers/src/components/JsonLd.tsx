@@ -1,8 +1,8 @@
+import type { Thing, WithContext } from "schema-dts"
 import React from "react"
-import type { JsonLdData } from "@/utilities/structuredData"
 
 interface JsonLdProps {
-  data: JsonLdData | JsonLdData[]
+  data: WithContext<Thing> | WithContext<Thing>[]
 }
 
 export function JsonLd({ data }: JsonLdProps): React.ReactElement {

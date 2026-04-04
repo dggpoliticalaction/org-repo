@@ -1,177 +1,122 @@
-import type { Article, User, Media } from "../payload-types"
-import { getServerSideURL } from "./getURL"
-import { getMediaUrl } from "./getMediaUrl"
+import type { Article, Media, User } from "@/payload-types"
+import { getMediaUrl } from "@/utilities/getMediaUrl"
+import { getServerSideURL } from "@/utilities/getURL"
+import type {
+  ArticleLeaf,
+  BreadcrumbListLeaf,
+  CollectionPageLeaf,
+  OrganizationLeaf,
+  PersonLeaf,
+  Thing,
+  WebSiteLeaf,
+  WithContext,
+} from "schema-dts"
 
+const SERVER_URL = getServerSideURL()
 const SITE_NAME = "The Pragmatic Papers"
 const SITE_DESCRIPTION =
   "Pragmatic, community-driven articles focusing on news, politics, economics, and more."
 
-export interface ImageObjectJsonLd {
-  "@type": "ImageObject"
-  url: string
-}
-
-export interface OrganizationJsonLd {
-  "@context": "https://schema.org"
-  "@type": "Organization"
-  name: string
-  url: string
-  logo: ImageObjectJsonLd
-  description?: string
-}
-
-export interface PersonJsonLd {
-  "@context": "https://schema.org"
-  "@type": "Person"
-  name: string | undefined
-  url: string | undefined
-  image: string | undefined
-  sameAs: string[] | undefined
-  affiliation: { "@type": "Organization"; name: string } | undefined
-}
-
-export interface ArticleJsonLd {
-  "@context": "https://schema.org"
-  "@type": "Article"
-  headline: string | null | undefined
-  description: string | undefined
-  datePublished: string | null | undefined
-  dateModified: string
-  author: { "@type": "Person"; name: string | undefined; url: string | undefined }[] | undefined
-  publisher: Omit<OrganizationJsonLd, "@context" | "description">
-  image: string | undefined
-  mainEntityOfPage: { "@type": "WebPage"; "@id": string }
-}
-
-export interface WebSiteJsonLd {
-  "@context": "https://schema.org"
-  "@type": "WebSite"
-  name: string
-  url: string
-}
-
-export interface BreadcrumbJsonLd {
-  "@context": "https://schema.org"
-  "@type": "BreadcrumbList"
-  itemListElement: { "@type": "ListItem"; position: number; name: string; item: string }[]
-}
-
-export interface CollectionPageJsonLd {
-  "@context": "https://schema.org"
-  "@type": "CollectionPage"
-  name: string
-  description: string
-  url: string
-}
-
-export type JsonLdData =
-  | ArticleJsonLd
-  | OrganizationJsonLd
-  | WebSiteJsonLd
-  | PersonJsonLd
-  | BreadcrumbJsonLd
-  | CollectionPageJsonLd
+export type JsonLdData = WithContext<Thing>
 
 function getImageUrl(media: Media | number | null | undefined): string | undefined {
   if (!media || typeof media === "number") return undefined
   return getMediaUrl(media.sizes?.og?.url || media.url) || undefined
 }
 
-export function buildArticleJsonLd(article: Article, path: string): ArticleJsonLd {
-  const serverUrl = getServerSideURL()
+export function buildArticleJsonLd(article: Article, path: string): WithContext<ArticleLeaf> {
   const authors = (article.authors || [])
     .filter((a): a is User => typeof a !== "number")
-    .map((author) => ({
-      "@type": "Person" as const,
-      name: author.name || undefined,
-      url: author.slug ? `${serverUrl}/authors/${author.slug}` : undefined,
-    }))
+    .map(
+      (author): PersonLeaf => ({
+        "@type": "Person",
+        name: author.name || undefined,
+        url: author.slug ? `${SERVER_URL}/authors/${author.slug}` : undefined,
+      }),
+    )
 
-  const image = getImageUrl(article.heroImage) || getImageUrl(article.meta?.image)
+  const image = getImageUrl(article.meta?.image || article.heroImage)
+  const publisher: OrganizationLeaf = {
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: SERVER_URL,
+    logo: {
+      "@type": "ImageObject",
+      url: `${SERVER_URL}/the-pragmatic-papers-opengraph-image.png`,
+    },
+  }
 
   return {
-    "@context": "https://schema.org" as const,
-    "@type": "Article" as const,
-    headline: article.meta?.title || article.title,
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: (article.meta?.title || article.title) || undefined,
     description: article.meta?.description || undefined,
-    datePublished: article.publishedAt || article.createdAt,
+    datePublished: article.publishedAt ?? article.createdAt,
     dateModified: article.updatedAt,
     author: authors.length > 0 ? authors : undefined,
-    publisher: {
-      "@type": "Organization" as const,
-      name: SITE_NAME,
-      url: serverUrl,
-      logo: {
-        "@type": "ImageObject" as const,
-        url: `${serverUrl}/the-pragmatic-papers-opengraph-image.png`,
-      },
-    },
+    publisher,
     image: image || undefined,
     mainEntityOfPage: {
-      "@type": "WebPage" as const,
-      "@id": `${serverUrl}${path}`,
+      "@type": "WebPage",
+      "@id": `${SERVER_URL}${path}`,
     },
   }
 }
 
-export function buildOrganizationJsonLd(): OrganizationJsonLd {
-  const serverUrl = getServerSideURL()
+export function buildOrganizationJsonLd(): WithContext<OrganizationLeaf> {
   return {
-    "@context": "https://schema.org" as const,
-    "@type": "Organization" as const,
+    "@context": "https://schema.org",
+    "@type": "Organization",
     name: SITE_NAME,
-    url: serverUrl,
+    url: SERVER_URL,
     logo: {
-      "@type": "ImageObject" as const,
-      url: `${serverUrl}/the-pragmatic-papers-opengraph-image.png`,
+      "@type": "ImageObject",
+      url: `${SERVER_URL}/the-pragmatic-papers-opengraph-image.png`,
     },
     description: SITE_DESCRIPTION,
   }
 }
 
-export function buildWebSiteJsonLd(): WebSiteJsonLd {
-  const serverUrl = getServerSideURL()
+export function buildWebSiteJsonLd(): WithContext<WebSiteLeaf> {
   return {
-    "@context": "https://schema.org" as const,
-    "@type": "WebSite" as const,
+    "@context": "https://schema.org",
+    "@type": "WebSite",
     name: SITE_NAME,
-    url: serverUrl,
+    url: SERVER_URL,
   }
 }
 
-export function buildPersonJsonLd(user: User, path: string): PersonJsonLd {
-  const serverUrl = getServerSideURL()
+export function buildPersonJsonLd(user: User, path: string): WithContext<PersonLeaf> {
   const image = getImageUrl(user.profileImage)
   const sameAs = (user.socials || [])
     .map((s) => (s.link?.type === "custom" ? s.link.url : null))
     .filter((u): u is string => Boolean(u))
 
   return {
-    "@context": "https://schema.org" as const,
-    "@type": "Person" as const,
+    "@context": "https://schema.org",
+    "@type": "Person",
     name: user.name || undefined,
-    url: `${serverUrl}${path}`,
+    url: `${SERVER_URL}${path}`,
     image: image || undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
     affiliation: user.affiliation
-      ? { "@type": "Organization" as const, name: user.affiliation }
+      ? { "@type": "Organization", name: user.affiliation }
       : undefined,
   }
 }
 
 export function buildBreadcrumbJsonLd(
   items?: { name: string; path: string }[],
-): BreadcrumbJsonLd {
-  const serverUrl = getServerSideURL()
+): WithContext<BreadcrumbListLeaf> {
   const allItems = [
-    { name: "Home", item: serverUrl },
-    ...(items ?? []).map((item) => ({ name: item.name, item: `${serverUrl}${item.path}` })),
+    { name: "Home", item: SERVER_URL },
+    ...(items ?? []).map((item) => ({ name: item.name, item: `${SERVER_URL}${item.path}` })),
   ]
   return {
-    "@context": "https://schema.org" as const,
-    "@type": "BreadcrumbList" as const,
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
     itemListElement: allItems.map((entry, index) => ({
-      "@type": "ListItem" as const,
+      "@type": "ListItem",
       position: index + 1,
       name: entry.name,
       item: entry.item,
@@ -183,13 +128,12 @@ export function buildCollectionPageJsonLd(
   title: string,
   description: string,
   path: string,
-): CollectionPageJsonLd {
-  const serverUrl = getServerSideURL()
+): WithContext<CollectionPageLeaf> {
   return {
-    "@context": "https://schema.org" as const,
-    "@type": "CollectionPage" as const,
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
     name: title,
     description,
-    url: `${serverUrl}${path}`,
+    url: `${SERVER_URL}${path}`,
   }
 }
