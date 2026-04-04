@@ -6,7 +6,9 @@ import type {
   BreadcrumbListLeaf,
   CollectionPageLeaf,
   OrganizationLeaf,
+  PeriodicalLeaf,
   PersonLeaf,
+  PublicationVolumeLeaf,
   Thing,
   WebSiteLeaf,
   WithContext,
@@ -62,6 +64,20 @@ export function buildArticleJsonLd(article: Article, path: string): WithContext<
     keywords: keywords.length > 0 ? keywords.join(", ") : undefined,
     author: authors.length > 0 ? authors : undefined,
     publisher,
+    isPartOf: article.populatedVolume?.id
+      ? ({
+          "@type": "PublicationVolume",
+          name:
+            article.populatedVolume.title ??
+            `Volume ${article.populatedVolume.volumeNumber}`,
+          volumeNumber: article.populatedVolume.volumeNumber ?? undefined,
+          isPartOf: {
+            "@type": "Periodical",
+            name: SITE_NAME,
+            url: SERVER_URL,
+          } satisfies PeriodicalLeaf,
+        } satisfies PublicationVolumeLeaf)
+      : undefined,
     image: image || undefined,
     mainEntityOfPage: {
       "@type": "WebPage",
