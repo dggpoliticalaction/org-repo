@@ -1,5 +1,5 @@
-import type { Access, FieldAccess } from 'payload'
-import { isAdmin, isEditor } from './checkRole'
+import type { Access, FieldAccess } from "payload"
+import { isAdmin, isEditor } from "./checkRole"
 
 export const editor: Access = ({ req: { user } }) => {
   if (!user) {

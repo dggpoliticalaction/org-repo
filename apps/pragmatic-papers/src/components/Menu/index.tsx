@@ -1,40 +1,40 @@
-import { CMSLink } from '@/components/Link/CMSLink2'
-import type { MenuField } from '@/payload-types'
-import { cn } from '@/utilities/ui'
-import { type VariantProps, cva } from 'class-variance-authority'
-import React from 'react'
+import { CMSLink } from "@/components/Link/CMSLink2"
+import type { MenuField } from "@/payload-types"
+import { cn } from "@/utilities/utils"
+import { type VariantProps, cva } from "class-variance-authority"
+import React from "react"
 
-const menuVariants = cva('flex items-center', {
+const menuVariants = cva("flex", {
   defaultVariants: {
-    layout: 'responsive',
+    layout: "responsive",
   },
   variants: {
     layout: {
-      inline: 'flex-row',
-      stacked: 'flex-col items-start',
-      responsive: 'flex-col md:flex-row',
+      inline: "flex-row gap-2 items-center",
+      stacked: "flex-col items-start",
+      responsive: "flex-col gap-1 items-start md:flex-row md:gap-2 md:items-center",
     },
   },
 })
 
-const menuLinkVariants = cva('font-medium hover:bg-foreground/10', {
+const menuItemVariants = cva("text-primary", {
   defaultVariants: {
-    layout: 'responsive',
+    layout: "responsive",
   },
   variants: {
     layout: {
-      inline:
-        'border-b-foreground px-3 py-2 hover:data-[active=true]:border-b-0 hover:data-[active=true]:pb-2 data-[active=true]:border-b-[4px] data-[active=true]:pb-1',
-      stacked:
-        'w-full items-start border-t border-border border-l-foreground py-4 text-lg hover:data-[active=true]:border-l-0 hover:data-[active=true]:pl-6 data-[active=true]:border-l-8 data-[active=true]:pl-4',
-      responsive: 'py-2 md:px-3',
+      inline: "hover:underline text-sm underline-offset-4",
+      stacked: "w-full justify-start border-0 border-t hover:bg-muted",
+      responsive: "hover:underline text-sm underline-offset-4",
     },
   },
 })
 
 interface MenuProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends Omit<React.HTMLAttributes<HTMLUListElement>, "slot">,
     VariantProps<typeof menuVariants> {
+  /** Wraps each menu link. Falls back to a Fragment when undefined. */
+  slot?: React.ElementType
   menu?: MenuField
 }
 
@@ -44,22 +44,42 @@ interface MenuProps
  * @param menu - The array of menu items to display.
  * @param className - Additional classes for the menu container.
  * @param layout - Specifies the menu layout variant ('inline', 'stacked', or 'responsive').
+ * @param slot - Optional wrapper component for each link (e.g. SheetClose). Falls back to a Fragment.
  * @param props - All other HTML div props.
  *
  * @example
  * <Menu menu={menuData} layout="inline" />
+ * <Menu menu={menuData} layout="stacked" slot={SheetClose} />
  */
-export const Menu: React.FC<MenuProps> = ({ menu, className, layout, ...props }) => {
+export const Menu: React.FC<MenuProps> = ({ menu, className, layout, slot, ...props }) => {
   if (!menu) return null
+
+  const Slot = slot ?? React.Fragment
+
   return (
-    <nav className={cn(menuVariants({ className, layout }))} {...props}>
-      {menu.map(({ link, id }, index) => (
-        <CMSLink
-          key={id || `menu-item-${index}`}
-          className={cn(menuLinkVariants({ layout }))}
-          link={link}
-        />
-      ))}
+    <nav>
+      <ul className={cn(menuVariants({ className, layout }))} {...props}>
+        {menu.map(({ link, id }, index) => {
+          const isStacked = layout === "stacked"
+          return (
+            <li
+              key={id || `menu-item-${index}`}
+              className={cn(menuItemVariants({ layout }), slot && "[&>button]:w-full")}
+            >
+              <Slot>
+                <CMSLink
+                  link={link}
+                  className={cn(
+                    "block w-full text-left",
+                    isStacked &&
+                      "data-[active=true]:bg-muted px-4 py-3 data-[active=true]:font-semibold",
+                  )}
+                />
+              </Slot>
+            </li>
+          )
+        })}
+      </ul>
     </nav>
   )
 }

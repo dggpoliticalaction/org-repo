@@ -1,4 +1,4 @@
-export const DggLIcon: React.FC<React.ComponentProps<'svg'>> = (props) => {
+export const DggLIcon: React.FC<React.ComponentProps<"svg">> = (props) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58.66 62.64" {...props}>
       <g>

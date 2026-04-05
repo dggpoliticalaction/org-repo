@@ -1,102 +1,97 @@
-import type { Media, User } from '@/payload-types'
-import type { Payload } from 'payload'
-import {
-  createParagraph,
-  createEmptyParagraph,
-  createRichText,
-  createTextNode,
-} from '../richtext'
-import { createArticle, validateWriters } from '../articles'
+import type { Media, User } from "@/payload-types"
+import type { Payload } from "payload"
+import { createArticle, validateWriters } from "../articles"
+import { createEmptyParagraph, createParagraph, createRichText, createTextNode } from "../richtext"
 
 const createArticleContentWithFootnotes = (referencedArticleId: number) => {
   const children = [
     createParagraph(
-      'This article demonstrates the footnotes feature. Footnotes are useful for providing additional context, citations, and references.',
+      "This article demonstrates the footnotes feature. Footnotes are useful for providing additional context, citations, and references.",
     ),
     createEmptyParagraph(),
     createParagraph([
       createTextNode(
-        'Academic writing often requires citations to support claims and provide readers with sources for further reading',
+        "Academic writing often requires citations to support claims and provide readers with sources for further reading",
       ),
       {
-        type: 'inlineBlock',
+        type: "inlineBlock",
         fields: {
-          blockType: 'footnote',
-          note: 'This is a basic footnote without attribution. It provides additional context or explanation for the preceding text.',
+          blockType: "footnote",
+          note: "This is a basic footnote without attribution. It provides additional context or explanation for the preceding text.",
           attributionEnabled: false,
         },
-        format: '',
+        format: "",
         version: 1,
       },
       createTextNode(
-        '. Footnotes can be inserted anywhere in the text where additional information is needed.',
+        ". Footnotes can be inserted anywhere in the text where additional information is needed.",
       ),
     ]),
     createEmptyParagraph(),
     createParagraph([
       createTextNode(
-        'The footnotes feature also supports attribution links, which can point to external sources or internal references',
+        "The footnotes feature also supports attribution links, which can point to external sources or internal references",
       ),
       {
-        type: 'inlineBlock',
+        type: "inlineBlock",
         fields: {
-          blockType: 'footnote',
-          note: 'This footnote includes an attribution link to demonstrate the full capabilities of the footnotes feature.',
+          blockType: "footnote",
+          note: "This footnote includes an attribution link to demonstrate the full capabilities of the footnotes feature.",
           attributionEnabled: true,
           link: {
-            type: 'custom',
-            url: 'https://en.wikipedia.org/wiki/Footnote',
-            label: 'Wikipedia - Footnote',
+            type: "custom",
+            url: "https://en.wikipedia.org/wiki/Footnote",
+            label: "Wikipedia - Footnote",
             newTab: true,
           },
         },
-        format: '',
+        format: "",
         version: 1,
       },
       createTextNode(
-        '. This makes it easy to cite sources and provide readers with direct access to referenced materials.',
+        ". This makes it easy to cite sources and provide readers with direct access to referenced materials.",
       ),
     ]),
     createEmptyParagraph(),
     createParagraph([
-      createTextNode('Multiple footnotes can be used throughout a document'),
+      createTextNode("Multiple footnotes can be used throughout a document"),
       {
-        type: 'inlineBlock',
+        type: "inlineBlock",
         fields: {
-          blockType: 'footnote',
-          note: 'Footnotes are automatically numbered sequentially as they appear in the document.',
+          blockType: "footnote",
+          note: "Footnotes are automatically numbered sequentially as they appear in the document.",
           attributionEnabled: false,
         },
-        format: '',
+        format: "",
         version: 1,
       },
       createTextNode(
-        ', and they are automatically numbered in the order they appear. This makes it easy to reference specific notes when discussing complex topics.',
+        ", and they are automatically numbered in the order they appear. This makes it easy to reference specific notes when discussing complex topics.",
       ),
     ]),
     createEmptyParagraph(),
     createParagraph([
       createTextNode(
-        'The footnote system integrates seamlessly with the Lexical rich text editor, allowing authors to insert footnotes inline while writing. Footnotes appear as numbered references in the text',
+        "The footnote system integrates seamlessly with the Lexical rich text editor, allowing authors to insert footnotes inline while writing. Footnotes appear as numbered references in the text",
       ),
       {
-        type: 'inlineBlock',
+        type: "inlineBlock",
         fields: {
-          blockType: 'footnote',
-          note: 'This is another example footnote with attribution to show how multiple footnotes work together in a single document.',
+          blockType: "footnote",
+          note: "This is another example footnote with attribution to show how multiple footnotes work together in a single document.",
           attributionEnabled: true,
           link: {
-            type: 'custom',
-            url: 'https://www.lexical.dev/',
-            label: 'Lexical Editor',
+            type: "custom",
+            url: "https://www.lexical.dev/",
+            label: "Lexical Editor",
             newTab: true,
           },
         },
-        format: '',
+        format: "",
         version: 1,
       },
       createTextNode(
-        ', and clicking on them scrolls to the full footnote text at the bottom of the article.',
+        ", and clicking on them scrolls to the full footnote text at the bottom of the article.",
       ),
     ]),
   ]
@@ -106,29 +101,29 @@ const createArticleContentWithFootnotes = (referencedArticleId: number) => {
       createEmptyParagraph(),
       createParagraph([
         createTextNode(
-          'Footnotes can also link to internal references, such as other articles in the collection',
+          "Footnotes can also link to internal references, such as other articles in the collection",
         ),
         {
-          type: 'inlineBlock',
+          type: "inlineBlock",
           fields: {
-            blockType: 'footnote',
-            note: 'This footnote demonstrates a reference link to another article, showing how footnotes can connect related content within the site.',
+            blockType: "footnote",
+            note: "This footnote demonstrates a reference link to another article, showing how footnotes can connect related content within the site.",
             attributionEnabled: true,
             link: {
-              type: 'reference',
+              type: "reference",
               reference: {
-                relationTo: 'articles',
+                relationTo: "articles",
                 value: referencedArticleId,
               },
-              label: 'Article 1 - Volume 1',
+              label: "Article 1 - Volume 1",
               newTab: false,
             },
           },
-          format: '',
+          format: "",
           version: 1,
         },
         createTextNode(
-          '. This creates a network of interconnected content that enhances the reading experience.',
+          ". This creates a network of interconnected content that enhances the reading experience.",
         ),
       ]),
     )
@@ -142,21 +137,24 @@ export const createFootnotesArticle = async (
   writers: User[],
   mediaDocs: Media[],
   referencedArticleId: number,
+  topics: number[] = [],
 ): Promise<number> => {
   validateWriters(writers)
 
   const writer = writers[0]!
-  const title = 'Demonstrating Footnotes: A Comprehensive Guide'
+  const title = "Demonstrating Footnotes: A Comprehensive Guide"
 
   const article = await createArticle(payload, {
     title,
     content: createArticleContentWithFootnotes(referencedArticleId),
     authors: [writer.id],
-    slug: 'demonstrating-footnotes-comprehensive-guide',
+    topics: topics,
+    slug: "demonstrating-footnotes-comprehensive-guide",
+    heroImage: mediaDocs[Math.floor(Math.random() * mediaDocs.length)]?.id,
     meta: {
       title,
       description:
-        'This article demonstrates the footnotes feature, showing how to add citations, references, and additional context to your articles.',
+        "This article demonstrates the footnotes feature, showing how to add citations, references, and additional context to your articles.",
       image: mediaDocs[0]?.id,
     },
   })

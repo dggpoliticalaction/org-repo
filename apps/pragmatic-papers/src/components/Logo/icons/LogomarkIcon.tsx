@@ -1,7 +1,7 @@
-import React from 'react'
+import React from "react"
 
-export const LogomarkIcon: React.FC<React.ComponentProps<'svg'>> = ({
-  fill = 'currentColor',
+export const LogomarkIcon: React.FC<React.ComponentProps<"svg">> = ({
+  fill = "currentColor",
   className,
 }) => {
   return (

@@ -1,4 +1,4 @@
-import { MigrateDownArgs, MigrateUpArgs, sql } from '@payloadcms/db-postgres'
+import { MigrateDownArgs, MigrateUpArgs, sql } from '@payloadcms/db-postgres';
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
@@ -27,26 +27,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "users" ADD COLUMN "generate_slug" boolean DEFAULT true;
   ALTER TABLE "users" ADD COLUMN "slug" varchar;
   ALTER TABLE "users" ADD COLUMN "profile_image_id" integer;
-  DO $$
-  DECLARE
-    r RECORD;
-    base_slug TEXT;
-    candidate TEXT;
-    counter INT;
-  BEGIN
-    FOR r IN SELECT id, name FROM users LOOP
-      base_slug := trim(r.name);
-      base_slug := regexp_replace(base_slug, '[^a-zA-Z0-9[:space:]]', '', 'g');
-      base_slug := lower(regexp_replace(base_slug, '\s+', '-', 'g'));
-      candidate := base_slug;
-      counter := 2;
-      WHILE EXISTS (SELECT 1 FROM users WHERE slug = candidate) LOOP
-        candidate := base_slug || '-' || counter;
-        counter := counter + 1;
-      END LOOP;
-      UPDATE users SET slug = candidate WHERE id = r.id;
-    END LOOP;
-  END $$;
+  UPDATE users SET slug = id::text;
   ALTER TABLE "users" ALTER COLUMN "slug" SET NOT NULL;
   ALTER TABLE "users_socials" ADD CONSTRAINT "users_socials_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "users_rels" ADD CONSTRAINT "users_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
@@ -63,7 +44,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "users_rels_articles_id_idx" ON "users_rels" USING btree ("articles_id");
   ALTER TABLE "users" ADD CONSTRAINT "users_profile_image_id_media_id_fk" FOREIGN KEY ("profile_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   CREATE UNIQUE INDEX "users_slug_idx" ON "users" USING btree ("slug");
-  CREATE INDEX "users_profile_image_idx" ON "users" USING btree ("profile_image_id");`)
+  CREATE INDEX "users_profile_image_idx" ON "users" USING btree ("profile_image_id");`);
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
@@ -80,5 +61,5 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "users" DROP COLUMN "generate_slug";
   ALTER TABLE "users" DROP COLUMN "slug";
   ALTER TABLE "users" DROP COLUMN "profile_image_id";
-  DROP TYPE "public"."enum_users_socials_link_type";`)
+  DROP TYPE "public"."enum_users_socials_link_type";`);
 }

@@ -32,6 +32,14 @@ WORKDIR /app
 # Copy pruned lockfile and package.json files from pruner stage
 COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+# Copy pruned source code from pruner
+COPY --from=pruner /app/out/full/ .
+# Copy .npmrc for GitHub Packages (@digitalgroundgame) auth
+COPY --from=pruner /app/.npmrc ./.npmrc
+# GitHub Packages auth (set GH_FONT_READ as build arg in Coolify for staging/prod)
+ARG GH_FONT_READ
+ENV GH_FONT_READ=${GH_FONT_READ}
+
 # Install dependencies with frozen lockfile
 # Using cache mount for pnpm store to speed up builds
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
@@ -49,8 +57,6 @@ RUN apk add --no-cache postgresql-client
 
 # Copy installed node_modules from installer
 COPY --from=installer /app/ .
-# Copy pruned source code from pruner
-COPY --from=pruner /app/out/full/ .
 
 # Copy database utility scripts
 COPY dockerfiles/scripts/modify-database-uri.sh /usr/local/bin/modify-database-uri.sh
@@ -172,7 +178,7 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'set -e' >> /app/start.sh && \
     # Source the build.env to get the potentially modified DATABASE_URI for preview deployments
     echo 'if [ -f /app/build.env ]; then . /app/build.env; fi' >> /app/start.sh && \
-    
+
     echo 'echo "========================================="' >> /app/start.sh && \
     echo 'echo "Starting Pragmatic Papers Application"' >> /app/start.sh && \
     echo 'echo "Node version: $(node --version)"' >> /app/start.sh && \

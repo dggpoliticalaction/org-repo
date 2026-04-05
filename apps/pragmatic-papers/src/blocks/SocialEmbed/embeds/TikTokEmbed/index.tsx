@@ -2,20 +2,20 @@ import {
   TIKTOK_DISPLAY_NAME,
   buildTikTokSrc,
   parseTikTokPostId,
-} from '@/blocks/SocialEmbed/adapters/tiktok.adapter'
-import type { SocialEmbedRenderProps } from '@/blocks/SocialEmbed/Component'
-import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
+} from "@/blocks/SocialEmbed/adapters/tiktok.adapter"
+import type { SocialEmbedRenderProps } from "@/blocks/SocialEmbed/Component"
+import { EmbedError } from "@/blocks/SocialEmbed/embeds/EmbedError"
 
 export async function TikTokEmbedBlock({
   url,
   snapshot,
 }: SocialEmbedRenderProps): Promise<React.ReactNode> {
-  if (snapshot?.status && snapshot.status !== 'ok') {
+  if (snapshot?.status && snapshot.status !== "ok") {
     if (snapshot.html) {
       return (
         <div className="my-8 flex justify-center">
           <div
-            className="w-full max-w-[550px] [&>div]:!my-0"
+            className="w-full max-w-[550px] [&>div]:my-0!"
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: snapshot.html }}
           />
@@ -39,7 +39,7 @@ export async function TikTokEmbedBlock({
   return (
     <div className="my-8 flex justify-center">
       <div className="relative w-full max-w-[360px] space-y-3">
-        <div className="sr-only rounded-lg border p-3">
+        <div className="sr-only">
           <div className="text-sm font-medium">{TIKTOK_DISPLAY_NAME}</div>
           {snapshot?.authorName && <div className="text-sm opacity-80">{snapshot.authorName}</div>}
           {snapshot?.title && <div className="mt-2 text-sm">{snapshot.title}</div>}
@@ -52,11 +52,11 @@ export async function TikTokEmbedBlock({
             View on {TIKTOK_DISPLAY_NAME}
           </a>
         </div>
-        <div className="relative aspect-[9/16] overflow-hidden rounded-lg shadow-xl">
+        <div className="relative aspect-9/16 overflow-hidden rounded-lg shadow-xl">
           <iframe
             className="absolute inset-0 h-full w-full"
             src={buildTikTokSrc(postId, { autoplay: 1, loop: 1 })}
-            title={snapshot?.title ?? 'TikTok video'}
+            title={snapshot?.title ?? "TikTok video"}
             loading="lazy"
             // allow should be explicit
             allow="autoplay; fullscreen; encrypted-media; picture-in-picture"

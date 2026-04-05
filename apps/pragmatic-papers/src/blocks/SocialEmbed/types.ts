@@ -1,4 +1,4 @@
 export interface ParentDocContext {
-  collection: 'articles'
+  collection: "articles"
   id: string | number
 }

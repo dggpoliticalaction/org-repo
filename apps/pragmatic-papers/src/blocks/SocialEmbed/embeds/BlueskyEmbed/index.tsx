@@ -2,12 +2,12 @@ import {
   BLUESKY_DISPLAY_NAME,
   fetchBlueskyOEmbed,
   sanitizeBlueskyHtml,
-} from '@/blocks/SocialEmbed/adapters/bluesky.adapter'
-import { BlueskyEmbedClient } from '@/blocks/SocialEmbed/embeds/BlueskyEmbed/client'
-import { EmbedError } from '@/blocks/SocialEmbed/embeds/EmbedError'
-import { shouldEnhance } from '@/blocks/SocialEmbed/helpers/snapshotFreshness'
-import type { SocialEmbedBlock } from '@/payload-types'
-import { isFailure } from '@/utilities/results'
+} from "@/blocks/SocialEmbed/adapters/bluesky.adapter"
+import { BlueskyEmbedClient } from "@/blocks/SocialEmbed/embeds/BlueskyEmbed/client"
+import { EmbedError } from "@/blocks/SocialEmbed/embeds/EmbedError"
+import { shouldEnhance } from "@/blocks/SocialEmbed/helpers/snapshotFreshness"
+import type { SocialEmbedBlock } from "@/payload-types"
+import { isFailure } from "@/utilities/results"
 
 export async function BlueskyEmbedBlock(props: SocialEmbedBlock): Promise<React.ReactNode> {
   const { url, snapshot, id } = props
@@ -35,7 +35,7 @@ export async function BlueskyEmbedBlock(props: SocialEmbedBlock): Promise<React.
     <div className="my-8 flex min-h-[240px] items-center justify-center">
       <div
         id={id}
-        className="w-full max-w-[550px] [&>div]:!my-0"
+        className="w-full max-w-[550px] [&>div]:my-0!"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: html }}
       />

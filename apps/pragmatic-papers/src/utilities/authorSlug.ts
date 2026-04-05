@@ -1,11 +1,11 @@
-import type { User } from '@/payload-types'
+import type { User } from "@/payload-types"
 
 const slugify = (value: string): string => {
   return value
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
 }
 
 export const authorSlugFromUser = (user: User): string => {
@@ -19,5 +19,5 @@ export const authorSlugFromNameAndId = (
 ): string => {
   if (name && name.trim()) return slugify(name)
   if (id != null) return slugify(String(id))
-  return 'author'
+  return "author"
 }

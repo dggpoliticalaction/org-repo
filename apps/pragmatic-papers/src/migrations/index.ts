@@ -18,6 +18,17 @@ import * as migration_20260305_050800_action_button_needed_more_migrations from 
 import * as migration_20260307_014204_enable_math_rendering from './20260307_014204_enable_math_rendering';
 import * as migration_20260307_192044_add_topics_to_articles from './20260307_192044_add_topics_to_articles';
 import * as migration_20260310_030303_update_volume_slugField from './20260310_030303_update_volume_slugField';
+import * as migration_20260311_160239_rename_Users_role_user_to_member from './20260311_160239_rename_Users_role_user_to_member';
+import * as migration_20260316_072557_add_blurdataurl from './20260316_072557_add_blurdataurl';
+import * as migration_20260317_033620_add_collections_again_thanks_esp from './20260317_033620_add_collections_again_thanks_esp';
+import * as migration_20260318_125059_revert_volume_autogen from './20260318_125059_revert_volume_autogen';
+import * as migration_20260318_152547_use_populate_authors_duh from './20260318_152547_use_populate_authors_duh';
+import * as migration_20260318_172936_topics_views from './20260318_172936_topics_views';
+import * as migration_20260321_165911_add_copyright_to_footer_global from './20260321_165911_add_copyright_to_footer_global';
+import * as migration_20260323_024225_add_showByline_to_admin from './20260323_024225_add_showByline_to_admin';
+import * as migration_20260323_043247_add_seo_to_topics from './20260323_043247_add_seo_to_topics';
+import * as migration_20260326_061304_add_social_links_component_to_footer from './20260326_061304_add_social_links_component_to_footer';
+import * as migration_20260326_115012_header_actions_array from './20260326_115012_header_actions_array';
 
 export const migrations = [
   {
@@ -118,6 +129,61 @@ export const migrations = [
   {
     up: migration_20260310_030303_update_volume_slugField.up,
     down: migration_20260310_030303_update_volume_slugField.down,
-    name: '20260310_030303_update_volume_slugField'
+    name: '20260310_030303_update_volume_slugField',
+  },
+  {
+    up: migration_20260311_160239_rename_Users_role_user_to_member.up,
+    down: migration_20260311_160239_rename_Users_role_user_to_member.down,
+    name: '20260311_160239_rename_Users_role_user_to_member',
+  },
+  {
+    up: migration_20260316_072557_add_blurdataurl.up,
+    down: migration_20260316_072557_add_blurdataurl.down,
+    name: '20260316_072557_add_blurdataurl',
+  },
+  {
+    up: migration_20260317_033620_add_collections_again_thanks_esp.up,
+    down: migration_20260317_033620_add_collections_again_thanks_esp.down,
+    name: '20260317_033620_add_collections_again_thanks_esp',
+  },
+  {
+    up: migration_20260318_125059_revert_volume_autogen.up,
+    down: migration_20260318_125059_revert_volume_autogen.down,
+    name: '20260318_125059_revert_volume_autogen',
+  },
+  {
+    up: migration_20260318_152547_use_populate_authors_duh.up,
+    down: migration_20260318_152547_use_populate_authors_duh.down,
+    name: '20260318_152547_use_populate_authors_duh',
+  },
+  {
+    up: migration_20260318_172936_topics_views.up,
+    down: migration_20260318_172936_topics_views.down,
+    name: '20260318_172936_topics_views',
+  },
+  {
+    up: migration_20260321_165911_add_copyright_to_footer_global.up,
+    down: migration_20260321_165911_add_copyright_to_footer_global.down,
+    name: '20260321_165911_add_copyright_to_footer_global',
+  },
+  {
+    up: migration_20260323_024225_add_showByline_to_admin.up,
+    down: migration_20260323_024225_add_showByline_to_admin.down,
+    name: '20260323_024225_add_showByline_to_admin',
+  },
+  {
+    up: migration_20260323_043247_add_seo_to_topics.up,
+    down: migration_20260323_043247_add_seo_to_topics.down,
+    name: '20260323_043247_add_seo_to_topics',
+  },
+  {
+    up: migration_20260326_061304_add_social_links_component_to_footer.up,
+    down: migration_20260326_061304_add_social_links_component_to_footer.down,
+    name: '20260326_061304_add_social_links_component_to_footer',
+  },
+  {
+    up: migration_20260326_115012_header_actions_array.up,
+    down: migration_20260326_115012_header_actions_array.down,
+    name: '20260326_115012_header_actions_array'
   },
 ];

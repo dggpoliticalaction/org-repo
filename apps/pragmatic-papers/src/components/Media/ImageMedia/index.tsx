@@ -1,182 +1,111 @@
-'use client'
+import type { Media as MediaType } from "@/payload-types"
+import NextImage, { type ImageProps } from "next/image"
+import React from "react"
 
-import type { StaticImageData } from 'next/image'
+import { getMediaUrl } from "@/utilities/getMediaUrl"
+import { cn } from "@/utilities/utils"
 
-import { cn } from '@/utilities/ui'
-import React, { useState } from 'react'
+// A base64 encoded image to use as a placeholder while the image is loading
+const placeholderBlur =
+  "data:image/png;base64,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"
 
-import type { Props as MediaProps } from '../types'
+export type ImageVariant = keyof Required<MediaType>["sizes"]
 
-import { MediaCarousel } from '@/components/MediaCarousel'
-import RichText from '@/components/RichText'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import Image from 'next/image'
+export interface ImageMediaProps extends Omit<ImageProps, "src" | "alt" | "width" | "height"> {
+  media: MediaType
+  variant?: ImageVariant
+  containerClassName?: string
+}
 
-export const ImageMedia: React.FC<MediaProps> = (props) => {
-  const {
-    alt: altFromProps,
-    pictureClassName,
-    imgClassName,
-    priority,
-    resource,
-    src: srcFromProps,
-    loading: loadingFromProps,
-    size,
-    enableModal = false,
-    gallery,
-  } = props
+function getMediaByVariant(
+  media: MediaType,
+  variant: ImageVariant,
+): Required<MediaType>["sizes"][ImageVariant] {
+  return media.sizes?.[variant]
+}
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
+/**
+ * ImageMedia
+ * TODO: Rename ImageMedia to `CMSImage`
+ *
+ * This component passes a **relative** `src` (e.g. `/media/...`) to Next.js Image.
+ * The `getMediaUrl` utility constructs the full URL by prepending the base URL from env vars
+ * (NEXT_PUBLIC_SERVER_URL). Next.js then optimizes this using `remotePatterns` configured
+ * in next.config.js — no custom `loader` needed.
+ *
+ * Flow:
+ *   1. Resource URL from Payload: `/media/image-123.jpg`
+ *   2. getMediaUrl() adds base URL: `https://yourdomain.com/media/image-123.jpg`
+ *   3. Next.js Image optimizes via remotePatterns: `/_next/image?url=...&w=1200&q=75`
+ *
+ * If your storage/plugin returns **external CDN URLs** (e.g. `https://cdn.example.com/...`),
+ * choose ONE of the following:
+ *   A) Allow the remote host in next.config.js:
+ *      images: { remotePatterns: [{ protocol: 'https', hostname: 'cdn.example.com' }] }
+ *   B) Provide a **custom loader** for CDN-specific transforms:
+ *      const imageLoader: ImageLoader = ({ src, width, quality }) =>
+ *        `https://cdn.example.com${src}?w=${width}&q=${quality ?? 75}`
+ *      <Image loader={imageLoader} src="/media/hero.jpg" width={1200} height={600} alt="" />
+ *   C) Skip optimization:
+ *      <Image unoptimized src="https://cdn.example.com/hero.jpg" width={1200} height={600} alt="" />
+ *
+ * TL;DR: Template uses relative URLs + getMediaUrl() to construct full URLs, then relies on
+ * remotePatterns for optimization. Only add `loader` if using external CDNs with custom transforms.
+ */
+export const ImageMedia: React.FC<ImageMediaProps> = ({
+  media,
+  variant,
+  sizes,
+  className,
+  quality = 80,
+  priority, // TODO rename to `preload` after upgrading to Next.js 16
+  loading,
+  fill,
+  style,
+  ...props
+}) => {
+  if (!media.url) return null
+  let src = getMediaUrl(media.url, media.updatedAt)
+  const alt = media.alt || "" // TODO: alt should be required
+  let width = media.width ?? undefined
+  let height = media.height ?? undefined
+  const blurDataURL = media.blurDataURL ?? placeholderBlur
+  loading = priority !== undefined ? undefined : loading // loading and priority are mutually exclusive
 
-  const isPayloadResource = resource && typeof resource === 'object'
-  let width: number | undefined = srcFromProps?.width
-  let height: number | undefined = srcFromProps?.height
-  let alt = altFromProps
-  let src: StaticImageData | string = srcFromProps || ''
-
-  if (!src && isPayloadResource) {
-    const { alt: altFromResource, height: fullHeight, width: fullWidth } = resource
-
-    width = fullWidth!
-    height = fullHeight!
-    alt = altFromResource || ''
-
-    const cacheTag = resource.updatedAt
-
-    if (size) {
-      switch (size) {
-        case 'small':
-          src = getMediaUrl(resource.sizes?.small?.url, cacheTag)
-          width = resource.sizes?.small?.width ?? undefined
-          height = resource.sizes?.small?.height ?? undefined
-          break
-        case 'medium':
-          src = getMediaUrl(resource.sizes?.medium?.url, cacheTag)
-          width = resource.sizes?.medium?.width ?? undefined
-          height = resource.sizes?.medium?.height ?? undefined
-          break
-        case 'large':
-          src = getMediaUrl(resource.sizes?.large?.url, cacheTag)
-          width = resource.sizes?.large?.width ?? undefined
-          height = resource.sizes?.large?.height ?? undefined
-          break
-        case 'xlarge':
-          src = getMediaUrl(resource.sizes?.xlarge?.url, cacheTag)
-          width = resource.sizes?.xlarge?.width ?? undefined
-          height = resource.sizes?.xlarge?.height ?? undefined
-          break
-        case 'square':
-          src = getMediaUrl(resource.sizes?.square?.url, cacheTag)
-          width = resource.sizes?.square?.width ?? undefined
-          height = resource.sizes?.square?.height ?? undefined
-          break
-      }
-    } else {
-      src = getMediaUrl(resource.sizes?.medium?.url, cacheTag)
-    }
-  }
-  const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
-
-  const handleClick = () => {
-    if (enableModal && isPayloadResource && window.innerWidth >= 768) {
-      setIsModalOpen(true)
-    }
+  if (variant) {
+    const mediaBySize = getMediaByVariant(media, variant)
+    src = getMediaUrl(mediaBySize?.url, media.updatedAt) || src
+    width = mediaBySize?.width || width
+    height = mediaBySize?.height || height
   }
 
-  const handleDialogContentClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (event.target === event.currentTarget) {
-      setIsModalOpen(false)
-    }
+  if (fill) {
+    width = undefined
+    height = undefined
   }
 
-  // NOTE: this is used by the browser to determine which image to download at different screen sizes
+  const objectPosition =
+    media.focalX != null && media.focalY != null ? `${media.focalX}% ${media.focalY}%` : undefined
+
+  style = objectPosition ? { ...style, objectPosition } : style
+
   return (
-    <>
-      {enableModal && isPayloadResource && (
-        <Dialog open={isModalOpen} onOpenChange={() => setIsModalOpen(false)}>
-          <DialogContent
-            className="flex h-full max-w-full flex-col items-center justify-center border-0 bg-transparent [&>button]:right-6 [&>button]:top-6 [&_svg]:h-6 [&_svg]:w-6"
-            onClick={handleDialogContentClick}
-          >
-            <DialogTitle className="sr-only">
-              {gallery ? 'Image gallery' : 'Image Modal'}
-            </DialogTitle>
-            {gallery ? (
-              <MediaCarousel
-                images={gallery.images}
-                initialIndex={gallery.startIndex}
-                showCaptions
-                indicatorClassName="bottom-12"
-                imageClassName="w-full h-full object-contain"
-                pictureClassName="w-full h-full flex items-center justify-center"
-                // containerClassName="w-fit mx-auto"
-                imageContainerClassName="h-[80svh]"
-                navigationClassName={{
-                  previous: 'left-1',
-                  next: 'right-1',
-                }}
-                enableModal={false}
-              />
-            ) : (
-              <>
-                <Image
-                  src={getMediaUrl(resource.url, resource.updatedAt)}
-                  alt={resource.alt || 'Image'}
-                  className="h-[80svh] w-fit rounded-sm object-contain"
-                  width={resource.width || 1920}
-                  height={resource.height || 1080}
-                  sizes="100vw"
-                />
-                {resource.caption && (
-                  <RichText
-                    className="text-center text-muted-foreground"
-                    data={resource.caption}
-                    enableGutter={false}
-                    enableProse={false}
-                  />
-                )}
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
-      )}
-      <picture
-        className={cn(
-          pictureClassName,
-          enableModal && isPayloadResource && 'max-md:cursor-default md:cursor-pointer',
-        )}
-        onClick={handleClick}
-      >
-        {isPayloadResource &&
-          !size &&
-          resource.sizes &&
-          Object.values(resource.sizes)
-            .filter(
-              (resourceSize) =>
-                resourceSize.width &&
-                resourceSize !== resource.sizes?.square &&
-                resourceSize !== resource.sizes?.og,
-            )
-            .map((resourceSize) => (
-              <source
-                key={resourceSize.url}
-                srcSet={getMediaUrl(resourceSize.url?.replace(/ /g, '%20'), resource.updatedAt)}
-                media={`(max-width: ${resourceSize.width}px)`}
-                type={resourceSize.mimeType ?? ''}
-                width={resourceSize.width!}
-                height={resourceSize.height!}
-              />
-            ))}
-        <img
-          alt={alt}
-          className={cn('w-fit', imgClassName)}
-          loading={loading}
-          width={width}
-          height={height}
-          src={typeof src === 'object' ? src.src : src}
-        />
-      </picture>
-    </>
+    <NextImage
+      {...props}
+      style={style}
+      className={cn("rounded-sm", className)}
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      fill={fill}
+      sizes={sizes}
+      quality={quality}
+      priority={priority}
+      fetchPriority={priority ? "high" : undefined}
+      loading={loading}
+      placeholder="blur"
+      blurDataURL={blurDataURL}
+    />
   )
 }

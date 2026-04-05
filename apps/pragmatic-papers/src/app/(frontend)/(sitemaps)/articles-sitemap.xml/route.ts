@@ -1,18 +1,15 @@
-import { getServerSideSitemap } from 'next-sitemap'
-import { getPayload } from 'payload'
-import config from '@payload-config'
-import { unstable_cache } from 'next/cache'
+import config from "@payload-config"
+import { getServerSideSitemap } from "next-sitemap"
+import { unstable_cache } from "next/cache"
+import { getPayload } from "payload"
 
 const getArticlesSitemap = unstable_cache(
   async () => {
     const payload = await getPayload({ config })
-    const SITE_URL =
-      process.env.NEXT_PUBLIC_SERVER_URL ||
-      process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-      'https://example.com'
+    const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL
 
     const results = await payload.find({
-      collection: 'articles',
+      collection: "articles",
       overrideAccess: false,
       draft: false,
       depth: 0,
@@ -20,7 +17,7 @@ const getArticlesSitemap = unstable_cache(
       pagination: false,
       where: {
         _status: {
-          equals: 'published',
+          equals: "published",
         },
       },
       select: {
@@ -38,12 +35,12 @@ const getArticlesSitemap = unstable_cache(
           .filter((page) => Boolean(page?.slug))
           .map((page) => {
             return {
-              loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}/articles/${page?.slug}`,
+              loc: page?.slug === "home" ? SITE_URL : `${SITE_URL}/articles/${page?.slug}`,
               lastmod: page.updatedAt || dateFallback,
               news: {
                 title: page.title,
-                publicationName: 'Pragmatic Papers',
-                publicationLanguage: 'en',
+                publicationName: "The Pragmatic Papers",
+                publicationLanguage: "en",
                 date: page.publishedAt ?? dateFallback,
               },
             }
@@ -52,9 +49,9 @@ const getArticlesSitemap = unstable_cache(
 
     return sitemap
   },
-  ['articles-sitemap'],
+  ["articles-sitemap"],
   {
-    tags: ['articles-sitemap'],
+    tags: ["articles-sitemap"],
   },
 )
 
