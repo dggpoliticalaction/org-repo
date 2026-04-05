@@ -1,4 +1,12 @@
-import type { Article, Media, MenuField, PopulatedAuthors, Topic, User, Volume } from "@/payload-types"
+import type {
+  Article,
+  Media,
+  MenuField,
+  PopulatedAuthors,
+  Topic,
+  User,
+  Volume,
+} from "@/payload-types"
 import { getMediaUrl } from "@/utilities/getMediaUrl"
 import { getServerSideURL } from "@/utilities/getURL"
 import { convertLexicalToPlaintext } from "@payloadcms/richtext-lexical/plaintext"
