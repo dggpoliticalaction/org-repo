@@ -18,7 +18,6 @@ import { HeaderActions } from "@/Header/HeaderActions/Component"
 import type { Footer, Header } from "@/payload-types"
 import { getCachedGlobal } from "@/utilities/getGlobals"
 import { SearchIcon, TextSearch, User, XIcon } from "lucide-react"
-import Link from "next/link"
 import React from "react"
 
 export async function Header(): Promise<React.JSX.Element> {
@@ -76,13 +75,13 @@ export async function Header(): Promise<React.JSX.Element> {
                 <SocialLinks socials={socials} className="px-4 py-3" />
               </SheetContent>
             </Sheet>
-            <Link
+            <a
               href="/"
               aria-label="Link to Home"
               className="inline-flex items-center justify-center"
             >
               <Logo />
-            </Link>
+            </a>
             <div className="flex items-center justify-end gap-2">
               <HeaderActions actions={actions} className="hidden lg:flex" />
               <Sheet>
@@ -115,7 +114,6 @@ export async function Header(): Promise<React.JSX.Element> {
                       size="lg"
                       className="w-full"
                       href="/admin/login"
-                      prefetch={false}
                     >
                       Log In
                     </LinkButton>
