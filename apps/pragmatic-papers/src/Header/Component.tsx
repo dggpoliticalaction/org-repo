@@ -109,12 +109,7 @@ export async function Header(): Promise<React.JSX.Element> {
                       actions={actions}
                       className="w-full justify-center [&>a]:w-1/2"
                     />
-                    <LinkButton
-                      variant="outline"
-                      size="lg"
-                      className="w-full"
-                      href="/admin/login"
-                    >
+                    <LinkButton variant="outline" size="lg" className="w-full" href="/admin/login">
                       Log In
                     </LinkButton>
                   </div>
