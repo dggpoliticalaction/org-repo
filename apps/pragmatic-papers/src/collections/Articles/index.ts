@@ -18,6 +18,7 @@ import { SquiggleRule } from "@/blocks/SquiggleRule/config"
 import { detectMathBlocks } from "@/collections/Articles/hooks/detectMathBlocks"
 import { generateFootnotes } from "@/collections/Articles/hooks/generateFootnotes"
 import { populateAuthors } from "@/collections/Articles/hooks/populateAuthors"
+import { populateVolume } from "@/collections/Articles/hooks/populateVolume"
 import { revalidateArticle, revalidateDelete } from "@/collections/Articles/hooks/revalidateArticle"
 import { footnotesArrayField } from "@/fields/footnotes"
 import { menu } from "@/fields/menu"
@@ -287,6 +288,26 @@ export const Articles: CollectionConfig = {
       ],
     },
     {
+      name: "populatedVolume",
+      interfaceName: "PopulatedVolume",
+      type: "group",
+      virtual: true,
+      access: {
+        update: () => false,
+      },
+      admin: {
+        disabled: true,
+        readOnly: true,
+      },
+      fields: [
+        { name: "id", type: "number" },
+        { name: "slug", type: "text" },
+        { name: "volumeNumber", type: "number" },
+        { name: "title", type: "text" },
+        { name: "publishedAt", type: "date" },
+      ],
+    },
+    {
       name: "topics",
       type: "relationship",
       admin: {
@@ -312,7 +333,7 @@ export const Articles: CollectionConfig = {
       detectMathBlocks,
     ],
     afterChange: [revalidateArticle],
-    afterRead: [populateAuthors],
+    afterRead: [populateAuthors, populateVolume],
     afterDelete: [revalidateDelete],
   },
   versions: {
