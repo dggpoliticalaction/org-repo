@@ -24,12 +24,14 @@ This repo uses some additional tools:
 ### Quick Start
 
 1. [Clone the repo](https://github.com/digitalgroundgame/pragmatic-papers.git) and `cd` into it.
-2. *(Optional)* Set up the private display font — see [Private Font Setup](#private-font-setup) below. Don't worry you can come back to this later.
+2. _(Optional)_ Set up the private display font — see [Private Font Setup](#private-font-setup) below. Don't worry you can come back to this later.
 3. Run `pnpm install`. The preinstall hook copies `apps/pragmatic-papers/.env` from `.env.example` if missing.
 4. Start dev:
-  ```bash
-   pnpm dev
-  ```
+
+```bash
+ pnpm dev
+```
+
 5. Open [http://localhost:8000](http://localhost:8000).
 
 ## Private Font Setup
@@ -85,7 +87,7 @@ Here are the most important scripts available in the root `package.json`:
 - `pnpm dev`: Start the application in development mode.
 - `pnpm dev:db`: Start the development docker container. This happens automatically when running `pnpm dev`.
 - `pnpm dev:db-down`: Stop the development docker container.
-- `pnpm dev:db-nuke`: Stop the container *and* remove the database volume.
+- `pnpm dev:db-nuke`: Stop the container _and_ remove the database volume.
 - `pnpm lint`: Lint files with `eslint`.
 - `pnpm format`: Format files with `prettier`.
 - `pnpm check-types`: Runs typescript compiler in no emit mode to check for type errors.
@@ -108,4 +110,3 @@ Migrations will be required for non-development database environments.
 
 - [Payload Documentation](https://payloadcms.com/docs/getting-started/what-is-payload)
 - [Payload Migration Documentation](https://payloadcms.com/docs/database/migrations)
-
