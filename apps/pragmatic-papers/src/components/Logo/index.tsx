@@ -16,8 +16,7 @@ const logoVariants = cva("w-auto text-foreground", {
 })
 
 export interface LogoProps
-  extends React.SVGProps<SVGSVGElement>,
-    VariantProps<typeof logoVariants> {
+  extends React.SVGProps<SVGSVGElement>, VariantProps<typeof logoVariants> {
   love?: boolean
 }
 
