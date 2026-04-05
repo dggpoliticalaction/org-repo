@@ -201,6 +201,10 @@ importers:
       typescript:
         specifier: ^5.7.3
         version: 5.9.3
+    optionalDependencies:
+      '@digitalgroundgame/fonts':
+        specifier: 1.2.0
+        version: 1.2.0
 
   packages/eslint-config:
     devDependencies:
@@ -589,6 +593,9 @@ packages:
 
   '@date-fns/tz@1.2.0':
     resolution: {integrity: sha512-LBrd7MiJZ9McsOgxqWX7AaxrDjcFVjWH/tIKJd7pnR7McaslGYOP1QmmiBXdJH/H/yLCT+rcQ7FaPBUxRGUtrg==}
+
+  '@digitalgroundgame/fonts@1.2.0':
+    resolution: {integrity: sha512-Dh+RuujVfiZN36E18kl6wo9HTdkzVtCVPUSt+vYnvcPy0QFrkZuhd6ClyxFWdRyUG/lkriq7upj9ZX79T3WBtA==, tarball: https://npm.pkg.github.com/download/@digitalgroundgame/fonts/1.2.0/86599b89015d1d704b41f2fc3e33444da3209824}
 
   '@dnd-kit/accessibility@3.1.1':
     resolution: {integrity: sha512-2P+YgaXF+gRsIihwwY1gCsQSYnu9Zyj2py8kY5fFvUM1qm2WA2u639R6YNVfU4GWr+ZM5mqEsfHZZLoRONbemw==}
@@ -6631,6 +6638,9 @@ snapshots:
   '@corex/deepmerge@4.0.43': {}
 
   '@date-fns/tz@1.2.0': {}
+
+  '@digitalgroundgame/fonts@1.2.0':
+    optional: true
 
   '@dnd-kit/accessibility@3.1.1(react@19.2.3)':
     dependencies:
