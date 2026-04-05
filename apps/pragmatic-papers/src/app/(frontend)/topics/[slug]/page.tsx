@@ -71,7 +71,6 @@ const queryArticlesByTopic = cache(async (topicId: number, page: number = 1) => 
     limit: ARTICLES_PER_PAGE,
     page,
     overrideAccess: draft,
-    pagination: false,
     where: {
       topics: {
         equals: topicId,
