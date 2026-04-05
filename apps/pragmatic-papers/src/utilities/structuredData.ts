@@ -32,7 +32,6 @@ function getImageUrl(media: Media | number | null | undefined): string | undefin
   return getMediaUrl(media.sizes?.og?.url || media.url) || undefined
 }
 
-
 export function buildArticleJsonLd(article: Article, path: string): WithContext<ArticleLeaf> {
   const fullUrl = `${SERVER_URL}${path}`
 
