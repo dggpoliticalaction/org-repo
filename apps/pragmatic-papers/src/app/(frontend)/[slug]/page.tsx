@@ -8,9 +8,12 @@ import { getPayload, type RequiredDataFromCollectionSlug } from "payload"
 import { cache, Suspense } from "react"
 
 import { RenderBlocks } from "@/blocks/RenderBlocks"
+import { JsonLd } from "@/components/JsonLd"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { RenderHero } from "@/heros/RenderHero"
 import { generateMeta } from "@/utilities/generateMeta"
+import { getCachedGlobal } from "@/utilities/getGlobals"
+import { buildBreadcrumbJsonLd, buildHomeJsonLd } from "@/utilities/structuredData"
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const payload = await getPayload({ config: configPromise })
@@ -85,6 +88,7 @@ export default async function Page({ params, searchParams }: Args): Promise<Reac
   let page: RequiredDataFromCollectionSlug<"pages"> | null = await queryPageBySlug({
     slug,
   })
+  const { socials } = await getCachedGlobal("footer", 1)()
 
   // Remove this code once your website is seeded
   if (!page && slug === "home") {
@@ -97,8 +101,13 @@ export default async function Page({ params, searchParams }: Args): Promise<Reac
 
   const { hero, layout } = page
 
+  const jsonLdData =
+    slug === "home"
+      ? buildHomeJsonLd(socials)
+      : [buildBreadcrumbJsonLd([{ name: page.meta?.title || slug, path: `/${slug}` }])]
   return (
     <article>
+      <JsonLd data={jsonLdData} />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
