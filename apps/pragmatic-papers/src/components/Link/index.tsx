@@ -19,7 +19,9 @@ interface CMSLinkType {
   type?: "custom" | "reference" | null
   url?: string | null
 }
-
+/**
+ * @deprecated Use CMSLink2 instead
+ */
 export const CMSLink: React.FC<CMSLinkType> = (props) => {
   const {
     type,
