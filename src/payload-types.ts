@@ -420,6 +420,7 @@ export interface Article {
   authors?: (number | User)[] | null;
   createdBy?: (number | null) | User;
   populatedAuthors?: PopulatedAuthors;
+  populatedVolume?: PopulatedVolume;
   topics?: (number | Topic)[] | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -631,6 +632,17 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PopulatedVolume".
+ */
+export interface PopulatedVolume {
+  id?: number | null;
+  slug?: string | null;
+  volumeNumber?: number | null;
+  title?: string | null;
+  publishedAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1464,6 +1476,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   authors?: T;
   createdBy?: T;
   populatedAuthors?: T | PopulatedAuthorsSelect<T>;
+  populatedVolume?: T | PopulatedVolumeSelect<T>;
   topics?: T;
   generateSlug?: T;
   slug?: T;
@@ -1514,6 +1527,17 @@ export interface PopulatedAuthorsSelect<T extends boolean = true> {
 export interface MenuFieldSelect<T extends boolean = true> {
   link?: T | LinkFieldSelect<T>;
   id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PopulatedVolume_select".
+ */
+export interface PopulatedVolumeSelect<T extends boolean = true> {
+  id?: T;
+  slug?: T;
+  volumeNumber?: T;
+  title?: T;
+  publishedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

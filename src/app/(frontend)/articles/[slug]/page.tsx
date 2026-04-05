@@ -1,5 +1,6 @@
 import { AuthorList } from "@/components/Authors/AuthorList"
 import { FootnoteList } from "@/components/FootnoteList"
+import { JsonLd } from "@/components/JsonLd"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
@@ -8,6 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import { ArticleHero } from "@/heros/ArticleHero"
 import { MathJaxProvider } from "@/providers/MathJaxProvider"
 import { generateMeta } from "@/utilities/generateMeta"
+import { buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/utilities/structuredData"
 import configPromise from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
@@ -80,6 +82,12 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
 
   return (
     <article className="mx-auto max-w-2xl space-y-6 px-4">
+      <JsonLd
+        data={[
+          buildArticleJsonLd(article, url),
+          buildBreadcrumbJsonLd([{ name: article.meta?.title || article.title, path: url }]),
+        ]}
+      />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
