@@ -44,18 +44,6 @@ export default async function RootLayout({
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
         <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
-        <link
-          href="/feed.articles"
-          rel="alternate"
-          title="Pragmatic Papers - Articles RSS Feed"
-          type="application/rss+xml"
-        />
-        <link
-          href="/feed.volumes"
-          rel="alternate"
-          title="Pragmatic Papers - Volumes RSS Feed"
-          type="application/rss+xml"
-        />
       </head>
       <body className="flex min-h-screen flex-col">
         <ThemeProvider
@@ -80,4 +68,15 @@ export default async function RootLayout({
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   openGraph: mergeOpenGraph(),
+  twitter: {
+    card: "summary_large_image",
+  },
+  alternates: {
+    types: {
+      "application/rss+xml": [
+        { url: "/feed.articles", title: "Pragmatic Papers - Articles RSS Feed" },
+        { url: "/feed.volumes", title: "Pragmatic Papers - Volumes RSS Feed" },
+      ],
+    },
+  },
 }

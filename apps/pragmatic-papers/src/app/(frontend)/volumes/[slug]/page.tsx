@@ -1,5 +1,6 @@
 import { ArticleCard } from "@/components/ArticleCard"
 import { AuthorList } from "@/components/Authors/AuthorList"
+import { JsonLd } from "@/components/JsonLd"
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
@@ -8,6 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import type { Article } from "@/payload-types"
 import { formatDateTime } from "@/utilities/formatDateTime"
 import { generateMeta } from "@/utilities/generateMeta"
+import { buildBreadcrumbJsonLd, buildVolumeJsonLd } from "@/utilities/structuredData"
 import { toRoman } from "@/utilities/toRoman"
 import configPromise from "@payload-config"
 import type { Metadata } from "next"
@@ -80,9 +82,14 @@ export default async function VolumePage({
   const volume = await queryVolumeBySlug({ slug })
 
   if (!volume) return <PayloadRedirects url={url} />
+
+  const volumeTitle = `Volume ${toRoman(Number(volume.slug))}`
+
   const { publishedAt, editorsNote } = volume
 
   const articles = volume.articles?.filter((a): a is Article => typeof a !== "number")
+
+  if (!articles) return <PayloadRedirects url={url} />
 
   const seen = new Set<string>()
   const volumeAuthors = articles
@@ -95,6 +102,15 @@ export default async function VolumePage({
 
   return (
     <article className="mx-auto max-w-3xl space-y-3 px-4">
+      <JsonLd
+        data={[
+          buildVolumeJsonLd(volume, url),
+          buildBreadcrumbJsonLd([
+            { name: "Volumes", path: "/volumes" },
+            { name: volumeTitle, path: url },
+          ]),
+        ]}
+      />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 

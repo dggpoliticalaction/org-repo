@@ -4,7 +4,6 @@ import { ModeToggle } from "@/components/ModeToggle"
 import { SocialLinks } from "@/components/SocialLinks"
 import type { Footer } from "@/payload-types"
 import { getCachedGlobal } from "@/utilities/getGlobals"
-import Link from "next/link"
 import { Copyright } from "./Copyright"
 
 export async function Footer(): Promise<React.ReactElement> {
@@ -13,9 +12,9 @@ export async function Footer(): Promise<React.ReactElement> {
   return (
     <footer className="container mt-8 space-y-1 py-2">
       <div className="flex flex-col justify-between gap-2 border-t pt-2 md:flex-row md:items-center">
-        <Link href="/" className="flex-1">
+        <a href="/" className="flex-1">
           <Logo size="sm" />
-        </Link>
+        </a>
         <div className="flex flex-row items-center gap-2">
           <SocialLinks parentId={id} socials={socials} aria-label="Footer Social Links" />
           <ModeToggle />
