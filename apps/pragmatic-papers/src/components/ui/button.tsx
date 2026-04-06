@@ -42,14 +42,15 @@ const buttonVariants = cva(
   },
 )
 
-type ButtonProps = ButtonPrimitive.Props & VariantProps<typeof buttonVariants>
+type ButtonVariantProps = VariantProps<typeof buttonVariants>
+type ButtonProps = ButtonPrimitive.Props & ButtonVariantProps
 
 function Button({
   className,
   variant = "default",
   size = "default",
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>): React.ReactNode {
+}: ButtonProps): React.ReactNode {
   return (
     <ButtonPrimitive
       data-slot="button"
@@ -59,4 +60,4 @@ function Button({
   )
 }
 
-export { Button, buttonVariants, type ButtonProps }
+export { Button, buttonVariants, type ButtonProps, type ButtonVariantProps }
