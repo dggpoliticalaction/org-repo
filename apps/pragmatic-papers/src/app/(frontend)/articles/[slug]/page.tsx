@@ -27,6 +27,9 @@ export async function generateStaticParams(): Promise<{ slug: string | null | un
     select: {
       slug: true,
     },
+    context: {
+      skipAfterRead: true,
+    },
   })
 
   const params = articles.docs.map(({ slug }) => {
