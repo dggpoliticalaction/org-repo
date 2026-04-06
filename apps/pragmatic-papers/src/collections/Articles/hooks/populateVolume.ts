@@ -6,6 +6,7 @@ export const populateVolume: CollectionAfterReadHook<Article> = async ({
   req: { payload, context },
 }) => {
   if (context.skipAfterRead) return doc
+  if (!doc.id) return doc
   const result = await payload.find({
     collection: "volumes",
     where: { articles: { contains: doc.id } },
