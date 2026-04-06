@@ -1,6 +1,5 @@
 import { type ButtonProps } from "@/components/ui/button"
 import { cn } from "@/utilities/utils"
-import Link from "next/link"
 import React from "react"
 
 import { LinkButton } from "@/components/ui/link-button"
@@ -20,7 +19,9 @@ interface CMSLinkType {
   type?: "custom" | "reference" | null
   url?: string | null
 }
-
+/**
+ * @deprecated Use CMSLink2 instead
+ */
 export const CMSLink: React.FC<CMSLinkType> = (props) => {
   const {
     type,
@@ -48,10 +49,10 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
   /* Ensure we don't break any styles set by richText */
   if (appearance === "inline") {
     return (
-      <Link className={cn(className)} href={href || url || ""} {...newTabProps}>
+      <a className={cn(className)} href={href || url || ""} {...newTabProps}>
         {label && label}
         {children && children}
-      </Link>
+      </a>
     )
   }
 
