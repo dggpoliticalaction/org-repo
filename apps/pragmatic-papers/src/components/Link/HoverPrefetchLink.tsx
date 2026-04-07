@@ -1,8 +1,8 @@
-// "use client"
+"use client"
 
-// import Link from "next/link"
-// import { usePathname } from "next/navigation"
-// import { useState } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useState } from "react"
 
 /**
  * `HoverPrefetchLink` is a wrapper around Next.js's `Link` component.
@@ -33,21 +33,21 @@ export const HoverPrefetchLink: React.FC<React.ComponentProps<"a">> = ({
   className,
   ...props
 }) => {
-  // const [active, setActive] = useState(false)
-  // const pathname = usePathname()
+  const [active, setActive] = useState(false)
+  const pathname = usePathname()
   // Starts-with matching (e.g. href='/about', pathname='/about/me') for active indication
-  // const isCurrent = href === "/" ? pathname === href : pathname.startsWith(href)
+  const isCurrent = href === "/" ? pathname === href : pathname.startsWith(href)
 
   return (
-    <a
+    <Link
       href={href}
       className={className}
       {...props}
-      // prefetch={active ? null : false}
-      // onMouseEnter={() => setActive(true)}
-      // data-active={isCurrent}
+      prefetch={active ? null : false}
+      onMouseEnter={() => setActive(true)}
+      data-active={isCurrent}
     >
       {children}
-    </a>
+    </Link>
   )
 }
