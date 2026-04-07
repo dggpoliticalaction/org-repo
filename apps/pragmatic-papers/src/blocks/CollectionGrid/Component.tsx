@@ -38,12 +38,12 @@ export const CollectionGridBlock: React.FC<
     <>
       <LayoutComponent
         id={id ?? undefined}
-        className="container mb-10 items-stretch md:mb-20"
+        className="container mb-9 items-stretch md:mb-12"
         slots={slots}
         priority={priority}
         loading={priority ? "eager" : undefined}
       />
-      <div className="container mb-10 last-of-type:mb-10 md:mb-20">
+      <div className="container mb-9 md:mb-12">
         <Separator />
       </div>
     </>
