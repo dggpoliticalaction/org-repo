@@ -256,7 +256,7 @@ export const createRichTextShowcaseArticle = async (
     meta: {
       title,
       description:
-        "A single reference article that exercises every rich-text formatting option available to authors: headings, bold, italic, underline, strikethrough, super- and subscript, ordered and unordered lists, check lists, blockquotes, tables, links, horizontal rules, and a captioned media block.",
+        "A reference article showcasing all available basic rich-text formatting: headings, lists, tables, links, and more.",
       image: mediaDocs[0]?.id,
     },
   })
