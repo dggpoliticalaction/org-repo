@@ -50,7 +50,7 @@
     "better-react-mathjax": "^2.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "feed": "^5.1.0",
