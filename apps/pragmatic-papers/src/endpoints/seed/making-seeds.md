@@ -33,7 +33,8 @@ Seed scripts populate the database with sample content for development. Rather t
 
 **Table Utilities:**
 
-- `createTableCellNode(text, headerState?)` - Creates a `<th>` (headerState=1) or `<td>` (headerState=0) cell
+- `createTableHeaderNode(text)` - Creates a `<th>` header cell
+- `createTableCellNode(text)` - Creates a `<td>` data cell
 - `createTableRowNode(cells)` - Creates a table row from an array of cell nodes
 - `createTableNode(rows)` - Creates a table from an array of row nodes
 
@@ -103,7 +104,7 @@ Unlike the media helpers above, the math helpers are exported and can be importe
 ```typescript
 import { createMathInlineBlock, createMathDisplayBlock } from "./math-blocks"
 
-createMathInlineBlock("E = mc^2")      // inline LaTeX within a paragraph (version: 1, inlineBlock)
+createMathInlineBlock("E = mc^2") // inline LaTeX within a paragraph (version: 1, inlineBlock)
 createMathDisplayBlock("\\int_0^1 x") // standalone display block (version: 2, block)
 ```
 

@@ -202,16 +202,172 @@ export function createLoremIpsumContent(numberOfParagraphs: number): LexicalCont
 }
 
 /**
- * Creates a table cell node (renders as <th> when headerState > 0, <td> otherwise)
+ * Creates a heading node (h2, h3, or h4)
  */
-export function createTableCellNode(text: string, headerState: 0 | 1 = 0): SerializedLexicalNode {
+export function createHeadingNode(
+  text: string | SerializedTextNode | (SerializedTextNode | Record<string, unknown>)[],
+  tag: "h2" | "h3" | "h4" = "h2",
+): SerializedLexicalNode {
+  const children = Array.isArray(text)
+    ? (text as SerializedTextNode[])
+    : typeof text === "string"
+      ? [createTextNode(text)]
+      : [text]
+
+  const node = {
+    children,
+    direction: "ltr",
+    format: "",
+    indent: 0,
+    tag,
+    type: "heading",
+    version: 1,
+  }
+  return node
+}
+
+/**
+ * Creates a list item node for use within a list
+ */
+export function createListItemNode(
+  text: string | SerializedTextNode | (SerializedTextNode | Record<string, unknown>)[],
+  value = 1,
+  checked?: boolean,
+): SerializedLexicalNode {
+  const children = Array.isArray(text)
+    ? (text as SerializedTextNode[])
+    : typeof text === "string"
+      ? [createTextNode(text)]
+      : [text]
+
+  const node = {
+    children,
+    direction: "ltr",
+    format: "",
+    indent: 0,
+    type: "listitem",
+    value,
+    version: 1,
+    ...(checked !== undefined && { checked }),
+  }
+  return node
+}
+
+/**
+ * Creates a list node (bullet, number, or check)
+ */
+export function createListNode(
+  items: SerializedLexicalNode[],
+  listType: "bullet" | "number" | "check" = "bullet",
+): SerializedLexicalNode {
+  const node = {
+    children: items,
+    direction: "ltr",
+    format: "",
+    indent: 0,
+    listType,
+    start: 1,
+    tag: listType === "number" ? "ol" : "ul",
+    type: "list",
+    version: 1,
+  }
+  return node
+}
+
+/**
+ * Creates a blockquote node
+ */
+export function createQuoteNode(
+  text: string | SerializedTextNode | (SerializedTextNode | Record<string, unknown>)[],
+): SerializedLexicalNode {
+  const children = Array.isArray(text)
+    ? (text as SerializedTextNode[])
+    : typeof text === "string"
+      ? [createTextNode(text)]
+      : [text]
+
+  const node = {
+    children,
+    direction: "ltr",
+    format: "",
+    indent: 0,
+    type: "quote",
+    version: 1,
+  }
+  return node
+}
+
+/**
+ * Creates a horizontal rule node
+ */
+export function createHorizontalRuleNode(): SerializedLexicalNode {
+  const node = {
+    type: "horizontalrule",
+    version: 1,
+  }
+  return node
+}
+
+/**
+ * Creates a media block node
+ */
+export function createMediaBlockNode(mediaId: number): SerializedLexicalNode {
+  const node = {
+    type: "block",
+    fields: {
+      blockType: "mediaBlock",
+      media: mediaId,
+    },
+    format: "",
+    version: 2,
+  }
+  return node
+}
+
+/**
+ * Text format bit flags for Lexical text nodes
+ */
+export const TextFormat = {
+  Normal: 0,
+  Bold: 1,
+  Italic: 2,
+  Strikethrough: 4,
+  Underline: 8,
+  Code: 16,
+  Subscript: 32,
+  Superscript: 64,
+} as const
+
+/**
+ * Creates a table header cell node (<th>)
+ */
+export function createTableHeaderNode(text: string): SerializedLexicalNode {
   const node = {
     type: "tablecell",
     version: 1,
     direction: "ltr",
     format: "",
     indent: 0,
-    headerState,
+    headerState: 1,
+    colSpan: 1,
+    rowSpan: 1,
+    backgroundColor: null,
+    children: [createParagraph(text)],
+  }
+  return node
+}
+
+/**
+ * Creates a table cell node (<td>)
+ */
+export function createTableCellNode(text: string): SerializedLexicalNode {
+  const node = {
+    type: "tablecell",
+    version: 1,
+    direction: "ltr",
+    format: "",
+    indent: 0,
+    headerState: 0,
     colSpan: 1,
     rowSpan: 1,
     backgroundColor: null,

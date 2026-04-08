@@ -30,10 +30,10 @@ import {
   PreviewField,
 } from "@payloadcms/plugin-seo/fields"
 import { checkArticles } from "./hooks/checkArticles"
+import { getNextVolumeNumber } from "./hooks/getNextVolumeNumber"
 import { pushToWebhooks } from "./hooks/pushToWebhooks"
 import { revalidateArticle, revalidateDelete } from "./hooks/revalidateVolumes"
 import { setDefaultSeoTitle } from "./hooks/seoTitle"
-import { getNextVolumeNumber } from "./hooks/getNextVolumeNumber"
 
 export const Volumes: CollectionConfig = {
   slug: "volumes",
@@ -94,7 +94,7 @@ export const Volumes: CollectionConfig = {
                   return [
                     ...rootFeatures,
                     AlignFeature(),
-                    HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
+                    HeadingFeature({ enabledHeadingSizes: ["h2", "h3", "h4"] }),
                     BlocksFeature({ blocks: [Banner, Code, MediaBlock, SquiggleRule] }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
