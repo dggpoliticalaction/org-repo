@@ -198,7 +198,7 @@
   --tw-prose-links: var(--color-foreground);
   --tw-prose-bold: var(--color-foreground);
   --tw-prose-counters: var(--color-muted-foreground);
-  --tw-prose-bullets: var(--color-ring);
+  --tw-prose-bullets: var(--color-muted-foreground);
   --tw-prose-hr: var(--color-border);
   --tw-prose-quotes: var(--color-primary);
   --tw-prose-quote-borders: var(--color-brand);
