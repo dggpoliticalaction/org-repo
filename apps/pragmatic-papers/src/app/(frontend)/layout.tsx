@@ -54,7 +54,7 @@ export default async function RootLayout({
         >
           <AdminBar />
           <Header />
-          <main role="main" className="my-8 flex-1">
+          <main role="main" className="my-6 flex-1">
             {children}
           </main>
           <Footer />

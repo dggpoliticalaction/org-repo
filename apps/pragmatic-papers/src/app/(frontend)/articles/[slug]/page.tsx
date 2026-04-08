@@ -106,9 +106,9 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
         />
       </MathJaxProvider>
       <FootnoteList footnotes={footnotes} />
-      <TopicsList topics={topics} className="mt-8" />
+      <Separator />
+      <TopicsList topics={topics} />
       <AuthorList aria-label="Article Authors" authors={populatedAuthors} />
-      <Separator className="mt-16" />
     </article>
   )
 }

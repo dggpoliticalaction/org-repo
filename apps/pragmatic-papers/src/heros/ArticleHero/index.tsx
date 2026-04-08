@@ -27,7 +27,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
           />
         </div>
       )}
-      <h1 className="mt-8">{title}</h1>
+      <h1>{title}</h1>
       <div className="dark:text-brand-high-contrast text-brand flex gap-2 font-serif font-bold underline-offset-4">
         {populatedAuthors &&
           populatedAuthors.map(({ id, slug, name }, index) => (
