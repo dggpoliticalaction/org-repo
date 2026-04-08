@@ -120,7 +120,7 @@ export default function RichText({
   return (
     <ConvertRichText
       className={cn(
-        "payload-richtext prose-xl prose-neutral font-serif leading-snug",
+        "payload-richtext prose-lg md:prose-xl prose-neutral text-primary prose-p:leading-relaxed prose-blockquote:text-(--tw-prose-body) font-serif",
         enableGutter ? "container" : "max-w-none",
         enableProse && "prose dark:prose-invert",
         className,
