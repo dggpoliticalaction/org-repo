@@ -1,14 +1,13 @@
 import type { Media, User } from "@/payload-types"
 import type { Payload } from "payload"
 import { createArticle, validateWriters } from "../articles"
-import { createEmptyParagraph, createParagraph, createRichText, createTextNode } from "../richtext"
+import { createParagraph, createRichText, createTextNode } from "../richtext"
 
 const createArticleContentWithFootnotes = (referencedArticleId: number) => {
   const children = [
     createParagraph(
       "This article demonstrates the footnotes feature. Footnotes are useful for providing additional context, citations, and references.",
     ),
-    createEmptyParagraph(),
     createParagraph([
       createTextNode(
         "Academic writing often requires citations to support claims and provide readers with sources for further reading",
@@ -27,7 +26,6 @@ const createArticleContentWithFootnotes = (referencedArticleId: number) => {
         ". Footnotes can be inserted anywhere in the text where additional information is needed.",
       ),
     ]),
-    createEmptyParagraph(),
     createParagraph([
       createTextNode(
         "The footnotes feature also supports attribution links, which can point to external sources or internal references",
@@ -52,7 +50,6 @@ const createArticleContentWithFootnotes = (referencedArticleId: number) => {
         ". This makes it easy to cite sources and provide readers with direct access to referenced materials.",
       ),
     ]),
-    createEmptyParagraph(),
     createParagraph([
       createTextNode("Multiple footnotes can be used throughout a document"),
       {
@@ -69,7 +66,6 @@ const createArticleContentWithFootnotes = (referencedArticleId: number) => {
         ", and they are automatically numbered in the order they appear. This makes it easy to reference specific notes when discussing complex topics.",
       ),
     ]),
-    createEmptyParagraph(),
     createParagraph([
       createTextNode(
         "The footnote system integrates seamlessly with the Lexical rich text editor, allowing authors to insert footnotes inline while writing. Footnotes appear as numbered references in the text",
@@ -98,7 +94,6 @@ const createArticleContentWithFootnotes = (referencedArticleId: number) => {
 
   if (referencedArticleId) {
     children.push(
-      createEmptyParagraph(),
       createParagraph([
         createTextNode(
           "Footnotes can also link to internal references, such as other articles in the collection",

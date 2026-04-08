@@ -16,7 +16,7 @@ Seed scripts populate the database with sample content for development. Rather t
 
 - `createTextNode(text, format?)` - Creates a text node
 - `createParagraph(text | textNode | array)` - Creates a paragraph with text/nodes
-- `createEmptyParagraph()` - Creates a line break paragraph
+- `createEmptyParagraph()` - Creates a line break paragraph, not commonly used.
 - `createRichText(children)` - Wraps paragraph nodes in root structure
 
 **High-Level Functions:**
@@ -136,7 +136,6 @@ export const createMyFeatureArticle = async (
   // Build content programmatically
   const content = createRichText([
     createParagraph("Introduction paragraph"),
-    createEmptyParagraph(),
     createMyCustomBlock({
       /* data */
     }),
@@ -206,9 +205,7 @@ export const createExampleArticle = async (payload, writer, mediaDocs) => {
   // Build content
   const content = createRichText([
     createParagraph("First paragraph from JSON"),
-    createEmptyParagraph(),
     createMediaBlock(media1.id),
-    createEmptyParagraph(),
     createParagraph("Second paragraph from JSON"),
   ])
 

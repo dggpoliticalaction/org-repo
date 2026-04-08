@@ -3,7 +3,6 @@ import type { Payload } from "payload"
 import { createArticle } from "../articles"
 import { createMediaFromURL } from "../media"
 import {
-  createEmptyParagraph,
   createLinkNode,
   createParagraph,
   createRichText,
@@ -79,7 +78,6 @@ export const createMediaCollageArticle = async (
   const content = createRichText([
     createParagraph("First, Click on an image to see a modal pop up. It displays captions!"),
     createMediaBlock(itsBadMedia.id),
-    createEmptyParagraph(),
     createParagraph("Try viewing a grid of images!"),
     createMediaCollageBlock(
       [mediaDocs[3]?.id, mediaDocs[0]?.id, mediaDocs[2]?.id, mediaDocs[1]?.id].filter(
@@ -87,7 +85,6 @@ export const createMediaCollageArticle = async (
       ),
       "grid",
     ),
-    createEmptyParagraph(),
     createParagraph("View them in a carousel! Click for modals!"),
     createMediaCollageBlock(
       [mediaDocs[3]?.id, mediaDocs[0]?.id, mediaDocs[2]?.id].filter(
@@ -95,7 +92,6 @@ export const createMediaCollageArticle = async (
       ),
       "carousel",
     ),
-    createEmptyParagraph(),
     createParagraph("Mix and match! Carousel with different images!"),
     createMediaCollageBlock(
       [mediaDocs[1]?.id, blueCoatMedia.id, mediaDocs[2]?.id, itsBadMedia.id].filter(
@@ -103,7 +99,6 @@ export const createMediaCollageArticle = async (
       ),
       "carousel",
     ),
-    createEmptyParagraph(),
     createParagraph("Another grid layout with differently shaped images!"),
     createMediaCollageBlock(
       [mediaDocs[0]?.id, itsBadMedia.id, blueCoatMedia.id].filter(

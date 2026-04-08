@@ -198,7 +198,7 @@ export function generateLoremIpsumParagraphs(numberOfParagraphs: number): string
  */
 export function createLoremIpsumContent(numberOfParagraphs: number): LexicalContent {
   const paragraphs = generateLoremIpsumParagraphs(numberOfParagraphs)
-  return createRichTextFromParagraphs(paragraphs, true)
+  return createRichTextFromParagraphs(paragraphs)
 }
 
 /**
