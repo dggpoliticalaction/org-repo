@@ -200,7 +200,7 @@
   --tw-prose-counters: var(--color-muted-foreground);
   --tw-prose-bullets: var(--color-muted-foreground);
   --tw-prose-hr: var(--color-border);
-  --tw-prose-quotes: var(--color-primary);
+  --tw-prose-quotes: var(--color-muted-foreground);
   --tw-prose-quote-borders: var(--color-brand);
   --tw-prose-captions: var(--color-muted-foreground);
   --tw-prose-kbd: var(--color-primary);
