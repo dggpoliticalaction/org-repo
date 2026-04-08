@@ -122,9 +122,9 @@ export default function RichText({
   return (
     <ConvertRichText
       className={cn(
-        "payload-richtext prose-lg md:prose-xl prose-neutral text-foreground prose-p:leading-relaxed prose-blockquote:text-(--tw-prose-body) font-serif",
+        "payload-richtext prose-lg md:prose-xl prose-brand prose-p:leading-relaxed prose-h2:mt-12 prose-h2:mb-6 prose-h2:text-4xl md:prose-h2:text-5xl prose-h3:text-3xl md:prose-h3:text-4xl prose-h4:text-2xl md:prose-h4:text-3xl font-serif",
         enableGutter ? "container" : "max-w-none",
-        enableProse && "prose dark:prose-invert",
+        enableProse && "prose",
         className,
       )}
       converters={createJsxConverters(parentDoc)}
