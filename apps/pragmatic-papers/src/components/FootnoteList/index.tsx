@@ -18,7 +18,7 @@ export const FootnoteList: React.FC<FootnoteListProps> = ({ footnotes }) => {
           const url = getLinkFieldUrl(link)
           return (
             <li key={index}>
-              <span id={`footnote-${index}`} className="mr-2">
+              <span id={`footnote-${index}`} className="mr-1">
                 {note}
               </span>
               {attributionEnabled && (
