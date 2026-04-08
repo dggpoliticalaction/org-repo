@@ -181,27 +181,15 @@ const LOREM_IPSUMS = [
  * Generates a Lorem Ipsum sentence with a specified number of characters with terminating period inclusive.
  * Max Characters must be greater than zero.
  */
-export function generateLoremIspumSentence(maxCharacters?: number): string {
-  const sentence = LOREM_IPSUMS[Math.floor(Math.random() * LOREM_IPSUMS.length)]!
-  if (maxCharacters) {
-    return sentence
-      .slice(0, maxCharacters - 1)
-      .trimEnd()
-      .concat(".")
-  }
-  return sentence
+export function generateLoremIspumSentence(): string {
+  return LOREM_IPSUMS[Math.floor(Math.random() * LOREM_IPSUMS.length)]!
 }
 
 /**
  * Generates a Lorem Ipsum paragraph with a specified number of sentences
  */
-export function generateLoremIpsumParagraph(
-  numberOfSentences: number,
-  maxCharacters?: number,
-): string {
-  return Array.from({ length: numberOfSentences }, () => {
-    return generateLoremIspumSentence(maxCharacters)
-  }).join(" ")
+export function generateLoremIpsumParagraph(numberOfSentences: number): string {
+  return Array.from({ length: numberOfSentences }, () => generateLoremIspumSentence()).join(" ")
 }
 
 /**
@@ -210,10 +198,9 @@ export function generateLoremIpsumParagraph(
 export function generateLoremIpsumParagraphs(
   numberOfParagraphs: number,
   numberOfSentences = 5,
-  maxCharacters?: number,
 ): string[] {
   return Array.from({ length: numberOfParagraphs }, () =>
-    generateLoremIpsumParagraph(numberOfSentences, maxCharacters),
+    generateLoremIpsumParagraph(numberOfSentences),
   )
 }
 
@@ -223,13 +210,8 @@ export function generateLoremIpsumParagraphs(
 export function createLoremIpsumContent(
   numberOfParagraphs: number,
   numberOfSentences?: number,
-  maxCharacters?: number,
 ): LexicalContent {
-  const paragraphs = generateLoremIpsumParagraphs(
-    numberOfParagraphs,
-    numberOfSentences,
-    maxCharacters,
-  )
+  const paragraphs = generateLoremIpsumParagraphs(numberOfParagraphs, numberOfSentences)
   return createRichTextFromParagraphs(paragraphs, true)
 }
 
