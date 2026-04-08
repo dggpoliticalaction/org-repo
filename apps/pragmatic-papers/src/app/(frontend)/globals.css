@@ -128,6 +128,8 @@
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-high-contrast: var(--brand-high-contrast);
+  --text-3xl: 2rem;
+  --text-3xl--line-height: calc(2.25 / 2);
 }
 
 @layer base {
@@ -150,13 +152,13 @@
   }
 
   h1 {
-    @apply text-5xl md:text-6xl;
-  }
-  h2 {
     @apply text-4xl md:text-5xl;
   }
-  h3 {
+  h2 {
     @apply text-3xl md:text-4xl;
+  }
+  h3 {
+    @apply text-2xl md:text-3xl;
   }
 }
 
@@ -189,14 +191,14 @@
 @utility prose-brand {
   --tw-prose-body: var(--color-foreground);
   --tw-prose-headings: var(--color-foreground);
-  --tw-prose-lead: var(--color-primary);
-  --tw-prose-links: var(--color-primary);
+  --tw-prose-lead: var(--color-foreground);
+  --tw-prose-links: var(--color-foreground);
   --tw-prose-bold: var(--color-foreground);
   --tw-prose-counters: var(--color-muted-foreground);
   --tw-prose-bullets: var(--color-ring);
   --tw-prose-hr: var(--color-border);
   --tw-prose-quotes: var(--color-primary);
-  --tw-prose-quote-borders: var(--color-border);
+  --tw-prose-quote-borders: var(--color-brand);
   --tw-prose-captions: var(--color-muted-foreground);
   --tw-prose-kbd: var(--color-primary);
   --tw-prose-kbd-shadows: var(--color-border);
@@ -232,4 +234,16 @@
 /* td */
 .lexical-table-cell-header-0 {
   @apply text-foreground;
+}
+
+.list-item-checkbox {
+  @apply relative;
+}
+
+.list-item-checkbox > input {
+  @apply absolute top-2 -left-5 h-4 w-4;
+}
+
+.list-item-checkbox > label {
+  @apply w-full;
 }
