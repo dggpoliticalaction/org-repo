@@ -85,6 +85,9 @@ export const createRichTextShowcaseArticle = async (
       // ── Heading 3 ──────────────────────────────────────────────────────────
       createHeadingNode("Exponents and Indices", "h3"),
 
+      // ── Heading 4 ──────────────────────────────────────────────────────────
+      createHeadingNode("Superscript and Subscript", "h4"),
+
       // ── Super and Sub Text ─────────────────────────────────────────────────
       createParagraph([
         createTextNode(
