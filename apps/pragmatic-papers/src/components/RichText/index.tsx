@@ -67,7 +67,9 @@ function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunctio
     ...LinkJSXConverter({ internalDocToHref }),
     blocks: {
       banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
-      mediaBlock: ({ node }) => <LightboxMediaBlock breakout {...node.fields} />,
+      mediaBlock: ({ node }) => (
+        <LightboxMediaBlock containerClassName="-my-8" breakout {...node.fields} />
+      ),
       mediaCollage: ({ node }) => <MediaCollageBlock {...node.fields} />,
       code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
       cta: ({ node }) => <CallToActionBlock {...node.fields} />,
@@ -120,7 +122,7 @@ export default function RichText({
   return (
     <ConvertRichText
       className={cn(
-        "payload-richtext prose-lg md:prose-xl prose-neutral text-primary prose-p:leading-relaxed prose-blockquote:text-(--tw-prose-body) font-serif",
+        "payload-richtext prose-lg md:prose-xl prose-neutral text-foreground prose-p:leading-relaxed prose-blockquote:text-(--tw-prose-body) font-serif",
         enableGutter ? "container" : "max-w-none",
         enableProse && "prose dark:prose-invert",
         className,
