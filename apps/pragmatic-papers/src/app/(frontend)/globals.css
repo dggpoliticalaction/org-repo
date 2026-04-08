@@ -169,9 +169,9 @@
 @utility drop-cap {
   & > p:first-child::first-letter {
     float: left;
-    font-size: 3em;
-    line-height: 0.9;
-    margin-right: 0.05em;
+    font-size: 3.25em;
+    line-height: 1;
+    margin-right: 0.02em;
     font-weight: bold;
   }
 
