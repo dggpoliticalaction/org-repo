@@ -175,29 +175,61 @@ const LOREM_IPSUMS = [
   "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
   "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur; yee wins.",
   "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-]
+] as const
+
+/**
+ * Generates a Lorem Ipsum sentence with a specified number of characters with terminating period inclusive.
+ * Max Characters must be greater than zero.
+ */
+export function generateLoremIspumSentence(maxCharacters?: number): string {
+  const sentence = LOREM_IPSUMS[Math.floor(Math.random() * LOREM_IPSUMS.length)]!
+  if (maxCharacters) {
+    return sentence
+      .slice(0, maxCharacters - 1)
+      .trimEnd()
+      .concat(".")
+  }
+  return sentence
+}
 
 /**
  * Generates a Lorem Ipsum paragraph with a specified number of sentences
  */
-export function generateLoremIpsumParagraph(numberOfSentences: number): string {
+export function generateLoremIpsumParagraph(
+  numberOfSentences: number,
+  maxCharacters?: number,
+): string {
   return Array.from({ length: numberOfSentences }, () => {
-    return LOREM_IPSUMS[Math.floor(Math.random() * LOREM_IPSUMS.length)]
+    return generateLoremIspumSentence(maxCharacters)
   }).join(" ")
 }
 
 /**
  * Generates an array of Lorem Ipsum paragraphs
  */
-export function generateLoremIpsumParagraphs(numberOfParagraphs: number): string[] {
-  return Array.from({ length: numberOfParagraphs }, () => generateLoremIpsumParagraph(5))
+export function generateLoremIpsumParagraphs(
+  numberOfParagraphs: number,
+  numberOfSentences = 5,
+  maxCharacters?: number,
+): string[] {
+  return Array.from({ length: numberOfParagraphs }, () =>
+    generateLoremIpsumParagraph(numberOfSentences, maxCharacters),
+  )
 }
 
 /**
  * Creates Lorem Ipsum rich text content with spacing between paragraphs
  */
-export function createLoremIpsumContent(numberOfParagraphs: number): LexicalContent {
-  const paragraphs = generateLoremIpsumParagraphs(numberOfParagraphs)
+export function createLoremIpsumContent(
+  numberOfParagraphs: number,
+  numberOfSentences?: number,
+  maxCharacters?: number,
+): LexicalContent {
+  const paragraphs = generateLoremIpsumParagraphs(
+    numberOfParagraphs,
+    numberOfSentences,
+    maxCharacters,
+  )
   return createRichTextFromParagraphs(paragraphs, true)
 }
 

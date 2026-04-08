@@ -135,7 +135,7 @@ export const seed = async (
             heroImage: ctx.media[i % ctx.media.length]?.id,
             meta: {
               title,
-              description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
+              description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1, 150),
               image: ctx.media[i % ctx.media.length]?.id,
             },
           })
@@ -164,7 +164,7 @@ export const seed = async (
             heroImage: ctx.media[i % ctx.media.length]?.id,
             meta: {
               title,
-              description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
+              description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1, 150),
               image: ctx.media[i % ctx.media.length]?.id,
             },
           })
