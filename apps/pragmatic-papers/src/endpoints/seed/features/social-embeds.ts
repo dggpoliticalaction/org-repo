@@ -2,7 +2,6 @@ import type { Media, SocialEmbedBlock, User } from "@/payload-types"
 import type { Payload } from "payload"
 import { createArticle } from "../articles"
 import {
-  createEmptyParagraph,
   createParagraph,
   createRichText,
   generateLoremIpsumParagraphs,
@@ -140,7 +139,6 @@ const createSocialEmbedContent = () => {
     children.push(createSocialEmbedBlock(item))
   }
   children.push(...lipsumParagraphs)
-  children.push(createEmptyParagraph())
 
   return createRichText(children)
 }
@@ -215,7 +213,6 @@ const createLegacySocialEmbedContent = () => {
     children.push(createLegacyEmbedBlock(item))
   }
   children.push(...lipsumParagraphs)
-  children.push(createEmptyParagraph())
 
   return createRichText(children)
 }
