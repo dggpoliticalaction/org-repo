@@ -178,8 +178,7 @@ const LOREM_IPSUMS = [
 ] as const
 
 /**
- * Generates a Lorem Ipsum sentence with a specified number of characters with terminating period inclusive.
- * Max Characters must be greater than zero.
+ * Generates a Lorem Ipsum sentence
  */
 export function generateLoremIspumSentence(): string {
   return LOREM_IPSUMS[Math.floor(Math.random() * LOREM_IPSUMS.length)]!
