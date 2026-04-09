@@ -10,7 +10,7 @@ import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from "./feat
 import { createMediaFromURL } from "./media"
 import { createMenus } from "./menus"
 import { createPages } from "./pages"
-import { createLoremIpsumContent, generateLoremIpsumParagraph } from "./richtext"
+import { createLoremIpsumContent, generateLoremIspumSentence } from "./richtext"
 import { createTopics } from "./topics"
 import { createUsers } from "./users"
 import { createVolumes } from "./volumes"
@@ -135,7 +135,7 @@ export const seed = async (
             heroImage: ctx.media[i % ctx.media.length]?.id,
             meta: {
               title,
-              description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
+              description: generateLoremIspumSentence(),
               image: ctx.media[i % ctx.media.length]?.id,
             },
           })
@@ -164,7 +164,7 @@ export const seed = async (
             heroImage: ctx.media[i % ctx.media.length]?.id,
             meta: {
               title,
-              description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
+              description: generateLoremIspumSentence(),
               image: ctx.media[i % ctx.media.length]?.id,
             },
           })
