@@ -1,6 +1,5 @@
 # Dockerfile for Pragmatic Papers (Next.js + Payload CMS)
-# Optimized for pnpm monorepo with Turborepo
-# Based on official Turborepo and Next.js Docker deployment guides
+# Based on official Next.js Docker deployment guides
 ARG NODE_VERSION=22.21.1
 
 # ============================================
@@ -14,36 +13,23 @@ RUN corepack enable
 WORKDIR /app
 
 # ============================================
-# Pruner stage - prune monorepo to this app
-# ============================================
-FROM base AS pruner
-# Install turbo globally
-RUN npm install -g turbo
-# Copy entire monorepo and prune to only include pragmatic-papers and its dependencies
-# This creates /app/out/json (package.json files) and /app/out/full (source code)
-COPY . .
-RUN turbo prune pragmatic-papers --docker
-
-# ============================================
 # Installer stage - install dependencies only
 # ============================================
 FROM base AS installer
 WORKDIR /app
-# Copy pruned lockfile and package.json files from pruner stage
-COPY --from=pruner /app/out/json/ .
-COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-# Copy pruned source code from pruner
-COPY --from=pruner /app/out/full/ .
+# Copy entire project
+COPY . .
 # Copy .npmrc for GitHub Packages (@digitalgroundgame) auth
-COPY --from=pruner /app/.npmrc ./.npmrc
+COPY .npmrc ./.npmrc
 # GitHub Packages auth (set GH_FONT_READ as build arg in Coolify for staging/prod)
 ARG GH_FONT_READ
 ENV GH_FONT_READ=${GH_FONT_READ}
 
 # Install dependencies with frozen lockfile
 # Using cache mount for pnpm store to speed up builds
+# Set CI=true to prevent pnpm from requiring TTY
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile
+    CI=true pnpm install --frozen-lockfile
 
 # ============================================
 # Builder stage - build the application
@@ -127,10 +113,11 @@ RUN /usr/local/bin/modify-database-uri.sh && \
     fi
 
 # Build application with migrations
-# Uses the 'ci' script which runs migrations and then builds
+# Runs migrations and then builds
 # Source the potentially modified DATABASE_URI before building
 RUN . /tmp/build.env && \
-    pnpm turbo run ci --filter=pragmatic-papers
+    pnpm install --frozen-lockfile && \
+    pnpm build
 
 # ============================================
 # Runner stage - minimal production runtime
@@ -158,20 +145,35 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 # Copy the standalone Next.js build
 # The standalone build includes a minimal server.js and only necessary node_modules
-COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 # Copy static assets (required for standalone mode)
 # These are not included in standalone by default as they should be served by CDN
-COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/.next/static ./apps/pragmatic-papers/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Copy public folder (images, fonts, etc.)
-COPY --from=builder --chown=nextjs:nodejs /app/apps/pragmatic-papers/public ./apps/pragmatic-papers/public
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # PERSISTENCE FIX: Copy the unique DATABASE_URI from the Builder stage to the Runner stage
 COPY --from=builder --chown=nextjs:nodejs /tmp/build.env /app/build.env
 
+#//TODO(#572): After publishing to dev, change coolify persistent storage.
+# https://github.com/digitalgroundgame/pragmatic-papers/issues/572
+#   Update Coolify's persistent storage from:
+#       /app/apps/pragmatic-papers/public/media
+#   to:
+#       /app/public/media
+#   And replace lines 171-176 with the following....
+
+# # Prepare media directory for local storage deployments
+# RUN mkdir -p /app/public/media && \
+#   chown -R nextjs:nodejs /app/public/media && \
+#   chmod -R 755 /app/public/media"""
+
 # Prepare media directory for local storage deployments
 RUN mkdir -p /app/apps/pragmatic-papers/public/media && \
-    chown -R nextjs:nodejs /app/apps/pragmatic-papers/public/media && \
-    chmod -R 755 /app/apps/pragmatic-papers/public/media
+    chown -R nextjs:nodejs /app/apps/pragmatic-papers/public && \
+    chmod -R 755 /app/apps/pragmatic-papers/public/media && \
+    rm -rf /app/public/media && \
+    ln -sf /app/apps/pragmatic-papers/public/media /app/public/media
 
 # STARTUP SCRIPT: Sources the isolated DB URI if it exists, otherwise uses defaults
 RUN echo '#!/bin/sh' > /app/start.sh && \
@@ -189,7 +191,7 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'echo "Storage: $([ \"$USE_LOCAL_STORAGE\" = \"true\" ] && echo \"Local\" || echo \"S3\")"' >> /app/start.sh && \
     echo 'echo "========================================="' >> /app/start.sh && \
     echo 'echo "Starting Next.js server..."' >> /app/start.sh && \
-    echo 'exec node --trace-warnings apps/pragmatic-papers/server.js' >> /app/start.sh && \
+    echo 'exec node --trace-warnings server.js' >> /app/start.sh && \
     chmod +x /app/start.sh && \
     chown nextjs:nodejs /app/start.sh
 
