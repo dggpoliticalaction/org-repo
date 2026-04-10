@@ -71,7 +71,6 @@ const queryArticlesByTopic = cache(async (topicId: number, page: number = 1) => 
     limit: ARTICLES_PER_PAGE,
     page,
     overrideAccess: draft,
-    pagination: false,
     where: {
       topics: {
         equals: topicId,
@@ -159,7 +158,7 @@ export default async function TopicPage({
       {draft && <LivePreviewListener />}
 
       <header className="space-y-3">
-        <h1>Topic: {topic.name}</h1>
+        <h1>{topic.name}</h1>
         {topic.description && <p className="text-muted-foreground text-sm">{topic.description}</p>}
       </header>
 

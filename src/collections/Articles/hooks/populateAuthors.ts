@@ -7,8 +7,9 @@ import type { CollectionAfterReadHook } from "payload"
 // So we use an alternative `populatedAuthors` field to populate the user data, hidden from the admin UI
 export const populateAuthors: CollectionAfterReadHook<Article> = async ({
   doc,
-  req: { payload },
+  req: { payload, context },
 }) => {
+  if (context.skipAfterRead) return doc
   if (!doc.authors || !doc.authors.length) return doc
 
   const populatedAuthors: User[] = []

@@ -3,8 +3,10 @@ import type { CollectionAfterReadHook } from "payload"
 
 export const populateVolume: CollectionAfterReadHook<Article> = async ({
   doc,
-  req: { payload },
+  req: { payload, context },
 }) => {
+  if (context.skipAfterRead) return doc
+  if (!doc.id) return doc
   const result = await payload.find({
     collection: "volumes",
     where: { articles: { contains: doc.id } },

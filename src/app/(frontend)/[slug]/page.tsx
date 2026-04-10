@@ -5,7 +5,7 @@ import { homeStatic } from "@/endpoints/seed/home-static"
 import configPromise from "@payload-config"
 import { draftMode } from "next/headers"
 import { getPayload, type RequiredDataFromCollectionSlug } from "payload"
-import { cache, Suspense } from "react"
+import { cache } from "react"
 
 import { RenderBlocks } from "@/blocks/RenderBlocks"
 import { JsonLd } from "@/components/JsonLd"
@@ -115,9 +115,7 @@ export default async function Page({ params, searchParams }: Args): Promise<Reac
 
       <RenderHero {...hero} />
 
-      <Suspense key={url}>
-        <RenderBlocks blocks={layout} pageNumber={pageNumber} />
-      </Suspense>
+      <RenderBlocks blocks={layout} pageNumber={pageNumber} />
     </article>
   )
 }
