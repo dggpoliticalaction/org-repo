@@ -10,6 +10,14 @@ import {
 } from "@/components/ui/breadcrumb"
 import { useSelectedLayoutSegments } from "next/navigation"
 
+const formatBreadcrumbLabel = (segment: string): string => {
+  return decodeURIComponent(segment)
+    .split("-")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
+}
+
 export const Breadcrumbs = (): ReactElement | null => {
   const segments = useSelectedLayoutSegments()
 
@@ -18,7 +26,7 @@ export const Breadcrumbs = (): ReactElement | null => {
   const breadcrumbs = [
     { label: "Home", href: "/" },
     ...segments.map((segment, index) => ({
-      label: segment.charAt(0).toUpperCase() + segment.slice(1),
+      label: formatBreadcrumbLabel(segment),
       href: "/" + segments.slice(0, index + 1).join("/"),
     })),
   ]
@@ -27,12 +35,12 @@ export const Breadcrumbs = (): ReactElement | null => {
     <Breadcrumb className="container mb-4">
       <BreadcrumbList>
         {breadcrumbs.map((breadcrumb, index) => (
-          <Fragment key={breadcrumb.href}>
+          <>
             <BreadcrumbItem>
               <BreadcrumbLink href={breadcrumb.href}>{breadcrumb.label}</BreadcrumbLink>
             </BreadcrumbItem>
             {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
-          </Fragment>
+          </>
         ))}
       </BreadcrumbList>
     </Breadcrumb>
