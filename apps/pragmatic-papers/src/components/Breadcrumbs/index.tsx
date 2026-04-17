@@ -25,8 +25,7 @@ const SECTION_DROPDOWN_LINKS = [
   { href: "/authors", label: "Authors" },
 ] as const
 
-const HOME_PATH = "/"
-const CURRENT_PAGE_CLASS = "max-w-[30ch] truncate"
+const CURRENT_PAGE_CLASS = "block min-w-0 max-w-full truncate"
 const DROPDOWN_TRIGGER_CLASS = "flex items-center gap-1 capitalize"
 const DROPDOWN_CONTENT_CLASS = "w-max min-w-36"
 
@@ -60,21 +59,25 @@ export const Breadcrumbs = (): ReactElement | null => {
 
   return (
     <Breadcrumb className="container mb-4">
-      <BreadcrumbList>
+      <BreadcrumbList className="flex-nowrap">
         <BreadcrumbItem>
-          <BreadcrumbLink href={HOME_PATH}>Home</BreadcrumbLink>
+          <BreadcrumbLink href="/">Home</BreadcrumbLink>
         </BreadcrumbItem>
 
         {segmentItems.map(({ href, label }, index) => {
           const dropdownLinks = getDropdownLinks(label)
+          const isCurrentPage = index === lastSegmentIndex
+          const isOnlySegment = segmentItems.length === 1
 
           return (
             <Fragment key={href}>
               <BreadcrumbSeparator />
-              <BreadcrumbItem>
+              <BreadcrumbItem className={isCurrentPage ? "min-w-0 flex-1" : undefined}>
                 {index === 0 ? (
                   <DropdownMenu>
-                    <DropdownMenuTrigger className={DROPDOWN_TRIGGER_CLASS}>
+                    <DropdownMenuTrigger
+                      className={`${DROPDOWN_TRIGGER_CLASS}${isOnlySegment ? "w-full min-w-0" : ""}`}
+                    >
                       {segmentItems.length > 1 ? (
                         <BreadcrumbLink href={href}>{label}</BreadcrumbLink>
                       ) : (
@@ -90,7 +93,7 @@ export const Breadcrumbs = (): ReactElement | null => {
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
-                ) : index === lastSegmentIndex ? (
+                ) : isCurrentPage ? (
                   <BreadcrumbPage className={CURRENT_PAGE_CLASS}>{label}</BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink href={href}>{label}</BreadcrumbLink>
