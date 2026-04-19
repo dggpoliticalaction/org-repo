@@ -30,7 +30,7 @@ export const MediaCollageBlock: React.FC<MediaCollageBlockType> = (props) => {
             key={`${id}-${idx}`}
             media={media}
             containerClassName={cn(isLastOddItem && "mx-auto md:col-span-2 w-1/2")}
-            className="not-prose my-0 [&>figcaption]:my-1.5"
+            className="my-0! [&>figcaption]:hidden"
             sizes="(max-width: 768px) 100vw, (max-width: 1376px) 50vw, 688px"
           />
         )
