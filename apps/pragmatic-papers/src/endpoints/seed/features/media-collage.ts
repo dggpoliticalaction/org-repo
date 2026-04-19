@@ -3,7 +3,6 @@ import type { Payload } from "payload"
 import { createArticle } from "../articles"
 import { createMediaFromURL } from "../media"
 import {
-  createEmptyParagraph,
   createLinkNode,
   createParagraph,
   createRichText,
@@ -101,7 +100,9 @@ export const createMediaCollageArticle = async (
         "https://picsum.photos/seed/pp-portrait/400/900.jpg",
         "A tall portrait image",
         {
-          caption: createRichTextFromString("Tall portrait: should fit within the viewport height."),
+          caption: createRichTextFromString(
+            "Tall portrait: should fit within the viewport height.",
+          ),
         },
       ),
       // Long caption — tests overflow-y-auto scrolling on the caption area
@@ -120,27 +121,22 @@ export const createMediaCollageArticle = async (
     // Short caption baseline
     createParagraph("Click on any image to open the lightbox. Captions are shown below the image."),
     createMediaBlock(itsBadMedia.id),
-    createEmptyParagraph(),
     // Wide landscape — horizontal overflow regression test
     createParagraph("Wide landscape image — the lightbox should constrain width to 90vw."),
     createMediaBlock(wideMedia.id),
-    createEmptyParagraph(),
     // Tall portrait — vertical overflow regression test
     createParagraph("Tall portrait image — the lightbox should constrain height to 80dvh."),
     createMediaBlock(portraitMedia.id),
-    createEmptyParagraph(),
     // Long caption — caption scroll test
     createParagraph(
       "Image with a long caption — the caption scrolls independently; the image is unaffected.",
     ),
     createMediaBlock(longCaptionMedia.id),
-    createEmptyParagraph(),
     // No caption — baseline (mediaDocs have no caption set)
     ...(mediaDocs[0]
       ? [
           createParagraph("Image without a caption — no caption area should appear."),
           createMediaBlock(mediaDocs[0].id),
-          createEmptyParagraph(),
         ]
       : []),
     // Grid with mixed aspect ratios
@@ -151,7 +147,6 @@ export const createMediaCollageArticle = async (
       ),
       "grid",
     ),
-    createEmptyParagraph(),
     createParagraph("Carousel — click any image for a lightbox modal."),
     createMediaCollageBlock(
       [mediaDocs[3]?.id, mediaDocs[0]?.id, mediaDocs[2]?.id].filter(
@@ -159,7 +154,6 @@ export const createMediaCollageArticle = async (
       ),
       "carousel",
     ),
-    createEmptyParagraph(),
     createParagraph("Mixed carousel with wide, portrait, and captioned images."),
     createMediaCollageBlock(
       [wideMedia.id, portraitMedia.id, blueCoatMedia.id, itsBadMedia.id].filter(
@@ -167,7 +161,6 @@ export const createMediaCollageArticle = async (
       ),
       "carousel",
     ),
-    createEmptyParagraph(),
     createParagraph("Another grid layout with differently shaped images."),
     createMediaCollageBlock(
       [mediaDocs[0]?.id, itsBadMedia.id, blueCoatMedia.id].filter(
