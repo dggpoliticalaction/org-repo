@@ -22,7 +22,7 @@ export const LightboxMediaBlock: React.FC<LightboxMediaBlockProps> = ({
 
   return (
     <Dialog>
-      <DialogTrigger className={cn("w-full", containerClassName)}>
+      <DialogTrigger className={cn("w-full cursor-pointer", containerClassName)}>
         <MediaBlock
           media={media}
           enableGutter={false}

@@ -17,17 +17,15 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
   return (
     <div className="relative flex flex-col gap-2 md:-mx-10 lg:-mx-32 xl:-mx-44">
       {heroImage && (
-        <div className="min-h-56">
-          <Media
-            priority
-            sizes="(max-width: 768px) 100vw, 1024px"
-            media={heroImage}
-            variant="large"
-            className="border shadow"
-          />
-        </div>
+        <Media
+          priority
+          sizes="(max-width: 768px) 100vw, 1024px"
+          media={heroImage}
+          variant="large"
+          className="min-h-56 border object-cover shadow sm:min-h-85 md:min-h-[418px] lg:min-h-[570px]"
+        />
       )}
-      <h1 className="mt-8">{title}</h1>
+      <h1 className="mt-6">{title}</h1>
       <div className="dark:text-brand-high-contrast text-brand flex gap-2 font-serif font-bold underline-offset-4">
         {populatedAuthors &&
           populatedAuthors.map(({ id, slug, name }, index) => (
@@ -45,7 +43,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
           </HoverPrefetchLink>
         )}
       </div>
-      <Separator className="my-4" />
+      <Separator />
     </div>
   )
 }
