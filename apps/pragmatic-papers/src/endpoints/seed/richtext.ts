@@ -175,30 +175,43 @@ const LOREM_IPSUMS = [
   "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
   "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur; yee wins.",
   "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-]
+] as const
+
+/**
+ * Generates a Lorem Ipsum sentence
+ */
+export function generateLoremIspumSentence(): string {
+  return LOREM_IPSUMS[Math.floor(Math.random() * LOREM_IPSUMS.length)]!
+}
 
 /**
  * Generates a Lorem Ipsum paragraph with a specified number of sentences
  */
 export function generateLoremIpsumParagraph(numberOfSentences: number): string {
-  return Array.from({ length: numberOfSentences }, () => {
-    return LOREM_IPSUMS[Math.floor(Math.random() * LOREM_IPSUMS.length)]
-  }).join(" ")
+  return Array.from({ length: numberOfSentences }, () => generateLoremIspumSentence()).join(" ")
 }
 
 /**
  * Generates an array of Lorem Ipsum paragraphs
  */
-export function generateLoremIpsumParagraphs(numberOfParagraphs: number): string[] {
-  return Array.from({ length: numberOfParagraphs }, () => generateLoremIpsumParagraph(5))
+export function generateLoremIpsumParagraphs(
+  numberOfParagraphs: number,
+  numberOfSentences = 5,
+): string[] {
+  return Array.from({ length: numberOfParagraphs }, () =>
+    generateLoremIpsumParagraph(numberOfSentences),
+  )
 }
 
 /**
  * Creates Lorem Ipsum rich text content with spacing between paragraphs
  */
-export function createLoremIpsumContent(numberOfParagraphs: number): LexicalContent {
-  const paragraphs = generateLoremIpsumParagraphs(numberOfParagraphs)
-  return createRichTextFromParagraphs(paragraphs)
+export function createLoremIpsumContent(
+  numberOfParagraphs: number,
+  numberOfSentences?: number,
+): LexicalContent {
+  const paragraphs = generateLoremIpsumParagraphs(numberOfParagraphs, numberOfSentences)
+  return createRichTextFromParagraphs(paragraphs, true)
 }
 
 /**
