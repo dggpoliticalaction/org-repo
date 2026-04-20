@@ -112,7 +112,7 @@ export const CollectionTile: React.FC<CollectionTileProps> = ({
 
         {/* Description */}
         {meta?.description && (
-          <p className="text-primary mt-1 line-clamp-3 font-serif text-lg leading-tight">
+          <p className="text-primary mt-1 line-clamp-4 font-serif text-base leading-tight">
             {meta!.description}
           </p>
         )}

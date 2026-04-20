@@ -1,5 +1,4 @@
 import { type Topic } from "@/payload-types"
-import { cn } from "@/utilities/utils"
 import React from "react"
 
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
@@ -23,23 +22,21 @@ export const TopicsList: React.FC<TopicsListProps> = ({
   if (!resolvedTopics.length) return null
 
   return (
-    <>
-      <section aria-label="Topics" className={cn("mt-4", className)} {...props}>
-        <div className="flex flex-wrap gap-2">
-          {resolvedTopics.map((topic) => (
-            <Badge
-              key={topic.id}
-              variant="brand"
-              className={badgeClassName}
-              render={
-                <HoverPrefetchLink href={`/topics/${topic.slug}`} className="hover:underline">
-                  {topic.name}
-                </HoverPrefetchLink>
-              }
-            />
-          ))}
-        </div>
-      </section>
-    </>
+    <section aria-label="Topics" className={className} {...props}>
+      <div className="flex flex-wrap gap-2">
+        {resolvedTopics.map((topic) => (
+          <Badge
+            key={topic.id}
+            variant="brand"
+            className={badgeClassName}
+            render={
+              <HoverPrefetchLink href={`/topics/${topic.slug}`} className="hover:underline">
+                {topic.name}
+              </HoverPrefetchLink>
+            }
+          />
+        ))}
+      </div>
+    </section>
   )
 }
