@@ -1,6 +1,6 @@
 import type { Media, Volume } from "@/payload-types"
-import { createRichTextFromString } from "./richtext"
 import type { Payload, RequiredDataFromCollectionSlug } from "payload"
+import { createRichTextFromString } from "./richtext"
 
 interface VolumeConfig {
   volumeNumber: number
