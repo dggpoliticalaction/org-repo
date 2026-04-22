@@ -57,16 +57,16 @@ export default async function TopicsPage({ searchParams }: Args): Promise<React.
         <p className="text-muted-foreground text-sm">Browse all topics</p>
       </header>
 
-      <section aria-label="All topics" className="mt-8">
+      <section aria-label="All topics" className="mt-6">
         {topics.length === 0 ? (
           <p className="text-muted-foreground text-sm">No topics found.</p>
         ) : (
           <>
-            <div className="mt-8 flex justify-center">
-              <TopicsList topics={topics} className="!mt-0" badgeClassName="px-3 py-1 text-base" />
+            <div className="mt-6 flex justify-center">
+              <TopicsList topics={topics} />
             </div>
             {totalPages > 1 && currentPage && (
-              <div className="mt-8 flex justify-center">
+              <div className="mt-6 flex justify-center">
                 <Pagination page={currentPage} totalPages={totalPages} />
               </div>
             )}

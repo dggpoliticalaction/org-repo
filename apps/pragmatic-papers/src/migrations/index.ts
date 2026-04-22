@@ -29,6 +29,7 @@ import * as migration_20260323_024225_add_showByline_to_admin from './20260323_0
 import * as migration_20260323_043247_add_seo_to_topics from './20260323_043247_add_seo_to_topics';
 import * as migration_20260326_061304_add_social_links_component_to_footer from './20260326_061304_add_social_links_component_to_footer';
 import * as migration_20260326_115012_header_actions_array from './20260326_115012_header_actions_array';
+import * as migration_20260422_030958_add_timeline_block from './20260422_030958_add_timeline_block';
 
 export const migrations = [
   {
@@ -184,6 +185,11 @@ export const migrations = [
   {
     up: migration_20260326_115012_header_actions_array.up,
     down: migration_20260326_115012_header_actions_array.down,
-    name: '20260326_115012_header_actions_array'
+    name: '20260326_115012_header_actions_array',
+  },
+  {
+    up: migration_20260422_030958_add_timeline_block.up,
+    down: migration_20260422_030958_add_timeline_block.down,
+    name: '20260422_030958_add_timeline_block'
   },
 ];

@@ -15,6 +15,7 @@ import {
 } from "@/blocks/SocialEmbed"
 import type { ParentDocContext } from "@/blocks/SocialEmbed/types"
 import { SquiggleRuleBlock } from "@/blocks/SquiggleRule/Component"
+import { TimelineBlock } from "@/blocks/Timeline/Component"
 import type {
   BannerBlock as BannerBlockProps,
   CallToActionBlock as CTABlockProps,
@@ -23,6 +24,7 @@ import type {
   MediaCollageBlock as MediaCollageBlockProps,
   SocialEmbedBlock as SocialEmbedBlockProps,
   SquiggleRuleBlock as SquiggleRuleBlockProps,
+  TimelineBlock as TimelineBlockProps,
 } from "@/payload-types"
 import { cn } from "@/utilities/utils"
 import type {
@@ -49,6 +51,7 @@ type NodeTypes =
       | MathBlockProps
       | SquiggleRuleBlockProps
       | SocialEmbedBlockProps
+      | TimelineBlockProps
     >
   | SerializedInlineBlockNode<MathBlockProps | FootnoteBlockProps>
 
@@ -67,7 +70,9 @@ function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunctio
     ...LinkJSXConverter({ internalDocToHref }),
     blocks: {
       banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
-      mediaBlock: ({ node }) => <LightboxMediaBlock breakout {...node.fields} />,
+      mediaBlock: ({ node }) => (
+        <LightboxMediaBlock containerClassName="-my-8" breakout {...node.fields} />
+      ),
       mediaCollage: ({ node }) => <MediaCollageBlock {...node.fields} />,
       code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
       cta: ({ node }) => <CallToActionBlock {...node.fields} />,
@@ -76,6 +81,9 @@ function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunctio
       ),
       squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
       socialEmbed: ({ node }) => <SocialEmbedBlock {...node.fields} parentDoc={parentDoc} />,
+      timeline: ({ node }: { node: SerializedBlockNode<TimelineBlockProps> }) => (
+        <TimelineBlock className="col-start-2 my-8" {...node.fields} />
+      ),
       // Legacy block types for backward compatibility with existing content
       twitterEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
         <TwitterEmbedBlock {...node.fields} />
@@ -120,9 +128,9 @@ export default function RichText({
   return (
     <ConvertRichText
       className={cn(
-        "payload-richtext prose-xl prose-neutral font-serif leading-snug",
+        "payload-richtext prose-lg md:prose-xl prose-brand md:prose-blockquote:-mx-4 lg:prose-blockquote:-mx-8 prose-p:leading-relaxed prose-h2:mt-9 prose-h2:mb-6 prose-h2:text-4xl md:prose-h2:text-5xl prose-h3:text-3xl md:prose-h3:text-4xl prose-h4:text-2xl md:prose-h4:text-3xl font-serif",
         enableGutter ? "container" : "max-w-none",
-        enableProse && "prose dark:prose-invert",
+        enableProse && "prose",
         className,
       )}
       converters={createJsxConverters(parentDoc)}

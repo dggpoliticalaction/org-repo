@@ -27,7 +27,7 @@ import { createOrUpdatePage } from "../pages"
  *
  * @param volume1ArticleIds - Volume 1 article IDs (6 articles)
  * @param volume2ArticleIds - Volume 2 article IDs (at least 2 needed)
- * @param featureArticleIds - Feature article IDs (index 2 = legacySocialEmbed, index 3 = mediaCollage)
+ * @param featureArticleIds - Feature article IDs (index 0 = rich text defaults)
  */
 export async function createCollectionGridHomePage(
   payload: Payload,
@@ -258,7 +258,7 @@ export async function createCollectionGridHomePage(
           {
             collection: {
               relationTo: "articles",
-              value: featureArticleIds[3]!,
+              value: featureArticleIds[0]!,
             },
             kicker: null,
             overrideTitle: null,
@@ -274,7 +274,7 @@ export async function createCollectionGridHomePage(
           {
             collection: {
               relationTo: "articles",
-              value: featureArticleIds[2]!,
+              value: featureArticleIds[0]!,
             },
             kicker: null,
             overrideTitle: null,

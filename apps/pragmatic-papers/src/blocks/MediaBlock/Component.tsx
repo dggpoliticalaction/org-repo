@@ -16,6 +16,7 @@ export type StyledMediaBlockProps = Omit<MediaBlockProps, "blockType"> & {
   breakout?: boolean
   className?: string
   imgClassName?: string
+  imgStyle?: React.CSSProperties
   captionClassName?: string
   enableGutter?: boolean
   sizes?: string | undefined
@@ -62,6 +63,7 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props })
     className,
     enableGutter = true,
     imgClassName,
+    imgStyle,
     media,
     variant = "medium",
     disableInnerContainer,
@@ -83,11 +85,17 @@ export const MediaBlock: React.FC<StyledMediaBlockProps> = ({ sizes, ...props })
         className,
       )}
     >
-      <Media className={cn("border", imgClassName)} media={media} sizes={sizes} variant={variant} />
+      <Media
+        className={cn("border", imgClassName)}
+        style={imgStyle}
+        media={media}
+        sizes={sizes}
+        variant={variant}
+      />
       {caption && (
         <figcaption
           className={cn(
-            "text-primary my-1.5 line-clamp-1 text-center font-serif",
+            "my-1.5 text-start font-serif leading-tight",
             {
               container: !disableInnerContainer,
             },
