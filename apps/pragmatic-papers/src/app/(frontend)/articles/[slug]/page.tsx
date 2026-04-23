@@ -84,7 +84,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   const { footnotes, content, populatedAuthors, enableMathRendering, topics } = article
 
   return (
-    <article className="mx-auto max-w-2xl space-y-6 px-4">
+    <article className="mx-auto max-w-2xl space-y-6 px-4 md:px-1">
       <JsonLd
         data={[
           buildArticleJsonLd(article, url),
@@ -106,9 +106,9 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
         />
       </MathJaxProvider>
       <FootnoteList footnotes={footnotes} />
-      <TopicsList topics={topics} className="mt-8" />
+      <Separator />
+      <TopicsList topics={topics} />
       <AuthorList aria-label="Article Authors" authors={populatedAuthors} />
-      <Separator className="mt-16" />
     </article>
   )
 }

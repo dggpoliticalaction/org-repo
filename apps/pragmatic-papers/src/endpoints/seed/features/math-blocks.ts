@@ -2,7 +2,7 @@ import type { Media, User } from "@/payload-types"
 import type { Payload } from "payload"
 import { createArticle, validateWriters } from "../articles"
 import type { SerializedLexicalNode } from "../richtext"
-import { createEmptyParagraph, createParagraph, createRichText, createTextNode } from "../richtext"
+import { createParagraph, createRichText, createTextNode } from "../richtext"
 
 /**
  * Creates an inline math block node (renders LaTeX within a paragraph)
@@ -39,13 +39,10 @@ const createMathBlocksContent = () => {
     createParagraph(
       "Mathematics is the language of science and philosophy alike. This article demonstrates both inline and display math rendering using LaTeX expressions.",
     ),
-    createEmptyParagraph(),
-
     // --- Inline math section ---
     createParagraph(
       "Inline math allows equations to flow naturally within a sentence. For example, Einstein's famous mass-energy equivalence",
     ),
-    createEmptyParagraph(),
     createParagraph([
       createTextNode("Einstein's mass-energy equivalence "),
       createMathInlineBlock("E = mc^2"),
@@ -53,7 +50,6 @@ const createMathBlocksContent = () => {
         " is one of the most recognisable equations in all of physics, relating energy, mass, and the speed of light.",
       ),
     ]),
-    createEmptyParagraph(),
     createParagraph([
       createTextNode("Bayes' theorem "),
       createMathInlineBlock("P(A \\mid B) = \\dfrac{P(B \\mid A)\\,P(A)}{P(B)}"),
@@ -61,7 +57,6 @@ const createMathBlocksContent = () => {
         " underpins modern probabilistic reasoning and has become central to debates in epistemology about rational belief revision.",
       ),
     ]),
-    createEmptyParagraph(),
     createParagraph([
       createTextNode("The sum of the first "),
       createMathInlineBlock("n"),
@@ -71,36 +66,28 @@ const createMathBlocksContent = () => {
         ", a result attributed to Gauss that elegantly illustrates the power of algebraic thinking.",
       ),
     ]),
-    createEmptyParagraph(),
-
     // --- Display math section ---
     createParagraph(
       "Display math is used for equations that deserve their own line — derivations, definitions, and results that the reader is meant to pause and study.",
     ),
-    createEmptyParagraph(),
     createParagraph(
       "The Gaussian integral is a cornerstone of probability theory and quantum mechanics:",
     ),
     createMathDisplayBlock("\\int_{-\\infty}^{\\infty} e^{-x^2}\\,dx = \\sqrt{\\pi}"),
-    createEmptyParagraph(),
     createParagraph(
       "The Fundamental Theorem of Calculus connects differentiation and integration, forming the backbone of analysis:",
     ),
     createMathDisplayBlock("\\frac{d}{dx}\\left[\\int_a^x f(t)\\,dt\\right] = f(x)"),
-    createEmptyParagraph(),
     createParagraph(
       "The time-dependent Schrödinger equation describes how the quantum state of a physical system evolves:",
     ),
     createMathDisplayBlock(
       "i\\hbar\\,\\frac{\\partial}{\\partial t}\\Psi(\\mathbf{r},t) = \\hat{H}\\,\\Psi(\\mathbf{r},t)",
     ),
-    createEmptyParagraph(),
     createParagraph(
       "Gauss's law — one of Maxwell's equations — relates the electric flux through a closed surface to the enclosed charge:",
     ),
     createMathDisplayBlock("\\nabla \\cdot \\mathbf{E} = \\frac{\\rho}{\\varepsilon_0}"),
-    createEmptyParagraph(),
-
     // --- Closing ---
     createParagraph(
       "Together, inline and display math blocks make it possible to write rigorous, typeset-quality mathematics within the flow of an article — bringing the precision of LaTeX to long-form philosophical and scientific writing.",
