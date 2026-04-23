@@ -40,31 +40,24 @@ The `@digitalgroundgame/fonts` package contains the proprietary display font. It
 
 If you do have access, create a **Classic GitHub Personal Access Token (PAT)** at [GitHub Settings → Tokens](https://github.com/settings/tokens) with the `read:packages` scope.
 
-Set `GH_FONT_READ` in your environment, it will be referenced by our project's `.npmrc`:
+The project `.npmrc` references `GH_FONT_READ` — you just need that variable set before running `pnpm install`. Choose whichever method suits you:
 
-```
-//npm.pkg.github.com/:_authToken=${GH_FONT_READ}
-```
+- **Mac/Linux — shell profile** (applies to every terminal automatically):
 
-Set the variable in your shell:
-
-- **Mac/Linux** — add to `~/.zshrc` or `~/.bashrc`:
   ```bash
-  # ~/.zshrc
+  # ~/.zshrc or ~/.bashrc
   export GH_FONT_READ=ghp_your_token_here
   ```
+
 - **Windows (PowerShell)** — set permanently for your user:
+
   ```powershell
   [System.Environment]::SetEnvironmentVariable("GH_FONT_READ", "ghp_your_token_here", "User")
   ```
+
   Alternatively, open **System Properties → Advanced → Environment Variables** (search "environment variables" in the Start menu) and add `GH_FONT_READ` under "User variables".
 
-Restart your terminal after setting the variable.
-
-Re-run `pnpm install` after setting up your credentials. You should see `✓ Fonts copied to public/fonts` in the output.
-
-> [!WARNING]
-> You will see console warnings until GH_FONT_READ is set as an environment variable during development.
+Restart your terminal after setting the variable, then re-run `pnpm install`. You should see `✓ Fonts copied to public/fonts` in the output.
 
 ## Seeding the Database
 
