@@ -1,10 +1,8 @@
-import { type ButtonProps, buttonVariants } from "@/components/ui/button"
+import { type ButtonVariantProps, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/utilities/utils"
+import Link from "next/link"
 
-interface LinkButtonProps extends React.ComponentProps<"a"> {
-  variant?: ButtonProps["variant"]
-  size?: ButtonProps["size"]
-}
+type LinkButtonProps = React.ComponentProps<typeof Link> & ButtonVariantProps
 
 const LinkButton: React.FC<LinkButtonProps> = ({
   children,
@@ -14,9 +12,9 @@ const LinkButton: React.FC<LinkButtonProps> = ({
   ...props
 }) => {
   return (
-    <a className={cn(buttonVariants({ variant, size, className }))} {...props}>
+    <Link className={cn(buttonVariants({ variant, size, className }))} {...props}>
       {children}
-    </a>
+    </Link>
   )
 }
 
