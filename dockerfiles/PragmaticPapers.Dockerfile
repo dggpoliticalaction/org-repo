@@ -154,32 +154,16 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 # PERSISTENCE FIX: Copy the unique DATABASE_URI from the Builder stage to the Runner stage
 COPY --from=builder --chown=nextjs:nodejs /tmp/build.env /app/build.env
 
-#//TODO(#572): After publishing to dev, change coolify persistent storage.
-# https://github.com/digitalgroundgame/pragmatic-papers/issues/572
-#   Update Coolify's persistent storage from:
-#       /app/apps/pragmatic-papers/public/media
-#   to:
-#       /app/public/media
-#   And replace lines 171-176 with the following....
-
-# # Prepare media directory for local storage deployments
-# RUN mkdir -p /app/public/media && \
-#   chown -R nextjs:nodejs /app/public/media && \
-#   chmod -R 755 /app/public/media"""
-
 # Prepare media directory for local storage deployments
-RUN mkdir -p /app/apps/pragmatic-papers/public/media && \
-    chown -R nextjs:nodejs /app/apps/pragmatic-papers/public && \
-    chmod -R 755 /app/apps/pragmatic-papers/public/media && \
-    rm -rf /app/public/media && \
-    ln -sf /app/apps/pragmatic-papers/public/media /app/public/media
+RUN mkdir -p /app/public/media && \
+  chown -R nextjs:nodejs /app/public/media && \
+  chmod -R 755 /app/public/media
 
 # STARTUP SCRIPT: Sources the isolated DB URI if it exists, otherwise uses defaults
 RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'set -e' >> /app/start.sh && \
     # Source the build.env to get the potentially modified DATABASE_URI for preview deployments
     echo 'if [ -f /app/build.env ]; then . /app/build.env; fi' >> /app/start.sh && \
-
     echo 'echo "========================================="' >> /app/start.sh && \
     echo 'echo "Starting Pragmatic Papers Application"' >> /app/start.sh && \
     echo 'echo "Node version: $(node --version)"' >> /app/start.sh && \
