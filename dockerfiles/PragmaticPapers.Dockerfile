@@ -19,8 +19,7 @@ FROM base AS installer
 WORKDIR /app
 # Copy entire project
 COPY . .
-# Copy .npmrc for GitHub Packages (@digitalgroundgame) auth
-COPY .npmrc ./.npmrc
+
 # GitHub Packages auth (set GH_FONT_READ as build arg in Coolify for staging/prod)
 ARG GH_FONT_READ
 ENV GH_FONT_READ=${GH_FONT_READ}
