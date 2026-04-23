@@ -15,37 +15,47 @@ Seed scripts populate the database with sample content for development. Rather t
 **Basic Functions:**
 
 - `createTextNode(text, format?)` - Creates a text node
-- `createParagraph(text | textNode | array)` - Creates a paragraph with text/nodes
-- `createEmptyParagraph()` - Creates a line break paragraph
+- `createLinkNode(text, url, newTab?)` - Creates a link node
+- `createParagraph(text | textNode | array, format?)` - Creates a paragraph with text/nodes
+- `createEmptyParagraph()` - Creates an empty paragraph (used internally for spacing between paragraphs)
 - `createRichText(children)` - Wraps paragraph nodes in root structure
 
 **High-Level Functions:**
 
-- `createRichTextFromString(text)` - Single paragraph from string
-- `createRichTextFromParagraphs(paragraphs[], addSpacing?)` - Multiple paragraphs with auto-spacing
+- `createRichTextFromString(text)` / `createRichTextContent(text)` - Single paragraph from string (aliases)
+- `createRichTextFromParagraphs(paragraphs[], addSpacing?)` - Multiple paragraphs with auto-spacing between them
 - `createLoremIpsumContent(numParagraphs)` - Lorem ipsum for testing
 
 **Lorem Ipsum Generators:**
 
-- `generateLoremIpsumParagraph(numSentences)` - Single paragraph
-- `generateLoremIpsumParagraphs(numParagraphs)` - Array of paragraphs
+- `generateLoremIpsumParagraph(numSentences)` - Single paragraph string
+- `generateLoremIpsumParagraphs(numParagraphs)` - Array of paragraph strings
+
+**Table Utilities:**
+
+- `createTableHeaderNode(text)` - Creates a `<th>` header cell
+- `createTableCellNode(text)` - Creates a `<td>` data cell
+- `createTableRowNode(cells)` - Creates a table row from an array of cell nodes
+- `createTableNode(rows)` - Creates a table from an array of row nodes
 
 ### Media Utilities (`media.ts`)
 
 - `fetchFileByURL(url)` - Fetches a file from URL, returns Payload File object
-- `createMediaFromURL(payload, url, alt, additionalData?)` - Fetches and creates media in one call
-  - `additionalData` supports: `{ caption: LexicalContent }`
+- `createMediaFromURL(payload, url, alt, additionalData?)` - Fetches and creates media in one call; strips `additionalData` on the final retry attempt
+  - `additionalData` is `Partial<Omit<Media, "id" | "alt">>` — supports any optional Media field (e.g. `{ caption: LexicalContent }`)
 
 ### Article Utilities (`articles.ts`)
 
-- `createArticle(payload, options)` - Creates a published article with defaults
+- `createArticle(payload, options, context?)` - Creates a published article with defaults; retries up to 3 times on Drizzle errors
 
 ```typescript
 interface CreateArticleOptions {
   title: string
   content: LexicalContent
   authors: number[]
+  topics?: number[]
   slug: string
+  heroImage?: number | null
   meta?: {
     title?: string | null
     description?: string | null
@@ -55,20 +65,47 @@ interface CreateArticleOptions {
 ```
 
 - `validateWriters(writers)` - Throws if no writers provided
-- `getWriterOrThrow(writers, index)` - Gets writer by index with validation
+- `getWriterOrThrow(writers, index)` - Gets writer by index with validation (wraps with modulo so index is always valid)
 
-### Block Helpers (in feature files)
+### Block Helpers (defined locally in each feature file)
 
-**Media Blocks:**
+Block helpers are small factory functions defined at the top of each feature file — they are **not** shared exports. Copy the pattern into your own feature file:
+
+**Media block:**
 
 ```typescript
-createMediaBlock(mediaId) // Single image block
+function createMediaBlock(mediaId: number) {
+  return {
+    type: "block",
+    fields: { blockType: "mediaBlock", media: mediaId },
+    format: "",
+    version: 2,
+  }
+}
 ```
 
-**Media Collage Blocks:**
+**Media collage block:**
 
 ```typescript
-createMediaCollageBlock(mediaIds[], layout) // 'grid' or 'carousel'
+function createMediaCollageBlock(mediaIds: number[], layout: "grid" | "carousel" = "grid") {
+  return {
+    type: "block",
+    fields: { blockType: "mediaCollage", layout, images: mediaIds.map((id) => ({ media: id })) },
+    format: "",
+    version: 2,
+  }
+}
+```
+
+**Math block helpers (exported from `features/math-blocks.ts`):**
+
+Unlike the media helpers above, the math helpers are exported and can be imported into other feature files:
+
+```typescript
+import { createMathInlineBlock, createMathDisplayBlock } from "./math-blocks"
+
+createMathInlineBlock("E = mc^2") // inline LaTeX within a paragraph (version: 1, inlineBlock)
+createMathDisplayBlock("\\int_0^1 x") // standalone display block (version: 2, block)
 ```
 
 ## How to Generate a Seed from Article JSON
@@ -101,14 +138,9 @@ When generating a seed from article JSON:
 ```typescript
 import type { Payload } from "payload"
 import type { User, Media } from "@/payload-types"
-import { createMediaFromURL } from "../utils/media"
-import {
-  createRichText,
-  createParagraph,
-  createTextNode,
-  createEmptyParagraph,
-} from "../utils/richtext"
-import { createArticle } from "../utils/articles"
+import { createMediaFromURL } from "../media"
+import { createRichText, createParagraph, createTextNode } from "../richtext"
+import { createArticle } from "../articles"
 
 // Helper functions for custom blocks
 function createMyCustomBlock(data) {
@@ -122,8 +154,9 @@ function createMyCustomBlock(data) {
 
 export const createMyFeatureArticle = async (
   payload: Payload,
-  writer: User,
+  writers: User | User[],
   mediaDocs: Media[],
+  topics: number[],
 ): Promise<number> => {
   // Create any additional media
   const customMedia = await createMediaFromURL(
@@ -136,7 +169,6 @@ export const createMyFeatureArticle = async (
   // Build content programmatically
   const content = createRichText([
     createParagraph("Introduction paragraph"),
-    createEmptyParagraph(),
     createMyCustomBlock({
       /* data */
     }),
@@ -153,10 +185,12 @@ export const createMyFeatureArticle = async (
   ])
 
   // Create the article
+  const writer = Array.isArray(writers) ? writers.map((writer) => writer.id) : [writer.id]
   const article = await createArticle(payload, {
     title: "My Feature Demo",
     content,
-    authors: [writer.id],
+    authors: writer,
+    topics,
     slug: "my-feature-demo",
     meta: {
       description: "Description of the feature",
@@ -186,7 +220,7 @@ export const createMyFeatureArticle = async (
 **Then AI generates:**
 
 ```typescript
-export const createExampleArticle = async (payload, writer, mediaDocs) => {
+export const createExampleArticle = async (payload, writers, mediaDocs, topics) => {
   // Create media with captions (using external URLs provided by user)
   const [media1, media2] = await Promise.all([
     createMediaFromURL(
@@ -206,17 +240,17 @@ export const createExampleArticle = async (payload, writer, mediaDocs) => {
   // Build content
   const content = createRichText([
     createParagraph("First paragraph from JSON"),
-    createEmptyParagraph(),
     createMediaBlock(media1.id),
-    createEmptyParagraph(),
     createParagraph("Second paragraph from JSON"),
   ])
 
   // Create article
+  const writer = Array.isArray(writers) ? writers[0]! : writers
   return await createArticle(payload, {
     title: "Example Article",
     content,
     authors: [writer.id],
+    topics,
     slug: "example-article",
     meta: { description: "Example description", image: media1.id },
   })
@@ -243,8 +277,8 @@ Add your seed to `index.ts`:
 ```typescript
 import { createMyFeatureArticle } from "./features/my-feature"
 
-// In the seed() function:
-await createMyFeatureArticle(payload, writer1, mediaDocs)
+// In the seed() function (inside a step fn, where ctx is available):
+await createMyFeatureArticle(payload, ctx.writer1, ctx.media, [ctx.topics[0]!, ctx.topics[3]!])
 ```
 
 ---
@@ -303,7 +337,7 @@ async function createUser(payload: Payload, data: UserData, label: string): Prom
     const { email, password, name, role, slug } = data
     return await payload.create({
       collection: "users",
-      data: { email, password, name, role, ...(slug ? { slug } : {}) },
+      data: { email, password, name, role, slug },
     })
   }
 }

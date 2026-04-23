@@ -3,14 +3,14 @@ import type { Payload } from "payload"
 import { createArticle, getWriterOrThrow, validateWriters } from "./articles"
 import { createCollectionGridHomePage } from "./features/collection-grid"
 import { createFootnotesArticle } from "./features/footnotes"
-import { createLexicalTablesArticle } from "./features/lexical-tables"
 import { createMathBlocksArticle } from "./features/math-blocks"
 import { createMediaCollageArticle } from "./features/media-collage"
+import { createRichTextShowcaseArticle } from "./features/rich-text-showcase"
 import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from "./features/social-embeds"
 import { createMediaFromURL } from "./media"
 import { createMenus } from "./menus"
 import { createPages } from "./pages"
-import { createLoremIpsumContent, generateLoremIpsumParagraph } from "./richtext"
+import { createLoremIpsumContent, generateLoremIspumSentence } from "./richtext"
 import { createTopics } from "./topics"
 import { createUsers } from "./users"
 import { createVolumes } from "./volumes"
@@ -135,7 +135,7 @@ export const seed = async (
             heroImage: ctx.media[i % ctx.media.length]?.id,
             meta: {
               title,
-              description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
+              description: generateLoremIspumSentence(),
               image: ctx.media[i % ctx.media.length]?.id,
             },
           })
@@ -164,7 +164,7 @@ export const seed = async (
             heroImage: ctx.media[i % ctx.media.length]?.id,
             meta: {
               title,
-              description: generateLoremIpsumParagraph(Math.floor(Math.random() * 2) + 1),
+              description: generateLoremIspumSentence(),
               image: ctx.media[i % ctx.media.length]?.id,
             },
           })
@@ -175,47 +175,53 @@ export const seed = async (
     {
       name: "Creating feature articles...",
       fn: async () => {
-        const [footnotes, socialEmbed, legacySocialEmbed, mediaCollage, mathBlocks, lexicalTables] =
-          await Promise.all([
-            createFootnotesArticle(
-              payload,
-              [ctx.writer1, ctx.writer2],
-              ctx.media,
-              ctx.volume1Articles[0]!,
-              [ctx.topics[0]!, ctx.topics[3]!, ctx.topics[4]!],
-            ),
-            createSocialEmbedArticle(payload, ctx.writer1, ctx.media, [
-              ctx.topics[0]!,
-              ctx.topics[1]!,
-              ctx.topics[7]!,
-            ]),
-            createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media, [
-              ctx.topics[0]!,
-              ctx.topics[1]!,
-              ctx.topics[10]!,
-            ]),
-            createMediaCollageArticle(payload, ctx.writer1, ctx.media, [
-              ctx.topics[3]!,
-              ctx.topics[7]!,
-            ]),
-            createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
-              ctx.topics[2]!,
-              ctx.topics[3]!,
-              ctx.topics[5]!,
-            ]),
-            createLexicalTablesArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
-              ctx.topics[3]!,
-              ctx.topics[4]!,
-              ctx.topics[5]!,
-            ]),
-          ])
-        ctx.featureArticles = [
+        const [
+          richTextShowcase,
           footnotes,
           socialEmbed,
           legacySocialEmbed,
           mediaCollage,
           mathBlocks,
-          lexicalTables,
+        ] = await Promise.all([
+          createRichTextShowcaseArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+            ctx.topics[3]!,
+            ctx.topics[4]!,
+            ctx.topics[7]!,
+          ]),
+          createFootnotesArticle(
+            payload,
+            [ctx.writer1, ctx.writer2],
+            ctx.media,
+            ctx.volume1Articles[0]!,
+            [ctx.topics[0]!, ctx.topics[3]!, ctx.topics[4]!],
+          ),
+          createSocialEmbedArticle(payload, ctx.writer1, ctx.media, [
+            ctx.topics[0]!,
+            ctx.topics[1]!,
+            ctx.topics[7]!,
+          ]),
+          createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media, [
+            ctx.topics[0]!,
+            ctx.topics[1]!,
+            ctx.topics[10]!,
+          ]),
+          createMediaCollageArticle(payload, ctx.writer1, ctx.media, [
+            ctx.topics[3]!,
+            ctx.topics[7]!,
+          ]),
+          createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+            ctx.topics[2]!,
+            ctx.topics[3]!,
+            ctx.topics[5]!,
+          ]),
+        ])
+        ctx.featureArticles = [
+          richTextShowcase,
+          footnotes,
+          socialEmbed,
+          legacySocialEmbed,
+          mediaCollage,
+          mathBlocks,
         ]
       },
     },
