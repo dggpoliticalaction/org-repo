@@ -16,14 +16,14 @@ const placeholder = resolve(dest, "FKScreamer-Bold.woff2")
 console.warn(`${blue("●")} Installing fonts...`)
 mkdirSync(dest, { recursive: true })
 
-if (existsSync(placeholder) && readFileSync(placeholder).byteLength !== 0) {
-  console.warn(gray("○ Fonts already installed"))
-  process.exit(0)
-}
-
 if (existsSync(src)) {
   cpSync(src, dest, { recursive: true })
   console.warn(`${green("✔")} Fonts copied to public/fonts`)
+  process.exit(0)
+}
+
+if (existsSync(placeholder) && readFileSync(placeholder).byteLength !== 0) {
+  console.warn(gray("○ Fonts already installed"))
   process.exit(0)
 }
 
