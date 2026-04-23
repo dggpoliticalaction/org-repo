@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync, writeFileSync } from "fs"
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "fs"
 import { dirname, resolve } from "path"
 import process from "process"
 import { fileURLToPath } from "url"
@@ -16,7 +16,7 @@ const placeholder = resolve(dest, "FKScreamer-Bold.woff2")
 console.warn(`${blue("●")} Installing fonts...`)
 mkdirSync(dest, { recursive: true })
 
-if (existsSync(placeholder)) {
+if (existsSync(placeholder) && readFileSync(placeholder).byteLength !== 0) {
   console.warn(gray("○ Fonts already installed"))
   process.exit(0)
 }
@@ -29,5 +29,5 @@ if (existsSync(src)) {
 
 console.warn(`${yellow("⚠")} @digitalgroundgame/fonts not found`)
 writeFileSync(placeholder, "")
-console.warn(`${green("✔")} Created placeholder font file`)
+console.warn(`${green("✔")} Using placeholder font file`)
 process.exit(0)
