@@ -11,6 +11,11 @@ const NEXT_PUBLIC_SUPABASE_URL = new URL(
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Temporarily required on Windows until Next.js fixes Turbopack Sass resolution.
+  // See: https://github.com/vercel/next.js/issues/86431
+  sassOptions: {
+    loadPaths: ["./node_modules/@payloadcms/ui/dist/scss/"],
+  },
   images: {
     qualities: [80],
     remotePatterns: [
