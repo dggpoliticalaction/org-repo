@@ -18,17 +18,18 @@ import {
 import { useSelectedLayoutSegments } from "next/navigation"
 import { ChevronDown } from "lucide-react"
 
+// constants
 const SECTION_DROPDOWN_LINKS = [
   { href: "/articles", label: "Articles" },
   { href: "/topics", label: "Topics" },
   { href: "/volumes", label: "Volumes" },
   { href: "/authors", label: "Authors" },
 ] as const
-
 const CURRENT_PAGE_CLASS = "block min-w-0 max-w-full truncate"
 const DROPDOWN_TRIGGER_CLASS = "flex items-center gap-1 capitalize"
 const DROPDOWN_CONTENT_CLASS = "w-max min-w-36"
 
+// helpers
 const formatBreadcrumbLabel = (segment: string): string => {
   return decodeURIComponent(segment)
     .split("-")
@@ -52,6 +53,7 @@ const getDropdownLinks = (label: string) =>
 export const Breadcrumbs = (): ReactElement | null => {
   const segments = useSelectedLayoutSegments()
 
+  // if there are no segments, we're on the homepage, so we don't need to render breadcrumbs
   if (segments.length === 0) return null
 
   const segmentItems = getSegmentItems(segments)
@@ -60,10 +62,11 @@ export const Breadcrumbs = (): ReactElement | null => {
   return (
     <Breadcrumb className="container mb-4">
       <BreadcrumbList className="flex-nowrap">
+        // always include a link to the homepage as the first breadcrumb item
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Home</BreadcrumbLink>
         </BreadcrumbItem>
-
+        // render breadcrumb items for each segment in the URL
         {segmentItems.map(({ href, label }, index) => {
           const dropdownLinks = getDropdownLinks(label)
           const isCurrentPage = index === lastSegmentIndex
@@ -74,6 +77,9 @@ export const Breadcrumbs = (): ReactElement | null => {
               <BreadcrumbSeparator />
               <BreadcrumbItem className={isCurrentPage ? "min-w-0 flex-1" : undefined}>
                 {index === 0 ? (
+                  // if this is the first segment, render a dropdown menu with links to other sections of the site
+                  // if there's only one segment, make the dropdown trigger take up the full width
+                  // of the breadcrumb item to prevent layout shift when the dropdown is opened
                   <DropdownMenu>
                     <DropdownMenuTrigger
                       className={`${DROPDOWN_TRIGGER_CLASS}${isOnlySegment ? "w-full min-w-0" : ""}`}
