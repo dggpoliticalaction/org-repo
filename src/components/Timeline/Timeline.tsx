@@ -3,6 +3,7 @@ import { ImageMedia } from "@/components/Media/ImageMedia"
 import { getLinkFieldUrl } from "@/utilities/getLinkFieldUrl"
 import { cn } from "@/utilities/utils"
 
+import { Separator } from "@/components/ui/separator"
 import { TimelineEventReveal } from "./TimelineEventReveal"
 import type { TimelineAvatar, TimelineBaseProps, TimelineEvent } from "./types"
 
@@ -67,9 +68,12 @@ export const Timeline: React.FC<TimelineBaseProps> = ({ events, title, className
           {title}
         </div>
       )}
+      <Separator />
       <div className="relative w-full">
-        <div className="bg-border absolute top-0 left-1/2 hidden h-full w-px -translate-x-1/2 md:block" />
-
+        <Separator
+          orientation="vertical"
+          className="absolute top-0 left-1/2 hidden h-full -translate-x-1/2 md:block"
+        />
         {events.map((event, index) => {
           const isLeft = index % 2 === 0
           const dotColor = isLeft ? "bg-brand" : "bg-foreground"
