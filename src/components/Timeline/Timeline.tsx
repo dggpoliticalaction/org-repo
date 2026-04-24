@@ -43,7 +43,7 @@ const EventContent: React.FC<{
     ) : (
       <div className="size-16" />
     )}
-    <div className={cn(isLeft ? "text-right" : "order-first")}>
+    <div className={cn("w-full max-w-[240px]", isLeft ? "text-right" : "order-first")}>
       <div className="text-brand text-sm font-bold tracking-wide">
         {new Date(event.date).toLocaleDateString(undefined, {
           month: "long",
@@ -52,7 +52,7 @@ const EventContent: React.FC<{
         })}
       </div>
       {event.title && <div>{event.title}</div>}
-      <p className={cn("text-muted-foreground max-w-[240px] text-sm text-pretty")}>
+      <p className={cn("text-muted-foreground text-sm text-pretty")}>
         {event.description}
         <Citation
           date={event.date}
