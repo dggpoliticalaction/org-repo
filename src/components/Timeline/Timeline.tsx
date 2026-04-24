@@ -37,9 +37,7 @@ const EventContent: React.FC<{
         year: "numeric",
       })}
     </div>
-    {event.title && (
-      <div className="text-foreground mt-1 font-sans text-base font-semibold">{event.title}</div>
-    )}
+    {event.title && <div className="text-foreground font-sans">{event.title}</div>}
     <p
       className={cn(
         "text-muted-foreground mt-2 max-w-[280px] font-sans text-sm",
