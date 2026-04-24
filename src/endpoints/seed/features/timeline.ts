@@ -49,7 +49,7 @@ export const createTimelineArticle = async (
 
   const events: TimelineEvent[] = [
     {
-      date: "January 5",
+      date: "2024-01-05",
       title: "Kickoff workshop",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
@@ -57,7 +57,7 @@ export const createTimelineArticle = async (
       citation: cite(1),
     },
     {
-      date: "January 18",
+      date: "2024-01-18",
       title: "Research synthesis",
       description:
         "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
@@ -65,14 +65,14 @@ export const createTimelineArticle = async (
       citation: cite(2),
     },
     {
-      date: "February 2",
+      date: "2024-02-02",
       title: "Design review",
       description:
         "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
       avatar: avatar(2),
     },
     {
-      date: "February 14",
+      date: "2024-02-14",
       title: "Prototype freeze",
       description:
         "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -80,7 +80,7 @@ export const createTimelineArticle = async (
       citation: cite(4),
     },
     {
-      date: "February 27",
+      date: "2024-02-27",
       title: "Stakeholder sign-off",
       description:
         "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
@@ -88,32 +88,32 @@ export const createTimelineArticle = async (
       citation: cite(5),
     },
     {
-      date: "March 6",
+      date: "2024-03-06",
       title: "Beta launch",
       citation: cite(6),
     },
     {
-      date: "March 19",
+      date: "2024-03-19",
       title: "Performance tuning",
       description:
         "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.",
       avatar: avatar(1),
     },
     {
-      date: "April 1",
+      date: "2024-04-01",
       title: "Content migration",
       description:
         "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.",
       avatar: avatar(2),
     },
     {
-      date: "April 12",
+      date: "2024-04-12",
       title: "Accessibility audit",
       description:
         "Sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam.",
     },
     {
-      date: "April 25",
+      date: "2024-04-25",
       title: "Public release",
       avatar: avatar(3),
     },
