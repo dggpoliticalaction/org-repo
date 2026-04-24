@@ -27,10 +27,11 @@ const Citation: React.FC<Pick<TimelineEvent, "date" | "enableCitation" | "citati
 }
 
 const EventContent: React.FC<{
+  className?: string
   event: TimelineEvent
   textAlign?: "left" | "right"
-}> = ({ event, textAlign = "left" }) => (
-  <>
+}> = ({ event, textAlign = "left", className }) => (
+  <div className={className}>
     <div className="text-brand text-sm font-bold tracking-wide">
       {new Date(event.date).toLocaleDateString(undefined, {
         month: "long",
@@ -48,7 +49,7 @@ const EventContent: React.FC<{
       {event.description}
       <Citation date={event.date} enableCitation={event.enableCitation} citation={event.citation} />
     </p>
-  </>
+  </div>
 )
 
 const Avatar: React.FC<{ media: TimelineAvatar }> = ({ media }) => (
@@ -88,9 +89,11 @@ export const Timeline: React.FC<TimelineBaseProps> = ({ events, title, className
                   )}
                 >
                   {avatar && <Avatar media={avatar} />}
-                  <div className={cn("flex flex-col", !isLeft && "order-first")}>
-                    <EventContent event={event} textAlign={isLeft ? "right" : "left"} />
-                  </div>
+                  <EventContent
+                    event={event}
+                    className={cn("flex flex-col", !isLeft && "order-first")}
+                    textAlign={isLeft ? "right" : "left"}
+                  />
                 </div>
                 <div
                   className={cn(
@@ -100,12 +103,9 @@ export const Timeline: React.FC<TimelineBaseProps> = ({ events, title, className
                 />
                 <div className={cn("w-1/2", !isLeft && "order-first")} />
               </div>
-
               <div className="flex items-start gap-4 md:hidden">
                 <div className={cn("mt-1 h-3 w-3 shrink-0 rounded-full", dotColor)} />
-                <div className="min-w-0 flex-1">
-                  <EventContent event={event} />
-                </div>
+                <EventContent event={event} className="min-w-0 flex-1" />
               </div>
             </TimelineEventReveal>
           )
