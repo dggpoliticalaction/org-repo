@@ -33,7 +33,7 @@ export const TimelineEventReveal: React.FC<Props> = ({ children, className }) =>
     <div
       ref={ref}
       className={cn(
-        "transition-[opacity,transform] duration-[600ms]",
+        "transition-[opacity,transform] duration-250",
         visible ? "translate-y-0 scale-100 opacity-100" : "translate-y-6 scale-95 opacity-0",
         className,
       )}
