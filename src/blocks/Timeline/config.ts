@@ -16,7 +16,7 @@ export const Timeline: Block = {
       required: true,
       minRows: 1,
       fields: [
-        { name: "date", type: "text", required: true, maxLength: 60 },
+        { name: "date", type: "date", required: true },
         { name: "title", type: "text" },
         { name: "description", type: "textarea", required: true },
         { name: "avatar", type: "upload", relationTo: "media" },

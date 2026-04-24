@@ -30,8 +30,12 @@ const EventContent: React.FC<{
   textAlign?: "left" | "right"
 }> = ({ event, textAlign = "left" }) => (
   <>
-    <div className="text-foreground font-mono text-sm font-bold tracking-wide uppercase">
-      {event.date}
+    <div className="text-brand text-sm font-bold tracking-wide">
+      {new Date(event.date).toLocaleDateString(undefined, {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })}
     </div>
     {event.title && (
       <div className="text-foreground mt-1 font-sans text-base font-semibold">{event.title}</div>
