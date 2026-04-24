@@ -78,25 +78,20 @@ export const Timeline: React.FC<TimelineBaseProps> = ({ events, title, className
           const isLeft = index % 2 === 0
           const dotColor = isLeft ? "bg-brand" : "bg-foreground"
           const avatar = typeof event.avatar === "object" ? event.avatar : null
-
-          const desktopBlock = (
-            <div
-              className={cn(
-                "flex w-1/2 items-center gap-4",
-                isLeft ? "justify-end pr-8 text-right" : "justify-start pl-8 text-left",
-              )}
-            >
-              {avatar && <Avatar media={avatar} />}
-              <div className={cn("flex flex-col", !isLeft && "order-first")}>
-                <EventContent event={event} textAlign={isLeft ? "right" : "left"} />
-              </div>
-            </div>
-          )
-
           return (
             <TimelineEventReveal key={index} className="relative mb-16">
               <div className="hidden md:flex md:items-center md:justify-center md:gap-8">
-                {desktopBlock}
+                <div
+                  className={cn(
+                    "flex w-1/2 items-center gap-4",
+                    isLeft ? "justify-end pr-8 text-right" : "justify-start pl-8 text-left",
+                  )}
+                >
+                  {avatar && <Avatar media={avatar} />}
+                  <div className={cn("flex flex-col", !isLeft && "order-first")}>
+                    <EventContent event={event} textAlign={isLeft ? "right" : "left"} />
+                  </div>
+                </div>
                 <div
                   className={cn(
                     "absolute top-1 left-1/2 z-10 h-3 w-3 -translate-x-1/2 rounded-full",
