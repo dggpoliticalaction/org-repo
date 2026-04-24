@@ -1,18 +1,11 @@
-import type { LinkField, Media } from "@/payload-types"
+import type { Media, TimelineEvents } from "@/payload-types"
 
 export type TimelineAvatar = Media
 
-export interface TimelineEvent {
-  date: string
-  title?: string | null
-  description: string
-  avatar?: TimelineAvatar | number | null
-  enableCitation?: boolean | null
-  citation?: LinkField | null
-}
+export type TimelineEvent = TimelineEvents[number]
 
 export interface TimelineBaseProps {
-  events: TimelineEvent[]
+  events: TimelineEvents
   title?: string | null
   className?: string
 }
