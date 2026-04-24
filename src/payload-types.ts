@@ -123,7 +123,7 @@ export type CollectionGridSlots = {
 export type TimelineEvents = {
   date: string;
   title?: string | null;
-  description: string;
+  description?: string | null;
   avatar?: (number | null) | Media;
   enableCitation?: boolean | null;
   citation?: LinkField;

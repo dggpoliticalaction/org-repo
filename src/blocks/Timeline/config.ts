@@ -18,7 +18,7 @@ export const Timeline: Block = {
       fields: [
         { name: "date", type: "date", required: true },
         { name: "title", type: "text" },
-        { name: "description", type: "textarea", required: true },
+        { name: "description", type: "textarea" },
         { name: "avatar", type: "upload", relationTo: "media" },
         { name: "enableCitation", type: "checkbox", label: "Enable citation" },
         link({
