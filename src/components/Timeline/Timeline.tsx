@@ -55,7 +55,7 @@ const Avatar: React.FC<{ media: TimelineAvatar }> = ({ media }) => (
     media={media}
     variant="thumbnail"
     sizes="64px"
-    className="h-16 w-16 flex-shrink-0 rounded-full object-cover"
+    className="h-16 w-16 shrink-0 rounded-full object-cover"
   />
 )
 
@@ -103,7 +103,7 @@ export const Timeline: React.FC<TimelineBaseProps> = ({ events, title, className
               </div>
 
               <div className="flex items-start gap-4 md:hidden">
-                <div className={cn("mt-1 h-3 w-3 flex-shrink-0 rounded-full", dotColor)} />
+                <div className={cn("mt-1 h-3 w-3 shrink-0 rounded-full", dotColor)} />
                 <div className="min-w-0 flex-1">
                   <EventContent event={event} />
                 </div>
