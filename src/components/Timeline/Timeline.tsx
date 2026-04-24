@@ -16,7 +16,9 @@ const Citation: React.FC<Pick<TimelineEvent, "date" | "enableCitation" | "citati
   return (
     <CMSLink
       link={citation}
-      className={cn("text-brand hover:text-foreground ml-1 text-sm transition-colors")}
+      className={cn(
+        "text-brand dark:text-brand-high-contrast hover:text-foreground ml-1 text-sm transition-colors",
+      )}
       aria-label={`Citation for ${date}`}
     />
   )
@@ -27,7 +29,7 @@ const Avatar: React.FC<{ media: TimelineAvatar }> = ({ media }) => (
     media={media}
     variant="thumbnail"
     sizes="64px"
-    className="size-16 shrink-0 rounded-full object-cover"
+    className="size-16 shrink-0 rounded-full border object-cover"
   />
 )
 
@@ -44,7 +46,7 @@ const EventContent: React.FC<{
       <div className="size-16" />
     )}
     <div className={cn("w-full max-w-[240px]", isLeft ? "text-right" : "order-first")}>
-      <div className="text-brand text-sm font-bold tracking-wide">
+      <div className="text-brand dark:text-brand-high-contrast text-sm font-bold tracking-wide">
         {new Date(event.date).toLocaleDateString(undefined, {
           month: "long",
           day: "numeric",
@@ -81,7 +83,7 @@ export const Timeline: React.FC<TimelineBaseProps> = ({ events, title, className
               <div
                 className={cn(
                   "absolute top-1 left-0 z-10 h-3 w-3 -translate-x-1/2 rounded-full md:left-1/2",
-                  isLeft ? "bg-brand" : "bg-foreground",
+                  isLeft ? "bg-brand dark:text-brand-high-contrast" : "bg-foreground",
                 )}
               />
             </TimelineEventReveal>
