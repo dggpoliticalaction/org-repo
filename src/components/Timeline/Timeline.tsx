@@ -14,99 +14,76 @@ const Citation: React.FC<Pick<TimelineEvent, "date" | "enableCitation" | "citati
 }) => {
   if (!enableCitation || !citation || !getLinkFieldUrl(citation)) return null
   return (
-    <sup className="relative top-[0.25px] ml-[2.5px] align-super">
-      <CMSLink
-        link={citation}
-        className="text-brand hover:text-foreground text-[0.65em] font-semibold transition-colors"
-        aria-label={`Citation for ${date}`}
-      >
-        [1]
-      </CMSLink>
-    </sup>
+    <CMSLink
+      link={citation}
+      className={cn("text-brand hover:text-foreground ml-1 text-sm transition-colors")}
+      aria-label={`Citation for ${date}`}
+    />
   )
 }
-
-const EventContent: React.FC<{
-  className?: string
-  event: TimelineEvent
-  textAlign?: "left" | "right"
-}> = ({ event, textAlign = "left", className }) => (
-  <div className={className}>
-    <div className="text-brand text-sm font-bold tracking-wide">
-      {new Date(event.date).toLocaleDateString(undefined, {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })}
-    </div>
-    {event.title && <div className="text-foreground font-sans">{event.title}</div>}
-    <p
-      className={cn(
-        "text-muted-foreground mt-2 max-w-[280px] font-sans text-sm",
-        textAlign === "right" && "ml-auto",
-      )}
-    >
-      {event.description}
-      <Citation date={event.date} enableCitation={event.enableCitation} citation={event.citation} />
-    </p>
-  </div>
-)
 
 const Avatar: React.FC<{ media: TimelineAvatar }> = ({ media }) => (
   <ImageMedia
     media={media}
     variant="thumbnail"
     sizes="64px"
-    className="h-16 w-16 shrink-0 rounded-full object-cover"
+    className="size-16 shrink-0 rounded-full object-cover"
   />
+)
+
+const EventContent: React.FC<{
+  event: TimelineEvent
+  isLeft: boolean
+}> = ({ event, isLeft }) => (
+  <div
+    className={cn("flex items-center gap-3 md:basis-1/2", isLeft ? "justify-start" : "justify-end")}
+  >
+    {typeof event.avatar === "object" && event.avatar ? (
+      <Avatar media={event.avatar} />
+    ) : (
+      <div className="size-16" />
+    )}
+    <div className={cn(isLeft ? "text-right" : "order-first")}>
+      <div className="text-brand text-sm font-bold tracking-wide">
+        {new Date(event.date).toLocaleDateString(undefined, {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })}
+      </div>
+      {event.title && <div>{event.title}</div>}
+      <p className={cn("text-muted-foreground max-w-[240px] text-sm text-pretty")}>
+        {event.description}
+        <Citation
+          date={event.date}
+          enableCitation={event.enableCitation}
+          citation={event.citation}
+        />
+      </p>
+    </div>
+  </div>
 )
 
 export const Timeline: React.FC<TimelineBaseProps> = ({ events, title, className }) => {
   return (
-    <div className={cn("w-full", className)}>
-      {title && (
-        <div className="text-muted-foreground mb-4 text-center font-mono text-xs font-semibold tracking-widest uppercase">
-          {title}
-        </div>
-      )}
-      <Separator />
-      <div className="relative w-full">
+    <div className={cn("prose-p:my-0 prose-img:my-0 w-full", className)}>
+      {title && <h3>{title}</h3>}
+      <div className="relative space-y-12 border-t border-b py-6 md:space-y-6 lg:-mx-8 xl:-mx-16">
         <Separator
           orientation="vertical"
-          className="absolute top-0 left-1/2 hidden h-full -translate-x-1/2 md:block"
+          className="absolute top-0 left-0 h-full -translate-x-1/2 md:left-1/2"
         />
         {events.map((event, index) => {
           const isLeft = index % 2 === 0
-          const dotColor = isLeft ? "bg-brand" : "bg-foreground"
-          const avatar = typeof event.avatar === "object" ? event.avatar : null
           return (
-            <TimelineEventReveal key={index} className="relative mb-16">
-              <div className="hidden md:flex md:items-center md:justify-center md:gap-8">
-                <div
-                  className={cn(
-                    "flex w-1/2 items-center gap-4",
-                    isLeft ? "justify-end pr-8 text-right" : "justify-start pl-8 text-left",
-                  )}
-                >
-                  {avatar && <Avatar media={avatar} />}
-                  <EventContent
-                    event={event}
-                    className={cn("flex flex-col", !isLeft && "order-first")}
-                    textAlign={isLeft ? "right" : "left"}
-                  />
-                </div>
-                <div
-                  className={cn(
-                    "absolute top-1 left-1/2 z-10 h-3 w-3 -translate-x-1/2 rounded-full",
-                    dotColor,
-                  )}
-                />
-                <div className={cn("w-1/2", !isLeft && "order-first")} />
-              </div>
-              <div className="flex items-start gap-4 md:hidden">
-                <div className={cn("mt-1 h-3 w-3 shrink-0 rounded-full", dotColor)} />
-                <EventContent event={event} className="min-w-0 flex-1" />
-              </div>
+            <TimelineEventReveal key={index} className={cn("relative px-2")}>
+              <EventContent event={event} isLeft={isLeft} />
+              <div
+                className={cn(
+                  "absolute top-1 left-0 z-10 h-3 w-3 -translate-x-1/2 rounded-full md:left-1/2",
+                  isLeft ? "bg-brand" : "bg-foreground",
+                )}
+              />
             </TimelineEventReveal>
           )
         })}
