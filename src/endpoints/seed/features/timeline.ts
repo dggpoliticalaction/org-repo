@@ -1,28 +1,16 @@
-import type { Media, User } from "@/payload-types"
+import type { LinkField, Media, User } from "@/payload-types"
 import type { Payload } from "payload"
 
+import { type TimelineEvent } from "@/components/Timeline/types"
 import { createArticle, validateWriters } from "../articles"
 import { createParagraph, createRichText } from "../richtext"
 
-interface TimelineCitationSeed {
-  url: string
-  label: string
-}
-
-interface TimelineEventSeed {
-  date: string
-  title?: string
-  description: string
-  avatar?: number
-  citation?: TimelineCitationSeed
-}
-
-const buildCitation = (citation?: TimelineCitationSeed) =>
+const buildCitation = (citation?: LinkField) =>
   citation
     ? { type: "custom" as const, url: citation.url, label: citation.label, newTab: true }
     : undefined
 
-const createTimelineBlock = (events: TimelineEventSeed[], title?: string) => ({
+const createTimelineBlock = (events: TimelineEvent[], title?: string) => ({
   type: "block",
   fields: {
     blockType: "timeline",
@@ -59,7 +47,7 @@ export const createTimelineArticle = async (
     label: `Source ${n}`,
   })
 
-  const events: TimelineEventSeed[] = [
+  const events: TimelineEvent[] = [
     {
       date: "January 5",
       title: "Kickoff workshop",
@@ -102,8 +90,6 @@ export const createTimelineArticle = async (
     {
       date: "March 6",
       title: "Beta launch",
-      description:
-        "Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
       citation: cite(6),
     },
     {
@@ -129,10 +115,7 @@ export const createTimelineArticle = async (
     {
       date: "April 25",
       title: "Public release",
-      description:
-        "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
       avatar: avatar(3),
-      citation: cite(7),
     },
   ]
 
