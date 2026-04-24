@@ -2,7 +2,7 @@ import type { Media, User } from "@/payload-types"
 import type { Payload } from "payload"
 
 import { createArticle, validateWriters } from "../articles"
-import { createEmptyParagraph, createParagraph, createRichText } from "../richtext"
+import { createParagraph, createRichText } from "../richtext"
 
 interface TimelineCitationSeed {
   url: string
@@ -140,8 +140,10 @@ export const createTimelineArticle = async (
     createParagraph(
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. The timeline below presents a sequence of events with per-event context — dates, descriptions, avatars, and citations.",
     ),
-    createEmptyParagraph(),
     createTimelineBlock(events, "A sample timeline"),
+    createParagraph(
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. The timeline below presents a sequence of events with per-event context — dates, descriptions, avatars, and citations.",
+    ),
   ])
 
   const title = "Lorem Ipsum Timeline"
