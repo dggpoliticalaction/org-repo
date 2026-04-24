@@ -62,6 +62,7 @@ export const createTimelineArticle = async (
   const events: TimelineEventSeed[] = [
     {
       date: "January 5",
+      title: "Kickoff workshop",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
       avatar: avatar(0),
@@ -69,6 +70,7 @@ export const createTimelineArticle = async (
     },
     {
       date: "January 18",
+      title: "Research synthesis",
       description:
         "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
       avatar: avatar(1),
@@ -76,12 +78,14 @@ export const createTimelineArticle = async (
     },
     {
       date: "February 2",
+      title: "Design review",
       description:
         "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
       avatar: avatar(2),
     },
     {
       date: "February 14",
+      title: "Prototype freeze",
       description:
         "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
       avatar: avatar(3),
@@ -89,6 +93,7 @@ export const createTimelineArticle = async (
     },
     {
       date: "February 27",
+      title: "Stakeholder sign-off",
       description:
         "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
       avatar: avatar(0),
@@ -96,29 +101,34 @@ export const createTimelineArticle = async (
     },
     {
       date: "March 6",
+      title: "Beta launch",
       description:
         "Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
       citation: cite(6),
     },
     {
       date: "March 19",
+      title: "Performance tuning",
       description:
         "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.",
       avatar: avatar(1),
     },
     {
       date: "April 1",
+      title: "Content migration",
       description:
         "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.",
       avatar: avatar(2),
     },
     {
       date: "April 12",
+      title: "Accessibility audit",
       description:
         "Sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam.",
     },
     {
       date: "April 25",
+      title: "Public release",
       description:
         "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
       avatar: avatar(3),
