@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, Home } from "lucide-react"
 import { useSelectedLayoutSegments } from "next/navigation"
 import { Fragment, type ReactElement } from "react"
 
@@ -63,7 +63,10 @@ export const Breadcrumbs = (): ReactElement | null => {
     <Breadcrumb className="container mb-4">
       <BreadcrumbList className="flex-nowrap">
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          <BreadcrumbLink href="/">
+            <Home className="size-4" />
+            <span className="sr-only">Home</span>
+          </BreadcrumbLink>
         </BreadcrumbItem>
         {segmentItems.map(({ href, label }, index) => {
           const dropdownLinks = getDropdownLinks(label)
