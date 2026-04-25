@@ -11,6 +11,7 @@ import { Geist } from "next/font/google"
 import localFont from "next/font/local"
 import React from "react"
 import "./globals.css"
+import { Breadcrumbs } from "@/components/Breadcrumbs"
 
 const FKScreamer = localFont({
   src: "../../../public/fonts/FKScreamer-Bold.woff2",
@@ -55,6 +56,7 @@ export default async function RootLayout({
           <AdminBar />
           <Header />
           <main role="main" className="my-6 flex-1">
+            <Breadcrumbs />
             {children}
           </main>
           <Footer />

@@ -184,7 +184,6 @@ export const seed = async (
           mediaCollage,
           mathBlocks,
           timeline,
-
         ] = await Promise.all([
           createRichTextShowcaseArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
             ctx.topics[3]!,
