@@ -6,6 +6,7 @@ import type {
   Media,
   MediaBlock,
   MediaCollageBlock,
+  TimelineBlock,
   Volume,
 } from "@/payload-types"
 import type { SerializedBlockNode, SerializedInlineBlockNode } from "@payloadcms/richtext-lexical"
@@ -62,6 +63,32 @@ function displayMathBlockToHTML({ node }: { node: SerializedBlockNode<DisplayMat
   return `<p class="math display-math">\\[${math}\\]</p>`
 }
 
+const timelineBlockToHTML = ({ node }: { node: SerializedBlockNode<TimelineBlock> }): string => {
+  const { title, events } = node.fields
+  if (!events?.length) return ""
+
+  const items = events
+    .map((event) => {
+      const link = event.enableCitation ? event.citation : undefined
+      let citationHtml = ""
+      if (link?.url) {
+        const href =
+          link.type === "reference" &&
+          typeof link.reference?.value === "object" &&
+          link.reference.value?.slug
+            ? `${SITE_URL}/${link.reference.relationTo}/${link.reference.value.slug}`
+            : link.url
+        citationHtml = ` <a href="${href}">[1]</a>`
+      }
+      const titleHtml = event.title ? ` — <strong>${event.title}</strong>` : ""
+      return `<li><strong>${event.date}</strong>${titleHtml}<br/>${event.description}${citationHtml}</li>`
+    })
+    .join("\n")
+
+  const heading = title ? `<h3>${title}</h3>` : ""
+  return `<section>${heading}<ul style="list-style: none; padding-left: 0;">${items}</ul></section>`
+}
+
 const htmlConverters: HTMLConvertersFunction = ({ defaultConverters }) => ({
   ...defaultConverters,
   blocks: {
@@ -75,6 +102,7 @@ const htmlConverters: HTMLConvertersFunction = ({ defaultConverters }) => ({
     twitterEmbed: socialEmbedBlockToHTML,
     youtubeEmbed: socialEmbedBlockToHTML,
     displayMathBlock: displayMathBlockToHTML,
+    timeline: timelineBlockToHTML,
   },
   inlineBlocks: {
     ...defaultConverters.inlineBlocks,

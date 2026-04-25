@@ -7,6 +7,7 @@ import { createMathBlocksArticle } from "./features/math-blocks"
 import { createMediaCollageArticle } from "./features/media-collage"
 import { createRichTextShowcaseArticle } from "./features/rich-text-showcase"
 import { createLegacySocialEmbedArticle, createSocialEmbedArticle } from "./features/social-embeds"
+import { createTimelineArticle } from "./features/timeline"
 import { createMediaFromURL } from "./media"
 import { createMenus } from "./menus"
 import { createPages } from "./pages"
@@ -182,6 +183,8 @@ export const seed = async (
           legacySocialEmbed,
           mediaCollage,
           mathBlocks,
+          timeline,
+
         ] = await Promise.all([
           createRichTextShowcaseArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
             ctx.topics[3]!,
@@ -214,6 +217,10 @@ export const seed = async (
             ctx.topics[3]!,
             ctx.topics[5]!,
           ]),
+          createTimelineArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+            ctx.topics[3]!,
+            ctx.topics[7]!,
+          ]),
         ])
         ctx.featureArticles = [
           richTextShowcase,
@@ -222,6 +229,7 @@ export const seed = async (
           legacySocialEmbed,
           mediaCollage,
           mathBlocks,
+          timeline,
         ]
       },
     },
