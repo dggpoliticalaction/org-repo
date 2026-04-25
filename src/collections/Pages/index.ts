@@ -6,6 +6,7 @@ import { CallToAction } from "@/blocks/CallToAction/config"
 import { Content } from "@/blocks/Content/config"
 import { FormBlock } from "@/blocks/Form/config"
 import { MediaBlock } from "@/blocks/MediaBlock/config"
+import { Timeline } from "@/blocks/Timeline/config"
 import { VolumeView } from "@/blocks/VolumeViewBlock/config"
 import { hero } from "@/heros/config"
 import { populatePublishedAt } from "@/hooks/populatePublishedAt"
@@ -73,7 +74,15 @@ export const Pages: CollectionConfig<"pages"> = {
             {
               name: "layout",
               type: "blocks",
-              blocks: [CollectionGrid, CallToAction, Content, MediaBlock, VolumeView, FormBlock],
+              blocks: [
+                CollectionGrid,
+                CallToAction,
+                Content,
+                MediaBlock,
+                Timeline,
+                VolumeView,
+                FormBlock,
+              ],
               required: true,
               admin: {
                 initCollapsed: true,

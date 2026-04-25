@@ -15,6 +15,7 @@ import {
 } from "@/blocks/SocialEmbed"
 import type { ParentDocContext } from "@/blocks/SocialEmbed/types"
 import { SquiggleRuleBlock } from "@/blocks/SquiggleRule/Component"
+import { TimelineBlock } from "@/blocks/Timeline/Component"
 import type {
   BannerBlock as BannerBlockProps,
   CallToActionBlock as CTABlockProps,
@@ -23,6 +24,7 @@ import type {
   MediaCollageBlock as MediaCollageBlockProps,
   SocialEmbedBlock as SocialEmbedBlockProps,
   SquiggleRuleBlock as SquiggleRuleBlockProps,
+  TimelineBlock as TimelineBlockProps,
 } from "@/payload-types"
 import { cn } from "@/utilities/utils"
 import type {
@@ -49,6 +51,7 @@ type NodeTypes =
       | MathBlockProps
       | SquiggleRuleBlockProps
       | SocialEmbedBlockProps
+      | TimelineBlockProps
     >
   | SerializedInlineBlockNode<MathBlockProps | FootnoteBlockProps>
 
@@ -78,6 +81,9 @@ function createJsxConverters(parentDoc?: ParentDocContext): JSXConvertersFunctio
       ),
       squiggleRule: ({ node }) => <SquiggleRuleBlock className="col-start-2" {...node.fields} />,
       socialEmbed: ({ node }) => <SocialEmbedBlock {...node.fields} parentDoc={parentDoc} />,
+      timeline: ({ node }: { node: SerializedBlockNode<TimelineBlockProps> }) => (
+        <TimelineBlock className="col-start-2 my-8" {...node.fields} />
+      ),
       // Legacy block types for backward compatibility with existing content
       twitterEmbed: ({ node }: { node: SerializedBlockNode<SocialEmbedBlockProps> }) => (
         <TwitterEmbedBlock {...node.fields} />
