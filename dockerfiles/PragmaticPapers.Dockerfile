@@ -116,6 +116,7 @@ RUN /usr/local/bin/modify-database-uri.sh && \
 # Source the potentially modified DATABASE_URI before building
 RUN . /tmp/build.env && \
     pnpm install --frozen-lockfile && \
+    pnpm payload migrate && \
     pnpm build
 
 # ============================================
