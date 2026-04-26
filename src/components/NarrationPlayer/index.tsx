@@ -1,6 +1,6 @@
 "use client"
 
-import type { Article, Narration } from "@/payload-types"
+import type { Narration } from "@/payload-types"
 import { Pause, Play } from "lucide-react"
 import React, { useCallback, useEffect, useRef, useState } from "react"
 
@@ -36,10 +36,6 @@ function buildWebVTT(transcript: string, duration: number): string {
   })
 
   return `WEBVTT\n\n${cues.join("\n\n")}`
-}
-
-export function isNarration(value: Article["narration"]): value is Narration {
-  return !!value && typeof value !== "number"
 }
 
 export function NarrationPlayer({ narration }: { narration: Narration }): React.ReactNode {
