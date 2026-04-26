@@ -27,26 +27,24 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
           className="min-h-56 border object-cover shadow sm:min-h-85 md:min-h-[418px] lg:min-h-[570px]"
         />
       )}
-      <div className="mt-6 flex flex-col gap-2 md:flex-row md:items-start md:gap-8">
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <h1>{title}</h1>
-          <div className="dark:text-brand-high-contrast text-brand flex gap-2 font-serif font-bold underline-offset-4">
-            {populatedAuthors &&
-              populatedAuthors.map(({ id, slug, name }, index) => (
-                <React.Fragment key={id}>
-                  {getSeparator(index, populatedAuthors.length)}
-                  <HoverPrefetchLink href={`/authors/${slug}`} className="hover:underline">
-                    {name}
-                  </HoverPrefetchLink>
-                </React.Fragment>
-              ))}
-            {"•"}
-            {publishedAt && (
-              <HoverPrefetchLink href={`/articles/${article.slug}`} className="hover:underline">
-                <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
-              </HoverPrefetchLink>
-            )}
-          </div>
+      <h1 className="mt-6">{title}</h1>
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-8">
+        <div className="dark:text-brand-high-contrast text-brand flex flex-1 gap-2 font-serif font-bold underline-offset-4">
+          {populatedAuthors &&
+            populatedAuthors.map(({ id, slug, name }, index) => (
+              <React.Fragment key={id}>
+                {getSeparator(index, populatedAuthors.length)}
+                <HoverPrefetchLink href={`/authors/${slug}`} className="hover:underline">
+                  {name}
+                </HoverPrefetchLink>
+              </React.Fragment>
+            ))}
+          {"•"}
+          {publishedAt && (
+            <HoverPrefetchLink href={`/articles/${article.slug}`} className="hover:underline">
+              <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
+            </HoverPrefetchLink>
+          )}
         </div>
         {isNarration(narration) && (
           <div className="md:w-56 md:shrink-0">
