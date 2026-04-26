@@ -12,5 +12,5 @@ export const MathJaxProvider: React.FC<{
   children: React.ReactNode
 }> = ({ enableMathRendering, children }) => {
   if (!enableMathRendering) return children
-  return <MathJaxContext>{children}</MathJaxContext>
+  return <MathJaxContext version={3}>{children}</MathJaxContext>
 }
