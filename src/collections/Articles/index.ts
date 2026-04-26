@@ -191,6 +191,7 @@ export const Articles: CollectionConfig = {
         position: "sidebar",
       },
     },
+    slugField(),
     {
       name: "enableMathRendering",
       type: "checkbox",
@@ -228,6 +229,15 @@ export const Articles: CollectionConfig = {
           in: ["writer", "editor", "chief-editor"],
         },
       },
+    },
+    {
+      name: "topics",
+      type: "relationship",
+      admin: {
+        position: "sidebar",
+      },
+      hasMany: true,
+      relationTo: "topics",
     },
     {
       name: "narration",
@@ -318,16 +328,6 @@ export const Articles: CollectionConfig = {
         { name: "publishedAt", type: "date" },
       ],
     },
-    {
-      name: "topics",
-      type: "relationship",
-      admin: {
-        position: "sidebar",
-      },
-      hasMany: true,
-      relationTo: "topics",
-    },
-    slugField(),
   ],
   hooks: {
     beforeChange: [
