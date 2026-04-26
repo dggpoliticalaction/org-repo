@@ -13,6 +13,31 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`
 }
 
+function formatVTTTime(seconds: number): string {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = seconds % 60
+  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toFixed(3).padStart(6, "0")}`
+}
+
+function buildWebVTT(transcript: string, duration: number): string {
+  const segments = transcript
+    .split(/\n\n+/)
+    .map((s) => s.replace(/\n/g, " ").trim())
+    .filter(Boolean)
+
+  if (segments.length === 0) return "WEBVTT\n"
+
+  const segmentDuration = duration / segments.length
+  const cues = segments.map((text, i) => {
+    const start = formatVTTTime(i * segmentDuration)
+    const end = formatVTTTime((i + 1) * segmentDuration)
+    return `${start} --> ${end}\n${text}`
+  })
+
+  return `WEBVTT\n\n${cues.join("\n\n")}`
+}
+
 export function isNarration(value: Article["narration"]): value is Narration {
   return !!value && typeof value !== "number"
 }
@@ -22,6 +47,7 @@ export function NarrationPlayer({ narration }: { narration: Narration }): React.
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
+  const [captionSrc, setCaptionSrc] = useState("")
 
   useEffect(() => {
     const audio = audioRef.current
@@ -43,6 +69,15 @@ export function NarrationPlayer({ narration }: { narration: Narration }): React.
       audio.removeEventListener("ended", onEnded)
     }
   }, [])
+
+  useEffect(() => {
+    if (duration <= 0 || !narration.transcript) return
+    const vtt = buildWebVTT(narration.transcript, duration)
+    const blob = new Blob([vtt], { type: "text/vtt" })
+    const url = URL.createObjectURL(blob)
+    setCaptionSrc(url)
+    return () => URL.revokeObjectURL(url)
+  }, [duration, narration.transcript])
 
   const togglePlay = useCallback(() => {
     const audio = audioRef.current
@@ -94,7 +129,12 @@ export function NarrationPlayer({ narration }: { narration: Narration }): React.
         </span>
       </div>
       <audio ref={audioRef} src={narration.url} preload="metadata">
-        <track kind="captions" />
+        <track
+          key={captionSrc}
+          kind="captions"
+          src={captionSrc || undefined}
+          default={!!captionSrc}
+        />
       </audio>
     </div>
   )
