@@ -25,6 +25,7 @@ import { footnotesArrayField } from "@/fields/footnotes"
 import { menu } from "@/fields/menu"
 import { type Article } from "@/payload-types"
 import { generatePreviewPath } from "@/utilities/generatePreviewPath"
+
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -227,6 +228,14 @@ export const Articles: CollectionConfig = {
           in: ["writer", "editor", "chief-editor"],
         },
       },
+    },
+    {
+      name: "narration",
+      type: "upload",
+      admin: {
+        position: "sidebar",
+      },
+      relationTo: "narrations",
     },
     {
       name: "createdBy",

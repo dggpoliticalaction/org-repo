@@ -199,6 +199,7 @@ export interface Config {
     articles: Article;
     volumes: Volume;
     media: Media;
+    narrations: Narration;
     categories: Category;
     users: User;
     webhooks: Webhook;
@@ -218,6 +219,7 @@ export interface Config {
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     volumes: VolumesSelect<false> | VolumesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    narrations: NarrationsSelect<false> | NarrationsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     webhooks: WebhooksSelect<false> | WebhooksSelect<true>;
@@ -439,6 +441,7 @@ export interface Article {
   enableMathRendering?: boolean | null;
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
+  narration?: (number | null) | Narration;
   createdBy?: (number | null) | User;
   populatedAuthors?: PopulatedAuthors;
   populatedVolume?: PopulatedVolume;
@@ -653,6 +656,33 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "narrations".
+ */
+export interface Narration {
+  id: number;
+  /**
+   * Name of the person who recorded this narration
+   */
+  narrator?: string | null;
+  /**
+   * Plain text transcript for accessibility
+   */
+  transcript?: string | null;
+  createdBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1262,6 +1292,10 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
+        relationTo: 'narrations';
+        value: number | Narration;
+      } | null)
+    | ({
         relationTo: 'categories';
         value: number | Category;
       } | null)
@@ -1542,6 +1576,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   enableMathRendering?: T;
   publishedAt?: T;
   authors?: T;
+  narration?: T;
   createdBy?: T;
   populatedAuthors?: T | PopulatedAuthorsSelect<T>;
   populatedVolume?: T | PopulatedVolumeSelect<T>;
@@ -1713,6 +1748,26 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "narrations_select".
+ */
+export interface NarrationsSelect<T extends boolean = true> {
+  narrator?: T;
+  transcript?: T;
+  createdBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
