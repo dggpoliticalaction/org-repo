@@ -438,19 +438,19 @@ export interface Article {
     description?: string | null;
   };
   heroImage?: (number | null) | Media;
-  enableMathRendering?: boolean | null;
-  publishedAt?: string | null;
-  authors?: (number | User)[] | null;
-  narration?: (number | null) | Narration;
-  createdBy?: (number | null) | User;
-  populatedAuthors?: PopulatedAuthors;
-  populatedVolume?: PopulatedVolume;
-  topics?: (number | Topic)[] | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
   slug: string;
+  enableMathRendering?: boolean | null;
+  publishedAt?: string | null;
+  authors?: (number | User)[] | null;
+  topics?: (number | Topic)[] | null;
+  narration?: (number | null) | Narration;
+  createdBy?: (number | null) | User;
+  populatedAuthors?: PopulatedAuthors;
+  populatedVolume?: PopulatedVolume;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1573,16 +1573,16 @@ export interface ArticlesSelect<T extends boolean = true> {
         description?: T;
       };
   heroImage?: T;
+  generateSlug?: T;
+  slug?: T;
   enableMathRendering?: T;
   publishedAt?: T;
   authors?: T;
+  topics?: T;
   narration?: T;
   createdBy?: T;
   populatedAuthors?: T | PopulatedAuthorsSelect<T>;
   populatedVolume?: T | PopulatedVolumeSelect<T>;
-  topics?: T;
-  generateSlug?: T;
-  slug?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
