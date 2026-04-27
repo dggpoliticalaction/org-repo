@@ -1,5 +1,5 @@
-import type { CollectionConfig } from "payload"
 import path from "path"
+import type { CollectionConfig } from "payload"
 import { fileURLToPath } from "url"
 
 import { anyone } from "@/access/anyone"
@@ -26,9 +26,15 @@ export const Narrations: CollectionConfig = {
   fields: [
     {
       name: "narrator",
-      type: "text",
+      type: "relationship",
+      relationTo: "users",
+      filterOptions: {
+        role: {
+          equals: "narrator",
+        },
+      },
       admin: {
-        description: "Name of the person who recorded this narration",
+        description: "User who recorded this narration",
       },
     },
     {
