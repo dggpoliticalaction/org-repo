@@ -63,7 +63,8 @@ const collectFootnoteSources = (): FootnoteSource[] => {
       }
     }
     if ($isElementNode(node)) {
-      for (const child of node.getChildren()) stack.push(child)
+      const children = node.getChildren()
+      for (let i = children.length - 1; i >= 0; i--) stack.push(children[i]!)
     }
   }
   return out
