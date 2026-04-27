@@ -38,7 +38,7 @@
     "@next/third-parties": "^15.3.6",
     "@payloadcms/admin-bar": "^3.79.0",
     "@payloadcms/db-postgres": "^3.79.0",
-    "@payloadcms/live-preview-react": "^3.79.0",
+    "@payloadcms/live-preview-react": "^3.84.1",
     "@payloadcms/next": "^3.79.0",
     "@payloadcms/plugin-form-builder": "^3.79.0",
     "@payloadcms/plugin-nested-docs": "^3.79.0",
