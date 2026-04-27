@@ -342,10 +342,7 @@ export const Articles: CollectionConfig = {
   },
   versions: {
     drafts: {
-      autosave: {
-        interval: 800,
-        showSaveDraftButton: true,
-      },
+      autosave: true,
       schedulePublish: true,
     },
     maxPerDoc: 50,
