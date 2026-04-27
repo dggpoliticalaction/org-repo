@@ -23,6 +23,8 @@ import { createPortal } from "react-dom"
 
 import type { FootnoteBlock } from "@/payload-types"
 
+import { truncate } from "./utils"
+
 type CreateInlineBlockFields = Parameters<typeof $createInlineBlockNode>[0]
 const createFootnoteNode = (fields: Partial<FootnoteBlock> & { blockType: "footnote" }) =>
   $createInlineBlockNode(fields as unknown as CreateInlineBlockFields)
@@ -218,7 +220,7 @@ const FootnoteShortcutPlugin: React.FC = () => {
                 }}
                 type="button"
               >
-                {truncate(option.source.note)}
+                {truncate(option.source.note, PREVIEW_LIMIT)}
               </button>
             ))}
           </div>,
