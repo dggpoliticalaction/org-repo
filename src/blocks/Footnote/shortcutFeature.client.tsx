@@ -1,23 +1,17 @@
 "use client"
 
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
+import {
+  LexicalTypeaheadMenuPlugin,
+  MenuOption,
+  type TriggerFn,
+} from "@lexical/react/LexicalTypeaheadMenuPlugin"
 import {
   $createInlineBlockNode,
   $isInlineBlockNode,
   createClientFeature,
 } from "@payloadcms/richtext-lexical/client"
-import {
-  $getRoot,
-  $isElementNode,
-  $isTextNode,
-  type LexicalNode,
-  TextNode,
-} from "@payloadcms/richtext-lexical/lexical"
-import { useLexicalComposerContext } from "@payloadcms/richtext-lexical/lexical/react/LexicalComposerContext"
-import {
-  LexicalTypeaheadMenuPlugin,
-  MenuOption,
-  type TriggerFn,
-} from "@payloadcms/richtext-lexical/lexical/react/LexicalTypeaheadMenuPlugin"
+import { $getRoot, $isElementNode, $isTextNode, type LexicalNode, TextNode } from "lexical"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { createPortal } from "react-dom"
 
