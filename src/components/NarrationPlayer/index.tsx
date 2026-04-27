@@ -40,28 +40,59 @@ function buildWebVTT(transcript: string, duration: number): string {
 
 export function NarrationPlayer({ narration }: { narration: Narration }): React.ReactNode {
   const audioRef = useRef<HTMLAudioElement>(null)
+  const durationRef = useRef(narration.duration ?? 0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState(0)
+  const [duration, setDuration] = useState(narration.duration ?? 0)
   const [captionSrc, setCaptionSrc] = useState("")
 
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
 
-    const onTimeUpdate = () => setCurrentTime(audio.currentTime)
-    const onDurationChange = () => {
-      if (isFinite(audio.duration)) setDuration(audio.duration)
+    let seeking = false
+
+    const onTimeUpdate = () => {
+      if (seeking) return
+      setCurrentTime(audio.currentTime)
     }
-    const onEnded = () => setIsPlaying(false)
+    const onDurationChange = () => {
+      if (!isFinite(audio.duration)) return
+      durationRef.current = audio.duration
+      setDuration(audio.duration)
+      if (seeking) {
+        seeking = false
+        audio.currentTime = 0
+      }
+    }
+    const onEnded = () => {
+      setIsPlaying(false)
+      setCurrentTime(durationRef.current)
+    }
+
+    const tryCaptureDuration = () => {
+      if (isFinite(audio.duration)) {
+        durationRef.current = audio.duration
+        setDuration(audio.duration)
+      } else if (durationRef.current === 0) {
+        // No stored duration and header reports Infinity — seek past end to
+        // force the browser to find the real end and re-fire durationchange.
+        seeking = true
+        audio.currentTime = 1e9
+      }
+    }
+
+    if (audio.readyState >= 1) tryCaptureDuration()
 
     audio.addEventListener("timeupdate", onTimeUpdate)
     audio.addEventListener("durationchange", onDurationChange)
+    audio.addEventListener("loadedmetadata", tryCaptureDuration)
     audio.addEventListener("ended", onEnded)
 
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate)
       audio.removeEventListener("durationchange", onDurationChange)
+      audio.removeEventListener("loadedmetadata", tryCaptureDuration)
       audio.removeEventListener("ended", onEnded)
     }
   }, [])
@@ -120,8 +151,7 @@ export function NarrationPlayer({ narration }: { narration: Narration }): React.
           aria-label="Seek"
         />
         <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
-          {formatTime(currentTime)}
-          {duration > 0 ? ` / ${formatTime(duration)}` : ""}
+          {`${formatTime(currentTime)} / ${formatTime(duration)}`}
         </span>
       </div>
       <audio ref={audioRef} src={narration.url} preload="metadata">

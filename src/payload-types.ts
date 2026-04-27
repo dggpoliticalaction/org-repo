@@ -671,6 +671,10 @@ export interface Narration {
    * Plain text transcript for accessibility
    */
   transcript?: string | null;
+  /**
+   * Duration in seconds (auto-populated from the audio file)
+   */
+  duration?: number | null;
   createdBy?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
@@ -1756,6 +1760,7 @@ export interface MediaSelect<T extends boolean = true> {
 export interface NarrationsSelect<T extends boolean = true> {
   narrator?: T;
   transcript?: T;
+  duration?: T;
   createdBy?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -39,6 +39,16 @@ export const Narrations: CollectionConfig = {
       },
     },
     {
+      name: "duration",
+      type: "number",
+      admin: {
+        description: "Duration in seconds (auto-populated from the audio file)",
+        components: {
+          Field: "@/collections/Narrations/components/DurationField#DurationField",
+        },
+      },
+    },
+    {
       name: "createdBy",
       type: "relationship",
       relationTo: "users",
