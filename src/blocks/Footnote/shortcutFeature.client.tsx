@@ -1,24 +1,18 @@
 "use client"
 
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
+import {
+  LexicalTypeaheadMenuPlugin,
+  MenuOption,
+  type TriggerFn,
+} from "@lexical/react/LexicalTypeaheadMenuPlugin"
 import {
   $createInlineBlockNode,
   $isInlineBlockNode,
   createClientFeature,
 } from "@payloadcms/richtext-lexical/client"
-import {
-  $getRoot,
-  $isElementNode,
-  $isTextNode,
-  type LexicalNode,
-  TextNode,
-} from "@payloadcms/richtext-lexical/lexical"
-import { useLexicalComposerContext } from "@payloadcms/richtext-lexical/lexical/react/LexicalComposerContext"
-import {
-  LexicalTypeaheadMenuPlugin,
-  MenuOption,
-  type TriggerFn,
-} from "@payloadcms/richtext-lexical/lexical/react/LexicalTypeaheadMenuPlugin"
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import { $getRoot, $isElementNode, $isTextNode, type LexicalNode, TextNode } from "lexical"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 
 import type { FootnoteBlock } from "@/payload-types"
@@ -87,28 +81,27 @@ class FootnoteMenuOption extends MenuOption {
   }
 }
 
-const truncate = (text: string): string =>
-  text.length > PREVIEW_LIMIT ? `${text.slice(0, PREVIEW_LIMIT)}…` : text
-
 const FootnoteShortcutPlugin: React.FC = () => {
   const [editor] = useLexicalComposerContext()
   const [queryString, setQueryString] = useState<string | null>(null)
-  const [sources, setSources] = useState<FootnoteSource[]>([])
+  const sourcesRef = useRef<FootnoteSource[]>([])
 
   useEffect(() => {
-    if (queryString === null) return
-    editor.getEditorState().read(() => {
-      setSources(collectFootnoteSources())
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        sourcesRef.current = collectFootnoteSources()
+      })
     })
-  }, [editor, queryString])
+  }, [editor])
 
   const options = useMemo(() => {
-    const q = (queryString ?? "").toLowerCase().trim()
-    return sources
+    if (queryString === null) return []
+    const q = queryString.toLowerCase().trim()
+    return sourcesRef.current
       .filter((s) => (q ? s.note.toLowerCase().includes(q) : true))
       .slice(0, MAX_SUGGESTIONS)
       .map((s) => new FootnoteMenuOption(s))
-  }, [sources, queryString])
+  }, [queryString])
 
   useEffect(() => {
     return editor.registerNodeTransform(TextNode, (textNode) => {
@@ -121,7 +114,7 @@ const FootnoteShortcutPlugin: React.FC = () => {
       const matchStart = match.index
       const matchEnd = matchStart + match[0].length
       const splits = textNode.splitText(matchStart, matchEnd)
-      const matchNode = splits.find((n) => n.getTextContent() === match[0])
+      const matchNode = splits[matchStart > 0 ? 1 : 0]
       if (!matchNode) return
 
       const existing = collectFootnoteSources().find((s) => s.note === noteText) ?? null
