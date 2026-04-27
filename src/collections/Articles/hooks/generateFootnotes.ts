@@ -80,7 +80,6 @@ export const collectFootnotes = (editorState?: SerializedEditorState): Footnotes
 }
 
 export const generateFootnotes: CollectionBeforeChangeHook<Article> = ({ data }) => {
-  // if (isAutosave(req)) return data
   if (data?.content) {
     data.footnotes = collectFootnotes(data.content as SerializedEditorState | undefined)
   }
