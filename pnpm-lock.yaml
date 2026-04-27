@@ -15,8 +15,8 @@ importers:
         specifier: ^15.3.6
         version: 15.3.6(next@15.4.11(@babel/core@7.29.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.77.4))(react@19.2.3)
       '@payloadcms/admin-bar':
-        specifier: ^3.79.0
-        version: 3.79.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^3.84.1
+        version: 3.84.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@payloadcms/db-postgres':
         specifier: ^3.79.0
         version: 3.79.1(@libsql/client@0.14.0)(payload@3.79.1(graphql@16.12.0)(typescript@5.9.3))
@@ -1687,8 +1687,8 @@ packages:
   '@open-draft/until@2.1.0':
     resolution: {integrity: sha512-U69T3ItWHvLwGg5eJ0n3I62nWuE6ilHlmz7zM0npLBRvPRd7e6NYmg54vvRtP5mZG7kZqZCFVdsTWo7BPtBujg==}
 
-  '@payloadcms/admin-bar@3.79.1':
-    resolution: {integrity: sha512-pgCcgz2yzn0nHelDrOCoMrEo01JrpKYMswl9IeSU4k+wqwmvnqkWV10dPxfgezA9AVtKSw0TZu4SSDj8IGUiDw==}
+  '@payloadcms/admin-bar@3.84.1':
+    resolution: {integrity: sha512-ihHiIDWp7Fx6FDfhxXX8q24iogbjkERy+KKF9t7pxEzCcJgXP8PCb2PqnyVQq98YCwxx6vOmVQolhxt5Fhumvw==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.1 || ^19.1.2 || ^19.2.1
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.1 || ^19.1.2 || ^19.2.1
@@ -2452,6 +2452,7 @@ packages:
   '@xmldom/xmldom@0.9.8':
     resolution: {integrity: sha512-p96FSY54r+WJ50FIOsCOjyj/wavs8921hG5+kVMmZgKcvIKxMXHTrjNJvRgWa/zuX3B6t2lijLNFaOyuxUH+2A==}
     engines: {node: '>=14.6'}
+    deprecated: this version has critical issues, please update to the latest version
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -5686,6 +5687,18 @@ packages:
       utf-8-validate:
         optional: true
 
+  ws@8.20.0:
+    resolution: {integrity: sha512-sAt8BhgNbzCtgGbt2OxmpuryO63ZoDk/sqaB/znQm94T4fCEsy/yV+7CdC1kJhOU9lboAEU7R3kquuycDoibVA==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   wsl-utils@0.3.1:
     resolution: {integrity: sha512-g/eziiSUNBSsdDJtCLB8bdYEUMj4jR7AGeUo96p/3dTafgjHhpF4RiCFPiRILwjQoDXx5MqkBr4fwWtR3Ky4Wg==}
     engines: {node: '>=20'}
@@ -7328,7 +7341,7 @@ snapshots:
   '@libsql/isomorphic-ws@0.1.5':
     dependencies:
       '@types/ws': 8.18.1
-      ws: 8.19.0
+      ws: 8.20.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -7472,7 +7485,7 @@ snapshots:
 
   '@open-draft/until@2.1.0': {}
 
-  '@payloadcms/admin-bar@3.79.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@payloadcms/admin-bar@3.84.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
@@ -12169,6 +12182,9 @@ snapshots:
   wrappy@1.0.2: {}
 
   ws@8.19.0: {}
+
+  ws@8.20.0:
+    optional: true
 
   wsl-utils@0.3.1:
     dependencies:
