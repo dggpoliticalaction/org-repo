@@ -17,7 +17,7 @@ export const FootnoteLabelClient: React.FC<FootnoteLabelClientProps> = ({ siblin
   const { data } = useDocumentInfo()
   const footnotes = (data?.footnotes as FootnotesField) ?? []
   const currentIndex =
-    index ?? (note ? (footnotes.find((f) => f.note === note)?.index ?? null) : null)
+    (note ? (footnotes.find((f) => f.note === note)?.index ?? null) : null) ?? index ?? null
 
   if (!note) return <span>Footnote</span>
   if (typeof currentIndex !== "number") return <span>{truncate(note, PREVIEW_LIMIT)}</span>
