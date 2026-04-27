@@ -15,16 +15,19 @@ import { $getRoot, $isElementNode, $isTextNode, type LexicalNode, TextNode } fro
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { createPortal } from "react-dom"
 
+import type { FootnoteBlock } from "@/payload-types"
+
+type CreateInlineBlockFields = Parameters<typeof $createInlineBlockNode>[0]
+const createFootnoteNode = (fields: Partial<FootnoteBlock> & { blockType: "footnote" }) =>
+  $createInlineBlockNode(fields as unknown as CreateInlineBlockFields)
+
 const SHORTCUT_REGEX = /\[\^([^\]]+)\]/
 const TRIGGER_REGEX = /(^|\s|\()(\[\^([^\]]*))$/
 const PREVIEW_LIMIT = 60
 const MAX_SUGGESTIONS = 8
 
-interface FootnoteSource {
+type FootnoteSource = Pick<FootnoteBlock, "note" | "attributionEnabled" | "link"> & {
   id: string
-  note: string
-  attributionEnabled?: boolean
-  link?: unknown
 }
 
 const collectFootnoteSources = (): FootnoteSource[] => {
@@ -34,14 +37,7 @@ const collectFootnoteSources = (): FootnoteSource[] => {
   while (stack.length) {
     const node = stack.pop()!
     if ($isInlineBlockNode(node)) {
-      const fields = node.getFields() as {
-        id?: string
-        blockType?: string
-        sourceId?: string | null
-        note?: string
-        attributionEnabled?: boolean
-        link?: unknown
-      }
+      const fields = node.getFields() as Partial<FootnoteBlock>
       if (
         fields.blockType === "footnote" &&
         !fields.sourceId &&
@@ -69,9 +65,9 @@ const triggerFn: TriggerFn = (text) => {
   const match = TRIGGER_REGEX.exec(text)
   if (!match) return null
   return {
-    leadOffset: match.index + match[1].length,
-    matchingString: match[3],
-    replaceableString: match[2],
+    leadOffset: match.index + (match[1]?.length ?? 0),
+    matchingString: match[3] ?? "",
+    replaceableString: match[2] ?? "",
   }
 }
 
@@ -121,7 +117,7 @@ const FootnoteShortcutPlugin: React.FC = () => {
       if (!matchNode) return
 
       const existing = collectFootnoteSources().find((s) => s.note === noteText) ?? null
-      const footnote = $createInlineBlockNode(
+      const footnote = createFootnoteNode(
         existing
           ? {
               blockName: "",
@@ -158,7 +154,7 @@ const FootnoteShortcutPlugin: React.FC = () => {
           const parts = node.splitText(splitOffset)
           triggerNode = parts[parts.length - 1]!
         }
-        const footnote = $createInlineBlockNode({
+        const footnote = createFootnoteNode({
           blockName: "",
           blockType: "footnote",
           sourceId: option.source.id,
