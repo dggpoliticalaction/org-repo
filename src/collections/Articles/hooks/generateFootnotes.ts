@@ -100,14 +100,8 @@ export const collectFootnotes = (editorState?: SerializedEditorState | null): Fo
   return result
 }
 
-export const generateFootnotes: CollectionBeforeChangeHook<Article> = ({ data, req }) => {
-  const autosaveQuery = req?.query?.autosave
-  const isAutosave =
-    autosaveQuery === true ||
-    autosaveQuery === "true" ||
-    autosaveQuery === 1 ||
-    autosaveQuery === "1"
-  if (!isAutosave && data?.content) {
+export const generateFootnotes: CollectionBeforeChangeHook<Article> = ({ data }) => {
+  if (data?.content) {
     data.footnotes = collectFootnotes(data.content as SerializedEditorState)
   }
   return data

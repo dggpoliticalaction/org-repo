@@ -11,7 +11,9 @@ export const InsertExistingFootnote: React.FC = () => {
   const { setValue: setSourceId } = useField<string>({ path: "sourceId" })
   const { setValue: setNote } = useField<string>({ path: "note" })
 
-  const footnotes = (data?.footnotes as NonNullable<FootnotesField>) ?? []
+  const footnotes = ((data?.footnotes as NonNullable<FootnotesField>) ?? []).filter(
+    (footnote) => footnote.note,
+  )
 
   const handleChange = (value: ReactSelectOption | ReactSelectOption[]) => {
     const option = Array.isArray(value) ? value[0] : value
