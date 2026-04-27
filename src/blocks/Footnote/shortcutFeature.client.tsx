@@ -5,13 +5,19 @@ import {
   $isInlineBlockNode,
   createClientFeature,
 } from "@payloadcms/richtext-lexical/client"
+import {
+  $getRoot,
+  $isElementNode,
+  $isTextNode,
+  type LexicalNode,
+  TextNode,
+} from "@payloadcms/richtext-lexical/lexical"
 import { useLexicalComposerContext } from "@payloadcms/richtext-lexical/lexical/react/LexicalComposerContext"
 import {
   LexicalTypeaheadMenuPlugin,
   MenuOption,
   type TriggerFn,
 } from "@payloadcms/richtext-lexical/lexical/react/LexicalTypeaheadMenuPlugin"
-import { $getRoot, $isElementNode, $isTextNode, type LexicalNode, TextNode } from "lexical"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 
