@@ -57,6 +57,8 @@
     "feed": "^5.1.0",
     "geist": "^1.7.0",
     "graphql": "^16.12.0",
+    "lexical": "0.41.0",
+    "@lexical/react": "0.41.0",
     "lucide-react": "^0.577.0",
     "next": "~15.4.11",
     "next-sitemap": "^4.2.3",
