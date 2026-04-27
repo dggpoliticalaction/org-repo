@@ -5,6 +5,7 @@ import { writer } from "@/access/writer"
 import { Banner } from "@/blocks/Banner/config"
 import { Code } from "@/blocks/Code/config"
 import { FootnoteBlock } from "@/blocks/Footnote/config"
+import { FootnoteShortcutFeature } from "@/blocks/Footnote/shortcutFeature"
 import { DisplayMathBlock, InlineMathBlock } from "@/blocks/Math/config"
 import { MediaBlock } from "@/blocks/MediaBlock/config"
 import { MediaCollageBlock } from "@/blocks/MediaCollageBlock/config"
@@ -130,6 +131,7 @@ export const Articles: CollectionConfig = {
                       ],
                       inlineBlocks: [InlineMathBlock, FootnoteBlock],
                     }),
+                    FootnoteShortcutFeature(),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
