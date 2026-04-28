@@ -637,7 +637,7 @@ export interface User {
   slug: string;
   profileImage?: (number | null) | Media;
   socials?: MenuField;
-  role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'member') | null;
+  role?: ('admin' | 'chief-editor' | 'editor' | 'writer' | 'narrator' | 'member') | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -664,9 +664,9 @@ export interface User {
 export interface Narration {
   id: number;
   /**
-   * Name of the person who recorded this narration
+   * User who recorded this narration
    */
-  narrator?: string | null;
+  narrator?: (number | null) | User;
   /**
    * Plain text transcript for accessibility
    */
