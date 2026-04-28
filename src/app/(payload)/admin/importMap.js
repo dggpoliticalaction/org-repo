@@ -28,6 +28,7 @@ import { SubscriptFeatureClient as SubscriptFeatureClient_e70f5e05f09f93e00b997e
 import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BlockquoteFeatureClient as BlockquoteFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { FootnoteShortcutFeatureClient as FootnoteShortcutFeatureClient_c9eb0c0c4f4eddc3060756b47cf6d3aa } from '@/blocks/Footnote/shortcutFeature.client'
 import { BlocksFeatureClient as BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { default as default_80e5fdb60df5ca84bc544282529ce3be } from '../../../blocks/Math/AdminComponent'
 import { URLField as URLField_50bd533e6cc7d027cb7127769a4f2bf9 } from '@/blocks/SocialEmbed/components/URLField'
@@ -77,6 +78,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#StrikethroughFeatureClient": StrikethroughFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BlockquoteFeatureClient": BlockquoteFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "@/blocks/Footnote/shortcutFeature.client#FootnoteShortcutFeatureClient": FootnoteShortcutFeatureClient_c9eb0c0c4f4eddc3060756b47cf6d3aa,
   "@payloadcms/richtext-lexical/client#BlocksFeatureClient": BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/blocks/Math/AdminComponent#default": default_80e5fdb60df5ca84bc544282529ce3be,
   "@/blocks/SocialEmbed/components/URLField#URLField": URLField_50bd533e6cc7d027cb7127769a4f2bf9,

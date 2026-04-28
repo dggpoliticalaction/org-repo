@@ -1,14 +1,12 @@
 import type { FootnoteBlock } from "@/payload-types"
 import React from "react"
 
+import { FootnoteLabelClient } from "./FootnoteLabelClient"
+
 interface FootnoteLabelProps {
-  siblingData: Partial<FootnoteBlock>
+  siblingData?: Partial<FootnoteBlock> | null
 }
 
-export const FootnoteLabel: React.FC<FootnoteLabelProps> = ({
-  siblingData: { index, sourceId },
-}) => {
-  if (typeof index !== "number") return <span>Footnote</span>
-  if (sourceId) return <span>{`↗ [${index}]`}</span>
-  return <span>{`[${index}]`}</span>
+export const FootnoteLabel: React.FC<FootnoteLabelProps> = ({ siblingData }) => {
+  return <FootnoteLabelClient siblingData={siblingData} />
 }
