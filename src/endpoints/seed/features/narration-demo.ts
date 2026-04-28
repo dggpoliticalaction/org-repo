@@ -30,8 +30,7 @@ export const createNarrationDemoArticle = async (
   const article = await createArticle(payload, {
     title,
     content: createRichTextFromParagraphs([
-      "This is a test narration for an article on The Pragmatic Papers.",
-      "It demonstrates how the audio player looks and feels with real audio content including the progress bar and playback controls.",
+      "This is a test narration for an article on The Pragmatic Papers. It demonstrates how the audio player looks and feels with real audio content including the progress bar and playback controls.",
       transcript,
     ]),
     authors: [writer.id],
