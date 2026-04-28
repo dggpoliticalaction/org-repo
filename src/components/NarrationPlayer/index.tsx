@@ -2,6 +2,7 @@
 
 import type { Narration } from "@/payload-types"
 import { Pause, Play } from "lucide-react"
+import Link from "next/link"
 import React, { useCallback, useEffect, useRef, useState } from "react"
 
 import { Slider } from "@/components/ui/slider"
@@ -132,8 +133,13 @@ export function NarrationPlayer({ narration }: { narration: Narration }): React.
 
   return (
     <div className="flex flex-col gap-1.5">
-      {narration.narrator && (
-        <p className="text-muted-foreground font-serif text-sm">Narrated by {narration.narrator}</p>
+      {narration.narrator && typeof narration.narrator !== "number" && (
+        <p className="text-muted-foreground font-serif text-sm">
+          Narrated by{" "}
+          <Link href={`/authors/${narration.narrator.slug}`} className="hover:underline">
+            {narration.narrator.name}
+          </Link>
+        </p>
       )}
       <div className="flex items-center gap-3">
         <button
