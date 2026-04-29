@@ -32,6 +32,14 @@ export const populateAuthors: CollectionAfterReadHook<Article> = async ({
       .map((id) => authorMap.get(id))
       .filter((userDoc): userDoc is User => Boolean(userDoc))
 
+    if (populatedAuthors.length < authorIds.length) {
+      const missingIds = authorIds.filter((id) => !authorMap.has(id))
+      payload.logger.warn(
+        { articleId: doc.id, missingIds },
+        `Some authors were not found for article ${doc.id}`,
+      )
+    }
+
     if (populatedAuthors.length > 0) {
       doc.populatedAuthors = populatedAuthors.map((populatedAuthor) => ({
         id: populatedAuthor.id,
@@ -42,9 +50,13 @@ export const populateAuthors: CollectionAfterReadHook<Article> = async ({
         profileImage: populatedAuthor.profileImage,
         socials: populatedAuthor.socials,
       }))
+      payload.logger.debug(
+        { articleId: doc.id, count: populatedAuthors.length },
+        `Populated authors for article ${doc.id}`,
+      )
     }
   } catch (error) {
-    payload.logger.error({ err: error, authorIds }, "Failed to populate authors")
+    payload.logger.error({ err: error, authorIds, articleId: doc.id }, "Failed to populate authors")
   }
 
   return doc
