@@ -171,11 +171,12 @@ export const Articles: CollectionConfig = {
               relationTo: "media",
             }),
             {
-              name: "imageAutoPopulated",
+              name: "useHeroImage",
               type: "checkbox",
-              defaultValue: false,
+              label: "Use Hero Image",
+              defaultValue: true,
               admin: {
-                hidden: true,
+                description: "Automatically use the Hero Image as the Meta Image",
               },
             },
 

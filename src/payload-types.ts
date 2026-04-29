@@ -433,7 +433,10 @@ export interface Article {
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
     image?: (number | null) | Media;
-    imageAutoPopulated?: boolean | null;
+    /**
+     * Automatically use the Hero Image as the Meta Image
+     */
+    useHeroImage?: boolean | null;
     description?: string | null;
   };
   heroImage?: (number | null) | Media;
@@ -1537,7 +1540,7 @@ export interface ArticlesSelect<T extends boolean = true> {
     | {
         title?: T;
         image?: T;
-        imageAutoPopulated?: T;
+        useHeroImage?: T;
         description?: T;
       };
   heroImage?: T;
