@@ -127,7 +127,7 @@ export default async function VolumePage({
       {editorsNote && <RichText className="drop-cap" enableGutter={false} data={editorsNote} />}
       <Separator className="my-6" />
       <section className="space-y-4">
-        {title && <h2>{title}</h2>}
+        <h2>{title || "Articles in this Volume"}</h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {articles?.map((article) => (
             <ArticleCard key={article.id} doc={article} relationTo="articles" />
