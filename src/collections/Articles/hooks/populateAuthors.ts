@@ -12,35 +12,39 @@ export const populateAuthors: CollectionAfterReadHook<Article> = async ({
   if (context.skipAfterRead) return doc
   if (!doc.authors || !doc.authors.length) return doc
 
-  const populatedAuthors: User[] = []
+  const authorIds = doc.authors.map((author) =>
+    typeof author === "number" ? author : author?.id,
+  ) as number[]
 
-  for (const author of doc.authors) {
-    try {
-      const authorDoc = await payload.findByID({
-        id: typeof author === "number" ? author : author?.id,
-        collection: "users",
-        overrideAccess: true,
-        depth: 1,
-      })
+  if (!authorIds.length) return doc
 
-      if (authorDoc) {
-        populatedAuthors.push(authorDoc)
-      }
-    } catch {
-      // swallow error
+  try {
+    const { docs: authorDocs } = await payload.find({
+      collection: "users",
+      where: { id: { in: authorIds } },
+      overrideAccess: true,
+      depth: 1,
+    })
+
+    // Preserve original author order
+    const authorMap = new Map(authorDocs.map((userDoc) => [userDoc.id, userDoc]))
+    const populatedAuthors = authorIds
+      .map((id) => authorMap.get(id))
+      .filter((userDoc): userDoc is User => Boolean(userDoc))
+
+    if (populatedAuthors.length > 0) {
+      doc.populatedAuthors = populatedAuthors.map((populatedAuthor) => ({
+        id: populatedAuthor.id,
+        name: populatedAuthor.name,
+        slug: populatedAuthor.slug,
+        affiliation: populatedAuthor.affiliation,
+        biography: populatedAuthor.biography,
+        profileImage: populatedAuthor.profileImage,
+        socials: populatedAuthor.socials,
+      }))
     }
-  }
-
-  if (populatedAuthors.length > 0) {
-    doc.populatedAuthors = populatedAuthors.map((populatedAuthor) => ({
-      id: populatedAuthor.id as unknown as string,
-      name: populatedAuthor.name,
-      slug: populatedAuthor.slug,
-      affiliation: populatedAuthor.affiliation,
-      biography: populatedAuthor.biography,
-      profileImage: populatedAuthor.profileImage,
-      socials: populatedAuthor.socials,
-    }))
+  } catch (error) {
+    payload.logger.error({ err: error, authorIds }, "Failed to populate authors")
   }
 
   return doc

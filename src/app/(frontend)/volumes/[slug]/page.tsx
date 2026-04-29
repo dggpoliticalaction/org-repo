@@ -91,7 +91,7 @@ export default async function VolumePage({
 
   if (!articles) return <PayloadRedirects url={url} />
 
-  const seen = new Set<string>()
+  const seen = new Set<number>()
   const volumeAuthors = articles
     ?.flatMap((article) => article.populatedAuthors ?? [])
     .filter((a) => {
