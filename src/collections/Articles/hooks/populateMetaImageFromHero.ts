@@ -3,10 +3,10 @@ import type { Article } from "@/payload-types"
 
 /**
  * BeforeChange hook that populates meta.image from heroImage
- * when meta.image is empty and useHeroImage is checked.
+ * when meta.image is empty.
  */
 export const populateMetaImageFromHero: CollectionBeforeChangeHook<Article> = ({ data }) => {
-  if (data.meta?.useHeroImage !== false && !data.meta?.image && data.heroImage) {
+  if (!data.meta?.image && data.heroImage) {
     data.meta = {
       ...data.meta,
       image: data.heroImage,

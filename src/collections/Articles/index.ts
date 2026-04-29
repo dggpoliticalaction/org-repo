@@ -170,15 +170,6 @@ export const Articles: CollectionConfig = {
             MetaImageField({
               relationTo: "media",
             }),
-            {
-              name: "useHeroImage",
-              type: "checkbox",
-              label: "Use Hero Image",
-              defaultValue: true,
-              admin: {
-                description: "Automatically use the Hero Image as the Meta Image",
-              },
-            },
 
             MetaDescriptionField({}),
             PreviewField({
