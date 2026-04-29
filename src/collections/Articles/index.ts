@@ -170,6 +170,14 @@ export const Articles: CollectionConfig = {
             MetaImageField({
               relationTo: "media",
             }),
+            {
+              name: "imageAutoPopulated",
+              type: "checkbox",
+              defaultValue: false,
+              admin: {
+                hidden: true,
+              },
+            },
 
             MetaDescriptionField({}),
             PreviewField({
