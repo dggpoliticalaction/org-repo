@@ -23,7 +23,7 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   logger: {
     options: {
-      level: process.env.NODE_ENV === "production" ? "info" : "debug",
+      level: process.env.PAYLOAD_LOG_LEVEL || "info",
     },
   },
   admin: {
