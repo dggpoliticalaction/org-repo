@@ -30,7 +30,7 @@ import {
   PreviewField,
 } from "@payloadcms/plugin-seo/fields"
 import { checkArticles } from "./hooks/checkArticles"
-import { getNextVolumeNumber } from "./hooks/getNextVolumeNumber"
+import { getDefaultTitle, getNextVolumeNumber } from "./hooks/getNextVolumeNumber"
 import { pushToWebhooks } from "./hooks/pushToWebhooks"
 import { revalidateArticle, revalidateDelete } from "./hooks/revalidateVolumes"
 import { setDefaultSeoTitle } from "./hooks/seoTitle"
@@ -64,7 +64,18 @@ export const Volumes: CollectionConfig = {
   fields: [
     {
       name: "title",
+      // default title uses getNextVolumeNumber to set the title to "Volume X" where X is the next volume number
+      defaultValue: getDefaultTitle,
       type: "text",
+      required: true,
+    },
+    {
+      name: "volumeNumber",
+      type: "number",
+      defaultValue: getNextVolumeNumber,
+      admin: {
+        position: "sidebar",
+      },
       required: true,
     },
     {
@@ -72,15 +83,6 @@ export const Volumes: CollectionConfig = {
       tabs: [
         {
           fields: [
-            {
-              name: "volumeNumber",
-              type: "number",
-              defaultValue: getNextVolumeNumber,
-              admin: {
-                position: "sidebar",
-              },
-              required: true,
-            },
             {
               name: "description",
               type: "textarea",

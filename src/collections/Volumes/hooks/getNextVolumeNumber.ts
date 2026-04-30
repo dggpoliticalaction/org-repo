@@ -1,6 +1,6 @@
-import { type FieldHook } from "payload"
+import { type FieldHook, type PayloadRequest } from "payload"
 
-export const getNextVolumeNumber: FieldHook = async ({ req }) => {
+const getNextVolumeNumberValue = async (req: PayloadRequest) => {
   const { payload } = req
   const volumes = await payload.find({
     collection: "volumes",
@@ -10,4 +10,13 @@ export const getNextVolumeNumber: FieldHook = async ({ req }) => {
   })
   const highestVolumeNumber = volumes?.docs?.[0]?.volumeNumber || 0
   return highestVolumeNumber + 1
+}
+
+export const getNextVolumeNumber: FieldHook = async ({ req }) => {
+  return await getNextVolumeNumberValue(req)
+}
+
+export const getDefaultTitle = async ({ req }: { req: PayloadRequest }): Promise<string> => {
+  const nextVolume = await getNextVolumeNumberValue(req)
+  return `Volume ${nextVolume}: `
 }
