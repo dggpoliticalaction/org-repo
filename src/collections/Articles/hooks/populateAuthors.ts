@@ -14,7 +14,7 @@ export const populateAuthors: CollectionAfterReadHook<Article> = async ({
 
   const authorIds = doc.authors.map((author) =>
     typeof author === "number" ? author : author?.id,
-  ) as number[]
+  )
 
   if (!authorIds.length) return doc
 
