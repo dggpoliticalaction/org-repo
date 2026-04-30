@@ -34,7 +34,7 @@ export const ContributorsBlock: React.FC<ContributorsBlockProps> = async ({ titl
   if (!contributors.length) return null
 
   return (
-    <section aria-label={title} className="container my-4 space-y-3">
+    <section aria-label={title} className="container my-4 max-w-3xl space-y-3">
       <h2>{title}</h2>
       <div className="flex flex-col gap-4">
         {contributors.map((contributor) => (
