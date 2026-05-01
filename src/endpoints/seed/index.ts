@@ -178,17 +178,7 @@ export const seed = async (
     {
       name: "Creating feature articles...",
       fn: async () => {
-        const [
-          richTextShowcase,
-          footnotes,
-          socialEmbed,
-          legacySocialEmbed,
-          mediaCollage,
-          mathBlocks,
-          timeline,
-          bannerBlocks,
-          codeBlocks,
-        ] = await Promise.all([
+        ctx.featureArticles = await Promise.all([
           createRichTextShowcaseArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
             ctx.topics[3]!,
             ctx.topics[4]!,
@@ -233,17 +223,6 @@ export const seed = async (
             ctx.topics[7]!,
           ]),
         ])
-        ctx.featureArticles = [
-          richTextShowcase,
-          footnotes,
-          socialEmbed,
-          legacySocialEmbed,
-          mediaCollage,
-          mathBlocks,
-          timeline,
-          bannerBlocks,
-          codeBlocks,
-        ]
       },
     },
     {
