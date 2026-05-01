@@ -1,12 +1,15 @@
+import { LivePreviewListener } from "@/components/LivePreviewListener"
+import { PageRange } from "@/components/PageRange"
+import { Pagination } from "@/components/Pagination"
 import { AuthorList } from "@/components/Authors/AuthorList"
-import type { PopulatedAuthors, PopulatedAuthorsSelect } from "@/payload-types"
+import type { PopulatedAuthorsSelect } from "@/payload-types"
 import { getServerSideURL } from "@/utilities/getURL"
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
-import configPromise from "@payload-config"
+import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
 import { getPayload } from "payload"
-import React from "react"
+import React, { cache } from "react"
 
 export const metadata: Metadata = {
   title: "Authors — Pragmatic Papers",
@@ -18,9 +21,11 @@ export const metadata: Metadata = {
   }),
 }
 
-async function queryAuthors(): Promise<NonNullable<PopulatedAuthors>> {
+const AUTHORS_PER_PAGE = 12
+
+const queryAuthors = cache(async (page: number = 1) => {
   const { isEnabled: draft } = await draftMode()
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayload({ config })
 
   const select: PopulatedAuthorsSelect<true> = {
     id: true,
@@ -32,11 +37,12 @@ async function queryAuthors(): Promise<NonNullable<PopulatedAuthors>> {
     socials: true,
   }
 
-  const { docs } = await payload.find({
+  return await payload.find({
     collection: "users",
     draft,
-    limit: 1000,
-    pagination: false,
+    limit: AUTHORS_PER_PAGE,
+    page,
+    pagination: true,
     sort: "name",
     depth: 1,
     where: {
@@ -46,8 +52,23 @@ async function queryAuthors(): Promise<NonNullable<PopulatedAuthors>> {
     },
     select,
   })
+})
 
-  return docs.map((doc) => ({
+interface Args {
+  searchParams: Promise<{
+    p?: string
+  }>
+}
+
+export default async function AuthorsIndexPage({ searchParams }: Args): Promise<React.ReactNode> {
+  const { isEnabled: draft } = await draftMode()
+  const { p } = await searchParams
+  let page = Number(p) || 1
+  if (!Number.isInteger(page) || page < 1) page = 1
+
+  const { docs: authors, totalDocs, totalPages, page: currentPage } = await queryAuthors(page)
+
+  const mappedAuthors = authors.map((doc) => ({
     id: String(doc.id),
     name: doc.name,
     slug: doc.slug,
@@ -56,20 +77,42 @@ async function queryAuthors(): Promise<NonNullable<PopulatedAuthors>> {
     profileImage: doc.profileImage,
     socials: doc.socials,
   }))
-}
-
-export default async function AuthorsIndexPage(): Promise<React.ReactNode> {
-  const authors = await queryAuthors()
 
   return (
     <article className="mx-auto max-w-3xl space-y-6 px-4">
-      <h1>Authors</h1>
-      <p>Learn more about The Pragmatic Papers contributors and explore their work.</p>
-      {authors.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No authors available yet.</p>
-      ) : (
-        <AuthorList authors={authors} />
-      )}
+      {draft && <LivePreviewListener />}
+
+      <header className="space-y-3">
+        <h1>Authors</h1>
+        <p className="text-muted-foreground text-sm">
+          Learn more about The Pragmatic Papers contributors and explore their work.
+        </p>
+      </header>
+
+      <section aria-label="All authors" className="mt-6">
+        {authors.length === 0 ? (
+          <p className="text-muted-foreground text-sm">No authors available yet.</p>
+        ) : (
+          <>
+            <div className="flex justify-center">
+              <PageRange
+                collectionLabels={{ plural: "Authors", singular: "Author" }}
+                currentPage={currentPage}
+                limit={AUTHORS_PER_PAGE}
+                totalDocs={totalDocs}
+              />
+            </div>
+            <div className="mt-4 flex flex-col gap-4">
+              <AuthorList authors={mappedAuthors} />
+            </div>
+            {totalPages > 1 && currentPage && (
+              <div className="mt-6 flex justify-center">
+                <Pagination page={currentPage} totalPages={totalPages} />
+              </div>
+            )}
+          </>
+        )}
+      </section>
     </article>
   )
 }
