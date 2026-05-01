@@ -6,28 +6,7 @@ export interface SeededUsers {
   admin: User
   chiefEditor: User
   editor: User
-  writer1: User
-  writer2: User
-  writer3: User
-  writer4: User
-  writer5: User
-  writer6: User
-  writer7: User
-  writer8: User
-  writer9: User
-  writer10: User
-  writer11: User
-  writer12: User
-  writer13: User
-  writer14: User
-  writer15: User
-  writer16: User
-  writer17: User
-  writer18: User
-  writer19: User
-  writer20: User
-  writer21: User
-  writer22: User
+  writers: User[]
 }
 
 type UserData = RequiredDataFromCollection<User> &
@@ -289,36 +268,10 @@ export const createUsers = async (payload: Payload, media: Media[]): Promise<See
     writers.push(writer)
   }
 
-  // Create a mapped object with guaranteed non-undefined values
-  const writerMap = {
-    writer1: writers[0]!,
-    writer2: writers[1]!,
-    writer3: writers[2]!,
-    writer4: writers[3]!,
-    writer5: writers[4]!,
-    writer6: writers[5]!,
-    writer7: writers[6]!,
-    writer8: writers[7]!,
-    writer9: writers[8]!,
-    writer10: writers[9]!,
-    writer11: writers[10]!,
-    writer12: writers[11]!,
-    writer13: writers[12]!,
-    writer14: writers[13]!,
-    writer15: writers[14]!,
-    writer16: writers[15]!,
-    writer17: writers[16]!,
-    writer18: writers[17]!,
-    writer19: writers[18]!,
-    writer20: writers[19]!,
-    writer21: writers[20]!,
-    writer22: writers[21]!,
-  }
-
   return {
     admin,
     chiefEditor,
     editor,
-    ...writerMap,
+    writers,
   }
 }

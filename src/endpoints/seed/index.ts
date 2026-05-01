@@ -18,28 +18,10 @@ import { createVolumes } from "./volumes"
 
 interface SeedContext {
   media: Media[]
-  writer1: User
-  writer2: User
-  writer3: User
-  writer4: User
-  writer5: User
-  writer6: User
-  writer7: User
-  writer8: User
-  writer9: User
-  writer10: User
-  writer11: User
-  writer12: User
-  writer13: User
-  writer14: User
-  writer15: User
-  writer16: User
-  writer17: User
-  writer18: User
-  writer19: User
-  writer20: User
-  writer21: User
-  writer22: User
+  admin: User
+  chiefEditor: User
+  editor: User
+  writers: User[]
   topics: number[]
   volume1Articles: number[]
   volume2Articles: number[]
@@ -70,28 +52,7 @@ export const seed = async (
                 "admin@example.com",
                 "chiefeditor@example.com",
                 "editor@example.com",
-                "writer1@example.com",
-                "writer2@example.com",
-                "writer3@example.com",
-                "writer4@example.com",
-                "writer5@example.com",
-                "writer6@example.com",
-                "writer7@example.com",
-                "writer8@example.com",
-                "writer9@example.com",
-                "writer10@example.com",
-                "writer11@example.com",
-                "writer12@example.com",
-                "writer13@example.com",
-                "writer14@example.com",
-                "writer15@example.com",
-                "writer16@example.com",
-                "writer17@example.com",
-                "writer18@example.com",
-                "writer19@example.com",
-                "writer20@example.com",
-                "writer21@example.com",
-                "writer22@example.com",
+                ...Array.from({ length: 22 }, (_, i) => `writer${i + 1}@example.com`),
               ],
             },
           },
@@ -122,53 +83,12 @@ export const seed = async (
     {
       name: "Creating users...",
       fn: async () => {
-        const {
-          writer1,
-          writer2,
-          writer3,
-          writer4,
-          writer5,
-          writer6,
-          writer7,
-          writer8,
-          writer9,
-          writer10,
-          writer11,
-          writer12,
-          writer13,
-          writer14,
-          writer15,
-          writer16,
-          writer17,
-          writer18,
-          writer19,
-          writer20,
-          writer21,
-          writer22,
-        } = await createUsers(payload, ctx.media)
-        ctx.writer1 = writer1
-        ctx.writer2 = writer2
-        ctx.writer3 = writer3
-        ctx.writer4 = writer4
-        ctx.writer5 = writer5
-        ctx.writer6 = writer6
-        ctx.writer7 = writer7
-        ctx.writer8 = writer8
-        ctx.writer9 = writer9
-        ctx.writer10 = writer10
-        ctx.writer11 = writer11
-        ctx.writer12 = writer12
-        ctx.writer13 = writer13
-        ctx.writer14 = writer14
-        ctx.writer15 = writer15
-        ctx.writer16 = writer16
-        ctx.writer17 = writer17
-        ctx.writer18 = writer18
-        ctx.writer19 = writer19
-        ctx.writer20 = writer20
-        ctx.writer21 = writer21
-        ctx.writer22 = writer22
-        validateWriters([writer1, writer2])
+        const { admin, chiefEditor, editor, writers } = await createUsers(payload, ctx.media)
+        ctx.admin = admin
+        ctx.chiefEditor = chiefEditor
+        ctx.editor = editor
+        ctx.writers = writers
+        validateWriters([writers[0]!, writers[1]!])
       },
     },
     {
@@ -181,18 +101,7 @@ export const seed = async (
     {
       name: "Creating Volume 1 articles...",
       fn: async () => {
-        const writers = [
-          ctx.writer1,
-          ctx.writer2,
-          ctx.writer3,
-          ctx.writer4,
-          ctx.writer5,
-          ctx.writer6,
-          ctx.writer7,
-          ctx.writer8,
-          ctx.writer9,
-          ctx.writer10,
-        ]
+        const writers = ctx.writers.slice(0, 10)
         ctx.volume1Articles = []
         // 0 Politics, 1 Memes, 2 Cognitive Science, 3 Philosophy, 4 Ethics, 5 Epistemology,
         // 6 Neuroscience, 7 Digital Culture, 8 Social Media, 9 Identity, 10 Humor
@@ -242,14 +151,7 @@ export const seed = async (
     {
       name: "Creating Volume 2 articles...",
       fn: async () => {
-        const writers = [
-          ctx.writer11,
-          ctx.writer12,
-          ctx.writer13,
-          ctx.writer14,
-          ctx.writer15,
-          ctx.writer16,
-        ]
+        const writers = ctx.writers.slice(10, 16)
         ctx.volume2Articles = []
         const volume2TopicSets: number[][] = [
           [ctx.topics[1]!, ctx.topics[2]!, ctx.topics[7]!], // Dawkins vs Blackmore: Memes, Cognitive Science, Digital Culture
@@ -298,38 +200,38 @@ export const seed = async (
           mathBlocks,
           timeline,
         ] = await Promise.all([
-          createRichTextShowcaseArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+          createRichTextShowcaseArticle(payload, [ctx.writers[0]!, ctx.writers[1]!], ctx.media, [
             ctx.topics[3]!,
             ctx.topics[4]!,
             ctx.topics[7]!,
           ]),
           createFootnotesArticle(
             payload,
-            [ctx.writer1, ctx.writer2],
+            [ctx.writers[0]!, ctx.writers[1]!],
             ctx.media,
             ctx.volume1Articles[0]!,
             [ctx.topics[0]!, ctx.topics[3]!, ctx.topics[4]!],
           ),
-          createSocialEmbedArticle(payload, ctx.writer1, ctx.media, [
+          createSocialEmbedArticle(payload, ctx.writers[0]!, ctx.media, [
             ctx.topics[0]!,
             ctx.topics[1]!,
             ctx.topics[7]!,
           ]),
-          createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media, [
+          createLegacySocialEmbedArticle(payload, ctx.writers[0]!, ctx.media, [
             ctx.topics[0]!,
             ctx.topics[1]!,
             ctx.topics[10]!,
           ]),
-          createMediaCollageArticle(payload, ctx.writer1, ctx.media, [
+          createMediaCollageArticle(payload, ctx.writers[0]!, ctx.media, [
             ctx.topics[3]!,
             ctx.topics[7]!,
           ]),
-          createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+          createMathBlocksArticle(payload, [ctx.writers[0]!, ctx.writers[1]!], ctx.media, [
             ctx.topics[2]!,
             ctx.topics[3]!,
             ctx.topics[5]!,
           ]),
-          createTimelineArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+          createTimelineArticle(payload, [ctx.writers[0]!, ctx.writers[1]!], ctx.media, [
             ctx.topics[3]!,
             ctx.topics[7]!,
           ]),
