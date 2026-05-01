@@ -1,6 +1,8 @@
 import type { Media, User } from "@/payload-types"
 import type { Payload } from "payload"
 import { createArticle, getWriterOrThrow, validateWriters } from "./articles"
+import { createBannerBlocksArticle } from "./features/banners"
+import { createCodeBlocksArticle } from "./features/code-blocks"
 import { createCollectionGridHomePage } from "./features/collection-grid"
 import { createFootnotesArticle } from "./features/footnotes"
 import { createMathBlocksArticle } from "./features/math-blocks"
@@ -184,7 +186,8 @@ export const seed = async (
           mediaCollage,
           mathBlocks,
           timeline,
-
+          bannerBlocks,
+          codeBlocks,
         ] = await Promise.all([
           createRichTextShowcaseArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
             ctx.topics[3]!,
@@ -221,6 +224,14 @@ export const seed = async (
             ctx.topics[3]!,
             ctx.topics[7]!,
           ]),
+          createBannerBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+            ctx.topics[3]!,
+            ctx.topics[7]!,
+          ]),
+          createCodeBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+            ctx.topics[2]!,
+            ctx.topics[7]!,
+          ]),
         ])
         ctx.featureArticles = [
           richTextShowcase,
@@ -230,6 +241,8 @@ export const seed = async (
           mediaCollage,
           mathBlocks,
           timeline,
+          bannerBlocks,
+          codeBlocks,
         ]
       },
     },
