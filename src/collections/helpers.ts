@@ -5,7 +5,13 @@ import {
   OverviewField,
   PreviewField,
 } from "@payloadcms/plugin-seo/fields"
-import type { CollectionBeforeChangeHook, CollectionConfig, Tab, TypeWithID } from "payload"
+import type {
+  CollectionBeforeChangeHook,
+  CollectionConfig,
+  FieldHook,
+  Tab,
+  TypeWithID,
+} from "payload"
 
 import { generatePreviewPath } from "@/utilities/generatePreviewPath"
 
@@ -72,3 +78,11 @@ export const setCreatedBy =
       return data
     }
   }
+
+export const setPublishedAtDefault: FieldHook = ({ siblingData, value }) => {
+  if (siblingData?._status === "published" && !value) {
+    return new Date().toISOString()
+  }
+
+  return value
+}

@@ -2,9 +2,9 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from "paylo
 
 import { revalidatePath, revalidateTag } from "next/cache"
 
-import type { Article } from "@/payload-types"
+import type { Volume } from "@/payload-types"
 
-export const revalidateArticle: CollectionAfterChangeHook<Article> = ({
+export const revalidateVolume: CollectionAfterChangeHook<Volume> = ({
   doc,
   previousDoc,
   req: { payload, context },
@@ -13,18 +13,18 @@ export const revalidateArticle: CollectionAfterChangeHook<Article> = ({
     if (doc._status === "published") {
       const path = `/volumes/${doc.slug}`
 
-      payload.logger.info(`Revalidating article at path: ${path}`)
+      payload.logger.info(`Revalidating volume at path: ${path}`)
 
       revalidatePath(path)
       revalidatePath("/feed.volumes")
       revalidateTag("volumes-sitemap")
     }
 
-    // If the article was previously published, we need to revalidate the old path
-    if (previousDoc._status === "published" && doc._status !== "published") {
+    // If the volume was previously published, we need to revalidate the old path
+    if (previousDoc?._status === "published" && doc._status !== "published") {
       const oldPath = `/volumes/${previousDoc.slug}`
 
-      payload.logger.info(`Revalidating old article at path: ${oldPath}`)
+      payload.logger.info(`Revalidating old volume at path: ${oldPath}`)
 
       revalidatePath(oldPath)
       revalidatePath("/feed.volumes")
@@ -34,7 +34,7 @@ export const revalidateArticle: CollectionAfterChangeHook<Article> = ({
   return doc
 }
 
-export const revalidateDelete: CollectionAfterDeleteHook<Article> = ({ doc, req: { context } }) => {
+export const revalidateDelete: CollectionAfterDeleteHook<Volume> = ({ doc, req: { context } }) => {
   if (!context.disableRevalidate) {
     const path = `/volumes/${doc?.slug}`
 

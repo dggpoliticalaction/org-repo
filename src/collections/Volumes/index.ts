@@ -19,12 +19,17 @@ import { Banner } from "@/blocks/Banner/config"
 import { Code } from "@/blocks/Code/config"
 import { MediaBlock } from "@/blocks/MediaBlock/config"
 import { SquiggleRule } from "@/blocks/SquiggleRule/config"
-import { draftVersions, previewAdminConfig, seoTab } from "@/collections/helpers"
+import {
+  draftVersions,
+  previewAdminConfig,
+  seoTab,
+  setPublishedAtDefault,
+} from "@/collections/helpers"
 
 import { checkArticles } from "./hooks/checkArticles"
 import { getNextVolumeNumber } from "./hooks/getNextVolumeNumber"
 import { pushToWebhooks } from "./hooks/pushToWebhooks"
-import { revalidateArticle, revalidateDelete } from "./hooks/revalidateVolumes"
+import { revalidateDelete, revalidateVolume } from "./hooks/revalidateVolumes"
 import { setDefaultSeoTitle } from "./hooks/seoTitle"
 
 export const Volumes: CollectionConfig = {
@@ -116,15 +121,7 @@ export const Volumes: CollectionConfig = {
         position: "sidebar",
       },
       hooks: {
-        beforeChange: [
-          // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-          ({ siblingData, value }) => {
-            if (siblingData._status === "published" && !value) {
-              return new Date()
-            }
-            return value
-          },
-        ],
+        beforeChange: [setPublishedAtDefault],
       },
     },
     slugField({
@@ -133,7 +130,7 @@ export const Volumes: CollectionConfig = {
     }),
   ],
   hooks: {
-    afterChange: [revalidateArticle, pushToWebhooks],
+    afterChange: [revalidateVolume, pushToWebhooks],
     afterDelete: [revalidateDelete],
     beforeChange: [setDefaultSeoTitle],
   },

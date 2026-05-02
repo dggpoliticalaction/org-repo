@@ -26,7 +26,13 @@ import { populateAuthors } from "@/collections/Articles/hooks/populateAuthors"
 import { populateVolume } from "@/collections/Articles/hooks/populateVolume"
 import { populateMetaImageFromHero } from "@/collections/Articles/hooks/populateMetaImageFromHero"
 import { revalidateArticle, revalidateDelete } from "@/collections/Articles/hooks/revalidateArticle"
-import { draftVersions, previewAdminConfig, seoTab, setCreatedBy } from "@/collections/helpers"
+import {
+  draftVersions,
+  previewAdminConfig,
+  seoTab,
+  setCreatedBy,
+  setPublishedAtDefault,
+} from "@/collections/helpers"
 import { footnotesArrayField } from "@/fields/footnotes"
 import { menu } from "@/fields/menu"
 import { type Article } from "@/payload-types"
@@ -48,19 +54,8 @@ import {
   SuperscriptFeature,
   UnorderedListFeature,
 } from "@payloadcms/richtext-lexical"
-import type { CollectionConfig, FieldHook } from "payload"
+import type { CollectionConfig } from "payload"
 import { slugField } from "payload"
-
-const setPublishedAtDefault: FieldHook<Article, Article["publishedAt"]> = ({
-  siblingData,
-  value,
-}) => {
-  if (siblingData && siblingData._status === "published" && !value) {
-    return new Date().toISOString()
-  }
-
-  return value
-}
 
 export const Articles: CollectionConfig = {
   slug: "articles",

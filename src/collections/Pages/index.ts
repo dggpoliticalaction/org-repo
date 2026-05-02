@@ -9,9 +9,13 @@ import { FormBlock } from "@/blocks/Form/config"
 import { MediaBlock } from "@/blocks/MediaBlock/config"
 import { Timeline } from "@/blocks/Timeline/config"
 import { VolumeView } from "@/blocks/VolumeViewBlock/config"
-import { draftVersions, previewAdminConfig, seoTab } from "@/collections/helpers"
+import {
+  draftVersions,
+  previewAdminConfig,
+  seoTab,
+  setPublishedAtDefault,
+} from "@/collections/helpers"
 import { hero } from "@/heros/config"
-import { populatePublishedAt } from "@/hooks/populatePublishedAt"
 import { slugField } from "payload"
 import { revalidateDelete, revalidatePage } from "./hooks/revalidatePage"
 
@@ -80,12 +84,14 @@ export const Pages: CollectionConfig<"pages"> = {
       admin: {
         position: "sidebar",
       },
+      hooks: {
+        beforeChange: [setPublishedAtDefault],
+      },
     },
     slugField(),
   ],
   hooks: {
     afterChange: [revalidatePage],
-    beforeChange: [populatePublishedAt],
     afterDelete: [revalidateDelete],
   },
   versions: draftVersions,
