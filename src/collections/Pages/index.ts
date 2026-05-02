@@ -9,19 +9,11 @@ import { FormBlock } from "@/blocks/Form/config"
 import { MediaBlock } from "@/blocks/MediaBlock/config"
 import { Timeline } from "@/blocks/Timeline/config"
 import { VolumeView } from "@/blocks/VolumeViewBlock/config"
+import { draftVersions, previewAdminConfig, seoTab } from "@/collections/helpers"
 import { hero } from "@/heros/config"
 import { populatePublishedAt } from "@/hooks/populatePublishedAt"
-import { generatePreviewPath } from "@/utilities/generatePreviewPath"
 import { slugField } from "payload"
 import { revalidateDelete, revalidatePage } from "./hooks/revalidatePage"
-
-import {
-  MetaDescriptionField,
-  MetaImageField,
-  MetaTitleField,
-  OverviewField,
-  PreviewField,
-} from "@payloadcms/plugin-seo/fields"
 
 export const Pages: CollectionConfig<"pages"> = {
   slug: "pages",
@@ -40,20 +32,7 @@ export const Pages: CollectionConfig<"pages"> = {
   },
   admin: {
     defaultColumns: ["title", "slug", "updatedAt"],
-    livePreview: {
-      url: ({ data, req }) =>
-        generatePreviewPath({
-          slug: data?.slug,
-          collection: "pages",
-          req,
-        }),
-    },
-    preview: (data, { req }) =>
-      generatePreviewPath({
-        slug: data?.slug as string,
-        collection: "pages",
-        req,
-      }),
+    ...previewAdminConfig("pages"),
     useAsTitle: "title",
   },
   fields: [
@@ -92,33 +71,7 @@ export const Pages: CollectionConfig<"pages"> = {
           ],
           label: "Content",
         },
-        {
-          name: "meta",
-          label: "SEO",
-          fields: [
-            OverviewField({
-              titlePath: "meta.title",
-              descriptionPath: "meta.description",
-              imagePath: "meta.image",
-            }),
-            MetaTitleField({
-              hasGenerateFn: true,
-            }),
-            MetaImageField({
-              relationTo: "media",
-            }),
-
-            MetaDescriptionField({}),
-            PreviewField({
-              // if the `generateUrl` function is configured
-              hasGenerateFn: true,
-
-              // field paths to match the target field for data
-              titlePath: "meta.title",
-              descriptionPath: "meta.description",
-            }),
-          ],
-        },
+        seoTab(),
       ],
     },
     {
@@ -135,11 +88,5 @@ export const Pages: CollectionConfig<"pages"> = {
     beforeChange: [populatePublishedAt],
     afterDelete: [revalidateDelete],
   },
-  versions: {
-    drafts: {
-      autosave: true,
-      schedulePublish: true,
-    },
-    maxPerDoc: 50,
-  },
+  versions: draftVersions,
 }

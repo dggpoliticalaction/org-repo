@@ -1,4 +1,4 @@
-import type { CollectionBeforeChangeHook, CollectionConfig } from "payload"
+import type { CollectionConfig } from "payload"
 
 import {
   FixedToolbarFeature,
@@ -9,6 +9,7 @@ import path from "path"
 import { fileURLToPath } from "url"
 
 import { anyone, editorOrSelf, writer } from "@/access"
+import { setCreatedBy } from "@/collections/helpers"
 
 import type { Media as MediaType } from "@/payload-types"
 import { regenerateBlurHandler } from "./endpoints/regenerateBlur"
@@ -75,18 +76,7 @@ export const Media: CollectionConfig = {
     },
   ],
   hooks: {
-    beforeChange: [
-      (args: Parameters<CollectionBeforeChangeHook<MediaType>>[0]): Partial<MediaType> | void => {
-        const { req, operation, data } = args
-        if (operation === "create") {
-          if (req.user) {
-            data.createdBy = req.user.id
-            return data
-          }
-        }
-      },
-      generateBlurDataUrl,
-    ],
+    beforeChange: [setCreatedBy<MediaType>(), generateBlurDataUrl],
   },
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload

@@ -6,6 +6,8 @@ import type {
 } from "@payloadcms/richtext-lexical/lexical"
 import type { CollectionBeforeChangeHook } from "payload"
 
+import { isAutosave } from "@/utilities/isAutosave"
+
 type FootnoteFields = FootnoteBlock & { sourceId?: string | null }
 
 const getDedupeKey = (fields: FootnoteBlock): string => {
@@ -21,67 +23,88 @@ const getDedupeKey = (fields: FootnoteBlock): string => {
   return `${fields.note}|${refId}`
 }
 
-export const collectFootnotes = (editorState?: SerializedEditorState): FootnotesField => {
+const collectByNode = (node: SerializedLexicalNode, into: Map<string, FootnoteFields>): void => {
+  if (!node || typeof node !== "object") return
+
+  if (node.type === "inlineBlock") {
+    const inlineNode = node as SerializedInlineBlockNode<FootnoteBlock>
+    const fields = inlineNode.fields as FootnoteFields
+    if (fields.blockType === "footnote" && !fields.sourceId) {
+      if (!fields.id) {
+        fields.id = crypto.randomUUID()
+      }
+      into.set(fields.id, fields)
+    }
+  }
+
+  if ("children" in node && Array.isArray(node.children)) {
+    node.children.forEach((child: SerializedLexicalNode) => collectByNode(child, into))
+  }
+}
+
+export const collectFootnotes = (editorState?: SerializedEditorState | null): FootnotesField => {
   if (!editorState || typeof editorState !== "object") return []
 
   const rootChildren = editorState.root?.children
   if (!Array.isArray(rootChildren)) return []
 
-  // Phase 1: single traversal — collect all footnotes in document order, index originals by id
-  const collected: FootnoteFields[] = []
+  // Phase 1: index all original (non-reference) footnote blocks by id
   const blockById = new Map<string, FootnoteFields>()
+  rootChildren.forEach((child: SerializedLexicalNode) => collectByNode(child, blockById))
 
-  const visit = (node: SerializedLexicalNode): void => {
-    if (!node || typeof node !== "object") return
-    if (node.type === "inlineBlock") {
-      const fields = (node as SerializedInlineBlockNode<FootnoteBlock>).fields as FootnoteFields
-      if (fields.blockType === "footnote") {
-        if (!fields.id) fields.id = crypto.randomUUID()
-        collected.push(fields)
-        if (!fields.sourceId) blockById.set(fields.id, fields)
-      }
-    }
-    if ("children" in node && Array.isArray(node.children)) node.children.forEach(visit)
-  }
-  rootChildren.forEach(visit)
-
-  // Phase 2: linear pass over collected footnotes — resolve refs, dedup, assign indices
   type FootnoteResult = NonNullable<FootnotesField>[number]
+
+  // Phase 2: resolve references, then dedup and assign indices
   let footnoteIndex = 0
   const result: FootnotesField = []
   const seen = new Map<string, number>()
 
-  for (const fields of collected) {
-    if (fields.sourceId) {
-      const source = blockById.get(fields.sourceId)
-      if (source) {
-        fields.note = source.note
-        fields.attributionEnabled = source.attributionEnabled
-        fields.link = source.link
-      } else {
-        // Orphaned reference: promote to standalone original
-        fields.sourceId = null
+  const visitNode = (node: SerializedLexicalNode) => {
+    if (!node || typeof node !== "object") return
+
+    if (node.type === "inlineBlock") {
+      const inlineNode = node as SerializedInlineBlockNode<FootnoteBlock>
+      const fields = inlineNode.fields as FootnoteFields
+
+      if (fields.blockType === "footnote") {
+        if (fields.sourceId) {
+          const source = blockById.get(fields.sourceId)
+          if (source) {
+            fields.note = source.note
+            fields.attributionEnabled = source.attributionEnabled
+            fields.link = source.link
+          } else {
+            // Orphaned reference: promote to standalone original
+            fields.sourceId = null
+          }
+        }
+
+        const key = getDedupeKey(fields)
+
+        if (seen.has(key)) {
+          fields.index = seen.get(key)!
+        } else {
+          footnoteIndex += 1
+          fields.index = footnoteIndex
+          seen.set(key, footnoteIndex)
+          result.push(fields as FootnoteResult)
+        }
       }
     }
 
-    const key = getDedupeKey(fields)
-
-    if (seen.has(key)) {
-      fields.index = seen.get(key)!
-    } else {
-      footnoteIndex += 1
-      fields.index = footnoteIndex
-      seen.set(key, footnoteIndex)
-      result.push(fields as FootnoteResult)
+    if ("children" in node && Array.isArray(node.children)) {
+      node.children.forEach((child: SerializedLexicalNode) => visitNode(child))
     }
   }
+
+  rootChildren.forEach((child: SerializedLexicalNode) => visitNode(child))
 
   return result
 }
 
-export const generateFootnotes: CollectionBeforeChangeHook<Article> = ({ data }) => {
-  if (data?.content) {
-    data.footnotes = collectFootnotes(data.content as SerializedEditorState | undefined)
+export const generateFootnotes: CollectionBeforeChangeHook<Article> = ({ data, req }) => {
+  if (!isAutosave(req) && data?.content) {
+    data.footnotes = collectFootnotes(data.content as SerializedEditorState)
   }
   return data
 }
