@@ -33,6 +33,7 @@ import * as migration_20260424_022531_add_timeline_block from "./20260424_022531
 import * as migration_20260502_004843_article_recommendations from "./20260502_004843_article_recommendations"
 import * as migration_20260502_010545 from "./20260502_010545"
 import * as migration_20260502_011227 from "./20260502_011227"
+import * as migration_20260502_020931 from "./20260502_020931"
 
 export const migrations = [
   {
@@ -209,5 +210,10 @@ export const migrations = [
     up: migration_20260502_011227.up,
     down: migration_20260502_011227.down,
     name: "20260502_011227",
+  },
+  {
+    up: migration_20260502_020931.up,
+    down: migration_20260502_020931.down,
+    name: "20260502_020931",
   },
 ]
