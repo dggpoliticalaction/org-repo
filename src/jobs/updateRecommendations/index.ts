@@ -22,18 +22,27 @@ export const updateRecommendationsTask: TaskConfig<"updateRecommendations"> = {
   outputSchema: [{ name: "count", type: "number", required: true }],
   handler: async ({ req }) => {
     const { payload } = req
-    const { propertyId, clientEmail, privateKey } = readGA4Env()
-    const analytics = createAnalyticsClient(clientEmail, privateKey)
+    try {
+      const { propertyId, clientEmail, privateKey } = readGA4Env()
+      const analytics = createAnalyticsClient(clientEmail, privateKey)
 
-    payload.logger.info(`Fetching metrics from GA4 property ${propertyId}...`)
-    const metricsBySlug = await fetchGA4Metrics(analytics, propertyId)
-    payload.logger.info(`Got metrics for ${metricsBySlug.size} article paths`)
+      payload.logger.info(`Fetching metrics from GA4 property ${propertyId}...`)
+      const metricsBySlug = await fetchGA4Metrics(analytics, propertyId)
+      payload.logger.info(`Got metrics for ${metricsBySlug.size} article paths`)
 
-    const candidates = await buildCandidatesFromDB(payload, metricsBySlug)
-    const scored = scoreArticles(candidates, Date.now())
-    const { count } = await writeRankings(payload, scored)
+      const candidates = await buildCandidatesFromDB(payload, metricsBySlug)
+      const scored = scoreArticles(candidates, Date.now())
+      const { count } = await writeRankings(payload, scored)
 
-    payload.logger.info(`Updated recommendations with ${count} articles`)
-    return { output: { count } }
+      payload.logger.info(`Updated recommendations with ${count} articles`)
+      return { output: { count } }
+    } catch (err) {
+      const summary =
+        err instanceof Error
+          ? `${err.name}: ${err.message}`
+          : `Non-Error throwable: ${JSON.stringify(err, Object.getOwnPropertyNames(err ?? {}))}`
+      payload.logger.error(`updateRecommendations failed — ${summary}`)
+      throw err instanceof Error ? err : new Error(summary)
+    }
   },
 }
