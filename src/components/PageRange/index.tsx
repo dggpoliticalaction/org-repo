@@ -1,5 +1,7 @@
 import React from "react"
 
+import { cn } from "@/utilities/utils"
+
 const defaultLabels = {
   plural: "Docs",
   singular: "Doc",
@@ -36,7 +38,7 @@ export const PageRange: React.FC<{
     totalDocs,
   } = props
 
-  let indexStart = (currentPage ? currentPage - 1 : 1) * (limit || 1) + 1
+  let indexStart = ((currentPage || 1) - 1) * (limit || 1) + 1
   if (totalDocs && indexStart > totalDocs) indexStart = 0
 
   let indexEnd = (currentPage || 1) * (limit || 1)
@@ -49,9 +51,7 @@ export const PageRange: React.FC<{
     {}
 
   return (
-    <div
-      className={[className, "text-muted-foreground text-center text-sm"].filter(Boolean).join(" ")}
-    >
+    <div className={cn("text-muted-foreground text-center text-sm", className)}>
       {(typeof totalDocs === "undefined" || totalDocs === 0) && "Search produced no results."}
       {typeof totalDocs !== "undefined" &&
         totalDocs > 0 &&

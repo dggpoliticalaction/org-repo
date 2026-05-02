@@ -8,35 +8,15 @@ import { TopicsList } from "@/components/Topics/TopicsList"
 import { Separator } from "@/components/ui/separator"
 import { ArticleHero } from "@/heros/ArticleHero"
 import { MathJaxProvider } from "@/providers/MathJaxProvider"
+import { queryArticleBySlug, queryArticleSlugs } from "@/utilities/contentQueries"
 import { generateMeta } from "@/utilities/generateMeta"
 import { buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/utilities/structuredData"
-import configPromise from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
-import { getPayload } from "payload"
-import React, { cache } from "react"
+import React from "react"
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
-  const payload = await getPayload({ config: configPromise })
-  const articles = await payload.find({
-    collection: "articles",
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-    context: {
-      skipAfterRead: true,
-    },
-  })
-
-  const params = articles.docs.map(({ slug }) => {
-    return { slug }
-  })
-
-  return params
+  return queryArticleSlugs()
 }
 
 interface Args {
@@ -45,30 +25,9 @@ interface Args {
   }>
 }
 
-const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
-
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: "articles",
-    draft,
-    limit: 1,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-  })
-
-  return result.docs?.[0] || null
-})
-
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = "" } = await paramsPromise
-  const article = await queryArticleBySlug({ slug })
+  const article = await queryArticleBySlug(slug)
 
   return generateMeta({ doc: article, canonicalPath: `/articles/${slug}` })
 }
@@ -77,7 +36,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   const { isEnabled: draft } = await draftMode()
   const { slug = "" } = await paramsPromise
   const url = "/articles/" + slug
-  const article = await queryArticleBySlug({ slug })
+  const article = await queryArticleBySlug(slug)
 
   if (!article) return <PayloadRedirects url={url} />
 

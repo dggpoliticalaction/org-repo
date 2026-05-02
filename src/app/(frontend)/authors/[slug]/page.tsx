@@ -9,43 +9,25 @@ import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
-import type { Article as ArticleType, User, Volume } from "@/payload-types"
+import type { Article as ArticleType } from "@/payload-types"
+import {
+  getVolumeByArticleId,
+  queryArticlesByAuthor,
+  queryAuthorSlugs,
+  queryUserBySlug,
+} from "@/utilities/contentQueries"
 import { getInitials } from "@/utilities/getInitials"
 import { getMediaUrl } from "@/utilities/getMediaUrl"
 import { getServerSideURL } from "@/utilities/getURL"
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
+import { parsePageNumber } from "@/utilities/parsePageNumber"
 import { buildBreadcrumbJsonLd, buildPersonJsonLd } from "@/utilities/structuredData"
-import config from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
-import { getPayload } from "payload"
-import React, { cache } from "react"
+import React from "react"
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
-  const payload = await getPayload({ config })
-  const { docs } = await payload.find({
-    collection: "users",
-    draft: false,
-    limit: 1000,
-    overrideAccess: true,
-    pagination: false,
-    where: {
-      and: [
-        {
-          role: {
-            in: ["writer", "editor", "chief-editor"],
-          },
-        },
-        {
-          slug: {
-            not_equals: null,
-          },
-        },
-      ],
-    },
-  })
-
-  return docs.map(({ slug }) => ({ slug }))
+  return queryAuthorSlugs()
 }
 
 interface Args {
@@ -57,79 +39,7 @@ interface Args {
   }>
 }
 
-const queryUserBySlug = cache(async (slug: string): Promise<User | null> => {
-  const { isEnabled: draft } = await draftMode()
-
-  const payload = await getPayload({ config })
-
-  const { docs } = await payload.find({
-    collection: "users",
-    draft,
-    limit: 1,
-    pagination: false,
-    where: {
-      and: [
-        {
-          role: {
-            in: ["writer", "editor", "chief-editor"],
-          },
-        },
-        {
-          slug: {
-            equals: slug,
-          },
-        },
-      ],
-    },
-    depth: 1,
-  })
-
-  return docs[0] || null
-})
-
 const ARTICLES_PER_PAGE = 5
-const queryArticlesByAuthor = cache(async (userId: number, page: number = 1) => {
-  const { isEnabled: draft } = await draftMode()
-
-  const payload = await getPayload({ config })
-
-  return payload.find({
-    collection: "articles",
-    draft,
-    limit: ARTICLES_PER_PAGE,
-    page,
-    where: {
-      authors: {
-        equals: userId,
-      },
-    },
-    depth: 2,
-  })
-})
-
-const queryVolumesForArticles = cache(async (articleIds: number[]): Promise<Volume[]> => {
-  if (!articleIds.length) return []
-
-  const { isEnabled: draft } = await draftMode()
-
-  const payload = await getPayload({ config })
-
-  const { docs } = await payload.find({
-    collection: "volumes",
-    draft,
-    limit: 1000,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      articles: {
-        in: articleIds,
-      },
-    },
-    depth: 0,
-  })
-
-  return docs
-})
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug } = await params
@@ -176,8 +86,7 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
   const { isEnabled: draft } = await draftMode()
   const { slug = "" } = await params
   const { p } = await searchParams
-  let page = Number(p) || 1
-  if (!Number.isInteger(page) || page < 1) page = 1
+  const page = parsePageNumber(p)
 
   const user = await queryUserBySlug(slug)
   const url = `/authors/${slug}`
@@ -188,24 +97,8 @@ export default async function AuthorPage({ params, searchParams }: Args): Promis
     totalDocs,
     totalPages,
     page: currentPage,
-  } = await queryArticlesByAuthor(user.id, page)
-  const articleIds = articles.map((article) => article.id).filter(Boolean)
-  const volumes = await queryVolumesForArticles(articleIds)
-
-  const volumeByArticleId = new Map<number, Volume>()
-
-  for (const volume of volumes) {
-    const volumeArticles = volume.articles || []
-    for (const articleRef of volumeArticles) {
-      const articleId =
-        typeof articleRef === "object" && articleRef !== null
-          ? articleRef.id
-          : (articleRef as number | undefined)
-      if (articleId != null && !volumeByArticleId.has(articleId)) {
-        volumeByArticleId.set(articleId, volume)
-      }
-    }
-  }
+  } = await queryArticlesByAuthor(user.id, page, ARTICLES_PER_PAGE)
+  const volumeByArticleId = await getVolumeByArticleId(...articles.map(({ id }) => id))
 
   const hasBiography = !!user.biography
 

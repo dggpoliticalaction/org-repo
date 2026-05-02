@@ -7,35 +7,17 @@ import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
 import { Separator } from "@/components/ui/separator"
 import type { Article } from "@/payload-types"
+import { queryVolumeBySlug, queryVolumeSlugs } from "@/utilities/contentQueries"
 import { formatDateTime } from "@/utilities/formatDateTime"
 import { generateMeta } from "@/utilities/generateMeta"
 import { buildBreadcrumbJsonLd, buildVolumeJsonLd } from "@/utilities/structuredData"
 import { toRoman } from "@/utilities/toRoman"
-import configPromise from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
-import type { Payload } from "payload"
-import { getPayload } from "payload"
-import React, { cache } from "react"
+import React from "react"
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
-  const payload = await getPayload({ config: configPromise })
-  const volumes = await payload.find({
-    collection: "volumes",
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
-
-  const params = volumes.docs.map(({ slug }) => {
-    return { slug }
-  })
-
-  return params
+  return queryVolumeSlugs()
 }
 
 interface Args {
@@ -44,31 +26,9 @@ interface Args {
   }>
 }
 
-const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
-
-  const payload: Payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: "volumes",
-    draft,
-    limit: 1,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-    depth: 2,
-  })
-
-  return result.docs?.[0] || null
-})
-
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = "" } = await paramsPromise
-  const volume = await queryVolumeBySlug({ slug })
+  const volume = await queryVolumeBySlug(slug)
 
   return generateMeta({ doc: volume, canonicalPath: `/volumes/${slug}` })
 }
@@ -79,7 +39,7 @@ export default async function VolumePage({
   const { isEnabled: draft } = await draftMode()
   const { slug = "" } = await paramsPromise
   const url = "/volumes/" + slug
-  const volume = await queryVolumeBySlug({ slug })
+  const volume = await queryVolumeBySlug(slug)
 
   if (!volume) return <PayloadRedirects url={url} />
 

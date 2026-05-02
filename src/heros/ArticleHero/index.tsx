@@ -5,7 +5,6 @@ import { Media } from "@/components/Media"
 import { Separator } from "@/components/ui/separator"
 import type { Article } from "@/payload-types"
 import { formatDateTime } from "@/utilities/formatDateTime"
-import { getSeparator } from "@/utilities/getSeparator"
 
 interface ArticleHeroProps {
   article: Article
@@ -30,7 +29,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
         {populatedAuthors &&
           populatedAuthors.map(({ id, slug, name }, index) => (
             <React.Fragment key={id}>
-              {getSeparator(index, populatedAuthors.length)}
+              {index > 0 && "•"}
               <HoverPrefetchLink href={`/authors/${slug}`} className="hover:underline">
                 {name}
               </HoverPrefetchLink>
