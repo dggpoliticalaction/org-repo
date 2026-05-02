@@ -100,6 +100,21 @@ export default buildConfig({
         })
       },
     },
+    {
+      path: "/article-recommendations/run",
+      method: "post",
+      handler: async (req) => {
+        if (!req.user) {
+          return Response.json({ error: "Unauthorized" }, { status: 401 })
+        }
+        const job = await req.payload.jobs.queue({
+          task: "updateRecommendations",
+          input: {},
+        })
+        const result = await req.payload.jobs.run({ queue: "default", limit: 1 })
+        return Response.json({ jobId: job.id, result })
+      },
+    },
   ],
   jobs: {
     access: {

@@ -10,6 +10,15 @@ export const ArticleRecommendations: GlobalConfig = {
   },
   fields: [
     {
+      name: "runNow",
+      type: "ui",
+      admin: {
+        components: {
+          Field: "@/globals/ArticleRecommendations/components/RunNowField",
+        },
+      },
+    },
+    {
       name: "lastUpdated",
       type: "date",
       admin: { readOnly: true },
