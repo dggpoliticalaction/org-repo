@@ -1,8 +1,9 @@
-import type { Article } from "@/payload-types"
+import type { Article, Media } from "@/payload-types"
 import configPromise from "@payload-config"
 import React from "react"
 import { getPayload } from "payload"
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
+import { ImageMedia } from "@/components/Media/ImageMedia"
 
 interface RecommendedArticlesProps {
   currentArticleSlug: string
@@ -30,14 +31,11 @@ export async function RecommendedArticles({
     .map((r) => {
       const article = r.article
       const metaImage = article.meta?.image
-      const imageUrl =
-        typeof metaImage === "object" && metaImage !== null && "url" in metaImage
-          ? (metaImage.url as string)
-          : null
       return {
         slug: article.slug ?? "",
         title: article.title,
-        metaImage: imageUrl,
+        metaImage:
+          typeof metaImage === "object" && metaImage !== null ? (metaImage as Media) : null,
         metaDescription: article.meta?.description ?? null,
       }
     })
@@ -58,10 +56,10 @@ export async function RecommendedArticles({
           >
             {article.metaImage && (
               <div className="aspect-video overflow-hidden rounded-sm border">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={article.metaImage}
-                  alt=""
+                <ImageMedia
+                  media={article.metaImage}
+                  variant="medium"
+                  sizes="(min-width: 640px) 320px, 100vw"
                   className="h-full w-full object-cover object-center group-hover:opacity-80"
                 />
               </div>

@@ -114,6 +114,7 @@ export default buildConfig({
         return authHeader === `Bearer ${process.env.CRON_SECRET}`
       },
     },
+    autoRun: [{ cron: "*/5 * * * *", queue: "default" }],
     tasks: [updateRecommendationsTask],
   },
 })
