@@ -1,90 +1,49 @@
 import type { User } from "@/payload-types"
-import type { Access, AccessArgs, FieldAccess, PayloadRequest } from "payload"
+import type { Access, AccessResult } from "payload"
 
-// Admin/Chief Editor > Editor > Writer
-export const isAdmin = (user: User): boolean => {
-  return user.role === "admin" || user.role === "chief-editor"
-}
+type Roles = readonly User["role"][]
 
-export const isEditor = (user: User): boolean => {
-  return user.role === "editor" || isAdmin(user)
-}
+const adminRoles: Roles = ["admin", "chief-editor"]
+const editorRoles: Roles = [...adminRoles, "editor"]
+const writerRoles: Roles = [...editorRoles, "writer"]
 
-export const isWriter = (user: User): boolean => {
-  return user.role === "writer" || isEditor(user)
-}
+export const isAdmin = (user: User) => adminRoles.includes(user.role)
+export const isEditor = (user: User) => editorRoles.includes(user.role)
+export const isWriter = (user: User) => writerRoles.includes(user.role)
 
-export const adminOrSelf: Access = ({ req: { user } }) => {
-  if (!user) {
-    return false
-  }
-
-  return (
-    isAdmin(user) || {
-      id: { equals: user.id },
+// This ensures the user is authenticated before checking an arbitrary access function.
+// This can be used for both role and field-level
+// If you don't want to require authentication, use Access directly
+const accessFor = <TResult extends AccessResult>(access: (user: User) => TResult) => {
+  return ({ req: { user } }: { req: { user?: User | null } }) => {
+    if (!user) {
+      return false
     }
-  )
-}
 
-export const admin: Access = ({ req: { user } }) => {
-  if (!user) {
-    return false
+    return access(user)
   }
-  return isAdmin(user)
 }
 
-export const adminFieldLevel: FieldAccess = ({ req: { user } }) => {
-  if (!user) {
-    return false
-  }
-  return isAdmin(user)
-}
+export const admin = accessFor(isAdmin)
+export const adminFieldLevel = admin
 
+export const editor = accessFor(isEditor)
+export const editorFieldLevel = editor
+
+export const writer = accessFor(isWriter)
+export const writerFieldLevel = writer
+
+export const staff = accessFor((user) => Boolean(user.role && user.role !== "member"))
 export const anyone: Access = () => true
+export const authenticated = accessFor(() => true)
 
-type isAuthenticated = (args: AccessArgs<User>) => boolean
+export const adminOrSelf = accessFor((user) => isAdmin(user) || { id: { equals: user.id } })
+export const editorOrSelf = accessFor(
+  (user) => isEditor(user) || { createdBy: { equals: user.id } },
+)
 
-export const authenticated: isAuthenticated = ({ req: { user } }) => {
-  return Boolean(user)
-}
-
-export const authenticatedOrPublished: Access = ({ req: { user } }) => {
-  if (user) {
-    return true
-  }
-
-  return {
-    _status: {
-      equals: "published",
-    },
-  }
-}
-
-export const editor: Access = ({ req: { user } }) => {
-  if (!user) {
-    return false
-  }
-  return isEditor(user)
-}
-
-export const editorFieldLevel: FieldAccess = ({ req: { user } }) => {
-  if (!user) {
-    return false
-  }
-  return isEditor(user)
-}
-
-export const editorOrSelf: Access = ({ req: { user } }) => {
-  if (!user) {
-    return false
-  }
-
-  return (
-    isEditor(user) || {
-      createdBy: { equals: user.id },
-    }
-  )
-}
+export const authenticatedOrPublished: Access = ({ req: { user } }) =>
+  Boolean(user) || { _status: { equals: "published" } }
 
 export const restrictWritersToDraftOnly: Access = ({ req: { user }, data }) => {
   if (!user) {
@@ -92,25 +51,4 @@ export const restrictWritersToDraftOnly: Access = ({ req: { user }, data }) => {
   }
 
   return isEditor(user) || (data?._status !== "published" && { createdBy: { equals: user.id } })
-}
-
-// Anyone User who's role is not "member" can access this collection
-export const staff = ({ req: { user } }: { req: PayloadRequest }): boolean => {
-  if (!user) return false
-  if (!user.role) return false
-  return user.role !== "member"
-}
-
-export const writer: Access = ({ req: { user } }) => {
-  if (!user) {
-    return false
-  }
-  return isWriter(user)
-}
-
-export const writerFieldLevel: FieldAccess = ({ req: { user } }) => {
-  if (!user) {
-    return false
-  }
-  return isWriter(user)
 }
