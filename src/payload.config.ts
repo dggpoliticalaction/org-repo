@@ -10,6 +10,7 @@ import { defaultLexical } from "@/fields/defaultLexical"
 import { Footer } from "@/Footer/config"
 import { ArticleRecommendations } from "@/globals/ArticleRecommendations/config"
 import { Header } from "@/Header/config"
+import { updateRecommendationsTask } from "@/jobs/updateRecommendations"
 import { plugins } from "@/plugins"
 import { getServerSideURL } from "@/utilities/getURL"
 import { postgresAdapter } from "@payloadcms/db-postgres"
@@ -113,6 +114,6 @@ export default buildConfig({
         return authHeader === `Bearer ${process.env.CRON_SECRET}`
       },
     },
-    tasks: [],
+    tasks: [updateRecommendationsTask],
   },
 })
