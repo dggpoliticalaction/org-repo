@@ -14,13 +14,12 @@ import {
   UnorderedListFeature,
 } from "@payloadcms/richtext-lexical"
 
-import { editor } from "@/access/editor"
+import { authenticatedOrPublished, editor } from "@/access"
 import { Banner } from "@/blocks/Banner/config"
 import { Code } from "@/blocks/Code/config"
 import { MediaBlock } from "@/blocks/MediaBlock/config"
 import { SquiggleRule } from "@/blocks/SquiggleRule/config"
 
-import { authenticatedOrPublished } from "@/access/authenticatedOrPublished"
 import { generatePreviewPath } from "@/utilities/generatePreviewPath"
 import {
   MetaDescriptionField,

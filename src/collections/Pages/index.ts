@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload"
 
-import { authenticatedOrPublished } from "@/access/authenticatedOrPublished"
+import { admin, authenticatedOrPublished } from "@/access"
 import { CollectionGrid } from "@/blocks/CollectionGrid/config"
 import { CallToAction } from "@/blocks/CallToAction/config"
 import { Content } from "@/blocks/Content/config"
@@ -15,7 +15,6 @@ import { generatePreviewPath } from "@/utilities/generatePreviewPath"
 import { slugField } from "payload"
 import { revalidateDelete, revalidatePage } from "./hooks/revalidatePage"
 
-import { admin } from "@/access/admins"
 import {
   MetaDescriptionField,
   MetaImageField,
