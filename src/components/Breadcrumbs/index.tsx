@@ -34,12 +34,13 @@ const getSegmentItems = (segments: string[]) =>
 
 export const Breadcrumbs = (): ReactElement | null => {
   let segments = useSelectedLayoutSegments()
-  if (segments[0] === "articles") {
-    segments = segments.slice(0, 1)
-  }
 
   // if there are no segments, we're on the homepage, so we don't need to render breadcrumbs
+  // if the first segment is "articles", we want to show only "Articles" in the breadcrumbs, so we slice the segments array to keep only the first segment
   if (segments.length === 0) return null
+  else if (segments[0] === "articles") {
+    segments = segments.slice(0, 1)
+  }
 
   const segmentItems = getSegmentItems(segments)
   const lastSegmentIndex = segmentItems.length - 1
