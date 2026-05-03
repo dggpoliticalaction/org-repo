@@ -1,7 +1,10 @@
-import { authenticatedOrPublished } from "@/access/authenticatedOrPublished"
-import { editorFieldLevel } from "@/access/editor"
-import { editorOrSelf, restrictWritersToDraftOnly } from "@/access/editorOrSelf"
-import { writer } from "@/access/writer"
+import {
+  authenticatedOrPublished,
+  editorFieldLevel,
+  editorOrSelf,
+  restrictWritersToDraftOnly,
+  writer,
+} from "@/access"
 import { Banner } from "@/blocks/Banner/config"
 import { Code } from "@/blocks/Code/config"
 import { FootnoteBlock } from "@/blocks/Footnote/config"
