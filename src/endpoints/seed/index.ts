@@ -18,8 +18,10 @@ import { createVolumes } from "./volumes"
 
 interface SeedContext {
   media: Media[]
-  writer1: User
-  writer2: User
+  admin: User
+  chiefEditor: User
+  editor: User
+  writers: User[]
   topics: number[]
   volume1Articles: number[]
   volume2Articles: number[]
@@ -31,21 +33,6 @@ export const seed = async (
   onProgress?: (message: string, step: number, total: number) => void,
 ): Promise<void> => {
   const ctx = {} as SeedContext
-
-  const volume1Titles = [
-    "The Trolley Problem Revisited: Moral Intuition in the Age of Autonomous Vehicles",
-    "Free Will and Determinism: Can Neuroscience Settle the Debate?",
-    "Plato's Cave in the Digital Age: Social Media as Manufactured Reality",
-    "The Ship of Theseus and Personal Identity: Who Are You After a Decade?",
-    "Simone de Beauvoir's Ethics of Ambiguity and the Modern Workplace",
-    "Epistemic Injustice: Why Some Voices Are Silenced in Public Discourse",
-  ]
-
-  const volume2Titles = [
-    "Dawkins vs. Blackmore: What Counts as a Meme in the Attention Economy?",
-    "Irony as Ideology: How the Internet Weaponised Humour",
-    "The Half-Life of Virality: Why Memes Die and What Survives",
-  ]
 
   const titleToSlug = (title: string) =>
     title
@@ -65,8 +52,7 @@ export const seed = async (
                 "admin@example.com",
                 "chiefeditor@example.com",
                 "editor@example.com",
-                "writer1@example.com",
-                "writer2@example.com",
+                ...Array.from({ length: 22 }, (_, i) => `writer${i + 1}@example.com`),
               ],
             },
           },
@@ -97,10 +83,12 @@ export const seed = async (
     {
       name: "Creating users...",
       fn: async () => {
-        const { writer1, writer2 } = await createUsers(payload, ctx.media)
-        ctx.writer1 = writer1
-        ctx.writer2 = writer2
-        validateWriters([writer1, writer2])
+        const { admin, chiefEditor, editor, writers } = await createUsers(payload, ctx.media)
+        ctx.admin = admin
+        ctx.chiefEditor = chiefEditor
+        ctx.editor = editor
+        ctx.writers = writers
+        validateWriters([writers[0]!, writers[1]!])
       },
     },
     {
@@ -113,7 +101,7 @@ export const seed = async (
     {
       name: "Creating Volume 1 articles...",
       fn: async () => {
-        const writers = [ctx.writer1, ctx.writer2]
+        const writers = ctx.writers.slice(0, 10)
         ctx.volume1Articles = []
         // 0 Politics, 1 Memes, 2 Cognitive Science, 3 Philosophy, 4 Ethics, 5 Epistemology,
         // 6 Neuroscience, 7 Digital Culture, 8 Social Media, 9 Identity, 10 Humor
@@ -124,6 +112,22 @@ export const seed = async (
           [ctx.topics[3]!, ctx.topics[9]!, ctx.topics[2]!], // Ship of Theseus: Philosophy, Identity, Cognitive Science
           [ctx.topics[4]!, ctx.topics[3]!, ctx.topics[0]!], // Beauvoir: Ethics, Philosophy, Politics
           [ctx.topics[5]!, ctx.topics[3]!, ctx.topics[0]!], // Epistemic Injustice: Epistemology, Philosophy, Politics
+          [ctx.topics[2]!, ctx.topics[6]!, ctx.topics[3]!], // Cognitive Bias: Cognitive Science, Neuroscience, Philosophy
+          [ctx.topics[7]!, ctx.topics[8]!, ctx.topics[3]!], // Digital Identity: Digital Culture, Social Media, Philosophy
+          [ctx.topics[0]!, ctx.topics[4]!, ctx.topics[5]!], // Voting Theory: Politics, Ethics, Epistemology
+          [ctx.topics[2]!, ctx.topics[9]!, ctx.topics[7]!], // Learning Styles: Cognitive Science, Identity, Digital Culture
+        ]
+        const volume1Titles = [
+          "The Trolley Problem Revisited: Moral Intuition in the Age of Autonomous Vehicles",
+          "Free Will and Determinism: Can Neuroscience Settle the Debate?",
+          "Plato's Cave in the Digital Age: Social Media as Manufactured Reality",
+          "The Ship of Theseus and Personal Identity: Who Are You After a Decade?",
+          "Simone de Beauvoir's Ethics of Ambiguity and the Modern Workplace",
+          "Epistemic Injustice: Why Some Voices Are Silenced in Public Discourse",
+          "Cognitive Biases in the Age of Algorithmic Decision Making",
+          "Digital Identity and the Fragmentation of Self in Online Spaces",
+          "Voting Theory and the Mathematics of Democratic Representation",
+          "Learning Styles: Myth or Reality in Educational Psychology",
         ]
         for (let i = 0; i < volume1Titles.length; i++) {
           const title = volume1Titles[i]!
@@ -147,12 +151,23 @@ export const seed = async (
     {
       name: "Creating Volume 2 articles...",
       fn: async () => {
-        const writers = [ctx.writer1, ctx.writer2]
+        const writers = ctx.writers.slice(10, 16)
         ctx.volume2Articles = []
         const volume2TopicSets: number[][] = [
           [ctx.topics[1]!, ctx.topics[2]!, ctx.topics[7]!], // Dawkins vs Blackmore: Memes, Cognitive Science, Digital Culture
           [ctx.topics[1]!, ctx.topics[7]!, ctx.topics[8]!, ctx.topics[10]!], // Irony as Ideology: Memes, Digital Culture, Social Media, Humor
           [ctx.topics[1]!, ctx.topics[7]!], // Half-Life of Virality: Memes, Digital Culture
+          [ctx.topics[7]!, ctx.topics[8]!, ctx.topics[10]!], // Meme Culture: Digital Culture, Social Media, Humor
+          [ctx.topics[1]!, ctx.topics[2]!, ctx.topics[8]!], // Memetic Engineering: Memes, Cognitive Science, Social Media
+          [ctx.topics[7]!, ctx.topics[9]!, ctx.topics[8]!], // Online Persona: Digital Culture, Identity, Social Media
+        ]
+        const volume2Titles = [
+          "Dawkins vs. Blackmore: What Counts as a Meme in the Attention Economy?",
+          "Irony as Ideology: How the Internet Weaponised Humour",
+          "The Half-Life of Virality: Why Memes Die and What Survives",
+          "Meme Culture and the Evolution of Internet Folklore",
+          "Memetic Engineering: Designing Ideas That Spread",
+          "The Online Persona: Performance and Authenticity in Digital Spaces",
         ]
         for (let i = 0; i < volume2Titles.length; i++) {
           const title = volume2Titles[i]!
@@ -184,40 +199,39 @@ export const seed = async (
           mediaCollage,
           mathBlocks,
           timeline,
-
         ] = await Promise.all([
-          createRichTextShowcaseArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+          createRichTextShowcaseArticle(payload, [ctx.writers[0]!, ctx.writers[1]!], ctx.media, [
             ctx.topics[3]!,
             ctx.topics[4]!,
             ctx.topics[7]!,
           ]),
           createFootnotesArticle(
             payload,
-            [ctx.writer1, ctx.writer2],
+            [ctx.writers[0]!, ctx.writers[1]!],
             ctx.media,
             ctx.volume1Articles[0]!,
             [ctx.topics[0]!, ctx.topics[3]!, ctx.topics[4]!],
           ),
-          createSocialEmbedArticle(payload, ctx.writer1, ctx.media, [
+          createSocialEmbedArticle(payload, ctx.writers[0]!, ctx.media, [
             ctx.topics[0]!,
             ctx.topics[1]!,
             ctx.topics[7]!,
           ]),
-          createLegacySocialEmbedArticle(payload, ctx.writer1, ctx.media, [
+          createLegacySocialEmbedArticle(payload, ctx.writers[0]!, ctx.media, [
             ctx.topics[0]!,
             ctx.topics[1]!,
             ctx.topics[10]!,
           ]),
-          createMediaCollageArticle(payload, ctx.writer1, ctx.media, [
+          createMediaCollageArticle(payload, ctx.writers[0]!, ctx.media, [
             ctx.topics[3]!,
             ctx.topics[7]!,
           ]),
-          createMathBlocksArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+          createMathBlocksArticle(payload, [ctx.writers[0]!, ctx.writers[1]!], ctx.media, [
             ctx.topics[2]!,
             ctx.topics[3]!,
             ctx.topics[5]!,
           ]),
-          createTimelineArticle(payload, [ctx.writer1, ctx.writer2], ctx.media, [
+          createTimelineArticle(payload, [ctx.writers[0]!, ctx.writers[1]!], ctx.media, [
             ctx.topics[3]!,
             ctx.topics[7]!,
           ]),
