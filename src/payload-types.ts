@@ -117,6 +117,19 @@ export type CollectionGridSlots = {
   id?: string | null;
 }[];
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineEvents".
+ */
+export type TimelineEvents = {
+  date: string;
+  title?: string | null;
+  description?: string | null;
+  avatar?: (number | null) | Media;
+  enableCitation?: boolean | null;
+  citation?: LinkField;
+  id?: string | null;
+}[];
+/**
  * Supported timezones in IANA format.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -318,7 +331,15 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CollectionGridBlock | CallToActionBlock | ContentBlock | MediaBlock | VolumeView | FormBlock)[];
+  layout: (
+    | CollectionGridBlock
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | TimelineBlock
+    | VolumeView
+    | FormBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -770,6 +791,17 @@ export interface MediaBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock".
+ */
+export interface TimelineBlock {
+  title?: string | null;
+  events: TimelineEvents;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'timeline';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1334,6 +1366,7 @@ export interface PagesSelect<T extends boolean = true> {
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
         volumeView?: T | VolumeViewSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
       };
@@ -1433,6 +1466,41 @@ export interface MediaBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock_select".
+ */
+export interface TimelineBlockSelect<T extends boolean = true> {
+  title?: T;
+  events?: T | TimelineEventsSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineEvents_select".
+ */
+export interface TimelineEventsSelect<T extends boolean = true> {
+  date?: T;
+  title?: T;
+  description?: T;
+  avatar?: T;
+  enableCitation?: T;
+  citation?: T | LinkFieldSelect<T>;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkField_select".
+ */
+export interface LinkFieldSelect<T extends boolean = true> {
+  type?: T;
+  newTab?: T;
+  variant?: T;
+  reference?: T;
+  url?: T;
+  label?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "VolumeView_select".
  */
 export interface VolumeViewSelect<T extends boolean = true> {
@@ -1494,18 +1562,6 @@ export interface FootnotesFieldSelect<T extends boolean = true> {
   attributionEnabled?: T;
   link?: T | LinkFieldSelect<T>;
   id?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "LinkField_select".
- */
-export interface LinkFieldSelect<T extends boolean = true> {
-  type?: T;
-  newTab?: T;
-  variant?: T;
-  reference?: T;
-  url?: T;
-  label?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

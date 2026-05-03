@@ -5,6 +5,7 @@ import { writer } from "@/access/writer"
 import { Banner } from "@/blocks/Banner/config"
 import { Code } from "@/blocks/Code/config"
 import { FootnoteBlock } from "@/blocks/Footnote/config"
+import { FootnoteShortcutFeature } from "@/blocks/Footnote/shortcutFeature"
 import { DisplayMathBlock, InlineMathBlock } from "@/blocks/Math/config"
 import { MediaBlock } from "@/blocks/MediaBlock/config"
 import { MediaCollageBlock } from "@/blocks/MediaCollageBlock/config"
@@ -15,6 +16,7 @@ import { LegacyTikTokEmbed } from "@/blocks/SocialEmbed/embeds/TikTokEmbed/confi
 import { LegacyTwitterEmbed } from "@/blocks/SocialEmbed/embeds/TwitterEmbed/config"
 import { LegacyYouTubeEmbed } from "@/blocks/SocialEmbed/embeds/YouTubeEmbed/config"
 import { SquiggleRule } from "@/blocks/SquiggleRule/config"
+import { Timeline } from "@/blocks/Timeline/config"
 import { detectMathBlocks } from "@/collections/Articles/hooks/detectMathBlocks"
 import { generateFootnotes } from "@/collections/Articles/hooks/generateFootnotes"
 import { populateAuthors } from "@/collections/Articles/hooks/populateAuthors"
@@ -119,6 +121,7 @@ export const Articles: CollectionConfig = {
                         DisplayMathBlock,
                         SquiggleRule,
                         SocialEmbed,
+                        Timeline,
                         // Legacy blocks for backward compatibility with existing content
                         LegacyBlueskyEmbed,
                         LegacyRedditEmbed,
@@ -128,6 +131,7 @@ export const Articles: CollectionConfig = {
                       ],
                       inlineBlocks: [InlineMathBlock, FootnoteBlock],
                     }),
+                    FootnoteShortcutFeature(),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
