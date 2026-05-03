@@ -1,29 +1,25 @@
+const base = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+const symbols = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"]
+
+// Converts a number to a Roman numeral string by repeatedly subtracting the largest possible
+// symbol from the number, until it reaches zero
 export function toRoman(x: number): string {
-  // array of values and symbols
-  const base = [1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000]
-  const sym = ["I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"]
+  let roman = ""
 
-  // to store result
-  let res = ""
+  // Loop through the symbols from largest to smallest
+  for (let i = 0; i < base.length && x > 0; i++) {
+    // How many times the current symbol can fit into the remaining number
+    const div = Math.floor(x / base[i]!)
 
-  // Loop from the right side to find
-  // the largest smaller base value
-  let i = base.length - 1
-  while (x > 0) {
-    if (typeof base[i] !== "undefined") {
-      let div = Math.floor(x / base[i]!)
-      while (div) {
-        res += sym[i]
-        div--
-      }
+    // Add that many of the symbol to the result
+    for (let j = 0; j < div; j++) {
+      roman += symbols[i]
     }
 
-    // Repeat the process for remainder
-    if (typeof base[i] !== "undefined") {
-      x %= base[i] as number
-    }
-    i--
+    // Subtract the value of those symbols from the number
+    // In this case, getting the remainder is equivalent to subtracting div * base[i] from x
+    x %= base[i]!
   }
 
-  return res
+  return roman
 }

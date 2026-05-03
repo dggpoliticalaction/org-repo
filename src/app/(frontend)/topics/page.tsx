@@ -1,13 +1,16 @@
+import config from "@payload-config"
+import { cache } from "react"
+
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { Pagination } from "@/components/Pagination"
 import { TopicsList } from "@/components/Topics/TopicsList"
 import { getServerSideURL } from "@/utilities/getURL"
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
-import config from "@payload-config"
+import { parsePageNumber } from "@/utilities/parsePageNumber"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
 import { getPayload } from "payload"
-import React, { cache } from "react"
+import React from "react"
 
 export const metadata: Metadata = {
   title: "Topics | The Pragmatic Papers",
@@ -19,34 +22,33 @@ export const metadata: Metadata = {
   }),
 }
 
-const TOPICS_PER_PAGE = 50
-
-const queryTopics = cache(async (page: number = 1) => {
-  const { isEnabled: draft } = await draftMode()
-  const payload = await getPayload({ config })
-
-  return await payload.find({
-    collection: "topics",
-    draft,
-    limit: TOPICS_PER_PAGE,
-    page,
-    pagination: true,
-  })
-})
-
 interface Args {
   searchParams: Promise<{
     p?: string
   }>
 }
 
+const TOPICS_PER_PAGE = 50
+
+const queryTopics = cache(async (page: number, limit: number) => {
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config })
+
+  return payload.find({
+    collection: "topics",
+    draft,
+    limit,
+    page,
+    pagination: true,
+  })
+})
+
 export default async function TopicsPage({ searchParams }: Args): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()
   const { p } = await searchParams
-  let page = Number(p) || 1
-  if (!Number.isInteger(page) || page < 1) page = 1
+  const page = parsePageNumber(p)
 
-  const { docs: topics, totalPages, page: currentPage } = await queryTopics(page)
+  const { docs: topics, totalPages, page: currentPage } = await queryTopics(page, TOPICS_PER_PAGE)
 
   return (
     <article className="mx-auto max-w-3xl space-y-6 px-4">

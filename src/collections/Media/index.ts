@@ -1,4 +1,4 @@
-import type { CollectionBeforeChangeHook, CollectionConfig } from "payload"
+import type { CollectionConfig, ImageSize, ImageUploadFormatOptions } from "payload"
 
 import {
   FixedToolbarFeature,
@@ -11,6 +11,7 @@ import { fileURLToPath } from "url"
 import { anyone } from "@/access/anyone"
 import { editorOrSelf } from "@/access/editorOrSelf"
 import { writer } from "@/access/writer"
+import { setCreatedBy } from "@/collections/helpers"
 
 import type { Media as MediaType } from "@/payload-types"
 import { regenerateBlurHandler } from "./endpoints/regenerateBlur"
@@ -18,6 +19,19 @@ import { generateBlurDataUrl } from "./hooks/generateBlurDataUrl"
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+type ImgSize = ImageSize & {
+  format?: ImageUploadFormatOptions["format"]
+}
+
+const imgSize = ({ format = "webp", formatOptions, ...size }: ImgSize): ImageSize => ({
+  ...size,
+  formatOptions: {
+    ...formatOptions,
+    format,
+  },
+  withoutEnlargement: size.withoutEnlargement ?? false,
+})
 
 export const Media: CollectionConfig = {
   slug: "media",
@@ -77,18 +91,7 @@ export const Media: CollectionConfig = {
     },
   ],
   hooks: {
-    beforeChange: [
-      (args: Parameters<CollectionBeforeChangeHook<MediaType>>[0]): Partial<MediaType> | void => {
-        const { req, operation, data } = args
-        if (operation === "create") {
-          if (req.user) {
-            data.createdBy = req.user.id
-            return data
-          }
-        }
-      },
-      generateBlurDataUrl,
-    ],
+    beforeChange: [setCreatedBy<MediaType>(), generateBlurDataUrl],
   },
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
@@ -104,65 +107,13 @@ export const Media: CollectionConfig = {
     // For production: set USE_LOCAL_STORAGE=false to use S3 and disable local storage
     disableLocalStorage: process.env.USE_LOCAL_STORAGE !== "true",
     imageSizes: [
-      {
-        name: "thumbnail",
-        width: 300,
-        formatOptions: {
-          format: "webp",
-        },
-        withoutEnlargement: false,
-      },
-      {
-        name: "square",
-        width: 500,
-        height: 500,
-        formatOptions: {
-          format: "webp",
-        },
-        withoutEnlargement: false,
-      },
-      {
-        name: "small",
-        width: 600,
-        formatOptions: {
-          format: "webp",
-        },
-        withoutEnlargement: false,
-      },
-      {
-        name: "medium",
-        width: 900,
-        formatOptions: {
-          format: "webp",
-        },
-        withoutEnlargement: false,
-      },
-      {
-        name: "large",
-        width: 1400,
-        formatOptions: {
-          format: "webp",
-        },
-        withoutEnlargement: false,
-      },
-      {
-        name: "xlarge",
-        width: 1920,
-        formatOptions: {
-          format: "webp",
-        },
-        withoutEnlargement: false,
-      },
-      {
-        name: "og",
-        width: 1200,
-        height: 630,
-        crop: "center",
-        formatOptions: {
-          format: "jpeg",
-        },
-        withoutEnlargement: false,
-      },
+      imgSize({ name: "thumbnail", width: 300 }),
+      imgSize({ name: "square", width: 500, height: 500 }),
+      imgSize({ name: "small", width: 600 }),
+      imgSize({ name: "medium", width: 900 }),
+      imgSize({ name: "large", width: 1400 }),
+      imgSize({ name: "xlarge", width: 1920 }),
+      imgSize({ name: "og", width: 1200, height: 630, crop: "center", format: "jpeg" }),
     ],
   },
 }

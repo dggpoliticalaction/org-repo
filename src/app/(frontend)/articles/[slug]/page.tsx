@@ -1,3 +1,6 @@
+import config from "@payload-config"
+import { cache } from "react"
+
 import { AuthorList } from "@/components/Authors/AuthorList"
 import { FootnoteList } from "@/components/FootnoteList"
 import { JsonLd } from "@/components/JsonLd"
@@ -7,18 +10,18 @@ import RichText from "@/components/RichText"
 import { TopicsList } from "@/components/Topics/TopicsList"
 import { Separator } from "@/components/ui/separator"
 import { ArticleHero } from "@/heros/ArticleHero"
+import type { Article as ArticleType } from "@/payload-types"
 import { MathJaxProvider } from "@/providers/MathJaxProvider"
 import { generateMeta } from "@/utilities/generateMeta"
 import { buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/utilities/structuredData"
-import configPromise from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
 import { getPayload } from "payload"
-import React, { cache } from "react"
+import React from "react"
 
-export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
-  const payload = await getPayload({ config: configPromise })
-  const articles = await payload.find({
+const queryArticleSlugs = cache(async (): Promise<{ slug: string | null | undefined }[]> => {
+  const payload = await getPayload({ config })
+  const { docs } = await payload.find({
     collection: "articles",
     draft: false,
     limit: 1000,
@@ -32,25 +35,14 @@ export async function generateStaticParams(): Promise<{ slug: string | null | un
     },
   })
 
-  const params = articles.docs.map(({ slug }) => {
-    return { slug }
-  })
+  return docs.map(({ slug }) => ({ slug }))
+})
 
-  return params
-}
-
-interface Args {
-  params: Promise<{
-    slug?: string
-  }>
-}
-
-const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryArticleBySlug = cache(async (slug: string): Promise<ArticleType | null> => {
   const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config })
 
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
+  const { docs } = await payload.find({
     collection: "articles",
     draft,
     limit: 1,
@@ -61,14 +53,25 @@ const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
         equals: slug,
       },
     },
+    depth: 0,
   })
 
-  return result.docs?.[0] || null
+  return docs[0] || null
 })
+
+export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
+  return queryArticleSlugs()
+}
+
+interface Args {
+  params: Promise<{
+    slug?: string
+  }>
+}
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = "" } = await paramsPromise
-  const article = await queryArticleBySlug({ slug })
+  const article = await queryArticleBySlug(slug)
 
   return generateMeta({ doc: article, canonicalPath: `/articles/${slug}` })
 }
@@ -77,7 +80,7 @@ export default async function Article({ params: paramsPromise }: Args): Promise<
   const { isEnabled: draft } = await draftMode()
   const { slug = "" } = await paramsPromise
   const url = "/articles/" + slug
-  const article = await queryArticleBySlug({ slug })
+  const article = await queryArticleBySlug(slug)
 
   if (!article) return <PayloadRedirects url={url} />
 

@@ -1,3 +1,6 @@
+import config from "@payload-config"
+import { cache } from "react"
+
 import { ArticleCard } from "@/components/ArticleCard"
 import { AuthorList } from "@/components/Authors/AuthorList"
 import { JsonLd } from "@/components/JsonLd"
@@ -6,21 +9,19 @@ import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
 import { Separator } from "@/components/ui/separator"
-import type { Article } from "@/payload-types"
+import type { Article, Volume } from "@/payload-types"
 import { formatDateTime } from "@/utilities/formatDateTime"
 import { generateMeta } from "@/utilities/generateMeta"
 import { buildBreadcrumbJsonLd, buildVolumeJsonLd } from "@/utilities/structuredData"
 import { toRoman } from "@/utilities/toRoman"
-import configPromise from "@payload-config"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
-import type { Payload } from "payload"
 import { getPayload } from "payload"
-import React, { cache } from "react"
+import React from "react"
 
-export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
-  const payload = await getPayload({ config: configPromise })
-  const volumes = await payload.find({
+const queryVolumeSlugs = cache(async (): Promise<{ slug: string | null | undefined }[]> => {
+  const payload = await getPayload({ config })
+  const { docs } = await payload.find({
     collection: "volumes",
     draft: false,
     limit: 1000,
@@ -31,25 +32,14 @@ export async function generateStaticParams(): Promise<{ slug: string | null | un
     },
   })
 
-  const params = volumes.docs.map(({ slug }) => {
-    return { slug }
-  })
+  return docs.map(({ slug }) => ({ slug }))
+})
 
-  return params
-}
-
-interface Args {
-  params: Promise<{
-    slug?: string
-  }>
-}
-
-const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryVolumeBySlug = cache(async (slug: string): Promise<Volume | null> => {
   const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config })
 
-  const payload: Payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
+  const { docs } = await payload.find({
     collection: "volumes",
     draft,
     limit: 1,
@@ -63,12 +53,22 @@ const queryVolumeBySlug = cache(async ({ slug }: { slug: string }) => {
     depth: 2,
   })
 
-  return result.docs?.[0] || null
+  return docs[0] || null
 })
+
+export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
+  return queryVolumeSlugs()
+}
+
+interface Args {
+  params: Promise<{
+    slug?: string
+  }>
+}
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = "" } = await paramsPromise
-  const volume = await queryVolumeBySlug({ slug })
+  const volume = await queryVolumeBySlug(slug)
 
   return generateMeta({ doc: volume, canonicalPath: `/volumes/${slug}` })
 }
@@ -79,7 +79,7 @@ export default async function VolumePage({
   const { isEnabled: draft } = await draftMode()
   const { slug = "" } = await paramsPromise
   const url = "/volumes/" + slug
-  const volume = await queryVolumeBySlug({ slug })
+  const volume = await queryVolumeBySlug(slug)
 
   if (!volume) return <PayloadRedirects url={url} />
 

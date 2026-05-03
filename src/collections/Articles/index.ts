@@ -23,17 +23,16 @@ import { populateAuthors } from "@/collections/Articles/hooks/populateAuthors"
 import { populateVolume } from "@/collections/Articles/hooks/populateVolume"
 import { populateMetaImageFromHero } from "@/collections/Articles/hooks/populateMetaImageFromHero"
 import { revalidateArticle, revalidateDelete } from "@/collections/Articles/hooks/revalidateArticle"
+import {
+  draftVersions,
+  previewAdminConfig,
+  setCreatedBy,
+  setPublishedAtDefault,
+} from "@/collections/helpers"
 import { footnotesArrayField } from "@/fields/footnotes"
 import { menu } from "@/fields/menu"
+import { seoTab } from "@/fields/seoTab"
 import { type Article } from "@/payload-types"
-import { generatePreviewPath } from "@/utilities/generatePreviewPath"
-import {
-  MetaDescriptionField,
-  MetaImageField,
-  MetaTitleField,
-  OverviewField,
-  PreviewField,
-} from "@payloadcms/plugin-seo/fields"
 import {
   AlignFeature,
   BlockquoteFeature,
@@ -52,19 +51,8 @@ import {
   SuperscriptFeature,
   UnorderedListFeature,
 } from "@payloadcms/richtext-lexical"
-import type { CollectionBeforeChangeHook, CollectionConfig, FieldHook } from "payload"
+import type { CollectionConfig } from "payload"
 import { slugField } from "payload"
-
-const setPublishedAtDefault: FieldHook<Article, Article["publishedAt"]> = ({
-  siblingData,
-  value,
-}) => {
-  if (siblingData && siblingData._status === "published" && !value) {
-    return new Date().toISOString()
-  }
-
-  return value
-}
 
 export const Articles: CollectionConfig = {
   slug: "articles",
@@ -76,20 +64,7 @@ export const Articles: CollectionConfig = {
   },
   admin: {
     defaultColumns: ["title", "slug", "updatedAt"],
-    livePreview: {
-      url: ({ data, req }) =>
-        generatePreviewPath({
-          slug: data?.slug,
-          collection: "articles",
-          req,
-        }),
-    },
-    preview: (data, { req }) =>
-      generatePreviewPath({
-        slug: data?.slug as string,
-        collection: "articles",
-        req,
-      }),
+    ...previewAdminConfig("articles"),
     useAsTitle: "title",
   },
   fields: [
@@ -155,33 +130,7 @@ export const Articles: CollectionConfig = {
           ],
           label: "Content",
         },
-        {
-          name: "meta",
-          label: "SEO",
-          fields: [
-            OverviewField({
-              titlePath: "meta.title",
-              descriptionPath: "meta.description",
-              imagePath: "meta.image",
-            }),
-            MetaTitleField({
-              hasGenerateFn: true,
-            }),
-            MetaImageField({
-              relationTo: "media",
-            }),
-
-            MetaDescriptionField({}),
-            PreviewField({
-              // if the `generateUrl` function is configured
-              hasGenerateFn: true,
-
-              // field paths to match the target field for data
-              titlePath: "meta.title",
-              descriptionPath: "meta.description",
-            }),
-          ],
-        },
+        seoTab(),
       ],
     },
     // END TABS FIELDS
@@ -325,15 +274,7 @@ export const Articles: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [
-      (args: Parameters<CollectionBeforeChangeHook<Article>>[0]): Partial<Article> | void => {
-        const { req, operation, data } = args
-        if (operation === "create") {
-          if (req.user) {
-            data.createdBy = req.user.id
-            return data
-          }
-        }
-      },
+      setCreatedBy<Article>(),
       generateFootnotes,
       detectMathBlocks,
       populateMetaImageFromHero,
@@ -342,11 +283,5 @@ export const Articles: CollectionConfig = {
     afterRead: [populateAuthors, populateVolume],
     afterDelete: [revalidateDelete],
   },
-  versions: {
-    drafts: {
-      autosave: true,
-      schedulePublish: true,
-    },
-    maxPerDoc: 50,
-  },
+  versions: draftVersions,
 }

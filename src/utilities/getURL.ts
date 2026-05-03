@@ -1,4 +1,6 @@
-import canUseDOM from "./canUseDOM"
+const canUseDOM = Boolean(
+  typeof window !== "undefined" && window.document && window.document.createElement,
+)
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getServerSideURL = () => {

@@ -1,25 +1,22 @@
+import config from "@payload-config"
+import { cache } from "react"
+
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { Pagination } from "@/components/Pagination"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
-import type { Topic, Volume } from "@/payload-types"
+import type { Topic } from "@/payload-types"
+import { getVolumeByArticleId } from "@/utilities/contentQueries"
 import { generateMeta } from "@/utilities/generateMeta"
-import config from "@payload-config"
+import { parsePageNumber } from "@/utilities/parsePageNumber"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
 import { getPayload } from "payload"
-import React, { cache } from "react"
+import React from "react"
 
-interface Args {
-  params: Promise<{
-    slug: string
-  }>
-  searchParams: Promise<{
-    p?: string
-  }>
-}
+const ARTICLES_PER_PAGE = 5
 
-export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
+const queryTopicSlugs = cache(async (): Promise<{ slug: string | null | undefined }[]> => {
   const payload = await getPayload({ config })
   const { docs } = await payload.find({
     collection: "topics",
@@ -35,11 +32,10 @@ export async function generateStaticParams(): Promise<{ slug: string | null | un
   })
 
   return docs.map(({ slug }) => ({ slug }))
-}
+})
 
 const queryTopicBySlug = cache(async (slug: string): Promise<Topic | null> => {
   const { isEnabled: draft } = await draftMode()
-
   const payload = await getPayload({ config })
 
   const { docs } = await payload.find({
@@ -59,16 +55,14 @@ const queryTopicBySlug = cache(async (slug: string): Promise<Topic | null> => {
   return docs[0] || null
 })
 
-const ARTICLES_PER_PAGE = 5
-const queryArticlesByTopic = cache(async (topicId: number, page: number = 1) => {
+const queryArticlesByTopic = cache(async (topicId: number, page: number, limit: number) => {
   const { isEnabled: draft } = await draftMode()
-
   const payload = await getPayload({ config })
 
-  return await payload.find({
+  return payload.find({
     collection: "articles",
     draft,
-    limit: ARTICLES_PER_PAGE,
+    limit,
     page,
     overrideAccess: draft,
     where: {
@@ -80,29 +74,18 @@ const queryArticlesByTopic = cache(async (topicId: number, page: number = 1) => 
   })
 })
 
-const queryVolumesForArticles = cache(async (articleIds: number[]): Promise<Volume[]> => {
-  if (!articleIds.length) return []
+interface Args {
+  params: Promise<{
+    slug: string
+  }>
+  searchParams: Promise<{
+    p?: string
+  }>
+}
 
-  const { isEnabled: draft } = await draftMode()
-
-  const payload = await getPayload({ config })
-
-  const { docs } = await payload.find({
-    collection: "volumes",
-    draft,
-    limit: 1000,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      articles: {
-        in: articleIds,
-      },
-    },
-    depth: 0,
-  })
-
-  return docs
-})
+export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
+  return queryTopicSlugs()
+}
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug = "" } = await params
@@ -111,15 +94,11 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   return generateMeta({ doc: topic, canonicalPath: `/topics/${slug}` })
 }
 
-export default async function TopicPage({
-  params: params,
-  searchParams,
-}: Args): Promise<React.ReactNode> {
+export default async function TopicPage({ params, searchParams }: Args): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()
   const { slug = "" } = await params
   const { p } = await searchParams
-  let page = Number(p) || 1
-  if (!Number.isInteger(page) || page < 1) page = 1
+  const page = parsePageNumber(p)
 
   const url = `/topics/${slug}`
   const topic = await queryTopicBySlug(slug)
@@ -131,25 +110,8 @@ export default async function TopicPage({
     totalDocs,
     totalPages,
     page: currentPage,
-  } = await queryArticlesByTopic(topic.id, page)
-  const articleIds = articles.map((article) => article.id).filter(Boolean)
-  const volumes = await queryVolumesForArticles(articleIds)
-
-  const volumeByArticleId = new Map<number, Volume>()
-
-  for (const volume of volumes) {
-    const volumeArticles = volume.articles || []
-    for (const articleRef of volumeArticles) {
-      const articleId =
-        typeof articleRef === "object" && articleRef !== null
-          ? articleRef.id
-          : (articleRef as number | undefined)
-
-      if (articleId != null && !volumeByArticleId.has(articleId)) {
-        volumeByArticleId.set(articleId, volume)
-      }
-    }
-  }
+  } = await queryArticlesByTopic(topic.id, page, ARTICLES_PER_PAGE)
+  const volumeByArticleId = await getVolumeByArticleId(...articles.map(({ id }) => id))
 
   return (
     <article className="mx-auto max-w-3xl space-y-6 px-4">

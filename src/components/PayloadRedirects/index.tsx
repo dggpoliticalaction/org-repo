@@ -1,9 +1,8 @@
 import type React from "react"
 import type { Article, Page, Volume } from "@/payload-types"
 
-import { getCachedDocument } from "@/utilities/getDocument"
-import { getCachedRedirects } from "@/utilities/getRedirects"
 import { notFound, redirect } from "next/navigation"
+import { getCachedDocument, getCachedRedirects } from "./queries"
 
 interface Props {
   disableNotFound?: boolean

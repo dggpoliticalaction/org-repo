@@ -1,13 +1,7 @@
 import { anyone } from "@/access/anyone"
 import { editor } from "@/access/editor"
 import { writer } from "@/access/writer"
-import {
-  MetaDescriptionField,
-  MetaImageField,
-  MetaTitleField,
-  OverviewField,
-  PreviewField,
-} from "@payloadcms/plugin-seo/fields"
+import { seoTab } from "@/fields/seoTab"
 import type { CollectionConfig } from "payload"
 import { slugField } from "payload"
 
@@ -45,29 +39,7 @@ export const Topics: CollectionConfig = {
             },
           ],
         },
-        {
-          name: "meta",
-          label: "SEO",
-          fields: [
-            OverviewField({
-              titlePath: "meta.title",
-              descriptionPath: "meta.description",
-              imagePath: "meta.image",
-            }),
-            MetaTitleField({
-              hasGenerateFn: true,
-            }),
-            MetaImageField({
-              relationTo: "media",
-            }),
-            MetaDescriptionField({}),
-            PreviewField({
-              hasGenerateFn: true,
-              titlePath: "meta.title",
-              descriptionPath: "meta.description",
-            }),
-          ],
-        },
+        seoTab(),
       ],
     },
     slugField({ useAsSlug: "name" }),
