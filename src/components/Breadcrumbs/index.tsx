@@ -33,7 +33,7 @@ const getSegmentItems = (segments: string[]) =>
   }))
 
 export const Breadcrumbs = (): ReactElement | null => {
-  let segments = useSelectedLayoutSegments()
+  const segments = useSelectedLayoutSegments()
 
   // if there are no segments, we're on the homepage, so we don't need to render breadcrumbs
   // if the first segment is "articles", we also want to avoid rendering breadcrumbs
