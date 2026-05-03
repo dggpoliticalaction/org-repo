@@ -8,9 +8,7 @@ import {
 import path from "path"
 import { fileURLToPath } from "url"
 
-import { anyone } from "@/access/anyone"
-import { editorOrSelf } from "@/access/editorOrSelf"
-import { writer } from "@/access/writer"
+import { anyone, editorOrSelf, writer } from "@/access"
 
 import type { Media as MediaType } from "@/payload-types"
 import { regenerateBlurHandler } from "./endpoints/regenerateBlur"

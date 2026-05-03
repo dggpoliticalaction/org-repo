@@ -1,4 +1,4 @@
-import { isAdmin } from "@/access/checkRole"
+import { isAdmin } from "@/access"
 import { seed } from "@/endpoints/seed"
 import type { User } from "@/payload-types"
 import configPromise from "@payload-config"
