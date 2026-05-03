@@ -7,9 +7,9 @@ const adminRoles: Roles = ["admin", "chief-editor"]
 const editorRoles: Roles = [...adminRoles, "editor"]
 const writerRoles: Roles = [...editorRoles, "writer"]
 
-export const isAdmin = (user: User) => adminRoles.includes(user.role)
-export const isEditor = (user: User) => editorRoles.includes(user.role)
-export const isWriter = (user: User) => writerRoles.includes(user.role)
+export const isAdmin = (user: User): boolean => adminRoles.includes(user.role)
+export const isEditor = (user: User): boolean => editorRoles.includes(user.role)
+export const isWriter = (user: User): boolean => writerRoles.includes(user.role)
 
 // This ensures the user is authenticated before checking an arbitrary access function.
 // This can be used for both role and field-level
