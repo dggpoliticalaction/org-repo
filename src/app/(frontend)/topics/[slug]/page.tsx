@@ -1,18 +1,78 @@
+import config from "@payload-config"
+import { cache } from "react"
+
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { Pagination } from "@/components/Pagination"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
-import {
-  getVolumeByArticleId,
-  queryArticlesByTopic,
-  queryTopicBySlug,
-  queryTopicSlugs,
-} from "@/utilities/contentQueries"
+import type { Topic } from "@/payload-types"
+import { getVolumeByArticleId } from "@/utilities/contentQueries"
 import { generateMeta } from "@/utilities/generateMeta"
 import { parsePageNumber } from "@/utilities/parsePageNumber"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
+import { getPayload } from "payload"
 import React from "react"
+
+const ARTICLES_PER_PAGE = 5
+
+const queryTopicSlugs = cache(async (): Promise<{ slug: string | null | undefined }[]> => {
+  const payload = await getPayload({ config })
+  const { docs } = await payload.find({
+    collection: "topics",
+    draft: false,
+    limit: 1000,
+    overrideAccess: true,
+    pagination: false,
+    where: {
+      slug: {
+        not_equals: null,
+      },
+    },
+  })
+
+  return docs.map(({ slug }) => ({ slug }))
+})
+
+const queryTopicBySlug = cache(async (slug: string): Promise<Topic | null> => {
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config })
+
+  const { docs } = await payload.find({
+    collection: "topics",
+    draft,
+    limit: 1,
+    overrideAccess: draft,
+    pagination: false,
+    where: {
+      slug: {
+        equals: slug,
+      },
+    },
+    depth: 0,
+  })
+
+  return docs[0] || null
+})
+
+const queryArticlesByTopic = cache(async (topicId: number, page: number, limit: number) => {
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config })
+
+  return payload.find({
+    collection: "articles",
+    draft,
+    limit,
+    page,
+    overrideAccess: draft,
+    where: {
+      topics: {
+        equals: topicId,
+      },
+    },
+    depth: 2,
+  })
+})
 
 interface Args {
   params: Promise<{
@@ -33,8 +93,6 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
 
   return generateMeta({ doc: topic, canonicalPath: `/topics/${slug}` })
 }
-
-const ARTICLES_PER_PAGE = 5
 
 export default async function TopicPage({ params, searchParams }: Args): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()

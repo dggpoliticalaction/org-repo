@@ -29,12 +29,12 @@ import { revalidateArticle, revalidateDelete } from "@/collections/Articles/hook
 import {
   draftVersions,
   previewAdminConfig,
-  seoTab,
   setCreatedBy,
   setPublishedAtDefault,
 } from "@/collections/helpers"
 import { footnotesArrayField } from "@/fields/footnotes"
 import { menu } from "@/fields/menu"
+import { seoTab } from "@/fields/seoTab"
 import { type Article } from "@/payload-types"
 import {
   AlignFeature,

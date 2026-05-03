@@ -1,12 +1,15 @@
+import config from "@payload-config"
+import { cache } from "react"
+
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { Pagination } from "@/components/Pagination"
 import { TopicsList } from "@/components/Topics/TopicsList"
 import { getServerSideURL } from "@/utilities/getURL"
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
-import { queryTopics } from "@/utilities/contentQueries"
 import { parsePageNumber } from "@/utilities/parsePageNumber"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
+import { getPayload } from "payload"
 import React from "react"
 
 export const metadata: Metadata = {
@@ -26,6 +29,19 @@ interface Args {
 }
 
 const TOPICS_PER_PAGE = 50
+
+const queryTopics = cache(async (page: number, limit: number) => {
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config })
+
+  return payload.find({
+    collection: "topics",
+    draft,
+    limit,
+    page,
+    pagination: true,
+  })
+})
 
 export default async function TopicsPage({ searchParams }: Args): Promise<React.ReactNode> {
   const { isEnabled: draft } = await draftMode()

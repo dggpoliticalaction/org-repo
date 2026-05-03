@@ -9,12 +9,8 @@ import { FormBlock } from "@/blocks/Form/config"
 import { MediaBlock } from "@/blocks/MediaBlock/config"
 import { Timeline } from "@/blocks/Timeline/config"
 import { VolumeView } from "@/blocks/VolumeViewBlock/config"
-import {
-  draftVersions,
-  previewAdminConfig,
-  seoTab,
-  setPublishedAtDefault,
-} from "@/collections/helpers"
+import { draftVersions, previewAdminConfig, setPublishedAtDefault } from "@/collections/helpers"
+import { seoTab } from "@/fields/seoTab"
 import { hero } from "@/heros/config"
 import { slugField } from "payload"
 import { revalidateDelete, revalidatePage } from "./hooks/revalidatePage"

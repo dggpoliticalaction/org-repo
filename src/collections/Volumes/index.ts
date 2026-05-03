@@ -19,12 +19,8 @@ import { Banner } from "@/blocks/Banner/config"
 import { Code } from "@/blocks/Code/config"
 import { MediaBlock } from "@/blocks/MediaBlock/config"
 import { SquiggleRule } from "@/blocks/SquiggleRule/config"
-import {
-  draftVersions,
-  previewAdminConfig,
-  seoTab,
-  setPublishedAtDefault,
-} from "@/collections/helpers"
+import { draftVersions, previewAdminConfig, setPublishedAtDefault } from "@/collections/helpers"
+import { seoTab } from "@/fields/seoTab"
 
 import { checkArticles } from "./hooks/checkArticles"
 import { getNextVolumeNumber } from "./hooks/getNextVolumeNumber"

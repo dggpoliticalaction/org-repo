@@ -1,3 +1,6 @@
+import config from "@payload-config"
+import { cache } from "react"
+
 import { AuthorList } from "@/components/Authors/AuthorList"
 import { FootnoteList } from "@/components/FootnoteList"
 import { JsonLd } from "@/components/JsonLd"
@@ -7,13 +10,54 @@ import RichText from "@/components/RichText"
 import { TopicsList } from "@/components/Topics/TopicsList"
 import { Separator } from "@/components/ui/separator"
 import { ArticleHero } from "@/heros/ArticleHero"
+import type { Article as ArticleType } from "@/payload-types"
 import { MathJaxProvider } from "@/providers/MathJaxProvider"
-import { queryArticleBySlug, queryArticleSlugs } from "@/utilities/contentQueries"
 import { generateMeta } from "@/utilities/generateMeta"
 import { buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/utilities/structuredData"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
+import { getPayload } from "payload"
 import React from "react"
+
+const queryArticleSlugs = cache(async (): Promise<{ slug: string | null | undefined }[]> => {
+  const payload = await getPayload({ config })
+  const { docs } = await payload.find({
+    collection: "articles",
+    draft: false,
+    limit: 1000,
+    overrideAccess: false,
+    pagination: false,
+    select: {
+      slug: true,
+    },
+    context: {
+      skipAfterRead: true,
+    },
+  })
+
+  return docs.map(({ slug }) => ({ slug }))
+})
+
+const queryArticleBySlug = cache(async (slug: string): Promise<ArticleType | null> => {
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config })
+
+  const { docs } = await payload.find({
+    collection: "articles",
+    draft,
+    limit: 1,
+    overrideAccess: draft,
+    pagination: false,
+    where: {
+      slug: {
+        equals: slug,
+      },
+    },
+    depth: 0,
+  })
+
+  return docs[0] || null
+})
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   return queryArticleSlugs()

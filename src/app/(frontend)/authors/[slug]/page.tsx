@@ -1,3 +1,6 @@
+import config from "@payload-config"
+import { cache } from "react"
+
 import { AuthorArticleCard } from "@/components/Articles/AuthorArticleCard"
 import { AuthorLinks } from "@/components/Authors/AuthorLinks"
 import { JsonLd } from "@/components/JsonLd"
@@ -9,13 +12,8 @@ import { PayloadRedirects } from "@/components/PayloadRedirects"
 import RichText from "@/components/RichText"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
-import type { Article as ArticleType } from "@/payload-types"
-import {
-  getVolumeByArticleId,
-  queryArticlesByAuthor,
-  queryAuthorSlugs,
-  queryUserBySlug,
-} from "@/utilities/contentQueries"
+import type { Article as ArticleType, User } from "@/payload-types"
+import { getVolumeByArticleId } from "@/utilities/contentQueries"
 import { getInitials } from "@/utilities/getInitials"
 import { getMediaUrl } from "@/utilities/getMediaUrl"
 import { getServerSideURL } from "@/utilities/getURL"
@@ -24,7 +22,85 @@ import { parsePageNumber } from "@/utilities/parsePageNumber"
 import { buildBreadcrumbJsonLd, buildPersonJsonLd } from "@/utilities/structuredData"
 import type { Metadata } from "next"
 import { draftMode } from "next/headers"
+import { getPayload } from "payload"
 import React from "react"
+
+const AUTHOR_ROLES = ["writer", "editor", "chief-editor"]
+const ARTICLES_PER_PAGE = 5
+
+const queryAuthorSlugs = cache(async (): Promise<{ slug: string | null | undefined }[]> => {
+  const payload = await getPayload({ config })
+  const { docs } = await payload.find({
+    collection: "users",
+    draft: false,
+    limit: 1000,
+    overrideAccess: true,
+    pagination: false,
+    where: {
+      and: [
+        {
+          role: {
+            in: AUTHOR_ROLES,
+          },
+        },
+        {
+          slug: {
+            not_equals: null,
+          },
+        },
+      ],
+    },
+  })
+
+  return docs.map(({ slug }) => ({ slug }))
+})
+
+const queryUserBySlug = cache(async (slug: string): Promise<User | null> => {
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config })
+
+  const { docs } = await payload.find({
+    collection: "users",
+    draft,
+    limit: 1,
+    pagination: false,
+    where: {
+      and: [
+        {
+          role: {
+            in: AUTHOR_ROLES,
+          },
+        },
+        {
+          slug: {
+            equals: slug,
+          },
+        },
+      ],
+    },
+    depth: 1,
+  })
+
+  return docs[0] || null
+})
+
+const queryArticlesByAuthor = cache(async (userId: number, page: number, limit: number) => {
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config })
+
+  return payload.find({
+    collection: "articles",
+    draft,
+    limit,
+    page,
+    where: {
+      authors: {
+        equals: userId,
+      },
+    },
+    depth: 2,
+  })
+})
 
 export async function generateStaticParams(): Promise<{ slug: string | null | undefined }[]> {
   return queryAuthorSlugs()
@@ -38,8 +114,6 @@ interface Args {
     p?: string
   }>
 }
-
-const ARTICLES_PER_PAGE = 5
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug } = await params

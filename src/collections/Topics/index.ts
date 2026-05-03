@@ -1,5 +1,5 @@
 import { anyone, editor, writer } from "@/access"
-import { seoTab } from "@/collections/helpers"
+import { seoTab } from "@/fields/seoTab"
 import type { CollectionConfig } from "payload"
 import { slugField } from "payload"
 
