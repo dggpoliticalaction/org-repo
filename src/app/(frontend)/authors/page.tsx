@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   }),
 }
 
-const AUTHORS_PER_PAGE = 12
+const AUTHORS_PER_PAGE = 6
 
 const queryAuthors = cache(async (page: number = 1) => {
   const { isEnabled: draft } = await draftMode()
