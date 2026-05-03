@@ -1,4 +1,6 @@
-import { anyone, editor, writer } from "@/access"
+import { anyone } from "@/access/anyone"
+import { editor } from "@/access/editor"
+import { writer } from "@/access/writer"
 import { seoTab } from "@/fields/seoTab"
 import type { CollectionConfig } from "payload"
 import { slugField } from "payload"

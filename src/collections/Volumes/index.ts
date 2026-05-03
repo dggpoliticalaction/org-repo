@@ -14,7 +14,8 @@ import {
   UnorderedListFeature,
 } from "@payloadcms/richtext-lexical"
 
-import { authenticatedOrPublished, editor } from "@/access"
+import { editor } from "@/access/editor"
+import { authenticatedOrPublished } from "@/access/authenticatedOrPublished"
 import { Banner } from "@/blocks/Banner/config"
 import { Code } from "@/blocks/Code/config"
 import { MediaBlock } from "@/blocks/MediaBlock/config"

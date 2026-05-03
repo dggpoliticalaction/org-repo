@@ -8,7 +8,9 @@ import {
 import path from "path"
 import { fileURLToPath } from "url"
 
-import { anyone, editorOrSelf, writer } from "@/access"
+import { anyone } from "@/access/anyone"
+import { editorOrSelf } from "@/access/editorOrSelf"
+import { writer } from "@/access/writer"
 import { setCreatedBy } from "@/collections/helpers"
 
 import type { Media as MediaType } from "@/payload-types"

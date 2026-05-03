@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload"
 
-import { admin, authenticatedOrPublished } from "@/access"
+import { authenticatedOrPublished } from "@/access/authenticatedOrPublished"
 import { CollectionGrid } from "@/blocks/CollectionGrid/config"
 import { CallToAction } from "@/blocks/CallToAction/config"
 import { Content } from "@/blocks/Content/config"
@@ -15,6 +15,7 @@ import { hero } from "@/heros/config"
 import { slugField } from "payload"
 import { revalidateDelete, revalidatePage } from "./hooks/revalidatePage"
 
+import { admin } from "@/access/admins"
 export const Pages: CollectionConfig<"pages"> = {
   slug: "pages",
   access: {
