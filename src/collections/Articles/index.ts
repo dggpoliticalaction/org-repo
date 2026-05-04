@@ -21,6 +21,7 @@ import { detectMathBlocks } from "@/collections/Articles/hooks/detectMathBlocks"
 import { generateFootnotes } from "@/collections/Articles/hooks/generateFootnotes"
 import { populateAuthors } from "@/collections/Articles/hooks/populateAuthors"
 import { populateVolume } from "@/collections/Articles/hooks/populateVolume"
+import { populateMetaImageFromHero } from "@/collections/Articles/hooks/populateMetaImageFromHero"
 import { revalidateArticle, revalidateDelete } from "@/collections/Articles/hooks/revalidateArticle"
 import { footnotesArrayField } from "@/fields/footnotes"
 import { menu } from "@/fields/menu"
@@ -335,6 +336,7 @@ export const Articles: CollectionConfig = {
       },
       generateFootnotes,
       detectMathBlocks,
+      populateMetaImageFromHero,
     ],
     afterChange: [revalidateArticle],
     afterRead: [populateAuthors, populateVolume],

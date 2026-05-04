@@ -340,6 +340,7 @@ export interface Page {
     | CollectionGridBlock
     | CallToActionBlock
     | ContentBlock
+    | ContributorsBlock
     | MediaBlock
     | TimelineBlock
     | VolumeView
@@ -786,6 +787,17 @@ export interface ContentBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'content';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContributorsBlock".
+ */
+export interface ContributorsBlock {
+  title: string;
+  people: (number | User)[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contributors';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1379,6 +1391,7 @@ export interface PagesSelect<T extends boolean = true> {
         collectionGrid?: T | CollectionGridBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
+        contributors?: T | ContributorsBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         timeline?: T | TimelineBlockSelect<T>;
         volumeView?: T | VolumeViewSelect<T>;
@@ -1466,6 +1479,16 @@ export interface ContentBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContributorsBlock_select".
+ */
+export interface ContributorsBlockSelect<T extends boolean = true> {
+  title?: T;
+  people?: T;
   id?: T;
   blockName?: T;
 }
