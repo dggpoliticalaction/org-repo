@@ -14,8 +14,8 @@ export const updateRecommendationsTask: TaskConfig<"updateRecommendations"> = {
   retries: { attempts: 2, backoff: { type: "exponential", delay: 60_000 } },
   schedule: [
     {
-      // Top of every hour
-      cron: "0 * * * *",
+      // Every five minutes
+      cron: "*/5 * * * *",
       queue: "default",
     },
   ],
@@ -37,12 +37,27 @@ export const updateRecommendationsTask: TaskConfig<"updateRecommendations"> = {
       payload.logger.info(`Updated recommendations with ${count} articles`)
       return { output: { count } }
     } catch (err) {
-      const summary =
-        err instanceof Error
-          ? `${err.name}: ${err.message}`
-          : `Non-Error throwable: ${JSON.stringify(err, Object.getOwnPropertyNames(err ?? {}))}`
-      payload.logger.error(`updateRecommendations failed — ${summary}`)
-      throw err instanceof Error ? err : new Error(summary)
+      const dump = (e: unknown): Record<string, unknown> => {
+        if (e === null || typeof e !== "object") return { value: String(e) }
+        const out: Record<string, unknown> = {}
+        for (const k of Object.getOwnPropertyNames(e)) {
+          const v = (e as Record<string, unknown>)[k]
+          out[k] =
+            v instanceof Error
+              ? dump(v)
+              : typeof v === "object"
+                ? JSON.parse(JSON.stringify(v ?? null))
+                : v
+        }
+        if ("cause" in (e as object) && (e as { cause?: unknown }).cause) {
+          out.cause = dump((e as { cause: unknown }).cause)
+        }
+        return out
+      }
+      payload.logger.error(
+        `updateRecommendations failed — full dump: ${JSON.stringify(dump(err), null, 2)}`,
+      )
+      throw err instanceof Error ? err : new Error(`Non-Error throwable: ${String(err)}`)
     }
   },
 }
