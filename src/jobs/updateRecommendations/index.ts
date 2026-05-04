@@ -44,7 +44,27 @@ export const updateRecommendationsTask: TaskConfig<"updateRecommendations"> = {
       log.info(
         `[recommendations] step 2/5: fetching pageview metrics from GA4 (range ${DATE_RANGE_START} → today, filter pagePath BEGINS_WITH /articles/)`,
       )
-      const metricsBySlug = await fetchGA4Metrics(analytics, propertyId)
+      let metricsBySlug
+      try {
+        metricsBySlug = await fetchGA4Metrics(analytics, propertyId)
+      } catch (ga4Err) {
+        const e = ga4Err as {
+          code?: number | string
+          details?: string
+          metadata?: unknown
+          message?: string
+          stack?: string
+        }
+        log.error(
+          `[recommendations]   GA4 runReport call failed — code=${e.code ?? "?"}, details=${e.details ?? "?"}, message=${e.message ?? "?"}`,
+        )
+        log.error(
+          `[recommendations]   raw error keys (own + proto)=${JSON.stringify([
+            ...new Set([...Object.getOwnPropertyNames(e), ...Object.keys(e)]),
+          ])}`,
+        )
+        throw ga4Err
+      }
       log.info(
         `[recommendations]   GA4 returned metrics for ${metricsBySlug.size} unique article slugs`,
       )
@@ -82,9 +102,23 @@ export const updateRecommendationsTask: TaskConfig<"updateRecommendations"> = {
     } catch (err) {
       const dump = (e: unknown): Record<string, unknown> => {
         if (e === null || typeof e !== "object") return { value: String(e) }
+        const keys = new Set<string>()
+        let proto: object | null = e as object
+        while (proto && proto !== Object.prototype) {
+          for (const k of Object.getOwnPropertyNames(proto)) keys.add(k)
+          proto = Object.getPrototypeOf(proto)
+        }
+        for (const k of Object.keys(e)) keys.add(k)
         const out: Record<string, unknown> = {}
-        for (const k of Object.getOwnPropertyNames(e)) {
-          const v = (e as Record<string, unknown>)[k]
+        for (const k of keys) {
+          if (k === "constructor") continue
+          let v: unknown
+          try {
+            v = (e as Record<string, unknown>)[k]
+          } catch {
+            continue
+          }
+          if (typeof v === "function") continue
           out[k] =
             v instanceof Error
               ? dump(v)
