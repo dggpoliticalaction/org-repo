@@ -1,8 +1,11 @@
+/*
+MUST READ: This is a debug script for playing with recommendation algorithm logic. 
+See src/jobs/updateReccomendations.ts for the ACTUAL CRON.
+*/
 import { getPayload } from "payload"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import {
-  buildCandidatesFromDB,
   buildCandidatesFromSite,
   createAnalyticsClient,
   fetchGA4Metrics,
@@ -12,7 +15,6 @@ import {
   readGA4Env,
   scoreArticles,
   seedRandomRankings,
-  writeRankings,
 } from "../src/jobs/updateRecommendations/logic"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -22,6 +24,13 @@ const DRY_RUN = process.argv.includes("--dry-run")
 const LOCAL_DEV = process.argv.includes("--local")
 
 async function main(): Promise<void> {
+  if (!DRY_RUN && !LOCAL_DEV) {
+    console.error(
+      "Must pass either --dry-run (GA4 fetch, no writes) or --local (seed random rankings into local DB).",
+    )
+    process.exit(1)
+  }
+
   const awaitedConfig = (await import(payloadConfigPath)).default
   const payload = await getPayload({ config: awaitedConfig })
 
@@ -39,22 +48,14 @@ async function main(): Promise<void> {
   const metricsBySlug = await fetchGA4Metrics(analytics, propertyId)
   payload.logger.info(`Got metrics for ${metricsBySlug.size} article paths`)
 
-  const candidates = DRY_RUN
-    ? await buildCandidatesFromSite(metricsBySlug, payload.logger)
-    : await buildCandidatesFromDB(payload, metricsBySlug)
+  const candidates = await buildCandidatesFromSite(metricsBySlug, payload.logger)
   const scored = scoreArticles(candidates, Date.now())
 
-  if (DRY_RUN) {
-    payload.logger.info("\n=== DRY RUN MODE ===\n")
-    logRawMetrics(metricsBySlug, payload.logger)
-    logFilteredArticles(candidates, payload.logger)
-    logRankings(scored, payload.logger)
-    payload.logger.info("\nDry run complete — no data written to DB.")
-  } else {
-    const { count } = await writeRankings(payload, scored)
-    payload.logger.info(`Updated recommendations with ${count} articles`)
-    logRankings(scored.slice(0, count), payload.logger)
-  }
+  payload.logger.info("\n=== DRY RUN MODE ===\n")
+  logRawMetrics(metricsBySlug, payload.logger)
+  logFilteredArticles(candidates, payload.logger)
+  logRankings(scored, payload.logger)
+  payload.logger.info("\nDry run complete — no data written to DB.")
 
   process.exit(0)
 }
