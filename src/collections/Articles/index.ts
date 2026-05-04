@@ -20,6 +20,7 @@ import { generateNarrationHandler } from "@/collections/Articles/endpoints/gener
 import { detectMathBlocks } from "@/collections/Articles/hooks/detectMathBlocks"
 import { generateFootnotes } from "@/collections/Articles/hooks/generateFootnotes"
 import { populateAuthors } from "@/collections/Articles/hooks/populateAuthors"
+import { populateNarrator } from "@/collections/Articles/hooks/populateNarrator"
 import { populateVolume } from "@/collections/Articles/hooks/populateVolume"
 import { revalidateArticle, revalidateDelete } from "@/collections/Articles/hooks/revalidateArticle"
 import { footnotesArrayField } from "@/fields/footnotes"
@@ -352,6 +353,24 @@ export const Articles: CollectionConfig = {
         { name: "publishedAt", type: "date" },
       ],
     },
+    {
+      name: "populatedNarrator",
+      interfaceName: "PopulatedNarrator",
+      type: "group",
+      virtual: true,
+      access: {
+        update: () => false,
+      },
+      admin: {
+        disabled: true,
+        readOnly: true,
+      },
+      fields: [
+        { name: "id", type: "text", required: true },
+        { name: "name", type: "text" },
+        { name: "slug", type: "text", required: true },
+      ],
+    },
   ],
   hooks: {
     beforeChange: [
@@ -368,7 +387,7 @@ export const Articles: CollectionConfig = {
       detectMathBlocks,
     ],
     afterChange: [revalidateArticle],
-    afterRead: [populateAuthors, populateVolume],
+    afterRead: [populateAuthors, populateVolume, populateNarrator],
     afterDelete: [revalidateDelete],
   },
   versions: {

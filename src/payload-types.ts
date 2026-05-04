@@ -449,6 +449,7 @@ export interface Article {
   createdBy?: (number | null) | User;
   populatedAuthors?: PopulatedAuthors;
   populatedVolume?: PopulatedVolume;
+  populatedNarrator: PopulatedNarrator;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -673,6 +674,15 @@ export interface PopulatedVolume {
   volumeNumber?: number | null;
   title?: string | null;
   publishedAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PopulatedNarrator".
+ */
+export interface PopulatedNarrator {
+  id: string;
+  name?: string | null;
+  slug: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1558,6 +1568,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   createdBy?: T;
   populatedAuthors?: T | PopulatedAuthorsSelect<T>;
   populatedVolume?: T | PopulatedVolumeSelect<T>;
+  populatedNarrator?: T | PopulatedNarratorSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1604,6 +1615,15 @@ export interface PopulatedVolumeSelect<T extends boolean = true> {
   volumeNumber?: T;
   title?: T;
   publishedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PopulatedNarrator_select".
+ */
+export interface PopulatedNarratorSelect<T extends boolean = true> {
+  id?: T;
+  name?: T;
+  slug?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

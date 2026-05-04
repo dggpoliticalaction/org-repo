@@ -1,6 +1,6 @@
 "use client"
 
-import type { Media } from "@/payload-types"
+import type { Article, Media } from "@/payload-types"
 import React from "react"
 
 import { AudioMedia, type AudioMediaProps } from "@/components/Media/AudioMedia"
@@ -30,7 +30,15 @@ import { AudioMedia, type AudioMediaProps } from "@/components/Media/AudioMedia"
 //   return `WEBVTT\n\n${cues.join("\n\n")}`
 // }
 
-export function NarrationPlayer({ narration }: { narration: Media }): React.ReactNode {
+interface NarrationPlayerProps {
+  narration: Media
+  populatedNarrator?: Article["populatedNarrator"]
+}
+
+export function NarrationPlayer({
+  narration,
+  populatedNarrator,
+}: NarrationPlayerProps): React.ReactNode {
   // const [duration, setDuration] = useState(narration.duration ?? 0)
   // const [captionSrc, setCaptionSrc] = useState("")
 
@@ -47,11 +55,11 @@ export function NarrationPlayer({ narration }: { narration: Media }): React.Reac
 
   return (
     <div className="flex flex-col gap-1.5">
-      {narration.narrator && typeof narration.narrator !== "number" && (
+      {populatedNarrator && (
         <p className="text-muted-foreground font-serif text-sm">
           Narrated by{" "}
-          <a href={`/authors/${narration.narrator.slug}`} className="hover:underline">
-            {narration.narrator.name}
+          <a href={`/authors/${populatedNarrator.slug}`} className="hover:underline">
+            {populatedNarrator.name}
           </a>
         </p>
       )}

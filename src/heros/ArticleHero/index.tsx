@@ -14,7 +14,7 @@ interface ArticleHeroProps {
 }
 
 export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
-  const { publishedAt, title, heroImage, populatedAuthors, narration } = article
+  const { publishedAt, title, heroImage, populatedAuthors, narration, populatedNarrator } = article
 
   return (
     <div className="relative flex flex-col gap-2 md:-mx-10 lg:-mx-32 xl:-mx-44">
@@ -48,7 +48,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
         </div>
         {isAudioMedia(narration) && (
           <div className="md:w-56 md:shrink-0">
-            <NarrationPlayer narration={narration} />
+            <NarrationPlayer narration={narration} populatedNarrator={populatedNarrator} />
           </div>
         )}
       </div>
