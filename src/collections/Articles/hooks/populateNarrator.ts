@@ -8,48 +8,43 @@ export const populateNarrator: CollectionAfterReadHook<Article> = async ({
   if (context.skipAfterRead) return doc
   if (!doc.narration) return doc
 
-  let narratorId: number | null = null
-
-  if (typeof doc.narration === "number") {
-    try {
+  try {
+    if (typeof doc.narration === "number") {
+      // Fetch with depth:1 so narrator is populated — avoids a second query
       const narrationDoc = await payload.findByID({
         id: doc.narration,
         collection: "media",
         overrideAccess: true,
-        depth: 0,
+        depth: 1,
       })
-      if (narrationDoc?.narrator) {
-        narratorId =
-          typeof narrationDoc.narrator === "number"
-            ? narrationDoc.narrator
-            : narrationDoc.narrator.id
+      const narrator = narrationDoc?.narrator
+      if (narrator && typeof narrator !== "number") {
+        doc.populatedNarrator = { id: narrator.id, name: narrator.name, slug: narrator.slug }
       }
-    } catch {
-      return doc
-    }
-  } else {
-    if (doc.narration.narrator) {
-      narratorId =
-        typeof doc.narration.narrator === "number"
-          ? doc.narration.narrator
-          : doc.narration.narrator.id
-    }
-  }
+    } else {
+      const rawNarrator = doc.narration.narrator
+      if (!rawNarrator) return doc
 
-  if (!narratorId) return doc
-
-  try {
-    const narratorDoc = await payload.findByID({
-      id: narratorId,
-      collection: "users",
-      overrideAccess: true,
-      depth: 0,
-    })
-    if (narratorDoc) {
-      doc.populatedNarrator = {
-        id: String(narratorDoc.id),
-        name: narratorDoc.name,
-        slug: narratorDoc.slug,
+      if (typeof rawNarrator !== "number") {
+        doc.populatedNarrator = {
+          id: rawNarrator.id,
+          name: rawNarrator.name,
+          slug: rawNarrator.slug,
+        }
+      } else {
+        const narratorDoc = await payload.findByID({
+          id: rawNarrator,
+          collection: "users",
+          overrideAccess: true,
+          depth: 0,
+        })
+        if (narratorDoc) {
+          doc.populatedNarrator = {
+            id: narratorDoc.id,
+            name: narratorDoc.name,
+            slug: narratorDoc.slug,
+          }
+        }
       }
     }
   } catch {

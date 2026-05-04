@@ -681,7 +681,7 @@ export interface PopulatedVolume {
  * via the `definition` "PopulatedNarrator".
  */
 export interface PopulatedNarrator {
-  id?: string | null;
+  id?: number | null;
   name?: string | null;
   slug?: string | null;
 }

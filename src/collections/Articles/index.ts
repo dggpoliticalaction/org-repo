@@ -20,9 +20,9 @@ import { Timeline } from "@/blocks/Timeline/config"
 import { detectMathBlocks } from "@/collections/Articles/hooks/detectMathBlocks"
 import { generateFootnotes } from "@/collections/Articles/hooks/generateFootnotes"
 import { populateAuthors } from "@/collections/Articles/hooks/populateAuthors"
+import { populateMetaImageFromHero } from "@/collections/Articles/hooks/populateMetaImageFromHero"
 import { populateNarrator } from "@/collections/Articles/hooks/populateNarrator"
 import { populateVolume } from "@/collections/Articles/hooks/populateVolume"
-import { populateMetaImageFromHero } from "@/collections/Articles/hooks/populateMetaImageFromHero"
 import { revalidateArticle, revalidateDelete } from "@/collections/Articles/hooks/revalidateArticle"
 import { footnotesArrayField } from "@/fields/footnotes"
 import { menu } from "@/fields/menu"
@@ -350,7 +350,7 @@ export const Articles: CollectionConfig = {
         readOnly: true,
       },
       fields: [
-        { name: "id", type: "text" },
+        { name: "id", type: "number" },
         { name: "name", type: "text" },
         { name: "slug", type: "text" },
       ],
