@@ -90,14 +90,6 @@ export const Media: CollectionConfig = {
       },
     },
     {
-      name: "transcript",
-      type: "textarea",
-      admin: {
-        description: "Plain text transcript for accessibility",
-        condition: (_, siblingData) => siblingData?.mimeType?.startsWith("audio/"),
-      },
-    },
-    {
       name: "duration",
       type: "number",
       admin: {

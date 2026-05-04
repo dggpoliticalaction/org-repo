@@ -540,10 +540,6 @@ export interface Media {
    */
   narrator?: (number | null) | User;
   /**
-   * Plain text transcript for accessibility
-   */
-  transcript?: string | null;
-  /**
    * Duration in seconds (auto-populated from the audio file)
    */
   duration?: number | null;
@@ -1643,7 +1639,6 @@ export interface MediaSelect<T extends boolean = true> {
   blurDataURL?: T;
   createdBy?: T;
   narrator?: T;
-  transcript?: T;
   duration?: T;
   updatedAt?: T;
   createdAt?: T;

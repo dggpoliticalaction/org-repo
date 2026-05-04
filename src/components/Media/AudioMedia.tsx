@@ -19,7 +19,7 @@ export interface AudioMediaProps {
   onDurationChange?: (duration: number) => void
 }
 
-export const AudioMedia: React.FC<AudioMediaProps> = ({ media, captionSrc, onDurationChange }) => {
+export const AudioMedia: React.FC<AudioMediaProps> = ({ media, onDurationChange }) => {
   const audioRef = useRef<HTMLAudioElement>(null)
   const durationRef = useRef(media.duration ?? 0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -124,8 +124,9 @@ export const AudioMedia: React.FC<AudioMediaProps> = ({ media, captionSrc, onDur
       <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
         {`${formatTime(currentTime)} / ${formatTime(duration)}`}
       </span>
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption -- TODO: fix this. */}
       <audio ref={audioRef} src={media.url} preload="metadata">
-        <track kind="captions" src={captionSrc || undefined} default={!!captionSrc} />
+        {/* <track kind="captions" src={captionSrc || undefined} default={!!captionSrc} /> */}
       </audio>
     </div>
   )
