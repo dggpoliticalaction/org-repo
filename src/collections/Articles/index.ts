@@ -254,17 +254,6 @@ export const Articles: CollectionConfig = {
       relationTo: "media",
     },
     {
-      name: "generateNarration",
-      type: "ui",
-      admin: {
-        position: "sidebar",
-        components: {
-          Field:
-            "@/collections/Articles/components/GenerateNarrationButton#GenerateNarrationButton",
-        },
-      },
-    },
-    {
       name: "createdBy",
       type: "relationship",
       relationTo: "users",
