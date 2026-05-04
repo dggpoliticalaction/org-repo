@@ -1,1 +1,2 @@
-turbo run lint:fix format:fix check-types
+pnpm lint-staged
+pnpm check-types
