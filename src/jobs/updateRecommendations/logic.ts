@@ -76,6 +76,7 @@ export function createAnalyticsClient(
 ): BetaAnalyticsDataClient {
   return new BetaAnalyticsDataClient({
     credentials: { client_email: clientEmail, private_key: privateKey },
+    // Fallback is needed because gRPC is blocked inside of our current production environment
     fallback: true,
   })
 }
@@ -151,6 +152,12 @@ export function scoreArticles(candidates: ArticleCandidate[], now: number): Scor
     .sort((a, b) => b.engagementScore - a.engagementScore)
 }
 
+/* 
+  buildCandidatesFromSite fetches the public pragmatic papers site to find a set of current articles
+  so that we can mimic running against the production databse.
+
+  i.e. only used locally to try out recommendation algo candidates
+*/
 export async function buildCandidatesFromSite(
   metricsBySlug: Map<string, ArticleMetrics>,
   logger: Logger,
