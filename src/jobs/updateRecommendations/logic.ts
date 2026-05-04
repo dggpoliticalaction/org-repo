@@ -218,6 +218,7 @@ export async function buildCandidatesFromSite(
 export async function buildCandidatesFromDB(
   payload: Payload,
   metricsBySlug: Map<string, ArticleMetrics>,
+  logger?: Logger,
 ): Promise<ArticleCandidate[]> {
   const articles = await payload.find({
     collection: "articles",
@@ -231,6 +232,7 @@ export async function buildCandidatesFromDB(
       publishedAt: true,
     },
   })
+  logger?.info(`  loaded ${articles.docs.length} published articles from Payload`)
 
   const latestVolume = await payload.find({
     collection: "volumes",
@@ -240,19 +242,32 @@ export async function buildCandidatesFromDB(
     overrideAccess: true,
     select: {
       articles: true,
+      volumeNumber: true,
     },
   })
 
+  const latestVolumeDoc = latestVolume.docs[0]
   const latestVolumeArticleIds = new Set<number>()
-  for (const ref of latestVolume.docs[0]?.articles || []) {
+  for (const ref of latestVolumeDoc?.articles || []) {
     latestVolumeArticleIds.add(typeof ref === "number" ? ref : ref.id)
   }
+  logger?.info(
+    `  latest volume = #${latestVolumeDoc?.volumeNumber ?? "?"} with ${latestVolumeArticleIds.size} articles (these bypass the user-count minimum)`,
+  )
 
+  let missingMetrics = 0
+  let missingMeta = 0
   const candidates: ArticleCandidate[] = []
   for (const article of articles.docs) {
-    if (!article.slug || !article.publishedAt) continue
+    if (!article.slug || !article.publishedAt) {
+      missingMeta++
+      continue
+    }
     const metrics = metricsBySlug.get(article.slug)
-    if (!metrics) continue
+    if (!metrics) {
+      missingMetrics++
+      continue
+    }
     candidates.push({
       id: article.id,
       slug: article.slug,
@@ -262,6 +277,9 @@ export async function buildCandidatesFromDB(
       isLatestVolume: latestVolumeArticleIds.has(article.id),
     })
   }
+  logger?.info(
+    `  joined GA4 metrics → articles: ${candidates.length} matched, ${missingMetrics} articles had no GA4 traffic, ${missingMeta} skipped (missing slug/publishedAt)`,
+  )
 
   return candidates
 }
@@ -269,12 +287,16 @@ export async function buildCandidatesFromDB(
 export async function writeRankings(
   payload: Payload,
   scored: ScoredArticle[],
+  logger?: Logger,
 ): Promise<{ count: number }> {
   const topRankings = scored.slice(0, MAX_RANKINGS).map((s) => ({
     article: s.id!,
     engagementScore: s.engagementScore,
   }))
 
+  logger?.info(
+    `  persisting ${topRankings.length} ranking rows (capped at MAX_RANKINGS=${MAX_RANKINGS}) into the 'article-recommendations' global`,
+  )
   await payload.updateGlobal({
     slug: "article-recommendations",
     data: {
@@ -282,6 +304,7 @@ export async function writeRankings(
       rankings: topRankings,
     },
   })
+  logger?.info("  global update committed")
 
   return { count: topRankings.length }
 }
