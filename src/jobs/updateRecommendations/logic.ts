@@ -75,6 +75,7 @@ export function createAnalyticsClient(
 ): BetaAnalyticsDataClient {
   return new BetaAnalyticsDataClient({
     credentials: { client_email: clientEmail, private_key: privateKey },
+    fallback: true,
   })
 }
 
