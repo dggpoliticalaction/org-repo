@@ -75,7 +75,7 @@ export const generateNarrationHandler: PayloadHandler = async (req) => {
   const audioBuffer = Buffer.concat(audioBuffers)
 
   const narration = await req.payload.create({
-    collection: "narrations",
+    collection: "media",
     data: {
       transcript: plainText,
     },

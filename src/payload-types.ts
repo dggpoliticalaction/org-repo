@@ -199,7 +199,6 @@ export interface Config {
     articles: Article;
     volumes: Volume;
     media: Media;
-    narrations: Narration;
     categories: Category;
     users: User;
     webhooks: Webhook;
@@ -219,7 +218,6 @@ export interface Config {
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     volumes: VolumesSelect<false> | VolumesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    narrations: NarrationsSelect<false> | NarrationsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     webhooks: WebhooksSelect<false> | WebhooksSelect<true>;
@@ -447,7 +445,7 @@ export interface Article {
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
   topics?: (number | Topic)[] | null;
-  narration?: (number | null) | Narration;
+  narration?: (number | null) | Media;
   createdBy?: (number | null) | User;
   populatedAuthors?: PopulatedAuthors;
   populatedVolume?: PopulatedVolume;
@@ -537,6 +535,18 @@ export interface Media {
    */
   blurDataURL?: string | null;
   createdBy?: (number | null) | User;
+  /**
+   * User who recorded this narration
+   */
+  narrator?: (number | null) | User;
+  /**
+   * Plain text transcript for accessibility
+   */
+  transcript?: string | null;
+  /**
+   * Duration in seconds (auto-populated from the audio file)
+   */
+  duration?: number | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -656,37 +666,6 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "narrations".
- */
-export interface Narration {
-  id: number;
-  /**
-   * User who recorded this narration
-   */
-  narrator?: (number | null) | User;
-  /**
-   * Plain text transcript for accessibility
-   */
-  transcript?: string | null;
-  /**
-   * Duration in seconds (auto-populated from the audio file)
-   */
-  duration?: number | null;
-  createdBy?: (number | null) | User;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1296,10 +1275,6 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
-        relationTo: 'narrations';
-        value: number | Narration;
-      } | null)
-    | ({
         relationTo: 'categories';
         value: number | Category;
       } | null)
@@ -1667,6 +1642,9 @@ export interface MediaSelect<T extends boolean = true> {
   caption?: T;
   blurDataURL?: T;
   createdBy?: T;
+  narrator?: T;
+  transcript?: T;
+  duration?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1752,27 +1730,6 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "narrations_select".
- */
-export interface NarrationsSelect<T extends boolean = true> {
-  narrator?: T;
-  transcript?: T;
-  duration?: T;
-  createdBy?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -40,7 +40,7 @@ import { FootnotesPreview as FootnotesPreview_78f98036fa74f92e38dd688ebeae2fd5 }
 import { GenerateNarrationButton as GenerateNarrationButton_746703705a9b510eb52b5d0ff96d6c28 } from '@/collections/Articles/components/GenerateNarrationButton'
 import { RowLabel as RowLabel_b9b9938cf466765c7ed61773d838e057 } from '@/fields/menu/RowLabel'
 import { BlurDataURLField as BlurDataURLField_3bf98f0d72a9b7fcf13045923bb48189 } from '@/collections/Media/components/BlurDataURLField'
-import { DurationField as DurationField_251236b8b615107af76ad7211158a91f } from '@/collections/Narrations/components/DurationField'
+import { DurationField as DurationField_eac2b3e17fa524aff4add76374d4c8eb } from '@/collections/Media/components/DurationField'
 import { PaperIconAdmin as PaperIconAdmin_de5f3b464da8d97ce80441fdb9ee9751 } from '@/components/Logo/icons/PaperIcon'
 import { LogomarkIcon as LogomarkIcon_715cf00332be8c15b8f2b121ec0215b0 } from '@/components/Logo/icons/LogomarkIcon'
 import { default as default_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
@@ -91,7 +91,7 @@ export const importMap = {
   "@/collections/Articles/components/GenerateNarrationButton#GenerateNarrationButton": GenerateNarrationButton_746703705a9b510eb52b5d0ff96d6c28,
   "@/fields/menu/RowLabel#RowLabel": RowLabel_b9b9938cf466765c7ed61773d838e057,
   "@/collections/Media/components/BlurDataURLField#BlurDataURLField": BlurDataURLField_3bf98f0d72a9b7fcf13045923bb48189,
-  "@/collections/Narrations/components/DurationField#DurationField": DurationField_251236b8b615107af76ad7211158a91f,
+  "@/collections/Media/components/DurationField#DurationField": DurationField_eac2b3e17fa524aff4add76374d4c8eb,
   "@/components/Logo/icons/PaperIcon#PaperIconAdmin": PaperIconAdmin_de5f3b464da8d97ce80441fdb9ee9751,
   "@/components/Logo/icons/LogomarkIcon#LogomarkIcon": LogomarkIcon_715cf00332be8c15b8f2b121ec0215b0,
   "@/components/BeforeDashboard#default": default_1a7510af427896d367a49dbf838d2de6,

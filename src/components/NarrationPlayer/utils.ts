@@ -1,5 +1,5 @@
-import { type Article, type Narration } from "@/payload-types"
+import { type Article, type Media } from "@/payload-types"
 
-export function isNarration(value: Article["narration"]): value is Narration {
+export function isAudioMedia(value: Article["narration"]): value is Media {
   return !!value && typeof value !== "number"
 }

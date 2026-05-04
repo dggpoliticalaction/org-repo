@@ -19,7 +19,7 @@ export const createNarrationDemoArticle = async (
   )
 
   const narration = await payload.create({
-    collection: "narrations",
+    collection: "media",
     data: {
       narrator: narrator.id,
       transcript,

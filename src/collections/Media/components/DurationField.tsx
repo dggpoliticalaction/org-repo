@@ -9,7 +9,7 @@ export const DurationField: React.FC<NumberFieldClientProps> = ({ field, path })
   const url = useFormFields(([fields]) => fields.url?.value as string | undefined)
   const hasMountedRef = useRef(false)
   // Capture the value present at mount — used to skip recalculation when
-  // opening an existing narration that already has a stored duration.
+  // opening an existing record that already has a stored duration.
   const initialValueRef = useRef(value)
 
   useEffect(() => {

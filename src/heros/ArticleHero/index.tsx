@@ -3,7 +3,7 @@ import React from "react"
 import { HoverPrefetchLink } from "@/components/Link/HoverPrefetchLink"
 import { Media } from "@/components/Media"
 import { NarrationPlayer } from "@/components/NarrationPlayer"
-import { isNarration } from "@/components/NarrationPlayer/utils"
+import { isAudioMedia } from "@/components/NarrationPlayer/utils"
 import { Separator } from "@/components/ui/separator"
 import type { Article } from "@/payload-types"
 import { formatDateTime } from "@/utilities/formatDateTime"
@@ -46,7 +46,7 @@ export const ArticleHero: React.FC<ArticleHeroProps> = ({ article }) => {
             </HoverPrefetchLink>
           )}
         </div>
-        {isNarration(narration) && (
+        {isAudioMedia(narration) && (
           <div className="md:w-56 md:shrink-0">
             <NarrationPlayer narration={narration} />
           </div>

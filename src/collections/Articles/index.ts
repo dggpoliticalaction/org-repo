@@ -253,7 +253,12 @@ export const Articles: CollectionConfig = {
       admin: {
         position: "sidebar",
       },
-      relationTo: "narrations",
+      filterOptions: {
+        mimeType: {
+          contains: "audio",
+        },
+      },
+      relationTo: "media",
     },
     {
       name: "generateNarration",

@@ -75,6 +75,39 @@ export const Media: CollectionConfig = {
         hidden: true,
       },
     },
+    {
+      name: "narrator",
+      type: "relationship",
+      relationTo: "users",
+      filterOptions: {
+        role: {
+          equals: "narrator",
+        },
+      },
+      admin: {
+        description: "User who recorded this narration",
+        condition: (_, siblingData) => siblingData?.mimeType?.startsWith("audio/"),
+      },
+    },
+    {
+      name: "transcript",
+      type: "textarea",
+      admin: {
+        description: "Plain text transcript for accessibility",
+        condition: (_, siblingData) => siblingData?.mimeType?.startsWith("audio/"),
+      },
+    },
+    {
+      name: "duration",
+      type: "number",
+      admin: {
+        description: "Duration in seconds (auto-populated from the audio file)",
+        condition: (_, siblingData) => siblingData?.mimeType?.startsWith("audio/"),
+        components: {
+          Field: "@/collections/Media/components/DurationField#DurationField",
+        },
+      },
+    },
   ],
   hooks: {
     beforeChange: [
