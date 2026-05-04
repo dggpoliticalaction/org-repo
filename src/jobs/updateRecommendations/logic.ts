@@ -18,6 +18,13 @@ export const MIN_TOTAL_USERS = 10
 
 const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000
 
+export interface Logger {
+  debug: (msg: string) => void
+  info: (msg: string) => void
+  warn: (msg: string) => void
+  error: (msg: string) => void
+}
+
 export interface ArticleMetrics {
   scrolledUsers: number
   totalUsers: number
@@ -45,12 +52,6 @@ export interface ScoredArticle {
   recencyMultiplier: number
   engagementScore: number
   publishedAt: string
-}
-
-export interface Logger {
-  info: (msg: string) => void
-  warn: (msg: string) => void
-  error: (msg: string) => void
 }
 
 export function readGA4Env(): {
@@ -233,7 +234,7 @@ export async function buildCandidatesFromDB(
       publishedAt: true,
     },
   })
-  logger?.info(`  loaded ${articles.docs.length} published articles from Payload`)
+  logger?.debug(`  loaded ${articles.docs.length} published articles from Payload`)
 
   const latestVolume = await payload.find({
     collection: "volumes",
@@ -252,7 +253,7 @@ export async function buildCandidatesFromDB(
   for (const ref of latestVolumeDoc?.articles || []) {
     latestVolumeArticleIds.add(typeof ref === "number" ? ref : ref.id)
   }
-  logger?.info(
+  logger?.debug(
     `  latest volume = #${latestVolumeDoc?.volumeNumber ?? "?"} with ${latestVolumeArticleIds.size} articles (these bypass the user-count minimum)`,
   )
 
@@ -278,7 +279,7 @@ export async function buildCandidatesFromDB(
       isLatestVolume: latestVolumeArticleIds.has(article.id),
     })
   }
-  logger?.info(
+  logger?.debug(
     `  joined GA4 metrics → articles: ${candidates.length} matched, ${missingMetrics} articles had no GA4 traffic, ${missingMeta} skipped (missing slug/publishedAt)`,
   )
 
@@ -295,7 +296,7 @@ export async function writeRankings(
     engagementScore: s.engagementScore,
   }))
 
-  logger?.info(
+  logger?.debug(
     `  persisting ${topRankings.length} ranking rows (capped at MAX_RANKINGS=${MAX_RANKINGS}) into the 'article-recommendations' global`,
   )
   await payload.updateGlobal({
@@ -305,7 +306,7 @@ export async function writeRankings(
       rankings: topRankings,
     },
   })
-  logger?.info("  global update committed")
+  logger?.debug("  global update committed")
 
   return { count: topRankings.length }
 }
@@ -314,12 +315,12 @@ export function logRawMetrics(metricsBySlug: Map<string, ArticleMetrics>, logger
   const sortedByTotal = [...metricsBySlug.entries()].sort(
     (a, b) => b[1].totalUsers - a[1].totalUsers,
   )
-  logger.info("Raw metrics (top 30 by traffic):")
-  logger.info(
+  logger.debug("Raw metrics (top 30 by traffic):")
+  logger.debug(
     `${"".padStart(6)} | ${"Total".padStart(5)} | ${"Scroll".padStart(6)} | ${"Rate".padStart(6)} | Slug`,
   )
   for (const [slug, m] of sortedByTotal.slice(0, 30)) {
-    logger.info(
+    logger.debug(
       `${"".padStart(6)} | ${String(m.totalUsers).padStart(5)} | ${String(m.scrolledUsers).padStart(6)} | ${(m.scrollRate * 100).toFixed(1).padStart(5)}% | ${slug}`,
     )
   }
@@ -330,9 +331,11 @@ export function logFilteredArticles(candidates: ArticleCandidate[], logger: Logg
     (c) => c.metrics.totalUsers < MIN_TOTAL_USERS && !c.isLatestVolume,
   )
   if (filtered.length > 0) {
-    logger.info(`\nFiltered out ${filtered.length} articles with < ${MIN_TOTAL_USERS} total users:`)
+    logger.debug(
+      `\nFiltered out ${filtered.length} articles with < ${MIN_TOTAL_USERS} total users:`,
+    )
     for (const c of filtered.slice(0, 10)) {
-      logger.info(
+      logger.debug(
         `  ${c.metrics.totalUsers} users, ${(c.metrics.scrollRate * 100).toFixed(0)}% rate - ${c.slug}`,
       )
     }
@@ -340,16 +343,16 @@ export function logFilteredArticles(candidates: ArticleCandidate[], logger: Logg
 }
 
 export function logRankings(scored: ScoredArticle[], logger: Logger): void {
-  logger.info(
+  logger.debug(
     `\n=== FINAL RANKINGS (scrollRate × recency decay, min ${MIN_TOTAL_USERS} users) ===\n`,
   )
-  logger.info(
+  logger.debug(
     `${"#".padStart(3)} | ${"Score".padStart(10)} | ${"Users".padStart(5)} | ${"Scrolled".padStart(8)} | ${"Rate".padStart(6)} | ${"Decay".padStart(5)} | ${"Wks".padStart(4)} | ${"Published".padEnd(10)} | Slug`,
   )
-  logger.info("-".repeat(120))
+  logger.debug("-".repeat(120))
   for (let i = 0; i < Math.min(scored.length, 30); i++) {
     const s = scored[i]!
-    logger.info(
+    logger.debug(
       `${String(i + 1).padStart(3)} | ${s.engagementScore.toFixed(6).padStart(10)} | ${String(s.totalUsers).padStart(5)} | ${String(s.scrolledUsers).padStart(8)} | ${(s.scrollRate * 100).toFixed(1).padStart(5)}% | ${s.recencyMultiplier.toFixed(3).padStart(5)} | ${s.weeksSincePublish.toFixed(1).padStart(4)} | ${s.publishedAt.padEnd(10)} | ${s.slug}`,
     )
   }

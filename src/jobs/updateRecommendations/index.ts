@@ -20,8 +20,8 @@ export const updateRecommendationsTask: TaskConfig<"updateRecommendations"> = {
   retries: { attempts: 2, backoff: { type: "exponential", delay: 60_000 } },
   schedule: [
     {
-      // Every five minutes
-      cron: "*/5 * * * *",
+      // Twice an hour (on the hour and at minute 30)
+      cron: "0,30 * * * *",
       queue: "default",
     },
   ],
@@ -33,16 +33,15 @@ export const updateRecommendationsTask: TaskConfig<"updateRecommendations"> = {
     try {
       log.info("[recommendations] === starting update run ===")
 
-      log.info("[recommendations] step 1/5: reading GA4 credentials from env")
+      log.debug("[recommendations] step 1/5: reading GA4 credentials from env")
       const { propertyId, clientEmail, privateKey } = readGA4Env()
-      log.info(
+      log.debug(
         `[recommendations]   GA4 property=${propertyId}, service account=${clientEmail}, private key length=${privateKey.length}`,
       )
       const analytics = createAnalyticsClient(clientEmail, privateKey)
-      log.info("[recommendations]   analytics client constructed")
 
       log.info(
-        `[recommendations] step 2/5: fetching pageview metrics from GA4 (range ${DATE_RANGE_START} → today, filter pagePath BEGINS_WITH /articles/)`,
+        `[recommendations] step 2/5: fetching pageview metrics from GA4 (range ${DATE_RANGE_START} → today)`,
       )
       let metricsBySlug
       try {
@@ -70,9 +69,7 @@ export const updateRecommendationsTask: TaskConfig<"updateRecommendations"> = {
       )
       logRawMetrics(metricsBySlug, log)
 
-      log.info(
-        "[recommendations] step 3/5: matching slugs to published articles in Payload + flagging latest-volume members",
-      )
+      log.debug("[recommendations] step 3/5: matching slugs to articles in Payload")
       const candidates = await buildCandidatesFromDB(payload, metricsBySlug, log)
       const latestVolumeCount = candidates.filter((c) => c.isLatestVolume).length
       log.info(
@@ -80,7 +77,7 @@ export const updateRecommendationsTask: TaskConfig<"updateRecommendations"> = {
       )
       logFilteredArticles(candidates, log)
 
-      log.info(
+      log.debug(
         "[recommendations] step 4/5: scoring candidates as scrollRate × exp(-λ·weeksSincePublish)",
       )
       const scored = scoreArticles(candidates, Date.now())
@@ -89,7 +86,7 @@ export const updateRecommendationsTask: TaskConfig<"updateRecommendations"> = {
       )
       logRankings(scored, log)
 
-      log.info(
+      log.debug(
         `[recommendations] step 5/5: writing top ${MAX_RANKINGS} rankings to the article-recommendations global`,
       )
       const { count } = await writeRankings(payload, scored, log)
