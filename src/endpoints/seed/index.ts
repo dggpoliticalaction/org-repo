@@ -19,6 +19,8 @@ import { createVolumes } from "./volumes"
 
 interface SeedContext {
   media: Media[]
+  chiefEditor: User
+  editor: User
   writer1: User
   writer2: User
   narrator: User
@@ -99,7 +101,12 @@ export const seed = async (
     {
       name: "Creating users...",
       fn: async () => {
-        const { writer1, writer2, narrator } = await createUsers(payload, ctx.media)
+        const { chiefEditor, editor, writer1, writer2, narrator } = await createUsers(
+          payload,
+          ctx.media,
+        )
+        ctx.chiefEditor = chiefEditor
+        ctx.editor = editor
         ctx.writer1 = writer1
         ctx.writer2 = writer2
         ctx.narrator = narrator
@@ -298,7 +305,11 @@ export const seed = async (
           privacyPolicyPage,
           termsOfUsePage,
           volumesPage,
-        } = await createPages(payload)
+        } = await createPages(payload, {
+          chiefEditorIds: [ctx.chiefEditor.id],
+          editorIds: [ctx.editor.id],
+          writerIds: [ctx.writer1.id, ctx.writer2.id],
+        })
         await createMenus(payload, {
           homePage,
           aboutPage,

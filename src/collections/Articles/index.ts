@@ -5,6 +5,7 @@ import { writer } from "@/access/writer"
 import { Banner } from "@/blocks/Banner/config"
 import { Code } from "@/blocks/Code/config"
 import { FootnoteBlock } from "@/blocks/Footnote/config"
+import { FootnoteShortcutFeature } from "@/blocks/Footnote/shortcutFeature"
 import { DisplayMathBlock, InlineMathBlock } from "@/blocks/Math/config"
 import { MediaBlock } from "@/blocks/MediaBlock/config"
 import { MediaCollageBlock } from "@/blocks/MediaCollageBlock/config"
@@ -21,6 +22,7 @@ import { generateFootnotes } from "@/collections/Articles/hooks/generateFootnote
 import { populateAuthors } from "@/collections/Articles/hooks/populateAuthors"
 import { populateNarrator } from "@/collections/Articles/hooks/populateNarrator"
 import { populateVolume } from "@/collections/Articles/hooks/populateVolume"
+import { populateMetaImageFromHero } from "@/collections/Articles/hooks/populateMetaImageFromHero"
 import { revalidateArticle, revalidateDelete } from "@/collections/Articles/hooks/revalidateArticle"
 import { footnotesArrayField } from "@/fields/footnotes"
 import { menu } from "@/fields/menu"
@@ -132,6 +134,7 @@ export const Articles: CollectionConfig = {
                       ],
                       inlineBlocks: [InlineMathBlock, FootnoteBlock],
                     }),
+                    FootnoteShortcutFeature(),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
@@ -366,6 +369,7 @@ export const Articles: CollectionConfig = {
       },
       generateFootnotes,
       detectMathBlocks,
+      populateMetaImageFromHero,
     ],
     afterChange: [revalidateArticle],
     afterRead: [populateAuthors, populateVolume, populateNarrator],
