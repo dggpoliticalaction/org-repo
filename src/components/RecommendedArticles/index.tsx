@@ -18,7 +18,7 @@ export async function RecommendedArticles({
 
   const recommendations = await payload.findGlobal({
     slug: "article-recommendations",
-    depth: 1,
+    depth: 2,
   })
 
   const rankings = recommendations?.rankings
