@@ -450,7 +450,7 @@ export interface Article {
   createdBy?: (number | null) | User;
   populatedAuthors?: PopulatedAuthors;
   populatedVolume?: PopulatedVolume;
-  populatedNarrator: PopulatedNarrator;
+  populatedNarrator?: PopulatedNarrator;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -681,9 +681,9 @@ export interface PopulatedVolume {
  * via the `definition` "PopulatedNarrator".
  */
 export interface PopulatedNarrator {
-  id: string;
+  id?: string | null;
   name?: string | null;
-  slug: string;
+  slug?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

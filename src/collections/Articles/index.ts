@@ -350,9 +350,9 @@ export const Articles: CollectionConfig = {
         readOnly: true,
       },
       fields: [
-        { name: "id", type: "text", required: true },
+        { name: "id", type: "text" },
         { name: "name", type: "text" },
-        { name: "slug", type: "text", required: true },
+        { name: "slug", type: "text" },
       ],
     },
   ],
