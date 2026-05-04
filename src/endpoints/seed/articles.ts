@@ -39,6 +39,7 @@ export async function createArticle(
     try {
       return await payload.create({
         collection: "articles",
+        draft: true,
         ...(context && { context }),
         data: {
           title: options.title,

@@ -16,7 +16,6 @@ import { LegacyTwitterEmbed } from "@/blocks/SocialEmbed/embeds/TwitterEmbed/con
 import { LegacyYouTubeEmbed } from "@/blocks/SocialEmbed/embeds/YouTubeEmbed/config"
 import { SquiggleRule } from "@/blocks/SquiggleRule/config"
 import { Timeline } from "@/blocks/Timeline/config"
-import { generateNarrationHandler } from "@/collections/Articles/endpoints/generateNarration"
 import { detectMathBlocks } from "@/collections/Articles/hooks/detectMathBlocks"
 import { generateFootnotes } from "@/collections/Articles/hooks/generateFootnotes"
 import { populateAuthors } from "@/collections/Articles/hooks/populateAuthors"
@@ -69,13 +68,6 @@ const setPublishedAtDefault: FieldHook<Article, Article["publishedAt"]> = ({
 
 export const Articles: CollectionConfig = {
   slug: "articles",
-  endpoints: [
-    {
-      path: "/:id/generate-narration",
-      method: "post",
-      handler: generateNarrationHandler,
-    },
-  ],
   access: {
     create: writer,
     delete: editorOrSelf,

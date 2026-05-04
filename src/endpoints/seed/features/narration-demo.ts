@@ -22,7 +22,7 @@ export const createNarrationDemoArticle = async (
     collection: "media",
     data: {
       narrator: narrator.id,
-      transcript,
+      caption: createRichTextFromParagraphs([transcript]),
     },
     file,
   })

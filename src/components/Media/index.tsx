@@ -5,7 +5,11 @@ import { AudioMedia, type AudioMediaProps } from "./AudioMedia"
 import { ImageMedia, type ImageMediaProps } from "./ImageMedia"
 import { VideoMedia, type VideoMediaProps } from "./VideoMedia"
 
-type MediaTypes = VideoMediaProps | ImageMediaProps | AudioMediaProps | { media?: MediaType | null }
+type MediaTypes =
+  | VideoMediaProps
+  | ImageMediaProps
+  | AudioMediaProps
+  | { media?: MediaType | number | null }
 
 export function isVideoMedia(props: MediaTypes): props is VideoMediaProps {
   if (!props.media || typeof props.media === "number") return false
@@ -28,7 +32,7 @@ export function isMedia(media: number | MediaType | undefined | null): media is 
   return true
 }
 
-export const Media: React.FC<VideoMediaProps | ImageMediaProps> = (props) => {
+export const Media: React.FC<MediaTypes> = (props) => {
   if (isVideoMedia(props)) {
     return <VideoMedia {...props} />
   }
