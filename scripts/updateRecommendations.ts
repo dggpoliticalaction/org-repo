@@ -1,6 +1,6 @@
 /*
 MUST READ: This is a debug script for playing with recommendation algorithm logic. 
-See src/jobs/updateReccomendations.ts for the ACTUAL CRON.
+See src/jobs/updateRecommendations.ts for the ACTUAL CRON.
 */
 import { getPayload } from "payload"
 import path from "node:path"
