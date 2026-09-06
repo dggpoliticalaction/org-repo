@@ -398,13 +398,20 @@ describe("DrilldownMapClient", () => {
     fireEvent.click(selector(container).getByRole("button", { name: "West" }))
     const p = pane(container)
     await within(p).findByRole("button", { name: "Ada Lovelace" })
-    // seats is the default view, and seniors ride alongside it: visible, outside the count
+    // seats is the default view, and the seniors start off the chart entirely
     const count = () => p.querySelector("[data-drilldown-count]")!.textContent
     expect(count()).toBe("D-appointed 1 of 2 · majority 2 (no majority)")
-    expect(within(p).getByRole("button", { name: "Alongside" })).toHaveAttribute(
+    expect(within(p).getByRole("button", { name: "Hidden" })).toHaveAttribute(
       "aria-pressed",
       "true",
     )
+    // A hidden member stays mounted so it can animate back in; it is off the chart, not gone.
+    const hopper = (): HTMLElement => within(p).getByRole("button", { name: "Grace Hopper" })
+    expect(hopper()).toHaveClass("opacity-0")
+    // alongside puts them in an outer band, still outside the count
+    fireEvent.click(within(p).getByRole("button", { name: "Alongside" }))
+    expect(count()).toBe("D-appointed 1 of 2 · majority 2 (no majority)")
+    expect(hopper()).not.toHaveClass("opacity-0")
     fireEvent.click(within(p).getByRole("button", { name: "Counted" }))
     expect(count()).toBe("D-appointed 2 of 3 · majority 2 ✓ · incl. senior")
   })

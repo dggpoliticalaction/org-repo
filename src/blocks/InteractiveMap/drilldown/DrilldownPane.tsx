@@ -73,9 +73,10 @@ export function DrilldownPane({
   ref,
 }: DrilldownPaneProps): React.ReactElement {
   const [mode, setMode] = useState<BenchMode>("seats")
-  // Shown by default: a bench's supernumerary members are part of who sits on it, and a reader
-  // who has to find a control to discover they exist does not know to look for it.
-  const [supernumeraryMode, setSupernumeraryMode] = useState<SupernumeraryMode>("show")
+  // Hidden by default: the question a bench answers first is who holds its authorized seats,
+  // and an outer band of senior judges around it doubles the chart's size to answer a second
+  // one. The control names them, so a reader who wants them can see there are some.
+  const [supernumeraryMode, setSupernumeraryMode] = useState<SupernumeraryMode>("hide")
   const [mark, setMark] = useState<string | null>(null)
   const [detail, setDetail] = useState<DetailSelection | null>(null)
   const headingRef = useRef<HTMLHeadingElement | null>(null)
