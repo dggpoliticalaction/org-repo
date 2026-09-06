@@ -46,7 +46,16 @@ const CIRCUIT_LABEL: Record<string, string> = {
   cafc: "Fed",
   cit: "CIT",
   uscfc: "CFC",
+  scotus: "SCOTUS",
 }
+
+/**
+ * The Supreme Court has no territory, so upstream publishes no seat block for it — but it is a
+ * top-level region like any circuit and a reader looks for it on the map. Park it in the open
+ * Atlantic below the Federal Circuit, the other court with no map of its own, so the two read
+ * as a column of national courts. National map units (`geometry/national.json`).
+ */
+const SCOTUS_ANCHOR: [number, number] = [2029097, 430000]
 
 /** "CC BY-SA 4.0 — credit: Jane Doe" → { license, credit }; public domain carries no credit. */
 export function splitLicense(license: string | null): {
@@ -67,6 +76,25 @@ function cleanPhotoUrl(url: string | null | undefined): string | null {
   } catch {
     return url
   }
+}
+
+/**
+ * The boilerplate every appellate and district court's official name opens with. It is the
+ * same 29 characters on 107 of the 110 courts, so it identifies none of them.
+ */
+const COURT_PREFIX = /^U\.S\. (?:Court of Appeals|District Court) for the /
+
+/**
+ * What a court is called wherever a reader meets it: the region rail, the map's tooltip, the
+ * pane's heading. Upstream publishes two names and neither is the one to show. `short_name`
+ * is a citation abbreviation — "D. Mass.", "9th Cir." — which a lawyer reads at a glance and
+ * everyone else has to decode. `court_name` is the full title, which says "U.S. District
+ * Court for the" ninety-four times down one column. Drop that opening and the court is left
+ * named in words: "District of Massachusetts", "Ninth Circuit". The full title stays on as
+ * the `full-name` fact, so the pane can still show a court its formal name.
+ */
+function regionLabel(court: Court): string {
+  return court.court_name.replace(COURT_PREFIX, "").trim() || court.short_name
 }
 
 function tenureLabel(t: Court["tenure_type"]): string {
@@ -142,8 +170,8 @@ export function factsFor(
   facts["seats-d"] = String(active.filter((j) => j.president_party === "Democratic").length)
   // Circuit and feeder anchors are in national units; district anchors in the circuit's local
   // units. A region is drawn as a block in exactly one of the two views, so one anchor suffices.
-  if (court.court_level !== "scotus" && block?.anchor)
-    facts.anchor = `${block.anchor[0]},${block.anchor[1]}`
+  if (court.court_level === "scotus") facts.anchor = SCOTUS_ANCHOR.join(",")
+  else if (block?.anchor) facts.anchor = `${block.anchor[0]},${block.anchor[1]}`
   const short = CIRCUIT_LABEL[court.court_id]
   if (short) facts["short-label"] = short
   facts.summary = summaryFor(court, judges)
@@ -279,7 +307,7 @@ export function adaptCourtTracker(
 
   const regions: DeclaredRegion[] = raw.courts.map((court) => ({
     id: court.court_id,
-    label: court.short_name,
+    label: regionLabel(court),
     ...(court.parent_id ? { parentId: court.parent_id } : {}),
     facts: factsFor(court, raw.seatBlocks[court.court_id], judgesByCourt.get(court.court_id) ?? []),
   }))

@@ -27,8 +27,6 @@ export interface PinRequest {
 export interface DrilldownPaneHandle {
   /** Move keyboard focus to the pane's heading (after a keyboard selection). */
   focusHeading(): void
-  /** Bring the pane into view (after a selection on a small screen). */
-  scrollIntoView(): void
 }
 
 interface DrilldownPaneProps {
@@ -46,6 +44,8 @@ interface DrilldownPaneProps {
   summary?: React.ReactNode
   /** A record to pin as soon as it is among the region's loaded records (search results). */
   pinRequest?: PinRequest | null
+  /** Which record the reader has pinned, so the page can put it in the URL. */
+  onPin?(recordId: string | null): void
   onDrill(): void
   onClose(): void
   ref?: React.Ref<DrilldownPaneHandle>
@@ -67,22 +67,21 @@ export function DrilldownPane({
   emptyHint = "Select a region on the map to see its details.",
   summary,
   pinRequest = null,
+  onPin,
   onDrill,
   onClose,
   ref,
 }: DrilldownPaneProps): React.ReactElement {
-  const [mode, setMode] = useState<BenchMode>("timeline")
-  const [supernumeraryMode, setSupernumeraryMode] = useState<SupernumeraryMode>("hide")
+  const [mode, setMode] = useState<BenchMode>("seats")
+  // Shown by default: a bench's supernumerary members are part of who sits on it, and a reader
+  // who has to find a control to discover they exist does not know to look for it.
+  const [supernumeraryMode, setSupernumeraryMode] = useState<SupernumeraryMode>("show")
   const [mark, setMark] = useState<string | null>(null)
   const [detail, setDetail] = useState<DetailSelection | null>(null)
-  const rootRef = useRef<HTMLElement | null>(null)
   const headingRef = useRef<HTMLHeadingElement | null>(null)
   const [now] = useState(() => new Date())
 
-  useImperativeHandle(ref, () => ({
-    focusHeading: () => headingRef.current?.focus(),
-    scrollIntoView: () => rootRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
-  }))
+  useImperativeHandle(ref, () => ({ focusHeading: () => headingRef.current?.focus() }))
 
   // A new region starts with no pinned or leftover detail.
   const regionId = region?.id ?? null
@@ -116,7 +115,29 @@ export function DrilldownPane({
   const supLabel = display?.status?.supernumerary?.[0]
     ? (display.status.labels?.[display.status.supernumerary[0]] ?? "Others")
     : "Others"
-  const cohortValue = detail && display?.cohort ? fieldString(detail.record, display.cohort) : null
+  /**
+   * What the amber rings mean, said in words. The rings mark everyone sharing the selected
+   * record's cohort field, and an unlabelled ring is a riddle: name the field and the value it
+   * matched, and say how much of the bench that is. The field's own label comes from the detail
+   * line that already describes it ("Appointed by"), so a profile never spells it twice. A
+   * cohort of one is nobody's group, so it is neither ringed nor captioned.
+   */
+  const cohort = ((): { value: string; label: string; count: number; total: number } | null => {
+    const field = display?.cohort
+    if (!field || !detail) return null
+    const value = fieldString(detail.record, field)
+    if (value === null) return null
+    const pool = records.seats
+    const count = pool.filter((r) => fieldString(r, field) === value).length
+    if (count < 2) return null
+    const detailLabel = display?.details?.find((d) => d.field === field)?.label
+    return {
+      value,
+      label: detailLabel ? `${detailLabel} ${value}` : value,
+      count,
+      total: pool.length,
+    }
+  })()
 
   const hoverRecord = (record: DrilldownRecord | null, recDisplay: RecordDisplay | null): void => {
     if (detail?.pinned) return
@@ -124,16 +145,16 @@ export function DrilldownPane({
     // Hover-out keeps the last record up (sticky) so the panel's links stay reachable.
   }
   const clickRecord = (record: DrilldownRecord, recDisplay: RecordDisplay): void => {
-    setDetail((cur) =>
-      cur?.pinned && cur.record === record ? null : { record, display: recDisplay, pinned: true },
-    )
+    const unpin = detail?.pinned && detail.record === record
+    const id = record._id
+    onPin?.(unpin || typeof id !== "string" ? null : id)
+    setDetail(unpin ? null : { record, display: recDisplay, pinned: true })
   }
 
   const notes = (region?.notes ?? []).filter((n) => n.mode === "always" || mode === "seats")
 
   return (
     <section
-      ref={rootRef}
       data-drilldown-pane=""
       data-open={open ? "" : undefined}
       aria-label={region ? `${region.label} details` : "Region details"}
@@ -195,15 +216,17 @@ export function DrilldownPane({
                   onClick={(r) => clickRecord(r, associate.display)}
                 />
               )}
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="icon-sm"
                 aria-label="Close details"
                 data-drilldown-close=""
                 onClick={onClose}
-                className="border-border bg-card hover:bg-muted focus-visible:ring-ring/60 size-7 rounded-full border text-sm outline-none focus-visible:ring-2"
+                className="rounded-full"
               >
                 ×
-              </button>
+              </Button>
             </div>
           </header>
 
@@ -213,8 +236,8 @@ export function DrilldownPane({
                 label="View"
                 value={mode}
                 options={[
-                  { value: "timeline", label: "Timeline" },
                   { value: "seats", label: "Seats" },
+                  { value: "timeline", label: "Timeline" },
                 ]}
                 onChange={setMode}
               />
@@ -234,10 +257,24 @@ export function DrilldownPane({
               <Segmented<SupernumeraryMode>
                 label={supLabel}
                 value={supernumeraryMode}
+                // "Show" and "Include" are not the same thing, and the old labels never said
+                // which was which: one puts them beside the bench, the other puts them in it.
                 options={[
-                  { value: "hide", label: "Hide" },
-                  { value: "show", label: "Show" },
-                  { value: "include", label: "Include" },
+                  {
+                    value: "hide",
+                    label: "Hidden",
+                    hint: `${supLabel} members are left off the chart.`,
+                  },
+                  {
+                    value: "show",
+                    label: "Alongside",
+                    hint: `${supLabel} members sit in an outer band, outside the seats and outside the majority.`,
+                  },
+                  {
+                    value: "include",
+                    label: "Counted",
+                    hint: `${supLabel} members take seats in the chart and count toward the majority.`,
+                  },
                 ]}
                 onChange={setSupernumeraryMode}
               />
@@ -279,7 +316,7 @@ export function DrilldownPane({
                   supernumeraryMode={supernumeraryMode}
                   mark={mark}
                   associate={associate?.record ?? null}
-                  cohortValue={cohortValue}
+                  cohortValue={cohort?.value ?? null}
                   onHover={(r) => hoverRecord(r, display)}
                   onClick={(r) => clickRecord(r, display)}
                 />
@@ -287,6 +324,18 @@ export function DrilldownPane({
               {recordsState === "idle" && !display && (
                 <p className="text-muted-foreground py-6 text-center text-sm">
                   No records for this region.
+                </p>
+              )}
+              {recordsState === "idle" && cohort && (
+                <p
+                  data-drilldown-cohort=""
+                  className="text-muted-foreground mt-2 flex items-center gap-1.5 text-xs"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="inline-block size-2.5 shrink-0 rounded-full ring-2 ring-amber-400"
+                  />
+                  {cohort.label} · {cohort.count} of {cohort.total}
                 </p>
               )}
               {notes.map((n, i) => (

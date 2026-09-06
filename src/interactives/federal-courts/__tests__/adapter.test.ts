@@ -301,7 +301,12 @@ describe("courtTrackerFeed end to end", () => {
       ref: "t",
     })
     const byId = Object.fromEntries(data.regions.map((r) => [r.id, r]))
-    expect(byId.moed).toMatchObject({ label: "E.D. Mo.", parentId: "ca8" })
+    // The label is the full name with the boilerplate off, not upstream's citation
+    // abbreviation ("E.D. Mo."), which stays reachable as the `full-name` fact below.
+    expect(byId.moed).toMatchObject({ label: "Eastern District of Missouri", parentId: "ca8" })
+    expect(byId.ca9).toMatchObject({ label: "Ninth Circuit" })
+    // Nothing to strip: the three national courts are already named in words.
+    expect(byId.uscfc).toMatchObject({ label: "U.S. Court of Federal Claims" })
     expect(byId.moed?.facts).toMatchObject({
       "full-name": "U.S. District Court for the Eastern District of Missouri",
       tenure: "Life tenure",

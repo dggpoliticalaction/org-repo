@@ -43,8 +43,14 @@ interface Layer {
   shapes: SVGGElement
   annotations: SVGGElement
   overlay: SVGPathElement
+  /** The selected region's outline: the same mark as the hover one, but it stays. */
+  selectedOverlay: SVGPathElement
   /** Raw (unpadded) viewBox. */
   viewBox: ViewBox
+  /** The viewBox actually on the element: padded, and widened by `gutter` on the left. */
+  render: ViewBox
+  /** Map units reserved left of the map for the parent's own seat block; 0 on the overview. */
+  gutter: number
   flipY: boolean
   /** Overview: null. Child view: the drilled parent. */
   parentId: string | null
@@ -85,6 +91,23 @@ const BLOCK_SCALE_HOVER = 1.17
 const BLOCK_SCALE_SELECTED = 1.24
 const BLOCK_SCALE_MS = 90
 const NOMINAL_MAP_PX = 900
+/** Breathing room either side of the parent's seat block in its gutter, in CSS px. */
+const PARENT_GUTTER_MARGIN_PX = 18
+
+/**
+ * Hover forgiveness. Region shapes share their borders, so a pointer resting on a seam
+ * crosses between two of them several times a second and the outline, the seat blocks and
+ * the tooltip all strobe. A *change* of target therefore has to hold for a moment before it
+ * counts — the first region of a sweep still lights up instantly, since there is nothing to
+ * flicker against, and the tooltip keeps following the pointer throughout.
+ */
+const HOVER_SWITCH_MS = 80
+/**
+ * Losing the target gets longer than swapping it: the anti-aliased hairline between two
+ * regions reads as background for a frame or two, and blinking the highlight off mid-sweep
+ * is the most visible flicker of the lot.
+ */
+const HOVER_CLEAR_MS = 160
 
 const nowMs = (): number =>
   typeof performance !== "undefined" && performance.now ? performance.now() : Date.now()
@@ -140,6 +163,12 @@ export class MapStage {
   private regions: RegionIndex
   private selected: string | null = null
   private hovered: string | null = null
+  /** A hover change waiting out its forgiveness delay — see HOVER_SWITCH_MS. */
+  private pendingHover: {
+    id: string | null
+    point: { x: number; y: number } | null
+    timer: ReturnType<typeof setTimeout>
+  } | null = null
   private view: { parentId: string | null } = { parentId: null }
   private readonly blockAnim = new WeakMap<SVGGElement, { raf: number | null; scale: number }>()
   private readonly disposers: (() => void)[] = []
@@ -151,7 +180,15 @@ export class MapStage {
     this.regions = opts.regions
     const svg = opts.overviewLayer.querySelector<SVGSVGElement>("svg[data-drilldown-overview]")
     if (!svg) throw new Error("drilldown stage: overview layer has no svg")
-    this.overview = this.adopt(opts.overviewLayer, svg, opts.overviewViewBox, opts.flipY, null)
+    // The overview is server-rendered by DrilldownOverviewSvg, which pads and never gutters.
+    this.overview = this.adopt(
+      opts.overviewLayer,
+      svg,
+      opts.overviewViewBox,
+      { vb: padViewBox(opts.overviewViewBox), gutter: 0 },
+      opts.flipY,
+      null,
+    )
     this.setLayerState(this.overview, "visible")
     this.wire(this.overview)
     if (typeof ResizeObserver === "function") {
@@ -162,6 +199,7 @@ export class MapStage {
 
   destroy(): void {
     this.destroyed = true
+    this.cancelPendingHover()
     this.cancelMorph()
     this.resizeObserver?.disconnect()
     for (const d of this.disposers) d()
@@ -172,6 +210,7 @@ export class MapStage {
     this.morphPlans.clear()
     // Leave the server-rendered overview exactly as React rendered it.
     this.overview.overlay.remove()
+    this.overview.selectedOverlay.remove()
     this.overview.annotations.replaceChildren()
     this.overview.el.removeAttribute("data-state")
     for (const p of this.overview.shapes.querySelectorAll("[data-selected],[data-hover],[role]")) {
@@ -202,11 +241,25 @@ export class MapStage {
   setSelected(regionId: string | null): void {
     this.selected = regionId
     for (const layer of this.allLayers()) {
+      // A child map's own parent is its backdrop, not one of the choices on it: selecting the
+      // circuit lights the seat block in its gutter, it does not flood the whole map.
+      const backdrop = layer.parentId !== null && layer.parentId === regionId
+      let drawn = false
       for (const p of layer.shapes.querySelectorAll<SVGPathElement>("path[data-region-id]")) {
-        const covers = regionId !== null && this.covers(p, regionId)
-        if (covers) p.setAttribute("data-selected", "")
-        else p.removeAttribute("data-selected")
+        const covers =
+          regionId !== null &&
+          !(backdrop && p.getAttribute("data-role") === "parent") &&
+          this.covers(layer, p, regionId)
+        if (covers) {
+          p.setAttribute("data-selected", "")
+          drawn = true
+        } else p.removeAttribute("data-selected")
       }
+      // The neutral fill alone is quiet among the greys; the outline is what the eye catches.
+      if (regionId !== null && drawn) {
+        layer.selectedOverlay.setAttribute("d", this.overlayPathFor(layer, regionId))
+        layer.selectedOverlay.setAttribute("data-visible", "")
+      } else layer.selectedOverlay.removeAttribute("data-visible")
       this.highlightBlocks(layer)
     }
   }
@@ -230,6 +283,7 @@ export class MapStage {
     const local = this.ensureLocalLayer(parentId, asset)
     this.view = { parentId }
     this.setSelected(null)
+    this.cancelPendingHover()
     this.opts.callbacks.onHover(null, null)
     const plan = this.morphPlanFor(parentId, local)
     if (!plan) {
@@ -256,6 +310,7 @@ export class MapStage {
     const local = parentId ? this.locals.get(parentId) : undefined
     this.view = { parentId: null }
     this.setSelected(null)
+    this.cancelPendingHover()
     this.opts.callbacks.onHover(null, null)
     const plan = parentId && local ? this.morphPlanFor(parentId, local) : null
     if (!plan) {
@@ -283,6 +338,7 @@ export class MapStage {
     el: HTMLElement,
     svg: SVGSVGElement,
     viewBox: ViewBox,
+    render: { vb: ViewBox; gutter: number },
     flipY: boolean,
     parentId: string | null,
   ): Layer {
@@ -290,9 +346,23 @@ export class MapStage {
     const annotations = svg.querySelector<SVGGElement>("g[data-drilldown-annotations]")
     if (!shapes || !annotations) throw new Error("drilldown stage: layer svg is missing its groups")
     svg.querySelectorAll("path[data-drilldown-overlay]").forEach((n) => n.remove())
+    // Selection underneath: a hovered selected region reads as hovered, not as two lines.
+    const selectedOverlay = svgEl("path", { "data-drilldown-overlay": "selected", d: "" })
     const overlay = svgEl("path", { "data-drilldown-overlay": "", d: "" })
-    shapes.appendChild(overlay)
-    const layer: Layer = { el, svg, shapes, annotations, overlay, viewBox, flipY, parentId }
+    shapes.append(selectedOverlay, overlay)
+    const layer: Layer = {
+      el,
+      svg,
+      shapes,
+      annotations,
+      overlay,
+      selectedOverlay,
+      viewBox,
+      render: render.vb,
+      gutter: render.gutter,
+      flipY,
+      parentId,
+    }
     // Only now is there a handler behind the shapes, so only now do they advertise as buttons.
     for (const p of shapes.querySelectorAll<SVGPathElement>("path[data-region-id]")) {
       if (this.targetOf(layer, p)) p.setAttribute("role", "button")
@@ -300,9 +370,55 @@ export class MapStage {
     return layer
   }
 
+  /** The viewport in CSS px, falling back to a nominal square while it is unmeasurable. */
+  private viewportPx(): { cw: number; ch: number } {
+    return {
+      cw: this.opts.viewport.clientWidth || NOMINAL_MAP_PX,
+      ch: this.opts.viewport.clientHeight || NOMINAL_MAP_PX,
+    }
+  }
+
+  /**
+   * Rendered px a region's seat block occupies across, margins included. Blocks are a constant
+   * size on screen, so this is a px answer that owes nothing to the projection.
+   */
+  private blockWidthPx(regionId: string): number {
+    const seats = this.opts.seats
+    const region = this.regions.byId[regionId]
+    if (!seats || !region) return 0
+    const total = Number(region.facts[seats.totalFact])
+    if (!Number.isFinite(total) || total <= 0) return 0
+    const compact = this.viewportPx().cw < COMPACT_MAP_PX
+    const e = compact ? BLOCK_PX_COMPACT : BLOCK_PX
+    const pitch = e * (1 + BLOCK_GAP)
+    const cols = Math.ceil(total / BLOCK_ROWS)
+    const label = !compact && seats.labelFact ? e * 3.2 : 0
+    return Math.max(cols * pitch - (pitch - e), label) + 2 * PARENT_GUTTER_MARGIN_PX
+  }
+
+  /**
+   * A child map reserves a gutter down its left for the parent's own seat block — the circuit's
+   * appellate bench belongs on the circuit's map, but beside it, not on top of it. The map is
+   * letterboxed into what is left, so the reservation has to solve for the shrink it causes:
+   * widening the viewBox scales the map down, which would otherwise eat the very room it made.
+   */
+  private renderBox(raw: ViewBox, parentId: string | null): { vb: ViewBox; gutter: number } {
+    const vb = padViewBox(raw)
+    const need = parentId ? this.blockWidthPx(parentId) : 0
+    if (need <= 0) return { vb, gutter: 0 }
+    const { cw, ch } = this.viewportPx()
+    const [x, y, w, h] = vb
+    // Height-bound: the scale is fixed by the height, so the px convert straight to units.
+    let gutter = (need * h) / ch
+    // Width-bound: every unit added shrinks the scale, hence the solve for g.
+    if ((w + gutter) * (ch / h) > cw) gutter = need < cw ? (need * w) / (cw - need) : w
+    return { vb: [x - gutter, y, w + gutter, h], gutter }
+  }
+
   private buildLocalLayer(parentId: string, asset: DrilldownAsset): Layer {
     const raw = asset.viewBox!
-    const vb = padViewBox(raw)
+    const render = this.renderBox(raw, parentId)
+    const vb = render.vb
     const el = document.createElement("div")
     el.setAttribute("data-drilldown-layer", "local")
     el.setAttribute("data-parent-id", parentId)
@@ -355,7 +471,7 @@ export class MapStage {
     svg.append(shapes, annotations)
     el.appendChild(svg)
     this.opts.layersHost.appendChild(el)
-    const layer = this.adopt(el, svg, raw, asset.flipY, parentId)
+    const layer = this.adopt(el, svg, raw, render, asset.flipY, parentId)
     this.setLayerState(layer, "hidden")
     this.wire(layer)
     return layer
@@ -398,9 +514,17 @@ export class MapStage {
     return role === "child" ? id : null
   }
 
-  private covers(path: SVGPathElement, regionId: string): boolean {
+  /**
+   * Whether this path is part of how the layer draws `regionId` — which is a different
+   * question on each map, and the same one `targetOf` answers for the pointer. On the
+   * overview an inset is its parent's only presence in that spot (Alaska stands in for the
+   * 9th), so it is painted with it. On the circuit's own map that same inset is a district
+   * in its own right: selecting the circuit must not flood Alaska, Hawaii and Guam.
+   */
+  private covers(layer: Layer, path: SVGPathElement, regionId: string): boolean {
     if (path.getAttribute("data-region-id") === regionId) return true
     return (
+      layer.parentId === null &&
       path.getAttribute("data-inset") === "true" &&
       path.getAttribute("data-parent-id") === regionId &&
       path.getAttribute("data-role") === "child"
@@ -413,9 +537,51 @@ export class MapStage {
     for (const p of layer.shapes.querySelectorAll<SVGPathElement>(
       `path[data-region-id][data-role]:not([data-role="outline"])`,
     )) {
-      if (this.covers(p, regionId)) parts.push(p.getAttribute("d") ?? "")
+      if (this.covers(layer, p, regionId)) parts.push(p.getAttribute("d") ?? "")
     }
     return parts.join(" ")
+  }
+
+  private cancelPendingHover(): void {
+    if (!this.pendingHover) return
+    clearTimeout(this.pendingHover.timer)
+    this.pendingHover = null
+  }
+
+  /**
+   * Route a pointer's idea of the target through the forgiveness delay. Landing on the region
+   * already highlighted cancels a pending change outright, so jittering back and forth over a
+   * shared border settles on whichever side the pointer actually stays.
+   */
+  private requestHover(
+    layer: Layer,
+    regionId: string | null,
+    point: { x: number; y: number } | null,
+  ): void {
+    if (regionId === this.hovered) {
+      this.cancelPendingHover()
+      return
+    }
+    // Nothing is highlighted yet, so there is no flicker to forgive: light up at once.
+    if (regionId !== null && this.hovered === null) {
+      this.cancelPendingHover()
+      this.setHover(layer, regionId, point)
+      return
+    }
+    if (this.pendingHover?.id === regionId) {
+      // Same pending target, fresher cursor — let the timer run out rather than restarting it.
+      this.pendingHover.point = point
+      return
+    }
+    this.cancelPendingHover()
+    const delay = regionId === null ? HOVER_CLEAR_MS : HOVER_SWITCH_MS
+    const timer = setTimeout(() => {
+      const pending = this.pendingHover
+      this.pendingHover = null
+      if (this.destroyed || !pending) return
+      this.setHover(layer, pending.id, pending.point)
+    }, delay)
+    this.pendingHover = { id: regionId, point, timer }
   }
 
   private setHover(
@@ -423,6 +589,7 @@ export class MapStage {
     regionId: string | null,
     point: { x: number; y: number } | null,
   ): void {
+    this.cancelPendingHover()
     if (regionId) {
       layer.overlay.setAttribute("d", this.overlayPathFor(layer, regionId))
       layer.overlay.setAttribute("data-visible", "")
@@ -449,13 +616,19 @@ export class MapStage {
 
     const onOver = (e: PointerEvent): void => {
       const id = targetFrom(e.target)
-      if (id && id !== this.hovered) this.setHover(layer, id, { x: e.clientX, y: e.clientY })
-      else if (!id && this.hovered) this.setHover(layer, null, null)
+      if (id || this.hovered) {
+        this.requestHover(layer, id, id ? { x: e.clientX, y: e.clientY } : null)
+      }
     }
     const onMove = (e: PointerEvent): void => {
-      if (this.hovered) this.opts.callbacks.onHover(this.hovered, { x: e.clientX, y: e.clientY })
+      const point = { x: e.clientX, y: e.clientY }
+      // Whatever is queued should arrive under the cursor, not where it was 80 ms ago.
+      if (this.pendingHover?.id) this.pendingHover.point = point
+      if (this.hovered) this.opts.callbacks.onHover(this.hovered, point)
     }
+    // The pointer has left the map altogether — unambiguous, so no grace period.
     const onLeave = (): void => {
+      this.cancelPendingHover()
       if (this.hovered) this.setHover(layer, null, null)
     }
     const onClick = (e: MouseEvent): void => {
@@ -478,6 +651,7 @@ export class MapStage {
       this.setHover(layer, id, { x: r.left + r.width / 2, y: r.top + r.height / 2 })
     }
     const onBlur = (): void => {
+      this.cancelPendingHover()
       if (this.hovered) this.setHover(layer, null, null)
     }
 
@@ -506,7 +680,7 @@ export class MapStage {
    * display:none and measures 0). Reproduces the letterbox `max-width/max-height: 100%` produce.
    */
   private renderedWidth(layer: Layer): number {
-    const [, , vw, vh] = layer.viewBox
+    const [, , vw, vh] = layer.render
     const cw = this.opts.viewport.clientWidth
     const ch = this.opts.viewport.clientHeight
     if (!(cw > 0 && ch > 0 && vw > 0 && vh > 0)) return NOMINAL_MAP_PX
@@ -524,12 +698,26 @@ export class MapStage {
     return path ? largestSubpathCentre(path.getAttribute("d")) : null
   }
 
+  /**
+   * Where a child map draws its own parent: centred in the gutter reserved for it, level with
+   * the middle of the map. Its declared anchor is no use here — that one is in the overview's
+   * units, and points at the region's place among its siblings on a map this is not.
+   */
+  private gutterAnchor(layer: Layer, regionId: string): [number, number] | null {
+    if (!layer.gutter || regionId !== layer.parentId) return null
+    const [x, y, , h] = layer.render
+    // drawBlocks reads an anchor as geographic Y and flips it, so hand back the flip's inverse.
+    const middle = y + h / 2
+    return [x + layer.gutter / 2, layer.flipY ? flipConstant(layer.viewBox) - middle : middle]
+  }
+
   private drawBlocks(layer: Layer, regionIds: string[]): void {
     layer.annotations.querySelectorAll("g[data-drilldown-blocks]").forEach((n) => n.remove())
     const seats = this.opts.seats
     if (!seats || regionIds.length === 0) return
     const group = svgEl("g", { "data-drilldown-blocks": "" })
-    const [, , vw] = layer.viewBox
+    const [, , vw] = layer.render
+    // The gutter only widens the box to the left, so the Y flip is the raw one either way.
     const k = flipConstant(layer.viewBox)
     const rendered = this.renderedWidth(layer)
     // Compactness follows the room the page gives the map, not the rendered width: a tall
@@ -555,6 +743,7 @@ export class MapStage {
       // Size to whichever is larger so no member is ever dropped from the block.
       while (squares.length < total) squares.push({ color: null })
       const anchor =
+        this.gutterAnchor(layer, id) ??
         (seats.anchorFact ? parseAnchor(region.facts[seats.anchorFact]) : null) ??
         this.shapeAnchor(layer, id)
       if (!anchor) continue
@@ -614,6 +803,15 @@ export class MapStage {
 
   private refreshBlocks(): void {
     if (this.destroyed) return
+    // The gutter is sized in rendered px, so a resize re-cuts it before the blocks redraw.
+    for (const layer of this.locals.values()) {
+      if (!layer.parentId) continue
+      const render = this.renderBox(layer.viewBox, layer.parentId)
+      if (viewBoxAttr(render.vb) === viewBoxAttr(layer.render)) continue
+      layer.render = render.vb
+      layer.gutter = render.gutter
+      layer.svg.setAttribute("viewBox", viewBoxAttr(render.vb))
+    }
     const ids = new Map<Layer, string[]>()
     for (const layer of this.allLayers()) {
       ids.set(
@@ -736,7 +934,7 @@ export class MapStage {
     }
 
     const vbStart = padViewBox(this.overview.viewBox)
-    const vbEnd = padViewBox(local.viewBox)
+    const vbEnd = local.render
     const svg = svgEl("svg", {
       "data-drilldown-morph": "",
       viewBox: viewBoxAttr(vbStart),

@@ -49,9 +49,11 @@ function blockIdsFor(
   const children = regions.childrenOf[view.parentId] ?? []
   const asset = loaded[view.parentId]
   const hasGeometry = asset ? asset.paths.some((p) => p.id) : false
-  // A parent with no child geometry keeps the overview on screen: its children join the
-  // top-level blocks at their declared anchors.
-  return hasGeometry ? children : [...regions.topLevel, ...children]
+  // The parent leads its own children: on its own map its block sits in the gutter beside it,
+  // so the bench that hears the whole region is where the region is.
+  // A parent with no child geometry keeps the overview on screen instead: its children join
+  // the top-level blocks at their declared anchors.
+  return hasGeometry ? [view.parentId, ...children] : [...regions.topLevel, ...children]
 }
 
 export function DrilldownMapClient({
@@ -77,6 +79,11 @@ export function DrilldownMapClient({
   const [hover, setHover] = useState<{ id: string; x: number; y: number } | null>(null)
   const [busy, setBusy] = useState(false)
   const [pinRequest, setPinRequest] = useState<(PinRequest & { regionId: string }) | null>(null)
+  // The record the reader has pinned in the pane, mirrored here only so the URL can carry it.
+  const [pinned, setPinned] = useState<string | null>(null)
+  // Which regions show their children in the rail. Drilling in opens one; the reader can open
+  // any of them by hand, which is also what fetches the labels their children are named by.
+  const [expanded, setExpanded] = useState<Set<string>>(new Set())
   // How the last selection was made, so keyboard users land in the pane they just opened.
   const lastVia = useRef<SelectVia>("pointer")
 
@@ -132,6 +139,7 @@ export function DrilldownMapClient({
       if (cur && rootRef.current?.contains(document.activeElement)) focusSelectorItem(cur)
       return null
     })
+    setPinned(null)
     setPaneOpen(false)
   }, [focusSelectorItem])
 
@@ -141,6 +149,7 @@ export function DrilldownMapClient({
       lastVia.current = via
       // A pin belongs to the region it was made for; selecting elsewhere drops it.
       setPinRequest((cur) => (cur && cur.regionId !== id ? null : cur))
+      setPinned(null)
       setSelected((cur) => {
         if (cur === id) {
           // `force` is for a selection that is showing something specific (a search result):
@@ -157,18 +166,51 @@ export function DrilldownMapClient({
     [regions, childAssets, ensureAsset],
   )
 
+  const drillOut = useCallback(async (): Promise<"done" | "fallback" | "cancelled"> => {
+    const stage = stageRef.current
+    if (!stage) return "cancelled"
+    setPaneOpen(false)
+    setSelected(null)
+    setPinned(null)
+    setView({ parentId: null })
+    setBusy(true)
+    const how = await stage.drillOut()
+    setBusy(false)
+    if (how === "cancelled") return how
+    stage.renderBlocks(regions.topLevel)
+    return how
+  }, [regions.topLevel])
+
+  /**
+   * Move into a region's own map. `via` is set when the reader asked for the *region* and not
+   * merely for its map — clicking a circuit — and then it stays selected through the morph, so
+   * the pane that greets them on arrival is the circuit's own bench.
+   */
   const drillIn = useCallback(
-    async (parentId: string) => {
+    async (parentId: string, via: SelectVia | null = null) => {
       const stage = stageRef.current
       if (!stage) return
       if (view.parentId === parentId) {
         setPaneOpen(false)
         return
       }
-      const asset = await ensureAsset(parentId)
-      if (!asset || !stageRef.current) return
-      setPaneOpen(false)
-      setSelected(null)
+      // Fetch and leave at the same time: every morph is anchored to the overview, so there
+      // is no plan that goes from one child map straight to another — crossing between two
+      // circuits is a drill out and a drill in, which is the journey a reader would make by
+      // hand anyway. Without it the map being left stayed on the stage under the new one.
+      const pending = ensureAsset(parentId)
+      if (view.parentId !== null && (await drillOut()) === "cancelled") return
+      const asset = await pending
+      if (!asset || !stageRef.current) {
+        // The map could not be fetched, but the reader still asked for this region: open the
+        // pane on it anyway, where the error — and the drill button, now a retry — are shown.
+        if (via) select(parentId, via)
+        return
+      }
+      if (via) lastVia.current = via
+      setExpanded((cur) => (cur.has(parentId) ? cur : new Set(cur).add(parentId)))
+      setPaneOpen(via !== null)
+      setSelected(via ? parentId : null)
       // The state update carrying this asset has not committed yet; give the stage the merged
       // index now so the child view's blocks are sized from its facts.
       const merged = buildRegionIndex([overview, ...Object.values(loaded), asset])
@@ -178,23 +220,26 @@ export function DrilldownMapClient({
       const how = await stage.drillIn(parentId, asset)
       setBusy(false)
       if (how === "cancelled") return
+      // The morph clears the map's own highlight; put it back on the region the reader chose.
+      if (via) stage.setSelected(parentId)
       stage.renderBlocks(blockIdsFor({ parentId }, merged, { ...loaded, [parentId]: asset }))
     },
-    [view.parentId, ensureAsset, overview, loaded],
+    [view.parentId, ensureAsset, overview, loaded, select, drillOut],
   )
 
-  const drillOut = useCallback(async () => {
-    const stage = stageRef.current
-    if (!stage) return
-    setPaneOpen(false)
-    setSelected(null)
-    setView({ parentId: null })
-    setBusy(true)
-    const how = await stage.drillOut()
-    setBusy(false)
-    if (how === "cancelled") return
-    stage.renderBlocks(regions.topLevel)
-  }, [regions.topLevel])
+  /**
+   * What choosing a region means, wherever it is chosen from. A region with a map of its own
+   * opens it — one click moves in rather than selecting now and drilling as a second step —
+   * and anything else simply selects.
+   */
+  const open = useCallback(
+    (id: string, via: SelectVia = "pointer", opts?: { force?: boolean }) => {
+      if (!regions.byId[id]) return
+      if (drillable.has(id) && view.parentId !== id) void drillIn(id, via)
+      else select(id, via, opts)
+    },
+    [regions, drillable, view.parentId, drillIn, select],
+  )
 
   // A search result names a record, not a region: show the map the record sits on, select its
   // region and ask the pane to pin it. The pane does the pinning once the region's asset has
@@ -207,10 +252,10 @@ export function DrilldownMapClient({
       if (!regions.byId[regionId]) return false
       const key = assetKeyFor(regionId, regions, childAssets)
       if (key && key !== regionId && view.parentId !== key) await drillIn(key)
-      select(regionId, "keyboard", { force: true })
+      open(regionId, "keyboard", { force: true })
       return true
     },
-    [regions, childAssets, view.parentId, drillIn, select],
+    [regions, childAssets, view.parentId, drillIn, open],
   )
 
   const revealRecord = useCallback(
@@ -223,13 +268,110 @@ export function DrilldownMapClient({
     [revealRegion],
   )
 
+  /** Open or close a region's children in the rail, fetching them the first time. */
+  const toggleExpanded = useCallback(
+    (id: string) => {
+      setExpanded((cur) => {
+        const next = new Set(cur)
+        if (next.has(id)) next.delete(id)
+        else next.add(id)
+        return next
+      })
+      if (!expanded.has(id)) void ensureAsset(id)
+    },
+    [expanded, ensureAsset],
+  )
+
+  // ---- the URL as the map's address ----------------------------------------------------------
+
+  /**
+   * Where the reader is, written into the query string: `region` is the one whose pane is
+   * open — which is also what says which map is on screen — `view` stands in for it when the
+   * reader has closed the pane on a child map, and `record` names the pinned card. Every state
+   * a click can reach is therefore a link someone can send, and Back walks the way they came.
+   *
+   * The history entries are written by hand rather than through the router: this is the same
+   * document either way, and a router navigation would re-run the page's own data fetch to
+   * land on markup identical to what is already on screen.
+   */
+  const restoring = useRef(false)
+  /** Nothing is written until the address has been read, or the read would erase itself. */
+  const restored = useRef(false)
+  /** A restored address is canonicalised in place: arriving somewhere is not a step taken. */
+  const arrived = useRef(false)
+
+  const applyUrl = useCallback(
+    async (query: string) => {
+      const q = new URLSearchParams(query)
+      const region = q.get("region")
+      const parent = q.get("view")
+      const record = q.get("record")
+      restoring.current = true
+      try {
+        if (region && regions.byId[region]) {
+          await revealRegion(region)
+          if (record) {
+            pinNonce.current += 1
+            setPinRequest({ regionId: region, recordId: record, nonce: pinNonce.current })
+            setPinned(record)
+          }
+          return
+        }
+        deselect()
+        if (parent && parent !== view.parentId) await drillIn(parent)
+        else if (!parent && view.parentId) await drillOut()
+      } finally {
+        restoring.current = false
+      }
+    },
+    [regions, view.parentId, revealRegion, drillIn, drillOut, deselect],
+  )
+
+  // Read the address once on mount, and again whenever the reader moves through history.
+  const applyUrlRef = useRef(applyUrl)
+  useEffect(() => {
+    applyUrlRef.current = applyUrl
+  }, [applyUrl])
+  useEffect(() => {
+    const onPop = (): void => void applyUrlRef.current(window.location.search)
+    window.addEventListener("popstate", onPop)
+    return () => window.removeEventListener("popstate", onPop)
+  }, [])
+
+  useEffect(() => {
+    if (!restored.current || restoring.current) return
+    const q = new URLSearchParams(window.location.search)
+    const before = q.toString()
+    const set = (key: string, value: string | null): void => {
+      if (value) q.set(key, value)
+      else q.delete(key)
+    }
+    // A selected region already says which map it is on, so `view` is only for a map the
+    // reader is standing on with nothing open — never both, they would say the same thing.
+    const shown = paneOpen && selected ? selected : null
+    set("region", shown)
+    set("view", shown ? null : view.parentId)
+    set("record", shown ? pinned : null)
+    const after = q.toString()
+    if (after === before) return
+    // Moving the map or the pane is a step worth going back from; re-pinning a card is not,
+    // and nor is tidying the address the reader arrived on.
+    const step =
+      !arrived.current &&
+      (new URLSearchParams(before).get("view") !== q.get("view") ||
+        new URLSearchParams(before).get("region") !== q.get("region"))
+    arrived.current = false
+    const url = `${window.location.pathname}${after ? `?${after}` : ""}${window.location.hash}`
+    window.history[step ? "pushState" : "replaceState"](null, "", url)
+  }, [view.parentId, selected, paneOpen, pinned])
+
   // ---- stage lifecycle ---------------------------------------------------------------------
 
-  // The stage is created once; it calls back into whichever `select` is current.
-  const selectRef = useRef(select)
+  // The stage is created once; it calls back into whichever `open` is current.
+  const selectRef = useRef(open)
   useEffect(() => {
-    selectRef.current = select
-  }, [select])
+    selectRef.current = open
+  }, [open])
 
   useEffect(() => {
     const viewport = viewportRef.current
@@ -257,6 +399,11 @@ export function DrilldownMapClient({
     }
     stageRef.current = stage
     stage.renderBlocks(buildRegionIndex([overview]).topLevel)
+    // Only now can a drill run, so this is where a deep link is honoured.
+    void applyUrlRef.current(window.location.search).finally(() => {
+      restored.current = true
+      arrived.current = true
+    })
     return () => {
       stage.destroy()
       if (stageRef.current === stage) stageRef.current = null
@@ -274,19 +421,13 @@ export function DrilldownMapClient({
     stageRef.current?.setSelected(selected)
   }, [selected])
 
-  // After a selection: keyboard users move into the pane, and it scrolls into view when it
-  // sits below the fold (a phone, or a tall map).
+  // A keyboard selection moves focus into the pane it opened, because a keyboard reader has
+  // no other way to get there. A pointer selection moves nothing: the reader picked a region
+  // on the map and the map is what they are looking at — scrolling the pane up under them
+  // took the map away as the reward for using it.
   useEffect(() => {
     if (!selected || !paneOpen) return
-    const pane = paneRef.current
-    if (!pane) return
-    if (lastVia.current === "keyboard") {
-      pane.focusHeading()
-      return
-    }
-    const el = rootRef.current?.querySelector<HTMLElement>("[data-drilldown-pane]")
-    const rect = el?.getBoundingClientRect()
-    if (rect && rect.top > window.innerHeight * 0.6) pane.scrollIntoView()
+    if (lastVia.current === "keyboard") paneRef.current?.focusHeading()
   }, [selected, paneOpen])
 
   // Escape closes an open pane from anywhere on the page — a reader who has scrolled into the
@@ -339,6 +480,7 @@ export function DrilldownMapClient({
       emptyHint={emptyHint}
       summary={summary}
       pinRequest={pinRequest && pinRequest.regionId === selected ? pinRequest : null}
+      onPin={setPinned}
       region={selectedRegion}
       facts={selectedRegion ? displayFacts(selectedRegion, payloadFor(selectedRegion.id)) : []}
       lookups={overview.payload?.lookups}
@@ -373,23 +515,29 @@ export function DrilldownMapClient({
         onKeyDown={onKeyDown}
         className="flex flex-col gap-3"
       >
-        <DrilldownSelector
-          regions={regions}
-          view={view}
-          selected={selected}
-          drillable={drillable}
-          onSelect={select}
-          onBack={() => void drillOut()}
-        />
-        <div
-          ref={viewportRef}
-          data-drilldown-viewport=""
-          data-view={view.parentId ? "child" : "overview"}
-          aria-busy={busy || undefined}
-          className="bg-muted/30 @container relative w-full min-w-0 overflow-hidden rounded-lg"
-        >
-          {children}
-          <div ref={layersRef} data-drilldown-layers="" />
+        {/* The rail rides beside the map from tablet up, and above it on a phone. */}
+        <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start">
+          <DrilldownSelector
+            regions={regions}
+            view={view}
+            selected={selected}
+            drillable={drillable}
+            expanded={expanded}
+            onSelect={open}
+            onToggle={toggleExpanded}
+            onBack={() => void drillOut()}
+            className="md:w-56 md:shrink-0 lg:w-64"
+          />
+          <div
+            ref={viewportRef}
+            data-drilldown-viewport=""
+            data-view={view.parentId ? "child" : "overview"}
+            aria-busy={busy || undefined}
+            className="bg-muted/30 @container relative min-w-0 flex-1 overflow-hidden rounded-lg"
+          >
+            {children}
+            <div ref={layersRef} data-drilldown-layers="" />
+          </div>
         </div>
         {pane}
       </div>

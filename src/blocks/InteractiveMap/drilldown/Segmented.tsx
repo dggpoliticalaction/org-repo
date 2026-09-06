@@ -16,7 +16,7 @@ export function Segmented<T extends string>({
 }: {
   label: string
   value: T
-  options: { value: T; label: string }[]
+  options: { value: T; label: string; hint?: string }[]
   onChange(v: T): void
 }): React.ReactElement {
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>): void => {
@@ -46,6 +46,7 @@ export function Segmented<T extends string>({
             key={o.value}
             type="button"
             data-value={o.value}
+            title={o.hint}
             aria-pressed={o.value === value}
             tabIndex={o.value === value ? 0 : -1}
             onClick={() => onChange(o.value)}

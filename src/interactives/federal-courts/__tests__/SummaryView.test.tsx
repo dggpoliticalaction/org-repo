@@ -1,9 +1,10 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react"
+import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import React from "react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { DrilldownSelectionProvider } from "@/blocks/InteractiveMap/drilldown/selection"
 
+import { AppointmentsChart, ChangeChart } from "../Charts"
 import type { FederalCourtsSummary } from "../summary"
 import { FederalCourtsSummaryView } from "../Summary"
 
@@ -25,24 +26,6 @@ const summary: FederalCourtsSummary = {
       president_party: "Republican",
     },
   ],
-  cartogram: [
-    {
-      id: "ca8",
-      offset: [0, 0],
-      rows: 1,
-      cols: 2,
-      cells: [
-        [0, 0, "moed", "Republican"],
-        [0, 1, "arw", null],
-      ],
-    },
-  ],
-  districtTotals: [
-    { party: "Republican", count: 1 },
-    { party: null, count: 1 },
-  ],
-  nationalTotals: { authorized: 1, active: 1, vacancies: 1, overAuthorized: 1 },
-  labels: { ca8: "8th Cir.", moed: "E.D. Mo.", arw: "W.D. Ark.", scotus: "SCOTUS" },
   change: {
     startYear: 2024,
     coverageFrom: 1994,
@@ -86,47 +69,6 @@ describe("FederalCourtsSummaryView", () => {
     expect(tally).toHaveTextContent("R-appointed")
   })
 
-  it("switches to the district cartogram, one square per judgeship", () => {
-    const { container } = renderView()
-    fireEvent.click(screen.getByRole("button", { name: "District courts" }))
-    const cartogram = container.querySelector("[data-summary-cartogram]")!
-    expect(cartogram.querySelectorAll("rect[data-summary-seat]")).toHaveLength(2)
-    expect(container.querySelector("[data-summary-tally]")).toHaveTextContent("2 district seats")
-    // The circuit is captioned on the map itself, in the feed's own wording.
-    expect(within(cartogram as unknown as HTMLElement).getByText("8th")).toBeInTheDocument()
-  })
-
-  it("says a square is a seat, and names the roving seats that are not authorized judgeships", () => {
-    const { container } = renderView()
-    fireEvent.click(screen.getByRole("button", { name: "District courts" }))
-    expect(container).toHaveTextContent("One square per seat on a district bench, filled or vacant")
-    // Upstream's own reconciliation, not a count we derived from the squares.
-    expect(container).toHaveTextContent("1 of them are authorized judgeships")
-    expect(container).toHaveTextContent("1 are roving seats")
-  })
-
-  it("says only what it knows when the manifest states no reconciliation", () => {
-    render(<FederalCourtsSummaryView data={{ ...summary, nationalTotals: null }} />)
-    fireEvent.click(screen.getByRole("button", { name: "District courts" }))
-    expect(screen.queryByText(/authorized judgeships/)).not.toBeInTheDocument()
-  })
-
-  it("names the district under the cursor rather than leaving the reader to guess", () => {
-    const { container } = renderView()
-    fireEvent.click(screen.getByRole("button", { name: "District courts" }))
-    const hint = container.querySelector("[data-summary-cartogram-hint]")!
-    expect(hint).toHaveTextContent("Hover a seat")
-    fireEvent.pointerEnter(container.querySelector("rect[data-summary-seat='moed']")!)
-    expect(hint).toHaveTextContent("E.D. Mo. · 8th Cir.")
-  })
-
-  it("takes the reader from a seat to that district on the map", () => {
-    const { container, select } = renderView()
-    fireEvent.click(screen.getByRole("button", { name: "District courts" }))
-    fireEvent.click(container.querySelector("rect[data-summary-seat='arw']")!)
-    expect(select).toHaveBeenCalledWith("arw")
-  })
-
   it("takes the reader from a justice to the Supreme Court", () => {
     const { container, select } = renderView()
     fireEvent.click(container.querySelector("[data-summary-justice='a']")!)
@@ -138,20 +80,16 @@ describe("FederalCourtsSummaryView", () => {
     expect(screen.getByText("Sotomayor")).toBeInTheDocument()
   })
 
-  it("says so when a feed carries neither bench nor layout", () => {
-    render(
-      <FederalCourtsSummaryView
-        data={{ ...summary, supremeCourt: [], cartogram: [], districtTotals: [] }}
-      />,
-    )
+  it("says so when a feed carries no bench", () => {
+    render(<FederalCourtsSummaryView data={{ ...summary, supremeCourt: [] }} />)
     expect(screen.getByText("No Supreme Court data.")).toBeInTheDocument()
-    fireEvent.click(screen.getByRole("button", { name: "District courts" }))
-    expect(screen.getByText("No district layout.")).toBeInTheDocument()
   })
+})
 
+/** The landing pane does not offer these while the map is the priority; they still work. */
+describe("the parked charts", () => {
   it("charts the bench's composition on a zero baseline, with both endpoints labelled", () => {
-    const { container } = renderView()
-    fireEvent.click(screen.getByRole("button", { name: "Change" }))
+    const { container } = render(<ChangeChart change={summary.change!} />)
     const chart = container.querySelector("[data-chart-change]")!
     // One stacked band per party, each named in the legend rather than by colour alone.
     expect(chart.querySelectorAll("path[data-chart-band]")).toHaveLength(2)
@@ -164,8 +102,7 @@ describe("FederalCourtsSummaryView", () => {
   })
 
   it("reads out the year under the cursor", () => {
-    const { container } = renderView()
-    fireEvent.click(screen.getByRole("button", { name: "Change" }))
+    const { container } = render(<ChangeChart change={summary.change!} />)
     const readout = container.querySelector("[data-chart-change-readout]")!
     expect(readout).toHaveTextContent("Hover the chart")
     const chart = container.querySelector("[data-chart-change]")!
@@ -175,16 +112,9 @@ describe("FederalCourtsSummaryView", () => {
   })
 
   it("draws one dot per appointment and bands the axis by president", () => {
-    const { container } = renderView()
-    fireEvent.click(screen.getByRole("button", { name: "Appointments" }))
+    const { container } = render(<AppointmentsChart appointments={summary.appointments!} />)
     const chart = container.querySelector("[data-chart-appointments]")!
     expect(chart.querySelectorAll("circle")).toHaveLength(3)
     expect(chart).toHaveTextContent("President")
-  })
-
-  it("says so when the feed carries no appointment history", () => {
-    render(<FederalCourtsSummaryView data={{ ...summary, change: null, appointments: null }} />)
-    fireEvent.click(screen.getByRole("button", { name: "Change" }))
-    expect(screen.getByText("No appointment history.")).toBeInTheDocument()
   })
 })

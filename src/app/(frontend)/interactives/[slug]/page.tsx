@@ -71,7 +71,7 @@ export default async function InteractivePage({
       {draft && <LivePreviewListener />}
 
       <header className="max-w-3xl">
-        <p className="text-muted-foreground text-xs font-semibold tracking-widest uppercase">
+        <p className="text-brand dark:text-brand-high-contrast font-serif text-xs font-semibold tracking-widest uppercase">
           Interactive
         </p>
         <h1 className="mt-2">{interactive.title}</h1>

@@ -18,7 +18,7 @@ import {
 } from "./seatLayout"
 import type { DrilldownRecord, RecordDisplay } from "./types"
 
-export type BenchMode = "timeline" | "seats"
+export type BenchMode = "seats" | "timeline"
 export type SupernumeraryMode = "hide" | "show" | "include"
 
 interface DrilldownBenchProps {
@@ -106,10 +106,10 @@ export function AssociateNode({
 }
 
 /**
- * The bench: one absolutely positioned node per member, laid out as a commission-ordered
- * grid or a seat-chart semicircle. Nodes keep their identity across modes so the CSS
- * transform transition animates the re-sort. Metrics follow the stage width, so the same
- * bench fits an article column, a page-wide pane and a phone.
+ * The bench: one absolutely positioned node per member, laid out as a seat-chart
+ * semicircle (the default view) or a commission-ordered grid. Nodes keep their identity
+ * across modes so the CSS transform transition animates the re-sort. Metrics follow the
+ * stage width, so the same bench fits an article column, a page-wide pane and a phone.
  */
 export function DrilldownBench({
   bench,

@@ -8,13 +8,23 @@ import { Segmented } from "@/blocks/InteractiveMap/drilldown/Segmented"
 import { useDrilldownSelection } from "@/blocks/InteractiveMap/drilldown/selection"
 import { layoutArc, REGULAR_METRICS } from "@/blocks/InteractiveMap/drilldown/seatLayout"
 import type { DrilldownRecord } from "@/blocks/InteractiveMap/drilldown/types"
-import { cn } from "@/utilities/utils"
 
 import { AppointmentsChart, ChangeChart } from "./Charts"
 import { federalCourtsPresentation } from "./presentation"
 import type { FederalCourtsSummary, SeatParty } from "./summary"
 
-type View = "scotus" | "districts" | "change" | "appointments"
+type View = "scotus" | "change" | "appointments"
+
+/**
+ * What the landing pane offers. The change and appointment charts are built and tested, but
+ * parked: they are a screenful each, and the map and its benches are what this page is for.
+ * Uncomment a line to put one back — nothing else has to change.
+ */
+const VIEWS: { value: View; label: string }[] = [
+  { value: "scotus", label: "Supreme Court" },
+  // { value: "change", label: "Change" },
+  // { value: "appointments", label: "Appointments" },
+]
 
 const display = federalCourtsPresentation.display
 
@@ -134,146 +144,10 @@ function SupremeCourt({
   )
 }
 
-const CELL = 1
-const GAP = 0.12
-
-/** Every district judgeship in the numbered circuits, one square per seat. */
-function DistrictCartogram({
-  circuits,
-  totals,
-  nationalTotals,
-  labels,
-}: {
-  circuits: FederalCourtsSummary["cartogram"]
-  totals: FederalCourtsSummary["districtTotals"]
-  nationalTotals: FederalCourtsSummary["nationalTotals"]
-  labels: Record<string, string>
-}): React.ReactElement {
-  const selection = useDrilldownSelection()
-  const [hover, setHover] = useState<{ region: string; circuit: string } | null>(null)
-
-  const box = useMemo(() => {
-    let minX = Infinity
-    let minY = Infinity
-    let maxX = -Infinity
-    let maxY = -Infinity
-    for (const c of circuits) {
-      minX = Math.min(minX, c.offset[0])
-      minY = Math.min(minY, c.offset[1])
-      maxX = Math.max(maxX, c.offset[0] + c.cols)
-      maxY = Math.max(maxY, c.offset[1] + c.rows)
-    }
-    if (!Number.isFinite(minX)) return { x: 0, y: 0, w: 1, h: 1 }
-    const pad = 1
-    return { x: minX - pad, y: minY - pad, w: maxX - minX + pad * 2, h: maxY - minY + pad * 2 }
-  }, [circuits])
-
-  if (circuits.length === 0)
-    return <p className="text-muted-foreground py-6 text-center text-sm">No district layout.</p>
-
-  return (
-    <div>
-      <Tally totals={totals} noun="district seats" />
-      <p className="text-muted-foreground mt-0.5 text-xs">
-        One square per seat on a district bench, filled or vacant, grouped into the circuit that
-        hears its appeals. Pick one to open that district.
-        {nationalTotals !== null && nationalTotals.overAuthorized > 0 && (
-          <>
-            {" "}
-            {nationalTotals.authorized} of them are authorized judgeships; the other{" "}
-            {nationalTotals.overAuthorized} are roving seats shared across districts in the same
-            state.
-          </>
-        )}
-      </p>
-      <svg
-        data-summary-cartogram=""
-        viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`}
-        role="img"
-        aria-label="District judgeships by circuit"
-        className="mt-3 block w-full"
-        style={{ maxHeight: "26rem" }}
-        onPointerLeave={() => setHover(null)}
-      >
-        {circuits.map((circuit) => (
-          <g key={circuit.id} data-summary-circuit={circuit.id}>
-            {circuit.cells.map(([row, col, region, party]) => {
-              const isHovered = hover?.region === region
-              return (
-                <rect
-                  key={`${row},${col}`}
-                  data-summary-seat={region}
-                  x={circuit.offset[0] + col * CELL + GAP / 2}
-                  y={circuit.offset[1] + row * CELL + GAP / 2}
-                  width={CELL - GAP}
-                  height={CELL - GAP}
-                  rx={0.18}
-                  fill={colorFor(party)}
-                  stroke={isHovered ? "var(--foreground)" : "var(--background)"}
-                  strokeWidth={isHovered ? 0.22 : 0.08}
-                  className="cursor-pointer"
-                  onPointerEnter={() => setHover({ region, circuit: circuit.id })}
-                  onClick={() => selection?.select(region)}
-                >
-                  <title>{labels[region] ?? region}</title>
-                </rect>
-              )
-            })}
-          </g>
-        ))}
-        {circuits.map((circuit) => {
-          const cx =
-            circuit.offset[0] +
-            circuit.cells.reduce((n, [, col]) => n + col, 0) / circuit.cells.length +
-            0.5
-          const cy =
-            circuit.offset[1] +
-            circuit.cells.reduce((n, [row]) => n + row, 0) / circuit.cells.length +
-            0.5
-          return (
-            <text
-              key={circuit.id}
-              data-summary-circuit-label={circuit.id}
-              x={cx}
-              y={cy}
-              textAnchor="middle"
-              dominantBaseline="central"
-              className="pointer-events-none"
-              style={{
-                fontSize: 2,
-                fontWeight: 700,
-                fill: "var(--foreground)",
-                paintOrder: "stroke",
-                stroke: "var(--background)",
-                strokeWidth: 0.7,
-                strokeLinejoin: "round",
-              }}
-            >
-              {(labels[circuit.id] ?? circuit.id).replace(/\s*Cir\.?$/, "")}
-            </text>
-          )
-        })}
-      </svg>
-      <p
-        data-summary-cartogram-hint=""
-        aria-live="polite"
-        className={cn(
-          "mt-1 text-center text-sm",
-          hover ? "text-foreground" : "text-muted-foreground",
-        )}
-      >
-        {hover
-          ? `${labels[hover.region] ?? hover.region} · ${labels[hover.circuit] ?? hover.circuit}`
-          : "Hover a seat for its district."}
-      </p>
-    </div>
-  )
-}
-
 /**
- * The landing view: the whole federal judiciary before the reader has picked anything. Two
- * views because the Supreme Court is nine named people and the district bench is six hundred
- * seats — the same drawing cannot serve both.
+ * The landing view: the whole federal judiciary before the reader has picked anything. The
+ * district benches are not drawn here — the map already gives every court a seat block, and
+ * saying it twice only invited the reader to wonder which one to believe.
  */
 export function FederalCourtsSummaryView({
   data,
@@ -285,28 +159,12 @@ export function FederalCourtsSummaryView({
     <div data-summary-view={view}>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-xl md:text-2xl">The federal bench</h2>
-        <Segmented<View>
-          label="Show"
-          value={view}
-          options={[
-            { value: "scotus", label: "Supreme Court" },
-            { value: "districts", label: "District courts" },
-            { value: "change", label: "Change" },
-            { value: "appointments", label: "Appointments" },
-          ]}
-          onChange={setView}
-        />
+        {VIEWS.length > 1 && (
+          <Segmented<View> label="Show" value={view} options={VIEWS} onChange={setView} />
+        )}
       </div>
       {view === "scotus" && (
         <SupremeCourt records={data.supremeCourt} regionId={data.supremeCourtRegion} />
-      )}
-      {view === "districts" && (
-        <DistrictCartogram
-          circuits={data.cartogram}
-          totals={data.districtTotals}
-          nationalTotals={data.nationalTotals}
-          labels={data.labels}
-        />
       )}
       {view === "change" &&
         (data.change ? (

@@ -3,6 +3,7 @@
 import React from "react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { cn } from "@/utilities/utils"
 
 import { RecordAvatar } from "./RecordAvatar"
@@ -81,15 +82,15 @@ function DetailBody({
       <div className="text-center text-sm font-semibold">
         {name}
         {flags.map((f) => (
-          <span key={f.field} className="bg-muted ml-1 rounded-xs px-1 text-[10px] font-medium">
+          <Badge key={f.field} variant="secondary" className="ml-1 align-middle">
             {f.symbol ? `${f.symbol} ` : ""}
             {f.label}
-          </span>
+          </Badge>
         ))}
         {status && (
-          <span className="bg-muted text-muted-foreground ml-1 rounded-xs px-1 text-[10px] font-medium">
+          <Badge variant="outline" className="text-muted-foreground ml-1 align-middle">
             {status}
-          </span>
+          </Badge>
         )}
       </div>
       <div className="flex items-center gap-1.5">

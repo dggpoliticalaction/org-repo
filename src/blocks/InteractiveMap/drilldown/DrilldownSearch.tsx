@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useId, useRef, useState } from "react"
 
+import { Input } from "@/components/ui/input"
 import { cn } from "@/utilities/utils"
 
 import { isSearchIndex, searchEntries, type SearchEntry, type SearchResult } from "./search"
@@ -124,7 +125,7 @@ export function DrilldownSearch({
 
   return (
     <div data-drilldown-search="" className={cn("relative", className)}>
-      <input
+      <Input
         ref={inputRef}
         id={inputId}
         type="search"
@@ -145,11 +146,7 @@ export function DrilldownSearch({
         }}
         onKeyDown={onKeyDown}
         onBlur={() => setOpen(false)}
-        className={cn(
-          "border-border bg-background text-foreground placeholder:text-muted-foreground",
-          "focus-visible:ring-ring/60 w-full rounded-md border px-3 py-1.5 text-sm outline-none",
-          "focus-visible:ring-2 [&::-webkit-search-cancel-button]:appearance-none",
-        )}
+        className="[&::-webkit-search-cancel-button]:appearance-none"
       />
 
       {showList && (
