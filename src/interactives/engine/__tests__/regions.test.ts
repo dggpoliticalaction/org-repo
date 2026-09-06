@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 
-import { parseDrilldownAssetString } from "@/blocks/InteractiveMap/drilldown/parseAsset"
-import { buildRegionIndex, displayFacts } from "@/blocks/InteractiveMap/drilldown/regions"
-import { DRILLDOWN_SCHEMA, type DrilldownAsset } from "@/blocks/InteractiveMap/drilldown/types"
+import { parseDrilldownAssetString } from "@/interactives/engine/parseAsset"
+import { buildRegionIndex, displayFacts } from "@/interactives/engine/regions"
+import { DRILLDOWN_SCHEMA, type DrilldownAsset } from "@/interactives/engine/types"
 
 // Geometry comes out of an SVG; the payload is attached the way `compose.ts` attaches it.
 const geometry = parseDrilldownAssetString(`<svg viewBox="0 0 10 10">

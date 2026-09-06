@@ -1,5 +1,5 @@
-import { assetKeyFor } from "@/blocks/InteractiveMap/drilldown/records"
-import { buildRegionIndex } from "@/blocks/InteractiveMap/drilldown/regions"
+import { assetKeyFor } from "@/interactives/engine/records"
+import { buildRegionIndex } from "@/interactives/engine/regions"
 import {
   DRILLDOWN_SCHEMA,
   type ChildAssetRef,
@@ -8,7 +8,7 @@ import {
   type DrilldownPath,
   type DrilldownPayload,
   type RegionIndex,
-} from "@/blocks/InteractiveMap/drilldown/types"
+} from "@/interactives/engine/types"
 
 import type { DrilldownData, DrilldownGeometry, DrilldownPresentation, GeometryFile } from "./types"
 

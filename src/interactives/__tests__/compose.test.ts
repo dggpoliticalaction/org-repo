@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
-import { displayFacts } from "@/blocks/InteractiveMap/drilldown/regions"
-import type { DrilldownRecord, RecordDisplay } from "@/blocks/InteractiveMap/drilldown/types"
+import { displayFacts } from "@/interactives/engine/regions"
+import type { DrilldownRecord, RecordDisplay } from "@/interactives/engine/types"
 
 import { childKeys, composeChild, composeIndex, composeOverview } from "../compose"
 import {

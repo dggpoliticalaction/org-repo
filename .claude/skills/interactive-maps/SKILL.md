@@ -26,6 +26,13 @@ parsed again; its facts and records arrive separately, from the feed.
 
 > A drilldown is not a block mode. An SVG never carries records.
 
+The tree says the same thing: `src/blocks/InteractiveMap/` is the choropleth
+block and nothing else, and the drilldown engine that draws an interactive page
+lives with the pages it serves, in `src/interactives/engine/`. Nothing in the
+block imports the engine. They share exactly two modules — the SVG sanitizer
+(`sanitize.ts`) and the `Sources` strip — plus the `--map-*` colour palette,
+which is a site theme token in `globals.css`.
+
 ## Choropleth mode
 
 That makes the SVG a **contract**, and the failure modes are quiet: a file that
@@ -268,7 +275,7 @@ records, labels and colours are not in these files — they come from the feed
 and from the profile's `presentation.ts`. See
 [Interactive pages](#interactive-pages--drilldown-from-a-synced-feed) for those.
 
-Source of truth is `src/blocks/InteractiveMap/drilldown/types.ts` (the engine's
+Source of truth is `src/interactives/engine/types.ts` (the engine's
 input) and `src/interactives/geometry.ts` (the SVG → JSON snapshot step).
 
 ### Two kinds of file
@@ -601,8 +608,10 @@ shows the full overview, strip, facts and any records carried in the overview.
 - Parser (id / value / transform extraction) — `src/blocks/InteractiveMap/parseInlineSvg.ts`
 - Color scale, breakpoints, bias, formatting — `src/blocks/InteractiveMap/colorScale.ts`
 - Map Assets collection — `src/collections/MapAssets/index.ts`
-- Drilldown engine contract — `src/blocks/InteractiveMap/drilldown/types.ts`, `contract.ts`
-- Drilldown rendering, regions, morph, seat layout, search — `src/blocks/InteractiveMap/drilldown/`
+- Drilldown engine contract — `src/interactives/engine/types.ts`, `contract.ts`
+- Drilldown rendering, regions, morph, seat layout, search — `src/interactives/engine/`
+- Drilldown stylesheet — `src/interactives/engine/styles.css`; the `--map-*` palette both
+  maps read is in `src/app/(frontend)/globals.css`
 - Ownership split and composition — `src/interactives/types.ts`, `compose.ts`
 - SVG → geometry snapshot — `src/interactives/geometry.ts`, `scripts/snapshot-federal-courts.ts`
 - Worked examples — `src/endpoints/seed/features/interactive-maps/` (two choropleths with a shared scale) and `src/endpoints/seed/features/interactives/` (the Federal Courts page)

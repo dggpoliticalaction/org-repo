@@ -1,12 +1,12 @@
 import { cleanup, fireEvent, render, waitFor, within } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { DrilldownMapClient } from "@/blocks/InteractiveMap/drilldown/DrilldownMapClient"
-import { DrilldownOverviewSvg } from "@/blocks/InteractiveMap/drilldown/DrilldownOverviewSvg"
-import { parseDrilldownAssetString } from "@/blocks/InteractiveMap/drilldown/parseAsset"
-import { buildRegionIndex } from "@/blocks/InteractiveMap/drilldown/regions"
-import { DRILLDOWN_SEARCH_SCHEMA } from "@/blocks/InteractiveMap/drilldown/search"
-import { DRILLDOWN_SCHEMA, type DrilldownAsset } from "@/blocks/InteractiveMap/drilldown/types"
+import { DrilldownMapClient } from "@/interactives/engine/DrilldownMapClient"
+import { DrilldownOverviewSvg } from "@/interactives/engine/DrilldownOverviewSvg"
+import { parseDrilldownAssetString } from "@/interactives/engine/parseAsset"
+import { buildRegionIndex } from "@/interactives/engine/regions"
+import { DRILLDOWN_SEARCH_SCHEMA } from "@/interactives/engine/search"
+import { DRILLDOWN_SCHEMA, type DrilldownAsset } from "@/interactives/engine/types"
 
 const display = {
   title: "name",

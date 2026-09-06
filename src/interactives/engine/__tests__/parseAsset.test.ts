@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { parseDrilldownAssetString } from "@/blocks/InteractiveMap/drilldown/parseAsset"
+import { parseDrilldownAssetString } from "@/interactives/engine/parseAsset"
 import { sanitizeMapSvg } from "@/blocks/InteractiveMap/sanitize"
 
 const FIXTURE = `<?xml version="1.0" encoding="UTF-8"?>

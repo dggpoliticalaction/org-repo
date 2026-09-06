@@ -1,5 +1,5 @@
-import { validateRecordItems, validateRegions } from "@/blocks/InteractiveMap/drilldown/contract"
-import type { DeclaredRegion, DrilldownRecord } from "@/blocks/InteractiveMap/drilldown/types"
+import { validateRecordItems, validateRegions } from "@/interactives/engine/contract"
+import type { DeclaredRegion, DrilldownRecord } from "@/interactives/engine/types"
 
 import { DRILLDOWN_DATA_SCHEMA, type DrilldownData, type DrilldownGeometry } from "./types"
 

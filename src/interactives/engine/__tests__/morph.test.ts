@@ -11,7 +11,7 @@ import {
   parsePathAbs,
   sameStructure,
   serializePath,
-} from "@/blocks/InteractiveMap/drilldown/morph"
+} from "@/interactives/engine/morph"
 
 describe("parsePathAbs", () => {
   it("parses absolute M/L subpaths, tolerating Z and exponents", () => {

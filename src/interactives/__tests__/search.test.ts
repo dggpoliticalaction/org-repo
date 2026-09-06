@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
-import { DRILLDOWN_SEARCH_SCHEMA } from "@/blocks/InteractiveMap/drilldown/search"
-import type { RecordDisplay } from "@/blocks/InteractiveMap/drilldown/types"
+import { DRILLDOWN_SEARCH_SCHEMA } from "@/interactives/engine/search"
+import type { RecordDisplay } from "@/interactives/engine/types"
 
 import { composeSearchIndex } from "../search"
 import { DRILLDOWN_DATA_SCHEMA, type DrilldownData, type DrilldownPresentation } from "../types"

@@ -2,12 +2,12 @@
 
 import React, { useMemo, useState } from "react"
 
-import { RecordAvatar } from "@/blocks/InteractiveMap/drilldown/RecordAvatar"
-import { fieldString } from "@/blocks/InteractiveMap/drilldown/recordFormat"
-import { Segmented } from "@/blocks/InteractiveMap/drilldown/Segmented"
-import { useDrilldownSelection } from "@/blocks/InteractiveMap/drilldown/selection"
-import { layoutArc, REGULAR_METRICS } from "@/blocks/InteractiveMap/drilldown/seatLayout"
-import type { DrilldownRecord } from "@/blocks/InteractiveMap/drilldown/types"
+import { RecordAvatar } from "@/interactives/engine/RecordAvatar"
+import { fieldString } from "@/interactives/engine/recordFormat"
+import { Segmented } from "@/interactives/engine/Segmented"
+import { useDrilldownSelection } from "@/interactives/engine/selection"
+import { layoutArc, REGULAR_METRICS } from "@/interactives/engine/seatLayout"
+import type { DrilldownRecord } from "@/interactives/engine/types"
 
 import { AppointmentsChart, ChangeChart } from "./Charts"
 import { federalCourtsPresentation } from "./presentation"

@@ -2,9 +2,9 @@ import { unstable_cache } from "next/cache"
 import { draftMode } from "next/headers"
 import { cache } from "react"
 
-import type { SearchIndex } from "@/blocks/InteractiveMap/drilldown/search"
-import type { ChildAssetRef, DrilldownAsset } from "@/blocks/InteractiveMap/drilldown/types"
 import { interactivePath, interactiveTag } from "@/collections/InteractiveSnapshots/tag"
+import type { SearchIndex } from "@/interactives/engine/search"
+import type { ChildAssetRef, DrilldownAsset } from "@/interactives/engine/types"
 import type { Interactive } from "@/payload-types"
 import { getPayloadConfig } from "@/utilities/getPayloadConfig"
 

@@ -1,7 +1,5 @@
 import React from "react"
 
-import "@/blocks/InteractiveMap/styles.css"
-
 import { resolveInlineSvgMap } from "@/blocks/InteractiveMap/adapters/inlineSvg"
 import type { ResolvedMap } from "@/blocks/InteractiveMap/types"
 import type { InteractiveMapBlock as InteractiveMapBlockProps, MapAsset } from "@/payload-types"

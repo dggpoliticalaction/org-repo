@@ -6,7 +6,7 @@ import {
   normalizeQuery,
   searchEntries,
   type SearchEntry,
-} from "@/blocks/InteractiveMap/drilldown/search"
+} from "@/interactives/engine/search"
 
 const entry = (name: string, region = "ca1"): SearchEntry => ({
   id: name.toLowerCase().replace(/\W+/g, "-"),

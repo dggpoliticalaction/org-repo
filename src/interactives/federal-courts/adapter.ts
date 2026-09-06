@@ -1,4 +1,4 @@
-import type { DeclaredRegion, DrilldownRecord } from "@/blocks/InteractiveMap/drilldown/types"
+import type { DeclaredRegion, DrilldownRecord } from "@/interactives/engine/types"
 
 import { DRILLDOWN_DATA_SCHEMA, type DrilldownData, type FeedSnapshot } from "../types"
 import type { Appointment, Court, CourtTrackerSources, Judge, Justice, SeatBlock } from "./upstream"

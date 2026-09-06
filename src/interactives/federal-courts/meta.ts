@@ -1,4 +1,4 @@
-import { fieldString } from "@/blocks/InteractiveMap/drilldown/recordFormat"
+import { fieldString } from "@/interactives/engine/recordFormat"
 
 import type { DrilldownData } from "../types"
 

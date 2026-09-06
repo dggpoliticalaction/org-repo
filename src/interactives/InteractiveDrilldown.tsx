@@ -1,11 +1,11 @@
 import React from "react"
 
-import "@/blocks/InteractiveMap/styles.css"
+import "@/interactives/engine/styles.css"
 
-import { DrilldownMapClient } from "@/blocks/InteractiveMap/drilldown/DrilldownMapClient"
-import { DrilldownOverviewSvg } from "@/blocks/InteractiveMap/drilldown/DrilldownOverviewSvg"
-import { buildRegionIndex } from "@/blocks/InteractiveMap/drilldown/regions"
-import type { DrilldownAsset } from "@/blocks/InteractiveMap/drilldown/types"
+import { DrilldownMapClient } from "@/interactives/engine/DrilldownMapClient"
+import { DrilldownOverviewSvg } from "@/interactives/engine/DrilldownOverviewSvg"
+import { buildRegionIndex } from "@/interactives/engine/regions"
+import type { DrilldownAsset } from "@/interactives/engine/types"
 
 import type { ComposedOverview } from "./load"
 

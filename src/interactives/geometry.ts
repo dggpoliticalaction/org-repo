@@ -1,5 +1,5 @@
-import { parseDrilldownAssetString } from "@/blocks/InteractiveMap/drilldown/parseAsset"
 import { sanitizeMapSvg } from "@/blocks/InteractiveMap/sanitize"
+import { parseDrilldownAssetString } from "@/interactives/engine/parseAsset"
 
 import type { GeometryFile } from "./types"
 

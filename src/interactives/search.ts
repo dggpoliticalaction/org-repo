@@ -2,7 +2,7 @@ import {
   DRILLDOWN_SEARCH_SCHEMA,
   type SearchEntry,
   type SearchIndex,
-} from "@/blocks/InteractiveMap/drilldown/search"
+} from "@/interactives/engine/search"
 
 import type { DrilldownData, DrilldownPresentation } from "./types"
 

@@ -23,12 +23,12 @@ import {
   DEFAULT_NEUTRAL,
   inferValueFormat,
 } from "@/blocks/InteractiveMap/colorScale"
-import { flipConstant } from "@/blocks/InteractiveMap/drilldown/geometry"
-import { buildMorphPairs, parsePathAbs } from "@/blocks/InteractiveMap/drilldown/morph"
-import { parseDrilldownAssetString } from "@/blocks/InteractiveMap/drilldown/parseAsset"
-import { buildRegionIndex } from "@/blocks/InteractiveMap/drilldown/regions"
-import type { DrilldownAsset } from "@/blocks/InteractiveMap/drilldown/types"
 import { sanitizeMapSvg } from "@/blocks/InteractiveMap/sanitize"
+import { flipConstant } from "@/interactives/engine/geometry"
+import { buildMorphPairs, parsePathAbs } from "@/interactives/engine/morph"
+import { parseDrilldownAssetString } from "@/interactives/engine/parseAsset"
+import { buildRegionIndex } from "@/interactives/engine/regions"
+import type { DrilldownAsset } from "@/interactives/engine/types"
 
 const SURVIVING_TAGS = new Set(["svg", "g", "path", "title", "desc", "metadata"])
 

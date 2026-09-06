@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import React from "react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { DrilldownSelectionProvider } from "@/blocks/InteractiveMap/drilldown/selection"
+import { DrilldownSelectionProvider } from "@/interactives/engine/selection"
 
 import { AppointmentsChart, ChangeChart } from "../Charts"
 import type { FederalCourtsSummary } from "../summary"

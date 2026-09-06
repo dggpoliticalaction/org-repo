@@ -13,7 +13,7 @@
  * `display` from the code-owned profile and nowhere else, so a feed cannot set a colour, a
  * label or an order even if it tries.
  *
- * The rendering engine in `@/blocks/InteractiveMap/drilldown` is untouched by this: it still
+ * The rendering engine in `@/interactives/engine` is untouched by this: it still
  * consumes `DrilldownAsset`s. What changes is where an asset comes from — composed here from
  * the three sources instead of parsed out of one uploaded SVG.
  */
@@ -25,7 +25,7 @@ import type {
   RecordDisplay,
   SeatBlockConfig,
   ViewBox,
-} from "@/blocks/InteractiveMap/drilldown/types"
+} from "@/interactives/engine/types"
 
 import type React from "react"
 

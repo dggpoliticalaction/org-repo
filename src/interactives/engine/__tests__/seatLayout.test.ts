@@ -11,7 +11,7 @@ import {
   ringCounts,
   ringSlotAngles,
   timelineStageHeight,
-} from "@/blocks/InteractiveMap/drilldown/seatLayout"
+} from "@/interactives/engine/seatLayout"
 
 describe("ringCounts / planRings", () => {
   it("distributes seats proportionally to radius and reconciles rounding", () => {

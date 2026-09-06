@@ -11,8 +11,8 @@ import {
   passesCondition,
   safeHref,
   surname,
-} from "@/blocks/InteractiveMap/drilldown/recordFormat"
-import type { RecordDisplay } from "@/blocks/InteractiveMap/drilldown/types"
+} from "@/interactives/engine/recordFormat"
+import type { RecordDisplay } from "@/interactives/engine/types"
 
 const display: RecordDisplay = {
   title: "full_name",

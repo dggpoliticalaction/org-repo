@@ -6,8 +6,8 @@ import {
   isReservedFact,
   notesFromFacts,
   validateDrilldownPayload,
-} from "@/blocks/InteractiveMap/drilldown/contract"
-import { DRILLDOWN_SCHEMA } from "@/blocks/InteractiveMap/drilldown/types"
+} from "@/interactives/engine/contract"
+import { DRILLDOWN_SCHEMA } from "@/interactives/engine/types"
 
 describe("fact key helpers", () => {
   it("strips the data- prefix and lower-cases", () => {
