@@ -16,7 +16,7 @@ export function Sources({ sources, colorBias, className }: SourcesProps): React.
   return (
     <div className={cn("flex flex-wrap items-center gap-x-2 gap-y-1", className)}>
       {sources && sources.length > 0 && (
-        <p className="text-muted-foreground text-xs">
+        <p className="text-muted-foreground mr-auto text-xs">
           Source{sources.length > 1 ? "s" : ""}:{" "}
           {sources.map(({ id, link }, i) => (
             <React.Fragment key={id || i}>
