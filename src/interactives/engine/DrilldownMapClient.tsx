@@ -4,6 +4,7 @@ import { PanelLeft } from "lucide-react"
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/utilities/utils"
 
 import { AssetLoader } from "./assetLoader"
@@ -74,9 +75,14 @@ export function DrilldownMapClient({
   const stageRef = useRef<MapStage | null>(null)
   const paneRef = useRef<DrilldownPaneHandle | null>(null)
   const [loader] = useState(() => new AssetLoader())
-  // Whether the region rail is showing. Per visit rather than remembered: a reader who folds
-  // it away is making room for one map, not setting a preference for every interactive.
-  const [railOpen, setRailOpen] = useState(true)
+  // Whether the reader has said anything about the rail. Null until they do, and the default
+  // is then a question of screen: beside the map there is room for it, above the map on a
+  // phone it costs a third of the first screenful, so it starts folded and the same button
+  // unfolds it. The default lives in CSS rather than in a breakpoint read after mount, so a
+  // phone renders the folded state outright instead of animating shut on arrival.
+  const [railChoice, setRailChoice] = useState<boolean | null>(null)
+  const isMobile = useIsMobile()
+  const railOpen = railChoice ?? !isMobile
   const railId = useId()
 
   const [loaded, setLoaded] = useState<Record<string, DrilldownAsset>>({})
@@ -544,11 +550,17 @@ export function DrilldownMapClient({
             id={railId}
             inert={!railOpen || undefined}
             className={cn(
-              "grid motion-safe:transition-[grid-template-columns] motion-safe:duration-200 motion-safe:ease-out",
-              railOpen ? "grid-cols-[1fr]" : "grid-cols-[0fr]",
+              // Beside the map the rail folds along its width; above the map it folds along
+              // its height, or a closed rail would leave a column of empty space behind.
+              "grid motion-safe:transition-[grid-template-columns,grid-template-rows] motion-safe:duration-200 motion-safe:ease-out",
+              railChoice === null
+                ? "grid-cols-[1fr] grid-rows-[0fr] md:grid-cols-[1fr] md:grid-rows-[1fr]"
+                : railChoice
+                  ? "grid-cols-[1fr] grid-rows-[1fr]"
+                  : "grid-cols-[1fr] grid-rows-[0fr] md:grid-cols-[0fr] md:grid-rows-[1fr]",
             )}
           >
-            <div className="min-w-0 overflow-hidden">
+            <div className="min-h-0 min-w-0 overflow-hidden">
               <DrilldownSelector
                 regions={regions}
                 view={view}
@@ -588,7 +600,7 @@ export function DrilldownMapClient({
               aria-expanded={railOpen}
               aria-controls={railId}
               aria-label={railOpen ? "Hide the region list" : "Show the region list"}
-              onClick={() => setRailOpen((was) => !was)}
+              onClick={() => setRailChoice(!railOpen)}
               className="absolute top-2 left-2 z-10"
             >
               <PanelLeft aria-hidden="true" />

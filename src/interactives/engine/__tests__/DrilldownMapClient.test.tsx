@@ -392,6 +392,11 @@ describe("DrilldownMapClient", () => {
     expect(toggle()).toHaveAttribute("aria-expanded", "true")
     expect(toggle()).toHaveAccessibleName("Hide the region list")
     expect(rail()).not.toHaveAttribute("inert")
+    // Until the reader says otherwise the default is a question of screen, and it is answered
+    // in CSS rather than by a breakpoint read after mount: folded above the map on a phone,
+    // open beside it from `md` up. A phone therefore renders it folded rather than animating
+    // it shut on arrival.
+    expect(rail()).toHaveClass("grid-rows-[0fr]", "md:grid-rows-[1fr]", "md:grid-cols-[1fr]")
     // The toggle says which thing it folds, which is the rail's own wrapper.
     expect(toggle().getAttribute("aria-controls")).toBe(rail().id)
 
