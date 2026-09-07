@@ -81,9 +81,11 @@ export function DrilldownMapClient({
   const [pinRequest, setPinRequest] = useState<(PinRequest & { regionId: string }) | null>(null)
   // The record the reader has pinned in the pane, mirrored here only so the URL can carry it.
   const [pinned, setPinned] = useState<string | null>(null)
-  // Which regions show their children in the rail. Drilling in opens one; the reader can open
-  // any of them by hand, which is also what fetches the labels their children are named by.
-  const [expanded, setExpanded] = useState<Set<string>>(new Set())
+  // The one region showing its children in the rail. One at a time: a reader comparing two
+  // circuits is comparing the maps, not two lists of district names, and 94 districts open at
+  // once turn the rail into a scroll with no landmarks. Drilling in opens that region's
+  // branch, which is also what fetches the labels its children are named by.
+  const [expanded, setExpanded] = useState<string | null>(null)
   // How the last selection was made, so keyboard users land in the pane they just opened.
   const lastVia = useRef<SelectVia>("pointer")
   // Set while the reader is between places — a move in flight, or the address being read back.
@@ -215,7 +217,7 @@ export function DrilldownMapClient({
         return
       }
       if (via) lastVia.current = via
-      setExpanded((cur) => (cur.has(parentId) ? cur : new Set(cur).add(parentId)))
+      setExpanded(parentId)
       setPaneOpen(via !== null)
       setSelected(via ? parentId : null)
       // The state update carrying this asset has not committed yet; give the stage the merged
@@ -291,16 +293,11 @@ export function DrilldownMapClient({
     [revealRegion],
   )
 
-  /** Open or close a region's children in the rail, fetching them the first time. */
+  /** Open a region's children in the rail — closing whichever was open — or close its own. */
   const toggleExpanded = useCallback(
     (id: string) => {
-      setExpanded((cur) => {
-        const next = new Set(cur)
-        if (next.has(id)) next.delete(id)
-        else next.add(id)
-        return next
-      })
-      if (!expanded.has(id)) void ensureAsset(id)
+      setExpanded((cur) => (cur === id ? null : id))
+      if (expanded !== id) void ensureAsset(id)
     },
     [expanded, ensureAsset],
   )

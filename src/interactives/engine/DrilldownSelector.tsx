@@ -28,8 +28,8 @@ interface DrilldownSelectorProps {
   view: { parentId: string | null }
   selected: string | null
   drillable: Set<string>
-  /** Regions whose children are showing beneath them. */
-  expanded: Set<string>
+  /** The one region showing its children, if any: the rail opens a single branch at a time. */
+  expanded: string | null
   onSelect(regionId: string, via: SelectVia): void
   onToggle(regionId: string): void
   onBack(): void
@@ -100,7 +100,7 @@ export function DrilldownSelector({
   const visible: string[] = []
   for (const id of regions.topLevel) {
     visible.push(id)
-    if (expanded.has(id)) visible.push(...childrenOf(id))
+    if (expanded === id) visible.push(...childrenOf(id))
   }
   const activeId = selected && visible.includes(selected) ? selected : visible[0]
 
@@ -112,7 +112,7 @@ export function DrilldownSelector({
     if (idx < 0) return
     const id = items[idx]?.dataset.regionItem ?? ""
     if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
-      if (!isExpandable(id) || expanded.has(id) === (e.key === "ArrowRight")) return
+      if (!isExpandable(id) || (expanded === id) === (e.key === "ArrowRight")) return
       e.preventDefault()
       onToggle(id)
       return
@@ -169,7 +169,7 @@ export function DrilldownSelector({
               {regions.topLevel.map((id) => {
                 const region = regions.byId[id]
                 if (!region) return null
-                const kids = expanded.has(id) ? childrenOf(id) : []
+                const kids = expanded === id ? childrenOf(id) : []
                 const expandable = isExpandable(id)
                 return (
                   <SidebarMenuItem key={id}>
@@ -180,7 +180,7 @@ export function DrilldownSelector({
                         tabbable: activeId === id,
                       })}
                       data-drillable={expandable ? "true" : undefined}
-                      aria-expanded={expandable ? expanded.has(id) : undefined}
+                      aria-expanded={expandable ? expanded === id : undefined}
                       isActive={selected === id}
                       onClick={(e) => onSelect(id, viaOf(e))}
                       className={ACTIVE_ROW}
@@ -190,13 +190,13 @@ export function DrilldownSelector({
                     {expandable && (
                       <SidebarMenuAction
                         data-region-toggle={id}
-                        aria-label={`${expanded.has(id) ? "Collapse" : "Expand"} ${region.label}`}
+                        aria-label={`${expanded === id ? "Collapse" : "Expand"} ${region.label}`}
                         tabIndex={-1}
                         onClick={() => onToggle(id)}
                       >
                         <ChevronRight
                           aria-hidden="true"
-                          className={cn("transition-transform", expanded.has(id) && "rotate-90")}
+                          className={cn("transition-transform", expanded === id && "rotate-90")}
                         />
                       </SidebarMenuAction>
                     )}

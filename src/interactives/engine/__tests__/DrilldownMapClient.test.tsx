@@ -373,6 +373,27 @@ describe("DrilldownMapClient", () => {
     await waitFor(() => expect(window.location.search).toBe("?region=w1"))
   })
 
+  it("opens one branch at a time, so the rail never becomes a wall of districts", async () => {
+    const { container, fetchMock } = setup({ eastMap: true })
+    const nav = (): HTMLElement =>
+      container.querySelector<HTMLElement>("[data-drilldown-selector]")!
+    fireEvent.click(within(nav()).getByRole("button", { name: "Expand West" }))
+    await waitFor(() =>
+      expect(within(nav()).getByRole("button", { name: "West 1" })).toBeInTheDocument(),
+    )
+    fireEvent.click(within(nav()).getByRole("button", { name: "Expand East" }))
+    await waitFor(() =>
+      expect(within(nav()).getByRole("button", { name: "East 1" })).toBeInTheDocument(),
+    )
+    // West's districts went away with it; only the branch just opened is showing.
+    expect(within(nav()).queryByRole("button", { name: "West 1" })).not.toBeInTheDocument()
+    expect(within(nav()).getByRole("button", { name: "West" })).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    )
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
   it("forgives a flicker across a shared border: a hover change has to settle before it counts", () => {
     vi.useFakeTimers()
     try {
