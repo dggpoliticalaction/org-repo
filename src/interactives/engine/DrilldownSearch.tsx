@@ -1,8 +1,14 @@
 "use client"
 
+import { Loader2, Search, X } from "lucide-react"
 import React, { useCallback, useEffect, useId, useRef, useState } from "react"
 
-import { Input } from "@/components/ui/input"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group"
 import { cn } from "@/utilities/utils"
 
 import { isSearchIndex, searchEntries, type SearchEntry, type SearchResult } from "./search"
@@ -125,29 +131,60 @@ export function DrilldownSearch({
 
   return (
     <div data-drilldown-search="" className={cn("relative", className)}>
-      <Input
-        ref={inputRef}
-        id={inputId}
-        type="search"
-        role="combobox"
-        autoComplete="off"
-        spellCheck={false}
-        aria-label={label}
-        aria-expanded={showList}
-        aria-controls={showList ? listId : undefined}
-        aria-activedescendant={activeId}
-        placeholder={label}
-        value={query}
-        onFocus={() => void loadIndex()}
-        onChange={(e) => {
-          setQuery(e.target.value)
-          setOpen(true)
-          void loadIndex()
-        }}
-        onKeyDown={onKeyDown}
-        onBlur={() => setOpen(false)}
-        className="[&::-webkit-search-cancel-button]:appearance-none"
-      />
+      <InputGroup>
+        <InputGroupAddon>
+          {state === "loading" ? (
+            <Loader2 aria-hidden="true" className="animate-spin" />
+          ) : (
+            <Search aria-hidden="true" />
+          )}
+        </InputGroupAddon>
+        <InputGroupInput
+          ref={inputRef}
+          id={inputId}
+          type="search"
+          role="combobox"
+          autoComplete="off"
+          spellCheck={false}
+          aria-label={label}
+          aria-expanded={showList}
+          aria-controls={showList ? listId : undefined}
+          aria-activedescendant={activeId}
+          placeholder={label}
+          value={query}
+          onFocus={() => void loadIndex()}
+          onChange={(e) => {
+            setQuery(e.target.value)
+            setOpen(true)
+            void loadIndex()
+          }}
+          onKeyDown={onKeyDown}
+          onBlur={() => setOpen(false)}
+          // The browser's own clear button would sit beside ours and clear without telling
+          // the combobox, leaving a stale list open.
+          className="[&::-webkit-search-cancel-button]:appearance-none"
+        />
+        {query !== "" && (
+          <InputGroupAddon align="inline-end">
+            <InputGroupButton
+              type="button"
+              size="icon-xs"
+              aria-label="Clear search"
+              data-drilldown-search-clear=""
+              // The input keeps focus, so the blur that would close the list has to be
+              // suppressed before the click can land.
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => {
+                setQuery("")
+                setOpen(false)
+                inputRef.current?.focus()
+              }}
+            >
+              <X aria-hidden="true" />
+            </InputGroupButton>
+          </InputGroupAddon>
+        )}
+      </InputGroup>
 
       {showList && (
         <div
