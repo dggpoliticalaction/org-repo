@@ -33,6 +33,20 @@ export function DrilldownOverviewSvg({
     else if (p.parentId) children.push(p)
     else parents.push(p)
   }
+  // Tab order follows the DOM, and the DOM followed whatever order the geometry file was
+  // written in — so a reader tabbed the circuits in no order at all. Sorted the way the rail
+  // lists them, the map and the list agree and the numbers come out in sequence.
+  const rank = (id: string | null): number => {
+    const i = regions.topLevel.indexOf(id ?? "")
+    return i < 0 ? Number.MAX_SAFE_INTEGER : i
+  }
+  parents.sort((a, b) => rank(a.id) - rank(b.id))
+
+  // A region reached from more than one place is still one region: the Ninth is its coastline,
+  // Alaska, Hawaii, Guam and the Marianas, and tabbing it five times says it is five things.
+  // The insets stay clickable — they are how a reader gets at a region drawn out at sea — but
+  // only the ones standing in for a region with nothing else on the map take a tab stop.
+  const drawnInPlace = new Set(parents.map((p) => p.id))
 
   const labelFor = (p: DrilldownPath): string => regions.byId[p.id ?? ""]?.label ?? p.id ?? ""
 
@@ -69,7 +83,7 @@ export function DrilldownOverviewSvg({
             data-layer={p.layer ?? undefined}
             data-inset={p.inset ? "true" : undefined}
             // An inset stands in for its parent on the overview (click Alaska → the 9th).
-            tabIndex={p.inset ? 0 : undefined}
+            tabIndex={p.inset && !drawnInPlace.has(p.parentId) ? 0 : undefined}
             aria-label={p.inset ? labelFor(p) : undefined}
           />
         ))}

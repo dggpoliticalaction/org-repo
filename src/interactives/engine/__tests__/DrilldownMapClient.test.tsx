@@ -63,7 +63,7 @@ const overviewSvg = `<svg viewBox="0 0 100 50">
     <path id="west" data-layer="circuit" data-region-label="West" data-seats="3" data-seats-r="1" data-seats-d="1" data-short-label="W" data-summary="3 authorized" data-children-label="districts" d="M0 0 L50 0 L50 50 L0 50"/>
     <path id="east" data-layer="circuit" data-region-label="East" data-seats="2" d="M50 0 L100 0 L100 50 L50 50"/>
     <path id="w1" data-parent-id="west" data-region-label="West 1" d="M0 0 L25 0 L25 50 L0 50"/>
-    <path id="w2" data-parent-id="west" data-region-label="West 2" d="M25 0 L50 0 L50 50 L25 50"/>
+    <path id="w2" data-parent-id="west" data-region-label="West 2" data-inset="true" d="M25 0 L50 0 L50 50 L25 50"/>
   </g>
 </svg>`
 
@@ -615,6 +615,22 @@ describe("DrilldownMapClient", () => {
 
     fireEvent.click(toggle())
     expect(rail()).toHaveClass("md:w-56")
+  })
+
+  it("gives the map one tab stop per region, in the order the rail lists them", async () => {
+    const { container } = setup()
+    const stops = (): string[] =>
+      [...container.querySelectorAll('[data-drilldown-overview] path[tabindex="0"]')].map(
+        (p) => p.getAttribute("data-region-id") ?? "",
+      )
+    // East sorts before West in this fixture, and the geometry file is written the other way
+    // round — so the order is the rail's, not the file's.
+    expect(stops()).toEqual(["east", "west"])
+    // And the inset that stands in for West out at sea is not a second West to tab through;
+    // it stays clickable, which is what it is there for.
+    const inset = container.querySelector('[data-drilldown-overview] path[data-inset="true"]')
+    expect(inset).toBeInTheDocument()
+    expect(inset).not.toHaveAttribute("tabindex")
   })
 
   it("folded, a region is its own numeral and says its name in a tooltip", async () => {
