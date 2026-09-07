@@ -68,9 +68,8 @@ interface MorphPlan {
   svg: SVGSVGElement
   pairs: (MorphPair & { node: SVGPathElement })[]
   vbStart: number[]
-  vbEnd: number[]
-  /** Where `vbEnd` sits in the overview's coordinates — what the flight actually aims at. */
-  vbDest: number[]
+  /** Read live, never captured: a child's box is re-cut whenever the viewport changes. */
+  layer: Layer
   /** The paired shapes' extent in each frame, which is what tells the camera how far the
       drawing has translated and shrunk by any point in the morph. */
   contentFrom: number[]
@@ -892,9 +891,14 @@ export class MapStage {
       const hovered = id !== null && id === this.hovered
       block.toggleAttribute("data-selected", selected)
       block.toggleAttribute("data-hover", hovered)
+      // A child map's own parent sits in the gutter and is selected the whole time the reader
+      // is on that map, so the selection's swell says nothing there — it only makes the block
+      // a quarter larger than the identical one they just clicked on the overview, and larger
+      // than every sibling beside it. The stroke still marks it; the size stays put.
+      const stuck = id !== null && id === layer.parentId
       this.animateBlockScale(
         block,
-        selected ? BLOCK_SCALE_SELECTED : hovered ? BLOCK_SCALE_HOVER : 1,
+        selected && !stuck ? BLOCK_SCALE_SELECTED : hovered ? BLOCK_SCALE_HOVER : 1,
       )
     }
   }
@@ -991,7 +995,6 @@ export class MapStage {
     }
 
     const vbStart = padViewBox(this.overview.viewBox)
-    const vbEnd = local.render
     const svg = svgEl("svg", {
       "data-drilldown-morph": "",
       viewBox: viewBoxAttr(vbStart),
@@ -1039,8 +1042,7 @@ export class MapStage {
       svg,
       pairs,
       vbStart,
-      vbEnd,
-      vbDest: pullbackViewBox(vbEnd, contentFrom, contentTo),
+      layer: local,
       contentFrom,
       contentTo,
       fadeOut: [shapesOut, blocksOut],
@@ -1054,12 +1056,13 @@ export class MapStage {
    * keeps a crossing's two halves agreeing at the country between them.
    */
   private cameraFor(plan: MorphPlan, u: number): number[] {
-    return frameForContent(
-      zoomViewBox(plan.vbStart, plan.vbDest, u),
-      plan.contentFrom,
-      plan.contentTo,
-      u,
-    )
+    // `layer.render` is read every frame rather than captured with the plan. A child's box
+    // reserves a gutter for its parent's seat block, and when the map is width-bound that
+    // reservation is solved against the viewport's WIDTH — which the side panels change while
+    // the morph is still running. A captured target would land a few pixels off the layer it
+    // hands over to, and the map would visibly shrink and step right as it arrived.
+    const dest = pullbackViewBox(plan.layer.render, plan.contentFrom, plan.contentTo)
+    return frameForContent(zoomViewBox(plan.vbStart, dest, u), plan.contentFrom, plan.contentTo, u)
   }
 
   /** Cached per parent; a null result is cached too — a view that cannot morph is not re-checked. */
