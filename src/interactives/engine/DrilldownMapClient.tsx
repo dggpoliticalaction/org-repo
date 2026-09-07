@@ -230,15 +230,22 @@ export function DrilldownMapClient({
   /**
    * What choosing a region means, wherever it is chosen from. A region with a map of its own
    * opens it — one click moves in rather than selecting now and drilling as a second step —
-   * and anything else simply selects.
+   * and a region that lives on a map the reader is not standing on is reached by moving to
+   * that map first: choosing a district from the rail lands on its circuit, zoomed in, the
+   * same as choosing the circuit does. Anything already on screen simply selects.
    */
   const open = useCallback(
-    (id: string, via: SelectVia = "pointer", opts?: { force?: boolean }) => {
+    async (id: string, via: SelectVia = "pointer", opts?: { force?: boolean }): Promise<void> => {
       if (!regions.byId[id]) return
-      if (drillable.has(id) && view.parentId !== id) void drillIn(id, via)
-      else select(id, via, opts)
+      if (drillable.has(id) && view.parentId !== id) {
+        await drillIn(id, via)
+        return
+      }
+      const key = assetKeyFor(id, regions, childAssets)
+      if (key && key !== id && view.parentId !== key) await drillIn(key)
+      select(id, via, opts)
     },
-    [regions, drillable, view.parentId, drillIn, select],
+    [regions, childAssets, drillable, view.parentId, drillIn, select],
   )
 
   // A search result names a record, not a region: show the map the record sits on, select its
@@ -250,12 +257,10 @@ export function DrilldownMapClient({
   const revealRegion = useCallback(
     async (regionId: string): Promise<boolean> => {
       if (!regions.byId[regionId]) return false
-      const key = assetKeyFor(regionId, regions, childAssets)
-      if (key && key !== regionId && view.parentId !== key) await drillIn(key)
-      open(regionId, "keyboard", { force: true })
+      await open(regionId, "keyboard", { force: true })
       return true
     },
-    [regions, childAssets, view.parentId, drillIn, open],
+    [regions, open],
   )
 
   const revealRecord = useCallback(
@@ -390,7 +395,7 @@ export function DrilldownMapClient({
         seats: overview.payload?.seats ?? null,
         callbacks: {
           onHover: (id, point) => setHover(id && point ? { id, x: point.x, y: point.y } : null),
-          onSelect: (id, via) => selectRef.current(id, via),
+          onSelect: (id, via) => void selectRef.current(id, via),
         },
       })
     } catch (err) {
@@ -523,7 +528,7 @@ export function DrilldownMapClient({
             selected={selected}
             drillable={drillable}
             expanded={expanded}
-            onSelect={open}
+            onSelect={(id, via) => void open(id, via)}
             onToggle={toggleExpanded}
             onBack={() => void drillOut()}
             className="md:w-56 md:shrink-0 lg:w-64"

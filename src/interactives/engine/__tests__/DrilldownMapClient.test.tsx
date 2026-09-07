@@ -324,6 +324,34 @@ describe("DrilldownMapClient", () => {
     expect(within(nav).queryByRole("button", { name: "West 1" })).not.toBeInTheDocument()
   })
 
+  it("choosing a child from the rail goes to its parent's map, zoomed in on the child", async () => {
+    const { container } = setup()
+    const nav = (): HTMLElement =>
+      container.querySelector<HTMLElement>("[data-drilldown-selector]")!
+    fireEvent.click(within(nav()).getByRole("button", { name: "Expand West" }))
+    await waitFor(() =>
+      expect(within(nav()).getByRole("button", { name: "West 1" })).toBeInTheDocument(),
+    )
+    fireEvent.click(within(nav()).getByRole("button", { name: "West 1" }))
+    // A district is only drawn on its circuit's map, so choosing one moves there — the same
+    // journey the reader would make by hand, rather than a selection they cannot see.
+    await waitFor(() =>
+      expect(container.querySelector("[data-drilldown-viewport]")).toHaveAttribute(
+        "data-view",
+        "child",
+      ),
+    )
+    const local = container.querySelector<HTMLElement>('[data-drilldown-layer="local"]')!
+    expect(local).toHaveAttribute("data-parent-id", "west")
+    // …and what they chose is what greets them there, not the circuit they travelled through
+    await waitFor(() => expect(pane(container)).toHaveAttribute("data-open"))
+    expect(pane(container).querySelector("[data-drilldown-pane-title]")).toHaveTextContent("West 1")
+    await waitFor(() =>
+      expect(local.querySelector('path[data-region-id="w1"]')).toHaveAttribute("data-selected"),
+    )
+    await waitFor(() => expect(window.location.search).toBe("?region=w1"))
+  })
+
   it("forgives a flicker across a shared border: a hover change has to settle before it counts", () => {
     vi.useFakeTimers()
     try {
