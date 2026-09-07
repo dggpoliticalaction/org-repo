@@ -179,7 +179,7 @@ export function DrilldownPane({
         // the top of what they just opened, but it is not a stop on the way through the page.
         tabIndex={-1}
         data-drilldown-pane-title=""
-        className="shrink-0 px-2 py-1.5 text-lg outline-none"
+        className="shrink-0 px-2 py-1.5 text-2xl outline-none"
       >
         {region?.label ?? overviewLabel}
       </h2>
