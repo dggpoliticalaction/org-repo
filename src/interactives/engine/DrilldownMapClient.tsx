@@ -610,7 +610,11 @@ export function DrilldownMapClient({
                   : "grid-cols-[1fr] grid-rows-[0fr] md:grid-cols-[0fr] md:grid-rows-[1fr]",
             )}
           >
-            <div className="min-h-0 min-w-0 overflow-hidden">
+            {/* The clip that hides the rail as it folds is the rail's exact box, so anything
+                drawn outside that box — a focus ring, a shadow — was cut off at the edge. The
+                padding gives it room and the negative margin gives the space back, leaving
+                the rail where it was. */}
+            <div className="-m-1 min-h-0 min-w-0 overflow-hidden p-1">
               <DrilldownSelector
                 regions={regions}
                 view={view}
