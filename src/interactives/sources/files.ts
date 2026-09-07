@@ -9,7 +9,8 @@ export interface FileSource {
   readJson<T>(path: string): Promise<T>
 }
 
-function withJson(source: Omit<FileSource, "readJson">): FileSource {
+/** Adds `readJson` to a source that can only read text, naming the file when it is not JSON. */
+export function withJson(source: Omit<FileSource, "readJson">): FileSource {
   return {
     ...source,
     async readJson<T>(path: string): Promise<T> {

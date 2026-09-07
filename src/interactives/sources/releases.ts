@@ -11,6 +11,8 @@
  * reads the version and then asks for its tag can ask for one that does not exist yet.
  */
 
+import { isRecord } from "@/utilities/isRecord"
+
 /**
  * The value a `ref` takes when the caller has no opinion: let the adapter resolve whatever
  * upstream last released. Anything else is honoured verbatim, so a branch or a specific tag
@@ -18,11 +20,19 @@
  */
 export const RELEASE_REF = "release"
 
+export interface ReleaseAsset {
+  name: string
+  /** The API URL. `browser_download_url` is unauthenticated storage, so a private repo 404s. */
+  url: string
+}
+
 export interface ReleaseRef {
   /** The git tag, e.g. `data-v05d95d9fcf1b`. */
   tag: string
   /** What follows the prefix — upstream's own version stamp. */
   version: string
+  /** What is attached to the release, so a consumer can prefer an archive over a file walk. */
+  assets: ReleaseAsset[]
 }
 
 export interface LatestReleaseOptions {
@@ -37,6 +47,18 @@ export interface LatestReleaseOptions {
 interface GithubRelease {
   tag_name?: unknown
   draft?: unknown
+  assets?: unknown
+}
+
+function assetsOf(release: GithubRelease): ReleaseAsset[] {
+  if (!Array.isArray(release.assets)) return []
+  const out: ReleaseAsset[] = []
+  for (const item of release.assets) {
+    if (!isRecord(item)) continue
+    const { name, url } = item
+    if (typeof name === "string" && typeof url === "string") out.push({ name, url })
+  }
+  return out
 }
 
 /**
@@ -71,7 +93,7 @@ export async function latestTaggedRelease({
     if (typeof tag !== "string" || !tag.startsWith(tagPrefix)) continue
     const version = tag.slice(tagPrefix.length)
     if (version === "") continue
-    return { tag, version }
+    return { tag, version, assets: assetsOf(item) }
   }
   return null
 }

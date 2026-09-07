@@ -8,6 +8,12 @@ export interface Manifest {
   schema: string
   /** Build hash; folds every input, so it moves whenever their output does. */
   version: string
+  /**
+   * Semver over the *shape* of the data, separate from `version`'s content hash: a collection
+   * sweep bumps the hash hundreds of times a year against an unchanged contract. Absent on a
+   * manifest built before upstream started publishing it.
+   */
+  schema_version?: string
   generated: string
   last_appointment?: string
   counts?: Record<string, number>

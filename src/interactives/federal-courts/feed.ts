@@ -1,5 +1,6 @@
 import { githubFileSource, type FileSource } from "../sources/files"
 import { latestTaggedRelease, RELEASE_REF, type ReleaseRef } from "../sources/releases"
+import { releaseTarballSource } from "../sources/tarball"
 import type { FeedAdapter, FeedFetchOptions, FeedSnapshot } from "../types"
 import { adaptCourtTracker } from "./adapter"
 import type {
@@ -17,6 +18,21 @@ import type {
 /** Upstream tags every manifest bump `data-v<manifest.version>` and cuts a release for it. */
 export const COURT_TRACKER_TAG_PREFIX = "data-v"
 
+/**
+ * The release asset carrying exactly what we read: every runtime `data/*.json`, at the paths
+ * the manifest names, and none of the photos, geometry or widget code that make up ~98% of
+ * the full package. Upstream publishes it for a consumer that renders its own map, which is
+ * what we are.
+ */
+export const COURT_TRACKER_JSON_ASSET = "data-json.tar.gz"
+
+/**
+ * The shape version we are written against, from upstream's data contract. It is semver over
+ * the *shape*, separate from `version`'s content hash, so a MAJOR bump is the one thing that
+ * can break this adapter without changing a single number we render.
+ */
+export const COURT_TRACKER_SCHEMA_MAJOR = 1
+
 export const COURT_TRACKER_REPO_ENV = "COURT_TRACKER_REPO"
 export const COURT_TRACKER_TOKEN_ENV = "COURT_TRACKER_GITHUB_TOKEN"
 export const DEFAULT_COURT_TRACKER_REPO = "digitalgroundgame/court-tracker"
@@ -32,6 +48,16 @@ export async function readCourtTrackerSources(
   const manifest = await files.readJson<Manifest>("data/manifest.json")
   if (manifest.schema !== "court-tracker/manifest@1") {
     throw new Error(`${files.describe()}: unexpected manifest schema "${manifest.schema}"`)
+  }
+  // Upstream versions the shape of the data separately from its content, so a MAJOR bump is a
+  // contract change: a closed enum gained a value, a field changed type, a file went away.
+  // Refuse it here, where the message can say so, rather than downstream where it arrives as
+  // a validation error about a region. An older manifest carries no schema version at all.
+  const major = Number.parseInt(manifest.schema_version ?? "", 10)
+  if (Number.isFinite(major) && major !== COURT_TRACKER_SCHEMA_MAJOR) {
+    throw new Error(
+      `${files.describe()}: data schema ${manifest.schema_version} is not the ${COURT_TRACKER_SCHEMA_MAJOR}.x this adapter reads — see the feed's SCHEMA_CHANGELOG before bumping COURT_TRACKER_SCHEMA_MAJOR`,
+    )
   }
   const f = manifest.files
   const optional = async <T>(path: string | undefined): Promise<T | null> =>
@@ -88,6 +114,25 @@ function sourceAt(ref: string, opts: FeedFetchOptions): FileSource {
 }
 
 /**
+ * Where one fetch reads its files from. A release that attaches the JSON archive is read as
+ * the archive — one request for the whole feed, and no way to see two files from two builds.
+ * A pinned ref, or a release cut before upstream published that asset, is read file by file
+ * at the ref instead, which is the same bytes for more round trips.
+ */
+async function resolveSource(opts: FeedFetchOptions): Promise<{ ref: string; files: FileSource }> {
+  const { ref, release } = await resolveRef(opts)
+  const asset = release?.assets.find((a) => a.name === COURT_TRACKER_JSON_ASSET)
+  if (!asset) return { ref, files: sourceAt(ref, opts) }
+  const files = await releaseTarballSource({
+    label: `github:${courtTrackerRepo()}@${release!.tag} ${asset.name}`,
+    url: asset.url,
+    token: opts.token,
+    fetchImpl: opts.fetchImpl,
+  })
+  return { ref, files }
+}
+
+/**
  * The Federal Courts feed. The researcher's manifest is the contract: its `version` says
  * whether anything moved, its `files` say what to read. Nothing here asks the researcher to
  * change what they publish.
@@ -107,8 +152,8 @@ export const courtTrackerFeed: FeedAdapter<CourtTrackerSources> = {
 
   async fetch(opts) {
     if (opts.files) return readCourtTrackerSources(opts.files)
-    const { ref } = await resolveRef(opts)
-    const snapshot = await readCourtTrackerSources(sourceAt(ref, opts))
+    const { ref, files } = await resolveSource(opts)
+    const snapshot = await readCourtTrackerSources(files)
     return { ...snapshot, ref }
   },
 

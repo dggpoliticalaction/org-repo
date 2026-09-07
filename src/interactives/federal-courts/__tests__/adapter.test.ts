@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest"
 
 import { validateDrilldownData } from "../../contract"
 import { memoryFileSource } from "../../sources/files"
+import { tarGz } from "../../__tests__/tarFixture"
 import { RELEASE_REF } from "../../sources/releases"
 import type { DrilldownGeometry } from "../../types"
 import { compactAppointment, factsFor, justiceRecord, splitLicense } from "../adapter"
@@ -277,6 +278,26 @@ describe("readCourtTrackerSources", () => {
     expect(snap.raw.presidents).not.toBeNull()
   })
 
+  it("reads a manifest that states the shape version it was built to", async () => {
+    const stated = memoryFileSource({
+      ...FILE_MAP,
+      "data/manifest.json": { ...MANIFEST, schema_version: "1.4.0" },
+    })
+    await expect(readCourtTrackerSources(stated)).resolves.toMatchObject({
+      version: "05d95d9fcf1b",
+    })
+  })
+
+  it("refuses a MAJOR shape bump here, where the message can say what happened", async () => {
+    const moved = memoryFileSource({
+      ...FILE_MAP,
+      "data/manifest.json": { ...MANIFEST, schema_version: "2.0.0" },
+    })
+    await expect(readCourtTrackerSources(moved)).rejects.toThrow(
+      /data schema 2\.0\.0 is not the 1\.x this adapter reads/,
+    )
+  })
+
   it("refuses an unknown manifest schema", async () => {
     const bad = memoryFileSource({
       "data/manifest.json": { ...MANIFEST, schema: "court-tracker/manifest@2" },
@@ -502,12 +523,31 @@ describe("courtTrackerFeed — which revision it reads", () => {
   const fileAt = (ref: string) =>
     new Response(JSON.stringify({ ...MANIFEST, version: `at-${ref}` }), { status: 200 })
 
-  /** Answers the releases API and then the contents API, recording every ref asked for. */
-  function stubGithub(releaseTags: string[]) {
+  /**
+   * Answers the releases API, the release-asset download and the contents API, recording
+   * every ref a file was asked for. `assets` names what each release has attached.
+   */
+  function stubGithub(releaseTags: string[], assets: string[] = []) {
     const refs: string[] = []
     const fetchImpl = vi.fn(async (url: string | URL) => {
       const href = String(url)
-      if (href.includes("/releases")) return releases(releaseTags.map((tag) => ({ tag_name: tag })))
+      if (href.includes("/releases/assets/")) {
+        return new Response(
+          tarGz({ ...FILE_MAP, "data/manifest.json": { ...MANIFEST, version: "from-archive" } }),
+          { status: 200 },
+        )
+      }
+      if (href.includes("/releases")) {
+        return releases(
+          releaseTags.map((tag) => ({
+            tag_name: tag,
+            assets: assets.map((name, i) => ({
+              name,
+              url: `https://api.github.com/repos/o/r/releases/assets/${i}`,
+            })),
+          })),
+        )
+      }
       const ref = new URL(href).searchParams.get("ref") ?? ""
       refs.push(ref)
       if (href.includes("manifest.json")) return fileAt(ref)
@@ -549,6 +589,30 @@ describe("courtTrackerFeed — which revision it reads", () => {
     const { fetchImpl } = stubGithub(["data-v05d95d9fcf1b"])
     const snapshot = await courtTrackerFeed.fetch({ ref: RELEASE_REF, fetchImpl })
     expect(snapshot.ref).toBe("data-v05d95d9fcf1b")
+  })
+
+  it("takes the whole feed from the release's JSON archive, in one request", async () => {
+    const { fetchImpl, refs } = stubGithub(
+      ["data-v05d95d9fcf1b"],
+      ["data-package.tar.gz", "data-json.tar.gz"],
+    )
+    const snapshot = await courtTrackerFeed.fetch({ ref: RELEASE_REF, fetchImpl })
+    expect(snapshot.version).toBe("from-archive")
+    expect(snapshot.ref).toBe("data-v05d95d9fcf1b")
+    // Not one file was walked: the archive is the feed, and it cannot be half a build.
+    expect(refs).toEqual([])
+    const calls = (fetchImpl as unknown as { mock: { calls: [string][] } }).mock.calls
+    expect(calls.map(([u]) => u)).toEqual([
+      "https://api.github.com/repos/digitalgroundgame/court-tracker/releases?per_page=30",
+      "https://api.github.com/repos/o/r/releases/assets/1",
+    ])
+  })
+
+  it("walks the files at the tag when a release has no archive attached", async () => {
+    const { fetchImpl, refs } = stubGithub(["data-v05d95d9fcf1b"], ["data-package.tar.gz"])
+    const snapshot = await courtTrackerFeed.fetch({ ref: RELEASE_REF, fetchImpl })
+    expect(snapshot.ref).toBe("data-v05d95d9fcf1b")
+    expect(refs[0]).toBe("data-v05d95d9fcf1b")
   })
 
   it("resolves nothing when the caller supplies its own files", async () => {

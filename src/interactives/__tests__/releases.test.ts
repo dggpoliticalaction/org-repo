@@ -15,7 +15,27 @@ describe("latestTaggedRelease", () => {
     )
     await expect(
       latestTaggedRelease({ repo: "o/r", tagPrefix: "data-v", fetchImpl }),
-    ).resolves.toEqual({ tag: "data-v05d95d9fcf1b", version: "05d95d9fcf1b" })
+    ).resolves.toEqual({ tag: "data-v05d95d9fcf1b", version: "05d95d9fcf1b", assets: [] })
+  })
+
+  it("carries the release's assets, so a consumer can prefer an archive to a file walk", async () => {
+    const fetchImpl = vi.fn(async () =>
+      ok([
+        {
+          tag_name: "data-v1",
+          assets: [
+            { name: "data-json.tar.gz", url: "https://api.github.com/…/assets/2" },
+            { name: "data-package.tar.gz", url: "https://api.github.com/…/assets/1" },
+            { name: "no-url" },
+          ],
+        },
+      ]),
+    )
+    const release = await latestTaggedRelease({ repo: "o/r", tagPrefix: "data-v", fetchImpl })
+    expect(release?.assets).toEqual([
+      { name: "data-json.tar.gz", url: "https://api.github.com/…/assets/2" },
+      { name: "data-package.tar.gz", url: "https://api.github.com/…/assets/1" },
+    ])
   })
 
   it("ignores releases that are not data packages, and drafts", async () => {
