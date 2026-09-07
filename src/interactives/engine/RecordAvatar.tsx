@@ -14,6 +14,13 @@ interface RecordAvatarProps {
   /** `bench` on a wide stage, `compact` on a narrow one, `chip` inline, `detail` in the card. */
   size?: "bench" | "compact" | "chip" | "detail"
   marked?: boolean
+  /**
+   * One of the group being picked out — the cohort a reader is hovering. It takes over the
+   * ring rather than adding one outside it: a second ring around the first grows the face by
+   * four pixels and shunts its neighbours, and the category colour it was drawn around is not
+   * what the reader is being shown at that moment.
+   */
+  cohort?: boolean
   className?: string
 }
 
@@ -27,6 +34,7 @@ export function RecordAvatar({
   display,
   size = "bench",
   marked = false,
+  cohort = false,
   className,
 }: RecordAvatarProps): React.ReactElement {
   const name = fieldString(record, display.title) ?? "?"
@@ -38,6 +46,7 @@ export function RecordAvatar({
       data-drilldown-avatar=""
       data-muted={muted ? "" : undefined}
       data-marked={marked ? "" : undefined}
+      data-cohort={cohort ? "" : undefined}
       className={cn(
         "bg-muted border-[3px] after:hidden",
         size === "bench" && "size-11 text-sm",
@@ -46,9 +55,11 @@ export function RecordAvatar({
         size === "detail" && "size-20 text-xl",
         muted && "opacity-70 grayscale",
         marked && "border-dashed",
+        cohort && "border-amber-400",
         className,
       )}
-      style={{ borderColor: category.color }}
+      // The class has to win, and an inline colour would beat it.
+      style={cohort ? undefined : { borderColor: category.color }}
     >
       {url && <AvatarImage src={url} alt={name} loading="lazy" referrerPolicy="no-referrer" />}
       <AvatarFallback className="bg-muted text-foreground font-sans font-semibold">

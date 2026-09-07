@@ -321,17 +321,12 @@ export function DrilldownBench({
             aria-label={fieldString(record, display.title) ?? undefined}
           >
             <span className={cn("relative mx-auto block", compact ? "size-9" : "size-11")}>
-              {cohort && (
-                <span
-                  aria-hidden="true"
-                  className="absolute -inset-1 rounded-full ring-[3px] ring-amber-400"
-                />
-              )}
               <RecordAvatar
                 record={record}
                 display={display}
                 size={compact ? "compact" : "bench"}
                 marked={mark !== null && fieldTruthy(record, mark)}
+                cohort={cohort}
               />
               {flags.map((f) => (
                 <span
