@@ -63,8 +63,11 @@ const CIRCUIT_LABEL: Record<string, string> = {
  * top-level region like any circuit and a reader looks for it on the map. Park it in the open
  * Atlantic below the Federal Circuit, the other court with no map of its own, so the two read
  * as a column of national courts. National map units (`geometry/national.json`).
+ *
+ * Low enough to clear the Federal Circuit's feeder courts, which appear in the column between
+ * the two when that circuit is opened. There is no room above them and a good deal below.
  */
-const SCOTUS_ANCHOR: [number, number] = [2029097, 430000]
+const SCOTUS_ANCHOR: [number, number] = [2029097, -25000]
 
 /** Where a court's seat block is drawn, in the units of the map it is drawn on. */
 const anchorFor = (courtId: string): number[] | undefined =>
