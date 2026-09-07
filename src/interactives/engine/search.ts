@@ -20,6 +20,8 @@ export interface SearchEntry {
   name: string
   /** The region the record belongs to; selecting a result selects this region. */
   region: string
+  /** The record's picture, where it has one — the same field the pane draws faces from. */
+  image?: string
 }
 
 export interface SearchIndex {

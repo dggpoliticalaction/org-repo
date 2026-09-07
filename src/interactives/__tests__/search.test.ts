@@ -34,6 +34,32 @@ describe("composeSearchIndex", () => {
     expect(index.entries).toEqual([{ id: "a", name: "Bobby Shepherd", region: "ca8" }])
   })
 
+  it("carries the picture the profile draws faces from, and only where there is one", () => {
+    const withImage: DrilldownPresentation = {
+      display: { ...display, image: { url: "photo_url" } },
+    }
+    const index = composeSearchIndex({
+      presentation: withImage,
+      data: data([
+        { _region: "ca8", _id: "a", full_name: "Bobby Shepherd", photo_url: "https://x/a.jpg" },
+        { _region: "ca8", _id: "b", full_name: "Ada Lovelace", photo_url: "" },
+      ]),
+    })
+    expect(index.entries).toEqual([
+      { id: "b", name: "Ada Lovelace", region: "ca8" },
+      { id: "a", name: "Bobby Shepherd", region: "ca8", image: "https://x/a.jpg" },
+    ])
+    // A profile that draws no faces gets no field, rather than a file full of empty ones.
+    expect(
+      composeSearchIndex({
+        presentation,
+        data: data([
+          { _region: "ca8", _id: "a", full_name: "Bobby Shepherd", photo_url: "https://x/a.jpg" },
+        ]),
+      }).entries[0],
+    ).not.toHaveProperty("image")
+  })
+
   it("skips records that could never be pinned: no id, no name", () => {
     const index = composeSearchIndex({
       presentation,

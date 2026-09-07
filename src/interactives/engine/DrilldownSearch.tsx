@@ -9,8 +9,10 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/utilities/utils"
 
+import { initials } from "./recordFormat"
 import { isSearchIndex, searchEntries, type SearchEntry, type SearchResult } from "./search"
 import type { RegionIndex } from "./types"
 
@@ -223,15 +225,33 @@ export function DrilldownSearch({
                     onMouseEnter={() => setActive(i)}
                     onClick={() => commit(r)}
                     className={cn(
-                      "flex w-full flex-col items-start px-3 py-1.5 text-left text-sm",
+                      "flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm",
                       i === active ? "bg-muted text-foreground" : "text-foreground",
                     )}
                   >
-                    {/* Stacked, not two columns: the box is as wide as the region rail, and
-                        side by side a long region name ate the record's own down to "E..". */}
-                    <span className="w-full truncate">{r.name}</span>
-                    <span className="text-muted-foreground w-full truncate text-xs">
-                      {regions.byId[r.region]?.label ?? r.region}
+                    {/* A face is recognised before a name is read, and the reader is usually
+                        looking for a person they have already seen on the map. */}
+                    <Avatar className="bg-muted size-7 shrink-0 after:hidden">
+                      {r.image && (
+                        <AvatarImage
+                          src={r.image}
+                          alt=""
+                          loading="lazy"
+                          referrerPolicy="no-referrer"
+                        />
+                      )}
+                      <AvatarFallback className="bg-muted text-foreground font-sans text-[0.6rem] font-semibold">
+                        {initials(r.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    {/* The two lines stack, not sit side by side: the box is as wide as the
+                        region rail, and abreast a long region name ate the record's own down
+                        to "E..". */}
+                    <span className="flex min-w-0 flex-col items-start">
+                      <span className="w-full truncate">{r.name}</span>
+                      <span className="text-muted-foreground w-full truncate text-xs">
+                        {regions.byId[r.region]?.label ?? r.region}
+                      </span>
                     </span>
                   </button>
                 </li>

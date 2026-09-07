@@ -44,8 +44,20 @@ export function geometryHash(file: GeometryFile | null): string {
 }
 
 /**
- * What a profile's *code* contributes to a composed asset: its presentation, and the geometry
- * it draws. Both are checked in, so this moves on a deploy and at no other time.
+ * Bumped when the composed output changes shape for a reason the profile cannot see — a new
+ * field in the search index, a payload carrying something it did not before.
+ *
+ * Everything else in the fingerprint is what a profile declares, and nothing about the code
+ * that reads it, so a composer change on its own leaves every cached route valid and serving
+ * the old shape: a deploy that quietly does nothing. This is the part a person has to
+ * remember, so it is one line and it says so.
+ */
+const COMPOSE_VERSION = 2
+
+/**
+ * What a profile's *code* contributes to a composed asset: its presentation, the geometry it
+ * draws, and the shape the composer builds out of them. All three are checked in, so this
+ * moves on a deploy and at no other time.
  *
  * It belongs in the cache key because the composed asset is a mixture of code and data, and
  * the tag on it only knows about the data. Without it, changing a label, an icon or a set of
@@ -58,6 +70,7 @@ export function profileFingerprint(
   geometry: DrilldownGeometry,
 ): string {
   const parts = [
+    `v${COMPOSE_VERSION}`,
     stableStringify(presentation),
     geometryHash(geometry.overview),
     ...Object.keys(geometry.children)
