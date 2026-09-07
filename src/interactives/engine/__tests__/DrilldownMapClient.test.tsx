@@ -625,6 +625,28 @@ describe("DrilldownMapClient", () => {
     expect(within(detail).getByText("Ada Lovelace")).toBeInTheDocument()
   })
 
+  it("leaves the seniors off the timeline too, until asked for them", async () => {
+    const { container } = setup()
+    fireEvent.click(selector(container).getByRole("button", { name: "West" }))
+    const p = pane(container)
+    await within(p).findByRole("button", { name: "Ada Lovelace" })
+    fireEvent.click(within(p).getByRole("button", { name: "Timeline" }))
+
+    // The same default the seat chart has: who sits now, not everyone who has sat.
+    const hopper = (): HTMLElement => within(p).getByRole("button", { name: "Grace Hopper" })
+    expect(within(p).getByRole("button", { name: "Hidden" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    )
+    expect(hopper()).toHaveClass("opacity-0")
+
+    // Two options here, not three: a timeline has no seats to take and no majority to count
+    // toward, so "Counted" would be a second word for "Shown".
+    expect(within(p).queryByRole("button", { name: "Counted" })).not.toBeInTheDocument()
+    fireEvent.click(within(p).getByRole("button", { name: "Shown" }))
+    expect(hopper()).not.toHaveClass("opacity-0")
+  })
+
   it("seat-chart view counts the authorized bench, and folds the seniors in on request", async () => {
     const { container } = setup()
     fireEvent.click(selector(container).getByRole("button", { name: "West" }))

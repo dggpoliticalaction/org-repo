@@ -168,11 +168,17 @@ export function DrilldownBench({
     let arc: ReturnType<typeof layoutArc> | null = null
 
     if (mode === "timeline") {
-      const ordered = [...all].sort(compareByField(display.order))
+      // The same switch as the seat chart, and for the same reason: who sits now is a
+      // different question from everyone who has sat, and a timeline that answers both at
+      // once answers neither. Hidden members keep their place in the list and lose their
+      // position, exactly as they do in the arc, so they can fade back in where they were.
+      const shown = supernumeraryMode === "hide" ? bench.active : all
+      const ordered = [...shown].sort(compareByField(display.order))
       height = timelineStageHeight(ordered.length + bench.vacancies, width, metrics)
       const pts = layoutTimeline(ordered.length + bench.vacancies, width, metrics)
       ordered.forEach((r, i) => positions.set(r, pts[i]!))
       vacancies = pts.slice(ordered.length)
+      if (supernumeraryMode === "hide") for (const r of bench.supernumerary) hidden.add(r)
     } else {
       height = ARC_STAGE_HEIGHT
       const filled = supernumeraryMode === "include" ? all : bench.active

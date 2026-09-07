@@ -112,7 +112,7 @@ export function DrilldownPane({
     ? buildBench(records.seats, display, region?.facts[display.seatsFact ?? ""])
     : null
   const associate = records.associates[0] ?? null
-  const showSupernumeraryRow = mode === "seats" && (bench?.supernumerary.length ?? 0) > 0
+  const showSupernumeraryRow = (bench?.supernumerary.length ?? 0) > 0
   const supLabel = display?.status?.supernumerary?.[0]
     ? (display.status.labels?.[display.status.supernumerary[0]] ?? "Others")
     : "Others"
@@ -257,26 +257,48 @@ export function DrilldownPane({
             {showSupernumeraryRow && (
               <Segmented<SupernumeraryMode>
                 label={supLabel}
-                value={supernumeraryMode}
+                // A timeline has no seats and no majority, so only two of the three mean
+                // anything in it; a reader arriving from the seat chart with "Counted"
+                // chosen is showing them, which is what that button says here.
+                value={
+                  mode === "timeline" && supernumeraryMode === "include"
+                    ? "show"
+                    : supernumeraryMode
+                }
                 // "Show" and "Include" are not the same thing, and the old labels never said
                 // which was which: one puts them beside the bench, the other puts them in it.
-                options={[
-                  {
-                    value: "hide",
-                    label: "Hidden",
-                    hint: `${supLabel} members are left off the chart.`,
-                  },
-                  {
-                    value: "show",
-                    label: "Alongside",
-                    hint: `${supLabel} members sit in an outer band, outside the seats and outside the majority.`,
-                  },
-                  {
-                    value: "include",
-                    label: "Counted",
-                    hint: `${supLabel} members take seats in the chart and count toward the majority.`,
-                  },
-                ]}
+                options={
+                  mode === "timeline"
+                    ? [
+                        {
+                          value: "hide",
+                          label: "Hidden",
+                          hint: `${supLabel} members are left off the timeline.`,
+                        },
+                        {
+                          value: "show",
+                          label: "Shown",
+                          hint: `${supLabel} members take their place in the timeline, by the same date as everyone else.`,
+                        },
+                      ]
+                    : [
+                        {
+                          value: "hide",
+                          label: "Hidden",
+                          hint: `${supLabel} members are left off the chart.`,
+                        },
+                        {
+                          value: "show",
+                          label: "Alongside",
+                          hint: `${supLabel} members sit in an outer band, outside the seats and outside the majority.`,
+                        },
+                        {
+                          value: "include",
+                          label: "Counted",
+                          hint: `${supLabel} members take seats in the chart and count toward the majority.`,
+                        },
+                      ]
+                }
                 onChange={setSupernumeraryMode}
               />
             )}
