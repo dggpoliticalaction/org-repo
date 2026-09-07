@@ -253,6 +253,10 @@ export function DrilldownSelector({
                         aria-label={`${expanded === id ? "Collapse" : "Expand"} ${region.label}`}
                         tabIndex={-1}
                         onClick={() => onToggle(id)}
+                        // The action sits over the row, so on the selected row it is drawn on
+                        // the inverted pill and its own `sidebar-foreground` is the colour of
+                        // the ground beneath it — invisible until hovered.
+                        className={cn(selected === id && "text-sidebar")}
                       >
                         <ChevronRight
                           aria-hidden="true"
