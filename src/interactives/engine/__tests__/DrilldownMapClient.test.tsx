@@ -633,6 +633,32 @@ describe("DrilldownMapClient", () => {
     expect(inset).not.toHaveAttribute("tabindex")
   })
 
+  it("hands the map the whole screen, and reads its state from the browser", async () => {
+    const { container } = setup()
+    const shell = container.querySelector<HTMLElement>("[data-drilldown-map]")!
+    const button = (): HTMLElement =>
+      container.querySelector<HTMLElement>("[data-drilldown-fullscreen]")!
+    const request = vi.fn().mockResolvedValue(undefined)
+    const exit = vi.fn().mockResolvedValue(undefined)
+    shell.requestFullscreen = request
+    document.exitFullscreen = exit
+
+    expect(button()).toHaveAccessibleName("Full screen")
+    expect(button()).toHaveAttribute("aria-pressed", "false")
+    fireEvent.click(button())
+    expect(request).toHaveBeenCalled()
+
+    // Escape and F11 leave without telling us, so the button follows the document rather than
+    // remembering what it asked for.
+    Object.defineProperty(document, "fullscreenElement", { value: shell, configurable: true })
+    fireEvent(document, new Event("fullscreenchange"))
+    expect(button()).toHaveAttribute("aria-pressed", "true")
+    expect(button()).toHaveAccessibleName("Leave full screen")
+
+    fireEvent.click(button())
+    expect(exit).toHaveBeenCalled()
+  })
+
   it("folded, a region is its own numeral and says its name in a tooltip", async () => {
     const { container } = setup()
     const toggle = container.querySelector<HTMLElement>("[data-drilldown-rail-toggle]")!

@@ -84,6 +84,16 @@
   outline: none;
 }
 
+/* Full screen. The browser promotes this element and paints black behind it, which is nobody's
+   design — so it takes the page's own ground, and the stage height stops being a clamp against
+   a page it is no longer on and becomes what is left of the screen once the trail is drawn. */
+[data-drilldown-map]:fullscreen {
+  background: var(--background);
+  justify-content: center;
+  padding: 0.75rem;
+  --drilldown-stage-h: calc(100vh - 5rem);
+}
+
 /* Layer stack: every layer fills the viewport the component sizes, and letterboxes its own
    map inside it. Every rule from here down paints something the stage builds by hand — the
    layers, the paths cloned into them, the seat blocks — which is why they are here and not on

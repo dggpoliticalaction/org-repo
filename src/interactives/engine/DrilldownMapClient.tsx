@@ -1,6 +1,6 @@
 "use client"
 
-import { MapIcon, PanelLeft, PanelRight } from "lucide-react"
+import { MapIcon, Maximize2, Minimize2, PanelLeft, PanelRight } from "lucide-react"
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 import {
@@ -91,6 +91,22 @@ export function DrilldownMapClient({
   // phone renders the folded state outright instead of animating shut on arrival.
   const [railChoice, setRailChoice] = useState<boolean | null>(null)
   const isMobile = useIsMobile()
+  const [full, setFull] = useState(false)
+  // The browser owns this state — Escape and the F11 key leave without asking us — so it is
+  // read from the document rather than remembered here.
+  useEffect(() => {
+    const sync = (): void => setFull(document.fullscreenElement === rootRef.current)
+    document.addEventListener("fullscreenchange", sync)
+    return () => document.removeEventListener("fullscreenchange", sync)
+  }, [])
+  const toggleFull = useCallback(() => {
+    const el = rootRef.current
+    if (!el) return
+    // Older Safari resolves neither promise; a rejection here means the browser said no, which
+    // is its right, and there is nothing to tell the reader that the button not moving doesn't.
+    if (document.fullscreenElement === el) void document.exitFullscreen?.().catch(() => undefined)
+    else void el.requestFullscreen?.().catch(() => undefined)
+  }, [])
   const railOpen = railChoice ?? !isMobile
   const railId = useId()
 
@@ -635,6 +651,8 @@ export function DrilldownMapClient({
         // The stage's height, which the map letterboxes inside and the rail is capped to, so
         // a wide screen gets a wide map rather than a tall one. One value, declared where
         // both of them can read it.
+        // What fullscreen does to this is in `styles.css`: a `:fullscreen` rule, since the
+        // element itself is what the browser promotes and there is no variant for it here.
         className="flex flex-col gap-3 [--drilldown-stage-h:clamp(18rem,78vw,26rem)] md:[--drilldown-stage-h:clamp(26rem,70vh,42rem)]"
       >
         {/* The rail rides beside the map from tablet up, and above it on a phone. */}
@@ -799,9 +817,21 @@ export function DrilldownMapClient({
               aria-controls={paneId}
               aria-label={paneOpen ? "Hide the details" : "Show the details"}
               onClick={() => showPane(!paneOpen)}
-              className="absolute top-1 right-2 z-10"
+              className="absolute top-1 right-11 z-10"
             >
               <PanelRight aria-hidden="true" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              data-drilldown-fullscreen=""
+              aria-pressed={full}
+              aria-label={full ? "Leave full screen" : "Full screen"}
+              onClick={toggleFull}
+              className="absolute top-1 right-2 z-10"
+            >
+              {full ? <Minimize2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
             </Button>
             {children}
             <div ref={layersRef} data-drilldown-layers="" />
