@@ -56,6 +56,11 @@ export interface Court {
   geometry_key: string | null
 }
 
+/**
+ * A court's bench, counted. `anchor` and `size` are placement for upstream's own map and are
+ * not read here — ours are checked in as `geometry/anchors.json` — but they stay in the shape
+ * because this file is what upstream publishes, verbatim.
+ */
 export interface SeatBlock {
   level: "circuit" | "district" | "feeder"
   parent_id: string | null

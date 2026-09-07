@@ -1,7 +1,8 @@
 /**
  * Snapshots the Federal Courts interactive's inputs from court-tracker.
  *
- *   geometry   parse upstream's QGIS export (assets/geo/**) into the JSON the profile imports
+ *   geometry   parse upstream's QGIS export (assets/geo/**) into the JSON the profile imports,
+ *              and take the seat-block anchors measured against it
  *   data       run the real feed adapter and write the fixture the seed and tests use
  *
  * `geometry` needs a checkout on disk (the SVGs are not part of the feed — geometry is ours).
@@ -50,6 +51,31 @@ function kb(s: string): string {
   return `${(Buffer.byteLength(s) / 1024).toFixed(0)} KB`
 }
 
+/**
+ * Where each court's seat block is drawn, taken once from upstream's `seat_blocks.json` and
+ * checked in beside the geometry it is measured against.
+ *
+ * Upstream tiers `anchor` as renderer-specific — hand-placed for their own map, free to move
+ * without notice — and placement is ours to own anyway. Reading it from the feed daily meant
+ * a nudge to their layout silently moved ours; taken here, it moves when the geometry it
+ * belongs to moves, in a diff someone reviews.
+ */
+function snapshotAnchors(source: string, outDir: string): void {
+  const blocks = JSON.parse(
+    readFileSync(path.join(source, "data", "seat_blocks.json"), "utf8"),
+  ) as Record<string, { anchor: [number, number] | null }>
+  const anchors: Record<string, [number, number]> = {}
+  for (const id of Object.keys(blocks).sort()) {
+    const anchor = blocks[id]?.anchor
+    if (anchor) anchors[id] = anchor
+  }
+  const json = JSON.stringify(anchors)
+  writeFileSync(path.join(outDir, "anchors.json"), json)
+  console.warn(
+    `anchors.json${" ".repeat(11)}${kb(json).padStart(8)} · ${Object.keys(anchors).length} blocks`,
+  )
+}
+
 function snapshotGeometry(source: string): number {
   const geoDir = path.join(source, "assets", "geo")
   const outDir = path.join(PROFILE_DIR, "geometry")
@@ -64,6 +90,7 @@ function snapshotGeometry(source: string): number {
   write("national.json", readFileSync(path.join(geoDir, "national.svg"), "utf8"))
   for (const id of CIRCUITS)
     write(`circuits/${id}.json`, readFileSync(path.join(geoDir, "circuits", `${id}.svg`), "utf8"))
+  snapshotAnchors(source, outDir)
   return 0
 }
 

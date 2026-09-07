@@ -2,6 +2,7 @@ import type { DeclaredRegion, DrilldownRecord } from "@/interactives/engine/type
 
 import { DRILLDOWN_DATA_SCHEMA, type DrilldownData, type FeedSnapshot } from "../types"
 import { aggregateAppointments } from "./appointments"
+import ANCHORS from "./geometry/anchors.json"
 import type { Court, CourtTrackerSources, Judge, Justice, SeatBlock } from "./upstream"
 
 /**
@@ -64,6 +65,10 @@ const CIRCUIT_LABEL: Record<string, string> = {
  * as a column of national courts. National map units (`geometry/national.json`).
  */
 const SCOTUS_ANCHOR: [number, number] = [2029097, 430000]
+
+/** Where a court's seat block is drawn, in the units of the map it is drawn on. */
+const anchorFor = (courtId: string): number[] | undefined =>
+  (ANCHORS as Record<string, number[]>)[courtId]
 
 /** "CC BY-SA 4.0 — credit: Jane Doe" → { license, credit }; public domain carries no credit. */
 export function splitLicense(license: string | null): {
@@ -233,8 +238,10 @@ export function factsFor(
   facts["seats-d"] = String(counts.d)
   // Circuit and feeder anchors are in national units; district anchors in the circuit's local
   // units. A region is drawn as a block in exactly one of the two views, so one anchor suffices.
-  if (court.court_level === "scotus") facts.anchor = SCOTUS_ANCHOR.join(",")
-  else if (block?.anchor) facts.anchor = `${block.anchor[0]},${block.anchor[1]}`
+  // Placement is ours: the anchors are checked in beside the geometry they are measured
+  // against (`geometry/anchors.json`), not read from the feed on every sync.
+  const anchor = court.court_level === "scotus" ? SCOTUS_ANCHOR : anchorFor(court.court_id)
+  if (anchor) facts.anchor = anchor.join(",")
   const short = CIRCUIT_LABEL[court.court_id]
   if (short) facts["short-label"] = short
   facts.summary = summaryFor(court, counts)

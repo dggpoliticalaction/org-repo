@@ -484,6 +484,14 @@ describe("helpers", () => {
     expect(facts.summary).toBe(`${seats} authorized · ${seats} active · 0 senior`)
   })
 
+  it("factsFor places a seat block from our own anchors, not from the feed's", () => {
+    const moed = COURTS.find((c) => c.court_id === "moed")!
+    const moved = { ...BLOCKS.moed!, anchor: [1, 2] as [number, number] }
+    // Upstream tiers `anchor` as placement for their own map; ours is checked in beside the
+    // geometry it is measured against, so their layout cannot move ours from under us.
+    expect(factsFor(moed, moved, []).anchor).toBe("484339,-528618")
+  })
+
   it("factsFor shows a fixed-term court as sitting, not active/senior", () => {
     const gud = COURTS.find((c) => c.court_id === "gud")!
     const facts = factsFor(gud, undefined, [
