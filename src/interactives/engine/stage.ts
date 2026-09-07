@@ -1095,9 +1095,9 @@ export class MapStage {
         resolve(how)
       }
       this.morphCancel = () => settle("cancelled")
-      // Longer than one morph, shorter than the two it replaces: the distance is greater, and
-      // the reader is never made to wait at the halfway point.
-      const dur = reducedMotion() ? 0 : Math.round(MORPH_MS * 1.4)
+      // Longer than one morph, shorter than the two it replaces: the crossing covers a drill
+      // out and a drill in, but hands over at speed instead of waiting at the country.
+      const dur = reducedMotion() ? 0 : Math.round(MORPH_MS * 1.75)
       const control = crossControlViewBox(outPlan.vbEnd, inPlan.vbEnd, outPlan.vbStart)
       const t0 = nowMs()
       let showingIn = false
