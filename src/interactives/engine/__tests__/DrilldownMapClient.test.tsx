@@ -850,8 +850,12 @@ describe("DrilldownMapClient", () => {
     expect(local.querySelector('path[data-region-id="w1"]')).toHaveAttribute("data-selected")
     const chosen = local.querySelector('path[data-drilldown-overlay="selected"]')!
     expect(chosen).toHaveAttribute("data-visible")
-    expect(chosen.getAttribute("d")).toBe(
-      local.querySelector('path[data-region-id="w1"]')!.getAttribute("d"),
+    // The mark is rebuilt island by island — a subpath too small to hold an outline is filled
+    // instead — so it is the same shape as the region, not the same string.
+    const points = (d: string | null): string =>
+      (d ?? "").replace(/[ML]/g, " ").trim().split(/\s+/).join(" ")
+    expect(points(chosen.getAttribute("d"))).toBe(
+      points(local.querySelector('path[data-region-id="w1"]')!.getAttribute("d")),
     )
     expect(
       within(pane(container)).getByRole("button", { name: "Katherine Johnson" }),

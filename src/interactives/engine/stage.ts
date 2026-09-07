@@ -12,6 +12,7 @@ import {
   lerpViewBox,
   MORPH_MIN_COMMIT_MS,
   MORPH_MS,
+  parsePathAbs,
   type MorphPair,
   type MorphSource,
   pullbackViewBox,
@@ -51,6 +52,8 @@ interface Layer {
   shapes: SVGGElement
   annotations: SVGGElement
   overlay: SVGPathElement
+  /** Hover mark for the parts an outline would swallow whole. */
+  overlayTiny: SVGPathElement
   /** The selected region's outline: the same mark as the hover one, but it stays. */
   selectedOverlay: SVGPathElement
   /** Raw (unpadded) viewBox. */
@@ -92,6 +95,11 @@ interface MorphPlan {
  */
 const BLOCK_ROWS = 4
 const BLOCK_PX = 6.5
+/**
+ * The smallest an island can be and still show a 2px outline as an outline. Below it the mark
+ * is a fill: the Virgin Islands are about five pixels across on the national map.
+ */
+const OUTLINE_MIN_PX = 12
 /**
  * Below this rendered map width the blocks shrink and drop their labels: at phone widths the
  * circuits' blocks overlap each other and their labels collide, and the R/D balance still
@@ -281,7 +289,9 @@ export class MapStage {
       }
       // The neutral fill alone is quiet among the greys; the outline is what the eye catches.
       if (regionId !== null && drawn) {
-        layer.selectedOverlay.setAttribute("d", this.overlayPathFor(layer, regionId))
+        // Small parts already take the selected fill on the shape itself, so the selection's
+        // outline is only ever the parts big enough to carry one.
+        layer.selectedOverlay.setAttribute("d", this.overlayPathsFor(layer, regionId).outline)
         layer.selectedOverlay.setAttribute("data-visible", "")
       } else layer.selectedOverlay.removeAttribute("data-visible")
       this.highlightBlocks(layer)
@@ -416,14 +426,18 @@ export class MapStage {
     svg.querySelectorAll("path[data-drilldown-overlay]").forEach((n) => n.remove())
     // Selection underneath: a hovered selected region reads as hovered, not as two lines.
     const selectedOverlay = svgEl("path", { "data-drilldown-overlay": "selected", d: "" })
+    // Islands too small to carry a stroke are filled instead; under the stroked overlay, so a
+    // region with both reads as one mark.
+    const overlayTiny = svgEl("path", { "data-drilldown-overlay": "tiny", d: "" })
     const overlay = svgEl("path", { "data-drilldown-overlay": "", d: "" })
-    shapes.append(selectedOverlay, overlay)
+    shapes.append(selectedOverlay, overlayTiny, overlay)
     const layer: Layer = {
       el,
       svg,
       shapes,
       annotations,
       overlay,
+      overlayTiny,
       selectedOverlay,
       viewBox,
       render: render.vb,
@@ -599,15 +613,50 @@ export class MapStage {
     )
   }
 
-  /** A parent's outline is mainland-only, so its hover outline adds every inset that points at it. */
-  private overlayPathFor(layer: Layer, regionId: string): string {
-    const parts: string[] = []
+  /**
+   * A parent's outline is mainland-only, so its hover mark adds every inset that points at it.
+   * The mark is not one thing, though, and the division is not by shape but by island.
+   *
+   * The stroke is 2px and does not scale. On the Ninth's coastline that is an outline; on the
+   * Virgin Islands, five pixels across at national scale, it is wider than the island and they
+   * come out solid black — a blot rather than a region highlighting. Which is why the split is
+   * per subpath: Alaska's mainland takes the outline and the Aleutians beside it take a fill,
+   * out of the same shape, because that is the mark each of them can carry.
+   */
+  private overlayPathsFor(layer: Layer, regionId: string): { outline: string; tiny: string } {
+    const scale = this.fitScale(layer.render)
+    const outline: string[] = []
+    const tiny: string[] = []
     for (const p of layer.shapes.querySelectorAll<SVGPathElement>(
       `path[data-region-id][data-role]:not([data-role="outline"])`,
     )) {
-      if (this.covers(layer, p, regionId)) parts.push(p.getAttribute("d") ?? "")
+      if (!this.covers(layer, p, regionId)) continue
+      const d = p.getAttribute("d") ?? ""
+      const subs = parsePathAbs(d)
+      // The contract says absolute M/L, and everything that reaches here has already been
+      // through it; a shape that somehow has not is outlined whole rather than dropped.
+      if (!subs) {
+        outline.push(d)
+        continue
+      }
+      for (const sub of subs) {
+        let x0 = Infinity
+        let y0 = Infinity
+        let x1 = -Infinity
+        let y1 = -Infinity
+        for (let i = 0; i < sub.length; i += 2) {
+          const x = sub[i]!
+          const y = sub[i + 1]!
+          if (x < x0) x0 = x
+          if (x > x1) x1 = x
+          if (y < y0) y0 = y
+          if (y > y1) y1 = y
+        }
+        const px = Math.max(x1 - x0, y1 - y0) * scale
+        ;(px < OUTLINE_MIN_PX ? tiny : outline).push(serializePath([sub]))
+      }
     }
-    return parts.join(" ")
+    return { outline: outline.join(" "), tiny: tiny.join(" ") }
   }
 
   private cancelPendingHover(): void {
@@ -659,10 +708,14 @@ export class MapStage {
   ): void {
     this.cancelPendingHover()
     if (regionId) {
-      layer.overlay.setAttribute("d", this.overlayPathFor(layer, regionId))
+      const marks = this.overlayPathsFor(layer, regionId)
+      layer.overlay.setAttribute("d", marks.outline)
+      layer.overlayTiny.setAttribute("d", marks.tiny)
       layer.overlay.setAttribute("data-visible", "")
+      layer.overlayTiny.setAttribute("data-visible", "")
     } else {
       layer.overlay.removeAttribute("data-visible")
+      layer.overlayTiny.removeAttribute("data-visible")
     }
     this.hovered = regionId
     this.highlightBlocks(layer)

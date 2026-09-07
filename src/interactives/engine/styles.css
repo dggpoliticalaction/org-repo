@@ -147,6 +147,13 @@ path[data-drilldown-overlay] {
 path[data-drilldown-overlay][data-visible] {
   opacity: 1;
 }
+/* Islands smaller than the stroke that would outline them. Filled, they read as this region
+   highlighting; outlined, a 2px line closes over five pixels of Virgin Islands and they go
+   solid black, which reads as a blot. */
+path[data-drilldown-overlay="tiny"] {
+  fill: var(--drilldown-hover-stroke);
+  stroke: none;
+}
 /* The selected region keeps the mark a hovered one gets, so it stays findable once the
    pointer has moved on — the neutral fill alone is too quiet among the greys. */
 path[data-drilldown-overlay="selected"] {
