@@ -437,12 +437,24 @@ describe("helpers", () => {
     expect(splitLicense(null)).toEqual({ license: null, credit: null })
   })
 
+  it("factsFor omits the vacancy count when the bench is full", () => {
+    const moed = COURTS.find((c) => c.court_id === "moed")!
+    const seats = moed.authorized_judgeships ?? 0
+    const full = Array.from({ length: seats }, (_, i) =>
+      judge({ court_id: "moed", seat_id: `MOED0${i}` }),
+    )
+    const facts = factsFor(moed, undefined, full)
+    expect(facts.vacant).toBe("0")
+    expect(facts.summary).not.toContain("vacant")
+    expect(facts.summary).toBe(`${seats} authorized · ${seats} active · 0 senior`)
+  })
+
   it("factsFor shows a fixed-term court as sitting, not active/senior", () => {
     const gud = COURTS.find((c) => c.court_id === "gud")!
     const facts = factsFor(gud, undefined, [
       judge({ court_id: "gud", term_expiration_date: "2030-01-01" }),
     ])
-    expect(facts.summary).toBe("Fixed-term court · 1 authorized · 1 sitting · 0 vacant")
+    expect(facts.summary).toBe("Fixed-term court · 1 authorized · 1 sitting")
     expect(facts).not.toHaveProperty("senior")
     expect(facts).not.toHaveProperty("anchor")
   })

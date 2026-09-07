@@ -110,11 +110,16 @@ function summaryFor(court: Court, judges: Judge[]): string {
   const active = judges.filter((j) => j.status === "active").length
   const senior = judges.filter((j) => j.status === "senior").length
   const vacant = Math.max(0, authorized - active)
-  if (court.tenure_type === "fixed_term")
-    return `Fixed-term court · ${authorized} authorized · ${active} sitting · ${vacant} vacant`
-  if (court.court_level === "scotus")
-    return `${authorized} authorized · ${active} active · ${vacant} vacant`
-  return `${authorized} authorized · ${active} active · ${senior} senior · ${vacant} vacant`
+  const parts: string[] = []
+  if (court.tenure_type === "fixed_term") parts.push("Fixed-term court")
+  parts.push(`${authorized} authorized`)
+  parts.push(court.tenure_type === "fixed_term" ? `${active} sitting` : `${active} active`)
+  if (court.tenure_type !== "fixed_term" && court.court_level !== "scotus")
+    parts.push(`${senior} senior`)
+  // A full bench is the unremarkable case; saying "0 vacant" spends the tooltip's one line
+  // on a non-fact. Only an actual vacancy is worth the reader's attention.
+  if (vacant > 0) parts.push(`${vacant} vacant`)
+  return parts.join(" · ")
 }
 
 /** The majority/en banc explainers, verbatim from upstream's pane (they cite statute). */
