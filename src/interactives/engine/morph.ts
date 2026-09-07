@@ -101,6 +101,27 @@ export function lerpViewBox(a: readonly number[], b: readonly number[], u: numbe
   return a.map((v, i) => v + ((b[i] ?? v) - v) * u)
 }
 
+/**
+ * A camera path from one map to another that passes near a third rather than stopping at it.
+ *
+ * Crossing between two circuits used to be two journeys: out to the whole country, a full
+ * stop, then in again. The country is on the way, not a destination — so it is the control
+ * point of a quadratic Bézier and the camera never rests there.
+ */
+export function bezierViewBox(
+  from: readonly number[],
+  through: readonly number[],
+  to: readonly number[],
+  u: number,
+): number[] {
+  const inv = 1 - u
+  return from.map((v, i) => {
+    const mid = through[i] ?? v
+    const end = to[i] ?? v
+    return inv * inv * v + 2 * inv * u * mid + u * u * end
+  })
+}
+
 export interface MorphPair {
   key: string
   start: Subpath[]

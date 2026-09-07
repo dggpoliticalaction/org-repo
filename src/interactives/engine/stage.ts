@@ -1,6 +1,7 @@
 import { flipConstant, flipTransform, padViewBox, viewBoxAttr } from "./geometry"
 import {
   buildMorphPairs,
+  bezierViewBox,
   easeInOutCubic,
   largestSubpathCentre,
   lerpInto,
@@ -305,6 +306,49 @@ export class MapStage {
     return "done"
   }
 
+  /**
+   * From one child map straight to another, without stopping at the country between them.
+   *
+   * The shapes still travel through the overview — they have to, since the two maps share no
+   * outline to morph between, and the country is what both of them are made of. What changes
+   * is the camera: instead of flying out to the overview, halting, and flying in again, it
+   * follows one curve whose control point is the overview. The reader sees the whole country
+   * in passing, already on their way to where they asked to go.
+   */
+  async crossTo(
+    parentId: string,
+    asset: DrilldownAsset,
+  ): Promise<"done" | "fallback" | "cancelled" | "no-geometry"> {
+    if (this.destroyed) return "cancelled"
+    const fromId = this.view.parentId
+    const from = fromId ? this.locals.get(fromId) : undefined
+    // Nothing to cross from, or nothing to cross to: the ordinary drill knows what to do.
+    if (!fromId || !from || !this.hasGeometry(asset) || asset.viewBox === null) {
+      return this.drillIn(parentId, asset)
+    }
+    const to = this.ensureLocalLayer(parentId, asset)
+    const outPlan = this.morphPlanFor(fromId, from)
+    const inPlan = this.morphPlanFor(parentId, to)
+    if (!outPlan || !inPlan) return this.drillIn(parentId, asset)
+
+    this.view = { parentId }
+    this.setSelected(null)
+    this.cancelPendingHover()
+    this.opts.callbacks.onHover(null, null)
+    // The reader is looking at `from`, and that is where the curve starts.
+    this.renderMorph(outPlan, 1, outPlan.vbEnd)
+    this.attachMorphLayer(outPlan.el)
+    this.setLayerState(this.overview, "hidden-hard")
+    this.setLayerState(from, "hidden")
+    this.setLayerState(to, "hidden")
+    const how = await this.runCross(outPlan, inPlan)
+    if (how !== "done") return "cancelled"
+    this.handoff(to, true)
+    outPlan.el.remove()
+    inPlan.el.remove()
+    return "done"
+  }
+
   async drillOut(): Promise<"done" | "fallback" | "cancelled"> {
     const parentId = this.view.parentId
     const local = parentId ? this.locals.get(parentId) : undefined
@@ -320,6 +364,7 @@ export class MapStage {
       this.setLayerState(this.overview, "visible")
       return "fallback"
     }
+    this.renderMorph(plan, 1, plan.vbEnd)
     this.attachMorphLayer(plan.el)
     this.handoff(local!, false)
     if ((await this.runMorph(plan, false)) !== "done") return "cancelled"
@@ -1006,11 +1051,85 @@ export class MapStage {
   }
 
   /**
+   * Draw a plan at one point of its morph: shapes, camera and crossfade together.
+   *
+   * Every frame of every transition goes through here, and so does the priming that happens
+   * before a layer is attached. A plan is built at u = 0 — the country — but a transition that
+   * runs backwards starts at u = 1, and attaching it unprimed lets the browser paint one frame
+   * of the whole map before the loop's first write. That flash is a full zoom out and back.
+   */
+  private renderMorph(plan: MorphPlan, u: number, vb: readonly number[]): void {
+    for (const pr of plan.pairs) {
+      lerpInto(pr.start, pr.end, pr.work, u)
+      pr.node.setAttribute("d", serializePath(pr.work))
+    }
+    plan.svg.setAttribute("viewBox", vb.join(" "))
+    this.setFades(plan, u)
+  }
+
+  /**
    * Attach this morph's layer and drop any OTHER stale one. When a drill-out morph is
    * interrupted by a drill-in of a different parent, the first layer (a whole map) would
    * otherwise stay attached with nothing to remove it, and they pile up until every later
    * morph repaints several dead maps per frame.
    */
+  /**
+   * The two halves of a crossing, run as one movement.
+   *
+   * The first half plays the map being left backwards to the country; the second plays the
+   * country forwards into the map being entered. At the join both plans are drawing the same
+   * thing — the overview — so swapping which one is on screen is invisible. The camera does
+   * not know about the halves at all: it follows a single curve from the box being left,
+   * through the country, to the box being entered.
+   */
+  private runCross(outPlan: MorphPlan, inPlan: MorphPlan): Promise<"done" | "cancelled"> {
+    this.cancelMorph()
+    return new Promise((resolve) => {
+      const settle = (how: "done" | "cancelled"): void => {
+        if (how === "cancelled" && this.morphRAF !== null) caf(this.morphRAF)
+        this.morphRAF = null
+        this.morphCancel = null
+        resolve(how)
+      }
+      this.morphCancel = () => settle("cancelled")
+      // Longer than one morph, shorter than the two it replaces: the distance is greater, and
+      // the reader is never made to wait at the halfway point.
+      const dur = reducedMotion() ? 0 : Math.round(MORPH_MS * 1.4)
+      const t0 = nowMs()
+      let showingIn = false
+      let lastCommit = -Infinity
+      const frame = (): void => {
+        const elapsed = nowMs() - t0
+        if (elapsed > dur * 5 + MORPH_MS) {
+          this.setFades(inPlan, 1)
+          settle("done")
+          return
+        }
+        const t = dur > 0 ? Math.min(1, elapsed / dur) : 1
+        if (t < 1 && elapsed - lastCommit < MORPH_MIN_COMMIT_MS) {
+          this.morphRAF = raf(frame)
+          return
+        }
+        lastCommit = elapsed
+        const half = t < 0.5
+        const plan = half ? outPlan : inPlan
+        if (!half && !showingIn) {
+          showingIn = true
+          this.attachMorphLayer(inPlan.el)
+          outPlan.el.remove()
+        }
+        // Each half eases on its own, so the shapes leave and arrive at rest even though the
+        // camera never stops between them.
+        const u = half ? 1 - easeInOutCubic(t / 0.5) : easeInOutCubic((t - 0.5) / 0.5)
+        const vb = bezierViewBox(outPlan.vbEnd, outPlan.vbStart, inPlan.vbEnd, easeInOutCubic(t))
+        this.renderMorph(plan, u, vb)
+        if (t < 1) this.morphRAF = raf(frame)
+        else settle("done")
+      }
+      this.morphRAF = raf(frame)
+    })
+  }
+
   private attachMorphLayer(el: HTMLElement): void {
     if (this.morphLayer && this.morphLayer !== el) this.morphLayer.remove()
     this.morphLayer = el
@@ -1057,13 +1176,7 @@ export class MapStage {
         }
         lastCommit = elapsed
         const u = forward ? easeInOutCubic(t) : 1 - easeInOutCubic(t)
-        for (const pr of plan.pairs) {
-          lerpInto(pr.start, pr.end, pr.work, u)
-          pr.node.setAttribute("d", serializePath(pr.work))
-        }
-        const vb = lerpViewBox(plan.vbStart, plan.vbEnd, u)
-        plan.svg.setAttribute("viewBox", vb.join(" "))
-        this.setFades(plan, u)
+        this.renderMorph(plan, u, lerpViewBox(plan.vbStart, plan.vbEnd, u))
         if (t < 1) this.morphRAF = raf(frame)
         else settle("done")
       }

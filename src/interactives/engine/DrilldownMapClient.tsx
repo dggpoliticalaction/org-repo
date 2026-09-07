@@ -260,13 +260,12 @@ export function DrilldownMapClient({
         setPaneOpen(false)
         return
       }
-      // Fetch and leave at the same time: every morph is anchored to the overview, so there
-      // is no plan that goes from one child map straight to another — crossing between two
-      // circuits is a drill out and a drill in, which is the journey a reader would make by
-      // hand anyway. Without it the map being left stayed on the stage under the new one.
-      const pending = ensureAsset(parentId)
-      if (shownParent() !== null && (await drillOut()) === "cancelled") return
-      const asset = await pending
+      // Crossing from one child map to another is one movement, not a drill out followed by a
+      // drill in: the stage flies the camera through the overview rather than stopping there
+      // (`crossTo`). The asset is fetched first, because there is nothing to cross to until
+      // it has arrived.
+      const crossing = shownParent() !== null && shownParent() !== parentId
+      const asset = await ensureAsset(parentId)
       if (!asset || !stageRef.current) {
         // The map could not be fetched, but the reader still asked for this region: open the
         // pane on it anyway, where the error — and the drill button, now a retry — are shown.
@@ -283,14 +282,16 @@ export function DrilldownMapClient({
       stage.setRegions(merged)
       setView({ parentId })
       setBusy(true)
-      const how = await stage.drillIn(parentId, asset)
+      const how = crossing
+        ? await stage.crossTo(parentId, asset)
+        : await stage.drillIn(parentId, asset)
       setBusy(false)
       if (how === "cancelled") return
       // The morph clears the map's own highlight; put it back on the region the reader chose.
       if (via) stage.setSelected(parentId)
       stage.renderBlocks(blockIdsFor({ parentId }, merged, { ...loaded, [parentId]: asset }))
     },
-    [view.parentId, shownParent, ensureAsset, overview, loaded, select, drillOut, showPane],
+    [view.parentId, shownParent, ensureAsset, overview, loaded, select, showPane],
   )
 
   /**

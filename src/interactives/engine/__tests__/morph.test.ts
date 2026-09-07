@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import {
+  bezierViewBox,
   buildMorphPairs,
   easeInOutCubic,
   flipYInPlace,
@@ -58,6 +59,17 @@ describe("structure, flip, serialize, lerp", () => {
     lerpInto(a, b, out, 0.5)
     expect(Array.from(out[0]!)).toEqual([5, 5, 15, 15])
     expect(lerpViewBox([0, 0, 10, 10], [10, 10, 20, 20], 0.5)).toEqual([5, 5, 15, 15])
+  })
+
+  it("curves a crossing through the overview without landing on it", () => {
+    const from = [0, 0, 10, 10]
+    const through = [-50, -50, 200, 200]
+    const to = [100, 100, 10, 10]
+    expect(bezierViewBox(from, through, to, 0)).toEqual(from)
+    expect(bezierViewBox(from, through, to, 1)).toEqual(to)
+    // Halfway is a quarter of each end and half the country: wide enough to see the whole
+    // map in passing, never the full zoom-out that stopping there would be.
+    expect(bezierViewBox(from, through, to, 0.5)).toEqual([0, 0, 105, 105])
   })
 
   it("eases symmetrically and keeps the commit cap at 16 ms", () => {
