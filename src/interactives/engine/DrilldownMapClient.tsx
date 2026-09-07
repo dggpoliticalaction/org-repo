@@ -1,6 +1,6 @@
 "use client"
 
-import { MapIcon, PanelLeft } from "lucide-react"
+import { MapIcon, PanelLeft, PanelRight } from "lucide-react"
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 import {
@@ -93,6 +93,7 @@ export function DrilldownMapClient({
   const isMobile = useIsMobile()
   const railOpen = railChoice ?? !isMobile
   const railId = useId()
+  const paneId = useId()
 
   const [loaded, setLoaded] = useState<Record<string, DrilldownAsset>>({})
   const [loadState, setLoadState] = useState<Record<string, LoadState>>({})
@@ -342,10 +343,11 @@ export function DrilldownMapClient({
   // ---- the URL as the map's address ----------------------------------------------------------
 
   /**
-   * Where the reader is, written into the query string: `region` is the one whose pane is
-   * open — which is also what says which map is on screen — `view` stands in for it when the
-   * reader has closed the pane on a child map, and `record` names the pinned card. Every state
-   * a click can reach is therefore a link someone can send, and Back walks the way they came.
+   * Where the reader is, written into the query string: `region` is the one selected — which
+   * is also what says which map is on screen — `view` stands in for it when the
+   * reader is standing on with nothing selected, `pane` says whether the pane is open, and
+   * `record` names the pinned card. Every state a click can reach is therefore a link
+   * someone can send, and Back walks the way they came.
    *
    * The history entries are written by hand rather than through the router: this is the same
    * document either way, and a router navigation would re-run the page's own data fetch to
@@ -366,6 +368,10 @@ export function DrilldownMapClient({
       try {
         if (region && regions.byId[region]) {
           await revealRegion(region)
+          // The address is what says whether the pane is open; revealing a region opens it,
+          // which is only right if the address agrees. A pinned record says so too — the card
+          // it names lives in the pane, so naming one and closing the pane is a contradiction.
+          setPaneOpen(q.get("pane") === "1" || !!record)
           if (record) {
             pinNonce.current += 1
             setPinRequest({ regionId: region, recordId: record, nonce: pinNonce.current })
@@ -378,6 +384,10 @@ export function DrilldownMapClient({
         // applied to a stage that no longer exists.
         if (parent && parent !== shownParent()) await drillIn(parent)
         else if (!parent && shownParent()) await drillOut()
+        // Only when the address asks for it. A bare arrival names nothing, and asserting
+        // the other way there would re-close the pane a moment after load, over a reader who
+        // had just opened it.
+        if (q.get("pane") === "1") setPaneOpen(true)
       } finally {
         moving.current = false
       }
@@ -404,12 +414,15 @@ export function DrilldownMapClient({
       if (value) q.set(key, value)
       else q.delete(key)
     }
-    // A selected region already says which map it is on, so `view` is only for a map the
-    // reader is standing on with nothing open — never both, they would say the same thing.
-    const shown = paneOpen && selected ? selected : null
-    set("region", shown)
-    set("view", shown ? null : view.parentId)
-    set("record", shown ? pinned : null)
+    // Two questions, two keys. Where the reader is: a selected region, which already says
+    // which map it is on, or else the map they are standing on — never both, they would say
+    // the same thing. And whether the pane is open, which used to be implied by *which* of
+    // those keys was written, so closing the pane on a circuit turned `region` into `view`
+    // and the address looked like the reader had gone somewhere.
+    set("region", selected)
+    set("view", selected ? null : view.parentId)
+    set("pane", paneOpen ? "1" : null)
+    set("record", selected && paneOpen ? pinned : null)
     const after = q.toString()
     if (after === before) return
     // Moving the map or the pane is a step worth going back from; re-pinning a card is not,
@@ -639,112 +652,132 @@ export function DrilldownMapClient({
               />
             </div>
           </div>
-          {/* The map and the pane are one area from here down: the pane rises from the bottom
-              of the map rather than sitting under the whole page, which is what leaves the
-              rail beside it rather than above it. On a phone there is no room to overlay
-              anything on a 20rem map, so it stays stacked underneath. */}
-          <div className="relative flex min-w-0 flex-1 flex-col gap-3 md:h-(--drilldown-stage-h) md:gap-0">
-            <div
-              ref={viewportRef}
-              data-drilldown-viewport=""
-              data-view={view.parentId ? "child" : "overview"}
-              aria-busy={busy || undefined}
-              className={cn(
-                // The map takes whatever the sheet leaves it, rather than being covered by it:
-                // a map you cannot see is not a map. The stage watches its own box, so it
-                // re-fits as the sheet opens.
-                // `flex-1` only from `md`, where the column is what it flexes inside. On a phone
-                // the column is vertical, and a basis of zero there is a map of no height at all.
-                "bg-muted/30 @container relative h-(--drilldown-stage-h) min-w-0 overflow-hidden rounded-lg md:h-auto md:min-h-0 md:flex-1",
-                // The hover outline already follows keyboard focus (stage.ts); this is the ring
-                // on the map itself, so a reader can tell the map has focus at all.
-                "has-[path[tabindex]:focus-visible]:outline-ring has-[path[tabindex]:focus-visible]:outline-2 has-[path[tabindex]:focus-visible]:outline-offset-2",
+          <div
+            ref={viewportRef}
+            data-drilldown-viewport=""
+            data-view={view.parentId ? "child" : "overview"}
+            aria-busy={busy || undefined}
+            className={cn(
+              // The map keeps its whole height and gives up width instead: the pane beside it
+              // takes what it needs, and what is left is still a map. Underneath, the pane's
+              // height always cost the map more than it could spare.
+              // `flex-1` only from `md`, where the row is what it flexes inside and the flex
+              // is about width. On a phone the row is a column, and a basis of zero there is
+              // a map of no height at all.
+              "bg-muted/30 @container relative h-(--drilldown-stage-h) min-w-0 overflow-hidden rounded-lg md:flex-1",
+              // The hover outline already follows keyboard focus (stage.ts); this is the ring
+              // on the map itself, so a reader can tell the map has focus at all.
+              "has-[path[tabindex]:focus-visible]:outline-ring has-[path[tabindex]:focus-visible]:outline-2 has-[path[tabindex]:focus-visible]:outline-offset-2",
+            )}
+          >
+            <div className="absolute top-1 left-2 z-10 flex max-w-[calc(100%-1rem)] items-center gap-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                data-drilldown-rail-toggle=""
+                aria-expanded={railOpen}
+                aria-controls={railId}
+                aria-label={railOpen ? "Hide the region list" : "Show the region list"}
+                onClick={() => setRailChoice(!railOpen)}
+                className="shrink-0"
+              >
+                <PanelLeft aria-hidden="true" />
+              </Button>
+              {trail.length > 0 && (
+                <>
+                  <Separator orientation="vertical" className="mr-2" />
+                  <Breadcrumb
+                    data-drilldown-trail=""
+                    aria-label="Where you are on the map"
+                    className="min-w-0"
+                  >
+                    <BreadcrumbList className="flex-nowrap gap-1 sm:gap-1.5">
+                      <BreadcrumbItem>
+                        <BreadcrumbLink
+                          render={
+                            <button
+                              type="button"
+                              data-drilldown-trail-root=""
+                              aria-label="Back to the whole map"
+                              onClick={() => void drillOut()}
+                              className="flex items-center"
+                            />
+                          }
+                        >
+                          <MapIcon aria-hidden="true" className="size-4" />
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      {trail.map((region, i) => (
+                        <React.Fragment key={region.id}>
+                          <BreadcrumbSeparator />
+                          <BreadcrumbItem className="min-w-0">
+                            {i === trail.length - 1 ? (
+                              <BreadcrumbPage className="truncate" title={region.label}>
+                                {region.label}
+                              </BreadcrumbPage>
+                            ) : (
+                              <BreadcrumbLink
+                                title={region.label}
+                                render={
+                                  <button
+                                    type="button"
+                                    data-drilldown-trail-item={region.id}
+                                    onClick={() => void open(region.id, "keyboard")}
+                                    className="max-w-40 truncate"
+                                  />
+                                }
+                              >
+                                {region.label}
+                              </BreadcrumbLink>
+                            )}
+                          </BreadcrumbItem>
+                        </React.Fragment>
+                      ))}
+                    </BreadcrumbList>
+                  </Breadcrumb>
+                </>
               )}
-            >
-              <div className="absolute top-1 left-2 z-10 flex max-w-[calc(100%-1rem)] items-center gap-1">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  data-drilldown-rail-toggle=""
-                  aria-expanded={railOpen}
-                  aria-controls={railId}
-                  aria-label={railOpen ? "Hide the region list" : "Show the region list"}
-                  onClick={() => setRailChoice(!railOpen)}
-                  className="shrink-0"
-                >
-                  <PanelLeft aria-hidden="true" />
-                </Button>
-                {trail.length > 0 && (
-                  <>
-                    <Separator orientation="vertical" className="mr-2" />
-                    <Breadcrumb
-                      data-drilldown-trail=""
-                      aria-label="Where you are on the map"
-                      className="min-w-0"
-                    >
-                      <BreadcrumbList className="flex-nowrap gap-1 sm:gap-1.5">
-                        <BreadcrumbItem>
-                          <BreadcrumbLink
-                            render={
-                              <button
-                                type="button"
-                                data-drilldown-trail-root=""
-                                aria-label="Back to the whole map"
-                                onClick={() => void drillOut()}
-                                className="flex items-center"
-                              />
-                            }
-                          >
-                            <MapIcon aria-hidden="true" className="size-4" />
-                          </BreadcrumbLink>
-                        </BreadcrumbItem>
-                        {trail.map((region, i) => (
-                          <React.Fragment key={region.id}>
-                            <BreadcrumbSeparator />
-                            <BreadcrumbItem className="min-w-0">
-                              {i === trail.length - 1 ? (
-                                <BreadcrumbPage className="truncate" title={region.label}>
-                                  {region.label}
-                                </BreadcrumbPage>
-                              ) : (
-                                <BreadcrumbLink
-                                  title={region.label}
-                                  render={
-                                    <button
-                                      type="button"
-                                      data-drilldown-trail-item={region.id}
-                                      onClick={() => void open(region.id, "keyboard")}
-                                      className="max-w-40 truncate"
-                                    />
-                                  }
-                                >
-                                  {region.label}
-                                </BreadcrumbLink>
-                              )}
-                            </BreadcrumbItem>
-                          </React.Fragment>
-                        ))}
-                      </BreadcrumbList>
-                    </Breadcrumb>
-                  </>
-                )}
-              </div>
-              {children}
-              <div ref={layersRef} data-drilldown-layers="" />
             </div>
-            <div
-              data-drilldown-sheet=""
-              data-open={paneOpen ? "" : undefined}
-              className={cn(
-                "flex min-h-0 shrink-0 flex-col overflow-hidden pt-2",
-                "motion-safe:transition-[max-height] motion-safe:duration-200 motion-safe:ease-out",
-                // Open, it takes most of the area and scrolls what it cannot show; collapsed,
-                // it is the pane's header and nothing else, and the whole map is back.
-                paneOpen ? "max-h-[62%]" : "max-h-11",
-              )}
+            {/* The pane folds away entirely, so this is the way back to it — the mirror of
+                  the rail's own toggle, in the opposite corner. */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              data-drilldown-pane-toggle-map=""
+              aria-expanded={paneOpen}
+              aria-controls={paneId}
+              aria-label={paneOpen ? "Hide the details" : "Show the details"}
+              onClick={() => setPaneOpen((was) => !was)}
+              className="absolute top-1 right-2 z-10"
             >
-              {pane}
+              <PanelRight aria-hidden="true" />
+            </Button>
+            {children}
+            <div ref={layersRef} data-drilldown-layers="" />
+          </div>
+          {/* Beside the map, not beneath it. Its height is whatever it needs, and underneath
+              that always cost the map more than it could spare — so it folds along its width
+              here, and along its height on a phone, where beneath is the only place for it. */}
+          <div
+            id={paneId}
+            inert={!paneOpen || undefined}
+            className={cn(
+              "grid min-w-0 motion-safe:transition-[grid-template-columns,grid-template-rows] motion-safe:duration-200 motion-safe:ease-out",
+              paneOpen
+                ? "grid-cols-[1fr] grid-rows-[1fr]"
+                : "grid-cols-[1fr] grid-rows-[0fr] md:grid-cols-[0fr] md:grid-rows-[1fr]",
+            )}
+          >
+            <div className="-m-1 min-h-0 min-w-0 overflow-hidden p-1">
+              <div
+                data-drilldown-sheet=""
+                data-open={paneOpen ? "" : undefined}
+                className="bg-card border-border flex min-h-0 flex-col rounded-lg border md:h-(--drilldown-stage-h) md:w-88 lg:w-96"
+              >
+                {pane}
+              </div>
             </div>
           </div>
         </div>

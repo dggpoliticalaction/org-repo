@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, waitFor, within } from "@testing-library/react"
+import { act, cleanup, fireEvent, render, waitFor, within } from "@testing-library/react"
 import React from "react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
@@ -290,12 +290,12 @@ describe("DrilldownMapClient", () => {
     window.history.replaceState(null, "", "/interactives/courts")
     const { container } = setup()
     fireEvent.click(selector(container).getByRole("button", { name: "West" }))
-    await waitFor(() => expect(window.location.search).toBe("?region=west"))
+    await waitFor(() => expect(window.location.search).toBe("?region=west&pane=1"))
 
     // a pinned card is part of the address too
     const p = pane(container)
     fireEvent.click(await within(p).findByRole("button", { name: "Ada Lovelace" }))
-    await waitFor(() => expect(window.location.search).toBe("?region=west&record=a"))
+    await waitFor(() => expect(window.location.search).toBe("?region=west&pane=1&record=a"))
 
     // and stepping back out empties it again
     fireEvent.click(
@@ -307,6 +307,39 @@ describe("DrilldownMapClient", () => {
     await waitFor(() => expect(window.location.search).toBe(""))
   })
 
+  it("puts the pane's own open state in the address, and reads it back", async () => {
+    window.history.replaceState(null, "", "/interactives/courts")
+    const { container } = setup()
+    const toggle = (): HTMLElement =>
+      container.querySelector<HTMLElement>("[data-drilldown-pane-toggle]")!
+
+    // The address is not written until it has first been read, so let the mount settle.
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    // Open on the overview: no region says it, so the address has to.
+    expect(toggle()).toHaveAttribute("aria-expanded", "false")
+    fireEvent.click(toggle())
+    expect(toggle()).toHaveAttribute("aria-expanded", "true")
+    await waitFor(() => expect(window.location.search).toBe("?pane=1"))
+    fireEvent.click(toggle())
+    await waitFor(() => expect(window.location.search).toBe(""))
+
+    // A region says it by itself, so the flag would be saying it twice.
+    fireEvent.click(selector(container).getByRole("button", { name: "West" }))
+    await waitFor(() => expect(window.location.search).toBe("?region=west&pane=1"))
+
+    cleanup()
+    window.history.replaceState(null, "", "/interactives/courts?pane=1")
+    const restored = setup()
+    await waitFor(() =>
+      expect(restored.container.querySelector("[data-drilldown-sheet]")).toHaveAttribute(
+        "data-open",
+      ),
+    )
+  })
+
   it("records where a move lands, not the maps it passed through", async () => {
     window.history.replaceState(null, "", "/interactives/courts")
     const { container } = setup()
@@ -316,7 +349,7 @@ describe("DrilldownMapClient", () => {
     const entries = (): (string | URL | null | undefined)[] => push.mock.calls.map((c) => c[2])
 
     fireEvent.click(within(nav()).getByRole("button", { name: "West" }))
-    await waitFor(() => expect(window.location.search).toBe("?region=west"))
+    await waitFor(() => expect(window.location.search).toBe("?region=west&pane=1"))
     fireEvent.click(within(nav()).getByRole("button", { name: "Back to overview" }))
     await waitFor(() => expect(window.location.search).toBe(""))
     push.mockClear()
@@ -324,8 +357,8 @@ describe("DrilldownMapClient", () => {
     // One click, one entry: the circuit's map is where the district is drawn, not a place the
     // reader stopped, so Back from here belongs to the overview they set out from.
     fireEvent.click(within(nav()).getByRole("button", { name: "West 1" }))
-    await waitFor(() => expect(window.location.search).toBe("?region=w1"))
-    expect(entries()).toEqual(["/interactives/courts?region=w1"])
+    await waitFor(() => expect(window.location.search).toBe("?region=w1&pane=1"))
+    expect(entries()).toEqual(["/interactives/courts?region=w1&pane=1"])
   })
 
   it("restores a deep link: the child map, its region and the pinned record", async () => {
@@ -346,7 +379,7 @@ describe("DrilldownMapClient", () => {
     expect(within(detail).getByText("Katherine Johnson")).toBeInTheDocument()
     // the region already says which map it is on, so nothing is added — and arriving
     // somewhere is not a step to go back from
-    expect(window.location.search).toBe("?region=w1&record=d")
+    expect(window.location.search).toBe("?region=w1&record=d&pane=1")
     expect(push).not.toHaveBeenCalled()
   })
 
@@ -403,7 +436,7 @@ describe("DrilldownMapClient", () => {
     await waitFor(() =>
       expect(local.querySelector('path[data-region-id="w1"]')).toHaveAttribute("data-selected"),
     )
-    await waitFor(() => expect(window.location.search).toBe("?region=w1"))
+    await waitFor(() => expect(window.location.search).toBe("?region=w1&pane=1"))
   })
 
   it("restores a deep link onto the stage that is actually on screen", async () => {
@@ -485,13 +518,13 @@ describe("DrilldownMapClient", () => {
     const sheet = (): HTMLElement => container.querySelector<HTMLElement>("[data-drilldown-sheet]")!
     const toggle = (): HTMLElement =>
       container.querySelector<HTMLElement>("[data-drilldown-pane-toggle]")!
-    // The pane is inside the same box as the map, which is what leaves the rail beside it,
-    // and it brings its own header — the one control that names it and opens it.
+    // The pane stands beside the map, in the same row as the map and the rail, and brings its
+    // own header — the one control that names it and opens it.
     expect(sheet().contains(pane(container))).toBe(true)
     expect(pane(container).contains(toggle())).toBe(true)
-    expect(container.querySelector("[data-drilldown-viewport]")?.parentElement).toBe(
-      sheet().parentElement,
-    )
+    const row = container.querySelector("[data-drilldown-viewport]")!.parentElement!
+    expect(row.contains(sheet())).toBe(true)
+    expect(row.contains(container.querySelector("[data-drilldown-rail]"))).toBe(true)
 
     // Collapsed on arrival: the map is what a reader came for.
     expect(sheet()).not.toHaveAttribute("data-open")
