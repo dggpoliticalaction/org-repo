@@ -250,11 +250,17 @@ export function pullbackViewBox(
  * Scaling stays uniform even though the two extents rarely agree on aspect: a fraction of a
  * percent of slack in the outlines is not worth squashing the seat blocks over.
  */
+export function frameScale(content: readonly number[], blended: readonly number[]): number {
+  const [, , aw, ah] = content as [number, number, number, number]
+  const [, , bw, bh] = blended as [number, number, number, number]
+  return aw > 0 && ah > 0 ? Math.sqrt((bw / aw) * (bh / ah)) : 1
+}
+
 export function frameTransform(content: readonly number[], blended: readonly number[]): string {
   const [ax, ay, aw, ah] = content as [number, number, number, number]
   const [bx, by, bw, bh] = blended as [number, number, number, number]
   if (aw <= 0 || ah <= 0) return ""
-  const s = Math.sqrt((bw / aw) * (bh / ah))
+  const s = frameScale(content, blended)
   const tx = bx + bw / 2 - s * (ax + aw / 2)
   const ty = by + bh / 2 - s * (ay + ah / 2)
   return `translate(${tx} ${ty}) scale(${s})`

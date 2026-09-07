@@ -7,6 +7,7 @@ import {
   easeOutCubic,
   flipYInPlace,
   frameForContent,
+  frameScale,
   frameTransform,
   largestSubpathCentre,
   lerpInto,
@@ -124,6 +125,18 @@ describe("structure, flip, serialize, lerp", () => {
     expect(frameTransform(overview, overview)).toBe("translate(0 0) scale(1)")
     // ...and the child's are a whole projection away, so they are brought onto it.
     expect(frameTransform(child, overview)).toBe("translate(-2000 -2000) scale(2)")
+  })
+
+  it("reports the scale a frame transform carries, for anything sized in pixels", () => {
+    const overview = [0, 0, 100, 100]
+    const child = [1000, 1000, 50, 50]
+    expect(frameScale(overview, overview)).toBe(1)
+    expect(frameScale(child, overview)).toBe(2)
+    // Seat blocks divide by it to stay the size they were drawn, so it has to agree with the
+    // transform the rest of the group is getting.
+    expect(frameTransform(child, overview)).toBe(
+      `translate(-2000 -2000) scale(${frameScale(child, overview)})`,
+    )
   })
 
   it("crosses the join at speed rather than coming to rest on it", () => {

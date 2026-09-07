@@ -5,6 +5,7 @@ import {
   easeInOutCubic,
   easeOutCubic,
   frameForContent,
+  frameScale,
   frameTransform,
   largestSubpathCentre,
   lerpInto,
@@ -74,6 +75,10 @@ interface MorphPlan {
       drawing has translated and shrunk by any point in the morph. */
   contentFrom: number[]
   contentTo: number[]
+  /** Cloned seat blocks, and the drawing they were taken from, so a redraw can be noticed. */
+  blocksOut: SVGGElement
+  blocksIn: SVGGElement
+  blocksGen: number
   fadeOut: SVGGElement[]
   fadeIn: SVGGElement[]
 }
@@ -170,6 +175,8 @@ export class MapStage {
   private readonly locals = new Map<string, Layer>()
   private readonly morphPlans = new Map<string, MorphPlan | null>()
   private morphLayer: HTMLElement | null = null
+  /** Bumped by every block redraw, so a morph in flight can notice its clones went stale. */
+  private blocksGen = 0
   private morphRAF: number | null = null
   private morphCancel: (() => void) | null = null
   private regions: RegionIndex
@@ -854,6 +861,7 @@ export class MapStage {
       group.appendChild(block)
     }
     layer.annotations.appendChild(group)
+    this.blocksGen++
     this.highlightBlocks(layer)
   }
 
@@ -878,8 +886,9 @@ export class MapStage {
       )
     }
     for (const [layer, list] of ids) if (list.length) this.drawBlocks(layer, list)
-    // cached plans carry cloned block groups sized for the old viewport
-    this.morphPlans.clear()
+    // Nothing else a plan holds is measured in pixels — its shapes and both extents come from
+    // the files — so a running morph picks the new blocks up rather than the cache being
+    // thrown away, which never reached the morph already in the air anyway.
   }
 
   private highlightBlocks(layer: Layer): void {
@@ -1045,6 +1054,9 @@ export class MapStage {
       layer: local,
       contentFrom,
       contentTo,
+      blocksOut,
+      blocksIn,
+      blocksGen: this.blocksGen,
       fadeOut: [shapesOut, blocksOut],
       fadeIn: [shapesIn, blocksIn],
     }
@@ -1092,7 +1104,66 @@ export class MapStage {
    * runs backwards starts at u = 1, and attaching it unprimed lets the browser paint one frame
    * of the whole map before the loop's first write. That flash is a full zoom out and back.
    */
+  /**
+   * Take the block groups again if either layer has redrawn its own since the plan was built.
+   *
+   * A block is sized in map units to come out at a constant number of CSS px, and for a map
+   * wider than the stage that conversion runs off the viewport's width — which the side panels
+   * change while a transition is still running. The clone the plan took would then hand over to
+   * a layer whose blocks are a different size, and the seats would jump as the map arrived.
+   */
+  private syncPlanBlocks(plan: MorphPlan): void {
+    if (plan.blocksGen === this.blocksGen) return
+    plan.blocksGen = this.blocksGen
+    for (const [src, into] of [
+      [this.overview, plan.blocksOut],
+      [plan.layer, plan.blocksIn],
+    ] as const) {
+      into.replaceChildren()
+      const blocks = src.annotations.querySelector("g[data-drilldown-blocks]")
+      if (blocks) into.appendChild(blocks.cloneNode(true))
+    }
+  }
+
+  /** The px-per-unit a viewBox letterboxes to in the current viewport — SVG's own `meet`. */
+  private fitScale(vb: readonly number[]): number {
+    const { cw, ch } = this.viewportPx()
+    const [, , w, h] = vb as [number, number, number, number]
+    return w > 0 && h > 0 ? Math.min(cw / w, ch / h) : 1
+  }
+
+  /**
+   * Hold a group's seat blocks at the size they were drawn to be, whatever the camera is doing.
+   *
+   * A block is authored in map units chosen so it comes out at a fixed number of CSS px on its
+   * own map. Its own map is the one thing a morph is not looking at: the camera crosses a five
+   * fold zoom, and the blocks rode all of it, so a circuit's districts spent most of a crossing
+   * at a fifth of their size while the country's blocks they were crossfading with were five
+   * times theirs. Each block is scaled about its own centre, so only the size moves.
+   */
+  private sizeBlocks(group: SVGGElement, factor: number): void {
+    const near = !Number.isFinite(factor) || Math.abs(factor - 1) < 0.002
+    for (const block of group.querySelectorAll<SVGGElement>("g[data-drilldown-block]")) {
+      if (near) {
+        block.removeAttribute("transform")
+        continue
+      }
+      // The hit rect spans the block, so its middle is the block's — and it is plain attribute
+      // arithmetic, which a layer that has never been laid out can still answer.
+      const hit = block.querySelector("rect[data-block-hit]")
+      if (!hit) continue
+      const cx = Number(hit.getAttribute("x")) + Number(hit.getAttribute("width")) / 2
+      const cy = Number(hit.getAttribute("y")) + Number(hit.getAttribute("height")) / 2
+      if (!Number.isFinite(cx) || !Number.isFinite(cy)) continue
+      block.setAttribute(
+        "transform",
+        `translate(${cx} ${cy}) scale(${factor}) translate(${-cx} ${-cy})`,
+      )
+    }
+  }
+
   private renderMorph(plan: MorphPlan, u: number, vb: readonly number[]): void {
+    this.syncPlanBlocks(plan)
     for (const pr of plan.pairs) {
       lerpInto(pr.start, pr.end, pr.work, u)
       pr.node.setAttribute("d", serializePath(pr.work))
@@ -1104,6 +1175,16 @@ export class MapStage {
       n.setAttribute("transform", frameTransform(plan.contentFrom, blended))
     for (const n of plan.fadeIn)
       n.setAttribute("transform", frameTransform(plan.contentTo, blended))
+    // Blocks are the exception to riding the frame: they are sized in px, not in map units.
+    const shown = this.fitScale(vb)
+    this.sizeBlocks(
+      plan.blocksOut,
+      this.fitScale(plan.vbStart) / (frameScale(plan.contentFrom, blended) * shown),
+    )
+    this.sizeBlocks(
+      plan.blocksIn,
+      this.fitScale(plan.layer.render) / (frameScale(plan.contentTo, blended) * shown),
+    )
     plan.svg.setAttribute("viewBox", vb.join(" "))
     this.setFades(plan, u)
   }
