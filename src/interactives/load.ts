@@ -10,7 +10,7 @@ import { getPayloadConfig } from "@/utilities/getPayloadConfig"
 import { isRecord } from "@/utilities/isRecord"
 
 import { childKeys, composeChildData, composeChildGeometry, composeOverview } from "./compose"
-import { geometryHash } from "./hash"
+import { geometryHash, profileFingerprint } from "./hash"
 import { getProfile } from "./profiles"
 import { composeSearchIndex } from "./search"
 import { DRILLDOWN_DATA_SCHEMA, type DrilldownData, type InteractiveProfile } from "./types"
@@ -60,6 +60,22 @@ const readSnapshotData = cache(
     return data as unknown as DrilldownData
   },
 )
+
+/**
+ * The code half of the cache key, worked out once per profile per process. The geometry it
+ * hashes is imported JSON held for the life of the process, so this is one pass over it.
+ */
+const fingerprints = new Map<string, Promise<string>>()
+
+function fingerprintOf(profile: InteractiveProfile): Promise<string> {
+  const held = fingerprints.get(profile.id)
+  if (held) return held
+  const computed = profile
+    .loadGeometry()
+    .then((geometry) => profileFingerprint(profile.presentation, geometry))
+  fingerprints.set(profile.id, computed)
+  return computed
+}
 
 export interface ComposedOverview {
   overview: DrilldownAsset
@@ -137,7 +153,12 @@ export async function loadInteractiveOverview(
   if (draft) return composeOverviewFor(interactive, profile, true)
   return unstable_cache(
     () => composeOverviewFor(interactive, profile, false),
-    ["interactive-overview", String(interactive.id), interactive.slug],
+    [
+      "interactive-overview",
+      String(interactive.id),
+      interactive.slug,
+      await fingerprintOf(profile),
+    ],
     { tags: [interactiveTag(interactive.id)] },
   )()
 }
@@ -167,7 +188,7 @@ export async function loadInteractiveRegion(
   if (draft) return composeChildFor(interactive, profile, regionId, true)
   return unstable_cache(
     () => composeChildFor(interactive, profile, regionId, false),
-    ["interactive-region", String(interactive.id), regionId],
+    ["interactive-region", String(interactive.id), regionId, await fingerprintOf(profile)],
     { tags: [interactiveTag(interactive.id)] },
   )()
 }
@@ -192,7 +213,7 @@ export async function loadInteractiveSearchIndex(
   if (draft) return composeSearchIndexFor(interactive, profile, true)
   return unstable_cache(
     () => composeSearchIndexFor(interactive, profile, false),
-    ["interactive-search", String(interactive.id), interactive.slug],
+    ["interactive-search", String(interactive.id), interactive.slug, await fingerprintOf(profile)],
     { tags: [interactiveTag(interactive.id)] },
   )()
 }

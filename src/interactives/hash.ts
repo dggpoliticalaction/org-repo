@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto"
 
-import type { DrilldownData, GeometryFile } from "./types"
+import type { DrilldownData, DrilldownGeometry, DrilldownPresentation, GeometryFile } from "./types"
 
 /** JSON with object keys sorted at every level, so equal data hashes equal. */
 export function stableStringify(value: unknown): string {
@@ -41,4 +41,28 @@ export function geometryHash(file: GeometryFile | null): string {
   const hash = createHash("sha256").update(stableStringify(file)).digest("hex").slice(0, 12)
   geometryHashes.set(file, hash)
   return hash
+}
+
+/**
+ * What a profile's *code* contributes to a composed asset: its presentation, and the geometry
+ * it draws. Both are checked in, so this moves on a deploy and at no other time.
+ *
+ * It belongs in the cache key because the composed asset is a mixture of code and data, and
+ * the tag on it only knows about the data. Without it, changing a label, an icon or a set of
+ * options served the old one until an editor happened to publish something — which is not a
+ * connection anyone would make, and cost this project three separate afternoons of "why is it
+ * still showing that".
+ */
+export function profileFingerprint(
+  presentation: DrilldownPresentation,
+  geometry: DrilldownGeometry,
+): string {
+  const parts = [
+    stableStringify(presentation),
+    geometryHash(geometry.overview),
+    ...Object.keys(geometry.children)
+      .sort()
+      .map((id) => `${id}:${geometryHash(geometry.children[id] ?? null)}`),
+  ]
+  return createHash("sha256").update(parts.join("|")).digest("hex").slice(0, 12)
 }
