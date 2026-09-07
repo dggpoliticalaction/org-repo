@@ -72,12 +72,16 @@ export async function readCourtTrackerSources(
     optional<Record<string, PresidentPhoto>>(f.president_photos),
     optional<Appointment[]>(f.appointments),
   ])
+  // Read together, but keyed back in the manifest's own order. Assigning as each read lands
+  // makes the bundle order — and so the order of every record in the snapshot, and the content
+  // hash over it — depend on which request finished first: two syncs of identical upstream
+  // data would disagree, and each would write a new version saying nothing had changed.
+  const bundles = Object.entries(f.judges)
+  const loaded = await Promise.all(bundles.map(([, path]) => files.readJson<Judge[]>(path)))
   const judges: Record<string, Judge[]> = {}
-  await Promise.all(
-    Object.entries(f.judges).map(async ([bundle, path]) => {
-      judges[bundle] = await files.readJson<Judge[]>(path)
-    }),
-  )
+  bundles.forEach(([bundle], i) => {
+    judges[bundle] = loaded[i]!
+  })
   return {
     version: manifest.version,
     generatedAt: manifest.generated,
