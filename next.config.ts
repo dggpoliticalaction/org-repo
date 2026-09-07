@@ -44,6 +44,17 @@ const nextConfig: NextConfig = {
     ],
   },
   reactStrictMode: true,
+  experimental: {
+    serverActions: {
+      // Payload's admin round-trips a whole document through a Server Action to save,
+      // publish or unpublish it, and an interactive snapshot carries the researcher's feed
+      // as one JSON field — 1.3 MB for the federal judiciary today, and it only grows.
+      // Next's default is 1 MB, so unpublishing a snapshot failed with "Body exceeded 1 MB
+      // limit". The field never needs to be in that form at all (issue #905), but the limit
+      // is what stands between an editor and a broken publish button today.
+      bodySizeLimit: "8mb",
+    },
+  },
   // Interactive Map drilldown assets are fetched lazily from stable, same-origin paths that
   // are emitted into the article HTML (so a crawler can capture them). With local storage the
   // files sit in public/map-assets and Next serves them directly; with S3 enabled this proxies
