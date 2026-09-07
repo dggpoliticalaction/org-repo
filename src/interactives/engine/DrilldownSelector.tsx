@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Search } from "lucide-react"
 import React, { useEffect, useRef, useState } from "react"
 
 import {
@@ -19,7 +19,9 @@ import {
 } from "@/components/ui/sidebar"
 import { cn } from "@/utilities/utils"
 
-import { regionIcon } from "./icons"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+
+import { regionGlyph } from "./icons"
 import type { RegionIcons, RegionIndex } from "./types"
 
 export type SelectVia = "pointer" | "keyboard"
@@ -38,6 +40,10 @@ interface DrilldownSelectorProps {
   search?: React.ReactNode
   /** What the profile puts beside a top-level region, if anything. */
   icons?: RegionIcons
+  /** Folded to a column of glyphs: the top-level regions only, each named by a tooltip. */
+  collapsed?: boolean
+  /** Unfold the rail and put the reader in the search box — the folded column has no room. */
+  onSearch?(): void
   className?: string
 }
 
@@ -59,15 +65,21 @@ const ACTIVE_ROW =
  */
 const rowProps = (
   regionId: string,
-  { label, selected, tabbable }: { label: string; selected: boolean; tabbable: boolean },
+  {
+    label,
+    selected,
+    tabbable,
+    titled = true,
+  }: { label: string; selected: boolean; tabbable: boolean; titled?: boolean },
 ) => ({
   type: "button" as const,
   "data-region-item": regionId,
   "aria-pressed": selected,
   tabIndex: tabbable ? 0 : -1,
   // Court names run to "District of the Northern Mariana Islands"; the rail is sized for most
-  // of them and this is how a reader gets the rest.
-  title: label,
+  // of them and this is how a reader gets the rest. Top-level rows say it in a tooltip
+  // instead — they have to, since folded they are a glyph with no name showing at all.
+  title: titled ? label : undefined,
 })
 
 /** Long enough to read as a movement, short enough not to be waited on. */
@@ -85,7 +97,15 @@ const BRANCH_MS = 220
  * that mounts already open — every first open, since its children arrive with the fetch —
  * would have nothing to animate from, so the first frame is spent closed.
  */
-function Branch({ open, children }: { open: boolean; children: React.ReactNode }): React.ReactNode {
+function Branch({
+  open,
+  className,
+  children,
+}: {
+  open: boolean
+  className?: string
+  children: React.ReactNode
+}): React.ReactNode {
   const [grown, setGrown] = useState(false)
   useEffect(() => {
     const frame = requestAnimationFrame(() => setGrown(open))
@@ -103,6 +123,7 @@ function Branch({ open, children }: { open: boolean; children: React.ReactNode }
         // height — for a reader who asked for no motion.
         "grid motion-safe:transition-[grid-template-rows] motion-safe:duration-200 motion-safe:ease-out",
         grown && open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+        className,
       )}
     >
       <div className="min-h-0 overflow-hidden">{children}</div>
@@ -136,6 +157,8 @@ export function DrilldownSelector({
   onBack,
   search,
   icons,
+  collapsed = false,
+  onSearch,
   className,
 }: DrilldownSelectorProps): React.ReactElement {
   const navRef = useRef<HTMLDivElement | null>(null)
@@ -195,118 +218,173 @@ export function DrilldownSelector({
     // results from being clipped by it.
     <SidebarProvider
       data-drilldown-rail=""
+      // Folding is a state of this one rail, not a second rail: the rows stay where they are
+      // and their names collapse away, so the glyphs slide into the narrow column rather than
+      // being replaced by a different set of buttons in a different place.
+      data-collapsed={collapsed ? "" : undefined}
       // An in-page rail, not an app shell: the wrapper must not claim the viewport's height
       // or the row's whole width. Never taller than the stage beside it either, so it scrolls
       // within its own height instead of stretching the page — and shorter still on a phone,
       // where it sits above the map.
-      className={cn("max-h-56 min-h-0 w-auto md:max-h-(--drilldown-stage-h)", className)}
+      className={cn("group/rail max-h-56 min-h-0 w-auto md:max-h-(--drilldown-stage-h)", className)}
     >
       {/* `h-auto`, not the sidebar's own `h-full`: the column is bounded by a max-height and
           nothing else, so a percentage height has nothing definite to resolve against and
           falls back to the content's own. Letting the flex row stretch it is what keeps the
           list inside the cap — and therefore scrolling. */}
-      <Sidebar collapsible="none" className="h-auto min-h-0 w-full bg-transparent">
-        {search && <SidebarHeader className="p-0 pb-2">{search}</SidebarHeader>}
-        <SidebarContent
-          ref={navRef}
-          role="navigation"
-          aria-label="Regions"
-          data-drilldown-selector=""
-          onKeyDown={onKeyDown}
-          // The registry's sidebar hides its scrollbar (`no-scrollbar`), and a rail that
-          // scrolls should say so. Marked important rather than left to which of two equally
-          // specific classes the stylesheet happens to print second.
-          className="[scrollbar-width:thin]!"
-        >
-          <SidebarGroup className="p-0">
-            {view.parentId && (
-              <SidebarMenuButton
-                data-drilldown-back=""
-                onClick={onBack}
-                className="text-muted-foreground mb-1"
-              >
-                <ChevronLeft aria-hidden="true" />
-                <span>Back to overview</span>
-              </SidebarMenuButton>
-            )}
-            <SidebarMenu>
-              {regions.topLevel.map((id) => {
-                const region = regions.byId[id]
-                if (!region) return null
-                const open = expanded === id
-                const kids = open || leaving === id ? childrenOf(id) : []
-                const expandable = isExpandable(id)
-                return (
-                  <SidebarMenuItem key={id}>
+      {/* The only tooltips here that are not the map's own: one wait for the first, none for
+          the rest of a sweep down the column. */}
+      <TooltipProvider delay={400} closeDelay={0}>
+        <Sidebar collapsible="none" className="h-auto min-h-0 w-full bg-transparent">
+          {search && (
+            <SidebarHeader className="p-0 pb-2 group-data-collapsed/rail:hidden">
+              {search}
+            </SidebarHeader>
+          )}
+          {/* A search box needs a rail's width, so folded it is a glyph that gives one back. */}
+          {search && onSearch && (
+            <SidebarHeader className="hidden p-0 pb-1 group-data-collapsed/rail:block">
+              <Tooltip>
+                <TooltipTrigger
+                  render={
                     <SidebarMenuButton
-                      {...rowProps(id, {
-                        label: region.label,
-                        selected: selected === id,
-                        tabbable: activeId === id,
-                      })}
-                      data-drillable={expandable ? "true" : undefined}
-                      aria-expanded={expandable ? expanded === id : undefined}
-                      isActive={selected === id}
-                      onClick={(e) => onSelect(id, viaOf(e))}
-                      className={ACTIVE_ROW}
-                    >
-                      {regionIcon(region, icons)}
-                      <span>{region.label}</span>
-                    </SidebarMenuButton>
-                    {expandable && (
-                      <SidebarMenuAction
-                        data-region-toggle={id}
-                        aria-label={`${expanded === id ? "Collapse" : "Expand"} ${region.label}`}
-                        tabIndex={-1}
-                        onClick={() => onToggle(id)}
-                        // The action sits over the row, so on the selected row it is drawn on
-                        // the inverted pill and its own `sidebar-foreground` is the colour of
-                        // the ground beneath it — invisible until hovered.
-                        className={cn(selected === id && "text-sidebar")}
-                      >
-                        <ChevronRight
-                          aria-hidden="true"
-                          className={cn("transition-transform", expanded === id && "rotate-90")}
-                        />
-                      </SidebarMenuAction>
-                    )}
-                    {kids.length > 0 && (
-                      <Branch open={open}>
-                        <SidebarMenuSub>
-                          {kids.map((childId) => {
-                            const child = regions.byId[childId]
-                            if (!child) return null
-                            return (
-                              <SidebarMenuSubItem key={childId}>
-                                <SidebarMenuSubButton
-                                  render={
-                                    <button
-                                      {...rowProps(childId, {
-                                        label: child.label,
-                                        selected: selected === childId,
-                                        tabbable: activeId === childId,
-                                      })}
-                                      onClick={(e) => onSelect(childId, viaOf(e))}
-                                    />
-                                  }
-                                  isActive={selected === childId}
-                                  className={ACTIVE_ROW}
-                                >
-                                  <span>{child.label}</span>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            )
+                      type="button"
+                      size="sm"
+                      data-drilldown-search-open=""
+                      aria-label="Search"
+                      onClick={onSearch}
+                      // The same padding as a region row, so the glyph lands in the one column
+                      // they all share rather than a little to one side of it.
+                      className="text-muted-foreground w-full"
+                    />
+                  }
+                >
+                  <Search aria-hidden="true" />
+                </TooltipTrigger>
+                <TooltipContent side="right">Search</TooltipContent>
+              </Tooltip>
+            </SidebarHeader>
+          )}
+          <SidebarContent
+            ref={navRef}
+            role="navigation"
+            aria-label="Regions"
+            data-drilldown-selector=""
+            onKeyDown={onKeyDown}
+            // The registry's sidebar hides its scrollbar (`no-scrollbar`), and a rail that
+            // scrolls should say so. Marked important rather than left to which of two equally
+            // specific classes the stylesheet happens to print second.
+            className="[scrollbar-width:thin]!"
+          >
+            <SidebarGroup className="p-0">
+              {view.parentId && (
+                <SidebarMenuButton
+                  data-drilldown-back=""
+                  onClick={onBack}
+                  // Folded there is no room for it and no need either: the trail across the top
+                  // of the map says where the reader is and takes them back up it.
+                  className="text-muted-foreground mb-1 group-data-collapsed/rail:hidden"
+                >
+                  <ChevronLeft aria-hidden="true" />
+                  <span>Back to overview</span>
+                </SidebarMenuButton>
+              )}
+              <SidebarMenu>
+                {regions.topLevel.map((id) => {
+                  const region = regions.byId[id]
+                  if (!region) return null
+                  const open = expanded === id
+                  const kids = open || leaving === id ? childrenOf(id) : []
+                  const expandable = isExpandable(id)
+                  return (
+                    <SidebarMenuItem key={id}>
+                      <Tooltip>
+                        <SidebarMenuButton
+                          {...rowProps(id, {
+                            label: region.label,
+                            selected: selected === id,
+                            tabbable: activeId === id,
+                            titled: false,
                           })}
-                        </SidebarMenuSub>
-                      </Branch>
-                    )}
-                  </SidebarMenuItem>
-                )
-              })}
-            </SidebarMenu>
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
+                          size="sm"
+                          data-drillable={expandable ? "true" : undefined}
+                          aria-expanded={expandable ? expanded === id : undefined}
+                          aria-label={region.label}
+                          isActive={selected === id}
+                          onClick={(e) => onSelect(id, viaOf(e))}
+                          // Nothing about the row's padding changes when it folds, so the
+                          // glyph keeps the same offset from the rail's edge either way and
+                          // the column narrowing is the only movement there is to see.
+                          className={ACTIVE_ROW}
+                          render={<TooltipTrigger render={<button type="button" />} />}
+                        >
+                          {regionGlyph(region, icons)}
+                          {/* Not hidden when it folds — clipped. The row's own overflow takes
+                              the name away as the column narrows over it, which is a movement
+                              rather than a disappearance, and the glyph beside it never
+                              shifts. */}
+                          <span>{region.label}</span>
+                        </SidebarMenuButton>
+                        <TooltipContent side="right">{region.label}</TooltipContent>
+                      </Tooltip>
+                      {expandable && (
+                        <SidebarMenuAction
+                          data-region-toggle={id}
+                          aria-label={`${expanded === id ? "Collapse" : "Expand"} ${region.label}`}
+                          tabIndex={-1}
+                          onClick={() => onToggle(id)}
+                          // The action sits over the row, so on the selected row it is drawn on
+                          // the inverted pill and its own `sidebar-foreground` is the colour of
+                          // the ground beneath it — invisible until hovered.
+                          className={cn(
+                            "group-data-collapsed/rail:hidden",
+                            selected === id && "text-sidebar",
+                          )}
+                        >
+                          <ChevronRight
+                            aria-hidden="true"
+                            className={cn("transition-transform", expanded === id && "rotate-90")}
+                          />
+                        </SidebarMenuAction>
+                      )}
+                      {kids.length > 0 && (
+                        <Branch open={open} className="group-data-collapsed/rail:hidden">
+                          <SidebarMenuSub>
+                            {kids.map((childId) => {
+                              const child = regions.byId[childId]
+                              if (!child) return null
+                              return (
+                                <SidebarMenuSubItem key={childId}>
+                                  <SidebarMenuSubButton
+                                    render={
+                                      <button
+                                        {...rowProps(childId, {
+                                          label: child.label,
+                                          selected: selected === childId,
+                                          tabbable: activeId === childId,
+                                        })}
+                                        onClick={(e) => onSelect(childId, viaOf(e))}
+                                      />
+                                    }
+                                    isActive={selected === childId}
+                                    className={ACTIVE_ROW}
+                                  >
+                                    <span>{child.label}</span>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              )
+                            })}
+                          </SidebarMenuSub>
+                        </Branch>
+                      )}
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+      </TooltipProvider>
     </SidebarProvider>
   )
 }

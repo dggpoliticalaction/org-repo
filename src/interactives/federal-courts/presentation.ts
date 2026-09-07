@@ -46,6 +46,9 @@ export const federalCourtsPresentation: DrilldownPresentation = {
   icons: {
     byRegion: { scotus: "landmark" },
     byLayer: { circuit: "scale" },
+    // Folded, the rail is a column of numerals: "9th" is drawn IX, the D.C. Circuit keeps its
+    // "DC", and the Supreme Court stays the building it already was.
+    shortFact: "short-label",
   },
   seats: {
     totalFact: "seats",

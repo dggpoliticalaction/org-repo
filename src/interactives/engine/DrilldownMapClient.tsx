@@ -116,6 +116,22 @@ export function DrilldownMapClient({
     setPaneOpen(open)
     if (open) setRailChoice(false)
   }, [])
+  /**
+   * The folded rail's search glyph. A search box needs a rail's width, so the glyph stands for
+   * one: it unfolds the rail and puts the reader where they were going, rather than making
+   * them open the rail and then find the box themselves.
+   */
+  const unfoldToSearch = useCallback(() => {
+    showRail(true)
+    // The box is only mounted once the rail is open, so it cannot be focused until after that
+    // render has happened.
+    requestAnimationFrame(() => {
+      document
+        .getElementById(railId)
+        ?.querySelector<HTMLInputElement>("[data-drilldown-search] input")
+        ?.focus()
+    })
+  }, [showRail, railId])
 
   const [hover, setHover] = useState<{ id: string; x: number; y: number } | null>(null)
   const [busy, setBusy] = useState(false)
@@ -624,32 +640,37 @@ export function DrilldownMapClient({
       >
         {/* The rail rides beside the map from tablet up, and above it on a phone. */}
         <div className="flex min-w-0 flex-col gap-1 md:flex-row md:items-start">
-          {/* Collapsing the rail hands its width to the map. It folds away rather than
-              shrinking to icons: every circuit carries the same glyph, so an icon rail would
-              be thirteen identical scales and no way to tell the 3rd from the 7th. The map
-              stays the way in — a region is clickable on it — and the rail is one press away.
-              `0fr → 1fr` is the same trick the branches use, so the two read as one motion. */}
+          {/* Collapsing the rail hands most of its width to the map and keeps a column of
+              glyphs, so changing circuit stays one press rather than three — open, choose, and
+              the rail folding itself away again behind the summary. It used to fold to nothing
+              because thirteen identical scales say nothing; a circuit drawn as its own numeral
+              does. Above the map there is no narrow column to keep, so there it still folds
+              away along its height — `0fr → 1fr`, the same trick the branches use. */}
           <div
             id={railId}
-            inert={!railOpen || undefined}
+            // Folded is not hidden on a wide screen: the glyphs are the point of folding.
+            inert={(!railOpen && isMobile) || undefined}
             className={cn(
-              // Beside the map the rail folds along its width; above the map it folds along
-              // its height, or a closed rail would leave a column of empty space behind.
-              "grid motion-safe:transition-[grid-template-columns,grid-template-rows] motion-safe:duration-200 motion-safe:ease-out",
+              "grid motion-safe:transition-[grid-template-rows,width] motion-safe:duration-200 motion-safe:ease-out",
+              "grid-cols-[1fr]",
               railChoice === null
-                ? "grid-cols-[1fr] grid-rows-[0fr] md:grid-cols-[1fr] md:grid-rows-[1fr]"
+                ? "grid-rows-[0fr] md:w-56 md:grid-rows-[1fr] lg:w-64"
                 : railChoice
-                  ? "grid-cols-[1fr] grid-rows-[1fr]"
-                  : "grid-cols-[1fr] grid-rows-[0fr] md:grid-cols-[0fr] md:grid-rows-[1fr]",
+                  ? "grid-rows-[1fr] md:w-56 lg:w-64"
+                  : "grid-rows-[0fr] md:w-11 md:grid-rows-[1fr]",
             )}
           >
             {/* The clip is the rail's exact box, so anything drawn outside it — a focus
                 ring, a shadow — was cut off at the edge. Padding gives it room and the
-                negative margin gives the space back. Only while it is open, though:
-                `overflow: hidden` clips at the padding box, so a folded rail would show four
-                pixels of itself — enough for the selected row's dark pill to sit on the edge
-                of the map like a tab. */}
-            <div className={cn("min-h-0 min-w-0 overflow-hidden", railOpen && "-m-1 p-1")}>
+                the column's own width carries it. Beside the map it applies either way, so a
+                glyph sits the same distance from the edge open or folded and the column
+                narrowing is the only movement. A negative margin would hide the padding from
+                the layout instead, and the rail would then spill past its column on both
+                sides and scroll the page sideways. Above the map, where folding still goes to no
+                height at all, only while open: `overflow: hidden` clips at the padding box, so
+                a folded rail would show four pixels of itself — enough for the selected row's
+                dark pill to sit on the edge of the map like a tab. */}
+            <div className={cn("min-h-0 min-w-0 overflow-hidden md:p-1", railOpen && "p-1")}>
               <DrilldownSelector
                 regions={regions}
                 view={view}
@@ -670,7 +691,9 @@ export function DrilldownMapClient({
                     />
                   )
                 }
-                className="md:w-56 lg:w-64"
+                collapsed={!railOpen}
+                onSearch={search ? unfoldToSearch : undefined}
+                className="w-full"
               />
             </div>
           </div>

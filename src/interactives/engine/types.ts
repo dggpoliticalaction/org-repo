@@ -193,6 +193,13 @@ export interface RegionIcons {
   byRegion?: Record<string, string>
   byLayer?: Record<string, string>
   default?: string
+  /**
+   * The fact holding a region's short form, for the rail when it is folded to icons. A leading
+   * number in it is the region's ordinal and is drawn as a Roman numeral ("9th" → IX); anything
+   * else short enough is drawn as it stands ("DC"). A profile that names no fact gets the
+   * ordinary icons, which is fine for a handful of regions and useless for thirteen alike.
+   */
+  shortFact?: string
 }
 
 export interface DrilldownPayload {

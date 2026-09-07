@@ -544,33 +544,35 @@ describe("DrilldownMapClient", () => {
 
   it("opens one panel at a time, and the map icon hands it back to the rail", async () => {
     const { container } = setup()
-    // Both panels are the same shape: a fold wrapper that goes `inert`, a clip, the panel.
-    const folded = (el: Element | null): boolean =>
-      el?.parentElement?.parentElement?.hasAttribute("inert") ?? false
-    const rail = (): Element | null => container.querySelector("[data-drilldown-rail]")
+    // The pane folds away to nothing and goes `inert`; the rail folds to its column of glyphs
+    // and stays reachable, so its own state attribute is what says which way it is.
     const sheet = (): Element | null => container.querySelector("[data-drilldown-sheet]")
+    const paneFolded = (): boolean =>
+      sheet()?.parentElement?.parentElement?.hasAttribute("inert") ?? false
+    const railFolded = (): boolean =>
+      container.querySelector("[data-drilldown-rail]")!.hasAttribute("data-collapsed")
 
     // Choosing a region is choosing to read about it: the rail that did the choosing folds.
-    expect(folded(rail())).toBe(false)
+    expect(railFolded()).toBe(false)
     fireEvent.click(selector(container).getByRole("button", { name: "West" }))
-    await waitFor(() => expect(folded(sheet())).toBe(false))
-    expect(folded(rail())).toBe(true)
+    await waitFor(() => expect(paneFolded()).toBe(false))
+    expect(railFolded()).toBe(true)
 
     // And back to the whole map is back to choosing.
     fireEvent.click(container.querySelector<HTMLElement>("[data-drilldown-trail-root]")!)
-    await waitFor(() => expect(folded(rail())).toBe(false))
-    expect(folded(sheet())).toBe(true)
+    await waitFor(() => expect(railFolded()).toBe(false))
+    expect(paneFolded()).toBe(true)
 
     // The two toggles are the same rule from either side.
     fireEvent.click(container.querySelector<HTMLElement>("[data-drilldown-pane-toggle-map]")!)
-    expect(folded(rail())).toBe(true)
-    expect(folded(sheet())).toBe(false)
+    expect(railFolded()).toBe(true)
+    expect(paneFolded()).toBe(false)
     fireEvent.click(container.querySelector<HTMLElement>("[data-drilldown-rail-toggle]")!)
-    expect(folded(rail())).toBe(false)
-    expect(folded(sheet())).toBe(true)
+    expect(railFolded()).toBe(false)
+    expect(paneFolded()).toBe(true)
   })
 
-  it("folds the rail away and hands its width to the map", async () => {
+  it("folds the rail to its glyphs and hands the rest of its width to the map", async () => {
     const { container } = setup()
     const toggle = (): HTMLElement =>
       container.querySelector<HTMLElement>("[data-drilldown-rail-toggle]")!
@@ -584,18 +586,42 @@ describe("DrilldownMapClient", () => {
     // in CSS rather than by a breakpoint read after mount: folded above the map on a phone,
     // open beside it from `md` up. A phone therefore renders it folded rather than animating
     // it shut on arrival.
-    expect(rail()).toHaveClass("grid-rows-[0fr]", "md:grid-rows-[1fr]", "md:grid-cols-[1fr]")
+    expect(rail()).toHaveClass("grid-rows-[0fr]", "md:grid-rows-[1fr]", "md:w-56")
     // The toggle says which thing it folds, which is the rail's own wrapper.
     expect(toggle().getAttribute("aria-controls")).toBe(rail().id)
+
+    const nav = (): HTMLElement =>
+      container.querySelector<HTMLElement>("[data-drilldown-selector]")!
+    expect(within(nav()).getByRole("button", { name: "West" })).toBeInTheDocument()
 
     fireEvent.click(toggle())
     expect(toggle()).toHaveAttribute("aria-expanded", "false")
     expect(toggle()).toHaveAccessibleName("Show the region list")
-    // Folded away is out of reach: no tabbing into a rail that is not on screen.
-    expect(rail()).toHaveAttribute("inert")
+    // Folded is a narrow column, not nothing: the width goes to the map and the regions stay
+    // where they were, so changing region is one press rather than three.
+    expect(rail()).toHaveClass("md:w-11")
+    expect(rail()).not.toHaveClass("md:w-56")
+    expect(within(nav()).getByRole("button", { name: "West" })).toBeInTheDocument()
+    // Beside the map it is on screen and reachable; only above the map, where it folds to no
+    // height at all, is it taken out of reach.
+    expect(rail()).not.toHaveAttribute("inert")
 
     fireEvent.click(toggle())
-    expect(rail()).not.toHaveAttribute("inert")
+    expect(rail()).toHaveClass("md:w-56")
+  })
+
+  it("folded, a region is its own numeral and says its name in a tooltip", async () => {
+    const { container } = setup()
+    const toggle = container.querySelector<HTMLElement>("[data-drilldown-rail-toggle]")!
+    const row = (id: string): HTMLElement =>
+      container.querySelector<HTMLElement>(`[data-region-item="${id}"]`)!
+
+    fireEvent.click(toggle)
+    // The rows are the same rows, so the glyph a reader was looking at is the one left behind,
+    // and its name is still what the row is called.
+    expect(row("west")).toHaveAccessibleName("West")
+    // Its name is the tooltip's job now, so the native one would say it twice.
+    expect(row("west")).not.toHaveAttribute("title")
   })
 
   it("puts the profile's icon beside a top-level region, and none beside a child", async () => {
