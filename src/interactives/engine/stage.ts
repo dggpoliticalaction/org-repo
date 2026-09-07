@@ -1,6 +1,7 @@
 import { flipConstant, flipTransform, padViewBox, viewBoxAttr } from "./geometry"
 import {
   buildMorphPairs,
+  crossApexViewBox,
   easeInCubic,
   easeInOutCubic,
   easeOutCubic,
@@ -1125,14 +1126,19 @@ export class MapStage {
    * whatever frame the drawing has reached by then. Both transitions use it, which is what
    * keeps a crossing's two halves agreeing at the country between them.
    */
-  private cameraFor(plan: MorphPlan, u: number): number[] {
+  private cameraFor(plan: MorphPlan, u: number, wide: readonly number[] = plan.vbStart): number[] {
     // `layer.render` is read every frame rather than captured with the plan. A child's box
     // reserves a gutter for its parent's seat block, and when the map is width-bound that
     // reservation is solved against the viewport's WIDTH — which the side panels change while
     // the morph is still running. A captured target would land a few pixels off the layer it
     // hands over to, and the map would visibly shrink and step right as it arrived.
     const dest = pullbackViewBox(plan.layer.render, plan.contentFrom, plan.contentTo)
-    return frameForContent(zoomViewBox(plan.vbStart, dest, u), plan.contentFrom, plan.contentTo, u)
+    return frameForContent(zoomViewBox(wide, dest, u), plan.contentFrom, plan.contentTo, u)
+  }
+
+  /** A plan's own destination in the overview's coordinates, which is where a flight aims. */
+  private destOf(plan: MorphPlan): number[] {
+    return pullbackViewBox(plan.layer.render, plan.contentFrom, plan.contentTo)
   }
 
   /** Cached per parent; a null result is cached too — a view that cannot morph is not re-checked. */
@@ -1275,6 +1281,10 @@ export class MapStage {
       // Longer than one morph, shorter than the two it replaces: the crossing covers a drill
       // out and a drill in, but hands over at speed instead of waiting at the country.
       const dur = reducedMotion() ? 0 : Math.round(MORPH_MS * 1.75)
+      // Both halves pull back to the same view, or the swap between them would be a jump. Only
+      // as far as it takes to hold both maps: the whole country is further than most crossings
+      // need to go, and the pull-back is the last part of one that still feels like a detour.
+      const apex = crossApexViewBox(this.destOf(outPlan), this.destOf(inPlan), outPlan.vbStart)
       const t0 = nowMs()
       let showingIn = false
       let lastCommit = -Infinity
@@ -1304,7 +1314,7 @@ export class MapStage {
         // Each half is its own drill flown one way or the other, so both are the country at
         // u = 0 and the swap between them lands on the same view.
         const u = half ? 1 - p : p
-        this.renderMorph(plan, u, this.cameraFor(plan, u))
+        this.renderMorph(plan, u, this.cameraFor(plan, u, apex))
         if (t < 1) this.morphRAF = raf(frame)
         else settle("done")
       }

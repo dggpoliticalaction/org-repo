@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import {
   buildMorphPairs,
+  crossApexViewBox,
   easeInCubic,
   easeInOutCubic,
   easeOutCubic,
@@ -137,6 +138,19 @@ describe("structure, flip, serialize, lerp", () => {
     expect(frameTransform(child, overview)).toBe(
       `translate(-2000 -2000) scale(${frameScale(child, overview)})`,
     )
+  })
+
+  it("pulls a crossing back only as far as it takes to hold both maps", () => {
+    const country = [0, 0, 1000, 500]
+    const near = crossApexViewBox([100, 100, 40, 20], [200, 120, 40, 20], country)
+    // Two maps a short way apart: a view of the ground between them, not a national one.
+    expect(near[2]).toBeLessThan(country[2]! / 2)
+    expect(near[0]! + near[2]! / 2).toBeCloseTo(170)
+    // Opposite ends: as far out as the country and no further, since the country is what the
+    // shapes have become by then and there is nothing past it to show.
+    const far = crossApexViewBox([0, 0, 40, 20], [960, 480, 40, 20], country)
+    expect(far[2]).toBeCloseTo(country[2]!)
+    expect(far[3]).toBeCloseTo(country[3]!)
   })
 
   it("crosses the join at speed rather than coming to rest on it", () => {

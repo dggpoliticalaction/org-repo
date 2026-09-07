@@ -266,6 +266,48 @@ export function frameTransform(content: readonly number[], blended: readonly num
   return `translate(${tx} ${ty}) scale(${s})`
 }
 
+/** How much air a crossing leaves around the two maps it has to hold. */
+const CROSS_MARGIN = 1.35
+
+/**
+ * The view a crossing passes through, in the overview's own coordinates: far enough out to
+ * hold both maps and their surroundings, and no further.
+ *
+ * Both halves must agree here — at the join they are drawing the same country, and the camera
+ * swaps between them — so this is computed once from the two ends rather than by each half.
+ * Going all the way out to the whole country is a longer journey than most crossings need: two
+ * neighbouring circuits do not require a national view to travel between, and now that the
+ * shapes travel smoothly the pull-back is the only part that still feels like a detour.
+ *
+ * Never wider than the country, because the country is what the shapes have become by then and
+ * there is nothing beyond it to show.
+ */
+export function crossApexViewBox(
+  from: readonly number[],
+  to: readonly number[],
+  country: readonly number[],
+): number[] {
+  const [fx, fy, fw, fh] = from as [number, number, number, number]
+  const [tx, ty, tw, th] = to as [number, number, number, number]
+  const [, , cw, ch] = country as [number, number, number, number]
+  const x0 = Math.min(fx, tx)
+  const y0 = Math.min(fy, ty)
+  const x1 = Math.max(fx + fw, tx + tw)
+  const y1 = Math.max(fy + fh, ty + th)
+  let w = (x1 - x0) * CROSS_MARGIN
+  let h = (y1 - y0) * CROSS_MARGIN
+  // The country's shape, so the pull-back letterboxes the way every other view does.
+  const aspect = cw / ch
+  if (w / h < aspect) w = h * aspect
+  else h = w / aspect
+  const over = Math.max(w / cw, h / ch)
+  if (over > 1) {
+    w /= over
+    h /= over
+  }
+  return [(x0 + x1) / 2 - w / 2, (y0 + y1) / 2 - h / 2, w, h]
+}
+
 export interface MorphPair {
   key: string
   start: Subpath[]
