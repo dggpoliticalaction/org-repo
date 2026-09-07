@@ -1,4 +1,5 @@
 import { fieldString } from "@/interactives/engine/recordFormat"
+import { isRecord } from "@/utilities/isRecord"
 
 import type { DrilldownData } from "../types"
 
@@ -8,9 +9,6 @@ const APPOINTMENT_DATE = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
   timeZone: "UTC",
 })
-
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v)
 
 /** The date the manifest itself states, when it states one. */
 function statedDate(data: DrilldownData): string | null {

@@ -1,5 +1,7 @@
 import { Parser } from "htmlparser2"
 
+import { isRecord } from "@/utilities/isRecord"
+
 import { validateDrilldownPayload } from "./contract"
 import { factKey, isReservedFact, RESERVED_FACTS } from "./contract"
 import type { DrilldownAsset, DrilldownPath, FactMap, ViewBox } from "./types"
@@ -105,8 +107,6 @@ export function parseDrilldownAssetString(sanitizedSvg: string): DrilldownAsset 
   return buildGeometryAsset(events)
 }
 
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v)
 const str = (v: unknown): string | null => (typeof v === "string" && v ? v : null)
 
 /**

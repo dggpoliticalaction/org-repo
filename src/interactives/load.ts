@@ -7,6 +7,7 @@ import type { SearchIndex } from "@/interactives/engine/search"
 import type { ChildAssetRef, DrilldownAsset } from "@/interactives/engine/types"
 import type { Interactive } from "@/payload-types"
 import { getPayloadConfig } from "@/utilities/getPayloadConfig"
+import { isRecord } from "@/utilities/isRecord"
 
 import { childKeys, composeChild, composeOverview } from "./compose"
 import { getProfile } from "./profiles"
@@ -39,9 +40,6 @@ export const queryInteractiveBySlug = cache(async (slug: string): Promise<Intera
   })
   return docs[0] ?? null
 })
-
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v)
 
 /** The snapshot as the sync validated it; drafts only when asked. */
 const readSnapshotData = cache(

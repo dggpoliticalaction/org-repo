@@ -1,10 +1,9 @@
 import { validateRecordItems, validateRegions } from "@/interactives/engine/contract"
 import type { DeclaredRegion, DrilldownRecord } from "@/interactives/engine/types"
+import { isRecord } from "@/utilities/isRecord"
 
 import { DRILLDOWN_DATA_SCHEMA, type DrilldownData, type DrilldownGeometry } from "./types"
 
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v)
 const isString = (v: unknown): v is string => typeof v === "string"
 
 export interface DataValidation {

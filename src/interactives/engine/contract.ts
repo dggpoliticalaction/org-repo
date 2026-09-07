@@ -1,3 +1,5 @@
+import { isRecord } from "@/utilities/isRecord"
+
 import {
   DRILLDOWN_SCHEMA,
   type DeclaredRegion,
@@ -51,8 +53,6 @@ export function notesFromFacts(facts: FactMap): RegionNote[] {
 
 // ---- payload validation -------------------------------------------------------------------
 
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v)
 const isString = (v: unknown): v is string => typeof v === "string"
 const isStringArray = (v: unknown): v is string[] => Array.isArray(v) && v.every(isString)
 const isStringMap = (v: unknown): v is Record<string, string> =>

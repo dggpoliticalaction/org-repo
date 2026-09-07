@@ -1,5 +1,6 @@
 import { fieldString } from "@/interactives/engine/recordFormat"
 import type { DrilldownRecord } from "@/interactives/engine/types"
+import { isRecord } from "@/utilities/isRecord"
 
 import type { DrilldownData, DrilldownPresentation } from "../types"
 
@@ -54,9 +55,6 @@ export interface FederalCourtsSummary {
   /** Every appointment the history covers, bucketed by month and appointing president. */
   appointments: AppointmentHistory | null
 }
-
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v)
 
 interface AppointmentRow {
   commission: string
