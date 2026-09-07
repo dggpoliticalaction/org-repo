@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest"
 
 import { validateDrilldownData } from "../../contract"
-import { memoryFileSource } from "../../sources/files"
+import { memoryFileSource, withJson } from "../../sources/files"
 import { tarGz } from "../../__tests__/tarFixture"
 import { RELEASE_REF } from "../../sources/releases"
 import type { DrilldownGeometry } from "../../types"
@@ -277,6 +277,20 @@ describe("readCourtTrackerSources", () => {
     expect(snap.raw.presidents).not.toBeNull()
   })
 
+  it("keys the judge bundles in the manifest's order, whatever order the reads land in", async () => {
+    // Assigning each bundle as its read lands would make the record order — and the content
+    // hash over it — depend on the network, so two syncs of the same data would disagree.
+    const slow = withJson({
+      describe: () => "slow",
+      read: (path: string) =>
+        new Promise<string>((resolve) =>
+          setTimeout(() => resolve(files.read(path)), path.includes("judges/ca8") ? 5 : 0),
+        ),
+    })
+    const snap = await readCourtTrackerSources(slow)
+    expect(Object.keys(snap.raw.judges)).toEqual(["ca8", "scotus"])
+  })
+
   it("reads a manifest that states the shape version it was built to", async () => {
     const stated = memoryFileSource({
       ...FILE_MAP,
@@ -327,19 +341,26 @@ describe("courtTrackerFeed end to end", () => {
     expect(byId.ca9).toMatchObject({ label: "Ninth Circuit" })
     // Nothing to strip: the three national courts are already named in words.
     expect(byId.uscfc).toMatchObject({ label: "U.S. Court of Federal Claims" })
+    // The counts are upstream's published block, not a re-derivation from the judge rows: this
+    // court seats nine active judges against seven authorized, because roving judgeships are
+    // shared across a state, and "authorized minus active" would report vacancies it does not
+    // have. `senior` is the one count they do not publish, so it is still counted here.
     expect(byId.moed?.facts).toMatchObject({
       "full-name": "U.S. District Court for the Eastern District of Missouri",
       tenure: "Life tenure",
-      seats: "7",
+      seats: "9",
       authorized: "7",
-      active: "1",
+      active: "9",
       senior: "1",
-      vacant: "6",
-      "seats-r": "0",
+      vacant: "0",
+      "seats-r": "8",
       "seats-d": "1",
       anchor: "484339,-528618",
-      summary: "7 authorized · 1 active · 1 senior · 6 vacant",
+      summary: "7 authorized · 9 active · 1 senior",
     })
+    // The Supreme Court has no territory, so upstream publishes no block for it; its counts
+    // come from the rows instead.
+    expect(byId.scotus?.facts).toMatchObject({ seats: "9", authorized: "9", active: "2" })
     expect(byId.moed?.facts).not.toHaveProperty("region-label")
     expect(byId.ca8?.facts).toMatchObject({
       order: "8",

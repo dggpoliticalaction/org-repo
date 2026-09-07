@@ -113,20 +113,75 @@ function tenureLabel(t: Court["tenure_type"]): string {
       : "Fixed term with senior status"
 }
 
-function summaryFor(court: Court, judges: Judge[]): string {
-  const authorized = court.authorized_judgeships ?? 0
-  const active = judges.filter((j) => j.status === "active").length
+/**
+ * How a court's bench is counted.
+ *
+ * Upstream publishes this arithmetic per court in `seat_blocks.json` — authorized seats, the
+ * active bench split by appointing party, and the vacancies left over — and their data
+ * contract tiers those counts as portable, meaning they are published for a consumer to use
+ * rather than to redo. Redoing them here would be a second implementation of a
+ * reconciliation with a real subtlety in it: a handful of district courts seat more active
+ * judges than they are authorized, because roving judgeships are shared across a state, so
+ * "authorized minus active" is not the vacancy count.
+ *
+ * Two things are still ours. `senior` is not in their blocks, so it is counted from the judge
+ * rows. And a court with no block at all — the Supreme Court, which has no territory to draw
+ * — falls back to those same rows.
+ */
+interface SeatCounts {
+  /** Squares to draw: the active bench plus its vacancies, which can exceed `authorized`. */
+  seats: number
+  authorized: number
+  active: number
+  senior: number
+  vacant: number
+  r: number
+  d: number
+  o: number
+}
+
+function countsFor(court: Court, block: SeatBlock | undefined, judges: Judge[]): SeatCounts {
   const senior = judges.filter((j) => j.status === "senior").length
-  const vacant = Math.max(0, authorized - active)
+  if (block) {
+    return {
+      seats: block.total,
+      authorized: block.authorized,
+      active: block.r + block.d + block.o,
+      senior,
+      vacant: block.vacancies,
+      r: block.r,
+      d: block.d,
+      o: block.o,
+    }
+  }
+  const active = judges.filter((j) => j.status === "active")
+  const authorized = court.authorized_judgeships ?? 0
+  const by = (party: string): number => active.filter((j) => j.president_party === party).length
+  const [republican, democratic] = PARTIES
+  return {
+    seats: Math.max(authorized, active.length),
+    authorized,
+    active: active.length,
+    senior,
+    vacant: Math.max(0, authorized - active.length),
+    r: by(republican),
+    d: by(democratic),
+    o: active.length - by(republican) - by(democratic),
+  }
+}
+
+function summaryFor(court: Court, counts: SeatCounts): string {
   const parts: string[] = []
   if (court.tenure_type === "fixed_term") parts.push("Fixed-term court")
-  parts.push(`${authorized} authorized`)
-  parts.push(court.tenure_type === "fixed_term" ? `${active} sitting` : `${active} active`)
+  parts.push(`${counts.authorized} authorized`)
+  parts.push(
+    court.tenure_type === "fixed_term" ? `${counts.active} sitting` : `${counts.active} active`,
+  )
   if (court.tenure_type !== "fixed_term" && court.court_level !== "scotus")
-    parts.push(`${senior} senior`)
+    parts.push(`${counts.senior} senior`)
   // A full bench is the unremarkable case; saying "0 vacant" spends the tooltip's one line
   // on a non-fact. Only an actual vacancy is worth the reader's attention.
-  if (vacant > 0) parts.push(`${vacant} vacant`)
+  if (counts.vacant > 0) parts.push(`${counts.vacant} vacant`)
   return parts.join(" · ")
 }
 
@@ -166,28 +221,23 @@ export function factsFor(
   const facts: Record<string, string> = {}
   facts["full-name"] = court.court_name
   facts.tenure = tenureLabel(court.tenure_type)
-  const authorized = court.authorized_judgeships ?? 0
-  const active = judges.filter((j) => j.status === "active")
-  const senior = judges.filter((j) => j.status === "senior")
-  facts.seats = String(Math.max(authorized, active.length))
-  facts.authorized = String(authorized)
-  facts.active = String(active.length)
+  const counts = countsFor(court, block, judges)
+  facts.seats = String(counts.seats)
+  facts.authorized = String(counts.authorized)
+  facts.active = String(counts.active)
   if (court.tenure_type !== "fixed_term" && court.court_level !== "scotus")
-    facts.senior = String(senior.length)
-  facts.vacant = String(Math.max(0, authorized - active.length))
-  facts["seats-r"] = String(active.filter((j) => j.president_party === "Republican").length)
-  facts["seats-o"] = String(
-    active.filter((j) => j.president_party !== "Republican" && j.president_party !== "Democratic")
-      .length,
-  )
-  facts["seats-d"] = String(active.filter((j) => j.president_party === "Democratic").length)
+    facts.senior = String(counts.senior)
+  facts.vacant = String(counts.vacant)
+  facts["seats-r"] = String(counts.r)
+  facts["seats-o"] = String(counts.o)
+  facts["seats-d"] = String(counts.d)
   // Circuit and feeder anchors are in national units; district anchors in the circuit's local
   // units. A region is drawn as a block in exactly one of the two views, so one anchor suffices.
   if (court.court_level === "scotus") facts.anchor = SCOTUS_ANCHOR.join(",")
   else if (block?.anchor) facts.anchor = `${block.anchor[0]},${block.anchor[1]}`
   const short = CIRCUIT_LABEL[court.court_id]
   if (short) facts["short-label"] = short
-  facts.summary = summaryFor(court, judges)
+  facts.summary = summaryFor(court, counts)
   if (court.court_level === "circuit")
     facts["children-label"] = court.court_id === "cafc" ? "feeders" : "districts"
   const order = court.court_level === "scotus" ? 0 : CIRCUIT_ORDER.indexOf(court.court_id) + 1
