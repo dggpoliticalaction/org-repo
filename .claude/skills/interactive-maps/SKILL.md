@@ -359,7 +359,14 @@ per-path facts from geometry. Source of truth: `src/interactives/types.ts`.
 1. The researcher publishes what they already publish (court-tracker's
    `data/manifest.json` + the files it lists). Nothing on their side changes;
    the **adapter** (`src/interactives/<profile>/adapter.ts`) absorbs their
-   shape and is ours to maintain.
+   shape and is ours to maintain. Where upstream publishes arithmetic we would
+   otherwise redo — `seat_blocks.json`'s per-court counts, the manifest's
+   `national_totals` — take theirs: a second implementation of a
+   reconciliation is free to drift from the one the researcher maintains.
+   What we deliberately do **not** read is anything tiered for their own
+   renderer: `district_arrangement.json`, and the `anchor`/`size` on a seat
+   block (ours are checked in as `geometry/anchors.json`, taken once by the
+   geometry snapshot).
 2. `syncInteractiveData` runs daily (06:15 UTC) and from the **Sync data
    feeds** button on Interactive Snapshots (`POST
 /api/interactive-snapshots/sync[?interactive=<id>&force=true]`). It reads
@@ -399,10 +406,22 @@ which means "resolve whatever upstream last published":
   alternative: the manifest lands on `main` first and the release is cut
   afterwards, so reading the version and then asking for its tag can ask for a
   tag that does not exist yet.
-- The fetch reads files at that tag. We do **not** download the release
-  tarball: the atomicity comes from the tag being immutable, and the tarball is
-  about 21 MB because it carries `assets/photos/` and `assets/geo/`, neither of
-  which we use — we hotlink photos and keep our own committed geometry.
+- The fetch downloads that release's **`data-json.tar.gz`** — the runtime
+  `data/*.json` at the paths the manifest names, published for a consumer that
+  renders its own map. One request for the whole feed, and it cannot be seen
+  half-built. (Not `data-package.tar.gz`: that one is ~21 MB of
+  `assets/photos/` and `assets/geo/`, which we do not use — we hotlink photos
+  and keep our own committed geometry.) `src/interactives/sources/tarball.ts`
+  reads it: fifty lines over ustar, no dependency.
+- A release with no archive attached — anything cut before upstream published
+  that asset — falls back to reading the files one by one at the tag, which is
+  the same bytes for more round trips.
+- The manifest's **`schema_version`** is a compatibility gate: a MAJOR bump is
+  refused with a message saying the contract moved, rather than surfacing
+  downstream as a validation error about a region. Bumping
+  `COURT_TRACKER_SCHEMA_MAJOR` in `feed.ts` is a deliberate act — read their
+  `docs/SCHEMA_CHANGELOG.md` first. A manifest that states no shape version
+  passes.
 - A repo that has published no matching release yet falls back to `main`, so
   this works before an upstream release workflow lands.
 - Any other value in **Feed ref** is honoured verbatim, for pinning or
@@ -501,18 +520,17 @@ The summary reaches the map through `useDrilldownSelection()`, so a reader can g
 overview straight to the region it names. Outside a drilldown that hook returns null and the
 component still renders, which is what makes it testable on its own.
 
-Federal Courts shows two views: the Supreme Court's bench on the same dome the seat chart
-uses, and every district judgeship in the numbered circuits as one square, laid out as a
-cartogram of the country. The squares come from the feed's `arrangement` dataset, whose
-per-cell `r`/`d`/`vacant` codes are **meanings**: `summary.ts` maps them onto the profile's own
-party values and `presentation.ts` decides the colour, so the cartogram, the seat blocks and
-the bench can never disagree. Upstream places blocks in drawing units rather than cells, so the
-compose step recovers the grid pitch and normalises offsets to whole cells.
+Federal Courts shows the Supreme Court's bench, on the same dome the seat chart uses. It once
+also drew every district judgeship as a square in a cartogram of the country; that was deleted
+as a second drawing of what the map already says, and with it the feed's `arrangement`
+dataset — which is why nothing reads `district_arrangement.json` any more.
 
-Federal Courts adds two charts to that landing view, both from the feed's
-`appointments` dataset and both aggregated at compose time — per-year counts
-and per-month buckets, about 6 KB, rather than the megabyte the raw history
-weighs:
+Federal Courts adds two charts to that landing view, both read from the feed's
+`appointments` dataset. That dataset is the **already-folded** history —
+per-year counts and per-month buckets, about 6 KB — folded in the adapter when
+the feed is read (`appointments.ts`) rather than per request from the megabyte
+of rows upstream publishes. A snapshot written before that fold carries the raw
+rows, reads back as no history, and is replaced by the next sync:
 
 - **Change** — judges in active service by appointing party, as a stacked area
   on a **zero baseline**, not a wiggle-baseline streamgraph: the total is the
@@ -568,38 +586,41 @@ shows the full overview, strip, facts and any records carried in the overview.
 2. Snapshot the geometry once from the upstream export and commit the JSON —
    for Federal Courts: `pnpm tsx scripts/snapshot-federal-courts.ts geometry --source ../court-tracker`.
 3. Snapshot the data fixture the seed and tests use — a real adapter output:
-   `pnpm tsx scripts/snapshot-federal-courts.ts data --source ../court-tracker`
-   (or `--ref main` with the token set). This also validates the feed and
-   prints every problem.
+   `pnpm tsx scripts/snapshot-federal-courts.ts data --source ../court-tracker --ref data-v<version>`
+   (or drop `--source` and read the release itself, with the token set). Pass
+   `--ref` alongside `--source` so the fixture records which release the
+   checkout is of rather than a path on your machine. This also validates the
+   feed and prints every problem. With no checkout to hand,
+   `gh release download data-v<version> --repo digitalgroundgame/court-tracker
+--pattern data-package.tar.gz` and untar it is enough of one.
 4. Create the **Interactive** in the admin (title, slug, profile, standfirst,
    sources, feed ref), press **Sync data feeds**, review the draft snapshot on
    the page, publish it.
 
 ### Troubleshooting (pages)
 
-| Symptom                                                     | Cause                                                                                                                                |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Page says "no published data yet"                           | No snapshot is published for the interactive. Open Interactive Snapshots: publish the draft, or run the sync and then publish.       |
-| Sync says "skipped — COURT_TRACKER_GITHUB_TOKEN not set"    | The upstream is private; set the token in the environment the job runs in.                                                           |
-| Sync says "unchanged" but the researcher pushed             | Their manifest `version` did not move (they did not rebuild), or the rendered content is identical. Use `?force=true` to re-read.    |
-| Sync fails with `geometry draws "x" but the feed declares…` | Upstream renamed or dropped a region id. Fix the adapter's mapping or re-snapshot the geometry; the last good snapshot still serves. |
-| Colours or labels look wrong after a data update            | They cannot come from the feed; look at `presentation.ts` and the theme tokens.                                                      |
-| Region route returns 404                                    | The region is not drillable (not a key of the profile's `geometry.children`), or there is no published snapshot.                     |
-| A judge is missing from search                              | Their record has no `_id`, or no value in the profile's `display.title` field — `composeSearchIndex` skips both. Check the adapter.  |
-| Summary shows "No district layout."                         | The feed carries no `arrangement` dataset, or its cells name districts the feed does not declare. Re-run the snapshot script.        |
-| Cartogram blocks overlap or scatter                         | The grid pitch could not be recovered because upstream's offsets are no longer whole multiples of one cell. Check `cellPitch`.       |
-| Searching finds nobody at all                               | `/interactives/<slug>/search` 404s (no published snapshot) or the box was never given a URL; the list says "Search is unavailable".  |
-| Region missing from the strip                               | Its path has no `id`, or its `data-parent-id` names a parent that does not exist (it is then listed at the top level).               |
-| "View … →" never appears                                    | The region is not a key of the profile's `geometry.children`, and it has no children in the overview.                                |
-| Pane says "No records for this region"                      | No record in the feed has `_region` equal to that id. Re-run the snapshot script: it prints every problem.                           |
-| Pane shows "Details could not be loaded"                    | The region route failed. Open `/interactives/<slug>/regions/<id>` in the browser.                                                    |
-| Drill-in zooms and crossfades instead of morphing           | By design when shapes are not absolute `M`/`L` or vertex counts differ. The paired validator run names the shapes.                   |
-| No seat blocks                                              | No `seats` in `presentation.ts`, or no region's facts carry `totalFact`.                                                             |
-| Seat block in the wrong place                               | `anchor` is in the wrong projection — a district's anchor must be in its circuit's child geometry units.                             |
-| Tooltip lists machine facts (`seats-r`, `anchor`)           | Add them to `facts.hide`, or reference them from `seats`/`display.seatsFact` so they hide automatically.                             |
-| Facts show `Active count` instead of your wording           | Add `facts.labels`.                                                                                                                  |
-| Map upside down in the child view only                      | The child SVG lacks the `scale(1,-1)` flip group (or has it while the overview does not); make both consistent, then re-snapshot.    |
-| Photos never appear                                         | `display.image.url` names a field the records do not have, or the host blocks hotlinking; initials show instead.                     |
+| Symptom                                                     | Cause                                                                                                                                                                                                                              |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Page says "no published data yet"                           | No snapshot is published for the interactive. Open Interactive Snapshots: publish the draft, or run the sync and then publish.                                                                                                     |
+| Sync says "skipped — COURT_TRACKER_GITHUB_TOKEN not set"    | The upstream is private; set the token in the environment the job runs in.                                                                                                                                                         |
+| Sync says "unchanged" but the researcher pushed             | Their manifest `version` did not move (they did not rebuild), or the rendered content is identical. Use `?force=true` to re-read.                                                                                                  |
+| Sync fails with `geometry draws "x" but the feed declares…` | Upstream renamed or dropped a region id. Fix the adapter's mapping or re-snapshot the geometry; the last good snapshot still serves.                                                                                               |
+| Colours or labels look wrong after a data update            | They cannot come from the feed; look at `presentation.ts` and the theme tokens.                                                                                                                                                    |
+| Region route returns 404                                    | The region is not drillable (not a key of the profile's `geometry.children`), or there is no published snapshot.                                                                                                                   |
+| A judge is missing from search                              | Their record has no `_id`, or no value in the profile's `display.title` field — `composeSearchIndex` skips both. Check the adapter.                                                                                                |
+| Cartogram blocks overlap or scatter                         | The grid pitch could not be recovered because upstream's offsets are no longer whole multiples of one cell. Check `cellPitch`.                                                                                                     |
+| Searching finds nobody at all                               | `/interactives/<slug>/search` 404s (no published snapshot) or the box was never given a URL; the list says "Search is unavailable".                                                                                                |
+| Region missing from the strip                               | Its path has no `id`, or its `data-parent-id` names a parent that does not exist (it is then listed at the top level).                                                                                                             |
+| "View … →" never appears                                    | The region is not a key of the profile's `geometry.children`, and it has no children in the overview.                                                                                                                              |
+| Pane says "No records for this region"                      | No record in the feed has `_region` equal to that id. Re-run the snapshot script: it prints every problem.                                                                                                                         |
+| Pane shows "Details could not be loaded"                    | The region route failed. Open `/interactives/<slug>/regions/<id>` in the browser.                                                                                                                                                  |
+| Drill-in zooms and crossfades instead of morphing           | By design when shapes are not absolute `M`/`L` or vertex counts differ. The paired validator run names the shapes.                                                                                                                 |
+| No seat blocks                                              | No `seats` in `presentation.ts`, or no region's facts carry `totalFact`.                                                                                                                                                           |
+| Seat block in the wrong place                               | `anchor` is in the wrong projection — a district's anchor must be in its circuit's child geometry units. Federal Courts' anchors are checked in (`geometry/anchors.json`); re-run the geometry snapshot after upstream reprojects. |
+| Tooltip lists machine facts (`seats-r`, `anchor`)           | Add them to `facts.hide`, or reference them from `seats`/`display.seatsFact` so they hide automatically.                                                                                                                           |
+| Facts show `Active count` instead of your wording           | Add `facts.labels`.                                                                                                                                                                                                                |
+| Map upside down in the child view only                      | The child SVG lacks the `scale(1,-1)` flip group (or has it while the overview does not); make both consistent, then re-snapshot.                                                                                                  |
+| Photos never appear                                         | `display.image.url` names a field the records do not have, or the host blocks hotlinking; initials show instead.                                                                                                                   |
 
 ## Reference
 
