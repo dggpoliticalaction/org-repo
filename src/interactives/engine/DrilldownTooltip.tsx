@@ -24,23 +24,23 @@ export function DrilldownTooltip({
   cursor,
 }: DrilldownTooltipProps): React.ReactNode {
   const ref = useRef<HTMLDivElement | null>(null)
-  const [pos, setPos] = useState<{ x: number; y: number } | null>(null)
+  const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
   const [mounted, setMounted] = useState(false)
 
   // eslint-disable-next-line react-hooks/set-state-in-effect -- standard isomorphic-portal mount guard
   useEffect(() => setMounted(true), [])
 
   useLayoutEffect(() => {
-    if (!label || !cursor || !ref.current) {
-      setPos(null)
-      return
-    }
+    // Keep the last position when the hover ends. The tooltip fades rather than vanishing, and
+    // a fade that also jumps to the parking spot is a flick across the map on every click —
+    // choosing a region is exactly when the pointer stops moving and the hover goes away.
+    if (!label || !cursor || !ref.current) return
     const el = ref.current
     let x = cursor.x + OFFSET
     let y = cursor.y + OFFSET
     if (x + el.offsetWidth > window.innerWidth - 8) x = cursor.x - el.offsetWidth - OFFSET
     if (y + el.offsetHeight > window.innerHeight - 8) y = cursor.y - el.offsetHeight - OFFSET
-    setPos({ x, y })
+    setPos({ left: x, top: y })
   }, [label, summary, cursor])
 
   if (!mounted) return null
@@ -54,7 +54,9 @@ export function DrilldownTooltip({
         "bg-foreground text-background pointer-events-none fixed z-50 max-w-64 rounded-md px-3 py-2 text-sm shadow-md transition-opacity",
         label && pos ? "opacity-100" : "opacity-0",
       )}
-      style={pos ? { left: pos.x, top: pos.y } : { left: -9999, top: -9999 }}
+      // Off-screen only until it has somewhere to be; after that it stays where it last was,
+      // faded out, rather than parking itself in the corner.
+      style={pos ?? { left: -9999, top: -9999 }}
     >
       {label && (
         <>
