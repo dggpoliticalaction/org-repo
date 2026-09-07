@@ -174,16 +174,18 @@ export function DrilldownPane({
     >
       {/* The pane's own header, and the control that opens it: one name, on the thing that
           shows and hides what the name belongs to. Collapsed, this is all there is. */}
-      <h2 className="shrink-0">
+      {/* A heading element for what it means — this labels the pane — but none of what the
+          site's headings look like: `h1`–`h6` here carry the display face with its own
+          tracking, leading and balance, and letter-spacing and line-height inherit, so they
+          have to be put back to normal rather than merely overridden by a smaller font. */}
+      <h2 className="shrink-0 font-sans text-sm leading-normal font-medium tracking-normal text-wrap">
         <button
           ref={headingRef}
           type="button"
           data-drilldown-pane-toggle=""
           aria-expanded={open}
           onClick={onToggle}
-          // Sans, not the display face the site gives an h2: this is a control that happens
-          // to be the pane's heading, and it sits in a row of controls.
-          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/60 flex h-9 w-full items-center gap-2 rounded-md px-2 text-left font-sans text-sm font-medium outline-none focus-visible:ring-2"
+          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/60 flex h-9 w-full items-center gap-2 rounded-md px-2 text-left outline-none focus-visible:ring-2"
         >
           <ChevronUp
             aria-hidden="true"
