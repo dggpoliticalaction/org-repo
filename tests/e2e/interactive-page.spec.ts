@@ -107,7 +107,7 @@ test.describe("interactive page — federal courts", () => {
       page.locator("[data-drilldown-pane][data-open] [data-drilldown-pane-title]"),
     ).toHaveText("Eastern District of Missouri")
 
-    await page.getByRole("button", { name: "← Back to overview" }).click()
+    await page.getByRole("button", { name: "Back to overview" }).click()
     await expect(viewport).toHaveAttribute("data-view", "overview")
     await expect(viewport).not.toHaveAttribute("aria-busy", "true")
     await expect(page.locator("[data-drilldown-layer='overview']")).toHaveAttribute(

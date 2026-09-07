@@ -215,10 +215,11 @@ text[data-block-label] {
 [data-drilldown-rail] {
   max-height: 14rem;
 }
+/* The sidebar's own content area is what scrolls (`min-h-0 flex-1 overflow-auto`); this only
+   asks for the slim scrollbar, since the registry's `no-scrollbar` class is not defined here
+   and a rail that scrolls should say so. */
 [data-drilldown-rail] [data-drilldown-selector] {
   scrollbar-width: thin;
-  min-height: 0;
-  overflow-y: auto;
 }
 @media (min-width: 48rem) {
   [data-drilldown-map] [data-drilldown-rail] {

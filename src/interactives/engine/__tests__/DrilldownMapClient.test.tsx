@@ -276,7 +276,7 @@ describe("DrilldownMapClient", () => {
     fireEvent.click(
       within(container.querySelector<HTMLElement>("[data-drilldown-selector]")!).getByRole(
         "button",
-        { name: "← Back to overview" },
+        { name: "Back to overview" },
       ),
     )
     await waitFor(() => expect(window.location.search).toBe(""))
@@ -292,7 +292,7 @@ describe("DrilldownMapClient", () => {
 
     fireEvent.click(within(nav()).getByRole("button", { name: "West" }))
     await waitFor(() => expect(window.location.search).toBe("?region=west"))
-    fireEvent.click(within(nav()).getByRole("button", { name: "← Back to overview" }))
+    fireEvent.click(within(nav()).getByRole("button", { name: "Back to overview" }))
     await waitFor(() => expect(window.location.search).toBe(""))
     push.mockClear()
 
@@ -476,7 +476,7 @@ describe("DrilldownMapClient", () => {
     )
     // the rail keeps every region in view and opens the one drilled into, in place
     const nav = container.querySelector<HTMLElement>("[data-drilldown-selector]")!
-    expect(within(nav).getByRole("button", { name: "← Back to overview" })).toBeInTheDocument()
+    expect(within(nav).getByRole("button", { name: "Back to overview" })).toBeInTheDocument()
     expect(within(nav).getByRole("button", { name: "West 1" })).toBeInTheDocument()
     expect(within(nav).getByRole("button", { name: "East" })).toBeInTheDocument()
     expect(within(nav).getByRole("button", { name: "West" })).toHaveAttribute(
@@ -529,7 +529,7 @@ describe("DrilldownMapClient", () => {
       within(pane(container)).getByRole("button", { name: "Katherine Johnson" }),
     ).toBeInTheDocument()
 
-    fireEvent.click(within(nav).getByRole("button", { name: "← Back to overview" }))
+    fireEvent.click(within(nav).getByRole("button", { name: "Back to overview" }))
     await waitFor(() =>
       expect(container.querySelector("[data-drilldown-viewport]")).toHaveAttribute(
         "data-view",
