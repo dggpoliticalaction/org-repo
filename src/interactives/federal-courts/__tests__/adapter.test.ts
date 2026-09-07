@@ -5,7 +5,7 @@ import { memoryFileSource } from "../../sources/files"
 import { tarGz } from "../../__tests__/tarFixture"
 import { RELEASE_REF } from "../../sources/releases"
 import type { DrilldownGeometry } from "../../types"
-import { compactAppointment, factsFor, justiceRecord, splitLicense } from "../adapter"
+import { factsFor, justiceRecord, splitLicense } from "../adapter"
 import { courtTrackerFeed, readCourtTrackerSources } from "../feed"
 import type { Court, Judge, Justice, SeatBlock } from "../upstream"
 
@@ -384,25 +384,19 @@ describe("courtTrackerFeed end to end", () => {
     })
   })
 
-  it("carries the extra datasets through, compacting the appointment history", async () => {
+  it("carries the extra datasets through, with the appointment history already folded", async () => {
     const data = courtTrackerFeed.adapt(await courtTrackerFeed.fetch({ ref: "t", files }), {
       ref: "t",
     })
     expect(Object.keys(data.datasets ?? {}).sort()).toEqual(["appointments", "presidents"])
-    expect((data.datasets?.appointments as unknown[])[0]).toEqual({
-      full_name: "Jane Q. Judge",
-      court_id: "moed",
-      court_level: "district",
-      appointing_president: "Barack Obama",
-      president_party: "Democratic",
-      confirmation_date: "2014-01-01",
-      commission_date: "2014-01-02",
-      senior_date: null,
-      termination_date: null,
-      termination_reason: null,
-      sitting: true,
-      fedsoc_reported: false,
-      acs_reported: true,
+    // Not a row in sight: what a snapshot carries is the two foldings the charts draw.
+    expect(data.datasets?.appointments).toEqual({
+      change: null, // one commission, so the series would start after it ends
+      history: {
+        baseYear: 2014,
+        presidents: [{ name: "Barack Obama", party: "Democratic" }],
+        bursts: [{ month: 0, president: 0, count: 1 }],
+      },
     })
   })
 
@@ -411,8 +405,8 @@ describe("courtTrackerFeed end to end", () => {
       ref: "t",
     })
     for (const record of data.records) expect(record).not.toHaveProperty("photo_thumb")
-    for (const row of (data.datasets?.appointments ?? []) as Record<string, unknown>[])
-      expect(row).not.toHaveProperty("photo_thumb")
+    // The appointment rows carried one too; folding them away takes it with them.
+    expect(JSON.stringify(data.datasets?.appointments)).not.toContain("photo_thumb")
   })
 
   it("carries what the manifest states about its own build, and nothing when it states none", async () => {
@@ -483,33 +477,6 @@ describe("helpers", () => {
     const r = justiceRecord({ ...JUSTICE, justice_name: "Nobody Here" }, SCOTUS_JUDGES, COURTS[0])
     expect(r.full_name).toBe("Brett M. Kavanaugh")
     expect(r.appointing_president).toBeUndefined()
-  })
-
-  it("compactAppointment turns upstream's string booleans into booleans", () => {
-    const c = compactAppointment({
-      full_name: "x",
-      court_id: "y",
-      court_level: "district",
-      appointing_president: "p",
-      president_party: "Republican",
-      nomination_date: "",
-      confirmation_date: "",
-      commission_date: "1990-01-01",
-      senior_date: "",
-      termination_date: "1999-01-01",
-      termination_reason: "Death",
-      sitting: "false",
-      fedsoc_reported: "true",
-      acs_reported: "",
-      photo_thumb: "assets/photos/z.jpg",
-    })
-    expect(c).toMatchObject({
-      sitting: false,
-      fedsoc_reported: true,
-      acs_reported: false,
-      confirmation_date: null,
-      termination_reason: "Death",
-    })
   })
 })
 

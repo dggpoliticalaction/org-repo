@@ -1,7 +1,8 @@
 import type { DeclaredRegion, DrilldownRecord } from "@/interactives/engine/types"
 
 import { DRILLDOWN_DATA_SCHEMA, type DrilldownData, type FeedSnapshot } from "../types"
-import type { Appointment, Court, CourtTrackerSources, Judge, Justice, SeatBlock } from "./upstream"
+import { aggregateAppointments } from "./appointments"
+import type { Court, CourtTrackerSources, Judge, Justice, SeatBlock } from "./upstream"
 
 /**
  * court-tracker → drilldown data. Pragmatic Papers owns this file: it absorbs upstream's
@@ -11,6 +12,13 @@ import type { Appointment, Court, CourtTrackerSources, Judge, Justice, SeatBlock
  * whom, the statutory explainer a court's pane cites. Nothing here is appearance; that is
  * `presentation.ts`.
  */
+
+/**
+ * The parties a bench is counted by. Upstream states a president's party as a free string;
+ * these are the two the profile counts separately, and anything else — an unaffiliated
+ * appointment, a blank — falls into "other" wherever a count is taken.
+ */
+export const PARTIES = ["Republican", "Democratic"] as const
 
 /** Selector order for the top-level regions; districts sort by label. */
 export const CIRCUIT_ORDER = [
@@ -278,25 +286,6 @@ export function justiceRecord(
   }
 }
 
-/** The fields the Change view and the appointments timeline read; the rest is dropped. */
-export function compactAppointment(a: Appointment): Record<string, unknown> {
-  return {
-    full_name: a.full_name,
-    court_id: a.court_id,
-    court_level: a.court_level,
-    appointing_president: a.appointing_president,
-    president_party: a.president_party,
-    confirmation_date: a.confirmation_date || null,
-    commission_date: a.commission_date || null,
-    senior_date: a.senior_date || null,
-    termination_date: a.termination_date || null,
-    termination_reason: a.termination_reason || null,
-    sitting: a.sitting === "true",
-    fedsoc_reported: a.fedsoc_reported === "true",
-    acs_reported: a.acs_reported === "true",
-  }
-}
-
 export function adaptCourtTracker(
   { raw, version, generatedAt }: FeedSnapshot<CourtTrackerSources>,
   { ref }: { ref: string },
@@ -332,7 +321,10 @@ export function adaptCourtTracker(
 
   const datasets: Record<string, unknown> = {}
   if (raw.presidents) datasets.presidents = raw.presidents
-  if (raw.appointments) datasets.appointments = raw.appointments.map(compactAppointment)
+  // Folded here rather than kept as rows: the charts read the same few kilobytes out of a
+  // megabyte on every request, and the rows only move when upstream rebuilds.
+  const appointments = aggregateAppointments(raw.appointments, PARTIES)
+  if (appointments) datasets.appointments = appointments
 
   // What the manifest states about its own build, rather than what we can derive from the
   // rows. Upstream computes the national reconciliation once; redoing it here would be a
