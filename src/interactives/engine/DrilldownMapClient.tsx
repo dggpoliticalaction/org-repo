@@ -618,7 +618,6 @@ export function DrilldownMapClient({
       open={paneOpen}
       canDrill={canDrill}
       onDrill={() => selectedRegion && void drillIn(selectedRegion.id)}
-      onToggle={() => showPane(!paneOpen)}
     />
   )
 

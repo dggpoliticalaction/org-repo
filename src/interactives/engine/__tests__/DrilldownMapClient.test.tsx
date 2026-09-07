@@ -310,8 +310,9 @@ describe("DrilldownMapClient", () => {
   it("puts the pane's own open state in the address, and reads it back", async () => {
     window.history.replaceState(null, "", "/interactives/courts")
     const { container } = setup()
+    // The panel button over the map is the one control that opens and closes the pane.
     const toggle = (): HTMLElement =>
-      container.querySelector<HTMLElement>("[data-drilldown-pane-toggle]")!
+      container.querySelector<HTMLElement>("[data-drilldown-pane-toggle-map]")!
 
     // The address is not written until it has first been read, so let the mount settle.
     await act(async () => {
@@ -517,11 +518,13 @@ describe("DrilldownMapClient", () => {
     const { container } = setup()
     const sheet = (): HTMLElement => container.querySelector<HTMLElement>("[data-drilldown-sheet]")!
     const toggle = (): HTMLElement =>
-      container.querySelector<HTMLElement>("[data-drilldown-pane-toggle]")!
-    // The pane stands beside the map, in the same row as the map and the rail, and brings its
-    // own header — the one control that names it and opens it.
+      container.querySelector<HTMLElement>("[data-drilldown-pane-toggle-map]")!
+    // The pane stands beside the map, in the same row as the map and the rail. Its own header
+    // is its name and nothing else; the control that opens and closes it is over the map,
+    // beside the rail's, so the two panels are worked the same way.
     expect(sheet().contains(pane(container))).toBe(true)
-    expect(pane(container).contains(toggle())).toBe(true)
+    expect(pane(container).contains(toggle())).toBe(false)
+    expect(pane(container).querySelector("[data-drilldown-pane-title]")).toBeInTheDocument()
     const row = container.querySelector("[data-drilldown-viewport]")!.parentElement!
     expect(row.contains(sheet())).toBe(true)
     expect(row.contains(container.querySelector("[data-drilldown-rail]"))).toBe(true)

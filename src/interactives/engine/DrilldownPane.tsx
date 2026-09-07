@@ -2,8 +2,6 @@
 
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react"
 
-import { ChevronUp } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
 import { cn } from "@/utilities/utils"
 
@@ -50,7 +48,6 @@ interface DrilldownPaneProps {
   onPin?(recordId: string | null): void
   onDrill(): void
   /** Whether the body is showing. The header stays either way — it is the way back in. */
-  onToggle(): void
   /** What the header says before a region is chosen, when the body is the profile's overview. */
   overviewLabel?: string
   ref?: React.Ref<DrilldownPaneHandle>
@@ -74,7 +71,6 @@ export function DrilldownPane({
   pinRequest = null,
   onPin,
   onDrill,
-  onToggle,
   overviewLabel = "Overview",
   ref,
 }: DrilldownPaneProps): React.ReactElement {
@@ -85,7 +81,7 @@ export function DrilldownPane({
   const [supernumeraryMode, setSupernumeraryMode] = useState<SupernumeraryMode>("hide")
   const [mark, setMark] = useState<string | null>(null)
   const [detail, setDetail] = useState<DetailSelection | null>(null)
-  const headingRef = useRef<HTMLButtonElement | null>(null)
+  const headingRef = useRef<HTMLHeadingElement | null>(null)
   const [now] = useState(() => new Date())
 
   useImperativeHandle(ref, () => ({ focusHeading: () => headingRef.current?.focus() }))
@@ -172,29 +168,20 @@ export function DrilldownPane({
       )}
       onClick={() => detail?.pinned && setDetail((d) => (d ? { ...d, pinned: false } : d))}
     >
-      {/* The pane's own header, and the control that opens it: one name, on the thing that
-          shows and hides what the name belongs to. Collapsed, this is all there is. */}
-      {/* A heading element for what it means — this labels the pane — but none of what the
-          site's headings look like: `h1`–`h6` here carry the display face with its own
-          tracking, leading and balance, and letter-spacing and line-height inherit, so they
-          have to be put back to normal rather than merely overridden by a smaller font. */}
-      <h2 className="shrink-0 font-sans text-sm leading-normal font-medium tracking-normal text-wrap">
-        <button
-          ref={headingRef}
-          type="button"
-          data-drilldown-pane-toggle=""
-          aria-expanded={open}
-          onClick={onToggle}
-          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/60 flex h-9 w-full items-center gap-2 rounded-md px-2 text-left outline-none focus-visible:ring-2"
-        >
-          <ChevronUp
-            aria-hidden="true"
-            className={cn("size-4 shrink-0 transition-transform", open && "rotate-180")}
-          />
-          <span data-drilldown-pane-title="" className="min-w-0 truncate">
-            {region?.label ?? overviewLabel}
-          </span>
-        </button>
+      {/* The pane's name, and only that: a heading, looking like this site's headings, with
+          nothing folded into it. Opening and closing the pane is the panel button over the
+          map, which is where a reader goes for it and where the rail's own button is. Only the
+          size is set here — the display face, weight and tracking are the ones every other
+          heading on the site has, and a pane 384px wide has no room for `text-3xl`. */}
+      <h2
+        ref={headingRef}
+        // Focusable only by script: a keyboard selection lands here so the reader arrives at
+        // the top of what they just opened, but it is not a stop on the way through the page.
+        tabIndex={-1}
+        data-drilldown-pane-title=""
+        className="shrink-0 px-2 py-1.5 text-lg outline-none"
+      >
+        {region?.label ?? overviewLabel}
       </h2>
 
       {!region &&
@@ -212,7 +199,7 @@ export function DrilldownPane({
         ))}
 
       {region && (
-        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4 sm:p-5">
+        <div className="-mt-4 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4 sm:p-5">
           {/* No heading of its own: the sheet's bar carries the region's name, and saying it
               twice a line apart is one name too many. What is left here is what the bar does
               not say — the counts, and the facts the summary line leaves out. */}
