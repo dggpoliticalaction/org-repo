@@ -6,13 +6,16 @@ import {
   easeInOutCubic,
   easeOutCubic,
   flipYInPlace,
+  frameForContent,
   largestSubpathCentre,
   lerpInto,
   lerpViewBox,
   MORPH_MIN_COMMIT_MS,
   parsePathAbs,
+  pullbackViewBox,
   sameStructure,
   serializePath,
+  subpathBounds,
   zoomViewBox,
 } from "@/interactives/engine/morph"
 
@@ -88,6 +91,29 @@ describe("structure, flip, serialize, lerp", () => {
     const a = [0, 0, 100, 100]
     const b = [50, 50, 100, 100]
     expect(zoomViewBox(a, b, 0.5)).toEqual([25, 25, 100, 100])
+  })
+
+  it("measures the extent of a set of subpaths", () => {
+    const a = parsePathAbs("M0 0L10 20")!
+    const b = parsePathAbs("M-5 3L4 4")!
+    expect(subpathBounds([a, b])).toEqual([-5, 0, 15, 20])
+    expect(subpathBounds([])).toBeNull()
+  })
+
+  it("carries a flight from the overview's frame into the child's", () => {
+    // The same shapes, a long way apart and half the size, as an overview and a child file
+    // project them.
+    const contentFrom = [0, 0, 100, 100]
+    const contentTo = [1000, 1000, 50, 50]
+    const childBox = [1000, 1000, 50, 50]
+    // Aiming at the child's box means aiming at where those shapes sit in the overview.
+    const dest = pullbackViewBox(childBox, contentFrom, contentTo)
+    expect(dest).toEqual([0, 0, 100, 100])
+    // Untouched at the start, where the drawing is still the overview's own...
+    const country = [-500, -500, 2000, 2000]
+    expect(frameForContent(country, contentFrom, contentTo, 0)).toEqual(country)
+    // ...and landed exactly on the child's own box at the end.
+    expect(frameForContent(dest, contentFrom, contentTo, 1)).toEqual(childBox)
   })
 
   it("crosses the join at speed rather than coming to rest on it", () => {

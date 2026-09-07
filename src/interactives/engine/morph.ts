@@ -150,6 +150,93 @@ export function zoomViewBox(a: readonly number[], b: readonly number[], u: numbe
   return [cx - w / 2, cy - h / 2, w, h]
 }
 
+/** The box every one of these subpaths fits inside, as a viewBox. Null if there are no points. */
+export function subpathBounds(sets: readonly Subpath[][]): number[] | null {
+  let x0 = Infinity
+  let y0 = Infinity
+  let x1 = -Infinity
+  let y1 = -Infinity
+  for (const set of sets) {
+    for (const sub of set) {
+      for (let i = 0; i < sub.length; i += 2) {
+        const x = sub[i]!
+        const y = sub[i + 1]!
+        if (x < x0) x0 = x
+        if (x > x1) x1 = x
+        if (y < y0) y0 = y
+        if (y > y1) y1 = y
+      }
+    }
+  }
+  return x1 >= x0 && y1 >= y0 ? [x0, y0, x1 - x0, y1 - y0] : null
+}
+
+/**
+ * The camera correction that makes a morph a flight over the map rather than the map sliding
+ * up to a stationary camera.
+ *
+ * An overview and a child view are separately projected files, so a circuit sits in one place
+ * in the country's coordinates and somewhere else entirely in its own — for the Eleventh they
+ * are over a million units apart. The morph interpolates shapes from the first frame to the
+ * second, which means that during the transition the map is bodily translating, and a camera
+ * interpolated between a box in one frame and a box in the other rides along with it. Both
+ * ends come out right, so it looks like a zoom; but the region never travels across the
+ * screen toward the reader, so drilling anywhere feels like the same fixed pull-in and the
+ * country appears pinned wherever the two frames happen to cross.
+ *
+ * `contentFrom` and `contentTo` are the same shapes' extent in each frame, so the two give the
+ * scale and offset the drawing has picked up by `u`. Applying that to a camera flown in the
+ * overview's own coordinates puts the flight back over the map: aim south for the Eleventh,
+ * west for the Ninth, and arrive with the region framed exactly as its own view frames it.
+ */
+export function frameForContent(
+  flight: readonly number[],
+  contentFrom: readonly number[],
+  contentTo: readonly number[],
+  u: number,
+): number[] {
+  const [fx, fy, fw, fh] = flight as [number, number, number, number]
+  const [ax, ay, aw, ah] = contentFrom as [number, number, number, number]
+  const [bx, by, bw, bh] = contentTo as [number, number, number, number]
+  if (aw <= 0 || ah <= 0) return [...flight]
+  // What the drawing has done to itself by u: the paired shapes interpolate vertex by vertex,
+  // so their extent interpolates with them.
+  const s = (aw + (bw - aw) * u) / aw
+  const cx = ax + aw / 2 + (bx + bw / 2 - (ax + aw / 2)) * u
+  const cy = ay + ah / 2 + (by + bh / 2 - (ay + ah / 2)) * u
+  const w = fw * s
+  const h = fh * s
+  return [
+    cx + (fx + fw / 2 - (ax + aw / 2)) * s - w / 2,
+    cy + (fy + fh / 2 - (ay + ah / 2)) * s - h / 2,
+    w,
+    h,
+  ]
+}
+
+/**
+ * A child view's own camera box, expressed in the overview's coordinates — where the flight
+ * has to aim, since it is flown over the country and only afterwards carried into the child's
+ * frame by `frameForContent`.
+ */
+export function pullbackViewBox(
+  box: readonly number[],
+  contentFrom: readonly number[],
+  contentTo: readonly number[],
+): number[] {
+  const [ax, ay, aw, ah] = contentFrom as [number, number, number, number]
+  const [bx, by, bw, bh] = contentTo as [number, number, number, number]
+  if (aw <= 0 || bw <= 0) return [...box]
+  const s = bw / aw
+  const [x, y, w, h] = box as [number, number, number, number]
+  return [
+    ax + aw / 2 + (x + w / 2 - (bx + bw / 2)) / s - w / s / 2,
+    ay + ah / 2 + (y + h / 2 - (by + bh / 2)) / s - h / s / 2,
+    w / s,
+    h / s,
+  ]
+}
+
 export interface MorphPair {
   key: string
   start: Subpath[]

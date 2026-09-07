@@ -4,13 +4,16 @@ import {
   easeInCubic,
   easeInOutCubic,
   easeOutCubic,
+  frameForContent,
   largestSubpathCentre,
   lerpInto,
   MORPH_MIN_COMMIT_MS,
   MORPH_MS,
   type MorphPair,
   type MorphSource,
+  pullbackViewBox,
   serializePath,
+  subpathBounds,
   zoomViewBox,
 } from "./morph"
 import type { DrilldownAsset, RegionIndex, SeatBlockConfig, ViewBox } from "./types"
@@ -64,6 +67,12 @@ interface MorphPlan {
   pairs: (MorphPair & { node: SVGPathElement })[]
   vbStart: number[]
   vbEnd: number[]
+  /** Where `vbEnd` sits in the overview's coordinates — what the flight actually aims at. */
+  vbDest: number[]
+  /** The paired shapes' extent in each frame, which is what tells the camera how far the
+      drawing has translated and shrunk by any point in the morph. */
+  contentFrom: number[]
+  contentTo: number[]
   fadeOut: SVGGElement[]
   fadeIn: SVGGElement[]
 }
@@ -1018,15 +1027,37 @@ export class MapStage {
     const el = document.createElement("div")
     el.setAttribute("data-drilldown-layer", "morph")
     el.appendChild(svg)
+    // The same shapes measured in both files. An overview and a child view are projected
+    // separately, so this is the only thing that says where one frame sits inside the other.
+    const contentFrom = subpathBounds(pairs.map((pr) => pr.start))
+    const contentTo = subpathBounds(pairs.map((pr) => pr.end))
+    if (!contentFrom || !contentTo) return null
     return {
       el,
       svg,
       pairs,
       vbStart,
       vbEnd,
+      vbDest: pullbackViewBox(vbEnd, contentFrom, contentTo),
+      contentFrom,
+      contentTo,
       fadeOut: [shapesOut, blocksOut],
       fadeIn: [shapesIn, blocksIn],
     }
+  }
+
+  /**
+   * Where the camera sits at `u` of a plan's morph: a flight over the country, carried into
+   * whatever frame the drawing has reached by then. Both transitions use it, which is what
+   * keeps a crossing's two halves agreeing at the country between them.
+   */
+  private cameraFor(plan: MorphPlan, u: number): number[] {
+    return frameForContent(
+      zoomViewBox(plan.vbStart, plan.vbDest, u),
+      plan.contentFrom,
+      plan.contentTo,
+      u,
+    )
   }
 
   /** Cached per parent; a null result is cached too — a view that cannot morph is not re-checked. */
@@ -1096,9 +1127,6 @@ export class MapStage {
       // Longer than one morph, shorter than the two it replaces: the crossing covers a drill
       // out and a drill in, but hands over at speed instead of waiting at the country.
       const dur = reducedMotion() ? 0 : Math.round(MORPH_MS * 1.75)
-      // The country itself, framed the way the overview frames it: at the join both plans are
-      // drawing those shapes, so any other box shows them half out of frame.
-      const apex = outPlan.vbStart
       const t0 = nowMs()
       let showingIn = false
       let lastCommit = -Infinity
@@ -1125,10 +1153,10 @@ export class MapStage {
         // Eased at the outer ends only: the halves leave and arrive at rest, and cross the
         // country at full speed rather than stopping there the way this used to.
         const p = half ? easeInCubic(t / 0.5) : easeOutCubic((t - 0.5) / 0.5)
-        // Camera and shapes run off the same clock, so the view is the country at exactly the
-        // moment both plans are drawing it.
-        const vb = half ? zoomViewBox(outPlan.vbEnd, apex, p) : zoomViewBox(apex, inPlan.vbEnd, p)
-        this.renderMorph(plan, half ? 1 - p : p, vb)
+        // Each half is its own drill flown one way or the other, so both are the country at
+        // u = 0 and the swap between them lands on the same view.
+        const u = half ? 1 - p : p
+        this.renderMorph(plan, u, this.cameraFor(plan, u))
         if (t < 1) this.morphRAF = raf(frame)
         else settle("done")
       }
@@ -1182,7 +1210,7 @@ export class MapStage {
         }
         lastCommit = elapsed
         const u = forward ? easeInOutCubic(t) : 1 - easeInOutCubic(t)
-        this.renderMorph(plan, u, zoomViewBox(plan.vbStart, plan.vbEnd, u))
+        this.renderMorph(plan, u, this.cameraFor(plan, u))
         if (t < 1) this.morphRAF = raf(frame)
         else settle("done")
       }
