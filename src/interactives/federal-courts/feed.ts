@@ -1,6 +1,6 @@
-import { githubFileSource, type FileSource } from "../sources/files"
-import { latestTaggedRelease, RELEASE_REF, type ReleaseRef } from "../sources/releases"
-import { releaseTarballSource } from "../sources/tarball"
+import { courtTracker } from "@/integrations"
+import type { FileSource } from "@/integrations/files"
+import { RELEASE_REF, type ReleaseRef } from "@/integrations/github"
 import type { FeedAdapter, FeedFetchOptions, FeedSnapshot } from "../types"
 import { adaptCourtTracker } from "./adapter"
 import type {
@@ -31,14 +31,6 @@ export const COURT_TRACKER_JSON_ASSET = "data-json.tar.gz"
  * can break this adapter without changing a single number we render.
  */
 export const COURT_TRACKER_SCHEMA_MAJOR = 1
-
-export const COURT_TRACKER_REPO_ENV = "COURT_TRACKER_REPO"
-export const COURT_TRACKER_TOKEN_ENV = "COURT_TRACKER_GITHUB_TOKEN"
-export const DEFAULT_COURT_TRACKER_REPO = "digitalgroundgame/court-tracker"
-
-export function courtTrackerRepo(): string {
-  return process.env[COURT_TRACKER_REPO_ENV]?.trim() || DEFAULT_COURT_TRACKER_REPO
-}
 
 /** Reads upstream's manifest first, then exactly the files it lists. Geometry is never read. */
 export async function readCourtTrackerSources(
@@ -100,22 +92,11 @@ async function resolveRef(
   opts: FeedFetchOptions,
 ): Promise<{ ref: string; release: ReleaseRef | null }> {
   if (opts.ref !== RELEASE_REF && opts.ref !== "") return { ref: opts.ref, release: null }
-  const release = await latestTaggedRelease({
-    repo: courtTrackerRepo(),
+  const release = await courtTracker.latestRelease({
     tagPrefix: COURT_TRACKER_TAG_PREFIX,
-    token: opts.token,
     fetchImpl: opts.fetchImpl,
   })
   return { ref: release?.tag ?? "main", release }
-}
-
-function sourceAt(ref: string, opts: FeedFetchOptions): FileSource {
-  return githubFileSource({
-    repo: courtTrackerRepo(),
-    ref,
-    token: opts.token,
-    fetchImpl: opts.fetchImpl,
-  })
 }
 
 /**
@@ -126,15 +107,12 @@ function sourceAt(ref: string, opts: FeedFetchOptions): FileSource {
  */
 async function resolveSource(opts: FeedFetchOptions): Promise<{ ref: string; files: FileSource }> {
   const { ref, release } = await resolveRef(opts)
-  const asset = release?.assets.find((a) => a.name === COURT_TRACKER_JSON_ASSET)
-  if (!asset) return { ref, files: sourceAt(ref, opts) }
-  const files = await releaseTarballSource({
-    label: `github:${courtTrackerRepo()}@${release!.tag} ${asset.name}`,
-    url: asset.url,
-    token: opts.token,
-    fetchImpl: opts.fetchImpl,
-  })
-  return { ref, files }
+  const archive = release
+    ? await courtTracker.filesFromRelease(release, COURT_TRACKER_JSON_ASSET, {
+        fetchImpl: opts.fetchImpl,
+      })
+    : null
+  return { ref, files: archive ?? courtTracker.filesAt(ref, { fetchImpl: opts.fetchImpl }) }
 }
 
 /**
@@ -143,8 +121,8 @@ async function resolveSource(opts: FeedFetchOptions): Promise<{ ref: string; fil
  * change what they publish.
  */
 export const courtTrackerFeed: FeedAdapter<CourtTrackerSources> = {
-  tokenEnv: COURT_TRACKER_TOKEN_ENV,
-  describe: () => `github:${courtTrackerRepo()}`,
+  integration: courtTracker,
+  describe: () => courtTracker.describe(),
 
   async peekVersion(opts) {
     if (opts.files) return (await opts.files.readJson<Manifest>("data/manifest.json")).version
@@ -152,7 +130,8 @@ export const courtTrackerFeed: FeedAdapter<CourtTrackerSources> = {
     // branch. Only a repo with no release yet has to open the manifest to answer this.
     const { ref, release } = await resolveRef(opts)
     if (release) return release.version
-    return (await sourceAt(ref, opts).readJson<Manifest>("data/manifest.json")).version
+    const files = courtTracker.filesAt(ref, { fetchImpl: opts.fetchImpl })
+    return (await files.readJson<Manifest>("data/manifest.json")).version
   },
 
   async fetch(opts) {

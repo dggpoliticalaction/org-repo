@@ -2,7 +2,7 @@ import type { Payload } from "payload"
 
 import { validateDrilldownData } from "@/interactives/contract"
 import fixture from "@/interactives/federal-courts/fixtures/data.json"
-import { RELEASE_REF } from "@/interactives/sources/releases"
+import { RELEASE_REF } from "@/integrations/github"
 import { FEDERAL_COURTS_PROFILE_ID } from "@/interactives/federal-courts"
 import { loadFederalCourtsGeometry } from "@/interactives/federal-courts/geometry"
 import { buildSnapshotFields } from "@/jobs/syncInteractiveData/logic"

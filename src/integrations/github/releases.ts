@@ -13,6 +13,9 @@
 
 import { isRecord } from "@/utilities/isRecord"
 
+import { gunzip, readTar, tarFileSource } from "../archive"
+import type { FileSource } from "../files"
+
 /**
  * The value a `ref` takes when the caller has no opinion: let the adapter resolve whatever
  * upstream last released. Anything else is honoured verbatim, so a branch or a specific tag
@@ -96,4 +99,39 @@ export async function latestTaggedRelease({
     return { tag, version, assets: assetsOf(item) }
   }
   return null
+}
+
+export interface ReleaseAssetSourceOptions {
+  /** What to call this source in an error: the release it came from. */
+  label: string
+  /** The asset's API URL, which is what serves the bytes on a private repo. */
+  url: string
+  token?: string | null
+  fetchImpl?: typeof fetch
+}
+
+/**
+ * Downloads a `.tar.gz` release asset and serves its files.
+ *
+ * The asset is fetched through the API URL with `application/octet-stream`, not through
+ * `browser_download_url`: the latter is a redirect to unauthenticated storage, which a private
+ * repo answers with a 404.
+ */
+export async function releaseTarballSource({
+  label,
+  url,
+  token,
+  fetchImpl = (...args) => fetch(...args),
+}: ReleaseAssetSourceOptions): Promise<FileSource> {
+  const res = await fetchImpl(url, {
+    headers: {
+      Accept: "application/octet-stream",
+      "X-GitHub-Api-Version": "2022-11-28",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+  if (!res.ok) throw new Error(`${label}: HTTP ${res.status}`)
+  const entries = readTar(await gunzip(new Uint8Array(await res.arrayBuffer())))
+  if (entries.size === 0) throw new Error(`${label}: archive carries no files`)
+  return tarFileSource(label, entries)
 }

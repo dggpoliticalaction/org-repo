@@ -1,7 +1,10 @@
 /**
- * Where a feed's files come from. A feed adapter reads paths relative to an upstream root
- * and never cares whether that root is a GitHub repo at a ref, a checkout on disk (the
- * snapshot CLI, offline work) or a map of strings (tests).
+ * Where a set of files comes from.
+ *
+ * A reader asks for paths relative to some root and never cares whether that root is a
+ * repository at a ref, an archive downloaded from a release, a checkout on disk (the snapshot
+ * CLI, offline work) or a map of strings (tests). It is the seam that lets one integration
+ * hand its files to a feature that knows nothing about it.
  */
 export interface FileSource {
   describe(): string
@@ -24,46 +27,6 @@ export function withJson(source: Omit<FileSource, "readJson">): FileSource {
       }
     },
   }
-}
-
-export interface GithubFileSourceOptions {
-  /** "owner/name" */
-  repo: string
-  ref: string
-  token?: string | null
-  fetchImpl?: typeof fetch
-}
-
-/**
- * Reads a file through the contents API with the raw media type, which returns the bytes
- * directly (no base64, no 1 MB cap) and works on private repos with a fine-grained token
- * that has contents:read.
- */
-export function githubFileSource({
-  repo,
-  ref,
-  token,
-  fetchImpl = (...args) => fetch(...args),
-}: GithubFileSourceOptions): FileSource {
-  const describe = (): string => `github:${repo}@${ref}`
-  return withJson({
-    describe,
-    async read(path) {
-      const url = `https://api.github.com/repos/${repo}/contents/${path
-        .split("/")
-        .map(encodeURIComponent)
-        .join("/")}?ref=${encodeURIComponent(ref)}`
-      const res = await fetchImpl(url, {
-        headers: {
-          Accept: "application/vnd.github.raw+json",
-          "X-GitHub-Api-Version": "2022-11-28",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      })
-      if (!res.ok) throw new Error(`${describe()} ${path}: HTTP ${res.status}`)
-      return res.text()
-    },
-  })
 }
 
 /** An in-memory source for tests. */

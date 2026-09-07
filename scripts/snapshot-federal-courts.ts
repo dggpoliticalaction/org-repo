@@ -23,8 +23,8 @@ import { courtTrackerFeed } from "../src/interactives/federal-courts/feed"
 import { loadFederalCourtsGeometry } from "../src/interactives/federal-courts/geometry"
 import { svgToGeometryFile } from "../src/interactives/geometry"
 import { hashDrilldownData } from "../src/interactives/hash"
-import { localFileSource } from "../src/interactives/sources/files"
-import { RELEASE_REF } from "../src/interactives/sources/releases"
+import { localFileSource } from "../src/integrations/files"
+import { RELEASE_REF } from "../src/integrations/github"
 
 const PROFILE_DIR = path.resolve("src/interactives/federal-courts")
 const CIRCUITS = [

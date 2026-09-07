@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest"
 
 import { validateDrilldownData } from "../../contract"
-import { memoryFileSource, withJson } from "../../sources/files"
-import { tarGz } from "../../__tests__/tarFixture"
-import { RELEASE_REF } from "../../sources/releases"
+import { memoryFileSource, withJson } from "@/integrations/files"
+import { tarGz } from "@/integrations/__tests__/tarFixture"
+import { RELEASE_REF } from "@/integrations/github"
 import type { DrilldownGeometry } from "../../types"
 import { factsFor, justiceRecord, splitLicense } from "../adapter"
 import { courtTrackerFeed, readCourtTrackerSources } from "../feed"

@@ -1,14 +1,10 @@
 /**
- * Reading a feed out of a release asset.
+ * Reading a set of files out of a `.tar.gz`.
  *
- * A publisher that cuts a release can attach the exact bytes a consumer needs. Upstream's
- * `data-json.tar.gz` is one such asset: every runtime JSON file, at the `data/`-prefixed
- * paths the manifest names, and nothing else — no photos, no geometry, no widget. One request
- * replaces a file-by-file walk of the same tag, and the archive cannot be caught half-written
- * the way a directory listing can.
- *
- * The archive is served as a `FileSource`, so nothing downstream knows the difference between
- * a tarball, a checkout on disk and a repo at a ref.
+ * A publisher that cuts a release can attach exactly the bytes a consumer needs, and one
+ * download of an archive beats a file-by-file walk of the same revision: fewer round trips,
+ * and no way to see two files from two different builds. The archive is served as a
+ * `FileSource`, so nothing downstream knows it was ever an archive.
  */
 
 import { type FileSource, withJson } from "./files"
@@ -83,39 +79,4 @@ export function tarFileSource(label: string, entries: Map<string, Uint8Array>): 
       return decoder.decode(bytes)
     },
   })
-}
-
-export interface ReleaseAssetSourceOptions {
-  /** What to call this source in an error: the release it came from. */
-  label: string
-  /** The asset's API URL, which is what serves the bytes on a private repo. */
-  url: string
-  token?: string | null
-  fetchImpl?: typeof fetch
-}
-
-/**
- * Downloads a `.tar.gz` release asset and serves its files.
- *
- * The asset is fetched through the API URL with `application/octet-stream`, not through
- * `browser_download_url`: the latter is a redirect to unauthenticated storage, which a private
- * repo answers with a 404.
- */
-export async function releaseTarballSource({
-  label,
-  url,
-  token,
-  fetchImpl = (...args) => fetch(...args),
-}: ReleaseAssetSourceOptions): Promise<FileSource> {
-  const res = await fetchImpl(url, {
-    headers: {
-      Accept: "application/octet-stream",
-      "X-GitHub-Api-Version": "2022-11-28",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-  })
-  if (!res.ok) throw new Error(`${label}: HTTP ${res.status}`)
-  const entries = readTar(await gunzip(new Uint8Array(await res.arrayBuffer())))
-  if (entries.size === 0) throw new Error(`${label}: archive carries no files`)
-  return tarFileSource(label, entries)
 }

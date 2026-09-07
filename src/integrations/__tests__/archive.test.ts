@@ -2,7 +2,8 @@ import { gzipSync } from "node:zlib"
 
 import { describe, expect, it, vi } from "vitest"
 
-import { gunzip, readTar, releaseTarballSource, tarFileSource } from "../sources/tarball"
+import { gunzip, readTar, tarFileSource } from "../archive"
+import { releaseTarballSource } from "../github/releases"
 import { tarArchive as archive, tarEntry as entry, tarGz } from "./tarFixture"
 
 describe("readTar", () => {

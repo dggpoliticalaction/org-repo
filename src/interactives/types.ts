@@ -29,7 +29,8 @@ import type {
 
 import type React from "react"
 
-import type { FileSource } from "./sources/files"
+import type { FileSource } from "@/integrations/files"
+import type { Integration } from "@/integrations/types"
 
 // ---- data: the researcher's half ------------------------------------------------------------
 
@@ -114,8 +115,6 @@ export interface FeedFetchOptions {
    * honoured verbatim, so a branch or a specific tag can still be pinned for debugging.
    */
   ref: string
-  /** Credential for a private upstream; read from `FeedAdapter.tokenEnv` by the sync. */
-  token?: string | null
   fetchImpl?: typeof fetch
   /** Read from here instead of upstream — a checkout on disk, or a memory source in tests. */
   files?: FileSource
@@ -139,8 +138,12 @@ export interface FeedSnapshot<Raw> {
  * already publish and to say when its shape changes.
  */
 export interface FeedAdapter<Raw> {
-  /** Env var holding the token when upstream is private. */
-  tokenEnv?: string
+  /**
+   * The outside connection this feed reads through (`@/integrations`). It owns the
+   * credential and the transport; the adapter owns the shape of what comes back. The sync
+   * asks it whether the feed is reachable at all before it tries.
+   */
+  integration: Integration
   /** Where the feed comes from, for logs ("github:org/repo"). */
   describe(): string
   /** Upstream's current version stamp, fetched as cheaply as possible. */

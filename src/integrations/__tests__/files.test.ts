@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { githubFileSource, memoryFileSource } from "../sources/files"
+import { githubFileSource } from "../github/contents"
+import { memoryFileSource } from "../files"
 
 function stubFetch(status: number, body: string): typeof fetch {
   return vi.fn(async () => ({

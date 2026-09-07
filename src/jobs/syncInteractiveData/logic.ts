@@ -2,9 +2,10 @@ import type { Payload } from "payload"
 
 import { validateDrilldownData } from "@/interactives/contract"
 import { hashDrilldownData } from "@/interactives/hash"
-import { RELEASE_REF } from "@/interactives/sources/releases"
+import { describeStatus, integrationStatus } from "@/integrations"
+import type { FileSource } from "@/integrations/files"
+import { RELEASE_REF } from "@/integrations/github"
 import { getProfile } from "@/interactives/profiles"
-import type { FileSource } from "@/interactives/sources/files"
 import type { DrilldownData, InteractiveProfile } from "@/interactives/types"
 import type { Interactive, InteractiveSnapshot } from "@/payload-types"
 
@@ -115,16 +116,19 @@ export async function syncInteractive(
     log.debug(`${tag} feed disabled — skipping`)
     return { outcome: "skipped", reason: "feed disabled" }
   }
-  const tokenEnv = profile.feed.tokenEnv
-  const token = tokenEnv ? (process.env[tokenEnv]?.trim() ?? null) : null
-  if (tokenEnv && !token && !files) {
-    log.warn(`${tag} ${tokenEnv} is not set — skipping ${profile.feed.describe()}`)
-    return { outcome: "skipped", reason: `${tokenEnv} not set` }
+  // Whether the outside connection can be reached at all is the integration's question, not
+  // this job's: it names the variables it needs and says which are missing, and every feed
+  // that ever gets added answers it the same way. `files` is a caller reading from a checkout
+  // or a fixture instead, which needs no credential.
+  const connection = integrationStatus(profile.feed.integration)
+  if (!connection.configured && !files) {
+    log.warn(`${tag} skipping — ${describeStatus(connection)}`)
+    return { outcome: "skipped", reason: `${connection.missing.join(", ")} not set` }
   }
   // Empty means "whatever upstream last released": the adapter resolves an immutable tag, so
   // a scheduled pull never races a branch mid-push. A pinned value is honoured verbatim.
   const requestedRef = interactive.feed?.ref?.trim() || RELEASE_REF
-  const fetchOpts = { ref: requestedRef, token, fetchImpl, files }
+  const fetchOpts = { ref: requestedRef, fetchImpl, files }
 
   const latest = await findLatestSnapshot(payload, interactive.id)
 

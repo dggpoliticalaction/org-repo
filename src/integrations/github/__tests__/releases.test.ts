@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { latestTaggedRelease } from "../sources/releases"
+import { latestTaggedRelease } from "../releases"
 
 const ok = (body: unknown): Response =>
   new Response(JSON.stringify(body), {

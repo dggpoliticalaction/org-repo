@@ -1,4 +1,4 @@
-import { memoryFileSource, type FileSource } from "../../sources/files"
+import { memoryFileSource, type FileSource } from "@/integrations/files"
 import { loadFederalCourtsGeometry } from "../geometry"
 import type { Court, Judge } from "../upstream"
 
