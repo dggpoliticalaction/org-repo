@@ -208,15 +208,20 @@ text[data-block-label] {
 [data-drilldown-map] [data-drilldown-viewport] {
   height: var(--drilldown-stage-h);
 }
-/* Region rail: a column beside the map, scrolling within the stage's own height rather than
-   stretching the page. On a phone it sits above the map and is capped shorter still. */
-[data-drilldown-selector] {
-  scrollbar-width: thin;
+/* Region rail: a column beside the map, kept to the stage's own height rather than stretching
+   the page. On a phone it sits above the map and is capped shorter still. The column carries
+   the cap; the region list inside it is the part that scrolls, so a search box above the list
+   stays in view without moving and its results are not clipped by the scroll box. */
+[data-drilldown-rail] {
   max-height: 14rem;
+}
+[data-drilldown-rail] [data-drilldown-selector] {
+  scrollbar-width: thin;
+  min-height: 0;
   overflow-y: auto;
 }
 @media (min-width: 48rem) {
-  [data-drilldown-map] [data-drilldown-selector] {
+  [data-drilldown-map] [data-drilldown-rail] {
     max-height: var(--drilldown-stage-h);
   }
 }

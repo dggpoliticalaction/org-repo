@@ -186,12 +186,14 @@ export function DrilldownSearch({
                     onMouseEnter={() => setActive(i)}
                     onClick={() => commit(r)}
                     className={cn(
-                      "flex w-full items-baseline justify-between gap-3 px-3 py-1.5 text-left text-sm",
+                      "flex w-full flex-col items-start px-3 py-1.5 text-left text-sm",
                       i === active ? "bg-muted text-foreground" : "text-foreground",
                     )}
                   >
-                    <span className="min-w-0 truncate">{r.name}</span>
-                    <span className="text-muted-foreground shrink-0 text-xs">
+                    {/* Stacked, not two columns: the box is as wide as the region rail, and
+                        side by side a long region name ate the record's own down to "E..". */}
+                    <span className="w-full truncate">{r.name}</span>
+                    <span className="text-muted-foreground w-full truncate text-xs">
                       {regions.byId[r.region]?.label ?? r.region}
                     </span>
                   </button>

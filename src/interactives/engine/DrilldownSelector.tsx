@@ -1,7 +1,9 @@
 "use client"
 
+import { ChevronRight } from "lucide-react"
 import React, { useRef } from "react"
 
+import { Button } from "@/components/ui/button"
 import { cn } from "@/utilities/utils"
 
 import type { RegionIndex } from "./types"
@@ -18,6 +20,8 @@ interface DrilldownSelectorProps {
   onSelect(regionId: string, via: SelectVia): void
   onToggle(regionId: string): void
   onBack(): void
+  /** Record search, if the interactive has it: rides at the top of the rail, in its width. */
+  search?: React.ReactNode
   className?: string
 }
 
@@ -46,8 +50,8 @@ function Item({
 }): React.ReactElement {
   return (
     <div className="flex items-stretch gap-0.5">
-      <button
-        type="button"
+      <Button
+        variant={selected ? "default" : "ghost"}
         data-region-item={regionId}
         data-drillable={expandable ? "true" : undefined}
         aria-pressed={selected}
@@ -58,31 +62,27 @@ function Item({
         // for most of them and this is how a reader gets the rest.
         title={label}
         className={cn(
-          "focus-visible:ring-ring/60 flex min-w-0 flex-1 items-center rounded-md py-1.5 pr-2 text-left text-sm font-medium transition-colors outline-none focus-visible:ring-2",
+          "min-w-0 flex-1 shrink justify-start pr-2 text-left",
           depth > 0 ? "pl-3" : "pl-2.5",
-          selected
-            ? "bg-foreground text-background hover:bg-foreground"
-            : "text-foreground hover:bg-muted",
         )}
       >
         <span className="min-w-0 flex-1 truncate">{label}</span>
-      </button>
+      </Button>
       {expandable && (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon-xs"
           data-region-toggle={regionId}
           aria-label={`${expanded ? "Collapse" : "Expand"} ${label}`}
           tabIndex={-1}
           onClick={onToggle}
-          className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/60 w-6 shrink-0 rounded-md text-xs outline-none focus-visible:ring-2"
+          className="text-muted-foreground hover:text-foreground h-auto self-stretch"
         >
-          <span
+          <ChevronRight
             aria-hidden="true"
-            className={cn("inline-block transition-transform", expanded && "rotate-90")}
-          >
-            ›
-          </span>
-        </button>
+            className={cn("transition-transform", expanded && "rotate-90")}
+          />
+        </Button>
       )}
     </div>
   )
@@ -106,6 +106,7 @@ export function DrilldownSelector({
   onSelect,
   onToggle,
   onBack,
+  search,
   className,
 }: DrilldownSelectorProps): React.ReactElement {
   const navRef = useRef<HTMLElement | null>(null)
@@ -145,68 +146,75 @@ export function DrilldownSelector({
   }
 
   return (
-    <nav
-      ref={navRef}
-      aria-label="Regions"
-      data-drilldown-selector=""
-      onKeyDown={onKeyDown}
-      className={cn("flex min-w-0 flex-col gap-0.5", className)}
-    >
-      {view.parentId && (
-        <button
-          type="button"
-          data-drilldown-back=""
-          onClick={onBack}
-          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/60 rounded-md px-2.5 py-1.5 text-left text-sm font-medium outline-none focus-visible:ring-2"
-        >
-          ← Back to overview
-        </button>
-      )}
-      <ul className="flex flex-col gap-0.5">
-        {regions.topLevel.map((id) => {
-          const region = regions.byId[id]
-          if (!region) return null
-          const kids = expanded.has(id) ? childrenOf(id) : []
-          return (
-            <li key={id}>
-              <Item
-                regionId={id}
-                label={region.label}
-                selected={selected === id}
-                tabbable={activeId === id}
-                expandable={isExpandable(id)}
-                expanded={expanded.has(id)}
-                depth={0}
-                onSelect={(via) => onSelect(id, via)}
-                onToggle={() => onToggle(id)}
-              />
-              {kids.length > 0 && (
-                <ul className="border-border mt-0.5 ml-3 flex flex-col gap-0.5 border-l pl-1">
-                  {kids.map((childId) => {
-                    const child = regions.byId[childId]
-                    if (!child) return null
-                    return (
-                      <li key={childId}>
-                        <Item
-                          regionId={childId}
-                          label={child.label}
-                          selected={selected === childId}
-                          tabbable={activeId === childId}
-                          expandable={false}
-                          expanded={false}
-                          depth={1}
-                          onSelect={(via) => onSelect(childId, via)}
-                          onToggle={() => onToggle(childId)}
-                        />
-                      </li>
-                    )
-                  })}
-                </ul>
-              )}
-            </li>
-          )
-        })}
-      </ul>
-    </nav>
+    // The rail is a column of two parts: the search box, which stays put, and the region list,
+    // which scrolls under it. The list is the scrolling element rather than the page, so the
+    // box needs no `sticky` to hold its place — and sitting outside that scroll box is what
+    // keeps its results list from being clipped by it.
+    <div data-drilldown-rail="" className={cn("flex min-w-0 flex-col gap-2", className)}>
+      {search}
+      <nav
+        ref={navRef}
+        aria-label="Regions"
+        data-drilldown-selector=""
+        onKeyDown={onKeyDown}
+        className="flex min-w-0 flex-col gap-0.5"
+      >
+        {view.parentId && (
+          <Button
+            variant="ghost"
+            data-drilldown-back=""
+            onClick={onBack}
+            className="text-muted-foreground hover:text-foreground justify-start px-2.5"
+          >
+            ← Back to overview
+          </Button>
+        )}
+        <ul className="flex flex-col gap-0.5">
+          {regions.topLevel.map((id) => {
+            const region = regions.byId[id]
+            if (!region) return null
+            const kids = expanded.has(id) ? childrenOf(id) : []
+            return (
+              <li key={id}>
+                <Item
+                  regionId={id}
+                  label={region.label}
+                  selected={selected === id}
+                  tabbable={activeId === id}
+                  expandable={isExpandable(id)}
+                  expanded={expanded.has(id)}
+                  depth={0}
+                  onSelect={(via) => onSelect(id, via)}
+                  onToggle={() => onToggle(id)}
+                />
+                {kids.length > 0 && (
+                  <ul className="border-border mt-0.5 ml-3 flex flex-col gap-0.5 border-l pl-1">
+                    {kids.map((childId) => {
+                      const child = regions.byId[childId]
+                      if (!child) return null
+                      return (
+                        <li key={childId}>
+                          <Item
+                            regionId={childId}
+                            label={child.label}
+                            selected={selected === childId}
+                            tabbable={activeId === childId}
+                            expandable={false}
+                            expanded={false}
+                            depth={1}
+                            onSelect={(via) => onSelect(childId, via)}
+                            onToggle={() => onToggle(childId)}
+                          />
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )}
+              </li>
+            )
+          })}
+        </ul>
+      </nav>
+    </div>
   )
 }

@@ -522,15 +522,6 @@ export function DrilldownMapClient({
 
   return (
     <DrilldownSelectionProvider value={selection}>
-      {search && (
-        <DrilldownSearch
-          url={search.url}
-          label={search.label}
-          regions={regions}
-          onSelect={(r) => void revealRecord(r)}
-          className="mb-3 max-w-sm"
-        />
-      )}
       <div
         ref={rootRef}
         data-drilldown-map=""
@@ -548,6 +539,16 @@ export function DrilldownMapClient({
             onSelect={(id, via) => void open(id, via)}
             onToggle={toggleExpanded}
             onBack={() => void drillOut()}
+            search={
+              search && (
+                <DrilldownSearch
+                  url={search.url}
+                  label={search.label}
+                  regions={regions}
+                  onSelect={(r) => void revealRecord(r)}
+                />
+              )
+            }
             className="md:w-56 md:shrink-0 lg:w-64"
           />
           <div
