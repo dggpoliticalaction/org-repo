@@ -22,6 +22,7 @@ import type {
   DrilldownPath,
   DrilldownRecord,
   FactsConfig,
+  RegionIcons,
   RecordDisplay,
   SeatBlockConfig,
   ViewBox,
@@ -80,6 +81,8 @@ export interface LookupSource {
 export interface DrilldownPresentation {
   facts?: FactsConfig
   seats?: SeatBlockConfig
+  /** Icons for the region rail, by region id or by the layer a region is drawn on. */
+  icons?: RegionIcons
   display: RecordDisplay
   /** Side tables built from `datasets`, keyed by the name a detail line's `lookup` names. */
   lookups?: Record<string, LookupSource>

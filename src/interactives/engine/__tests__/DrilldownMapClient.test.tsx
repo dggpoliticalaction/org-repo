@@ -41,6 +41,7 @@ const overviewPayload = {
     ],
     labelFact: "short-label",
   },
+  icons: { byRegion: { east: "landmark" }, byLayer: { circuit: "scale" } },
   records: {
     items: [
       {
@@ -58,8 +59,8 @@ const overviewPayload = {
 
 const overviewSvg = `<svg viewBox="0 0 100 50">
   <g transform="scale(1,-1) translate(0,-50)">
-    <path id="west" data-region-label="West" data-seats="3" data-seats-r="1" data-seats-d="1" data-short-label="W" data-summary="3 authorized" data-children-label="districts" d="M0 0 L50 0 L50 50 L0 50"/>
-    <path id="east" data-region-label="East" data-seats="2" d="M50 0 L100 0 L100 50 L50 50"/>
+    <path id="west" data-layer="circuit" data-region-label="West" data-seats="3" data-seats-r="1" data-seats-d="1" data-short-label="W" data-summary="3 authorized" data-children-label="districts" d="M0 0 L50 0 L50 50 L0 50"/>
+    <path id="east" data-layer="circuit" data-region-label="East" data-seats="2" d="M50 0 L100 0 L100 50 L50 50"/>
     <path id="w1" data-parent-id="west" data-region-label="West 1" d="M0 0 L25 0 L25 50 L0 50"/>
     <path id="w2" data-parent-id="west" data-region-label="West 2" d="M25 0 L50 0 L50 50 L25 50"/>
   </g>
@@ -379,6 +380,22 @@ describe("DrilldownMapClient", () => {
       expect(local.querySelector('path[data-region-id="w1"]')).toHaveAttribute("data-selected"),
     )
     await waitFor(() => expect(window.location.search).toBe("?region=w1"))
+  })
+
+  it("puts the profile's icon beside a top-level region, and none beside a child", async () => {
+    const { container } = setup()
+    const nav = (): HTMLElement =>
+      container.querySelector<HTMLElement>("[data-drilldown-selector]")!
+    // `west` is drawn on the circuit layer; `east` is named outright. Both come from the
+    // profile through the payload — the engine only knows the names it allows.
+    expect(nav().querySelector('[data-region-item="west"] svg')).toHaveClass("lucide-scale")
+    expect(nav().querySelector('[data-region-item="east"] svg')).toHaveClass("lucide-landmark")
+
+    fireEvent.click(within(nav()).getByRole("button", { name: "Expand West" }))
+    await waitFor(() =>
+      expect(within(nav()).getByRole("button", { name: "West 1" })).toBeInTheDocument(),
+    )
+    expect(nav().querySelector('[data-region-item="w1"] svg')).toBeNull()
   })
 
   it("opens one branch at a time, so the rail never becomes a wall of districts", async () => {

@@ -249,6 +249,20 @@ export function validateDrilldownPayload(input: unknown): PayloadValidation {
     }
   }
 
+  let icons: DrilldownPayload["icons"]
+  if (input.icons !== undefined) {
+    const i = input.icons
+    // Names only, and an unknown one resolves to no icon rather than an error: the allowlist
+    // lives in `engine/icons`, and a payload written against a newer one must still render.
+    if (!isRecord(i)) errors.push("icons must be an object")
+    else {
+      icons = {}
+      if (isStringMap(i.byRegion)) icons.byRegion = i.byRegion
+      if (isStringMap(i.byLayer)) icons.byLayer = i.byLayer
+      if (isString(i.default)) icons.default = i.default
+    }
+  }
+
   const records = validateRecords(input.records, errors)
   const lookups = validateLookups(input.lookups, errors)
 
@@ -257,6 +271,7 @@ export function validateDrilldownPayload(input: unknown): PayloadValidation {
   if (regions) payload.regions = regions
   if (facts) payload.facts = facts
   if (seats) payload.seats = seats
+  if (icons) payload.icons = icons
   if (records) payload.records = records
   if (lookups) payload.lookups = lookups
   return { payload, errors }

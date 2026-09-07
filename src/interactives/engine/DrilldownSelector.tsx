@@ -19,7 +19,8 @@ import {
 } from "@/components/ui/sidebar"
 import { cn } from "@/utilities/utils"
 
-import type { RegionIndex } from "./types"
+import { regionIcon } from "./icons"
+import type { RegionIcons, RegionIndex } from "./types"
 
 export type SelectVia = "pointer" | "keyboard"
 
@@ -35,6 +36,8 @@ interface DrilldownSelectorProps {
   onBack(): void
   /** Record search, if the interactive has it: rides at the top of the rail, in its width. */
   search?: React.ReactNode
+  /** What the profile puts beside a top-level region, if anything. */
+  icons?: RegionIcons
   className?: string
 }
 
@@ -132,6 +135,7 @@ export function DrilldownSelector({
   onToggle,
   onBack,
   search,
+  icons,
   className,
 }: DrilldownSelectorProps): React.ReactElement {
   const navRef = useRef<HTMLDivElement | null>(null)
@@ -240,6 +244,7 @@ export function DrilldownSelector({
                       onClick={(e) => onSelect(id, viaOf(e))}
                       className={ACTIVE_ROW}
                     >
+                      {regionIcon(region, icons)}
                       <span>{region.label}</span>
                     </SidebarMenuButton>
                     {expandable && (

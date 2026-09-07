@@ -184,11 +184,23 @@ export interface RecordsConfig {
   display: RecordDisplay
 }
 
+/**
+ * Which icon sits beside a region in the rail, named rather than imported: the profile picks
+ * the name, `engine/icons` owns the allowlist it resolves to. Most specific wins — the region
+ * itself, then the layer it is drawn on, then the fallback.
+ */
+export interface RegionIcons {
+  byRegion?: Record<string, string>
+  byLayer?: Record<string, string>
+  default?: string
+}
+
 export interface DrilldownPayload {
   schema: typeof DRILLDOWN_SCHEMA
   regions?: DeclaredRegion[]
   facts?: FactsConfig
   seats?: SeatBlockConfig
+  icons?: RegionIcons
   records?: RecordsConfig
   /** Side tables a `portrait` detail line reads, keyed by table name then by value. */
   lookups?: Record<string, Record<string, LookupEntry>>

@@ -536,6 +536,7 @@ export function DrilldownMapClient({
             onSelect={(id, via) => void open(id, via)}
             onToggle={toggleExpanded}
             onBack={() => void drillOut()}
+            icons={overview.payload?.icons}
             search={
               search && (
                 <DrilldownSearch

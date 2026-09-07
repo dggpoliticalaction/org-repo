@@ -41,6 +41,12 @@ export const federalCourtsPresentation: DrilldownPresentation = {
       "vacant",
     ],
   },
+  // The Supreme Court is a building everyone knows; a circuit is the scales. Districts get
+  // none — the indent under their circuit already says what they are.
+  icons: {
+    byRegion: { scotus: "landmark" },
+    byLayer: { circuit: "scale" },
+  },
   seats: {
     totalFact: "seats",
     groups: [

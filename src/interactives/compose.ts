@@ -127,6 +127,7 @@ export function composeOverview({ presentation, geometry, data }: ComposeInput):
       regions: data.regions,
       ...(presentation.facts ? { facts: presentation.facts } : {}),
       ...(presentation.seats ? { seats: presentation.seats } : {}),
+      ...(presentation.icons ? { icons: presentation.icons } : {}),
       ...((): Pick<DrilldownPayload, "lookups"> => {
         const lookups = composeLookups(presentation, data)
         return lookups ? { lookups } : {}
