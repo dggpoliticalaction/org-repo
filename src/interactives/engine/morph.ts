@@ -237,6 +237,29 @@ export function pullbackViewBox(
   ]
 }
 
+/**
+ * How to place content that belongs to one file into the frame the morph has reached.
+ *
+ * A morph layer draws three things at once: the overview's own shapes, the child's own shapes,
+ * and the paired shapes interpolating between the two. Only the paired ones are in the frame
+ * the camera follows. The other two are each a whole projection away — for the Eleventh
+ * Circuit a million units — so without this the child's districts and its seat blocks hang
+ * north of the map they belong to for the whole of the crossfade, worst in the middle where
+ * both are half visible.
+ *
+ * Scaling stays uniform even though the two extents rarely agree on aspect: a fraction of a
+ * percent of slack in the outlines is not worth squashing the seat blocks over.
+ */
+export function frameTransform(content: readonly number[], blended: readonly number[]): string {
+  const [ax, ay, aw, ah] = content as [number, number, number, number]
+  const [bx, by, bw, bh] = blended as [number, number, number, number]
+  if (aw <= 0 || ah <= 0) return ""
+  const s = Math.sqrt((bw / aw) * (bh / ah))
+  const tx = bx + bw / 2 - s * (ax + aw / 2)
+  const ty = by + bh / 2 - s * (ay + ah / 2)
+  return `translate(${tx} ${ty}) scale(${s})`
+}
+
 export interface MorphPair {
   key: string
   start: Subpath[]

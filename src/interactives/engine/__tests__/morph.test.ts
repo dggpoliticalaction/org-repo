@@ -7,6 +7,7 @@ import {
   easeOutCubic,
   flipYInPlace,
   frameForContent,
+  frameTransform,
   largestSubpathCentre,
   lerpInto,
   lerpViewBox,
@@ -114,6 +115,15 @@ describe("structure, flip, serialize, lerp", () => {
     expect(frameForContent(country, contentFrom, contentTo, 0)).toEqual(country)
     // ...and landed exactly on the child's own box at the end.
     expect(frameForContent(dest, contentFrom, contentTo, 1)).toEqual(childBox)
+  })
+
+  it("places one file's own content into the frame the morph has reached", () => {
+    const overview = [0, 0, 100, 100]
+    const child = [1000, 1000, 50, 50]
+    // At the country the overview's shapes are already where they belong...
+    expect(frameTransform(overview, overview)).toBe("translate(0 0) scale(1)")
+    // ...and the child's are a whole projection away, so they are brought onto it.
+    expect(frameTransform(child, overview)).toBe("translate(-2000 -2000) scale(2)")
   })
 
   it("crosses the join at speed rather than coming to rest on it", () => {

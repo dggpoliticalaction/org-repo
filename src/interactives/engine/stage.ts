@@ -5,8 +5,10 @@ import {
   easeInOutCubic,
   easeOutCubic,
   frameForContent,
+  frameTransform,
   largestSubpathCentre,
   lerpInto,
+  lerpViewBox,
   MORPH_MIN_COMMIT_MS,
   MORPH_MS,
   type MorphPair,
@@ -345,8 +347,8 @@ export class MapStage {
     this.setSelected(null)
     this.cancelPendingHover()
     this.opts.callbacks.onHover(null, null)
-    // The reader is looking at `from`, and that is where the curve starts.
-    this.renderMorph(outPlan, 1, outPlan.vbEnd)
+    // The reader is looking at `from`, and that is where the crossing starts.
+    this.renderMorph(outPlan, 1, this.cameraFor(outPlan, 1))
     this.attachMorphLayer(outPlan.el)
     this.setLayerState(this.overview, "hidden-hard")
     this.setLayerState(from, "hidden")
@@ -374,7 +376,7 @@ export class MapStage {
       this.setLayerState(this.overview, "visible")
       return "fallback"
     }
-    this.renderMorph(plan, 1, plan.vbEnd)
+    this.renderMorph(plan, 1, this.cameraFor(plan, 1))
     this.attachMorphLayer(plan.el)
     this.handoff(local!, false)
     if ((await this.runMorph(plan, false)) !== "done") return "cancelled"
@@ -1069,11 +1071,8 @@ export class MapStage {
       this.morphPlans.set(parentId, plan)
     }
     const plan = this.morphPlans.get(parentId) ?? null
-    if (plan) {
-      for (const pr of plan.pairs) pr.node.setAttribute("d", serializePath(pr.start))
-      this.setFades(plan, 0)
-      plan.svg.setAttribute("viewBox", plan.vbStart.join(" "))
-    }
+    // Reset to the country, transforms and all, so an unprimed plan never paints a stale frame.
+    if (plan) this.renderMorph(plan, 0, this.cameraFor(plan, 0))
     return plan
   }
 
@@ -1095,6 +1094,13 @@ export class MapStage {
       lerpInto(pr.start, pr.end, pr.work, u)
       pr.node.setAttribute("d", serializePath(pr.work))
     }
+    // The paired shapes define the frame; the two files' own shapes and seat blocks are each a
+    // whole projection away from it, so they are placed into it rather than left where they were.
+    const blended = lerpViewBox(plan.contentFrom, plan.contentTo, u)
+    for (const n of plan.fadeOut)
+      n.setAttribute("transform", frameTransform(plan.contentFrom, blended))
+    for (const n of plan.fadeIn)
+      n.setAttribute("transform", frameTransform(plan.contentTo, blended))
     plan.svg.setAttribute("viewBox", vb.join(" "))
     this.setFades(plan, u)
   }
