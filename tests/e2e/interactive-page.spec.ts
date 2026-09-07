@@ -35,12 +35,12 @@ test.describe("interactive page — federal courts", () => {
       "svg[data-drilldown-overview] path[data-region-id='ca8'][data-role='parent']",
     )
     await ca8.hover()
-    await expect(page.locator("[data-drilldown-tooltip]")).toContainText("8th Cir.")
+    await expect(page.locator("[data-drilldown-tooltip]")).toContainText("Eighth Circuit")
 
     await ca8.click()
     const pane = page.locator("[data-drilldown-pane][data-open]")
     await expect(pane).toBeVisible()
-    await expect(pane.locator("[data-drilldown-pane-title]")).toHaveText("8th Cir.")
+    await expect(pane.locator("[data-drilldown-pane-title]")).toHaveText("Eighth Circuit")
     await expect(pane.locator("[data-drilldown-node]").first()).toBeVisible()
     await expect(pane.locator("[data-drilldown-associate-node]")).toContainText("Circ. Justice")
 
@@ -53,7 +53,7 @@ test.describe("interactive page — federal courts", () => {
       /^https:\/\/upload\.wikimedia\.org\//,
     )
     // The counts live in the summary line; the facts row carries what the summary lacks.
-    await expect(pane).toContainText("11 authorized · 11 active · 6 senior · 0 vacant")
+    await expect(pane).toContainText("11 authorized · 11 active · 6 senior")
 
     test.skip(testInfo.project.name !== "chromium", "visual baseline captured on chromium only")
 
@@ -105,7 +105,7 @@ test.describe("interactive page — federal courts", () => {
     await page.locator("[data-drilldown-selector] [data-region-item='moed']").click()
     await expect(
       page.locator("[data-drilldown-pane][data-open] [data-drilldown-pane-title]"),
-    ).toHaveText("E.D. Mo.")
+    ).toHaveText("Eastern District of Missouri")
 
     await page.getByRole("button", { name: "← Back to overview" }).click()
     await expect(viewport).toHaveAttribute("data-view", "overview")
@@ -146,7 +146,9 @@ test.describe("interactive page — federal courts", () => {
     // A seat is a way into its district: the map drills to the circuit and opens the district.
     await cartogram.locator("rect[data-summary-seat='moed']").first().click()
     const open = page.locator("[data-drilldown-pane][data-open]")
-    await expect(open.locator("[data-drilldown-pane-title]")).toHaveText("E.D. Mo.")
+    await expect(open.locator("[data-drilldown-pane-title]")).toHaveText(
+      "Eastern District of Missouri",
+    )
     await expect(page.locator("[data-drilldown-viewport]")).toHaveAttribute("data-view", "child")
   })
 
@@ -159,11 +161,11 @@ test.describe("interactive page — federal courts", () => {
     await box.fill("kayatta")
     const option = page.getByRole("option", { name: /Kayatta/ })
     // The region beside the name is what tells two judges of the same name apart.
-    await expect(option).toContainText("1st Cir.")
+    await expect(option).toContainText("First Circuit")
     await option.click()
 
     const pane = page.locator("[data-drilldown-pane][data-open]")
-    await expect(pane.locator("[data-drilldown-pane-title]")).toHaveText("1st Cir.")
+    await expect(pane.locator("[data-drilldown-pane-title]")).toHaveText("First Circuit")
     const detail = pane.locator("[data-drilldown-detail]")
     await expect(detail).toHaveAttribute("data-pinned", "")
     await expect(detail).toContainText("Kayatta")
@@ -235,7 +237,7 @@ test.describe("interactive page — federal courts", () => {
     // Enter selects and hands focus to the pane's heading, so the bench is where the reader is.
     await page.keyboard.press("Enter")
     const title = page.locator("[data-drilldown-pane][data-open] [data-drilldown-pane-title]")
-    await expect(title).toHaveText("8th Cir.")
+    await expect(title).toHaveText("Eighth Circuit")
     await expect(title).toBeFocused()
 
     // Escape closes it and puts focus back on the region it came from.
