@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, waitFor, within } from "@testing-library/react"
+import React from "react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { DrilldownMapClient } from "@/interactives/engine/DrilldownMapClient"
@@ -151,7 +152,8 @@ function compose(svg: string, payload: unknown): DrilldownAsset {
 function setup({
   search,
   eastMap = false,
-}: { search?: { url: string; label?: string }; eastMap?: boolean } = {}) {
+  strict = false,
+}: { search?: { url: string; label?: string }; eastMap?: boolean; strict?: boolean } = {}) {
   const overview = compose(overviewSvg, overviewPayload)
   const regions = buildRegionIndex([overview])
   const fetchMock = vi.fn(async (url: string) => {
@@ -163,6 +165,13 @@ function setup({
     return new Response("nope", { status: 404 })
   })
   vi.stubGlobal("fetch", fetchMock)
+  // Strict Mode mounts, tears down and mounts again, which is what development does to the
+  // stage: a second one is built while the state from the first is still standing.
+  const wrapper = strict
+    ? ({ children }: { children: React.ReactNode }) => (
+        <React.StrictMode>{children}</React.StrictMode>
+      )
+    : undefined
   const utils = render(
     <DrilldownMapClient
       overview={{ ...overview, paths: overview.paths.map((p) => ({ ...p, d: "" })) }}
@@ -176,6 +185,7 @@ function setup({
         <DrilldownOverviewSvg asset={overview} regions={regions} />
       </div>
     </DrilldownMapClient>,
+    { wrapper },
   )
   return { ...utils, fetchMock }
 }
@@ -380,6 +390,40 @@ describe("DrilldownMapClient", () => {
       expect(local.querySelector('path[data-region-id="w1"]')).toHaveAttribute("data-selected"),
     )
     await waitFor(() => expect(window.location.search).toBe("?region=w1"))
+  })
+
+  it("restores a deep link onto the stage that is actually on screen", async () => {
+    window.history.replaceState(null, "", "/interactives/courts?view=west")
+    // Under Strict Mode the first stage is destroyed and a second built. Every guard used to
+    // ask React state — "we are already at west" — so nobody drilled the new stage, and its
+    // districts' seat blocks were drawn over a national map that had never gone away.
+    const { container } = setup({ strict: true })
+    await waitFor(() =>
+      expect(container.querySelector("[data-drilldown-viewport]")).toHaveAttribute(
+        "data-view",
+        "child",
+      ),
+    )
+    // The map that is up must be the one the address named, not the overview with the
+    // child's blocks scattered over it.
+    const local = container.querySelector<HTMLElement>('[data-drilldown-layer="local"]')!
+    expect(local).toHaveAttribute("data-parent-id", "west")
+    await waitFor(() => expect(local).not.toHaveAttribute("data-state", "hidden"))
+    expect(container.querySelector('[data-drilldown-layer="overview"]')).toHaveAttribute(
+      "data-state",
+      "hidden-hard",
+    )
+    // Its blocks are the child's, and they are drawn on the child's layer.
+    await waitFor(() =>
+      expect(
+        Array.from(local.querySelectorAll("g[data-drilldown-block]")).map((b) =>
+          b.getAttribute("data-region-id"),
+        ),
+      ).toEqual(["west", "w1", "w2"]),
+    )
+    expect(
+      container.querySelectorAll('[data-drilldown-layer="overview"] g[data-drilldown-block]'),
+    ).toHaveLength(0)
   })
 
   it("says where on the map the reader has got to, and takes them back up it", async () => {

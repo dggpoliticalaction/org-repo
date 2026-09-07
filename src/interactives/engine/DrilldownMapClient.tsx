@@ -198,6 +198,18 @@ export function DrilldownMapClient({
     [regions, childAssets, ensureAsset],
   )
 
+  /**
+   * Which map the stage is actually showing.
+   *
+   * React state can say more than the stage knows. A stage is built once per overview asset —
+   * and twice on mount in development, where Strict Mode runs the effect, tears it down and
+   * runs it again — and a new one starts at the overview however far the reader had already
+   * drilled. Asking state instead of the stage is how a deep link ended up with the child's
+   * seat blocks scattered across the national map: every guard said "we are already at ca9",
+   * so nobody told the rebuilt stage.
+   */
+  const shownParent = useCallback((): string | null => stageRef.current?.currentParent ?? null, [])
+
   const drillOut = useCallback(async (): Promise<"done" | "fallback" | "cancelled"> => {
     const stage = stageRef.current
     if (!stage) return "cancelled"
@@ -222,7 +234,7 @@ export function DrilldownMapClient({
     async (parentId: string, via: SelectVia | null = null) => {
       const stage = stageRef.current
       if (!stage) return
-      if (view.parentId === parentId) {
+      if (view.parentId === parentId && shownParent() === parentId) {
         setPaneOpen(false)
         return
       }
@@ -231,7 +243,7 @@ export function DrilldownMapClient({
       // circuits is a drill out and a drill in, which is the journey a reader would make by
       // hand anyway. Without it the map being left stayed on the stage under the new one.
       const pending = ensureAsset(parentId)
-      if (view.parentId !== null && (await drillOut()) === "cancelled") return
+      if (shownParent() !== null && (await drillOut()) === "cancelled") return
       const asset = await pending
       if (!asset || !stageRef.current) {
         // The map could not be fetched, but the reader still asked for this region: open the
@@ -256,7 +268,7 @@ export function DrilldownMapClient({
       if (via) stage.setSelected(parentId)
       stage.renderBlocks(blockIdsFor({ parentId }, merged, { ...loaded, [parentId]: asset }))
     },
-    [view.parentId, ensureAsset, overview, loaded, select, drillOut],
+    [view.parentId, shownParent, ensureAsset, overview, loaded, select, drillOut],
   )
 
   /**
@@ -276,19 +288,19 @@ export function DrilldownMapClient({
       const outer = moving.current
       moving.current = true
       try {
-        if (drillable.has(id) && view.parentId !== id) {
+        if (drillable.has(id) && shownParent() !== id) {
           await drillIn(id, via)
           return
         }
         const key = assetKeyFor(id, regions, childAssets)
-        if (key && key !== id && view.parentId !== key) await drillIn(key)
+        if (key && key !== id && shownParent() !== key) await drillIn(key)
       } finally {
         moving.current = outer
         if (!outer) setSettled((n) => n + 1)
       }
       select(id, via, opts)
     },
-    [regions, childAssets, drillable, view.parentId, drillIn, select],
+    [regions, childAssets, drillable, shownParent, drillIn, select],
   )
 
   // A search result names a record, not a region: show the map the record sits on, select its
@@ -360,13 +372,15 @@ export function DrilldownMapClient({
           return
         }
         deselect()
-        if (parent && parent !== view.parentId) await drillIn(parent)
-        else if (!parent && view.parentId) await drillOut()
+        // Against the stage, not against state: on a remount the address has already been
+        // applied to a stage that no longer exists.
+        if (parent && parent !== shownParent()) await drillIn(parent)
+        else if (!parent && shownParent()) await drillOut()
       } finally {
         moving.current = false
       }
     },
-    [regions, view.parentId, revealRegion, drillIn, drillOut, deselect],
+    [regions, shownParent, revealRegion, drillIn, drillOut, deselect],
   )
 
   // Read the address once on mount, and again whenever the reader moves through history.
@@ -456,7 +470,11 @@ export function DrilldownMapClient({
     const stage = stageRef.current
     if (!stage) return
     stage.setRegions(regions)
-    if (!busy) stage.renderBlocks(blockIdsFor(view, regions, loaded))
+    // Blocks are drawn into whichever layer the stage has up, so the set of them has to be
+    // chosen from the same place. Taken from `view` instead, a stage that did not reach the
+    // map state believes it is on ends up with a child's seat blocks scattered across the
+    // overview, each one drawn at an anchor measured for a map that is not on screen.
+    if (!busy) stage.renderBlocks(blockIdsFor({ parentId: stage.currentParent }, regions, loaded))
   }, [regions, view, loaded, busy])
 
   useEffect(() => {
@@ -619,8 +637,6 @@ export function DrilldownMapClient({
             aria-busy={busy || undefined}
             className="bg-muted/30 @container relative min-w-0 flex-1 overflow-hidden rounded-lg"
           >
-            {/* The rail's toggle and the trail sit together over the map's top-left: one says
-                what is beside the map, the other where on it the reader has got to. */}
             <div className="absolute top-1 left-2 z-10 flex max-w-[calc(100%-1rem)] items-center gap-1">
               <Button
                 type="button"
@@ -635,7 +651,7 @@ export function DrilldownMapClient({
               >
                 <PanelLeft aria-hidden="true" />
               </Button>
-              <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+              <Separator orientation="vertical" className="mr-2" />
               {/* Only once there is somewhere to go back to. At the overview the trail would
                   be a lone map icon saying the reader is where they started. */}
               {trail.length > 0 && (
