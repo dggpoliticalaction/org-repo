@@ -113,66 +113,41 @@ export const MORPH_MS = 800
  */
 export const MORPH_MIN_COMMIT_MS = 16
 
-/** Interpolated viewBox at u. */
+/** Interpolated viewBox at u. Straight-line in every component; see `zoomViewBox` for camera work. */
 export function lerpViewBox(a: readonly number[], b: readonly number[], u: number): number[] {
   return a.map((v, i) => v + ((b[i] ?? v) - v) * u)
 }
 
 /**
- * A camera path from one map to another by way of a third, without stopping at it.
+ * A camera move from one viewBox to another, interpolated the way a zoom is seen rather than
+ * the way its numbers are stored.
  *
- * Crossing between two circuits used to be two journeys: out to the whole country, a full
- * stop, then in again. The country is on the way, not a destination. A quadratic gives the
- * camera one continuous movement through it — see `crossControlViewBox` for the control point
- * that puts the country halfway along, since a quadratic does not pass through its own.
+ * Interpolating `x`, `y`, `w`, `h` in a straight line looks wrong whenever the two boxes differ
+ * much in scale, and drilling from the country into a circuit differs by five times. Half the
+ * numeric distance between 5.2M and 1.0M units is 3.1M — still almost the whole country — so
+ * the view stays wide for most of the move and then collapses. Meanwhile the centre, moving at
+ * a constant rate in map units, covers almost no ground per frame while the view is wide and
+ * then tears across the screen once it is narrow. Together they read as zooming into the middle
+ * of the country and jumping to the region at the last moment.
+ *
+ * Both come from measuring in map units what the reader is judging in screen widths. So the
+ * scale is interpolated geometrically — equal ratios in equal time, halfway between 5.2M and
+ * 1.0M being 2.3M — and the centre is carried along in proportion to the scale's own progress,
+ * which is what holds the pan to a steady speed across the screen. The region is under the
+ * camera early, and stays there while the view closes on it.
  */
-export function bezierViewBox(
-  from: readonly number[],
-  through: readonly number[],
-  to: readonly number[],
-  u: number,
-): number[] {
-  const inv = 1 - u
-  return from.map((v, i) => {
-    const mid = through[i] ?? v
-    const end = to[i] ?? v
-    return inv * inv * v + 2 * inv * u * mid + u * u * end
-  })
-}
-
-/**
- * The control point for a crossing: country scale halfway along, on a straight line between
- * the two maps.
- *
- * Two separate things have to be true at the halfway point, and each was got wrong on its own
- * before both were.
- *
- * The SIZE has to be the country's. Halfway through a crossing both morph plans are drawing
- * the overview — that is what makes the swap between them invisible — so a camera any tighter
- * shows a magnified crop of the whole country and the reader watches states swim in from off
- * frame. A quadratic does not pass through its control point (at the midpoint it is only a
- * quarter of each end plus half the control), so the control is solved backwards from the apex
- * rather than handed the country directly.
- *
- * The CENTRE must not be the country's. The padded overview box carries the inset territories
- * below the mainland, which puts its centre well south of anything a reader thinks of as the
- * middle of the map — for two east-coast circuits the trip through it is almost entirely a
- * dive south and back, and on screen the mainland rides up to the top edge and returns. So the
- * apex is centred between the two maps instead, which also makes the centre path the straight
- * line from where the reader was to where they are going.
- */
-export function crossControlViewBox(
-  from: readonly number[],
-  to: readonly number[],
-  country: readonly number[],
-): number[] {
-  const [fx, fy, fw, fh] = from as [number, number, number, number]
-  const [tx, ty, tw, th] = to as [number, number, number, number]
-  const [, , cw, ch] = country as [number, number, number, number]
-  const mx = (fx + fw / 2 + (tx + tw / 2)) / 2
-  const my = (fy + fh / 2 + (ty + th / 2)) / 2
-  const apex = [mx - cw / 2, my - ch / 2, cw, ch]
-  return apex.map((v, i) => 2 * v - ((from[i] ?? v) + (to[i] ?? v)) / 2)
+export function zoomViewBox(a: readonly number[], b: readonly number[], u: number): number[] {
+  const [ax, ay, aw, ah] = a as [number, number, number, number]
+  const [bx, by, bw, bh] = b as [number, number, number, number]
+  if (aw <= 0 || bw <= 0 || ah <= 0 || bh <= 0) return lerpViewBox(a, b, u)
+  const w = aw * Math.pow(bw / aw, u)
+  const h = ah * Math.pow(bh / ah, u)
+  // How far the scale has come, as a fraction of the whole move. Equal to `u` when there is no
+  // zoom to speak of, which is also the only case where the ratio would divide by nothing.
+  const f = Math.abs(bw - aw) > 1e-6 ? (w - aw) / (bw - aw) : u
+  const cx = ax + aw / 2 + (bx + bw / 2 - (ax + aw / 2)) * f
+  const cy = ay + ah / 2 + (by + bh / 2 - (ay + ah / 2)) * f
+  return [cx - w / 2, cy - h / 2, w, h]
 }
 
 export interface MorphPair {

@@ -1,19 +1,17 @@
 import { flipConstant, flipTransform, padViewBox, viewBoxAttr } from "./geometry"
 import {
   buildMorphPairs,
-  bezierViewBox,
-  crossControlViewBox,
   easeInCubic,
   easeInOutCubic,
   easeOutCubic,
   largestSubpathCentre,
   lerpInto,
-  lerpViewBox,
   MORPH_MIN_COMMIT_MS,
   MORPH_MS,
   type MorphPair,
   type MorphSource,
   serializePath,
+  zoomViewBox,
 } from "./morph"
 import type { DrilldownAsset, RegionIndex, SeatBlockConfig, ViewBox } from "./types"
 
@@ -1098,7 +1096,9 @@ export class MapStage {
       // Longer than one morph, shorter than the two it replaces: the crossing covers a drill
       // out and a drill in, but hands over at speed instead of waiting at the country.
       const dur = reducedMotion() ? 0 : Math.round(MORPH_MS * 1.75)
-      const control = crossControlViewBox(outPlan.vbEnd, inPlan.vbEnd, outPlan.vbStart)
+      // The country itself, framed the way the overview frames it: at the join both plans are
+      // drawing those shapes, so any other box shows them half out of frame.
+      const apex = outPlan.vbStart
       const t0 = nowMs()
       let showingIn = false
       let lastCommit = -Infinity
@@ -1122,11 +1122,13 @@ export class MapStage {
           this.attachMorphLayer(inPlan.el)
           outPlan.el.remove()
         }
-        // Eased at the outer ends only: the shapes leave and arrive at rest, and cross the
-        // country at full speed rather than stopping there the way the camera used to.
-        const u = half ? 1 - easeInCubic(t / 0.5) : easeOutCubic((t - 0.5) / 0.5)
-        const vb = bezierViewBox(outPlan.vbEnd, control, inPlan.vbEnd, easeInOutCubic(t))
-        this.renderMorph(plan, u, vb)
+        // Eased at the outer ends only: the halves leave and arrive at rest, and cross the
+        // country at full speed rather than stopping there the way this used to.
+        const p = half ? easeInCubic(t / 0.5) : easeOutCubic((t - 0.5) / 0.5)
+        // Camera and shapes run off the same clock, so the view is the country at exactly the
+        // moment both plans are drawing it.
+        const vb = half ? zoomViewBox(outPlan.vbEnd, apex, p) : zoomViewBox(apex, inPlan.vbEnd, p)
+        this.renderMorph(plan, half ? 1 - p : p, vb)
         if (t < 1) this.morphRAF = raf(frame)
         else settle("done")
       }
@@ -1180,7 +1182,7 @@ export class MapStage {
         }
         lastCommit = elapsed
         const u = forward ? easeInOutCubic(t) : 1 - easeInOutCubic(t)
-        this.renderMorph(plan, u, lerpViewBox(plan.vbStart, plan.vbEnd, u))
+        this.renderMorph(plan, u, zoomViewBox(plan.vbStart, plan.vbEnd, u))
         if (t < 1) this.morphRAF = raf(frame)
         else settle("done")
       }

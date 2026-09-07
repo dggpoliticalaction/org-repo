@@ -1,9 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import {
-  bezierViewBox,
   buildMorphPairs,
-  crossControlViewBox,
   easeInCubic,
   easeInOutCubic,
   easeOutCubic,
@@ -15,6 +13,7 @@ import {
   parsePathAbs,
   sameStructure,
   serializePath,
+  zoomViewBox,
 } from "@/interactives/engine/morph"
 
 describe("parsePathAbs", () => {
@@ -71,33 +70,24 @@ describe("structure, flip, serialize, lerp", () => {
     expect(MORPH_MIN_COMMIT_MS).toBe(16)
   })
 
-  it("meets both ends and weights the control point half at the midpoint", () => {
-    const from = [0, 0, 10, 10]
-    const control = [-50, -50, 200, 200]
-    const to = [100, 100, 10, 10]
-    expect(bezierViewBox(from, control, to, 0)).toEqual(from)
-    expect(bezierViewBox(from, control, to, 1)).toEqual(to)
-    // A quadratic does not pass through its control point — which is why a crossing has to
-    // solve for one rather than hand the country straight in.
-    expect(bezierViewBox(from, control, to, 0.5)).toEqual([0, 0, 105, 105])
+  it("moves the camera in equal ratios, not equal units", () => {
+    const country = [0, 0, 1000, 1000]
+    const region = [900, 900, 100, 100]
+    expect(zoomViewBox(country, region, 0)).toEqual(country)
+    expect(zoomViewBox(country, region, 1)).toEqual(region)
+    const mid = zoomViewBox(country, region, 0.5)
+    // Halfway is the geometric mean of the two scales, not the arithmetic one: 316, not 550.
+    expect(mid[2]).toBeCloseTo(Math.sqrt(1000 * 100))
+    // And the centre has come most of the way already, so the region is under the camera while
+    // the view closes on it rather than sliding in at the end.
+    const travelled = (mid[0]! + mid[2]! / 2 - 500) / (950 - 500)
+    expect(travelled).toBeGreaterThan(0.6)
   })
 
-  it("puts the country's scale halfway along a crossing, centred between the two maps", () => {
-    const from = [0, 0, 10, 10]
-    const to = [100, 100, 10, 10]
-    const country = [-50, -50, 200, 200]
-    const control = crossControlViewBox(from, to, country)
-    const apex = bezierViewBox(from, control, to, 0.5)
-    // The size is the country's, because that is what both morph plans are drawing at the
-    // join — a tighter camera there is a magnified crop of a map that has moved.
-    expect(apex[2]).toBeCloseTo(country[2]!)
-    expect(apex[3]).toBeCloseTo(country[3]!)
-    // The centre is not. A padded overview box carries the inset territories below the
-    // mainland, so travelling through its centre is a dive south and back.
-    expect(apex[0]! + apex[2]! / 2).toBeCloseTo(55)
-    expect(apex[1]! + apex[3]! / 2).toBeCloseTo(55)
-    expect(bezierViewBox(from, control, to, 0)).toEqual(from)
-    expect(bezierViewBox(from, control, to, 1)).toEqual(to)
+  it("falls back to a straight line when there is no zoom to speak of", () => {
+    const a = [0, 0, 100, 100]
+    const b = [50, 50, 100, 100]
+    expect(zoomViewBox(a, b, 0.5)).toEqual([25, 25, 100, 100])
   })
 
   it("crosses the join at speed rather than coming to rest on it", () => {
