@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronUp, MapIcon, PanelLeft } from "lucide-react"
+import { MapIcon, PanelLeft } from "lucide-react"
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 import {
@@ -554,10 +554,6 @@ export function DrilldownMapClient({
     view.parentId !== selectedRegion.id &&
     (drillable.has(selectedRegion.id) || (regions.childrenOf[selectedRegion.id]?.length ?? 0) > 0)
 
-  // What the collapsed bar says it is holding. A region once one is chosen; before that, the
-  // profile's own overview, which is what the pane shows when nothing is selected.
-  const sheetTitle = selectedRegion?.label ?? "Overview"
-
   const pane = (
     <DrilldownPane
       ref={paneRef}
@@ -573,7 +569,7 @@ export function DrilldownMapClient({
       open={paneOpen}
       canDrill={canDrill}
       onDrill={() => selectedRegion && void drillIn(selectedRegion.id)}
-      onClose={deselect}
+      onToggle={() => setPaneOpen((was) => !was)}
     />
   )
 
@@ -737,29 +733,14 @@ export function DrilldownMapClient({
               data-drilldown-sheet=""
               data-open={paneOpen ? "" : undefined}
               className={cn(
-                "md:flex md:min-h-0 md:shrink-0 md:flex-col md:pt-2",
-                "md:motion-safe:transition-[max-height] md:motion-safe:duration-200 md:motion-safe:ease-out",
+                "flex min-h-0 shrink-0 flex-col overflow-hidden pt-2",
+                "motion-safe:transition-[max-height] motion-safe:duration-200 motion-safe:ease-out",
                 // Open, it takes most of the area and scrolls what it cannot show; collapsed,
-                // it is the bar and nothing else, and the whole map is back.
-                paneOpen ? "md:max-h-[62%]" : "md:max-h-11",
+                // it is the pane's header and nothing else, and the whole map is back.
+                paneOpen ? "max-h-[62%]" : "max-h-11",
               )}
             >
-              <button
-                type="button"
-                data-drilldown-sheet-toggle=""
-                aria-expanded={paneOpen}
-                onClick={() => setPaneOpen((was) => !was)}
-                className="text-muted-foreground hover:text-foreground hidden h-9 shrink-0 items-center gap-2 self-start rounded-md px-2 text-left text-sm md:flex"
-              >
-                <ChevronUp
-                  aria-hidden="true"
-                  className={cn("size-4 transition-transform", paneOpen && "rotate-180")}
-                />
-                {/* Open, the pane says its own name in its own heading; the bar only has to
-                    say it while it is the only thing showing. */}
-                <span className={cn("min-w-0 truncate", paneOpen && "sr-only")}>{sheetTitle}</span>
-              </button>
-              <div className="min-h-0 md:overflow-y-auto">{pane}</div>
+              {pane}
             </div>
           </div>
         </div>

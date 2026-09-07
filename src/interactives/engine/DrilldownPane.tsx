@@ -2,6 +2,8 @@
 
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react"
 
+import { ChevronUp } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { cn } from "@/utilities/utils"
 
@@ -47,7 +49,10 @@ interface DrilldownPaneProps {
   /** Which record the reader has pinned, so the page can put it in the URL. */
   onPin?(recordId: string | null): void
   onDrill(): void
-  onClose(): void
+  /** Whether the body is showing. The header stays either way — it is the way back in. */
+  onToggle(): void
+  /** What the header says before a region is chosen, when the body is the profile's overview. */
+  overviewLabel?: string
   ref?: React.Ref<DrilldownPaneHandle>
 }
 
@@ -69,7 +74,8 @@ export function DrilldownPane({
   pinRequest = null,
   onPin,
   onDrill,
-  onClose,
+  onToggle,
+  overviewLabel = "Overview",
   ref,
 }: DrilldownPaneProps): React.ReactElement {
   const [mode, setMode] = useState<BenchMode>("seats")
@@ -79,7 +85,7 @@ export function DrilldownPane({
   const [supernumeraryMode, setSupernumeraryMode] = useState<SupernumeraryMode>("hide")
   const [mark, setMark] = useState<string | null>(null)
   const [detail, setDetail] = useState<DetailSelection | null>(null)
-  const headingRef = useRef<HTMLHeadingElement | null>(null)
+  const headingRef = useRef<HTMLButtonElement | null>(null)
   const [now] = useState(() => new Date())
 
   useImperativeHandle(ref, () => ({ focusHeading: () => headingRef.current?.focus() }))
@@ -160,16 +166,38 @@ export function DrilldownPane({
       data-open={open ? "" : undefined}
       aria-label={region ? `${region.label} details` : "Region details"}
       className={cn(
-        // Its own container: the bench/detail split is a property of the pane's width, not
-        // the map's. Without this the detail card never moves beside the bench, since the
-        // pane is a sibling of the map rather than a child of it.
-        "bg-card text-card-foreground border-border @container flex scroll-mt-20 flex-col rounded-lg border",
+        // Its own container query: the bench/detail split is a property of the pane's width,
+        // not the map's. No card around it — it sits inside the map's area, which is the box.
+        "@container flex min-h-0 scroll-mt-20 flex-col",
       )}
       onClick={() => detail?.pinned && setDetail((d) => (d ? { ...d, pinned: false } : d))}
     >
+      {/* The pane's own header, and the control that opens it: one name, on the thing that
+          shows and hides what the name belongs to. Collapsed, this is all there is. */}
+      <h2 className="shrink-0">
+        <button
+          ref={headingRef}
+          type="button"
+          data-drilldown-pane-toggle=""
+          aria-expanded={open}
+          onClick={onToggle}
+          // Sans, not the display face the site gives an h2: this is a control that happens
+          // to be the pane's heading, and it sits in a row of controls.
+          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/60 flex h-9 w-full items-center gap-2 rounded-md px-2 text-left font-sans text-sm font-medium outline-none focus-visible:ring-2"
+        >
+          <ChevronUp
+            aria-hidden="true"
+            className={cn("size-4 shrink-0 transition-transform", open && "rotate-180")}
+          />
+          <span data-drilldown-pane-title="" className="min-w-0 truncate">
+            {region?.label ?? overviewLabel}
+          </span>
+        </button>
+      </h2>
+
       {!region &&
         (summary ? (
-          <div data-drilldown-summary="" className="p-4 sm:p-5">
+          <div data-drilldown-summary="" className="min-h-0 overflow-y-auto p-4 sm:p-5">
             {summary}
           </div>
         ) : (
@@ -182,20 +210,13 @@ export function DrilldownPane({
         ))}
 
       {region && (
-        <div className="flex min-h-0 flex-1 flex-col gap-3 p-4 sm:p-5">
+        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4 sm:p-5">
+          {/* No heading of its own: the sheet's bar carries the region's name, and saying it
+              twice a line apart is one name too many. What is left here is what the bar does
+              not say — the counts, and the facts the summary line leaves out. */}
           <header className="flex flex-wrap items-start gap-x-4 gap-y-2">
             <div className="min-w-0 flex-1">
-              <h2
-                ref={headingRef}
-                tabIndex={-1}
-                data-drilldown-pane-title=""
-                className="text-2xl outline-none md:text-3xl"
-              >
-                {region.label}
-              </h2>
-              {region.summary && (
-                <p className="text-muted-foreground mt-1 text-sm">{region.summary}</p>
-              )}
+              {region.summary && <p className="text-muted-foreground text-sm">{region.summary}</p>}
               {facts.length > 0 && (
                 <dl className="text-muted-foreground mt-2 flex flex-wrap gap-x-4 gap-y-0.5 text-sm">
                   {facts.map((f) => (
@@ -217,17 +238,6 @@ export function DrilldownPane({
                   onClick={(r) => clickRecord(r, associate.display)}
                 />
               )}
-              <Button
-                type="button"
-                variant="outline"
-                size="icon-sm"
-                aria-label="Close details"
-                data-drilldown-close=""
-                onClick={onClose}
-                className="rounded-full"
-              >
-                ×
-              </Button>
             </div>
           </header>
 

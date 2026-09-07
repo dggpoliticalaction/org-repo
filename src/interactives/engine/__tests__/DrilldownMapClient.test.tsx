@@ -484,9 +484,11 @@ describe("DrilldownMapClient", () => {
     const { container } = setup()
     const sheet = (): HTMLElement => container.querySelector<HTMLElement>("[data-drilldown-sheet]")!
     const toggle = (): HTMLElement =>
-      container.querySelector<HTMLElement>("[data-drilldown-sheet-toggle]")!
-    // The pane is inside the same box as the map, which is what leaves the rail beside it.
+      container.querySelector<HTMLElement>("[data-drilldown-pane-toggle]")!
+    // The pane is inside the same box as the map, which is what leaves the rail beside it,
+    // and it brings its own header — the one control that names it and opens it.
     expect(sheet().contains(pane(container))).toBe(true)
+    expect(pane(container).contains(toggle())).toBe(true)
     expect(container.querySelector("[data-drilldown-viewport]")?.parentElement).toBe(
       sheet().parentElement,
     )
