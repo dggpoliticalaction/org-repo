@@ -97,7 +97,11 @@ export const easeInOutCubic = (t: number): number =>
 export const easeInCubic = (t: number): number => t * t * t
 export const easeOutCubic = (t: number): number => 1 - Math.pow(1 - t, 3)
 
-export const MORPH_MS = 620
+/**
+ * How long a drill in or out takes. A crossing between two children is a multiple of it, so
+ * this one number paces every transition the map makes.
+ */
+export const MORPH_MS = 800
 
 /**
  * Cap on the morph's COMMIT rate, independent of display refresh. On a high-refresh display
