@@ -91,7 +91,6 @@
 [data-drilldown-layer] {
   position: absolute;
   inset: 0;
-  padding: 12px;
   transition:
     opacity 420ms ease,
     transform 420ms ease;

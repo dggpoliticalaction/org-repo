@@ -603,7 +603,7 @@ export function DrilldownMapClient({
         className="flex flex-col gap-3 [--drilldown-stage-h:clamp(18rem,78vw,26rem)] md:[--drilldown-stage-h:clamp(26rem,70vh,42rem)]"
       >
         {/* The rail rides beside the map from tablet up, and above it on a phone. */}
-        <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start">
+        <div className="flex min-w-0 flex-col gap-1 md:flex-row md:items-start">
           {/* Collapsing the rail hands its width to the map. It folds away rather than
               shrinking to icons: every circuit carries the same glyph, so an icon rail would
               be thirteen identical scales and no way to tell the 3rd from the 7th. The map
@@ -623,11 +623,13 @@ export function DrilldownMapClient({
                   : "grid-cols-[1fr] grid-rows-[0fr] md:grid-cols-[0fr] md:grid-rows-[1fr]",
             )}
           >
-            {/* The clip that hides the rail as it folds is the rail's exact box, so anything
-                drawn outside that box — a focus ring, a shadow — was cut off at the edge. The
-                padding gives it room and the negative margin gives the space back, leaving
-                the rail where it was. */}
-            <div className="-m-1 min-h-0 min-w-0 overflow-hidden p-1">
+            {/* The clip is the rail's exact box, so anything drawn outside it — a focus
+                ring, a shadow — was cut off at the edge. Padding gives it room and the
+                negative margin gives the space back. Only while it is open, though:
+                `overflow: hidden` clips at the padding box, so a folded rail would show four
+                pixels of itself — enough for the selected row's dark pill to sit on the edge
+                of the map like a tab. */}
+            <div className={cn("min-h-0 min-w-0 overflow-hidden", railOpen && "-m-1 p-1")}>
               <DrilldownSelector
                 regions={regions}
                 view={view}
@@ -739,8 +741,6 @@ export function DrilldownMapClient({
                 </>
               )}
             </div>
-            {/* The pane folds away entirely, so this is the way back to it — the mirror of
-                  the rail's own toggle, in the opposite corner. */}
             <Button
               type="button"
               variant="ghost"
@@ -770,7 +770,9 @@ export function DrilldownMapClient({
                 : "grid-cols-[1fr] grid-rows-[0fr] md:grid-cols-[0fr] md:grid-rows-[1fr]",
             )}
           >
-            <div className="-m-1 min-h-0 min-w-0 overflow-hidden p-1">
+            {/* Room for a ring while it is open; none when it is folded, or four pixels of
+                the pane's own border would show against the map. */}
+            <div className={cn("min-h-0 min-w-0 overflow-hidden", paneOpen && "-m-1 p-1")}>
               <div
                 data-drilldown-sheet=""
                 data-open={paneOpen ? "" : undefined}
