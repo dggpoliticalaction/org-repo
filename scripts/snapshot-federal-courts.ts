@@ -11,7 +11,7 @@
  *
  * Usage:
  *   pnpm tsx scripts/snapshot-federal-courts.ts geometry --source ../court-tracker
- *   pnpm tsx scripts/snapshot-federal-courts.ts data --source ../court-tracker
+ *   pnpm tsx scripts/snapshot-federal-courts.ts data --source ../court-tracker --ref data-v05d95d9fcf1b
  *   pnpm tsx scripts/snapshot-federal-courts.ts data --ref data-v05d95d9fcf1b
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
@@ -70,8 +70,12 @@ function snapshotGeometry(source: string): number {
 async function snapshotData(): Promise<number> {
   const source = arg("--source")
   const ref = arg("--ref") ?? RELEASE_REF
+  // What the fixture records as its provenance. Reading a checkout, that is the directory —
+  // unless the caller says which release the checkout is of, which is the useful answer and
+  // the only one that means anything in another clone.
+  const recordedRef = source ? (arg("--ref") ?? `dir:${path.resolve(source)}`) : ref
   const opts = source
-    ? { ref: `dir:${path.resolve(source)}`, files: localFileSource(path.resolve(source)) }
+    ? { ref: recordedRef, files: localFileSource(path.resolve(source)) }
     : { ref, token: process.env.COURT_TRACKER_GITHUB_TOKEN ?? null }
   if (!source && !opts.token) {
     console.error("set COURT_TRACKER_GITHUB_TOKEN or pass --source <checkout>")
@@ -79,7 +83,7 @@ async function snapshotData(): Promise<number> {
   }
   console.warn(`reading ${source ? `dir:${source}` : `${courtTrackerFeed.describe()}@${ref}`}`)
   const snapshot = await courtTrackerFeed.fetch(opts)
-  const data = courtTrackerFeed.adapt(snapshot, { ref: opts.ref })
+  const data = courtTrackerFeed.adapt(snapshot, { ref: snapshot.ref ?? recordedRef })
   const geometry = await loadFederalCourtsGeometry()
   const { errors } = validateDrilldownData(data, geometry)
   if (errors.length > 0) {

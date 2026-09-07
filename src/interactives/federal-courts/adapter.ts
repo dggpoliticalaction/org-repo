@@ -332,7 +332,6 @@ export function adaptCourtTracker(
 
   const datasets: Record<string, unknown> = {}
   if (raw.presidents) datasets.presidents = raw.presidents
-  if (raw.arrangement) datasets.arrangement = raw.arrangement
   if (raw.appointments) datasets.appointments = raw.appointments.map(compactAppointment)
 
   // What the manifest states about its own build, rather than what we can derive from the

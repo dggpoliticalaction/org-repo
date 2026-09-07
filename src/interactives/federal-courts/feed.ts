@@ -7,7 +7,6 @@ import type {
   Appointment,
   Court,
   CourtTrackerSources,
-  DistrictArrangement,
   Judge,
   Justice,
   Manifest,
@@ -63,12 +62,14 @@ export async function readCourtTrackerSources(
   const optional = async <T>(path: string | undefined): Promise<T | null> =>
     path ? files.readJson<T>(path) : null
 
-  const [courts, seatBlocks, justices, presidents, arrangement, appointments] = await Promise.all([
+  // `district_arrangement` and `judges_search` are listed and deliberately not read: the
+  // first is a cartogram for upstream's own map, the second an index built for their widget's
+  // vocabulary. We draw our own map and build our own index from the records we render.
+  const [courts, seatBlocks, justices, presidents, appointments] = await Promise.all([
     files.readJson<Court[]>(f.courts),
     files.readJson<Record<string, SeatBlock>>(f.seat_blocks),
     files.readJson<Justice[]>(f.circuit_justices),
     optional<Record<string, PresidentPhoto>>(f.president_photos),
-    optional<DistrictArrangement>(f.district_arrangement),
     optional<Appointment[]>(f.appointments),
   ])
   const judges: Record<string, Judge[]> = {}
@@ -80,7 +81,7 @@ export async function readCourtTrackerSources(
   return {
     version: manifest.version,
     generatedAt: manifest.generated,
-    raw: { manifest, courts, seatBlocks, justices, judges, presidents, arrangement, appointments },
+    raw: { manifest, courts, seatBlocks, justices, judges, presidents, appointments },
   }
 }
 

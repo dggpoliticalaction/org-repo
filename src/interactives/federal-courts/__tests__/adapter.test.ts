@@ -274,7 +274,6 @@ describe("readCourtTrackerSources", () => {
     expect(snap.version).toBe("05d95d9fcf1b")
     expect(snap.generatedAt).toBe("2026-09-05T11:10:40Z")
     expect(Object.keys(snap.raw.judges).sort()).toEqual(["ca8", "scotus"])
-    expect(snap.raw.arrangement).toBeNull() // not listed
     expect(snap.raw.presidents).not.toBeNull()
   })
 

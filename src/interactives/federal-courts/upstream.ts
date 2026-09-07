@@ -136,12 +136,6 @@ export interface Appointment {
   photo_thumb: string | null
 }
 
-/** The seat-square cartogram layout per circuit, as upstream's builder tool saved it. */
-export interface DistrictArrangement {
-  schema: string
-  circuits: { circuit_id: string; offset: [number, number]; matrix: number[][] }[]
-}
-
 /** Everything one sync reads. `judges` is keyed by bundle (circuit id or "scotus"). */
 export interface CourtTrackerSources {
   manifest: Manifest
@@ -150,6 +144,5 @@ export interface CourtTrackerSources {
   justices: Justice[]
   judges: Record<string, Judge[]>
   presidents: Record<string, PresidentPhoto> | null
-  arrangement: DistrictArrangement | null
   appointments: Appointment[] | null
 }
