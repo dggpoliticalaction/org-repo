@@ -9,6 +9,7 @@ import {
   type DrilldownPayload,
   type RegionIndex,
 } from "@/interactives/engine/types"
+import { isRecord } from "@/utilities/isRecord"
 
 import type { DrilldownData, DrilldownGeometry, DrilldownPresentation, GeometryFile } from "./types"
 
@@ -28,9 +29,6 @@ export interface ComposeInput {
   data: DrilldownData
 }
 
-const isObject = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v)
-
 /**
  * Side tables for the `portrait` detail lines: the profile names a dataset and the fields to
  * read; the feed supplies the rows. A dataset the feed does not carry yields no table, and a
@@ -44,10 +42,10 @@ function composeLookups(
   const out: NonNullable<DrilldownPayload["lookups"]> = {}
   for (const [name, source] of Object.entries(presentation.lookups)) {
     const raw = data.datasets?.[source.dataset]
-    if (!isObject(raw)) continue
+    if (!isRecord(raw)) continue
     const table: Record<string, { image?: string; label?: string; source?: string }> = {}
     for (const [key, value] of Object.entries(raw)) {
-      if (!isObject(value)) continue
+      if (!isRecord(value)) continue
       const entry: { image?: string; label?: string; source?: string } = {}
       const read = (field: string | undefined): string | undefined => {
         if (!field) return undefined
