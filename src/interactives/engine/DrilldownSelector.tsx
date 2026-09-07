@@ -1,7 +1,7 @@
 "use client"
 
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import React, { useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 import {
   Sidebar,
@@ -67,6 +67,46 @@ const rowProps = (
   title: label,
 })
 
+/** Long enough to read as a movement, short enough not to be waited on. */
+const BRANCH_MS = 220
+
+/**
+ * A branch that grows and shrinks rather than appearing and vanishing.
+ *
+ * The point is the swap: when a reader opens a second circuit, the first one's districts
+ * shrink away while the new ones grow in, so it is visible where the list that just arrived
+ * came from. Both are therefore on screen together, which is why a closing branch stays
+ * mounted until its transition is over.
+ *
+ * `grid-template-rows: 0fr → 1fr` is what animates to a height nobody has measured. A branch
+ * that mounts already open — every first open, since its children arrive with the fetch —
+ * would have nothing to animate from, so the first frame is spent closed.
+ */
+function Branch({ open, children }: { open: boolean; children: React.ReactNode }): React.ReactNode {
+  const [grown, setGrown] = useState(false)
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setGrown(open))
+    return () => cancelAnimationFrame(frame)
+  }, [open])
+  return (
+    <div
+      data-drilldown-branch={open ? "open" : "closing"}
+      // Not focusable, not clickable, not in the accessibility tree: a branch on its way out
+      // is a picture of where the reader has been, not somewhere they can go.
+      inert={!open || undefined}
+      className={cn(
+        // Duration and easing sit inside the guard with the property: `transition-property`
+        // defaults to `all`, so a bare `duration-200` animates everything — including this
+        // height — for a reader who asked for no motion.
+        "grid motion-safe:transition-[grid-template-rows] motion-safe:duration-200 motion-safe:ease-out",
+        grown && open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+      )}
+    >
+      <div className="min-h-0 overflow-hidden">{children}</div>
+    </div>
+  )
+}
+
 /**
  * The region rail: every top-level region down the left of the stage, each drillable one
  * opening to show its own children in place. A tree rather than a strip that swaps its
@@ -95,6 +135,20 @@ export function DrilldownSelector({
   className,
 }: DrilldownSelectorProps): React.ReactElement {
   const navRef = useRef<HTMLDivElement | null>(null)
+  // The branch that was open when this one was chosen, kept mounted while it shrinks away.
+  // Adjusted during render rather than in an effect, so the two never disagree for a frame.
+  const [previous, setPrevious] = useState(expanded)
+  const [leaving, setLeaving] = useState<string | null>(null)
+  if (previous !== expanded) {
+    setPrevious(expanded)
+    setLeaving(previous)
+  }
+  useEffect(() => {
+    if (leaving === null) return
+    const done = setTimeout(() => setLeaving(null), BRANCH_MS)
+    return () => clearTimeout(done)
+  }, [leaving])
+
   const childrenOf = (id: string): string[] => regions.childrenOf[id] ?? []
   const isExpandable = (id: string): boolean => drillable.has(id) || childrenOf(id).length > 0
   const visible: string[] = []
@@ -169,7 +223,8 @@ export function DrilldownSelector({
               {regions.topLevel.map((id) => {
                 const region = regions.byId[id]
                 if (!region) return null
-                const kids = expanded === id ? childrenOf(id) : []
+                const open = expanded === id
+                const kids = open || leaving === id ? childrenOf(id) : []
                 const expandable = isExpandable(id)
                 return (
                   <SidebarMenuItem key={id}>
@@ -201,32 +256,34 @@ export function DrilldownSelector({
                       </SidebarMenuAction>
                     )}
                     {kids.length > 0 && (
-                      <SidebarMenuSub>
-                        {kids.map((childId) => {
-                          const child = regions.byId[childId]
-                          if (!child) return null
-                          return (
-                            <SidebarMenuSubItem key={childId}>
-                              <SidebarMenuSubButton
-                                render={
-                                  <button
-                                    {...rowProps(childId, {
-                                      label: child.label,
-                                      selected: selected === childId,
-                                      tabbable: activeId === childId,
-                                    })}
-                                    onClick={(e) => onSelect(childId, viaOf(e))}
-                                  />
-                                }
-                                isActive={selected === childId}
-                                className={ACTIVE_ROW}
-                              >
-                                <span>{child.label}</span>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          )
-                        })}
-                      </SidebarMenuSub>
+                      <Branch open={open}>
+                        <SidebarMenuSub>
+                          {kids.map((childId) => {
+                            const child = regions.byId[childId]
+                            if (!child) return null
+                            return (
+                              <SidebarMenuSubItem key={childId}>
+                                <SidebarMenuSubButton
+                                  render={
+                                    <button
+                                      {...rowProps(childId, {
+                                        label: child.label,
+                                        selected: selected === childId,
+                                        tabbable: activeId === childId,
+                                      })}
+                                      onClick={(e) => onSelect(childId, viaOf(e))}
+                                    />
+                                  }
+                                  isActive={selected === childId}
+                                  className={ACTIVE_ROW}
+                                >
+                                  <span>{child.label}</span>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            )
+                          })}
+                        </SidebarMenuSub>
+                      </Branch>
                     )}
                   </SidebarMenuItem>
                 )

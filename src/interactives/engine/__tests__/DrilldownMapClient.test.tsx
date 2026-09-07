@@ -342,7 +342,15 @@ describe("DrilldownMapClient", () => {
     )
     expect(pane(container)).not.toHaveAttribute("data-open")
     fireEvent.click(within(nav).getByRole("button", { name: "Collapse West" }))
-    expect(within(nav).queryByRole("button", { name: "West 1" })).not.toBeInTheDocument()
+    // A closed branch shrinks away rather than vanishing, so it is on screen — inert, and
+    // marked as leaving — until the transition it is in is over.
+    expect(nav.querySelector("[data-drilldown-branch]")).toHaveAttribute(
+      "data-drilldown-branch",
+      "closing",
+    )
+    await waitFor(() =>
+      expect(within(nav).queryByRole("button", { name: "West 1" })).not.toBeInTheDocument(),
+    )
   })
 
   it("choosing a child from the rail goes to its parent's map, zoomed in on the child", async () => {
@@ -385,8 +393,18 @@ describe("DrilldownMapClient", () => {
     await waitFor(() =>
       expect(within(nav()).getByRole("button", { name: "East 1" })).toBeInTheDocument(),
     )
-    // West's districts went away with it; only the branch just opened is showing.
-    expect(within(nav()).queryByRole("button", { name: "West 1" })).not.toBeInTheDocument()
+    // West's districts go away with it — shrinking while East's grow, so the swap is visible —
+    // and the branch left behind is inert the moment it starts closing.
+    const branches = (): NodeListOf<HTMLElement> =>
+      nav().querySelectorAll("[data-drilldown-branch]")
+    // East sorts before West in this fixture, so the branch that just opened comes first.
+    expect(Array.from(branches()).map((b) => b.dataset.drilldownBranch)).toEqual([
+      "open",
+      "closing",
+    ])
+    await waitFor(() =>
+      expect(within(nav()).queryByRole("button", { name: "West 1" })).not.toBeInTheDocument(),
+    )
     expect(within(nav()).getByRole("button", { name: "West" })).toHaveAttribute(
       "aria-expanded",
       "false",
