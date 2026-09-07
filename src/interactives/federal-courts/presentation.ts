@@ -100,10 +100,13 @@ export const federalCourtsPresentation: DrilldownPresentation = {
     seatsFact: "seats",
     flags: [{ field: "is_chief", label: "Chief judge", symbol: "★" }],
     cohort: "appointing_president",
-    marks: [
-      { field: "fedsoc_reported", label: "FedSoc" },
-      { field: "acs_reported", label: "ACS" },
-    ],
+    // No marks. The engine can ring a bench by any reported field, and affiliation is the
+    // obvious one to ring it by — but upstream has a Federalist Society affiliation on hand
+    // for 120 of 1,490 judges and an American Constitution Society one for three. A control
+    // that rings three judges reads as "these are the ACS members", when what it means is
+    // "these are the three anyone has checked". The same fields still appear on a judge's own
+    // card, where they are a claim about that judge and absence claims nothing. Worth
+    // restoring when upstream's coverage is worth comparing across a bench.
     details: [
       {
         field: "appointing_president",
