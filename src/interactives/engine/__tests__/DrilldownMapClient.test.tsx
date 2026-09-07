@@ -480,6 +480,33 @@ describe("DrilldownMapClient", () => {
     expect(container.querySelector("[data-drilldown-trail]")).toBeNull()
   })
 
+  it("keeps the pane inside the map's area, opening it on a region and closing it back", async () => {
+    const { container } = setup()
+    const sheet = (): HTMLElement => container.querySelector<HTMLElement>("[data-drilldown-sheet]")!
+    const toggle = (): HTMLElement =>
+      container.querySelector<HTMLElement>("[data-drilldown-sheet-toggle]")!
+    // The pane is inside the same box as the map, which is what leaves the rail beside it.
+    expect(sheet().contains(pane(container))).toBe(true)
+    expect(container.querySelector("[data-drilldown-viewport]")?.parentElement).toBe(
+      sheet().parentElement,
+    )
+
+    // Collapsed on arrival: the map is what a reader came for.
+    expect(sheet()).not.toHaveAttribute("data-open")
+    expect(toggle()).toHaveAttribute("aria-expanded", "false")
+
+    fireEvent.click(toggle())
+    expect(sheet()).toHaveAttribute("data-open")
+
+    fireEvent.click(toggle())
+    expect(sheet()).not.toHaveAttribute("data-open")
+
+    // Choosing a region opens it on that region.
+    fireEvent.click(selector(container).getByRole("button", { name: "West" }))
+    await waitFor(() => expect(sheet()).toHaveAttribute("data-open"))
+    expect(pane(container).querySelector("[data-drilldown-pane-title]")).toHaveTextContent("West")
+  })
+
   it("folds the rail away and hands its width to the map", async () => {
     const { container } = setup()
     const toggle = (): HTMLElement =>

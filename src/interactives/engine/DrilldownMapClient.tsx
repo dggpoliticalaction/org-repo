@@ -1,6 +1,6 @@
 "use client"
 
-import { MapIcon, PanelLeft } from "lucide-react"
+import { ChevronUp, MapIcon, PanelLeft } from "lucide-react"
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 import {
@@ -98,6 +98,8 @@ export function DrilldownMapClient({
   const [loadState, setLoadState] = useState<Record<string, LoadState>>({})
   const [view, setView] = useState<View>({ parentId: null })
   const [selected, setSelected] = useState<string | null>(null)
+  // Closed on arrival: the map is what a reader came for, and the bar says the overview is
+  // there to be opened. Choosing a region opens it.
   const [paneOpen, setPaneOpen] = useState(false)
   const [hover, setHover] = useState<{ id: string; x: number; y: number } | null>(null)
   const [busy, setBusy] = useState(false)
@@ -552,6 +554,10 @@ export function DrilldownMapClient({
     view.parentId !== selectedRegion.id &&
     (drillable.has(selectedRegion.id) || (regions.childrenOf[selectedRegion.id]?.length ?? 0) > 0)
 
+  // What the collapsed bar says it is holding. A region once one is chosen; before that, the
+  // profile's own overview, which is what the pane shows when nothing is selected.
+  const sheetTitle = selectedRegion?.label ?? "Overview"
+
   const pane = (
     <DrilldownPane
       ref={paneRef}
@@ -585,7 +591,7 @@ export function DrilldownMapClient({
         // The stage's height, which the map letterboxes inside and the rail is capped to, so
         // a wide screen gets a wide map rather than a tall one. One value, declared where
         // both of them can read it.
-        className="flex flex-col gap-3 [--drilldown-stage-h:clamp(18rem,78vw,26rem)] md:[--drilldown-stage-h:clamp(22rem,56vh,34rem)]"
+        className="flex flex-col gap-3 [--drilldown-stage-h:clamp(18rem,78vw,26rem)] md:[--drilldown-stage-h:clamp(26rem,70vh,42rem)]"
       >
         {/* The rail rides beside the map from tablet up, and above it on a phone. */}
         <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start">
@@ -633,92 +639,130 @@ export function DrilldownMapClient({
               />
             </div>
           </div>
-          <div
-            ref={viewportRef}
-            data-drilldown-viewport=""
-            data-view={view.parentId ? "child" : "overview"}
-            aria-busy={busy || undefined}
-            className={cn(
-              "bg-muted/30 @container relative h-(--drilldown-stage-h) min-w-0 flex-1 overflow-hidden rounded-lg",
-              // The hover outline already follows keyboard focus (stage.ts); this is the ring
-              // on the map itself, so a reader can tell the map has focus at all.
-              "has-[path[tabindex]:focus-visible]:outline-ring has-[path[tabindex]:focus-visible]:outline-2 has-[path[tabindex]:focus-visible]:outline-offset-2",
-            )}
-          >
-            <div className="absolute top-1 left-2 z-10 flex max-w-[calc(100%-1rem)] items-center gap-1">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                data-drilldown-rail-toggle=""
-                aria-expanded={railOpen}
-                aria-controls={railId}
-                aria-label={railOpen ? "Hide the region list" : "Show the region list"}
-                onClick={() => setRailChoice(!railOpen)}
-                className="shrink-0"
-              >
-                <PanelLeft aria-hidden="true" />
-              </Button>
-              {trail.length > 0 && (
-                <>
-                  <Separator orientation="vertical" className="mr-2" />
-                  <Breadcrumb
-                    data-drilldown-trail=""
-                    aria-label="Where you are on the map"
-                    className="min-w-0"
-                  >
-                    <BreadcrumbList className="flex-nowrap gap-1 sm:gap-1.5">
-                      <BreadcrumbItem>
-                        <BreadcrumbLink
-                          render={
-                            <button
-                              type="button"
-                              data-drilldown-trail-root=""
-                              aria-label="Back to the whole map"
-                              onClick={() => void drillOut()}
-                              className="flex items-center"
-                            />
-                          }
-                        >
-                          <MapIcon aria-hidden="true" className="size-4" />
-                        </BreadcrumbLink>
-                      </BreadcrumbItem>
-                      {trail.map((region, i) => (
-                        <React.Fragment key={region.id}>
-                          <BreadcrumbSeparator />
-                          <BreadcrumbItem className="min-w-0">
-                            {i === trail.length - 1 ? (
-                              <BreadcrumbPage className="truncate" title={region.label}>
-                                {region.label}
-                              </BreadcrumbPage>
-                            ) : (
-                              <BreadcrumbLink
-                                title={region.label}
-                                render={
-                                  <button
-                                    type="button"
-                                    data-drilldown-trail-item={region.id}
-                                    onClick={() => void open(region.id, "keyboard")}
-                                    className="max-w-40 truncate"
-                                  />
-                                }
-                              >
-                                {region.label}
-                              </BreadcrumbLink>
-                            )}
-                          </BreadcrumbItem>
-                        </React.Fragment>
-                      ))}
-                    </BreadcrumbList>
-                  </Breadcrumb>
-                </>
+          {/* The map and the pane are one area from here down: the pane rises from the bottom
+              of the map rather than sitting under the whole page, which is what leaves the
+              rail beside it rather than above it. On a phone there is no room to overlay
+              anything on a 20rem map, so it stays stacked underneath. */}
+          <div className="relative flex min-w-0 flex-1 flex-col gap-3 md:h-(--drilldown-stage-h) md:gap-0">
+            <div
+              ref={viewportRef}
+              data-drilldown-viewport=""
+              data-view={view.parentId ? "child" : "overview"}
+              aria-busy={busy || undefined}
+              className={cn(
+                // The map takes whatever the sheet leaves it, rather than being covered by it:
+                // a map you cannot see is not a map. The stage watches its own box, so it
+                // re-fits as the sheet opens.
+                // `flex-1` only from `md`, where the column is what it flexes inside. On a phone
+                // the column is vertical, and a basis of zero there is a map of no height at all.
+                "bg-muted/30 @container relative h-(--drilldown-stage-h) min-w-0 overflow-hidden rounded-lg md:h-auto md:min-h-0 md:flex-1",
+                // The hover outline already follows keyboard focus (stage.ts); this is the ring
+                // on the map itself, so a reader can tell the map has focus at all.
+                "has-[path[tabindex]:focus-visible]:outline-ring has-[path[tabindex]:focus-visible]:outline-2 has-[path[tabindex]:focus-visible]:outline-offset-2",
               )}
+            >
+              <div className="absolute top-1 left-2 z-10 flex max-w-[calc(100%-1rem)] items-center gap-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  data-drilldown-rail-toggle=""
+                  aria-expanded={railOpen}
+                  aria-controls={railId}
+                  aria-label={railOpen ? "Hide the region list" : "Show the region list"}
+                  onClick={() => setRailChoice(!railOpen)}
+                  className="shrink-0"
+                >
+                  <PanelLeft aria-hidden="true" />
+                </Button>
+                {trail.length > 0 && (
+                  <>
+                    <Separator orientation="vertical" className="mr-2" />
+                    <Breadcrumb
+                      data-drilldown-trail=""
+                      aria-label="Where you are on the map"
+                      className="min-w-0"
+                    >
+                      <BreadcrumbList className="flex-nowrap gap-1 sm:gap-1.5">
+                        <BreadcrumbItem>
+                          <BreadcrumbLink
+                            render={
+                              <button
+                                type="button"
+                                data-drilldown-trail-root=""
+                                aria-label="Back to the whole map"
+                                onClick={() => void drillOut()}
+                                className="flex items-center"
+                              />
+                            }
+                          >
+                            <MapIcon aria-hidden="true" className="size-4" />
+                          </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        {trail.map((region, i) => (
+                          <React.Fragment key={region.id}>
+                            <BreadcrumbSeparator />
+                            <BreadcrumbItem className="min-w-0">
+                              {i === trail.length - 1 ? (
+                                <BreadcrumbPage className="truncate" title={region.label}>
+                                  {region.label}
+                                </BreadcrumbPage>
+                              ) : (
+                                <BreadcrumbLink
+                                  title={region.label}
+                                  render={
+                                    <button
+                                      type="button"
+                                      data-drilldown-trail-item={region.id}
+                                      onClick={() => void open(region.id, "keyboard")}
+                                      className="max-w-40 truncate"
+                                    />
+                                  }
+                                >
+                                  {region.label}
+                                </BreadcrumbLink>
+                              )}
+                            </BreadcrumbItem>
+                          </React.Fragment>
+                        ))}
+                      </BreadcrumbList>
+                    </Breadcrumb>
+                  </>
+                )}
+              </div>
+              {children}
+              <div ref={layersRef} data-drilldown-layers="" />
             </div>
-            {children}
-            <div ref={layersRef} data-drilldown-layers="" />
+            <div
+              data-drilldown-sheet=""
+              data-open={paneOpen ? "" : undefined}
+              className={cn(
+                "md:flex md:min-h-0 md:shrink-0 md:flex-col md:pt-2",
+                "md:motion-safe:transition-[max-height] md:motion-safe:duration-200 md:motion-safe:ease-out",
+                // Open, it takes most of the area and scrolls what it cannot show; collapsed,
+                // it is the bar and nothing else, and the whole map is back.
+                paneOpen ? "md:max-h-[62%]" : "md:max-h-11",
+              )}
+            >
+              <button
+                type="button"
+                data-drilldown-sheet-toggle=""
+                aria-expanded={paneOpen}
+                onClick={() => setPaneOpen((was) => !was)}
+                className="text-muted-foreground hover:text-foreground hidden h-9 shrink-0 items-center gap-2 self-start rounded-md px-2 text-left text-sm md:flex"
+              >
+                <ChevronUp
+                  aria-hidden="true"
+                  className={cn("size-4 transition-transform", paneOpen && "rotate-180")}
+                />
+                {/* Open, the pane says its own name in its own heading; the bar only has to
+                    say it while it is the only thing showing. */}
+                <span className={cn("min-w-0 truncate", paneOpen && "sr-only")}>{sheetTitle}</span>
+              </button>
+              <div className="min-h-0 md:overflow-y-auto">{pane}</div>
+            </div>
           </div>
         </div>
-        {pane}
       </div>
       <DrilldownTooltip
         label={hoverRegion?.label ?? null}
