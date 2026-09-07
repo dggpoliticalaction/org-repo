@@ -106,3 +106,50 @@ describe("seed — Federal Courts interactive", () => {
     expect(overview.paths.every((p) => Object.keys(p.facts).length === 0)).toBe(true)
   })
 })
+
+/**
+ * What the admin does when an editor presses Publish, and what would happen if the snapshot's
+ * megabyte stopped being part of that form.
+ *
+ * The field is the reason two 1 MB walls have been hit — a Server Action's body limit and
+ * busboy's field limit, which truncates rather than refuses. Keeping it out of the form is the
+ * fix that makes both go away, and this is the question that decides whether that is safe: a
+ * publish writes a *version* from the document, so if an update that omits the field emptied
+ * it, every publish would quietly publish nothing.
+ */
+describe("interactive snapshots — publishing a document that carries a megabyte", () => {
+  it("keeps the data an update does not mention, in the document and in its version", async () => {
+    interactiveId = await createFederalCourtsInteractive(payload, { disableRevalidate: true })
+    const { docs } = await payload.find({
+      collection: "interactive-snapshots",
+      where: { interactive: { equals: interactiveId } },
+      draft: true,
+      depth: 0,
+      overrideAccess: true,
+    })
+    const snapshot = docs[0]!
+    const before = snapshot.data as { regions?: unknown[] }
+    expect(before?.regions?.length).toBeGreaterThan(100)
+
+    // Exactly what a form without that field would send: everything else, and a status.
+    const updated = await payload.update({
+      collection: "interactive-snapshots",
+      id: snapshot.id,
+      data: { label: snapshot.label, summary: snapshot.summary, _status: "published" },
+      overrideAccess: true,
+      context: { disableRevalidate: true },
+    })
+    expect((updated.data as { regions?: unknown[] })?.regions?.length).toBe(before.regions!.length)
+
+    // And what a reader is served, which comes from the published version rather than the row.
+    const { docs: published } = await payload.find({
+      collection: "interactive-snapshots",
+      where: { interactive: { equals: interactiveId } },
+      depth: 0,
+      overrideAccess: false,
+    })
+    expect((published[0]?.data as { regions?: unknown[] })?.regions?.length).toBe(
+      before.regions!.length,
+    )
+  })
+})

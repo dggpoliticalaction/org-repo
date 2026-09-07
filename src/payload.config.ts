@@ -98,6 +98,14 @@ export default buildConfig({
     push: process.env.NODE_ENV === "development",
     afterSchemaInit: [searchVectorAfterSchemaInit],
   }),
+  /**
+   * The admin saves a document as multipart, and busboy — which parses it — truncates any
+   * field over 1 MiB rather than refusing it, so Payload was handed half a JSON document and
+   * `JSON.parse` failed on the cut ("Unterminated string at position 1048515"). An interactive
+   * snapshot carries the researcher's whole feed in one field, which is past that on its own.
+   * Raised to 32 MB: the ceiling is only there to stop a runaway request, and ours are known.
+   */
+  bodyParser: { limits: { fieldSize: 32 * 1024 * 1024 } },
   collections: [
     Pages,
     Articles,
