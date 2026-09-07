@@ -18,6 +18,14 @@ import {
 } from "./seatLayout"
 import type { DrilldownRecord, RecordDisplay } from "./types"
 
+/**
+ * Bench nodes slide between layouts rather than jumping. They are HTML, so a transform
+ * transition is cheap here — and it is the node's own business, not a stylesheet's.
+ * `motion-safe` is what keeps a reader who asked for no motion out of it.
+ */
+const NODE_MOTION =
+  "motion-safe:[transition:transform_480ms_cubic-bezier(0.4,0.1,0.2,1),opacity_300ms_ease]"
+
 export type BenchMode = "seats" | "timeline"
 export type SupernumeraryMode = "hide" | "show" | "include"
 
@@ -292,7 +300,8 @@ export function DrilldownBench({
             data-drilldown-node=""
             data-cohort={cohort ? "" : undefined}
             className={cn(
-              "drilldown-node focus-visible:ring-ring/60 absolute top-0 left-0 rounded-md text-center outline-none focus-visible:ring-2",
+              NODE_MOTION,
+              "focus-visible:ring-ring/60 absolute top-0 left-0 rounded-md text-center outline-none focus-visible:ring-2",
               !show && "pointer-events-none opacity-0",
             )}
             style={at(p)}
@@ -346,7 +355,7 @@ export function DrilldownBench({
         <div
           key={`vacant-${i}`}
           data-drilldown-vacancy=""
-          className="drilldown-node absolute top-0 left-0 text-center"
+          className={cn(NODE_MOTION, "absolute top-0 left-0 text-center")}
           style={at(p)}
         >
           <span
@@ -373,7 +382,7 @@ export function DrilldownBench({
           data-drilldown-associate=""
           // Wider than a seat: "Circ. Justice Kavanaugh" is a title plus a surname and
           // truncating it to "Circ. Jus…" told the reader nothing.
-          className="drilldown-node absolute top-0 left-0 text-center"
+          className={cn(NODE_MOTION, "absolute top-0 left-0 text-center")}
           style={{
             transform: `translate(${arc.dims.cx - 52}px, ${arc.dims.cy - arc.dims.r0 * 0.3 - half}px)`,
             width: 104,

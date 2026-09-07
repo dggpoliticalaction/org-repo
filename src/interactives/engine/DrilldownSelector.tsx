@@ -196,8 +196,10 @@ export function DrilldownSelector({
     <SidebarProvider
       data-drilldown-rail=""
       // An in-page rail, not an app shell: the wrapper must not claim the viewport's height
-      // or the row's whole width.
-      className={cn("min-h-0 w-auto", className)}
+      // or the row's whole width. Never taller than the stage beside it either, so it scrolls
+      // within its own height instead of stretching the page — and shorter still on a phone,
+      // where it sits above the map.
+      className={cn("max-h-56 min-h-0 w-auto md:max-h-(--drilldown-stage-h)", className)}
     >
       {/* `h-auto`, not the sidebar's own `h-full`: the column is bounded by a max-height and
           nothing else, so a percentage height has nothing definite to resolve against and
@@ -211,6 +213,10 @@ export function DrilldownSelector({
           aria-label="Regions"
           data-drilldown-selector=""
           onKeyDown={onKeyDown}
+          // The registry's sidebar hides its scrollbar (`no-scrollbar`), and a rail that
+          // scrolls should say so. Marked important rather than left to which of two equally
+          // specific classes the stylesheet happens to print second.
+          className="[scrollbar-width:thin]!"
         >
           <SidebarGroup className="p-0">
             {view.parentId && (

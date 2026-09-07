@@ -1,5 +1,12 @@
-/* The drilldown engine's stylesheet. The `--map-*` palette these rules read is a site theme
-   token (globals.css), not the engine's own: the choropleth block reads the same scale. */
+/* What the drilldown engine paints that no component can.
+ *
+ * The stage builds its layers, its cloned outlines, its hover overlay and its seat blocks with
+ * `createElementNS` — there is no JSX to hang a class on, so their painting lives here. Layout
+ * a component owns (the stage's height, the rail's cap, the focus ring, a bench node's
+ * transition) belongs on that component and has moved there.
+ *
+ * The `--map-*` palette these rules read is a site theme token (globals.css), not the engine's
+ * own: the choropleth block reads the same scale. */
 :root {
   --drilldown-parent-fill: color-mix(in oklch, var(--muted-foreground) 22%, var(--background));
   --drilldown-parent-outline: color-mix(in oklch, var(--muted-foreground) 70%, var(--background));
@@ -77,10 +84,10 @@
   outline: none;
 }
 
-/* Layer stack: every layer fills the fixed-ratio viewport and letterboxes its own map. */
-[data-drilldown-viewport] {
-  position: relative;
-}
+/* Layer stack: every layer fills the viewport the component sizes, and letterboxes its own
+   map inside it. Every rule from here down paints something the stage builds by hand — the
+   layers, the paths cloned into them, the seat blocks — which is why they are here and not on
+   a component: there is no component to put them on. */
 [data-drilldown-layer] {
   position: absolute;
   inset: 0;
@@ -187,53 +194,6 @@ text[data-block-label] {
   stroke-linejoin: round;
 }
 
-/* Bench nodes animate between layouts; icons are HTML, so a transform transition is fine here. */
-.drilldown-node {
-  transition:
-    transform 480ms cubic-bezier(0.4, 0.1, 0.2, 1),
-    opacity 300ms ease;
-}
-
-/* Region strip, map at a capped height, pane beneath — the same arrangement on every viewport.
-   The map letterboxes inside the stage height instead of dictating it, so a wide screen gets a
-   wide map, not a tall one. */
-[data-drilldown-map] {
-  --drilldown-stage-h: clamp(18rem, 78vw, 26rem);
-}
-@media (min-width: 48rem) {
-  [data-drilldown-map] {
-    --drilldown-stage-h: clamp(22rem, 56vh, 34rem);
-  }
-}
-[data-drilldown-map] [data-drilldown-viewport] {
-  height: var(--drilldown-stage-h);
-}
-/* Region rail: a column beside the map, kept to the stage's own height rather than stretching
-   the page. On a phone it sits above the map and is capped shorter still. The column carries
-   the cap; the region list inside it is the part that scrolls, so a search box above the list
-   stays in view without moving and its results are not clipped by the scroll box. */
-[data-drilldown-rail] {
-  max-height: 14rem;
-}
-/* The sidebar's own content area is what scrolls (`min-h-0 flex-1 overflow-auto`); this only
-   asks for the slim scrollbar, since the registry's `no-scrollbar` class is not defined here
-   and a rail that scrolls should say so. */
-[data-drilldown-rail] [data-drilldown-selector] {
-  scrollbar-width: thin;
-}
-@media (min-width: 48rem) {
-  [data-drilldown-map] [data-drilldown-rail] {
-    max-height: var(--drilldown-stage-h);
-  }
-}
-
-/* Keyboard focus on a region: the hover outline already follows focus (stage.ts); this adds
-   the ring on the map itself so the reader knows the map has focus at all. */
-[data-drilldown-viewport]:has(path[tabindex]:focus-visible) {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-
 /* Compact map (a narrow viewport): seat blocks lose their labels and shrink — the R/D balance
    still reads at a glance and the blocks stop colliding. Set by stage.ts per layer. */
 [data-drilldown-compact] text[data-block-label] {
@@ -241,9 +201,7 @@ text[data-block-label] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-drilldown-layer],
-  [data-drilldown-pane],
-  .drilldown-node {
+  [data-drilldown-layer] {
     transition: none;
   }
 }

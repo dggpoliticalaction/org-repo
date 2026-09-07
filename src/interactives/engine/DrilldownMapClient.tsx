@@ -582,7 +582,10 @@ export function DrilldownMapClient({
         ref={rootRef}
         data-drilldown-map=""
         onKeyDown={onKeyDown}
-        className="flex flex-col gap-3"
+        // The stage's height, which the map letterboxes inside and the rail is capped to, so
+        // a wide screen gets a wide map rather than a tall one. One value, declared where
+        // both of them can read it.
+        className="flex flex-col gap-3 [--drilldown-stage-h:clamp(18rem,78vw,26rem)] md:[--drilldown-stage-h:clamp(22rem,56vh,34rem)]"
       >
         {/* The rail rides beside the map from tablet up, and above it on a phone. */}
         <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start">
@@ -635,7 +638,12 @@ export function DrilldownMapClient({
             data-drilldown-viewport=""
             data-view={view.parentId ? "child" : "overview"}
             aria-busy={busy || undefined}
-            className="bg-muted/30 @container relative min-w-0 flex-1 overflow-hidden rounded-lg"
+            className={cn(
+              "bg-muted/30 @container relative h-(--drilldown-stage-h) min-w-0 flex-1 overflow-hidden rounded-lg",
+              // The hover outline already follows keyboard focus (stage.ts); this is the ring
+              // on the map itself, so a reader can tell the map has focus at all.
+              "has-[path[tabindex]:focus-visible]:outline-ring has-[path[tabindex]:focus-visible]:outline-2 has-[path[tabindex]:focus-visible]:outline-offset-2",
+            )}
           >
             <div className="absolute top-1 left-2 z-10 flex max-w-[calc(100%-1rem)] items-center gap-1">
               <Button
@@ -651,59 +659,59 @@ export function DrilldownMapClient({
               >
                 <PanelLeft aria-hidden="true" />
               </Button>
-              <Separator orientation="vertical" className="mr-2" />
-              {/* Only once there is somewhere to go back to. At the overview the trail would
-                  be a lone map icon saying the reader is where they started. */}
               {trail.length > 0 && (
-                <Breadcrumb
-                  data-drilldown-trail=""
-                  aria-label="Where you are on the map"
-                  className="min-w-0"
-                >
-                  <BreadcrumbList className="flex-nowrap gap-1 sm:gap-1.5">
-                    <BreadcrumbItem>
-                      <BreadcrumbLink
-                        render={
-                          <button
-                            type="button"
-                            data-drilldown-trail-root=""
-                            aria-label="Back to the whole map"
-                            onClick={() => void drillOut()}
-                            className="flex items-center"
-                          />
-                        }
-                      >
-                        <MapIcon aria-hidden="true" className="size-4" />
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    {trail.map((region, i) => (
-                      <React.Fragment key={region.id}>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem className="min-w-0">
-                          {i === trail.length - 1 ? (
-                            <BreadcrumbPage className="truncate" title={region.label}>
-                              {region.label}
-                            </BreadcrumbPage>
-                          ) : (
-                            <BreadcrumbLink
-                              title={region.label}
-                              render={
-                                <button
-                                  type="button"
-                                  data-drilldown-trail-item={region.id}
-                                  onClick={() => void open(region.id, "keyboard")}
-                                  className="max-w-40 truncate"
-                                />
-                              }
-                            >
-                              {region.label}
-                            </BreadcrumbLink>
-                          )}
-                        </BreadcrumbItem>
-                      </React.Fragment>
-                    ))}
-                  </BreadcrumbList>
-                </Breadcrumb>
+                <>
+                  <Separator orientation="vertical" className="mr-2" />
+                  <Breadcrumb
+                    data-drilldown-trail=""
+                    aria-label="Where you are on the map"
+                    className="min-w-0"
+                  >
+                    <BreadcrumbList className="flex-nowrap gap-1 sm:gap-1.5">
+                      <BreadcrumbItem>
+                        <BreadcrumbLink
+                          render={
+                            <button
+                              type="button"
+                              data-drilldown-trail-root=""
+                              aria-label="Back to the whole map"
+                              onClick={() => void drillOut()}
+                              className="flex items-center"
+                            />
+                          }
+                        >
+                          <MapIcon aria-hidden="true" className="size-4" />
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      {trail.map((region, i) => (
+                        <React.Fragment key={region.id}>
+                          <BreadcrumbSeparator />
+                          <BreadcrumbItem className="min-w-0">
+                            {i === trail.length - 1 ? (
+                              <BreadcrumbPage className="truncate" title={region.label}>
+                                {region.label}
+                              </BreadcrumbPage>
+                            ) : (
+                              <BreadcrumbLink
+                                title={region.label}
+                                render={
+                                  <button
+                                    type="button"
+                                    data-drilldown-trail-item={region.id}
+                                    onClick={() => void open(region.id, "keyboard")}
+                                    className="max-w-40 truncate"
+                                  />
+                                }
+                              >
+                                {region.label}
+                              </BreadcrumbLink>
+                            )}
+                          </BreadcrumbItem>
+                        </React.Fragment>
+                      ))}
+                    </BreadcrumbList>
+                  </Breadcrumb>
+                </>
               )}
             </div>
             {children}
