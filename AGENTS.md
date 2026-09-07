@@ -54,6 +54,7 @@ This file provides guidance to tools like Claude Code (claude.ai/code) when work
 - **`app/(payload)/`** — Payload admin panel routes
 - **`components/`** — Reusable React components for layouts, pagination, etc; `components/ui/` uses shadcn/ui;
 - **`providers/`** — Context providers (MathJaxProvider)
+- **`integrations/`** — the outside services we read from, one **connection** per entry (see below)
 - **`migrations/`** — Drizzle database migrations
 
 ### Path Aliases
@@ -114,6 +115,31 @@ This file provides guidance to tools like Claude Code (claude.ai/code) when work
 - **Pre-push hooks**: Husky runs full checks on all files (`lint:fix`, `format:fix`, `check-types`) before pushing
 - **Pre-commit hooks**: lint-staged runs ESLint + Prettier on staged files only (fast, ~1-2 seconds)
 - **Colocation**: Prefer colocating logic near where it's used. `src/utilities/` is only for genuinely reusable helpers shared across multiple features (e.g. `generateMeta`, `getURL`, `toRoman`, `cn`). Don't put single-use logic there.
+
+### Integrations
+
+`src/integrations/` is where an outside service lives: a GitHub repository we
+sync data from, the Shopify store behind the merch catalogue, and — as they are
+brought across — Listmonk, Google, the rest.
+
+- An integration is one **connection**, not a vendor. Two GitHub repositories
+  read with two tokens are two connections. Each is declared once in
+  `src/integrations/index.ts`, and a feature imports the one it needs by name.
+- The shared contract (`types.ts`) is only identity, the environment variables
+  it needs, and `integrationStatus()`, which reports which are missing **by
+  name, never by value**. Secrets stay in the environment; nothing here writes a
+  credential to the database (issue #912 has the reasoning).
+- What a connection _does_ is its own API. `githubRepo()` offers `filesAt(ref)`,
+  `latestRelease()` and `filesFromRelease()`, all producing a `FileSource` —
+  the seam that lets a feature read files without knowing whether they came from
+  an archive, a repository or a fixture. Don't invent a common `sync()`.
+- A job that needs credentials asks the connection whether it is configured and
+  skips with `describeStatus()` when it is not, rather than reading
+  `process.env` itself.
+
+Adding one: declare the connection in `src/integrations/index.ts`, put its
+client under `src/integrations/<service>/`, and have the feature import it.
+Progress and the open questions live on issue #912.
 
 ### Test coverage
 

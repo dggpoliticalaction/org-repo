@@ -428,6 +428,13 @@ which means "resolve whatever upstream last published":
   debugging. The snapshot records the ref actually read, so its provenance
   names the immutable tag rather than the word `release`.
 
+The repository, its token and the three ways it hands over files belong to an
+**integration** — `courtTracker` in `src/integrations/index.ts`, built by
+`githubRepo()`. The feed adapter owns the _shape_ of what court-tracker
+publishes and nothing about how it is reached, and the sync asks the
+integration whether it is configured rather than knowing any variable's name
+(see the Integrations section in AGENTS.md).
+
 Private upstream: set `COURT_TRACKER_GITHUB_TOKEN` (fine-grained, contents:
 read); `COURT_TRACKER_REPO` overrides the default repository. Without the
 token the sync logs a warning and skips. A refused releases request throws
