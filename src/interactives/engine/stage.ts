@@ -85,7 +85,12 @@ interface MorphPlan {
 
 // Seat-block geometry (see renderBlocks). Square edge is constant in CSS px across views; the
 // projections differ ~4× in scale, so a map-unit size would swamp a child view.
-const BLOCK_ROWS = 5
+/**
+ * Rows in a seat block. Four rather than five: a bench of 29 over five rows is six columns of
+ * a two-square-tall sliver, and the shape said "tall and thin" about every court regardless of
+ * its size. Four rows makes the same bench squarer and the small ones no worse.
+ */
+const BLOCK_ROWS = 4
 const BLOCK_PX = 6.5
 /**
  * Below this rendered map width the blocks shrink and drop their labels: at phone widths the
