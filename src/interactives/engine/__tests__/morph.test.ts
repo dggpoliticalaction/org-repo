@@ -3,7 +3,10 @@ import { describe, expect, it } from "vitest"
 import {
   bezierViewBox,
   buildMorphPairs,
+  crossControlViewBox,
+  easeInCubic,
   easeInOutCubic,
+  easeOutCubic,
   flipYInPlace,
   largestSubpathCentre,
   lerpInto,
@@ -61,22 +64,51 @@ describe("structure, flip, serialize, lerp", () => {
     expect(lerpViewBox([0, 0, 10, 10], [10, 10, 20, 20], 0.5)).toEqual([5, 5, 15, 15])
   })
 
-  it("curves a crossing through the overview without landing on it", () => {
-    const from = [0, 0, 10, 10]
-    const through = [-50, -50, 200, 200]
-    const to = [100, 100, 10, 10]
-    expect(bezierViewBox(from, through, to, 0)).toEqual(from)
-    expect(bezierViewBox(from, through, to, 1)).toEqual(to)
-    // Halfway is a quarter of each end and half the country: wide enough to see the whole
-    // map in passing, never the full zoom-out that stopping there would be.
-    expect(bezierViewBox(from, through, to, 0.5)).toEqual([0, 0, 105, 105])
-  })
-
   it("eases symmetrically and keeps the commit cap at 16 ms", () => {
     expect(easeInOutCubic(0)).toBe(0)
     expect(easeInOutCubic(1)).toBe(1)
     expect(easeInOutCubic(0.5)).toBeCloseTo(0.5)
     expect(MORPH_MIN_COMMIT_MS).toBe(16)
+  })
+
+  it("meets both ends and weights the control point half at the midpoint", () => {
+    const from = [0, 0, 10, 10]
+    const control = [-50, -50, 200, 200]
+    const to = [100, 100, 10, 10]
+    expect(bezierViewBox(from, control, to, 0)).toEqual(from)
+    expect(bezierViewBox(from, control, to, 1)).toEqual(to)
+    // A quadratic does not pass through its control point — which is why a crossing has to
+    // solve for one rather than hand the country straight in.
+    expect(bezierViewBox(from, control, to, 0.5)).toEqual([0, 0, 105, 105])
+  })
+
+  it("puts the country's scale halfway along a crossing, centred between the two maps", () => {
+    const from = [0, 0, 10, 10]
+    const to = [100, 100, 10, 10]
+    const country = [-50, -50, 200, 200]
+    const control = crossControlViewBox(from, to, country)
+    const apex = bezierViewBox(from, control, to, 0.5)
+    // The size is the country's, because that is what both morph plans are drawing at the
+    // join — a tighter camera there is a magnified crop of a map that has moved.
+    expect(apex[2]).toBeCloseTo(country[2]!)
+    expect(apex[3]).toBeCloseTo(country[3]!)
+    // The centre is not. A padded overview box carries the inset territories below the
+    // mainland, so travelling through its centre is a dive south and back.
+    expect(apex[0]! + apex[2]! / 2).toBeCloseTo(55)
+    expect(apex[1]! + apex[3]! / 2).toBeCloseTo(55)
+    expect(bezierViewBox(from, control, to, 0)).toEqual(from)
+    expect(bezierViewBox(from, control, to, 1)).toEqual(to)
+  })
+
+  it("crosses the join at speed rather than coming to rest on it", () => {
+    for (const ease of [easeInCubic, easeOutCubic]) {
+      expect(ease(0)).toBe(0)
+      expect(ease(1)).toBe(1)
+    }
+    // The leaving half is still slow when the arriving half is already fast: both are at full
+    // speed at the handover, which is what keeps the country from being a stop.
+    expect(easeInCubic(0.1)).toBeLessThan(easeOutCubic(0.1))
+    expect(easeInCubic(0.9)).toBeLessThan(easeOutCubic(0.9))
   })
 })
 

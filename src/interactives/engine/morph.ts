@@ -84,6 +84,19 @@ export function lerpInto(a: Subpath[], b: Subpath[], out: Subpath[], u: number):
 export const easeInOutCubic = (t: number): number =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 
+/**
+ * The two halves of a crossing, eased at their outer ends only.
+ *
+ * `easeInOutCubic` is at rest at BOTH ends, so using it for each half brings the shapes to a
+ * standstill at the country and starts them again — the very stop the crossing exists to
+ * remove, reintroduced by the easing after the camera had stopped making it. The leaving half
+ * accelerates from rest and hands over at full speed; the arriving half takes over at that
+ * speed and decelerates into place. Cubes on both sides, so the two velocities match at the
+ * handover and the join is not a seam.
+ */
+export const easeInCubic = (t: number): number => t * t * t
+export const easeOutCubic = (t: number): number => 1 - Math.pow(1 - t, 3)
+
 export const MORPH_MS = 620
 
 /**
@@ -102,11 +115,12 @@ export function lerpViewBox(a: readonly number[], b: readonly number[], u: numbe
 }
 
 /**
- * A camera path from one map to another that passes near a third rather than stopping at it.
+ * A camera path from one map to another by way of a third, without stopping at it.
  *
  * Crossing between two circuits used to be two journeys: out to the whole country, a full
- * stop, then in again. The country is on the way, not a destination — so it is the control
- * point of a quadratic Bézier and the camera never rests there.
+ * stop, then in again. The country is on the way, not a destination. A quadratic gives the
+ * camera one continuous movement through it — see `crossControlViewBox` for the control point
+ * that puts the country halfway along, since a quadratic does not pass through its own.
  */
 export function bezierViewBox(
   from: readonly number[],
@@ -120,6 +134,41 @@ export function bezierViewBox(
     const end = to[i] ?? v
     return inv * inv * v + 2 * inv * u * mid + u * u * end
   })
+}
+
+/**
+ * The control point for a crossing: country scale halfway along, on a straight line between
+ * the two maps.
+ *
+ * Two separate things have to be true at the halfway point, and each was got wrong on its own
+ * before both were.
+ *
+ * The SIZE has to be the country's. Halfway through a crossing both morph plans are drawing
+ * the overview — that is what makes the swap between them invisible — so a camera any tighter
+ * shows a magnified crop of the whole country and the reader watches states swim in from off
+ * frame. A quadratic does not pass through its control point (at the midpoint it is only a
+ * quarter of each end plus half the control), so the control is solved backwards from the apex
+ * rather than handed the country directly.
+ *
+ * The CENTRE must not be the country's. The padded overview box carries the inset territories
+ * below the mainland, which puts its centre well south of anything a reader thinks of as the
+ * middle of the map — for two east-coast circuits the trip through it is almost entirely a
+ * dive south and back, and on screen the mainland rides up to the top edge and returns. So the
+ * apex is centred between the two maps instead, which also makes the centre path the straight
+ * line from where the reader was to where they are going.
+ */
+export function crossControlViewBox(
+  from: readonly number[],
+  to: readonly number[],
+  country: readonly number[],
+): number[] {
+  const [fx, fy, fw, fh] = from as [number, number, number, number]
+  const [tx, ty, tw, th] = to as [number, number, number, number]
+  const [, , cw, ch] = country as [number, number, number, number]
+  const mx = (fx + fw / 2 + (tx + tw / 2)) / 2
+  const my = (fy + fh / 2 + (ty + th / 2)) / 2
+  const apex = [mx - cw / 2, my - ch / 2, cw, ch]
+  return apex.map((v, i) => 2 * v - ((from[i] ?? v) + (to[i] ?? v)) / 2)
 }
 
 export interface MorphPair {

@@ -2,7 +2,10 @@ import { flipConstant, flipTransform, padViewBox, viewBoxAttr } from "./geometry
 import {
   buildMorphPairs,
   bezierViewBox,
+  crossControlViewBox,
+  easeInCubic,
   easeInOutCubic,
+  easeOutCubic,
   largestSubpathCentre,
   lerpInto,
   lerpViewBox,
@@ -1095,6 +1098,7 @@ export class MapStage {
       // Longer than one morph, shorter than the two it replaces: the distance is greater, and
       // the reader is never made to wait at the halfway point.
       const dur = reducedMotion() ? 0 : Math.round(MORPH_MS * 1.4)
+      const control = crossControlViewBox(outPlan.vbEnd, inPlan.vbEnd, outPlan.vbStart)
       const t0 = nowMs()
       let showingIn = false
       let lastCommit = -Infinity
@@ -1118,10 +1122,10 @@ export class MapStage {
           this.attachMorphLayer(inPlan.el)
           outPlan.el.remove()
         }
-        // Each half eases on its own, so the shapes leave and arrive at rest even though the
-        // camera never stops between them.
-        const u = half ? 1 - easeInOutCubic(t / 0.5) : easeInOutCubic((t - 0.5) / 0.5)
-        const vb = bezierViewBox(outPlan.vbEnd, outPlan.vbStart, inPlan.vbEnd, easeInOutCubic(t))
+        // Eased at the outer ends only: the shapes leave and arrive at rest, and cross the
+        // country at full speed rather than stopping there the way the camera used to.
+        const u = half ? 1 - easeInCubic(t / 0.5) : easeOutCubic((t - 0.5) / 0.5)
+        const vb = bezierViewBox(outPlan.vbEnd, control, inPlan.vbEnd, easeInOutCubic(t))
         this.renderMorph(plan, u, vb)
         if (t < 1) this.morphRAF = raf(frame)
         else settle("done")
