@@ -382,6 +382,46 @@ describe("DrilldownMapClient", () => {
     await waitFor(() => expect(window.location.search).toBe("?region=w1"))
   })
 
+  it("says where on the map the reader has got to, and takes them back up it", async () => {
+    const { container } = setup()
+    const trail = (): HTMLElement => container.querySelector<HTMLElement>("[data-drilldown-trail]")!
+    const crumbs = (): string[] =>
+      Array.from(
+        trail().querySelectorAll("[data-slot='breadcrumb-link'], [data-slot='breadcrumb-page']"),
+      ).map((c) => c.textContent?.trim() || c.getAttribute("aria-label") || "")
+
+    // Nowhere yet, so nothing to say: a trail at the overview would be one map icon telling
+    // the reader they are where they started.
+    expect(container.querySelector("[data-drilldown-trail]")).toBeNull()
+
+    fireEvent.click(selector(container).getByRole("button", { name: "West" }))
+    await waitFor(() => expect(crumbs()).toEqual(["Back to the whole map", "West"]))
+
+    fireEvent.click(selector(container).getByRole("button", { name: "West 1" }))
+    await waitFor(() => expect(crumbs()).toEqual(["Back to the whole map", "West", "West 1"]))
+    // The end of the trail is where they are; everything before it is a way back.
+    expect(trail().querySelector("[data-drilldown-trail-item='west']")).toBeInTheDocument()
+    expect(trail().querySelector("[data-drilldown-trail-item='w1']")).toBeNull()
+
+    // Going back up it selects the circuit rather than leaving its map.
+    fireEvent.click(trail().querySelector<HTMLElement>("[data-drilldown-trail-item='west']")!)
+    await waitFor(() => expect(crumbs()).toEqual(["Back to the whole map", "West"]))
+    expect(container.querySelector("[data-drilldown-viewport]")).toHaveAttribute(
+      "data-view",
+      "child",
+    )
+
+    // And the map icon is the way out of it entirely.
+    fireEvent.click(trail().querySelector<HTMLElement>("[data-drilldown-trail-root]")!)
+    await waitFor(() =>
+      expect(container.querySelector("[data-drilldown-viewport]")).toHaveAttribute(
+        "data-view",
+        "overview",
+      ),
+    )
+    expect(container.querySelector("[data-drilldown-trail]")).toBeNull()
+  })
+
   it("folds the rail away and hands its width to the map", async () => {
     const { container } = setup()
     const toggle = (): HTMLElement =>

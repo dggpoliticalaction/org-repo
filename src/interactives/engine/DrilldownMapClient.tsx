@@ -1,11 +1,20 @@
 "use client"
 
-import { PanelLeft } from "lucide-react"
+import { MapIcon, PanelLeft } from "lucide-react"
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/utilities/utils"
+import { Separator } from "@/components/ui/separator"
 
 import { AssetLoader } from "./assetLoader"
 import { DrilldownPane, type DrilldownPaneHandle, type PinRequest } from "./DrilldownPane"
@@ -18,7 +27,7 @@ import { buildRegionIndex, displayFacts } from "./regions"
 import type { SearchResult } from "./search"
 import { DrilldownSelectionProvider } from "./selection"
 import { MapStage } from "./stage"
-import type { ChildAssetRef, DrilldownAsset, RegionIndex } from "./types"
+import type { ChildAssetRef, DrilldownAsset, RegionIndex, RegionInfo } from "./types"
 
 export interface DrilldownMapClientProps {
   /** The overview asset with path data stripped — geometry lives in the server-rendered SVG. */
@@ -502,6 +511,24 @@ export function DrilldownMapClient({
     return asset?.payload?.facts || asset?.payload?.seats ? asset.payload : overview.payload
   }
   const hoverRegion = hover ? (regions.byId[hover.id] ?? null) : null
+  /**
+   * Where the reader is, from the whole map down. The end of it is the deepest thing they
+   * have chosen — the region whose pane is open, or else the map they are standing on — and
+   * its ancestors are the way back. The overview is the icon at the head, so a reader who has
+   * gone nowhere still sees what "nowhere" is.
+   */
+  const trail = useMemo(() => {
+    const path: RegionInfo[] = []
+    const seen = new Set<string>()
+    let cur: string | null = ((paneOpen && selected) || view.parentId) ?? null
+    while (cur && !seen.has(cur)) {
+      seen.add(cur)
+      const region = regions.byId[cur]
+      if (region) path.unshift(region)
+      cur = region?.parentId ?? null
+    }
+    return path
+  }, [paneOpen, selected, view.parentId, regions])
   const canDrill =
     !!selectedRegion &&
     view.parentId !== selectedRegion.id &&
@@ -592,19 +619,77 @@ export function DrilldownMapClient({
             aria-busy={busy || undefined}
             className="bg-muted/30 @container relative min-w-0 flex-1 overflow-hidden rounded-lg"
           >
-            <Button
-              type="button"
-              variant="outline"
-              size="icon-sm"
-              data-drilldown-rail-toggle=""
-              aria-expanded={railOpen}
-              aria-controls={railId}
-              aria-label={railOpen ? "Hide the region list" : "Show the region list"}
-              onClick={() => setRailChoice(!railOpen)}
-              className="absolute top-2 left-2 z-10"
-            >
-              <PanelLeft aria-hidden="true" />
-            </Button>
+            {/* The rail's toggle and the trail sit together over the map's top-left: one says
+                what is beside the map, the other where on it the reader has got to. */}
+            <div className="absolute top-1 left-2 z-10 flex max-w-[calc(100%-1rem)] items-center gap-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                data-drilldown-rail-toggle=""
+                aria-expanded={railOpen}
+                aria-controls={railId}
+                aria-label={railOpen ? "Hide the region list" : "Show the region list"}
+                onClick={() => setRailChoice(!railOpen)}
+                className="shrink-0"
+              >
+                <PanelLeft aria-hidden="true" />
+              </Button>
+              <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+              {/* Only once there is somewhere to go back to. At the overview the trail would
+                  be a lone map icon saying the reader is where they started. */}
+              {trail.length > 0 && (
+                <Breadcrumb
+                  data-drilldown-trail=""
+                  aria-label="Where you are on the map"
+                  className="min-w-0"
+                >
+                  <BreadcrumbList className="flex-nowrap gap-1 sm:gap-1.5">
+                    <BreadcrumbItem>
+                      <BreadcrumbLink
+                        render={
+                          <button
+                            type="button"
+                            data-drilldown-trail-root=""
+                            aria-label="Back to the whole map"
+                            onClick={() => void drillOut()}
+                            className="flex items-center"
+                          />
+                        }
+                      >
+                        <MapIcon aria-hidden="true" className="size-4" />
+                      </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    {trail.map((region, i) => (
+                      <React.Fragment key={region.id}>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem className="min-w-0">
+                          {i === trail.length - 1 ? (
+                            <BreadcrumbPage className="truncate" title={region.label}>
+                              {region.label}
+                            </BreadcrumbPage>
+                          ) : (
+                            <BreadcrumbLink
+                              title={region.label}
+                              render={
+                                <button
+                                  type="button"
+                                  data-drilldown-trail-item={region.id}
+                                  onClick={() => void open(region.id, "keyboard")}
+                                  className="max-w-40 truncate"
+                                />
+                              }
+                            >
+                              {region.label}
+                            </BreadcrumbLink>
+                          )}
+                        </BreadcrumbItem>
+                      </React.Fragment>
+                    ))}
+                  </BreadcrumbList>
+                </Breadcrumb>
+              )}
+            </div>
             {children}
             <div ref={layersRef} data-drilldown-layers="" />
           </div>
