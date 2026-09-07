@@ -7,10 +7,14 @@ interface Args {
 }
 
 /**
- * The lazily fetched asset for one drillable region — its child geometry plus the records it
- * owns — composed on the server from the code-owned profile and the published snapshot. The
- * client's `AssetLoader` reads it as JSON; the page emits a prefetch link per region so a
- * crawler that follows same-origin references captures a working archive.
+ * The records one drillable region owns, composed on the server from the code-owned profile
+ * and the published snapshot. Its shapes are served separately, from a URL that carries their
+ * own hash, because they change only when the map is reprojected while this changes whenever
+ * the sync finds something new.
+ *
+ * The client's `AssetLoader` reads both as JSON and puts them back together; the page emits a
+ * prefetch link for each so a crawler that follows same-origin references captures a working
+ * archive.
  */
 export async function GET(_req: Request, { params }: Args): Promise<Response> {
   const { slug, regionId } = await params

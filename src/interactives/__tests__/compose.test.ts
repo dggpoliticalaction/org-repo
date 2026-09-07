@@ -3,7 +3,13 @@ import { describe, expect, it } from "vitest"
 import { displayFacts } from "@/interactives/engine/regions"
 import type { DrilldownRecord, RecordDisplay } from "@/interactives/engine/types"
 
-import { childKeys, composeChild, composeIndex, composeOverview } from "../compose"
+import {
+  childKeys,
+  composeChildData,
+  composeChildGeometry,
+  composeIndex,
+  composeOverview,
+} from "../compose"
 import {
   DRILLDOWN_DATA_SCHEMA,
   type DrilldownData,
@@ -147,29 +153,37 @@ describe("composeOverview", () => {
   })
 })
 
-describe("composeChild", () => {
-  it("bundles a region's geometry with the records it and its descendants own", () => {
-    const asset = composeChild({ presentation, geometry, data }, "ca8")
-    expect(asset?.paths.map((p) => p.id)).toEqual(["moed", "mowd"])
-    expect(asset?.payload?.records?.items.map((r) => r._id).sort()).toEqual(["j8", "m1", "w1"])
-    expect(asset?.payload?.regions?.map((r) => r.id)).toEqual(["ca8", "moed", "mowd"])
-    expect(asset?.payload?.records?.display).toBe(display)
+describe("composeChild — the two halves", () => {
+  it("gives the records to one half and the shapes to the other, and nothing to both", () => {
+    const dataHalf = composeChildData({ presentation, geometry, data }, "ca8")
+    expect(dataHalf?.payload?.records?.items.map((r) => r._id).sort()).toEqual(["j8", "m1", "w1"])
+    expect(dataHalf?.payload?.regions?.map((r) => r.id)).toEqual(["ca8", "moed", "mowd"])
+    expect(dataHalf?.payload?.records?.display).toBe(display)
     // Presentation-wide settings live on the overview; the client falls back to it.
-    expect(asset?.payload?.facts).toBeUndefined()
-    expect(asset?.payload?.seats).toBeUndefined()
+    expect(dataHalf?.payload?.facts).toBeUndefined()
+    expect(dataHalf?.payload?.seats).toBeUndefined()
+    // The half that changes nightly carries no geometry at all — that is the point of it.
+    expect(dataHalf?.paths).toEqual([])
+
+    const geometryHalf = composeChildGeometry(geometry, "ca8")
+    expect(geometryHalf?.paths.map((p) => p.id)).toEqual(["moed", "mowd"])
+    expect(geometryHalf?.payload).toBeNull()
   })
 
   it("serves a records-only region with no geometry and its declared children", () => {
-    const asset = composeChild({ presentation, geometry, data }, "cafc")
-    expect(asset?.paths).toEqual([])
-    expect(asset?.viewBox).toBeNull()
-    expect(asset?.payload?.regions?.map((r) => r.id)).toEqual(["cit"])
-    expect(asset?.payload?.records?.items.map((r) => r._id)).toEqual(["c1"])
+    const dataHalf = composeChildData({ presentation, geometry, data }, "cafc")
+    expect(dataHalf?.payload?.regions?.map((r) => r.id)).toEqual(["cit"])
+    expect(dataHalf?.payload?.records?.items.map((r) => r._id)).toEqual(["c1"])
+    const geometryHalf = composeChildGeometry(geometry, "cafc")
+    expect(geometryHalf?.paths).toEqual([])
+    expect(geometryHalf?.viewBox).toBeNull()
   })
 
   it("returns null for a region that is not drillable", () => {
-    expect(composeChild({ presentation, geometry, data }, "moed")).toBeNull()
-    expect(composeChild({ presentation, geometry, data }, "hasOwnProperty")).toBeNull()
+    expect(composeChildData({ presentation, geometry, data }, "moed")).toBeNull()
+    expect(composeChildData({ presentation, geometry, data }, "hasOwnProperty")).toBeNull()
+    expect(composeChildGeometry(geometry, "moed")).toBeNull()
+    expect(composeChildGeometry(geometry, "hasOwnProperty")).toBeNull()
   })
 
   it("never serves the same record from two assets", () => {
@@ -179,7 +193,7 @@ describe("composeChild", () => {
       items?.forEach((r) => served.set(String(r._id), (served.get(String(r._id)) ?? 0) + 1))
     count(overview.payload?.records?.items)
     for (const key of childKeys(geometry))
-      count(composeChild({ presentation, geometry, data }, key)?.payload?.records?.items)
+      count(composeChildData({ presentation, geometry, data }, key)?.payload?.records?.items)
     expect([...served.values()].every((n) => n === 1)).toBe(true)
     expect(served.size).toBe(data.records.length)
   })

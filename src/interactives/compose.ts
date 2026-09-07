@@ -102,8 +102,9 @@ export function composeIndex({ geometry, data }: Omit<ComposeInput, "presentatio
   return buildRegionIndex(assets)
 }
 
+/** Bucketing only asks which regions have an asset, so the URLs can be empty here. */
 function refsFor(geometry: DrilldownGeometry): ChildAssetRef[] {
-  return childKeys(geometry).map((regionId) => ({ regionId, url: "" }))
+  return childKeys(geometry).map((regionId) => ({ regionId, url: "", geometryUrl: "" }))
 }
 
 /** The child asset key each record is served from, or null for the overview. */
@@ -158,23 +159,43 @@ function subtreeRegions(
 }
 
 /**
- * The lazily fetched asset for one drillable region: its child geometry (none for a
- * records-only region — the engine then keeps the overview on screen and lists the children
- * in the selector) plus every record it and its descendants own. Returns null for a region
- * that is not drillable, which the route turns into a 404.
+ * A drillable region's two halves, fetched separately because they change on different
+ * clocks. The geometry is code — it moves when the map is reprojected, so its URL carries a
+ * content hash and is cached forever. The records are the researcher's, and change every time
+ * the sync finds something new. Fused, as they used to be, every nightly data change re-sent
+ * a map that had not moved: for the Ninth Circuit that is 74 KB of geometry against 22 KB of
+ * records, compressed.
+ *
+ * Both halves are `DrilldownAsset`s, so either URL is something a person can open and read,
+ * and the client merges them back into one before the stage ever sees it.
  */
-export function composeChild(
-  { presentation, geometry, data }: ComposeInput,
+export function composeChildGeometry(
+  geometry: DrilldownGeometry,
   regionId: string,
 ): DrilldownAsset | null {
   if (!Object.prototype.hasOwnProperty.call(geometry.children, regionId)) return null
   const file = geometry.children[regionId] ?? null
-  const index = composeIndex({ geometry, data })
-  const items = data.records.filter((r) => bucketFor(r._region, index, geometry) === regionId)
   return {
     viewBox: file?.viewBox ?? null,
     flipY: file?.flipY ?? false,
     paths: geometryPaths(file),
+    payload: null,
+    payloadError: null,
+  }
+}
+
+/** Every record `regionId` and its descendants own, with the display that draws them. */
+export function composeChildData(
+  { presentation, geometry, data }: ComposeInput,
+  regionId: string,
+): DrilldownAsset | null {
+  if (!Object.prototype.hasOwnProperty.call(geometry.children, regionId)) return null
+  const index = composeIndex({ geometry, data })
+  const items = data.records.filter((r) => bucketFor(r._region, index, geometry) === regionId)
+  return {
+    viewBox: null,
+    flipY: false,
+    paths: [],
     payload: {
       schema: DRILLDOWN_SCHEMA,
       regions: subtreeRegions(regionId, index, data),

@@ -124,8 +124,8 @@ export function DrilldownMapClient({
     [overview, loaded],
   )
   const drillable = useMemo(() => new Set(childAssets.map((a) => a.regionId)), [childAssets])
-  const urlFor = useCallback(
-    (regionId: string) => childAssets.find((a) => a.regionId === regionId)?.url ?? null,
+  const refFor = useCallback(
+    (regionId: string) => childAssets.find((a) => a.regionId === regionId) ?? null,
     [childAssets],
   )
 
@@ -133,13 +133,13 @@ export function DrilldownMapClient({
 
   const ensureAsset = useCallback(
     async (key: string): Promise<DrilldownAsset | null> => {
-      const url = urlFor(key)
-      if (!url) return null
-      const cached = loader.get(url)
+      const ref = refFor(key)
+      if (!ref) return null
+      const cached = loader.get(ref.url)
       if (cached) return cached
       setLoadState((s) => ({ ...s, [key]: "loading" }))
       try {
-        const asset = await loader.load(url)
+        const asset = await loader.load(ref.url, ref.geometryUrl)
         setLoaded((prev) => (prev[key] === asset ? prev : { ...prev, [key]: asset }))
         setLoadState((s) => {
           const { [key]: _omit, ...rest } = s
@@ -152,7 +152,7 @@ export function DrilldownMapClient({
         return null
       }
     },
-    [urlFor, loader],
+    [refFor, loader],
   )
 
   // ---- selection / navigation -------------------------------------------------------------

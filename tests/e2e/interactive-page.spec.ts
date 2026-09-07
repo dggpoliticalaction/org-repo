@@ -20,8 +20,9 @@ test.describe("interactive page — federal courts", () => {
     await expect(page.locator("svg[data-drilldown-overview] path[data-role='parent']")).toHaveCount(
       12,
     )
+    // Two per region: its records, and its shapes from a hashed URL of their own.
     await expect(page.locator(`head link[rel='prefetch'][href^='${PAGE}/regions/']`)).toHaveCount(
-      13,
+      26,
     )
     await expect(page.locator("[data-drilldown-layer='local']")).toHaveCount(0)
 
@@ -196,19 +197,32 @@ test.describe("interactive page — federal courts", () => {
     expect(index.entries.every((e) => typeof e.name === "string" && e.name.length > 0)).toBe(true)
   })
 
-  test("a region's asset is composed server-side and served as JSON", async ({ page }) => {
+  test("a region is composed server-side and served as two halves", async ({ page }) => {
     const region = await page.request.get(`${PAGE}/regions/ca8`)
     expect(region.ok()).toBe(true)
     expect(region.headers()["content-type"]).toContain("application/json")
-    const asset = (await region.json()) as {
-      paths: { id: string | null }[]
+    const data = (await region.json()) as {
+      paths: unknown[]
       payload: { records: { items: unknown[] }; facts?: unknown; seats?: unknown }
     }
-    expect(asset.paths.filter((p) => p.id).length).toBe(11)
-    expect(asset.payload.records.items.length).toBeGreaterThan(50)
+    expect(data.payload.records.items.length).toBeGreaterThan(50)
     // Presentation-wide settings live on the overview, never repeated per region.
-    expect(asset.payload.facts).toBeUndefined()
-    expect(asset.payload.seats).toBeUndefined()
+    expect(data.payload.facts).toBeUndefined()
+    expect(data.payload.seats).toBeUndefined()
+    // The half that changes with every sync carries no shapes to change with it.
+    expect(data.paths).toEqual([])
+    expect(region.headers()["cache-control"]).not.toContain("immutable")
+
+    const href = await page
+      .locator(`head link[rel='prefetch'][href*='/regions/ca8/geometry/']`)
+      .getAttribute("href")
+    const geometry = await page.request.get(href!)
+    expect(geometry.ok()).toBe(true)
+    const shapes = (await geometry.json()) as { paths: { id: string | null }[]; payload: null }
+    expect(shapes.paths.filter((p) => p.id).length).toBe(11)
+    expect(shapes.payload).toBeNull()
+    // Its URL names its own content, so it can be held for as long as the browser likes.
+    expect(geometry.headers()["cache-control"]).toContain("immutable")
   })
 
   test("a region that is not drillable is a 404", async ({ page }) => {

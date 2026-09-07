@@ -26,8 +26,9 @@ interface InteractiveDrilldownProps {
 
 /**
  * The drilldown as a page section: region strip, map, pane beneath. The overview is complete
- * in the initial HTML; regions load lazily from the same-origin JSON routes prefetched here,
- * so a crawler that follows same-origin references captures a working archive.
+ * in the initial HTML; regions load lazily from the same-origin JSON routes prefetched here —
+ * both halves of each, shapes and records — so a crawler that follows same-origin references
+ * captures a working archive.
  */
 export function InteractiveDrilldown({
   composed,
@@ -40,7 +41,10 @@ export function InteractiveDrilldown({
   return (
     <section data-interactive-drilldown="" aria-label="Interactive map">
       {childAssets.map((a) => (
-        <link key={a.regionId} rel="prefetch" as="fetch" href={a.url} />
+        <React.Fragment key={a.regionId}>
+          <link rel="prefetch" as="fetch" href={a.url} />
+          <link rel="prefetch" as="fetch" href={a.geometryUrl} />
+        </React.Fragment>
       ))}
       <DrilldownMapClient
         emptyHint={emptyHint}

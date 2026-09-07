@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto"
 
-import type { DrilldownData } from "./types"
+import type { DrilldownData, GeometryFile } from "./types"
 
 /** JSON with object keys sorted at every level, so equal data hashes equal. */
 export function stableStringify(value: unknown): string {
@@ -24,4 +24,21 @@ export function hashDrilldownData(
 ): string {
   const rendered = { regions: data.regions, records: data.records, datasets: data.datasets }
   return createHash("sha256").update(stableStringify(rendered)).digest("hex").slice(0, 16)
+}
+
+/**
+ * Content hash of one region's geometry, which is code: it moves when the map is reprojected
+ * and at no other time. It goes in the URL the geometry is served from, so that URL can be
+ * cached forever and a reprojection issues a new one — the alternative being a map that is
+ * held after it has changed, which no editor can clear.
+ */
+const geometryHashes = new WeakMap<GeometryFile, string>()
+
+export function geometryHash(file: GeometryFile | null): string {
+  if (!file) return "none"
+  const cached = geometryHashes.get(file)
+  if (cached) return cached
+  const hash = createHash("sha256").update(stableStringify(file)).digest("hex").slice(0, 12)
+  geometryHashes.set(file, hash)
+  return hash
 }

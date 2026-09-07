@@ -8,7 +8,9 @@ import type { DrilldownAsset } from "./types"
  * race through the gap between the cache check and the cache write and inject one layer per
  * click. Failures are not cached, so a transient network error can be retried.
  *
- * Assets are composed on the server and served as JSON by an interactive's region route; the
+ * A region arrives in two halves — its shapes from a URL that never changes for a given map,
+ * its records from one that changes with every sync — fetched together and put back into the
+ * single asset the stage expects. Both are composed on the server and served as JSON; the
  * client never parses SVG, so nothing here has to be a sanitizer.
  */
 export class AssetLoader {
@@ -21,15 +23,30 @@ export class AssetLoader {
     return this.loaded.get(url)
   }
 
-  load(url: string): Promise<DrilldownAsset> {
+  private async fetchAsset(url: string): Promise<DrilldownAsset> {
+    const res = await this.fetchImpl(url, { credentials: "same-origin" })
+    if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`)
+    return parseDrilldownAssetJson(await res.json())
+  }
+
+  load(url: string, geometryUrl: string): Promise<DrilldownAsset> {
     const cached = this.loaded.get(url)
     if (cached) return Promise.resolve(cached)
     const inFlight = this.pending.get(url)
     if (inFlight) return inFlight
     const p = (async () => {
-      const res = await this.fetchImpl(url, { credentials: "same-origin" })
-      if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`)
-      const asset = parseDrilldownAssetJson(await res.json())
+      // Together, not one after the other: the region is not on screen until both are in.
+      const [data, geometry] = await Promise.all([
+        this.fetchAsset(url),
+        this.fetchAsset(geometryUrl),
+      ])
+      const asset: DrilldownAsset = {
+        viewBox: geometry.viewBox,
+        flipY: geometry.flipY,
+        paths: geometry.paths,
+        payload: data.payload,
+        payloadError: data.payloadError,
+      }
       this.loaded.set(url, asset)
       this.pending.delete(url)
       return asset

@@ -242,6 +242,8 @@ export interface RegionIndex {
 
 export interface ChildAssetRef {
   regionId: string
-  /** Same-origin, stable path under the map-assets upload URL. */
+  /** Same-origin path serving the region's records; changes whenever the sync does. */
   url: string
+  /** Same-origin path serving its shapes, hashed so it can be held forever. */
+  geometryUrl: string
 }

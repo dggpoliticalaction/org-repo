@@ -9,7 +9,8 @@ import type { Interactive } from "@/payload-types"
 import { getPayloadConfig } from "@/utilities/getPayloadConfig"
 import { isRecord } from "@/utilities/isRecord"
 
-import { childKeys, composeChild, composeOverview } from "./compose"
+import { childKeys, composeChildData, composeChildGeometry, composeOverview } from "./compose"
+import { geometryHash } from "./hash"
 import { getProfile } from "./profiles"
 import { composeSearchIndex } from "./search"
 import { DRILLDOWN_DATA_SCHEMA, type DrilldownData, type InteractiveProfile } from "./types"
@@ -87,10 +88,17 @@ async function composeOverviewFor(
   ])
   if (!data) return null
   const overview = composeOverview({ presentation: profile.presentation, geometry, data })
-  const childAssets = childKeys(geometry).map((regionId) => ({
-    regionId,
-    url: `${interactivePath(interactive.slug)}/regions/${encodeURIComponent(regionId)}`,
-  }))
+  // Two URLs per region, because the halves change on different clocks. The geometry's
+  // carries a hash of itself: it is code, so the only thing that moves it is a reprojection,
+  // and a URL that changes then is one a browser can hold on to forever.
+  const childAssets = childKeys(geometry).map((regionId) => {
+    const base = `${interactivePath(interactive.slug)}/regions/${encodeURIComponent(regionId)}`
+    return {
+      regionId,
+      url: base,
+      geometryUrl: `${base}/geometry/${geometryHash(geometry.children[regionId] ?? null)}`,
+    }
+  })
   const problems: string[] = []
   if (overview.viewBox === null) problems.push("overview geometry has no usable viewBox")
   return {
@@ -116,7 +124,7 @@ async function composeChildFor(
     profile.loadGeometry(),
   ])
   if (!data) return null
-  return composeChild({ presentation: profile.presentation, geometry, data }, regionId)
+  return composeChildData({ presentation: profile.presentation, geometry, data }, regionId)
 }
 
 /** The overview view of an interactive, or null when it has no snapshot to show. */
@@ -134,7 +142,21 @@ export async function loadInteractiveOverview(
   )()
 }
 
-/** One region's lazily fetched asset, or null when the region is not drillable / no snapshot. */
+/**
+ * One region's shapes. Code, not data: no snapshot is read, nothing is cached by tag, and the
+ * route that serves it tells the browser to keep it forever — the hash in its URL is what
+ * makes that safe.
+ */
+export async function loadInteractiveGeometry(
+  interactive: Interactive,
+  regionId: string,
+): Promise<DrilldownAsset | null> {
+  const profile = getProfile(interactive.profile)
+  if (!profile) return null
+  return composeChildGeometry(await profile.loadGeometry(), regionId)
+}
+
+/** One region's records, or null when the region is not drillable / there is no snapshot. */
 export async function loadInteractiveRegion(
   interactive: Interactive,
   regionId: string,

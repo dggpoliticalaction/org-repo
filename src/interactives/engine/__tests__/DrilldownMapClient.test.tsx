@@ -156,11 +156,23 @@ function setup({
 }: { search?: { url: string; label?: string }; eastMap?: boolean; strict?: boolean } = {}) {
   const overview = compose(overviewSvg, overviewPayload)
   const regions = buildRegionIndex([overview])
+  // A region arrives in two halves, as the routes serve them: shapes from a hashed URL that
+  // never changes, records from one that changes with the sync.
+  const halves = (svg: string, payload: unknown) => {
+    const whole = compose(svg, payload)
+    return {
+      geometry: { ...whole, payload: null },
+      data: { viewBox: null, flipY: false, paths: [], payload, payloadError: null },
+    }
+  }
+  const west = halves(westSvg, westPayload)
+  const east = halves(eastSvg, { schema: DRILLDOWN_SCHEMA })
   const fetchMock = vi.fn(async (url: string) => {
-    if (url === "/regions/west") return Response.json(compose(westSvg, westPayload))
+    if (url === "/regions/west") return Response.json(west.data)
+    if (url === "/regions/west/geometry/w1") return Response.json(west.geometry)
     // East has no map unless a test asks for one — its 404 is what the error state is made of.
-    if (url === "/regions/east" && eastMap)
-      return Response.json(compose(eastSvg, { schema: DRILLDOWN_SCHEMA }))
+    if (url.startsWith("/regions/east") && eastMap)
+      return Response.json(url.includes("/geometry/") ? east.geometry : east.data)
     if (url === "/search") return Response.json(searchIndex)
     return new Response("nope", { status: 404 })
   })
@@ -177,8 +189,8 @@ function setup({
       overview={{ ...overview, paths: overview.paths.map((p) => ({ ...p, d: "" })) }}
       search={search}
       childAssets={[
-        { regionId: "west", url: "/regions/west" },
-        { regionId: "east", url: "/regions/east" },
+        { regionId: "west", url: "/regions/west", geometryUrl: "/regions/west/geometry/w1" },
+        { regionId: "east", url: "/regions/east", geometryUrl: "/regions/east/geometry/e1" },
       ]}
     >
       <div data-drilldown-layer="overview" data-state="visible">
@@ -243,10 +255,12 @@ describe("DrilldownMapClient", () => {
     )
     // inside its own map, the same item toggles the pane rather than drilling again
     fireEvent.click(item)
-    fireEvent.click(item) // and open again — still one fetch
+    fireEvent.click(item) // and open again — still one fetch of each half
     await waitFor(() => expect(pane(container)).toHaveAttribute("data-open"))
-    expect(fetchMock).toHaveBeenCalledTimes(1)
-    expect(fetchMock).toHaveBeenCalledWith("/regions/west", expect.anything())
+    expect(fetchMock.mock.calls.map(([u]) => u)).toEqual([
+      "/regions/west",
+      "/regions/west/geometry/w1",
+    ])
 
     const p = pane(container)
     await waitFor(() =>
@@ -538,7 +552,8 @@ describe("DrilldownMapClient", () => {
       "aria-expanded",
       "false",
     )
-    expect(fetchMock).toHaveBeenCalledTimes(2)
+    // Two regions, two halves each.
+    expect(fetchMock).toHaveBeenCalledTimes(4)
   })
 
   it("forgives a flicker across a shared border: a hover change has to settle before it counts", () => {
