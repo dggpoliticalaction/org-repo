@@ -86,6 +86,13 @@ export function DrilldownMapClient({
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   // How the last selection was made, so keyboard users land in the pane they just opened.
   const lastVia = useRef<SelectVia>("pointer")
+  // Set while the reader is between places — a move in flight, or the address being read back.
+  // The address records where they land, never the steps taken to get there: reaching a
+  // district is one click and must be one entry to go back from, not a stop on its parent's
+  // map that nobody asked to stand on. `settled` is bumped when a move ends, because the
+  // states a move passes through are the ones that would otherwise have written it.
+  const moving = useRef(false)
+  const [settled, setSettled] = useState(0)
 
   const regions = useMemo(
     () => buildRegionIndex([overview, ...Object.values(loaded)]),
@@ -237,12 +244,23 @@ export function DrilldownMapClient({
   const open = useCallback(
     async (id: string, via: SelectVia = "pointer", opts?: { force?: boolean }): Promise<void> => {
       if (!regions.byId[id]) return
-      if (drillable.has(id) && view.parentId !== id) {
-        await drillIn(id, via)
-        return
+      // The whole move is one journey. Each morph along the way settles into a state of its
+      // own, and writing those would put a map the reader only passed through into their
+      // history — so the address is written once, from where the journey ends. A move made
+      // to satisfy an address already being read back writes nothing at all.
+      const outer = moving.current
+      moving.current = true
+      try {
+        if (drillable.has(id) && view.parentId !== id) {
+          await drillIn(id, via)
+          return
+        }
+        const key = assetKeyFor(id, regions, childAssets)
+        if (key && key !== id && view.parentId !== key) await drillIn(key)
+      } finally {
+        moving.current = outer
+        if (!outer) setSettled((n) => n + 1)
       }
-      const key = assetKeyFor(id, regions, childAssets)
-      if (key && key !== id && view.parentId !== key) await drillIn(key)
       select(id, via, opts)
     },
     [regions, childAssets, drillable, view.parentId, drillIn, select],
@@ -299,7 +317,6 @@ export function DrilldownMapClient({
    * document either way, and a router navigation would re-run the page's own data fetch to
    * land on markup identical to what is already on screen.
    */
-  const restoring = useRef(false)
   /** Nothing is written until the address has been read, or the read would erase itself. */
   const restored = useRef(false)
   /** A restored address is canonicalised in place: arriving somewhere is not a step taken. */
@@ -311,7 +328,7 @@ export function DrilldownMapClient({
       const region = q.get("region")
       const parent = q.get("view")
       const record = q.get("record")
-      restoring.current = true
+      moving.current = true
       try {
         if (region && regions.byId[region]) {
           await revealRegion(region)
@@ -326,7 +343,7 @@ export function DrilldownMapClient({
         if (parent && parent !== view.parentId) await drillIn(parent)
         else if (!parent && view.parentId) await drillOut()
       } finally {
-        restoring.current = false
+        moving.current = false
       }
     },
     [regions, view.parentId, revealRegion, drillIn, drillOut, deselect],
@@ -344,7 +361,7 @@ export function DrilldownMapClient({
   }, [])
 
   useEffect(() => {
-    if (!restored.current || restoring.current) return
+    if (!restored.current || moving.current) return
     const q = new URLSearchParams(window.location.search)
     const before = q.toString()
     const set = (key: string, value: string | null): void => {
@@ -368,7 +385,7 @@ export function DrilldownMapClient({
     arrived.current = false
     const url = `${window.location.pathname}${after ? `?${after}` : ""}${window.location.hash}`
     window.history[step ? "pushState" : "replaceState"](null, "", url)
-  }, [view.parentId, selected, paneOpen, pinned])
+  }, [view.parentId, selected, paneOpen, pinned, settled])
 
   // ---- stage lifecycle ---------------------------------------------------------------------
 

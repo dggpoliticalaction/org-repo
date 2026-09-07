@@ -282,6 +282,27 @@ describe("DrilldownMapClient", () => {
     await waitFor(() => expect(window.location.search).toBe(""))
   })
 
+  it("records where a move lands, not the maps it passed through", async () => {
+    window.history.replaceState(null, "", "/interactives/courts")
+    const { container } = setup()
+    const nav = (): HTMLElement =>
+      container.querySelector<HTMLElement>("[data-drilldown-selector]")!
+    const push = vi.spyOn(window.history, "pushState")
+    const entries = (): (string | URL | null | undefined)[] => push.mock.calls.map((c) => c[2])
+
+    fireEvent.click(within(nav()).getByRole("button", { name: "West" }))
+    await waitFor(() => expect(window.location.search).toBe("?region=west"))
+    fireEvent.click(within(nav()).getByRole("button", { name: "← Back to overview" }))
+    await waitFor(() => expect(window.location.search).toBe(""))
+    push.mockClear()
+
+    // One click, one entry: the circuit's map is where the district is drawn, not a place the
+    // reader stopped, so Back from here belongs to the overview they set out from.
+    fireEvent.click(within(nav()).getByRole("button", { name: "West 1" }))
+    await waitFor(() => expect(window.location.search).toBe("?region=w1"))
+    expect(entries()).toEqual(["/interactives/courts?region=w1"])
+  })
+
   it("restores a deep link: the child map, its region and the pinned record", async () => {
     window.history.replaceState(null, "", "/interactives/courts?region=w1&record=d")
     const push = vi.spyOn(window.history, "pushState")
