@@ -382,6 +382,29 @@ describe("DrilldownMapClient", () => {
     await waitFor(() => expect(window.location.search).toBe("?region=w1"))
   })
 
+  it("folds the rail away and hands its width to the map", async () => {
+    const { container } = setup()
+    const toggle = (): HTMLElement =>
+      container.querySelector<HTMLElement>("[data-drilldown-rail-toggle]")!
+    const rail = (): HTMLElement =>
+      container.querySelector<HTMLElement>("[data-drilldown-rail]")!.parentElement!.parentElement!
+
+    expect(toggle()).toHaveAttribute("aria-expanded", "true")
+    expect(toggle()).toHaveAccessibleName("Hide the region list")
+    expect(rail()).not.toHaveAttribute("inert")
+    // The toggle says which thing it folds, which is the rail's own wrapper.
+    expect(toggle().getAttribute("aria-controls")).toBe(rail().id)
+
+    fireEvent.click(toggle())
+    expect(toggle()).toHaveAttribute("aria-expanded", "false")
+    expect(toggle()).toHaveAccessibleName("Show the region list")
+    // Folded away is out of reach: no tabbing into a rail that is not on screen.
+    expect(rail()).toHaveAttribute("inert")
+
+    fireEvent.click(toggle())
+    expect(rail()).not.toHaveAttribute("inert")
+  })
+
   it("puts the profile's icon beside a top-level region, and none beside a child", async () => {
     const { container } = setup()
     const nav = (): HTMLElement =>

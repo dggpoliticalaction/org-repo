@@ -1,6 +1,10 @@
 "use client"
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { PanelLeft } from "lucide-react"
+import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
+
+import { Button } from "@/components/ui/button"
+import { cn } from "@/utilities/utils"
 
 import { AssetLoader } from "./assetLoader"
 import { DrilldownPane, type DrilldownPaneHandle, type PinRequest } from "./DrilldownPane"
@@ -70,6 +74,10 @@ export function DrilldownMapClient({
   const stageRef = useRef<MapStage | null>(null)
   const paneRef = useRef<DrilldownPaneHandle | null>(null)
   const [loader] = useState(() => new AssetLoader())
+  // Whether the region rail is showing. Per visit rather than remembered: a reader who folds
+  // it away is making room for one map, not setting a preference for every interactive.
+  const [railOpen, setRailOpen] = useState(true)
+  const railId = useId()
 
   const [loaded, setLoaded] = useState<Record<string, DrilldownAsset>>({})
   const [loadState, setLoadState] = useState<Record<string, LoadState>>({})
@@ -527,28 +535,44 @@ export function DrilldownMapClient({
       >
         {/* The rail rides beside the map from tablet up, and above it on a phone. */}
         <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start">
-          <DrilldownSelector
-            regions={regions}
-            view={view}
-            selected={selected}
-            drillable={drillable}
-            expanded={expanded}
-            onSelect={(id, via) => void open(id, via)}
-            onToggle={toggleExpanded}
-            onBack={() => void drillOut()}
-            icons={overview.payload?.icons}
-            search={
-              search && (
-                <DrilldownSearch
-                  url={search.url}
-                  label={search.label}
-                  regions={regions}
-                  onSelect={(r) => void revealRecord(r)}
-                />
-              )
-            }
-            className="md:w-56 md:shrink-0 lg:w-64"
-          />
+          {/* Collapsing the rail hands its width to the map. It folds away rather than
+              shrinking to icons: every circuit carries the same glyph, so an icon rail would
+              be thirteen identical scales and no way to tell the 3rd from the 7th. The map
+              stays the way in — a region is clickable on it — and the rail is one press away.
+              `0fr → 1fr` is the same trick the branches use, so the two read as one motion. */}
+          <div
+            id={railId}
+            inert={!railOpen || undefined}
+            className={cn(
+              "grid motion-safe:transition-[grid-template-columns] motion-safe:duration-200 motion-safe:ease-out",
+              railOpen ? "grid-cols-[1fr]" : "grid-cols-[0fr]",
+            )}
+          >
+            <div className="min-w-0 overflow-hidden">
+              <DrilldownSelector
+                regions={regions}
+                view={view}
+                selected={selected}
+                drillable={drillable}
+                expanded={expanded}
+                onSelect={(id, via) => void open(id, via)}
+                onToggle={toggleExpanded}
+                onBack={() => void drillOut()}
+                icons={overview.payload?.icons}
+                search={
+                  search && (
+                    <DrilldownSearch
+                      url={search.url}
+                      label={search.label}
+                      regions={regions}
+                      onSelect={(r) => void revealRecord(r)}
+                    />
+                  )
+                }
+                className="md:w-56 lg:w-64"
+              />
+            </div>
+          </div>
           <div
             ref={viewportRef}
             data-drilldown-viewport=""
@@ -556,6 +580,19 @@ export function DrilldownMapClient({
             aria-busy={busy || undefined}
             className="bg-muted/30 @container relative min-w-0 flex-1 overflow-hidden rounded-lg"
           >
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              data-drilldown-rail-toggle=""
+              aria-expanded={railOpen}
+              aria-controls={railId}
+              aria-label={railOpen ? "Hide the region list" : "Show the region list"}
+              onClick={() => setRailOpen((was) => !was)}
+              className="absolute top-2 left-2 z-10"
+            >
+              <PanelLeft aria-hidden="true" />
+            </Button>
             {children}
             <div ref={layersRef} data-drilldown-layers="" />
           </div>
