@@ -545,7 +545,7 @@ describe("DrilldownMapClient", () => {
     expect(pane(container).querySelector("[data-drilldown-pane-title]")).toHaveTextContent("West")
   })
 
-  it("opens one panel at a time, and the map icon hands it back to the rail", async () => {
+  it("opens one panel at a time, and leaves the rail as the reader had it", async () => {
     const { container } = setup()
     // The pane folds away to nothing and goes `inert`; the rail folds to its column of glyphs
     // and stays reachable, so its own state attribute is what says which way it is.
@@ -561,18 +561,22 @@ describe("DrilldownMapClient", () => {
     await waitFor(() => expect(paneFolded()).toBe(false))
     expect(railFolded()).toBe(true)
 
-    // And back to the whole map is back to choosing.
+    // Back to the whole map closes the summary, since there is nothing left for it to be
+    // about — but it does not open the rail. Folded, the rail is still a column of regions to
+    // choose from, and a panel that opens itself is one the reader has to close again.
     fireEvent.click(container.querySelector<HTMLElement>("[data-drilldown-trail-root]")!)
-    await waitFor(() => expect(railFolded()).toBe(false))
+    await waitFor(() => expect(paneFolded()).toBe(true))
+    expect(railFolded()).toBe(true)
+
+    // The rail opens when the reader says so, and that closes the summary.
+    fireEvent.click(container.querySelector<HTMLElement>("[data-drilldown-rail-toggle]")!)
+    expect(railFolded()).toBe(false)
     expect(paneFolded()).toBe(true)
 
     // The two toggles are the same rule from either side.
     fireEvent.click(container.querySelector<HTMLElement>("[data-drilldown-pane-toggle-map]")!)
     expect(railFolded()).toBe(true)
     expect(paneFolded()).toBe(false)
-    fireEvent.click(container.querySelector<HTMLElement>("[data-drilldown-rail-toggle]")!)
-    expect(railFolded()).toBe(false)
-    expect(paneFolded()).toBe(true)
   })
 
   it("folds the rail to its glyphs and hands the rest of its width to the map", async () => {

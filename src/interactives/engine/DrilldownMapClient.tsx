@@ -746,9 +746,11 @@ export function DrilldownMapClient({
                               aria-label="Back to the whole map"
                               onClick={() => {
                                 void drillOut()
-                                // Back to the whole map is back to choosing, so the rail that
-                                // does the choosing comes back with it.
-                                showRail(true)
+                                // The rail is left as the reader had it. Folded it is still a
+                                // column of regions to choose from, so there is nothing here
+                                // for opening it to give them — and a panel that opens itself
+                                // is one they have to close again.
+                                showPane(false)
                               }}
                               className="flex items-center"
                             />
