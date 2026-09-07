@@ -542,6 +542,34 @@ describe("DrilldownMapClient", () => {
     expect(pane(container).querySelector("[data-drilldown-pane-title]")).toHaveTextContent("West")
   })
 
+  it("opens one panel at a time, and the map icon hands it back to the rail", async () => {
+    const { container } = setup()
+    // Both panels are the same shape: a fold wrapper that goes `inert`, a clip, the panel.
+    const folded = (el: Element | null): boolean =>
+      el?.parentElement?.parentElement?.hasAttribute("inert") ?? false
+    const rail = (): Element | null => container.querySelector("[data-drilldown-rail]")
+    const sheet = (): Element | null => container.querySelector("[data-drilldown-sheet]")
+
+    // Choosing a region is choosing to read about it: the rail that did the choosing folds.
+    expect(folded(rail())).toBe(false)
+    fireEvent.click(selector(container).getByRole("button", { name: "West" }))
+    await waitFor(() => expect(folded(sheet())).toBe(false))
+    expect(folded(rail())).toBe(true)
+
+    // And back to the whole map is back to choosing.
+    fireEvent.click(container.querySelector<HTMLElement>("[data-drilldown-trail-root]")!)
+    await waitFor(() => expect(folded(rail())).toBe(false))
+    expect(folded(sheet())).toBe(true)
+
+    // The two toggles are the same rule from either side.
+    fireEvent.click(container.querySelector<HTMLElement>("[data-drilldown-pane-toggle-map]")!)
+    expect(folded(rail())).toBe(true)
+    expect(folded(sheet())).toBe(false)
+    fireEvent.click(container.querySelector<HTMLElement>("[data-drilldown-rail-toggle]")!)
+    expect(folded(rail())).toBe(false)
+    expect(folded(sheet())).toBe(true)
+  })
+
   it("folds the rail away and hands its width to the map", async () => {
     const { container } = setup()
     const toggle = (): HTMLElement =>

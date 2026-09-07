@@ -93,6 +93,7 @@ export function DrilldownMapClient({
   const isMobile = useIsMobile()
   const railOpen = railChoice ?? !isMobile
   const railId = useId()
+
   const paneId = useId()
 
   const [loaded, setLoaded] = useState<Record<string, DrilldownAsset>>({})
@@ -102,6 +103,20 @@ export function DrilldownMapClient({
   // Closed on arrival: the map is what a reader came for, and the bar says the overview is
   // there to be opened. Choosing a region opens it.
   const [paneOpen, setPaneOpen] = useState(false)
+  /**
+   * One panel at a time. The rail is for choosing where to go and the pane is for reading
+   * what is there, and on the widths this runs at, both of them open leave a map too narrow
+   * to be the thing they are about. Opening either therefore folds the other.
+   */
+  const showRail = useCallback((open: boolean) => {
+    setRailChoice(open)
+    if (open) setPaneOpen(false)
+  }, [])
+  const showPane = useCallback((open: boolean) => {
+    setPaneOpen(open)
+    if (open) setRailChoice(false)
+  }, [])
+
   const [hover, setHover] = useState<{ id: string; x: number; y: number } | null>(null)
   const [busy, setBusy] = useState(false)
   const [pinRequest, setPinRequest] = useState<(PinRequest & { regionId: string }) | null>(null)
@@ -189,16 +204,20 @@ export function DrilldownMapClient({
         if (cur === id) {
           // `force` is for a selection that is showing something specific (a search result):
           // re-selecting the region it is already on must not toggle the pane shut.
-          setPaneOpen((open) => force || !open)
+          setPaneOpen((open) => {
+            const next = force || !open
+            if (next) setRailChoice(false)
+            return next
+          })
           return id
         }
-        setPaneOpen(true)
+        showPane(true)
         return id
       })
       const key = assetKeyFor(id, regions, childAssets)
       if (key) void ensureAsset(key)
     },
-    [regions, childAssets, ensureAsset],
+    [regions, childAssets, ensureAsset, showPane],
   )
 
   /**
@@ -256,7 +275,7 @@ export function DrilldownMapClient({
       }
       if (via) lastVia.current = via
       setExpanded(parentId)
-      setPaneOpen(via !== null)
+      showPane(via !== null)
       setSelected(via ? parentId : null)
       // The state update carrying this asset has not committed yet; give the stage the merged
       // index now so the child view's blocks are sized from its facts.
@@ -271,7 +290,7 @@ export function DrilldownMapClient({
       if (via) stage.setSelected(parentId)
       stage.renderBlocks(blockIdsFor({ parentId }, merged, { ...loaded, [parentId]: asset }))
     },
-    [view.parentId, shownParent, ensureAsset, overview, loaded, select, drillOut],
+    [view.parentId, shownParent, ensureAsset, overview, loaded, select, drillOut, showPane],
   )
 
   /**
@@ -371,7 +390,7 @@ export function DrilldownMapClient({
           // The address is what says whether the pane is open; revealing a region opens it,
           // which is only right if the address agrees. A pinned record says so too — the card
           // it names lives in the pane, so naming one and closing the pane is a contradiction.
-          setPaneOpen(q.get("pane") === "1" || !!record)
+          showPane(q.get("pane") === "1" || !!record)
           if (record) {
             pinNonce.current += 1
             setPinRequest({ regionId: region, recordId: record, nonce: pinNonce.current })
@@ -387,12 +406,12 @@ export function DrilldownMapClient({
         // Only when the address asks for it. A bare arrival names nothing, and asserting
         // the other way there would re-close the pane a moment after load, over a reader who
         // had just opened it.
-        if (q.get("pane") === "1") setPaneOpen(true)
+        if (q.get("pane") === "1") showPane(true)
       } finally {
         moving.current = false
       }
     },
-    [regions, shownParent, revealRegion, drillIn, drillOut, deselect],
+    [regions, shownParent, revealRegion, drillIn, drillOut, deselect, showPane],
   )
 
   // Read the address once on mount, and again whenever the reader moves through history.
@@ -582,7 +601,7 @@ export function DrilldownMapClient({
       open={paneOpen}
       canDrill={canDrill}
       onDrill={() => selectedRegion && void drillIn(selectedRegion.id)}
-      onToggle={() => setPaneOpen((was) => !was)}
+      onToggle={() => showPane(!paneOpen)}
     />
   )
 
@@ -681,7 +700,7 @@ export function DrilldownMapClient({
                 aria-expanded={railOpen}
                 aria-controls={railId}
                 aria-label={railOpen ? "Hide the region list" : "Show the region list"}
-                onClick={() => setRailChoice(!railOpen)}
+                onClick={() => showRail(!railOpen)}
                 className="shrink-0"
               >
                 <PanelLeft aria-hidden="true" />
@@ -702,7 +721,12 @@ export function DrilldownMapClient({
                               type="button"
                               data-drilldown-trail-root=""
                               aria-label="Back to the whole map"
-                              onClick={() => void drillOut()}
+                              onClick={() => {
+                                void drillOut()
+                                // Back to the whole map is back to choosing, so the rail that
+                                // does the choosing comes back with it.
+                                showRail(true)
+                              }}
                               className="flex items-center"
                             />
                           }
@@ -749,7 +773,7 @@ export function DrilldownMapClient({
               aria-expanded={paneOpen}
               aria-controls={paneId}
               aria-label={paneOpen ? "Hide the details" : "Show the details"}
-              onClick={() => setPaneOpen((was) => !was)}
+              onClick={() => showPane(!paneOpen)}
               className="absolute top-1 right-2 z-10"
             >
               <PanelRight aria-hidden="true" />
