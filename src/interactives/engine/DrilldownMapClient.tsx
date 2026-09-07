@@ -235,6 +235,7 @@ export function DrilldownMapClient({
   const drillOut = useCallback(async (): Promise<"done" | "fallback" | "cancelled"> => {
     const stage = stageRef.current
     if (!stage) return "cancelled"
+    setPaneOpen(false)
     setSelected(null)
     setPinned(null)
     setView({ parentId: null })
@@ -242,9 +243,6 @@ export function DrilldownMapClient({
     const how = await stage.drillOut()
     setBusy(false)
     if (how === "cancelled") return how
-    // After the map has finished moving, not across it: a panel folding through a 620ms morph
-    // is two animations asking for the same attention, and neither gets it.
-    setPaneOpen(false)
     stage.renderBlocks(regions.topLevel)
     return how
   }, [regions.topLevel])
@@ -277,6 +275,7 @@ export function DrilldownMapClient({
       }
       if (via) lastVia.current = via
       setExpanded(parentId)
+      showPane(via !== null)
       setSelected(via ? parentId : null)
       // The state update carrying this asset has not committed yet; give the stage the merged
       // index now so the child view's blocks are sized from its facts.
@@ -287,8 +286,6 @@ export function DrilldownMapClient({
       const how = await stage.drillIn(parentId, asset)
       setBusy(false)
       if (how === "cancelled") return
-      // The panels move once the map has stopped, so the reader watches one thing at a time.
-      showPane(via !== null)
       // The morph clears the map's own highlight; put it back on the region the reader chose.
       if (via) stage.setSelected(parentId)
       stage.renderBlocks(blockIdsFor({ parentId }, merged, { ...loaded, [parentId]: asset }))
@@ -725,9 +722,10 @@ export function DrilldownMapClient({
                               data-drilldown-trail-root=""
                               aria-label="Back to the whole map"
                               onClick={() => {
+                                void drillOut()
                                 // Back to the whole map is back to choosing, so the rail that
-                                // does the choosing comes back — once the map has stopped.
-                                void drillOut().then(() => showRail(true))
+                                // does the choosing comes back with it.
+                                showRail(true)
                               }}
                               className="flex items-center"
                             />
