@@ -397,6 +397,23 @@ export class MapStage {
     return again
   }
 
+  /**
+   * Put the hover and selection marks back over the shapes, wherever those have got to.
+   *
+   * Called while a region is being dragged: the marks are separate paths built from the
+   * shapes' coordinates, so nothing about moving a shape moves them.
+   */
+  private refreshMarks(layer: Layer): void {
+    if (this.hovered) {
+      const marks = this.overlayPathsFor(layer, this.hovered)
+      layer.overlay.setAttribute("d", marks.outline)
+      layer.overlayTiny.setAttribute("d", marks.tiny)
+    }
+    if (this.selected) {
+      layer.selectedOverlay.setAttribute("d", this.overlayPathsFor(layer, this.selected).outline)
+    }
+  }
+
   /** Forget what was dragged, for every piece drawn at one spot, and put them back. */
   private resetLayout(layer: Layer, ids: string[], kind: "anchor" | "region"): void {
     const key = this.layerKey(layer)
@@ -405,6 +422,7 @@ export class MapStage {
       else {
         this.movedRegions.get(key)?.delete(id)
         this.shapesOf(id).forEach((p) => p.removeAttribute("transform"))
+        this.refreshMarks(layer)
       }
       this.opts.callbacks.onLayoutReset?.(id, { layer: key, writable: true })
     }
@@ -872,6 +890,20 @@ export class MapStage {
         outline.push(d)
         continue
       }
+      // The mark is built from the shapes' own coordinates, and a shape nudged with the
+      // layout tools carries its move as a transform rather than in them — so the outline
+      // stayed behind while the region walked away from it.
+      const nudged = this.movedRegions
+        .get(this.layerKey(layer))
+        ?.get(p.getAttribute("data-region-id") ?? "")
+      if (nudged) {
+        for (const sub of subs) {
+          for (let i = 0; i < sub.length; i += 2) {
+            sub[i] = sub[i]! + nudged[0]
+            sub[i + 1] = sub[i + 1]! + nudged[1]
+          }
+        }
+      }
       for (const sub of subs) {
         let x0 = Infinity
         let y0 = Infinity
@@ -1045,6 +1077,8 @@ export class MapStage {
       const move = (ev: PointerEvent): void => {
         const [x, y] = offsetAt(ev)
         shapes.forEach((p) => p.setAttribute("transform", `translate(${x} ${y})`))
+        for (const each of ids) this.remember(this.movedRegions, layer, each, [x, y])
+        this.refreshMarks(layer)
       }
       const up = (ev: PointerEvent): void => {
         svg.removeEventListener("pointermove", move)
