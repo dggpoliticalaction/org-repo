@@ -60,15 +60,11 @@ export function blockIdsFor(
   view: View,
   regions: RegionIndex,
   loaded: Record<string, DrilldownAsset>,
-  mapless: string[] = [],
 ): string[] {
-  // On the overview: every top-level region, and the children of any that has no map of its
-  // own. Those children are drawn here or nowhere — the Federal Circuit's feeder courts have
-  // anchors in national units for exactly that reason — so waiting until a reader opens the
-  // branch hid them behind a step nobody would know to take.
-  if (!view.parentId) {
-    return [...regions.topLevel, ...mapless.flatMap((id) => regions.childrenOf[id] ?? [])]
-  }
+  // The overview draws the top level and nothing else. A region whose children have no map of
+  // their own — the Federal Circuit's feeders — draws them when the reader opens it, which is
+  // the same step every other region's children take.
+  if (!view.parentId) return regions.topLevel
   const children = regions.childrenOf[view.parentId] ?? []
   const asset = loaded[view.parentId]
   const hasGeometry = asset ? asset.paths.some((p) => p.id) : false
@@ -195,11 +191,6 @@ export function DrilldownMapClient({
   useLayoutEditor(mounted, layoutEditing)
 
   const drillable = useMemo(() => new Set(childAssets.map((a) => a.regionId)), [childAssets])
-  /** The regions whose children have nowhere of their own to be drawn, so they are drawn here. */
-  const mapless = useMemo(
-    () => childAssets.filter((a) => !a.hasMap).map((a) => a.regionId),
-    [childAssets],
-  )
   const refFor = useCallback(
     (regionId: string) => childAssets.find((a) => a.regionId === regionId) ?? null,
     [childAssets],
@@ -301,9 +292,9 @@ export function DrilldownMapClient({
     const how = await stage.drillOut()
     setBusy(false)
     if (how === "cancelled") return how
-    stage.renderBlocks(blockIdsFor({ parentId: null }, regions, loaded, mapless))
+    stage.renderBlocks(blockIdsFor({ parentId: null }, regions, loaded))
     return how
-  }, [regions, loaded, mapless])
+  }, [regions, loaded])
 
   /**
    * Move into a region's own map. `via` is set when the reader asked for the *region* and not
@@ -347,11 +338,9 @@ export function DrilldownMapClient({
       if (how === "cancelled") return
       // The morph clears the map's own highlight; put it back on the region the reader chose.
       if (via) stage.setSelected(parentId)
-      stage.renderBlocks(
-        blockIdsFor({ parentId }, merged, { ...loaded, [parentId]: asset }, mapless),
-      )
+      stage.renderBlocks(blockIdsFor({ parentId }, merged, { ...loaded, [parentId]: asset }))
     },
-    [view.parentId, shownParent, ensureAsset, overview, loaded, mapless, select, showPane],
+    [view.parentId, shownParent, ensureAsset, overview, loaded, select, showPane],
   )
 
   /**
@@ -589,9 +578,8 @@ export function DrilldownMapClient({
     // chosen from the same place. Taken from `view` instead, a stage that did not reach the
     // map state believes it is on ends up with a child's seat blocks scattered across the
     // overview, each one drawn at an anchor measured for a map that is not on screen.
-    if (!busy)
-      stage.renderBlocks(blockIdsFor({ parentId: stage.currentParent }, regions, loaded, mapless))
-  }, [regions, view, loaded, mapless, busy])
+    if (!busy) stage.renderBlocks(blockIdsFor({ parentId: stage.currentParent }, regions, loaded))
+  }, [regions, view, loaded, busy])
 
   useEffect(() => {
     stageRef.current?.setSelected(selected)
