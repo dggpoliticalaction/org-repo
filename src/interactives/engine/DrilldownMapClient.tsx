@@ -75,6 +75,16 @@ export function blockIdsFor(
   return hasGeometry ? [view.parentId, ...children] : [...regions.topLevel, ...children]
 }
 
+/**
+ * Where an address says the reader is: the region they have chosen, or else the map they are
+ * standing on. Never both — a region already says which map it is on — which is why this is
+ * what a history entry is measured against rather than the query string itself.
+ */
+function placeOf(q: URLSearchParams): string {
+  const region = q.get("region")
+  return `${region ?? ""}|${region ? "" : (q.get("view") ?? "")}`
+}
+
 export function DrilldownMapClient({
   overview,
   childAssets,
@@ -424,8 +434,15 @@ export function DrilldownMapClient({
    */
   /** Nothing is written until the address has been read, or the read would erase itself. */
   const restored = useRef(false)
-  /** A restored address is canonicalised in place: arriving somewhere is not a step taken. */
-  const arrived = useRef(false)
+  /**
+   * The place the address last named, so a write that only rephrases it is not a step taken.
+   *
+   * This used to be a flag saying "the address has just been restored", cleared by the first
+   * write that followed. A reader arriving with no query needs no tidying, so nothing wrote,
+   * so the flag was still standing when they first chose a circuit — and that move replaced
+   * the entry they arrived on instead of pushing one. Back then left the page altogether.
+   */
+  const placed = useRef<string | null>(null)
 
   const applyUrl = useCallback(
     async (query: string) => {
@@ -459,6 +476,7 @@ export function DrilldownMapClient({
         if (q.get("pane") === "1") showPane(true)
       } finally {
         moving.current = false
+        placed.current = placeOf(q)
       }
     },
     [regions, shownParent, revealRegion, drillIn, drillOut, deselect, showPane],
@@ -493,14 +511,12 @@ export function DrilldownMapClient({
     set("pane", paneOpen ? "1" : null)
     set("record", selected && paneOpen ? pinned : null)
     const after = q.toString()
-    if (after === before) return
     // Moving the map or the pane is a step worth going back from; re-pinning a card is not,
-    // and nor is tidying the address the reader arrived on.
-    const step =
-      !arrived.current &&
-      (new URLSearchParams(before).get("view") !== q.get("view") ||
-        new URLSearchParams(before).get("region") !== q.get("region"))
-    arrived.current = false
+    // and nor is saying the same place a second way.
+    const place = placeOf(q)
+    const step = placed.current !== null && placed.current !== place
+    placed.current = place
+    if (after === before) return
     const url = `${window.location.pathname}${after ? `?${after}` : ""}${window.location.hash}`
     window.history[step ? "pushState" : "replaceState"](null, "", url)
   }, [view.parentId, selected, paneOpen, pinned, settled])
@@ -561,7 +577,6 @@ export function DrilldownMapClient({
     // Only now can a drill run, so this is where a deep link is honoured.
     void applyUrlRef.current(window.location.search).finally(() => {
       restored.current = true
-      arrived.current = true
     })
     return () => {
       stage.destroy()
