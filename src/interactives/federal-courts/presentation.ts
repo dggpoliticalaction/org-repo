@@ -64,6 +64,20 @@ export const federalCourtsPresentation: DrilldownPresentation = {
     anchors: ANCHORS,
     anchorFact: "anchor",
     labelFact: "short-label",
+    // The four courts with no territory. They are read against each other — the Supreme Court
+    // over the three specialist courts that feed the Federal Circuit — so the space between
+    // them is px and holds at any width, where an anchor apiece only held at the width it was
+    // measured at. Only where the group hangs is geographic, and that is the Supreme Court's
+    // anchor in `anchors.json`; the other three no longer have one.
+    clusters: [
+      {
+        anchor: "scotus",
+        rows: [["scotus"], ["cit", "uscfc", "cafc"]],
+        gap: 10,
+        rowGap: 15,
+        align: "right",
+      },
+    ],
   },
   lookups: {
     // A judge names their appointing president; the president's face is a fact about the
