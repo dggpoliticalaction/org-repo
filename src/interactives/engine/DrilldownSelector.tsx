@@ -327,7 +327,11 @@ export function DrilldownSelector({
                         </SidebarMenuButton>
                         <TooltipContent side="right">{region.label}</TooltipContent>
                       </Tooltip>
-                      {expandable && (
+                      {/* Not merely hidden when folded: an action still in the document keeps
+                          its room reserved — the row reserves `pr-8` for one and `:has()` does
+                          not care that it is `display: none` — and 40px of padding in a 36px
+                          column pushes the button past the rail and scrolls it sideways. */}
+                      {expandable && !collapsed && (
                         <SidebarMenuAction
                           data-region-toggle={id}
                           aria-label={`${expanded === id ? "Collapse" : "Expand"} ${region.label}`}
@@ -336,10 +340,7 @@ export function DrilldownSelector({
                           // The action sits over the row, so on the selected row it is drawn on
                           // the inverted pill and its own `sidebar-foreground` is the colour of
                           // the ground beneath it — invisible until hovered.
-                          className={cn(
-                            "group-data-collapsed/rail:hidden",
-                            selected === id && "text-sidebar",
-                          )}
+                          className={cn(selected === id && "text-sidebar")}
                         >
                           <ChevronRight
                             aria-hidden="true"
