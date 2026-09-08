@@ -27,6 +27,7 @@ import { buildRegionIndex, displayFacts } from "./regions"
 import type { SearchResult } from "./search"
 import { DrilldownSelectionProvider } from "./selection"
 import { MapStage } from "./stage"
+import { ANCHOR_EDIT_PARAM, useAnchorEditor } from "./useAnchorEditor"
 import type { ChildAssetRef, DrilldownAsset, RegionIndex, RegionInfo } from "./types"
 
 export interface DrilldownMapClientProps {
@@ -89,6 +90,9 @@ export function DrilldownMapClient({
   const viewportRef = useRef<HTMLDivElement | null>(null)
   const layersRef = useRef<HTMLDivElement | null>(null)
   const stageRef = useRef<MapStage | null>(null)
+  // The ref is what everything else reaches the stage through; this is the same stage as a
+  // value, for the one hook that has to re-run when it appears.
+  const [mounted, setMounted] = useState<MapStage | null>(null)
   const paneRef = useRef<DrilldownPaneHandle | null>(null)
   const [loader] = useState(() => new AssetLoader())
   // Whether the reader has said anything about the rail. Null until they do, and the default
@@ -180,6 +184,15 @@ export function DrilldownMapClient({
     () => buildRegionIndex([overview, ...Object.values(loaded)]),
     [overview, loaded],
   )
+  // Nothing unless the address asks for it: see `useAnchorEditor`. Read once, from the address
+  // the page was opened at — this is a tool an editor arrives with, not a mode to toggle.
+  const [anchorEditing] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get(ANCHOR_EDIT_PARAM) === "1",
+  )
+  useAnchorEditor(mounted, anchorEditing)
+
   const drillable = useMemo(() => new Set(childAssets.map((a) => a.regionId)), [childAssets])
   /** The regions whose children have nowhere of their own to be drawn, so they are drawn here. */
   const mapless = useMemo(
@@ -528,6 +541,9 @@ export function DrilldownMapClient({
         callbacks: {
           onHover: (id, point) => setHover(id && point ? { id, x: point.x, y: point.y } : null),
           onSelect: (id, via) => void selectRef.current(id, via),
+          onAnchorMoved: (id, at) =>
+            // eslint-disable-next-line no-console -- the anchor editor's whole output
+            console.info(`[interactive-map] "${id}": [${at[0]}, ${at[1]}]`),
         },
       })
     } catch (err) {
@@ -535,6 +551,7 @@ export function DrilldownMapClient({
       return
     }
     stageRef.current = stage
+    setMounted(stage)
     stage.renderBlocks(buildRegionIndex([overview]).topLevel)
     // Only now can a drill run, so this is where a deep link is honoured.
     void applyUrlRef.current(window.location.search).finally(() => {
@@ -544,6 +561,7 @@ export function DrilldownMapClient({
     return () => {
       stage.destroy()
       if (stageRef.current === stage) stageRef.current = null
+      setMounted(null)
     }
   }, [overview])
 

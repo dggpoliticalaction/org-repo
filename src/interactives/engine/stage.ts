@@ -31,6 +31,8 @@ export interface StageCallbacks {
   onHover(regionId: string | null, point: { x: number; y: number } | null): void
   /** `via` lets the client move keyboard focus into the pane a keyboard selection opened. */
   onSelect(regionId: string, via: "pointer" | "keyboard"): void
+  /** Only while anchor editing is on: an editor has dragged a seat block to a new place. */
+  onAnchorMoved?(regionId: string, at: [number, number]): void
 }
 
 export interface StageOptions {
@@ -198,6 +200,9 @@ export class MapStage {
   private morphLayer: HTMLElement | null = null
   /** Bumped by every block redraw, so a morph in flight can notice its clones went stale. */
   private blocksGen = 0
+  /** Anchors moved by hand this session, keyed by region id. Empty unless editing is on. */
+  private movedAnchors = new Map<string, [number, number]>()
+  private anchorEditing = false
   private morphRAF: number | null = null
   private morphCancel: (() => void) | null = null
   private regions: RegionIndex
@@ -271,6 +276,53 @@ export class MapStage {
   }
 
   /** Region ids that get a seat block, drawn on whichever layer holds their geometry/anchor. */
+  /**
+   * Let an editor drag the seat blocks and read off where they put them.
+   *
+   * Anchors are placement, so they are ours and they are code — checked into `anchors.json`,
+   * measured against geometry beside it. Which makes moving one a matter of guessing numbers,
+   * reloading, and guessing again. This is the same loop with the guessing taken out: drag a
+   * block, and the position it lands at is printed in the form the file wants.
+   *
+   * Nothing here is a secret — every anchor is already in the payload the page ships — so this
+   * is a convenience and not a privilege. What gates it is only that a reader who has not
+   * asked for it should never find a map whose furniture slides around under the pointer.
+   */
+  setAnchorEditing(on: boolean): void {
+    if (this.anchorEditing === on) return
+    this.anchorEditing = on
+    for (const layer of this.allLayers()) {
+      layer.annotations.toggleAttribute("data-drilldown-anchor-editing", on)
+    }
+    if (!on) this.movedAnchors.clear()
+  }
+
+  /**
+   * Where a block is drawn now, whatever decided it — a drag, the gutter, the profile, a fact
+   * or the shape's own centre. In the same geographic frame the anchors are written in, so
+   * what comes out of a drag can go straight into the file.
+   */
+  private anchorOf(layer: Layer, regionId: string): [number, number] | null {
+    const seats = this.opts.seats
+    const moved = this.movedAnchors.get(regionId)
+    if (moved) return moved
+    const gutter = this.gutterAnchor(layer, regionId)
+    if (gutter) return gutter
+    const declared =
+      toAnchor(seats?.anchors?.[regionId]) ??
+      (seats?.anchorFact ? parseAnchor(this.regions.byId[regionId]?.facts[seats.anchorFact]) : null)
+    return declared ?? this.shapeAnchor(layer, regionId)
+  }
+
+  /** Every anchor moved this session, in the shape `anchors.json` is written in. */
+  movedAnchorsJSON(): string {
+    const out: Record<string, [number, number]> = {}
+    for (const [id, at] of [...this.movedAnchors].sort(([a], [b]) => a.localeCompare(b))) {
+      out[id] = [Math.round(at[0]), Math.round(at[1])]
+    }
+    return JSON.stringify(out, null, 2)
+  }
+
   renderBlocks(regionIds: string[]): void {
     const local = this.view.parentId ? this.locals.get(this.view.parentId) : undefined
     const target = local ?? this.overview
@@ -784,6 +836,51 @@ export class MapStage {
       if (this.hovered) this.setHover(layer, null, null)
     }
 
+    /**
+     * Dragging a block, when an editor has asked for it. The map's own hover and click run on
+     * the same element, so this claims the pointer outright: capture, stop the event, and put
+     * the anchor back where the pointer says once it is released.
+     */
+    const onAnchorDown = (e: PointerEvent): void => {
+      if (!this.anchorEditing) return
+      const block = blockFrom(e.target)
+      const id = block?.getAttribute("data-region-id")
+      if (!block || !id) return
+      const from = this.anchorOf(layer, id)
+      if (!from) return
+      e.preventDefault()
+      e.stopPropagation()
+      const scale = this.fitScale(layer.render)
+      const startX = e.clientX
+      const startY = e.clientY
+      // A block is placed in geographic Y on a flipped layer, so what the pointer does
+      // downwards is the opposite of what the number does.
+      const flip = layer.flipY ? -1 : 1
+      const move = (ev: PointerEvent): void => {
+        const dx = (ev.clientX - startX) / scale
+        const dy = (ev.clientY - startY) / scale
+        block.setAttribute("transform", `translate(${dx} ${dy})`)
+      }
+      const up = (ev: PointerEvent): void => {
+        svg.removeEventListener("pointermove", move)
+        svg.removeEventListener("pointerup", up)
+        svg.removeEventListener("pointercancel", up)
+        block.removeAttribute("transform")
+        const at: [number, number] = [
+          from[0] + (ev.clientX - startX) / scale,
+          from[1] + ((ev.clientY - startY) / scale) * flip,
+        ]
+        this.movedAnchors.set(id, at)
+        this.opts.callbacks.onAnchorMoved?.(id, [Math.round(at[0]), Math.round(at[1])])
+        this.refreshBlocks()
+      }
+      svg.setPointerCapture(e.pointerId)
+      svg.addEventListener("pointermove", move)
+      svg.addEventListener("pointerup", up)
+      svg.addEventListener("pointercancel", up)
+    }
+
+    svg.addEventListener("pointerdown", onAnchorDown)
     svg.addEventListener("pointerover", onOver)
     svg.addEventListener("pointermove", onMove)
     svg.addEventListener("pointerleave", onLeave)
@@ -794,6 +891,7 @@ export class MapStage {
     this.disposers.push(() => {
       svg.removeEventListener("pointerover", onOver)
       svg.removeEventListener("pointermove", onMove)
+      svg.removeEventListener("pointerdown", onAnchorDown)
       svg.removeEventListener("pointerleave", onLeave)
       svg.removeEventListener("click", onClick)
       svg.removeEventListener("keydown", onKey)
@@ -872,6 +970,9 @@ export class MapStage {
       // Size to whichever is larger so no member is ever dropped from the block.
       while (squares.length < total) squares.push({ color: null })
       const anchor =
+        // Whatever the editor has dragged this session outranks everything: that is the point
+        // of dragging it.
+        this.movedAnchors.get(id) ??
         this.gutterAnchor(layer, id) ??
         // The profile's own placement first: it is measured against the geometry checked in
         // beside it, where a fact carrying a position was measured against somebody else's map.
