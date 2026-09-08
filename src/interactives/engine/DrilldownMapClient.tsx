@@ -1,6 +1,15 @@
 "use client"
 
-import { MapIcon, Maximize2, Minimize2, PanelLeft, PanelRight } from "lucide-react"
+import {
+  MapIcon,
+  Maximize2,
+  Minimize2,
+  PanelLeft,
+  PanelRight,
+  Scan,
+  ZoomIn,
+  ZoomOut,
+} from "lucide-react"
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 import {
@@ -26,7 +35,7 @@ import { assetKeyFor, recordsFor } from "./records"
 import { buildRegionIndex, displayFacts } from "./regions"
 import type { SearchResult } from "./search"
 import { DrilldownSelectionProvider } from "./selection"
-import { MapStage } from "./stage"
+import { MapStage, ZOOM_MAX, ZOOM_STEP } from "./stage"
 import { DEBUG_LAYOUT, DEBUG_PARAM } from "./layoutTools"
 import { useLayoutEditor } from "./useLayoutEditor"
 import type { ChildAssetRef, DrilldownAsset, RegionIndex, RegionInfo } from "./types"
@@ -168,6 +177,9 @@ export function DrilldownMapClient({
   }, [showRail, railId])
 
   const [hover, setHover] = useState<{ id: string; x: number; y: number } | null>(null)
+  // How far the camera has moved in, mirrored from the stage so the controls can say whether
+  // there is anything to pan around or come back from.
+  const [zoom, setZoom] = useState(1)
   const [busy, setBusy] = useState(false)
   const [pinRequest, setPinRequest] = useState<(PinRequest & { regionId: string }) | null>(null)
   // The record the reader has pinned in the pane, mirrored here only so the URL can carry it.
@@ -349,6 +361,9 @@ export function DrilldownMapClient({
       // The morph clears the map's own highlight; put it back on the region the reader chose.
       if (via) stage.setSelected(parentId)
       stage.renderBlocks(blockIdsFor({ parentId }, merged, { ...loaded, [parentId]: asset }))
+      // A region with no map of its own has just brought the country back; its own bench and
+      // its children's are the only thing on it that changed, so that is where to look.
+      if (how === "no-geometry") stage.focusOn(parentId)
     },
     [view.parentId, shownParent, ensureAsset, overview, loaded, select, showPane],
   )
@@ -547,6 +562,7 @@ export function DrilldownMapClient({
         callbacks: {
           onHover: (id, point) => setHover(id && point ? { id, x: point.x, y: point.y } : null),
           onSelect: (id, via) => void selectRef.current(id, via),
+          onCamera: setZoom,
           // The map a drag happened on decides what its number is worth: the Ninth's block
           // has one place on the national map and another in the gutter of its own, and only
           // one of them is a line in a file.
@@ -597,7 +613,14 @@ export function DrilldownMapClient({
   }, [regions, view, loaded, busy])
 
   useEffect(() => {
-    stageRef.current?.setSelected(selected)
+    const stage = stageRef.current
+    if (!stage) return
+    stage.setSelected(selected)
+    // A court with no territory is a block standing in the sea, and at the scale of the whole
+    // country that is a thumbnail among thirteen others. Moving in a little is what answers
+    // "where is it". Everything else has a shape to light up, so the camera comes back.
+    if (selected && !stage.drawsShape(selected)) stage.focusOn(selected)
+    else stage.clearSentCamera()
   }, [selected])
 
   // A keyboard selection moves focus into the pane it opened, because a keyboard reader has
@@ -885,6 +908,40 @@ export function DrilldownMapClient({
             >
               {full ? <Minimize2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
             </Button>
+            {/* The camera. Once the map is larger than the frame it can be dragged around;
+                until then there is nowhere to drag it to, so the way in comes first. */}
+            <div data-drilldown-zoom="" className="absolute top-11 right-2 z-10 flex flex-col">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Zoom in"
+                onClick={() => stageRef.current?.zoomBy(ZOOM_STEP)}
+                disabled={zoom >= ZOOM_MAX}
+              >
+                <ZoomIn aria-hidden="true" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Zoom out"
+                onClick={() => stageRef.current?.zoomBy(1 / ZOOM_STEP)}
+                disabled={zoom <= 1}
+              >
+                <ZoomOut aria-hidden="true" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Fit the whole map"
+                onClick={() => stageRef.current?.resetCamera()}
+                disabled={zoom <= 1}
+              >
+                <Scan aria-hidden="true" />
+              </Button>
+            </div>
             {children}
             <div ref={layersRef} data-drilldown-layers="" />
           </div>

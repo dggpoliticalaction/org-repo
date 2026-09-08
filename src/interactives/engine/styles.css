@@ -84,6 +84,17 @@
   outline: none;
 }
 
+/* Once the map is larger than its frame it can be dragged around inside it, and says so. The
+   grab cursor is on the viewport rather than on the paths, so the sea between the regions
+   drags too — it is as much of the map as the land is. */
+[data-drilldown-viewport][data-zoomed] {
+  cursor: grab;
+}
+[data-drilldown-viewport][data-panning],
+[data-drilldown-viewport][data-panning] path[tabindex] {
+  cursor: grabbing;
+}
+
 /* Full screen. The browser promotes this element and paints black behind it, which is nobody's
    design — so it takes the page's own ground, and the stage height stops being a clamp against
    a page it is no longer on and becomes what is left of the screen once the trail is drawn. */

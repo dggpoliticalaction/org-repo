@@ -1,4 +1,11 @@
-import { flipConstant, flipTransform, padViewBox, viewBoxAttr } from "./geometry"
+import {
+  cameraViewBox,
+  flipConstant,
+  flipTransform,
+  holdCamera,
+  padViewBox,
+  viewBoxAttr,
+} from "./geometry"
 import {
   buildMorphPairs,
   crossApexViewBox,
@@ -51,6 +58,8 @@ export interface StageCallbacks {
   onRegionMoved?(regionId: string, by: [number, number], where: DragOrigin): void
   /** A second press put something back where the files say it goes. */
   onLayoutReset?(regionId: string, where: DragOrigin): void
+  /** How far the camera has moved in, so the controls can say whether there is a way back. */
+  onCamera?(zoom: number): void
 }
 
 export interface StageOptions {
@@ -104,6 +113,19 @@ interface BlockContext {
   unitsPerPx: number
   /** The Y flip's constant, so an anchor in geographic Y can be put on the screen. */
   k: number
+}
+
+/**
+ * Where the reader has moved the map to.
+ *
+ * `k` is how far in, where 1 is the whole map and nothing to pan around; `cx`/`cy` are what is
+ * under the middle of the frame, in the current layer's own drawn units. It is one camera and
+ * not one per layer because only one map is ever on screen, and moving to another resets it.
+ */
+interface Camera {
+  k: number
+  cx: number
+  cy: number
 }
 
 interface MorphPlan {
@@ -174,6 +196,20 @@ const BLOCK_SCALE_HOVER = 1.17
 const BLOCK_SCALE_SELECTED = 1.24
 const BLOCK_SCALE_MS = 90
 const NOMINAL_MAP_PX = 900
+/**
+ * The camera: how far in it can be pushed, and how far one press of the button takes it.
+ *
+ * Past six the country is a few counties and a lot of grey. The step is close to the square
+ * root of two, so two presses roughly double.
+ */
+export const ZOOM_MAX = 6
+export const ZOOM_STEP = 1.5
+/** Where the camera lands on a court that has no territory to be found by. */
+const FOCUS_ZOOM = 1.8
+/** How long the camera takes to fly somewhere it was sent, rather than dragged. */
+const CAMERA_MS = 340
+/** Pointer travel, in CSS px, that makes a press a drag of the map rather than a choice on it. */
+const PAN_SLOP = 4
 /** Breathing room either side of the parent's seat block in its gutter, in CSS px. */
 const PARENT_GUTTER_MARGIN_PX = 18
 
@@ -305,6 +341,16 @@ export class MapStage {
     timer: ReturnType<typeof setTimeout>
   } | null = null
   private view: { parentId: string | null } = { parentId: null }
+  /** Null while the whole map is on screen — see `Camera`. */
+  private camera: Camera | null = null
+  /** Whether the camera was sent somewhere rather than driven there, so it can be taken back. */
+  private cameraAuto = false
+  private cameraRAF: number | null = null
+  /**
+   * Set for the instant between a pan ending and the click it would otherwise have been.
+   * Dragging the map is not a choice made on it, and the two arrive as the same gesture.
+   */
+  private suppressClick = false
   private readonly blockAnim = new WeakMap<SVGGElement, { raf: number | null; scale: number }>()
   private readonly disposers: (() => void)[] = []
   private resizeObserver: ResizeObserver | null = null
@@ -335,6 +381,7 @@ export class MapStage {
   destroy(): void {
     this.destroyed = true
     this.cancelPendingHover()
+    this.cancelCameraFlight()
     this.cancelMorph()
     this.resizeObserver?.disconnect()
     for (const d of this.disposers) d()
@@ -600,6 +647,7 @@ export class MapStage {
     // another map — not merely a change of what `currentParent` says, which left the map they
     // had been on painted underneath a view that had stopped believing in it.
     if (!this.hasGeometry(asset) || asset.viewBox === null) {
+      this.resetCamera()
       if (this.view.parentId !== null) {
         if ((await this.drillOut()) === "cancelled") return "cancelled"
       } else {
@@ -609,6 +657,7 @@ export class MapStage {
       this.view = { parentId }
       return "no-geometry"
     }
+    this.resetCamera()
     const local = this.ensureLocalLayer(parentId, asset)
     this.view = { parentId }
     this.setSelected(null)
@@ -654,6 +703,7 @@ export class MapStage {
     if (!fromId || !from || !this.hasGeometry(asset) || asset.viewBox === null) {
       return this.drillIn(parentId, asset)
     }
+    this.resetCamera()
     const to = this.ensureLocalLayer(parentId, asset)
     const outPlan = this.morphPlanFor(fromId, from)
     const inPlan = this.morphPlanFor(parentId, to)
@@ -678,6 +728,7 @@ export class MapStage {
   }
 
   async drillOut(): Promise<"done" | "fallback" | "cancelled"> {
+    this.resetCamera()
     const parentId = this.view.parentId
     const local = parentId ? this.locals.get(parentId) : undefined
     this.view = { parentId: null }
@@ -699,6 +750,175 @@ export class MapStage {
     this.setLayerState(this.overview, "visible")
     plan.el.remove()
     return "done"
+  }
+
+  // ---- camera ----------------------------------------------------------------------------
+
+  /** The layer the reader is looking at. A parent with no map of its own keeps the overview. */
+  private activeLayer(): Layer {
+    return (this.view.parentId ? this.locals.get(this.view.parentId) : null) ?? this.overview
+  }
+
+  /** How far in the camera is, where 1 is the whole map. */
+  get zoom(): number {
+    return this.camera?.k ?? 1
+  }
+
+  /** The box actually on a layer's element: its own, cut down and moved by the camera. */
+  private cameraBox(layer: Layer): ViewBox {
+    const cam = this.camera
+    // The camera points at one map. Its numbers are in that map's units and mean nothing on
+    // any other, so every layer but the one on screen answers with its own box.
+    if (!cam || layer !== this.activeLayer()) return layer.render
+    return cameraViewBox(cam, layer.render)
+  }
+
+  /** Put every layer's box back on its element: the one being looked at moves, the rest rest. */
+  private writeCamera(): void {
+    for (const layer of this.allLayers()) {
+      layer.svg.setAttribute("viewBox", viewBoxAttr(this.cameraBox(layer)))
+    }
+    this.opts.viewport.toggleAttribute("data-zoomed", this.zoom > 1)
+  }
+
+  private cancelCameraFlight(): void {
+    if (this.cameraRAF !== null) caf(this.cameraRAF)
+    this.cameraRAF = null
+  }
+
+  /**
+   * Move the camera. A scale change redraws the seat blocks — they are sized to come out at a
+   * constant number of CSS px, so a map that has zoomed under them has to be measured again —
+   * and a pan does not, which is what keeps dragging the map cheap.
+   */
+  private setCamera(next: Camera | null, opts: { auto?: boolean } = {}): void {
+    if (this.destroyed) return
+    const was = this.zoom
+    this.camera = next && next.k > 1 ? holdCamera(next, this.activeLayer().render, ZOOM_MAX) : null
+    this.cameraAuto = this.camera ? (opts.auto ?? false) : false
+    this.writeCamera()
+    if (Math.abs(this.zoom - was) > 0.001) {
+      this.refreshBlocks()
+      this.opts.callbacks.onCamera?.(this.zoom)
+    }
+  }
+
+  /** Fly the camera somewhere, rather than putting it there. */
+  private flyCamera(to: Camera, auto: boolean): void {
+    this.cancelCameraFlight()
+    const layer = this.activeLayer()
+    const [, , w, h] = layer.render
+    const from = this.camera ?? { k: 1, cx: layer.render[0] + w / 2, cy: layer.render[1] + h / 2 }
+    if (reducedMotion()) return void this.setCamera(to, { auto })
+    const t0 = nowMs()
+    const step = (): void => {
+      const t = Math.min(1, (nowMs() - t0) / CAMERA_MS)
+      const u = easeInOutCubic(t)
+      this.setCamera(
+        {
+          k: from.k + (to.k - from.k) * u,
+          cx: from.cx + (to.cx - from.cx) * u,
+          cy: from.cy + (to.cy - from.cy) * u,
+        },
+        { auto },
+      )
+      this.cameraRAF = t < 1 ? raf(step) : null
+    }
+    step()
+  }
+
+  /** The whole map again. */
+  resetCamera(): void {
+    this.cancelCameraFlight()
+    this.setCamera(null)
+  }
+
+  /** Take back a camera the map sent somewhere; leave one the reader drove there alone. */
+  clearSentCamera(): void {
+    if (this.cameraAuto) this.resetCamera()
+  }
+
+  /**
+   * Step the camera in or out, about a point on the screen — the pointer, or the middle of the
+   * frame when nothing says otherwise. Zooming about the pointer is what keeps the thing under
+   * it under it, which is the whole of what makes a zoom feel like one.
+   */
+  zoomBy(factor: number, about?: { x: number; y: number }): void {
+    this.cancelCameraFlight()
+    const layer = this.activeLayer()
+    const box = this.cameraBox(layer)
+    const k = this.zoom * factor
+    const at = about ? this.pointIn(layer, about) : null
+    const cx = box[0] + box[2] / 2
+    const cy = box[1] + box[3] / 2
+    if (!at) return void this.setCamera({ k, cx, cy })
+    // Hold `at` still: the fraction of the frame it sits at now is the fraction it keeps.
+    const fx = (at[0] - box[0]) / box[2]
+    const fy = (at[1] - box[1]) / box[3]
+    const [, , w, h] = layer.render
+    this.setCamera({ k, cx: at[0] + (0.5 - fx) * (w / k), cy: at[1] + (0.5 - fy) * (h / k) })
+  }
+
+  /** A client point in a layer's drawn units, or null when the map is not on screen. */
+  private pointIn(layer: Layer, at: { x: number; y: number }): [number, number] | null {
+    const rect = layer.svg.getBoundingClientRect()
+    if (!(rect.width > 0 && rect.height > 0)) return null
+    const box = this.cameraBox(layer)
+    // The svg element is the viewport, and the box letterboxes inside it.
+    const scale = Math.min(rect.width / box[2], rect.height / box[3])
+    const left = rect.left + (rect.width - box[2] * scale) / 2
+    const top = rect.top + (rect.height - box[3] * scale) / 2
+    return [box[0] + (at.x - left) / scale, box[1] + (at.y - top) / scale]
+  }
+
+  /** Whether the map on screen draws this region at all, or only its seat block. */
+  drawsShape(regionId: string): boolean {
+    const layer = this.activeLayer()
+    return layer.shapes.querySelector(`path[data-region-id="${cssEscape(regionId)}"]`) !== null
+  }
+
+  /**
+   * Send the camera to a region's seat block — the whole group's, when the block belongs to
+   * one.
+   *
+   * For a court with no territory this is the only way to answer "where is it": there is no
+   * shape to light up, only a block standing in the sea, and at the scale of the country that
+   * block is a thumbnail among thirteen others. Moving in a little is what makes it the
+   * subject. The blocks themselves do not grow — they are drawn to a size in px and the map
+   * that has zoomed under them is measured again — so what changes is how much country is
+   * behind them.
+   */
+  focusOn(regionId: string, k: number = FOCUS_ZOOM): void {
+    const layer = this.activeLayer()
+    const ids = this.clusterOf(regionId)?.rows.flat() ?? [regionId]
+    const at = this.blockCentre(layer, ids)
+    if (!at) return
+    this.flyCamera({ k, cx: at[0], cy: at[1] }, true)
+  }
+
+  /**
+   * The middle of what a set of seat blocks covers on this layer, in its drawn units.
+   *
+   * Kept as four numbers rather than a `DOMRect`: `getBBox` answers with one, but not every
+   * engine fills in its `right` and `bottom`, and a union built from those came out `NaN`.
+   */
+  private blockCentre(layer: Layer, regionIds: string[]): [number, number] | null {
+    let x0 = Infinity
+    let y0 = Infinity
+    let x1 = -Infinity
+    let y1 = -Infinity
+    for (const id of regionIds) {
+      const block = layer.annotations.querySelector<SVGGElement>(
+        `g[data-drilldown-block][data-region-id="${cssEscape(id)}"]`,
+      )
+      const bb = block?.getBBox()
+      if (!bb || !(bb.width > 0 && bb.height > 0)) continue
+      x0 = Math.min(x0, bb.x)
+      y0 = Math.min(y0, bb.y)
+      x1 = Math.max(x1, bb.x + bb.width)
+      y1 = Math.max(y1, bb.y + bb.height)
+    }
+    return Number.isFinite(x0) ? [(x0 + x1) / 2, (y0 + y1) / 2] : null
   }
 
   // ---- layers --------------------------------------------------------------------------------
@@ -920,7 +1140,7 @@ export class MapStage {
    * out of the same shape, because that is the mark each of them can carry.
    */
   private overlayPathsFor(layer: Layer, regionId: string): { outline: string; tiny: string } {
-    const scale = this.fitScale(layer.render)
+    const scale = this.fitScale(this.cameraBox(layer))
     const outline: string[] = []
     const tiny: string[] = []
     for (const p of layer.shapes.querySelectorAll<SVGPathElement>(
@@ -1063,6 +1283,7 @@ export class MapStage {
       if (this.hovered) this.setHover(layer, null, null)
     }
     const onClick = (e: MouseEvent): void => {
+      if (this.suppressClick) return
       const id = targetFrom(e.target)
       // A keyboard "click" on a focused path arrives here too, with detail 0.
       if (id) this.opts.callbacks.onSelect(id, e.detail === 0 ? "keyboard" : "pointer")
@@ -1105,7 +1326,7 @@ export class MapStage {
       const ids = this.coincidentIds(layer, path.getAttribute("d"))
       if (this.isDoublePress(layer, id)) return void this.resetLayout(layer, ids, "region")
       const shapes = ids.flatMap((each) => this.shapesOf(each))
-      const scale = this.fitScale(layer.render)
+      const scale = this.fitScale(this.cameraBox(layer))
       // A file's coordinates are unflipped; the group they are drawn in carries the flip. So
       // the transform goes on in the drawn frame and the number comes out in the file's.
       const flip = layer.flipY ? -1 : 1
@@ -1150,12 +1371,60 @@ export class MapStage {
     }
 
     /**
+     * Dragging the map itself, once there is more of it than the frame holds.
+     *
+     * The same press is also how a region is chosen, so the two are told apart by how far the
+     * pointer travels: under a few pixels it was a click and the map has not moved, and past
+     * that it is a pan and the click it would have been is dropped. Nothing pans at zoom 1 —
+     * the whole map is already on screen, and dragging it would only push it off.
+     */
+    const onPanDown = (e: PointerEvent): void => {
+      if (this.layoutEditing || e.button !== 0 || this.zoom <= 1) return
+      const startX = e.clientX
+      const startY = e.clientY
+      const from = this.camera
+      if (!from) return
+      let panning = false
+      const move = (ev: PointerEvent): void => {
+        const dx = ev.clientX - startX
+        const dy = ev.clientY - startY
+        if (!panning && Math.hypot(dx, dy) < PAN_SLOP) return
+        if (!panning) {
+          panning = true
+          this.cancelCameraFlight()
+          this.cancelPendingHover()
+          if (this.hovered) this.setHover(layer, null, null)
+          this.opts.viewport.setAttribute("data-panning", "")
+        }
+        const scale = this.fitScale(this.cameraBox(layer))
+        this.setCamera({ k: from.k, cx: from.cx - dx / scale, cy: from.cy - dy / scale })
+      }
+      const up = (): void => {
+        window.removeEventListener("pointermove", move)
+        window.removeEventListener("pointerup", up)
+        window.removeEventListener("pointercancel", up)
+        this.opts.viewport.removeAttribute("data-panning")
+        if (!panning) return
+        // The click is dispatched straight after this, so the flag has to outlive the gesture
+        // by exactly one turn of the event loop and no longer.
+        this.suppressClick = true
+        setTimeout(() => (this.suppressClick = false), 0)
+      }
+      // On the window rather than captured on the map, and deliberately: capturing the pointer
+      // retargets the click that follows to whatever holds the capture, so every press on the
+      // map became a press on the map as a whole and stopped choosing the region under it.
+      window.addEventListener("pointermove", move)
+      window.addEventListener("pointerup", up)
+      window.addEventListener("pointercancel", up)
+    }
+
+    /**
      * Dragging a block, when an editor has asked for it. The map's own hover and click run on
      * the same element, so this claims the pointer outright: capture, stop the event, and put
      * the anchor back where the pointer says once it is released.
      */
     const onBlockDown = (e: PointerEvent): void => {
-      if (!this.layoutEditing) return
+      if (!this.layoutEditing) return void onPanDown(e)
       const block = blockFrom(e.target)
       if (!block) return void onRegionDown(e)
       const pressed = block.getAttribute("data-region-id")
@@ -1174,7 +1443,7 @@ export class MapStage {
             (g) => this.dragTarget(g.getAttribute("data-region-id") ?? "") === id,
           )
         : [block]
-      const scale = this.fitScale(layer.render)
+      const scale = this.fitScale(this.cameraBox(layer))
       const startX = e.clientX
       const startY = e.clientY
       // A block is placed in geographic Y on a flipped layer, so what the pointer does
@@ -1239,7 +1508,7 @@ export class MapStage {
    * display:none and measures 0). Reproduces the letterbox `max-width/max-height: 100%` produce.
    */
   private renderedWidth(layer: Layer): number {
-    const [, , vw, vh] = layer.render
+    const [, , vw, vh] = this.cameraBox(layer)
     const cw = this.opts.viewport.clientWidth
     const ch = this.opts.viewport.clientHeight
     if (!(cw > 0 && ch > 0 && vw > 0 && vh > 0)) return NOMINAL_MAP_PX
@@ -1286,6 +1555,9 @@ export class MapStage {
       Math.round(this.renderedWidth(layer)),
       Math.round(layer.gutter),
       layer.render.join(),
+      // The zoom, and deliberately not the pan: a block is redrawn when the map has changed
+      // size under it, and dragging the map does not change its size.
+      Math.round(this.zoom * 100),
       [...(this.movedAnchors.get(this.layerKey(layer)) ?? [])].map(
         ([id, at]) => `${id}@${Math.round(at[0])},${Math.round(at[1])}`,
       ),
@@ -1297,7 +1569,7 @@ export class MapStage {
     }
     existing?.remove()
     const group = svgEl("g", { "data-drilldown-blocks": "", "data-signature": signature })
-    const [, , vw] = layer.render
+    const [, , vw] = this.cameraBox(layer)
     // The gutter only widens the box to the left, so the Y flip is the raw one either way.
     const k = flipConstant(layer.viewBox)
     const rendered = this.renderedWidth(layer)
@@ -1551,7 +1823,7 @@ export class MapStage {
       if (viewBoxAttr(render.vb) === viewBoxAttr(layer.render)) continue
       layer.render = render.vb
       layer.gutter = render.gutter
-      layer.svg.setAttribute("viewBox", viewBoxAttr(render.vb))
+      layer.svg.setAttribute("viewBox", viewBoxAttr(this.cameraBox(layer)))
     }
     const ids = new Map<Layer, string[]>()
     for (const layer of this.allLayers()) {
