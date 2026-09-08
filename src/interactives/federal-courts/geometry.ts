@@ -1,3 +1,6 @@
+import { offsetGeometry } from "../geometry"
+
+import OFFSETS from "./geometry/offsets.json"
 import type { DrilldownGeometry, GeometryFile } from "../types"
 
 /**
@@ -54,7 +57,9 @@ export function loadFederalCourtsGeometry(): Promise<DrilldownGeometry> {
       children[id] = circuits[i]!
     })
     children.cafc = null
-    return { overview, children }
+    // Where the insets sit on the national map is ours, not the export's — see
+    // `offsetGeometry`. Empty by default, so an untouched profile gets the export verbatim.
+    return { overview: offsetGeometry(overview, OFFSETS), children }
   })()
   return cached
 }

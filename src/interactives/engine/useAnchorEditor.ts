@@ -36,14 +36,20 @@ export function useAnchorEditor(stage: MapStage | null, enabled: boolean): void 
         // maintain, and this is a ruler.
         // eslint-disable-next-line no-console -- printing is what this tool is
         console.info(
-          "[interactive-map] anchor editing on — drag a seat block, then run `drilldownAnchors()` to print every one you have moved.",
+          "[interactive-map] layout editing on. Drag a seat block, or a region's shape. " +
+            "`drilldownAnchors()` prints the blocks for geometry/anchors.json; " +
+            "`drilldownOffsets()` prints the shapes for geometry/offsets.json.",
         )
-        ;(window as unknown as Record<string, unknown>).drilldownAnchors = (): string => {
-          const json = stage.movedAnchorsJSON()
-          // eslint-disable-next-line no-console -- printing is what this tool is
-          console.info(json)
-          return json
+        const expose = (name: string, read: () => string): void => {
+          ;(window as unknown as Record<string, unknown>)[name] = (): string => {
+            const json = read()
+            // eslint-disable-next-line no-console -- printing is what this tool is
+            console.info(json)
+            return json
+          }
         }
+        expose("drilldownAnchors", () => stage.movedAnchorsJSON())
+        expose("drilldownOffsets", () => stage.movedRegionsJSON())
       } catch {
         // Not signed in, or no Payload to ask. Either way the map stays a map.
       }
@@ -53,6 +59,7 @@ export function useAnchorEditor(stage: MapStage | null, enabled: boolean): void 
       live = false
       stage.setAnchorEditing(false)
       delete (window as unknown as Record<string, unknown>).drilldownAnchors
+      delete (window as unknown as Record<string, unknown>).drilldownOffsets
     }
   }, [stage, enabled])
 }

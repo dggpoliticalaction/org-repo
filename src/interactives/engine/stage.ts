@@ -33,6 +33,8 @@ export interface StageCallbacks {
   onSelect(regionId: string, via: "pointer" | "keyboard"): void
   /** Only while anchor editing is on: an editor has dragged a seat block to a new place. */
   onAnchorMoved?(regionId: string, at: [number, number]): void
+  /** Only while anchor editing is on: an editor has nudged a region's shapes. */
+  onRegionMoved?(regionId: string, by: [number, number]): void
 }
 
 export interface StageOptions {
@@ -231,6 +233,8 @@ export class MapStage {
   private blocksGen = 0
   /** Anchors moved by hand this session, keyed by region id. Empty unless editing is on. */
   private movedAnchors = new Map<string, [number, number]>()
+  /** Shapes nudged by hand this session, in the geometry file's own units. */
+  private movedRegions = new Map<string, [number, number]>()
   private anchorEditing = false
   private morphRAF: number | null = null
   private morphCancel: (() => void) | null = null
@@ -323,7 +327,30 @@ export class MapStage {
     for (const layer of this.allLayers()) {
       layer.annotations.toggleAttribute("data-drilldown-anchor-editing", on)
     }
-    if (!on) this.movedAnchors.clear()
+    if (on) return
+    this.movedAnchors.clear()
+    for (const id of this.movedRegions.keys())
+      this.shapesOf(id).forEach((p) => p.removeAttribute("transform"))
+    this.movedRegions.clear()
+  }
+
+  /** Every shape a layer draws for a region, its outline clone included. */
+  private shapesOf(regionId: string): SVGPathElement[] {
+    const sel = cssEscape(regionId)
+    return [...this.allLayers()].flatMap((layer) => [
+      ...layer.shapes.querySelectorAll<SVGPathElement>(
+        `path[data-region-id="${sel}"], path[data-outline-for="${sel}"]`,
+      ),
+    ])
+  }
+
+  /** Every shape nudged this session, in the shape `offsets.json` is written in. */
+  movedRegionsJSON(): string {
+    const out: Record<string, [number, number]> = {}
+    for (const [id, by] of [...this.movedRegions].sort(([a], [b]) => a.localeCompare(b))) {
+      out[id] = [Math.round(by[0]), Math.round(by[1])]
+    }
+    return JSON.stringify(out, null, 2)
   }
 
   /**
@@ -866,6 +893,55 @@ export class MapStage {
     }
 
     /**
+     * Dragging a region's shapes, the other half of the same tool.
+     *
+     * Where the insets sit on the national map — Alaska under the southwest, the territories
+     * in a row beside it — is a placement decision, and this is how it gets made: nudge one,
+     * and the offset it takes is printed for `geometry/offsets.json`, which the loader applies
+     * over the export. The whole region moves, outline clone and all, since half a moved
+     * Alaska is not a thing anyone wants to see.
+     */
+    const onRegionDown = (e: PointerEvent): void => {
+      const path = pathFrom(e.target)
+      const id = path?.getAttribute("data-region-id")
+      if (!path || !id) return
+      e.preventDefault()
+      e.stopPropagation()
+      const shapes = this.shapesOf(id)
+      const scale = this.fitScale(layer.render)
+      // A file's coordinates are unflipped; the group they are drawn in carries the flip. So
+      // the transform goes on in the drawn frame and the number comes out in the file's.
+      const flip = layer.flipY ? -1 : 1
+      const startX = e.clientX
+      const startY = e.clientY
+      const had = this.movedRegions.get(id) ?? [0, 0]
+      // One number, used twice: the transform goes on a path *inside* the flipped group, so
+      // the file's own units are already the right ones to move it by. Flipping again on the
+      // way to the screen sent the shape north when the pointer went south.
+      const offsetAt = (ev: PointerEvent): [number, number] => [
+        had[0] + (ev.clientX - startX) / scale,
+        had[1] + ((ev.clientY - startY) / scale) * flip,
+      ]
+      const move = (ev: PointerEvent): void => {
+        const [x, y] = offsetAt(ev)
+        shapes.forEach((p) => p.setAttribute("transform", `translate(${x} ${y})`))
+      }
+      const up = (ev: PointerEvent): void => {
+        svg.removeEventListener("pointermove", move)
+        svg.removeEventListener("pointerup", up)
+        svg.removeEventListener("pointercancel", up)
+        const by = offsetAt(ev)
+        this.movedRegions.set(id, by)
+        move(ev)
+        this.opts.callbacks.onRegionMoved?.(id, [Math.round(by[0]), Math.round(by[1])])
+      }
+      svg.setPointerCapture(e.pointerId)
+      svg.addEventListener("pointermove", move)
+      svg.addEventListener("pointerup", up)
+      svg.addEventListener("pointercancel", up)
+    }
+
+    /**
      * Dragging a block, when an editor has asked for it. The map's own hover and click run on
      * the same element, so this claims the pointer outright: capture, stop the event, and put
      * the anchor back where the pointer says once it is released.
@@ -873,8 +949,9 @@ export class MapStage {
     const onAnchorDown = (e: PointerEvent): void => {
       if (!this.anchorEditing) return
       const block = blockFrom(e.target)
-      const id = block?.getAttribute("data-region-id")
-      if (!block || !id) return
+      if (!block) return void onRegionDown(e)
+      const id = block.getAttribute("data-region-id")
+      if (!id) return
       const from = this.anchorOf(layer, id)
       if (!from) return
       e.preventDefault()

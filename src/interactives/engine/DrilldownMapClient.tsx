@@ -542,8 +542,11 @@ export function DrilldownMapClient({
           onHover: (id, point) => setHover(id && point ? { id, x: point.x, y: point.y } : null),
           onSelect: (id, via) => void selectRef.current(id, via),
           onAnchorMoved: (id, at) =>
-            // eslint-disable-next-line no-console -- the anchor editor's whole output
-            console.info(`[interactive-map] "${id}": [${at[0]}, ${at[1]}]`),
+            // eslint-disable-next-line no-console -- the layout editor's whole output
+            console.info(`[interactive-map] anchor "${id}": [${at[0]}, ${at[1]}]`),
+          onRegionMoved: (id, by) =>
+            // eslint-disable-next-line no-console -- the layout editor's whole output
+            console.info(`[interactive-map] offset "${id}": [${by[0]}, ${by[1]}]`),
         },
       })
     } catch (err) {
