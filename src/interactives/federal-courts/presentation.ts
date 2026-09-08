@@ -1,3 +1,4 @@
+import ANCHORS from "./geometry/anchors.json"
 import type { DrilldownPresentation } from "../types"
 
 /**
@@ -58,6 +59,9 @@ export const federalCourtsPresentation: DrilldownPresentation = {
       { fact: "seats-d", label: "Democratic-appointed", color: COLORS.Democratic },
     ],
     vacant: { label: "Vacant" },
+    // Checked in beside the geometry they are measured against, and read at render time: an
+    // anchor is placement, which is ours, so nudging one is a deploy rather than a re-sync.
+    anchors: ANCHORS,
     anchorFact: "anchor",
     labelFact: "short-label",
   },

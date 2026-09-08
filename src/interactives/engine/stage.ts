@@ -170,6 +170,13 @@ const cssEscape = (s: string): string =>
     ? CSS.escape(s)
     : s.replace(/["\\]/g, "\\$&")
 
+/** A declared anchor, checked rather than trusted: it arrives through the payload like anything else. */
+function toAnchor(value: readonly number[] | undefined): [number, number] | null {
+  if (!value || value.length !== 2) return null
+  const [x, y] = value
+  return Number.isFinite(x) && Number.isFinite(y) ? [x as number, y as number] : null
+}
+
 function parseAnchor(value: string | undefined): [number, number] | null {
   if (!value) return null
   const parts = value.split(/[\s,]+/).map(Number)
@@ -866,6 +873,9 @@ export class MapStage {
       while (squares.length < total) squares.push({ color: null })
       const anchor =
         this.gutterAnchor(layer, id) ??
+        // The profile's own placement first: it is measured against the geometry checked in
+        // beside it, where a fact carrying a position was measured against somebody else's map.
+        toAnchor(seats.anchors?.[id]) ??
         (seats.anchorFact ? parseAnchor(region.facts[seats.anchorFact]) : null) ??
         this.shapeAnchor(layer, id)
       if (!anchor) continue

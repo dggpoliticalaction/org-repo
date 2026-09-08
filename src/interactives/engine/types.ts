@@ -82,6 +82,15 @@ export interface SeatBlockConfig {
   totalFact: string
   groups: SeatGroup[]
   vacant?: { label: string }
+  /**
+   * Where each block is drawn, in the units of the map it is drawn on, by region id.
+   *
+   * Placement is the profile's: the anchors are measured against geometry that is checked in
+   * beside them, so moving one is a code change and takes effect on a deploy. It beats
+   * `anchorFact` for that reason — a feed that carries a position is describing its own map,
+   * not ours.
+   */
+  anchors?: Record<string, readonly number[]>
   /** Fact holding `"x,y"` in the asset's projected units; default is the shape's centre. */
   anchorFact?: string
   /** Fact holding a short label drawn above the block. */
@@ -253,4 +262,10 @@ export interface ChildAssetRef {
   url: string
   /** Same-origin path serving its shapes, hashed so it can be held forever. */
   geometryUrl: string
+  /**
+   * Whether the region has a map of its own to drill into. A region without one is still a
+   * region — it has records, and a reader can select it — but its children are drawn on the
+   * parent map at their own anchors, because there is nowhere else to draw them.
+   */
+  hasMap: boolean
 }
