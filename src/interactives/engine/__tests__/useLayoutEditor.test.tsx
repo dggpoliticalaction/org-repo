@@ -9,8 +9,9 @@ function fakeStage(): { stage: MapStage; setLayoutEditing: ReturnType<typeof vi.
   const setLayoutEditing = vi.fn()
   const stage = {
     setLayoutEditing,
-    movedAnchorsJSON: () => '{"ca9":[1,2]}',
-    movedRegionsJSON: () => '{"akd":[3,4]}',
+    // Grouped by the map the drag happened on, as the real one is.
+    movedAnchorsJSON: () => '{"overview":{"ca9":[1,2]}}',
+    movedRegionsJSON: () => '{"overview":{"akd":[3,4]}}',
   } as unknown as MapStage
   return { stage, setLayoutEditing }
 }
@@ -30,8 +31,8 @@ describe("useLayoutEditor", () => {
     const { stage, setLayoutEditing } = fakeStage()
     renderHook(() => useLayoutEditor(stage, true))
     expect(setLayoutEditing).toHaveBeenCalledWith(true)
-    expect(helper("drilldownAnchors")?.()).toBe('{"ca9":[1,2]}')
-    expect(helper("drilldownOffsets")?.()).toBe('{"akd":[3,4]}')
+    expect(helper("drilldownAnchors")?.()).toBe('{"overview":{"ca9":[1,2]}}')
+    expect(helper("drilldownOffsets")?.()).toBe('{"overview":{"akd":[3,4]}}')
   })
 
   it("puts the map back when it goes away", () => {

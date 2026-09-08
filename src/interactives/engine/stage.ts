@@ -27,14 +27,26 @@ const SVGNS = "http://www.w3.org/2000/svg"
 
 export type LayerState = "visible" | "hidden" | "hidden-hard" | "fade-out" | "fading" | "fade-in"
 
+/**
+ * Where a drag happened, which is half of what its number means.
+ *
+ * `writable` is false when the position is computed rather than declared — a circuit's own
+ * block in the gutter of its map, or a shape nudged on a map no offsets file covers. Those
+ * drags are worth seeing and worth nothing to paste.
+ */
+export interface DragOrigin {
+  layer: string
+  writable: boolean
+}
+
 export interface StageCallbacks {
   onHover(regionId: string | null, point: { x: number; y: number } | null): void
   /** `via` lets the client move keyboard focus into the pane a keyboard selection opened. */
   onSelect(regionId: string, via: "pointer" | "keyboard"): void
-  /** Only while anchor editing is on: an editor has dragged a seat block to a new place. */
-  onAnchorMoved?(regionId: string, at: [number, number]): void
-  /** Only while anchor editing is on: an editor has nudged a region's shapes. */
-  onRegionMoved?(regionId: string, by: [number, number]): void
+  /** Only while layout editing is on: an editor has dragged a seat block to a new place. */
+  onAnchorMoved?(regionId: string, at: [number, number], where: DragOrigin): void
+  /** Only while layout editing is on: an editor has nudged a region's shapes. */
+  onRegionMoved?(regionId: string, by: [number, number], where: DragOrigin): void
 }
 
 export interface StageOptions {
@@ -231,10 +243,17 @@ export class MapStage {
   private morphLayer: HTMLElement | null = null
   /** Bumped by every block redraw, so a morph in flight can notice its clones went stale. */
   private blocksGen = 0
-  /** Anchors moved by hand this session, keyed by region id. Empty unless editing is on. */
-  private movedAnchors = new Map<string, [number, number]>()
-  /** Shapes nudged by hand this session, in the geometry file's own units. */
-  private movedRegions = new Map<string, [number, number]>()
+  /**
+   * Moved by hand this session, keyed by the layer the drag happened on and then the region.
+   *
+   * The layer is half the answer. The Ninth's block sits on the national map at the anchor
+   * `anchors.json` gives it, and again on its own map in the gutter, where the position is
+   * computed and no file has a say. The same region, the same drag, two numbers that mean
+   * entirely different things — so neither is reported without saying which map it came from.
+   */
+  private movedAnchors = new Map<string, Map<string, [number, number]>>()
+  /** Shapes nudged by hand this session, per layer, in the geometry file's own units. */
+  private movedRegions = new Map<string, Map<string, [number, number]>>()
   private layoutEditing = false
   private morphRAF: number | null = null
   private morphCancel: (() => void) | null = null
@@ -329,7 +348,7 @@ export class MapStage {
     }
     if (on) return
     this.movedAnchors.clear()
-    for (const id of this.movedRegions.keys())
+    for (const id of [...this.movedRegions.values()].flatMap((m) => [...m.keys()]))
       this.shapesOf(id).forEach((p) => p.removeAttribute("transform"))
     this.movedRegions.clear()
   }
@@ -344,13 +363,16 @@ export class MapStage {
     ])
   }
 
-  /** Every shape nudged this session, in the shape `offsets.json` is written in. */
+  /**
+   * Every shape nudged this session, grouped by the map it was nudged on.
+   *
+   * Only the overview's group belongs in `offsets.json` — that is the file the loader applies,
+   * and it applies it to the national geometry. A shape moved on a circuit's own map is
+   * reported all the same, because seeing where it went is half of why anyone drags it, but
+   * the grouping is what says so.
+   */
   movedRegionsJSON(): string {
-    const out: Record<string, [number, number]> = {}
-    for (const [id, by] of [...this.movedRegions].sort(([a], [b]) => a.localeCompare(b))) {
-      out[id] = [Math.round(by[0]), Math.round(by[1])]
-    }
-    return JSON.stringify(out, null, 2)
+    return this.movedJSON(this.movedRegions)
   }
 
   /**
@@ -360,7 +382,7 @@ export class MapStage {
    */
   private anchorOf(layer: Layer, regionId: string): [number, number] | null {
     const seats = this.opts.seats
-    const moved = this.movedAnchors.get(regionId)
+    const moved = this.movedAnchors.get(this.layerKey(layer))?.get(regionId)
     if (moved) return moved
     const gutter = this.gutterAnchor(layer, regionId)
     if (gutter) return gutter
@@ -370,13 +392,50 @@ export class MapStage {
     return declared ?? this.shapeAnchor(layer, regionId)
   }
 
-  /** Every anchor moved this session, in the shape `anchors.json` is written in. */
+  /**
+   * Every anchor moved this session, grouped by the map it was moved on.
+   *
+   * `anchors.json` is flat and a region appears in it once, because a region's block is drawn
+   * on exactly one map: a circuit's on the national one, a district's on its circuit's. The
+   * grouping is therefore also the units — national under `overview`, the circuit's own under
+   * its id — and it is what stops a number measured on one map being pasted in as the other.
+   *
+   * The exception prints itself: a circuit's block on its *own* map sits in the gutter, where
+   * the position is computed from the map's box and no file has a say. Dragging it moves it
+   * for the session and nothing more.
+   */
   movedAnchorsJSON(): string {
-    const out: Record<string, [number, number]> = {}
-    for (const [id, at] of [...this.movedAnchors].sort(([a], [b]) => a.localeCompare(b))) {
-      out[id] = [Math.round(at[0]), Math.round(at[1])]
+    return this.movedJSON(this.movedAnchors)
+  }
+
+  /** The map a drag happened on, as the dumps name it. */
+  private layerKey(layer: Layer): string {
+    return layer.parentId ?? "overview"
+  }
+
+  private movedJSON(from: Map<string, Map<string, [number, number]>>): string {
+    const out: Record<string, Record<string, [number, number]>> = {}
+    for (const [layer, entries] of [...from].sort(([a], [b]) => a.localeCompare(b))) {
+      if (entries.size === 0) continue
+      const group: Record<string, [number, number]> = {}
+      for (const [id, at] of [...entries].sort(([a], [b]) => a.localeCompare(b))) {
+        group[id] = [Math.round(at[0]), Math.round(at[1])]
+      }
+      out[layer] = group
     }
     return JSON.stringify(out, null, 2)
+  }
+
+  private remember(
+    into: Map<string, Map<string, [number, number]>>,
+    layer: Layer,
+    regionId: string,
+    at: [number, number],
+  ): void {
+    const key = this.layerKey(layer)
+    const group = into.get(key) ?? new Map<string, [number, number]>()
+    group.set(regionId, at)
+    into.set(key, group)
   }
 
   renderBlocks(regionIds: string[]): void {
@@ -914,7 +973,7 @@ export class MapStage {
       const flip = layer.flipY ? -1 : 1
       const startX = e.clientX
       const startY = e.clientY
-      const had = this.movedRegions.get(id) ?? [0, 0]
+      const had = this.movedRegions.get(this.layerKey(layer))?.get(id) ?? [0, 0]
       // One number, used twice: the transform goes on a path *inside* the flipped group, so
       // the file's own units are already the right ones to move it by. Flipping again on the
       // way to the screen sent the shape north when the pointer went south.
@@ -931,9 +990,14 @@ export class MapStage {
         svg.removeEventListener("pointerup", up)
         svg.removeEventListener("pointercancel", up)
         const by = offsetAt(ev)
-        this.movedRegions.set(id, by)
+        this.remember(this.movedRegions, layer, id, by)
         move(ev)
-        this.opts.callbacks.onRegionMoved?.(id, [Math.round(by[0]), Math.round(by[1])])
+        this.opts.callbacks.onRegionMoved?.(id, [Math.round(by[0]), Math.round(by[1])], {
+          layer: this.layerKey(layer),
+          // `offsets.json` is applied to the national geometry, so that is the only map a
+          // nudge can be written down for.
+          writable: layer.parentId === null,
+        })
       }
       svg.setPointerCapture(e.pointerId)
       svg.addEventListener("pointermove", move)
@@ -976,8 +1040,15 @@ export class MapStage {
           from[0] + (ev.clientX - startX) / scale,
           from[1] + ((ev.clientY - startY) / scale) * flip,
         ]
-        this.movedAnchors.set(id, at)
-        this.opts.callbacks.onAnchorMoved?.(id, [Math.round(at[0]), Math.round(at[1])])
+        // Read before remembering, or the gutter check sees the drag it is being asked about.
+        const gutter = this.gutterAnchor(layer, id) !== null
+        this.remember(this.movedAnchors, layer, id, at)
+        this.opts.callbacks.onAnchorMoved?.(id, [Math.round(at[0]), Math.round(at[1])], {
+          layer: this.layerKey(layer),
+          // A circuit's block on its own map sits in the gutter, placed from the map's box.
+          // Dragging it moves it for the session; `anchors.json` has no say over it.
+          writable: !gutter,
+        })
         this.refreshBlocks()
       }
       svg.setPointerCapture(e.pointerId)
@@ -1060,7 +1131,9 @@ export class MapStage {
       Math.round(this.renderedWidth(layer)),
       Math.round(layer.gutter),
       layer.render.join(),
-      [...this.movedAnchors].map(([id, at]) => `${id}@${Math.round(at[0])},${Math.round(at[1])}`),
+      [...(this.movedAnchors.get(this.layerKey(layer)) ?? [])].map(
+        ([id, at]) => `${id}@${Math.round(at[0])},${Math.round(at[1])}`,
+      ),
     ].join("|")
     if (existing?.getAttribute("data-signature") === signature) {
       // Hover and selection are written onto the blocks that are already there.
@@ -1096,9 +1169,9 @@ export class MapStage {
       // Size to whichever is larger so no member is ever dropped from the block.
       while (squares.length < total) squares.push({ color: null })
       const anchor =
-        // Whatever the editor has dragged this session outranks everything: that is the point
-        // of dragging it.
-        this.movedAnchors.get(id) ??
+        // Whatever the editor has dragged this session outranks everything — on the map they
+        // dragged it on, which is the only one it means anything for.
+        this.movedAnchors.get(this.layerKey(layer))?.get(id) ??
         this.gutterAnchor(layer, id) ??
         // The profile's own placement first: it is measured against the geometry checked in
         // beside it, where a fact carrying a position was measured against somebody else's map.

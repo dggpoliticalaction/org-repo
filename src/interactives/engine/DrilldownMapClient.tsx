@@ -542,12 +542,21 @@ export function DrilldownMapClient({
         callbacks: {
           onHover: (id, point) => setHover(id && point ? { id, x: point.x, y: point.y } : null),
           onSelect: (id, via) => void selectRef.current(id, via),
-          onAnchorMoved: (id, at) =>
+          // The map a drag happened on decides what its number is worth: the Ninth's block
+          // has one place on the national map and another in the gutter of its own, and only
+          // one of them is a line in a file.
+          onAnchorMoved: (id, at, where) =>
             // eslint-disable-next-line no-console -- the layout editor's whole output
-            console.info(`[interactive-map] anchor "${id}": [${at[0]}, ${at[1]}]`),
-          onRegionMoved: (id, by) =>
+            console.info(
+              `[interactive-map] anchor "${id}": [${at[0]}, ${at[1]}] — on ${where.layer}` +
+                (where.writable ? " (anchors.json)" : " (gutter, computed — not from a file)"),
+            ),
+          onRegionMoved: (id, by, where) =>
             // eslint-disable-next-line no-console -- the layout editor's whole output
-            console.info(`[interactive-map] offset "${id}": [${by[0]}, ${by[1]}]`),
+            console.info(
+              `[interactive-map] offset "${id}": [${by[0]}, ${by[1]}] — on ${where.layer}` +
+                (where.writable ? " (offsets.json)" : " (this map has no offsets file)"),
+            ),
         },
       })
     } catch (err) {
