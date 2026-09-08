@@ -47,6 +47,8 @@ export interface StageCallbacks {
   onAnchorMoved?(regionId: string, at: [number, number], where: DragOrigin): void
   /** Only while layout editing is on: an editor has nudged a region's shapes. */
   onRegionMoved?(regionId: string, by: [number, number], where: DragOrigin): void
+  /** A second press put something back where the files say it goes. */
+  onLayoutReset?(regionId: string, where: DragOrigin): void
 }
 
 export interface StageOptions {
@@ -117,6 +119,14 @@ const BLOCK_PX = 6.5
  * is a fill: the Virgin Islands are about five pixels across on the national map.
  */
 const OUTLINE_MIN_PX = 12
+/**
+ * How long a second press still counts as a double press, while layout editing is on.
+ *
+ * Counted from the pointer rather than listened for as `dblclick`: preventing the default of a
+ * pointerdown — which the drag has to, or the map selects the region under it — takes the
+ * compatibility mouse events with it, and `dblclick` is one of them.
+ */
+const DOUBLE_PRESS_MS = 350
 /**
  * Below this rendered map width the blocks shrink and drop their labels: at phone widths the
  * circuits' blocks overlap each other and their labels collide, and the R/D balance still
@@ -255,6 +265,8 @@ export class MapStage {
   /** Shapes nudged by hand this session, per layer, in the geometry file's own units. */
   private movedRegions = new Map<string, Map<string, [number, number]>>()
   private layoutEditing = false
+  /** The last thing pressed while editing, so a second press on it can mean "put it back". */
+  private lastTap: { key: string; at: number } | null = null
   private morphRAF: number | null = null
   private morphCancel: (() => void) | null = null
   private regions: RegionIndex
@@ -351,6 +363,52 @@ export class MapStage {
     for (const id of [...this.movedRegions.values()].flatMap((m) => [...m.keys()]))
       this.shapesOf(id).forEach((p) => p.removeAttribute("transform"))
     this.movedRegions.clear()
+  }
+
+  /**
+   * The regions drawn at exactly this outline, which is usually one and occasionally two.
+   *
+   * The D.C. Circuit's only district is the circuit — the export emits the same shape twice,
+   * once at each level — so grabbing what looks like one piece of the map and moving it left
+   * the other copy sitting where it was. Anything stacked like that moves together.
+   *
+   * By geometry rather than by parentage: the Ninth's mainland and Alaska are one region and
+   * must *not* move together, since where the insets sit is the placement being decided.
+   */
+  private coincidentIds(layer: Layer, d: string | null): string[] {
+    const ids = new Set<string>()
+    if (!d) return []
+    for (const p of layer.shapes.querySelectorAll<SVGPathElement>("path[data-region-id]")) {
+      const id = p.getAttribute("data-region-id")
+      if (id && p.getAttribute("d") === d) ids.add(id)
+    }
+    return [...ids]
+  }
+
+  /**
+   * Whether this press is a second one on the same thing, and therefore means "put it back".
+   * Records the press either way, so the next one can ask the same question.
+   */
+  private isDoublePress(layer: Layer, id: string): boolean {
+    const key = `${this.layerKey(layer)}:${id}`
+    const at = nowMs()
+    const again = this.lastTap?.key === key && at - this.lastTap.at < DOUBLE_PRESS_MS
+    this.lastTap = again ? null : { key, at }
+    return again
+  }
+
+  /** Forget what was dragged, for every piece drawn at one spot, and put them back. */
+  private resetLayout(layer: Layer, ids: string[], kind: "anchor" | "region"): void {
+    const key = this.layerKey(layer)
+    for (const id of ids) {
+      if (kind === "anchor") this.movedAnchors.get(key)?.delete(id)
+      else {
+        this.movedRegions.get(key)?.delete(id)
+        this.shapesOf(id).forEach((p) => p.removeAttribute("transform"))
+      }
+      this.opts.callbacks.onLayoutReset?.(id, { layer: key, writable: true })
+    }
+    if (kind === "anchor") this.refreshBlocks()
   }
 
   /** Every shape a layer draws for a region, its outline clone included. */
@@ -966,7 +1024,10 @@ export class MapStage {
       if (!path || !id) return
       e.preventDefault()
       e.stopPropagation()
-      const shapes = this.shapesOf(id)
+      // Everything drawn at this outline, not merely the path under the pointer.
+      const ids = this.coincidentIds(layer, path.getAttribute("d"))
+      if (this.isDoublePress(layer, id)) return void this.resetLayout(layer, ids, "region")
+      const shapes = ids.flatMap((each) => this.shapesOf(each))
       const scale = this.fitScale(layer.render)
       // A file's coordinates are unflipped; the group they are drawn in carries the flip. So
       // the transform goes on in the drawn frame and the number comes out in the file's.
@@ -990,14 +1051,18 @@ export class MapStage {
         svg.removeEventListener("pointerup", up)
         svg.removeEventListener("pointercancel", up)
         const by = offsetAt(ev)
-        this.remember(this.movedRegions, layer, id, by)
         move(ev)
-        this.opts.callbacks.onRegionMoved?.(id, [Math.round(by[0]), Math.round(by[1])], {
-          layer: this.layerKey(layer),
-          // `offsets.json` is applied to the national geometry, so that is the only map a
-          // nudge can be written down for.
-          writable: layer.parentId === null,
-        })
+        // One line per region moved. Two shapes stacked are still two paths in the file, and
+        // an offset that names only one of them puts them back where they started.
+        for (const each of ids) {
+          this.remember(this.movedRegions, layer, each, by)
+          this.opts.callbacks.onRegionMoved?.(each, [Math.round(by[0]), Math.round(by[1])], {
+            layer: this.layerKey(layer),
+            // `offsets.json` is applied to the national geometry, so that is the only map a
+            // nudge can be written down for.
+            writable: layer.parentId === null,
+          })
+        }
       }
       svg.setPointerCapture(e.pointerId)
       svg.addEventListener("pointermove", move)
@@ -1020,6 +1085,7 @@ export class MapStage {
       if (!from) return
       e.preventDefault()
       e.stopPropagation()
+      if (this.isDoublePress(layer, id)) return void this.resetLayout(layer, [id], "anchor")
       const scale = this.fitScale(layer.render)
       const startX = e.clientX
       const startY = e.clientY

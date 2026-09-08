@@ -27,5 +27,6 @@ export const DEBUG_LAYOUT = "layout"
 export const LAYOUT_TOOL_NOTES = [
   { label: "Layout tools", value: `?${DEBUG_PARAM}=${DEBUG_LAYOUT}` },
   { label: "Drag", value: "a seat block, or a region's shape" },
+  { label: "Reset", value: "press a piece twice" },
   { label: "Print", value: "drilldownAnchors(), drilldownOffsets()" },
 ] as const

@@ -551,6 +551,9 @@ export function DrilldownMapClient({
               `[interactive-map] anchor "${id}": [${at[0]}, ${at[1]}] — on ${where.layer}` +
                 (where.writable ? " (anchors.json)" : " (gutter, computed — not from a file)"),
             ),
+          onLayoutReset: (id, where) =>
+            // eslint-disable-next-line no-console -- the layout editor's whole output
+            console.info(`[interactive-map] reset "${id}" — on ${where.layer}`),
           onRegionMoved: (id, by, where) =>
             // eslint-disable-next-line no-console -- the layout editor's whole output
             console.info(
