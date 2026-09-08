@@ -118,6 +118,20 @@ export interface SeatCluster {
   rowGap?: number
   /** How a row narrower than the widest one sits against it. Defaults to centred. */
   align?: "left" | "center" | "right"
+  /**
+   * Where the group sits in the map's frame, as a fraction of it — `{ x: 1, y: 1 }` is the
+   * bottom-right corner, `{ x: 0.5, y: 0 }` the top middle. Given, it replaces the anchor
+   * member's declared position as what the group hangs from.
+   *
+   * Which is the whole point for a group of blocks that belongs to no place. Its members are
+   * a constant size in CSS px and the map is not, so a position in map units only holds at
+   * the width it was measured at: narrow the page and the map shrinks out from under blocks
+   * that do not, until the courts in the Atlantic are standing on Florida. Solved against the
+   * frame, the group keeps its corner at every width, the way a child map's gutter does.
+   */
+  at?: { x: number; y: number }
+  /** Between the group and the frame's edge, in CSS px, when `at` places it. */
+  inset?: number
 }
 
 export interface CategoryValue {

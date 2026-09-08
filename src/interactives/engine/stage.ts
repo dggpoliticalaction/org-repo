@@ -155,6 +155,8 @@ const DOUBLE_PRESS_MS = 350
 const COMPACT_MAP_PX = 560
 /** Between members of a cluster, in CSS px, when the profile does not say. */
 const CLUSTER_GAP_PX = 12
+/** Between a frame-placed cluster and the edge of the frame, in CSS px, likewise. */
+const CLUSTER_INSET_PX = 10
 /** Under a fiftieth of a px on screen is not a move; it is arithmetic that did not quite land. */
 const CLUSTER_EPSILON_PX = 0.02
 const BLOCK_PX_COMPACT = 4.5
@@ -1192,14 +1194,15 @@ export class MapStage {
           from[0] + (ev.clientX - startX) / scale,
           from[1] + ((ev.clientY - startY) / scale) * flip,
         ]
-        // Read before remembering, or the gutter check sees the drag it is being asked about.
-        const gutter = this.gutterAnchor(layer, id) !== null
+        // Read before remembering, or the check sees the drag it is being asked about.
+        const computed = this.gutterAnchor(layer, id) !== null || !!this.clusterOf(id)?.at
         this.remember(this.movedAnchors, layer, id, at)
         this.opts.callbacks.onAnchorMoved?.(id, [Math.round(at[0]), Math.round(at[1])], {
           layer: this.layerKey(layer),
-          // A circuit's block on its own map sits in the gutter, placed from the map's box.
-          // Dragging it moves it for the session; `anchors.json` has no say over it.
-          writable: !gutter,
+          // A circuit's block on its own map sits in the gutter, and a group placed against
+          // the frame sits where the frame puts it. Both are worked out from the map's box, so
+          // dragging one moves it for the session and `anchors.json` has no say over it.
+          writable: !computed,
         })
         this.refreshBlocks()
       }
@@ -1492,6 +1495,7 @@ export class MapStage {
       }
       const anchorBox = boxes.get(origin)
       if (!anchorBox) continue
+      const dragged = this.movedAnchors.get(this.layerKey(layer))?.get(origin)
       const gap = (cluster.gap ?? CLUSTER_GAP_PX) * ctx.unitsPerPx
       const placement = layoutCluster(
         cluster.rows.map((row) => row.flatMap((id) => boxes.get(id)?.box ?? [])),
@@ -1501,19 +1505,31 @@ export class MapStage {
           align: cluster.align ?? "center",
         },
       )
-      // Hang the whole group off the one member whose place is declared, by moving the layout
-      // until that member's anchor lands back on it.
+      // Where the group's own box goes, in the drawing's screen frame. Either the frame places
+      // it, or it hangs off the one member whose place is declared — moving the layout until
+      // that member's anchor lands back on it. A drag beats both, so an editor can still shift
+      // a frame-placed group to see where it ought to sit.
       const home = placement.at.get(origin)
       if (!home) continue
-      const shiftX = originAt[0]! - (home[0] - anchorBox.offX)
-      const shiftY = screenY(originAt) - (home[1] - anchorBox.offY)
+      let groupX = originAt[0]! - (home[0] - anchorBox.offX)
+      let groupY = screenY(originAt) - (home[1] - anchorBox.offY)
+      if (cluster.at && !dragged) {
+        const [rx, ry, rw, rh] = layer.render
+        const inset = (cluster.inset ?? CLUSTER_INSET_PX) * ctx.unitsPerPx
+        const room = (span: number, size: number): number => Math.max(0, span - size - 2 * inset)
+        groupX = rx + inset + room(rw, placement.width) * cluster.at.x
+        groupY = ry + inset + room(rh, placement.height) * cluster.at.y
+      }
       for (const [id, at] of placement.at) {
-        if (id === origin) continue
+        // The anchor member only moves when the frame is what placed the group; otherwise it
+        // is the fixed point the rest hang from, and recording where it already is would let
+        // a stale reading outlive the profile's own number.
+        if (id === origin && !cluster.at) continue
         const entry = boxes.get(id)
         const was = this.anchorOf(layer, id)
         if (!entry || !was) continue
-        const x = at[0] - entry.offX + shiftX
-        const y = at[1] - entry.offY + shiftY
+        const x = at[0] - entry.offX + groupX
+        const y = at[1] - entry.offY + groupY
         const to: [number, number] = [x, layer.flipY ? ctx.k - y : y]
         const still = CLUSTER_EPSILON_PX * ctx.unitsPerPx
         if (Math.abs(to[0] - was[0]!) < still && Math.abs(to[1] - was[1]!) < still) continue

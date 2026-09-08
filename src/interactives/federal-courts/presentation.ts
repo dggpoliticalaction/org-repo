@@ -65,10 +65,10 @@ export const federalCourtsPresentation: DrilldownPresentation = {
     anchorFact: "anchor",
     labelFact: "short-label",
     // The four courts with no territory. They are read against each other — the Supreme Court
-    // over the three specialist courts that feed the Federal Circuit — so the space between
-    // them is px and holds at any width, where an anchor apiece only held at the width it was
-    // measured at. Only where the group hangs is geographic, and that is the Supreme Court's
-    // anchor in `anchors.json`; the other three no longer have one.
+    // over the three specialist courts that feed the Federal Circuit — so both the space
+    // between them and their place on the map are worked out in px against the frame, not in
+    // map units: they stand in the Atlantic off Florida at every width, rather than sliding
+    // onto the coast as the map shrinks under blocks that keep their size.
     clusters: [
       {
         anchor: "scotus",
@@ -76,6 +76,7 @@ export const federalCourtsPresentation: DrilldownPresentation = {
         gap: 10,
         rowGap: 15,
         align: "right",
+        at: { x: 1, y: 1 },
       },
     ],
   },
