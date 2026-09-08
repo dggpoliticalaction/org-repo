@@ -593,9 +593,17 @@ export class MapStage {
     asset: DrilldownAsset,
   ): Promise<"done" | "fallback" | "cancelled" | "no-geometry"> {
     if (this.destroyed) return "cancelled"
+    // A region with no map of its own is read on the overview, where its children's blocks are
+    // drawn. So opening one is a journey back to the country when the reader is standing on
+    // another map — not merely a change of what `currentParent` says, which left the map they
+    // had been on painted underneath a view that had stopped believing in it.
     if (!this.hasGeometry(asset) || asset.viewBox === null) {
-      this.cancelMorph()
-      this.detachMorphLayer()
+      if (this.view.parentId !== null) {
+        if ((await this.drillOut()) === "cancelled") return "cancelled"
+      } else {
+        this.cancelMorph()
+        this.detachMorphLayer()
+      }
       this.view = { parentId }
       return "no-geometry"
     }
