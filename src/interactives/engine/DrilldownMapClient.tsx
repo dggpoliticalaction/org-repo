@@ -29,7 +29,7 @@ import { AssetLoader } from "./assetLoader"
 import { DrilldownPane, type DrilldownPaneHandle, type PinRequest } from "./DrilldownPane"
 import { DrilldownSearch } from "./DrilldownSearch"
 import { DrilldownSelector, type SelectVia } from "./DrilldownSelector"
-import { DrilldownTooltip } from "./DrilldownTooltip"
+import { DrilldownTooltip, type DrilldownTooltipHandle } from "./DrilldownTooltip"
 import { DEFAULT_VIEWBOX } from "./geometry"
 import { assetKeyFor, recordsFor } from "./records"
 import { buildRegionIndex, displayFacts } from "./regions"
@@ -176,7 +176,9 @@ export function DrilldownMapClient({
     })
   }, [showRail, railId])
 
-  const [hover, setHover] = useState<{ id: string; x: number; y: number } | null>(null)
+  // The tooltip is driven straight rather than through state: it follows a pointer, and a
+  // pointer reports itself far more often than anything above it has anything new to say.
+  const tooltipRef = useRef<DrilldownTooltipHandle | null>(null)
   // How far the camera has moved in, mirrored from the stage so the controls can say whether
   // there is anything to pan around or come back from.
   const [zoom, setZoom] = useState(1)
@@ -538,7 +540,11 @@ export function DrilldownMapClient({
 
   // ---- stage lifecycle ---------------------------------------------------------------------
 
-  // The stage is created once; it calls back into whichever `open` is current.
+  // The stage is created once; it calls back into whichever `open` and index are current.
+  const regionsRef = useRef(regions)
+  useEffect(() => {
+    regionsRef.current = regions
+  }, [regions])
   const selectRef = useRef(open)
   useEffect(() => {
     selectRef.current = open
@@ -560,7 +566,13 @@ export function DrilldownMapClient({
         regions: buildRegionIndex([overview]),
         seats: overview.payload?.seats ?? null,
         callbacks: {
-          onHover: (id, point) => setHover(id && point ? { id, x: point.x, y: point.y } : null),
+          onHover: (id, point) => {
+            const region = id ? (regionsRef.current.byId[id] ?? null) : null
+            tooltipRef.current?.point(
+              region && { label: region.label, summary: region.summary },
+              point,
+            )
+          },
           onSelect: (id, via) => void selectRef.current(id, via),
           onCamera: setZoom,
           // The map a drag happened on decides what its number is worth: the Ninth's block
@@ -670,7 +682,6 @@ export function DrilldownMapClient({
     const asset = key ? loaded[key] : undefined
     return asset?.payload?.facts || asset?.payload?.seats ? asset.payload : overview.payload
   }
-  const hoverRegion = hover ? (regions.byId[hover.id] ?? null) : null
   /**
    * Where the reader is, from the whole map down. The end of it is the deepest thing they
    * have chosen — the region whose pane is open, or else the map they are standing on — and
@@ -972,11 +983,7 @@ export function DrilldownMapClient({
           </div>
         </div>
       </div>
-      <DrilldownTooltip
-        label={hoverRegion?.label ?? null}
-        summary={hoverRegion?.summary ?? null}
-        cursor={hover ? { x: hover.x, y: hover.y } : null}
-      />
+      <DrilldownTooltip ref={tooltipRef} />
     </DrilldownSelectionProvider>
   )
 }
