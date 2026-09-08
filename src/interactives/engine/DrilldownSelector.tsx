@@ -253,9 +253,9 @@ export function DrilldownSelector({
                       data-drilldown-search-open=""
                       aria-label="Search"
                       onClick={onSearch}
-                      // The same padding and the same square as a region row, so the glyph
-                      // lands in the column they all share, not a little to one side of it.
-                      className="text-muted-foreground h-9 w-full"
+                      // The same square as a region row, so the glyph lands in the column
+                      // they all share rather than a little to one side of it.
+                      className="text-muted-foreground w-full p-1"
                     />
                   }
                 >
@@ -317,12 +317,12 @@ export function DrilldownSelector({
                             // glyph keeps the same offset from the rail's edge either way and
                             // the column narrowing is the only movement there is to see.
                             //
-                            // Square once folded. The width is the glyph plus its padding and
-                            // is not negotiable — it is what the column is cut to — so it is
-                            // the height that gives, carried by the row's own transition.
-                            // Nothing to do with the labels: "Fed" is drawn inside the very
-                            // box "IX" is.
-                            "group-data-[collapsed]/rail:h-9",
+                            // Square once folded, and square at the row's own height: 4px of
+                            // padding around a 20px glyph is 28, which is what `h-7` already
+                            // is. The glyph sits 4px nearer the edge than it does open, which
+                            // is the whole of the movement — a column built for a name has
+                            // more air in it than one built for a numeral.
+                            "group-data-[collapsed]/rail:p-1",
                             ACTIVE_ROW,
                           )}
                           render={<TooltipTrigger render={<button type="button" />} />}

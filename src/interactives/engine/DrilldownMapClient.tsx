@@ -711,7 +711,7 @@ export function DrilldownMapClient({
                 ? "grid-rows-[0fr] md:w-56 md:grid-rows-[1fr] lg:w-64"
                 : railChoice
                   ? "grid-rows-[1fr] md:w-56 lg:w-64"
-                  : "grid-rows-[0fr] md:w-11 md:grid-rows-[1fr]",
+                  : "grid-rows-[0fr] md:w-9 md:grid-rows-[1fr]",
             )}
           >
             {/* The clip is the rail's exact box, so anything drawn outside it — a focus

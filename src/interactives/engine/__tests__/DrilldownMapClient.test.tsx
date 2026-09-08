@@ -616,7 +616,7 @@ describe("DrilldownMapClient", () => {
     expect(toggle()).toHaveAccessibleName("Show the region list")
     // Folded is a narrow column, not nothing: the width goes to the map and the regions stay
     // where they were, so changing region is one press rather than three.
-    expect(rail()).toHaveClass("md:w-11")
+    expect(rail()).toHaveClass("md:w-9")
     expect(rail()).not.toHaveClass("md:w-56")
     expect(within(nav()).getByRole("button", { name: "West" })).toBeInTheDocument()
     // Beside the map it is on screen and reachable; only above the map, where it folds to no
