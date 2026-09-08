@@ -75,9 +75,8 @@ export function DrilldownPane({
   ref,
 }: DrilldownPaneProps): React.ReactElement {
   const [mode, setMode] = useState<BenchMode>("seats")
-  // Hidden by default: the question a bench answers first is who holds its authorized seats,
-  // and an outer band of senior judges around it doubles the chart's size to answer a second
-  // one. The control names them, so a reader who wants them can see there are some.
+  // Hidden by default: an outer band of senior judges doubles the chart's size to answer a
+  // question the reader did not ask first. The control names them, so it is discoverable.
   const [supernumeraryMode, setSupernumeraryMode] = useState<SupernumeraryMode>("hide")
   const [mark, setMark] = useState<string | null>(null)
   const [detail, setDetail] = useState<DetailSelection | null>(null)
@@ -119,11 +118,9 @@ export function DrilldownPane({
     ? (display.status.labels?.[display.status.supernumerary[0]] ?? "Others")
     : "Others"
   /**
-   * What the amber rings mean, said in words. The rings mark everyone sharing the selected
-   * record's cohort field, and an unlabelled ring is a riddle: name the field and the value it
-   * matched, and say how much of the bench that is. The field's own label comes from the detail
-   * line that already describes it ("Appointed by"), so a profile never spells it twice. A
-   * cohort of one is nobody's group, so it is neither ringed nor captioned.
+   * What the amber rings mean, said in words: the field, the value it matched and how much of
+   * the bench that is. The label comes from the detail line that already describes the field,
+   * so a profile never spells it twice. A cohort of one is neither ringed nor captioned.
    */
   const cohort = ((): { value: string; label: string; count: number; total: number } | null => {
     const field = display?.cohort
@@ -257,15 +254,13 @@ export function DrilldownPane({
               <Segmented<SupernumeraryMode>
                 label={supLabel}
                 // A timeline has no seats and no majority, so only two of the three mean
-                // anything in it; a reader arriving from the seat chart with "Counted"
-                // chosen is showing them, which is what that button says here.
+                // anything in it.
                 value={
                   mode === "timeline" && supernumeraryMode === "include"
                     ? "show"
                     : supernumeraryMode
                 }
-                // "Show" and "Include" are not the same thing, and the old labels never said
-                // which was which: one puts them beside the bench, the other puts them in it.
+                // "Show" puts them beside the bench; "Include" puts them in it.
                 options={
                   mode === "timeline"
                     ? [

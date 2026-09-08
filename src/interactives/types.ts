@@ -1,21 +1,14 @@
 /**
- * The ownership split behind every interactive page.
- *
- * A drilldown interactive is assembled from three sources with two owners:
+ * The ownership split behind every interactive page. Three sources, two owners:
  *
  *   geometry      — parsed region shapes, checked into this repo            Pragmatic Papers
  *   presentation  — labels, colours, ordering, formats, seat grouping       Pragmatic Papers
  *   data          — region facts and records, synced from a researcher's feed   the researcher
  *
- * The rule that keeps the split honest: **data carries values and meanings; code carries
- * appearance.** A feed may say `party: "D"` or `status: "senior"`; only the profile says what
- * colour "D" is or how a senior judge is drawn. `compose.ts` reads `facts`, `seats` and
- * `display` from the code-owned profile and nowhere else, so a feed cannot set a colour, a
- * label or an order even if it tries.
- *
- * The rendering engine in `@/interactives/engine` is untouched by this: it still
- * consumes `DrilldownAsset`s. What changes is where an asset comes from — composed here from
- * the three sources instead of parsed out of one uploaded SVG.
+ * The rule that keeps it honest: **data carries values and meanings; code carries appearance.**
+ * A feed may say `party: "D"`; only the profile says what colour "D" is. `compose.ts` reads
+ * `facts`, `seats` and `display` from the profile and nowhere else, so a feed cannot set a
+ * colour, a label or an order even if it tries.
  */
 import type {
   DeclaredRegion,
@@ -65,11 +58,7 @@ export interface DrilldownData {
 
 // ---- presentation: Pragmatic Papers' half ----------------------------------------------------
 
-/**
- * Where a `portrait` detail line gets its faces: the named dataset in the feed, and which of
- * its fields hold the image and its source. The feed supplies the values; this says what to
- * read and the detail line says whether to show it.
- */
+/** Where a `portrait` detail line gets its faces: a named dataset, and the fields to read. */
 export interface LookupSource {
   dataset: string
   image?: string
@@ -113,9 +102,8 @@ export interface DrilldownGeometry {
 
 export interface FeedFetchOptions {
   /**
-   * Which upstream revision to read. `"release"` (the default everywhere) means "whatever the
-   * newest published data release is", which an adapter resolves for itself; anything else is
-   * honoured verbatim, so a branch or a specific tag can still be pinned for debugging.
+   * Which upstream revision to read. `"release"` (the default) means the newest published data
+   * release, which the adapter resolves; anything else is honoured verbatim.
    */
   ref: string
   fetchImpl?: typeof fetch
@@ -135,16 +123,11 @@ export interface FeedSnapshot<Raw> {
   raw: Raw
 }
 
-/**
- * How one upstream is read and reshaped. The adapter is Pragmatic Papers' code: it absorbs
- * upstream's shape so the researcher's only obligation is to keep publishing what they
- * already publish and to say when its shape changes.
- */
+/** How one upstream is read and reshaped, so the researcher only has to keep publishing. */
 export interface FeedAdapter<Raw> {
   /**
-   * The outside connection this feed reads through (`@/integrations`). It owns the
-   * credential and the transport; the adapter owns the shape of what comes back. The sync
-   * asks it whether the feed is reachable at all before it tries.
+   * The outside connection this feed reads through (`@/integrations`): it owns the credential
+   * and the transport, the adapter owns the shape of what comes back.
    */
   integration: Integration
   /** Where the feed comes from, for logs ("github:org/repo"). */
@@ -175,11 +158,9 @@ export interface InteractiveProfile<Raw = unknown> {
    */
   metaLine?(input: { data: DrilldownData }): string | null
   /**
-   * The landing view shown before a reader picks a region: an overview of the whole dataset.
-   *
-   * `compose` runs on the server and its result is cached with the overview, so it must be
-   * serialisable. `render` is the only place that knows the shape, which keeps the summary's
-   * type inside the profile instead of forcing every caller to carry it.
+   * The landing view shown before a reader picks a region. `compose` runs on the server and is
+   * cached with the overview, so its result must be serialisable; `render` is the only place
+   * that knows the shape, which keeps it inside the profile.
    */
   summary?: {
     compose(input: { presentation: DrilldownPresentation; data: DrilldownData }): unknown

@@ -14,13 +14,10 @@ import { isRecord } from "@/utilities/isRecord"
 import type { DrilldownData, DrilldownGeometry, DrilldownPresentation, GeometryFile } from "./types"
 
 /**
- * Where the ownership rule is enforced.
- *
- * The engine renders `DrilldownAsset`s. These functions build them from the three sources —
- * code geometry, code presentation, synced data — and are the only place the three meet.
- * `facts`, `seats` and `records.display` are taken from `presentation` and from nothing else;
- * path facts are emptied so nothing baked into a geometry file leaks through either. A feed
- * that carries a `display` block, or geometry with `data-color` on a path, changes nothing.
+ * Where the ownership rule is enforced: the only place code geometry, code presentation and
+ * synced data meet. `facts`, `seats` and `records.display` come from `presentation` and
+ * nowhere else, and path facts are emptied, so neither a feed carrying a `display` block nor
+ * geometry carrying `data-color` changes anything.
  */
 
 export interface ComposeInput {
@@ -29,11 +26,7 @@ export interface ComposeInput {
   data: DrilldownData
 }
 
-/**
- * Side tables for the `portrait` detail lines: the profile names a dataset and the fields to
- * read; the feed supplies the rows. A dataset the feed does not carry yields no table, and a
- * portrait line then falls back to the plain value it already had.
- */
+/** Side tables for the `portrait` detail lines. A dataset the feed lacks yields no table. */
 function composeLookups(
   presentation: DrilldownPresentation,
   data: DrilldownData,
@@ -164,15 +157,11 @@ function subtreeRegions(
 }
 
 /**
- * A drillable region's two halves, fetched separately because they change on different
- * clocks. The geometry is code — it moves when the map is reprojected, so its URL carries a
- * content hash and is cached forever. The records are the researcher's, and change every time
- * the sync finds something new. Fused, as they used to be, every nightly data change re-sent
- * a map that had not moved: for the Ninth Circuit that is 74 KB of geometry against 22 KB of
- * records, compressed.
- *
- * Both halves are `DrilldownAsset`s, so either URL is something a person can open and read,
- * and the client merges them back into one before the stage ever sees it.
+ * A drillable region's two halves, fetched separately because they change on different clocks:
+ * the geometry moves only when the map is reprojected, so its URL carries a content hash and
+ * is cached forever, while the records change every time the sync finds something new. Fused,
+ * every nightly data change re-sent a map that had not moved — 74 KB against 22 KB for the
+ * Ninth. Both halves are `DrilldownAsset`s, and the client merges them before the stage sees it.
  */
 export function composeChildGeometry(
   geometry: DrilldownGeometry,

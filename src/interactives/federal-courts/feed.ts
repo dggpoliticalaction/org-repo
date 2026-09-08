@@ -18,10 +18,8 @@ import type {
 export const COURT_TRACKER_TAG_PREFIX = "data-v"
 
 /**
- * The release asset carrying exactly what we read: every runtime `data/*.json`, at the paths
- * the manifest names, and none of the photos, geometry or widget code that make up ~98% of
- * the full package. Upstream publishes it for a consumer that renders its own map, which is
- * what we are.
+ * The release asset carrying exactly what we read: every runtime `data/*.json`, and none of
+ * the photos, geometry or widget code that make up ~98% of the full package.
  */
 export const COURT_TRACKER_JSON_ASSET = "data-json.tar.gz"
 
@@ -40,10 +38,9 @@ export async function readCourtTrackerSources(
   if (manifest.schema !== "court-tracker/manifest@1") {
     throw new Error(`${files.describe()}: unexpected manifest schema "${manifest.schema}"`)
   }
-  // Upstream versions the shape of the data separately from its content, so a MAJOR bump is a
-  // contract change: a closed enum gained a value, a field changed type, a file went away.
-  // Refuse it here, where the message can say so, rather than downstream where it arrives as
-  // a validation error about a region. An older manifest carries no schema version at all.
+  // A MAJOR bump is a contract change — an enum gained a value, a field changed type, a file
+  // went away — so it is refused here, where the message can say so. An older manifest
+  // carries no schema version at all.
   const major = Number.parseInt(manifest.schema_version ?? "", 10)
   if (Number.isFinite(major) && major !== COURT_TRACKER_SCHEMA_MAJOR) {
     throw new Error(
@@ -64,10 +61,9 @@ export async function readCourtTrackerSources(
     optional<Record<string, PresidentPhoto>>(f.president_photos),
     optional<Appointment[]>(f.appointments),
   ])
-  // Read together, but keyed back in the manifest's own order. Assigning as each read lands
-  // makes the bundle order — and so the order of every record in the snapshot, and the content
-  // hash over it — depend on which request finished first: two syncs of identical upstream
-  // data would disagree, and each would write a new version saying nothing had changed.
+  // Read together, keyed back in the manifest's own order: assigning as each read lands would
+  // make the content hash depend on which request finished first, and two syncs of identical
+  // data would each write a version saying nothing had changed.
   const bundles = Object.entries(f.judges)
   const loaded = await Promise.all(bundles.map(([, path]) => files.readJson<Judge[]>(path)))
   const judges: Record<string, Judge[]> = {}
@@ -82,11 +78,9 @@ export async function readCourtTrackerSources(
 }
 
 /**
- * The revision to read. Upstream asks consumers not to read `main`, because a scheduled pull
- * can catch it mid-push or catch `data/` and `assets/geo/` disagreeing across two commits;
- * every manifest bump cuts an immutable `data-v<version>` release instead. A caller that pins
- * something else is honoured, and a repo that has published no release yet falls back to the
- * default branch so this keeps working before upstream's release workflow lands.
+ * The revision to read. Upstream asks consumers not to read `main` — a scheduled pull can
+ * catch it mid-push — and cuts an immutable `data-v<version>` release per manifest bump. A
+ * caller that pins something else is honoured; a repo with no release falls back to the branch.
  */
 async function resolveRef(
   opts: FeedFetchOptions,
@@ -100,10 +94,8 @@ async function resolveRef(
 }
 
 /**
- * Where one fetch reads its files from. A release that attaches the JSON archive is read as
- * the archive — one request for the whole feed, and no way to see two files from two builds.
- * A pinned ref, or a release cut before upstream published that asset, is read file by file
- * at the ref instead, which is the same bytes for more round trips.
+ * Where one fetch reads its files from: the JSON archive when a release attaches one — one
+ * request, and no way to see two files from two builds — or file by file at the ref.
  */
 async function resolveSource(opts: FeedFetchOptions): Promise<{ ref: string; files: FileSource }> {
   const { ref, release } = await resolveRef(opts)
@@ -116,9 +108,8 @@ async function resolveSource(opts: FeedFetchOptions): Promise<{ ref: string; fil
 }
 
 /**
- * The Federal Courts feed. The researcher's manifest is the contract: its `version` says
- * whether anything moved, its `files` say what to read. Nothing here asks the researcher to
- * change what they publish.
+ * The Federal Courts feed. The manifest is the contract: `version` says whether anything
+ * moved, `files` say what to read.
  */
 export const courtTrackerFeed: FeedAdapter<CourtTrackerSources> = {
   integration: courtTracker,

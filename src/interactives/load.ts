@@ -16,15 +16,12 @@ import { composeSearchIndex } from "./search"
 import { DRILLDOWN_DATA_SCHEMA, type DrilldownData, type InteractiveProfile } from "./types"
 
 /**
- * Server-side loading for an interactive page. Two rules keep this cheap and correct:
+ * Server-side loading for an interactive page. Two rules keep it cheap and correct:
  *
- * - The snapshot document is megabytes. It is read once per request (`React.cache`) and what
- *   gets cached across requests is the *composed* asset for one view — the overview, or one
- *   region — each well under a megabyte, tagged so the sync and the collection hooks can drop
- *   them together.
- * - In draft mode nothing is cached and the newest snapshot version is read, draft or
- *   published. That is the preview: an editor opens the page from the admin and sees the
- *   researcher's latest data in the site's design before publishing it.
+ * - The snapshot is megabytes. It is read once per request (`React.cache`); what is cached
+ *   across requests is the *composed* asset for one view, tagged so the sync can drop them.
+ * - In draft mode nothing is cached and the newest snapshot version is read, so an editor
+ *   previewing from the admin sees the researcher's latest data before publishing it.
  */
 
 export const queryInteractiveBySlug = cache(async (slug: string): Promise<Interactive | null> => {
@@ -105,8 +102,7 @@ async function composeOverviewFor(
   if (!data) return null
   const overview = composeOverview({ presentation: profile.presentation, geometry, data })
   // Two URLs per region, because the halves change on different clocks. The geometry's
-  // carries a hash of itself: it is code, so the only thing that moves it is a reprojection,
-  // and a URL that changes then is one a browser can hold on to forever.
+  // carries a hash of itself, so a browser can hold it forever and a reprojection issues a new one.
   const childAssets = childKeys(geometry).map((regionId) => {
     const base = `${interactivePath(interactive.slug)}/regions/${encodeURIComponent(regionId)}`
     return {
@@ -164,11 +160,7 @@ export async function loadInteractiveOverview(
   )()
 }
 
-/**
- * One region's shapes. Code, not data: no snapshot is read, nothing is cached by tag, and the
- * route that serves it tells the browser to keep it forever — the hash in its URL is what
- * makes that safe.
- */
+/** One region's shapes. Code, not data: no snapshot read, and cacheable forever by its hash. */
 export async function loadInteractiveGeometry(
   interactive: Interactive,
   regionId: string,

@@ -1,20 +1,16 @@
 /**
  * Integrations: the outside services this site reads from and writes to.
  *
- * An integration is one **connection**, not a vendor in the abstract. Two GitHub repositories
- * read with two different tokens are two connections; a Shopify store is one. Each is declared
- * once in `./index`, points at exactly one place, and answers for itself whether it is usable.
+ * An integration is one **connection**, not a vendor: two GitHub repositories read with two
+ * tokens are two connections. Each is declared once in `./index` and answers for itself
+ * whether it is usable.
  *
  * The shared contract is deliberately thin — identity, the environment it needs, and a probe.
- * What a connection *does* is its own API, because a Storefront catalogue and a tagged data
- * release have nothing in common except that reading either needs a credential and can fail.
- * Forcing a common `sync()` on them would encode the accidents of whichever two came first
- * (issue #912 makes the same argument from the admin panel's side).
+ * What a connection *does* is its own API; forcing a common `sync()` on a Storefront catalogue
+ * and a tagged data release would encode the accidents of whichever two came first (#912).
  *
  * **Secrets stay in the environment.** A connection names the variables it needs and reports
- * which are missing; it never reports a value, and nothing here writes a credential to the
- * database. That keeps a database backup from becoming a credential store, and still answers
- * the question an editor actually asks: is this connected?
+ * which are missing, never a value, and nothing here writes a credential to the database.
  */
 
 export interface Integration {
@@ -57,9 +53,8 @@ export interface IntegrationStatus {
 const isSet = (name: string): boolean => (process.env[name]?.trim() ?? "") !== ""
 
 /**
- * What one connection reports about itself. Reads the environment on every call rather than
- * at import: a status probe that answers from a value captured at boot is a status probe that
- * lies after a redeploy changes one.
+ * What one connection reports about itself. Reads the environment on every call rather than at
+ * import: a probe answering from a value captured at boot lies after a redeploy changes one.
  */
 export function integrationStatus(integration: Integration): IntegrationStatus {
   const missing = integration.required.filter((name) => !isSet(name))

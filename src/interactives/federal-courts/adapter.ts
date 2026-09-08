@@ -6,12 +6,8 @@ import ANCHORS from "./geometry/anchors.json"
 import type { Court, CourtTrackerSources, Judge, Justice, SeatBlock } from "./upstream"
 
 /**
- * court-tracker → drilldown data. Pragmatic Papers owns this file: it absorbs upstream's
- * shape so the researcher's only obligation is to keep publishing what they already publish.
- *
- * Everything here is a value or a meaning — counts, dates, names, which party appointed
- * whom, the statutory explainer a court's pane cites. Nothing here is appearance; that is
- * `presentation.ts`.
+ * court-tracker → drilldown data. Everything here is a value or a meaning — counts, dates,
+ * names, the statutory explainer a court's pane cites. Appearance is `presentation.ts`.
  */
 
 /**
@@ -59,13 +55,9 @@ const CIRCUIT_LABEL: Record<string, string> = {
 }
 
 /**
- * The Supreme Court has no territory, so upstream publishes no seat block for it — but it is a
- * top-level region like any circuit and a reader looks for it on the map. Park it in the open
- * Atlantic below the Federal Circuit, the other court with no map of its own, so the two read
- * as a column of national courts. National map units (`geometry/national.json`).
- *
- * Low enough to clear the Federal Circuit's feeder courts, which appear in the column between
- * the two when that circuit is opened. There is no room above them and a good deal below.
+ * The Supreme Court has no territory, so upstream publishes no seat block for it. This is
+ * where its own goes, in national map units — a fallback, since the profile's cluster places
+ * the courts with no territory against the frame.
  */
 const SCOTUS_ANCHOR: [number, number] = [2029097, -25000]
 
@@ -101,13 +93,10 @@ function cleanPhotoUrl(url: string | null | undefined): string | null {
 const COURT_PREFIX = /^U\.S\. (?:Court of Appeals|District Court) for the /
 
 /**
- * What a court is called wherever a reader meets it: the region rail, the map's tooltip, the
- * pane's heading. Upstream publishes two names and neither is the one to show. `short_name`
- * is a citation abbreviation — "D. Mass.", "9th Cir." — which a lawyer reads at a glance and
- * everyone else has to decode. `court_name` is the full title, which says "U.S. District
- * Court for the" ninety-four times down one column. Drop that opening and the court is left
- * named in words: "District of Massachusetts", "Ninth Circuit". The full title stays on as
- * the `full-name` fact, so the pane can still show a court its formal name.
+ * What a court is called wherever a reader meets it. Neither name upstream publishes is the
+ * one to show: `short_name` is a citation abbreviation only a lawyer reads at a glance, and
+ * `court_name` says "U.S. District Court for the" ninety-four times down one column. Dropping
+ * that opening leaves the court named in words; the full title stays on as `full-name`.
  */
 function regionLabel(court: Court): string {
   return court.court_name.replace(COURT_PREFIX, "").trim() || court.short_name
@@ -122,19 +111,13 @@ function tenureLabel(t: Court["tenure_type"]): string {
 }
 
 /**
- * How a court's bench is counted.
+ * How a court's bench is counted. Upstream publishes this arithmetic per court in
+ * `seat_blocks.json` and tiers it as portable, so it is used rather than redone: a handful of
+ * district courts seat more active judges than they are authorized, because roving judgeships
+ * are shared across a state, so "authorized minus active" is not the vacancy count.
  *
- * Upstream publishes this arithmetic per court in `seat_blocks.json` — authorized seats, the
- * active bench split by appointing party, and the vacancies left over — and their data
- * contract tiers those counts as portable, meaning they are published for a consumer to use
- * rather than to redo. Redoing them here would be a second implementation of a
- * reconciliation with a real subtlety in it: a handful of district courts seat more active
- * judges than they are authorized, because roving judgeships are shared across a state, so
- * "authorized minus active" is not the vacancy count.
- *
- * Two things are still ours. `senior` is not in their blocks, so it is counted from the judge
- * rows. And a court with no block at all — the Supreme Court, which has no territory to draw
- * — falls back to those same rows.
+ * `senior` is not in their blocks and is counted from the judge rows; so is a court with no
+ * block at all, which is the Supreme Court.
  */
 interface SeatCounts {
   /** Squares to draw: the active bench plus its vacancies, which can exceed `authorized`. */
@@ -187,8 +170,7 @@ function summaryFor(court: Court, counts: SeatCounts): string {
   )
   if (court.tenure_type !== "fixed_term" && court.court_level !== "scotus")
     parts.push(`${counts.senior} senior`)
-  // A full bench is the unremarkable case; saying "0 vacant" spends the tooltip's one line
-  // on a non-fact. Only an actual vacancy is worth the reader's attention.
+  // A full bench is the unremarkable case, and "0 vacant" spends the tooltip's one line on it.
   if (counts.vacant > 0) parts.push(`${counts.vacant} vacant`)
   return parts.join(" · ")
 }
@@ -239,10 +221,9 @@ export function factsFor(
   facts["seats-r"] = String(counts.r)
   facts["seats-o"] = String(counts.o)
   facts["seats-d"] = String(counts.d)
-  // Circuit and feeder anchors are in national units; district anchors in the circuit's local
-  // units. A region is drawn as a block in exactly one of the two views, so one anchor suffices.
-  // Placement is ours: the anchors are checked in beside the geometry they are measured
-  // against (`geometry/anchors.json`), not read from the feed on every sync.
+  // Circuit and feeder anchors are in national units, district anchors in the circuit's own.
+  // A region is drawn as a block in exactly one view, so one anchor suffices. Placement is
+  // ours: `geometry/anchors.json`, checked in beside the geometry it is measured against.
   const anchor = court.court_level === "scotus" ? SCOTUS_ANCHOR : anchorFor(court.court_id)
   if (anchor) facts.anchor = anchor.join(",")
   const short = CIRCUIT_LABEL[court.court_id]
@@ -381,14 +362,12 @@ export function adaptCourtTracker(
 
   const datasets: Record<string, unknown> = {}
   if (raw.presidents) datasets.presidents = raw.presidents
-  // Folded here rather than kept as rows: the charts read the same few kilobytes out of a
-  // megabyte on every request, and the rows only move when upstream rebuilds.
+  // Folded here rather than kept as rows: the rows only move when upstream rebuilds.
   const appointments = aggregateAppointments(raw.appointments, PARTIES)
   if (appointments) datasets.appointments = appointments
 
-  // What the manifest states about its own build, rather than what we can derive from the
-  // rows. Upstream computes the national reconciliation once; redoing it here would be a
-  // second implementation of their arithmetic, free to drift from theirs.
+  // What the manifest states about its own build, rather than a second implementation of
+  // upstream's arithmetic free to drift from theirs.
   const upstream: Record<string, unknown> = {}
   if (raw.manifest.last_appointment) upstream.last_appointment = raw.manifest.last_appointment
   if (raw.manifest.national_totals) upstream.national_totals = raw.manifest.national_totals

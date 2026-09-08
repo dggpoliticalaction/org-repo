@@ -3,10 +3,9 @@
  * that neighbours keep a minimum spacing, with supernumerary members in a greyed outer band.
  * Pure functions over counts and pixel sizes; the React stage applies the positions.
  *
- * Two sets of metrics. The regular set is tuned for a wide stage (an article's full column,
- * the tracker's own 1000 px pane). A side column on an interactive page is ~400–480 px, and
- * a 29-seat bench as a four-ring dome needs ~530 px at regular size, so a narrow stage gets
- * the compact set: smaller icons, tighter rings, same algorithm.
+ * Two sets of metrics: a regular set tuned for a wide stage, and a compact one — smaller
+ * icons, tighter rings, same algorithm — for a side column, where a 29-seat bench as a
+ * four-ring dome would need ~530 px at regular size.
  */
 
 export interface SeatMetrics {
@@ -132,10 +131,8 @@ export function planRings(
 }
 
 /**
- * Evenly spaced slot angles on a semicircle, endpoints included (every ring has a seat at
- * exactly 180°); a lone seat sits at 90°. A tiny single-ring bench (≤ 3) looks odd stretched
- * to the extremes, so it spreads with arc buffers instead: 2 seats at 120°/60°, 3 at
- * 135°/90°/45°.
+ * Evenly spaced slot angles on a semicircle, endpoints included; a lone seat sits at 90°. A
+ * bench of ≤ 3 looks odd stretched to the extremes, so it spreads with arc buffers instead.
  */
 export function ringSlotAngles(count: number, buffered: boolean): number[] {
   if (count <= 1) return [Math.PI / 2]

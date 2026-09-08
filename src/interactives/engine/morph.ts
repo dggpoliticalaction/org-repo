@@ -85,14 +85,9 @@ export const easeInOutCubic = (t: number): number =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 
 /**
- * The two halves of a crossing, eased at their outer ends only.
- *
- * `easeInOutCubic` is at rest at BOTH ends, so using it for each half brings the shapes to a
- * standstill at the country and starts them again — the very stop the crossing exists to
- * remove, reintroduced by the easing after the camera had stopped making it. The leaving half
- * accelerates from rest and hands over at full speed; the arriving half takes over at that
- * speed and decelerates into place. Cubes on both sides, so the two velocities match at the
- * handover and the join is not a seam.
+ * The two halves of a crossing, eased at their outer ends only: `easeInOutCubic` is at rest at
+ * both ends, and a half using it stops at the country — the very stop the crossing removes.
+ * Cubes on both sides, so the velocities match at the handover and the join is not a seam.
  */
 export const easeInCubic = (t: number): number => t * t * t
 export const easeOutCubic = (t: number): number => 1 - Math.pow(1 - t, 3)
@@ -104,12 +99,11 @@ export const easeOutCubic = (t: number): number => 1 - Math.pow(1 - t, 3)
 export const MORPH_MS = 800
 
 /**
- * Cap on the morph's COMMIT rate, independent of display refresh. On a high-refresh display
- * the rAF loop otherwise pushes a full-map repaint commit every vsync; combined with a
- * high-rate mouse forcing input-aligned frames, Chrome's compositor convoys until the page
- * freezes for seconds. Measured upstream (court-tracker tests/freeze-hunt.mjs): uncapped froze
- * hard every run; ≥16 ms per commit survived 30-cycle runs with no freeze. 16 is a no-op at
- * 60 Hz and lands ~48–72 fps on 120–144 Hz displays. Do not "clean this up".
+ * Cap on the morph's commit rate, independent of display refresh. On a high-refresh display
+ * the rAF loop otherwise commits a full-map repaint every vsync, and with a high-rate mouse
+ * forcing input-aligned frames Chrome's compositor convoys until the page freezes for seconds.
+ * Measured upstream (court-tracker tests/freeze-hunt.mjs): uncapped froze hard every run; ≥16
+ * ms survived 30-cycle runs. A no-op at 60 Hz. Do not "clean this up".
  */
 export const MORPH_MIN_COMMIT_MS = 16
 
@@ -122,19 +116,11 @@ export function lerpViewBox(a: readonly number[], b: readonly number[], u: numbe
  * A camera move from one viewBox to another, interpolated the way a zoom is seen rather than
  * the way its numbers are stored.
  *
- * Interpolating `x`, `y`, `w`, `h` in a straight line looks wrong whenever the two boxes differ
- * much in scale, and drilling from the country into a circuit differs by five times. Half the
- * numeric distance between 5.2M and 1.0M units is 3.1M — still almost the whole country — so
- * the view stays wide for most of the move and then collapses. Meanwhile the centre, moving at
- * a constant rate in map units, covers almost no ground per frame while the view is wide and
- * then tears across the screen once it is narrow. Together they read as zooming into the middle
- * of the country and jumping to the region at the last moment.
- *
- * Both come from measuring in map units what the reader is judging in screen widths. So the
- * scale is interpolated geometrically — equal ratios in equal time, halfway between 5.2M and
- * 1.0M being 2.3M — and the centre is carried along in proportion to the scale's own progress,
- * which is what holds the pan to a steady speed across the screen. The region is under the
- * camera early, and stays there while the view closes on it.
+ * A straight line through `x`, `y`, `w`, `h` measures in map units what the reader judges in
+ * screen widths: halfway between 5.2M and 1.0M is 3.1M, still almost the whole country, so the
+ * view stays wide and then collapses while the centre tears across at the end. The scale is
+ * therefore interpolated geometrically — equal ratios in equal time — and the centre carried
+ * along in proportion to its progress, which holds the pan to a steady speed on screen.
  */
 export function zoomViewBox(a: readonly number[], b: readonly number[], u: number): number[] {
   const [ax, ay, aw, ah] = a as [number, number, number, number]
@@ -142,8 +128,8 @@ export function zoomViewBox(a: readonly number[], b: readonly number[], u: numbe
   if (aw <= 0 || bw <= 0 || ah <= 0 || bh <= 0) return lerpViewBox(a, b, u)
   const w = aw * Math.pow(bw / aw, u)
   const h = ah * Math.pow(bh / ah, u)
-  // How far the scale has come, as a fraction of the whole move. Equal to `u` when there is no
-  // zoom to speak of, which is also the only case where the ratio would divide by nothing.
+  // How far the scale has come, as a fraction of the whole move. Equal to `u` when there is
+  // no zoom, which is also the only case where the ratio would divide by nothing.
   const f = Math.abs(bw - aw) > 1e-6 ? (w - aw) / (bw - aw) : u
   const cx = ax + aw / 2 + (bx + bw / 2 - (ax + aw / 2)) * f
   const cy = ay + ah / 2 + (by + bh / 2 - (ay + ah / 2)) * f
@@ -175,19 +161,12 @@ export function subpathBounds(sets: readonly Subpath[][]): number[] | null {
  * The camera correction that makes a morph a flight over the map rather than the map sliding
  * up to a stationary camera.
  *
- * An overview and a child view are separately projected files, so a circuit sits in one place
- * in the country's coordinates and somewhere else entirely in its own — for the Eleventh they
- * are over a million units apart. The morph interpolates shapes from the first frame to the
- * second, which means that during the transition the map is bodily translating, and a camera
- * interpolated between a box in one frame and a box in the other rides along with it. Both
- * ends come out right, so it looks like a zoom; but the region never travels across the
- * screen toward the reader, so drilling anywhere feels like the same fixed pull-in and the
- * country appears pinned wherever the two frames happen to cross.
- *
- * `contentFrom` and `contentTo` are the same shapes' extent in each frame, so the two give the
- * scale and offset the drawing has picked up by `u`. Applying that to a camera flown in the
- * overview's own coordinates puts the flight back over the map: aim south for the Eleventh,
- * west for the Ninth, and arrive with the region framed exactly as its own view frames it.
+ * An overview and a child view are separately projected, so a circuit sits over a million
+ * units from itself between the two. The morph translates the map bodily, and a camera
+ * interpolated between a box in each frame rides along with it — right at both ends, but the
+ * region never travels toward the reader. `contentFrom`/`contentTo` are the same shapes'
+ * extent in each frame, so applying what the drawing has done by `u` to a camera flown in the
+ * overview's own coordinates puts the flight back over the map.
  */
 export function frameForContent(
   flight: readonly number[],
@@ -238,17 +217,11 @@ export function pullbackViewBox(
 }
 
 /**
- * How to place content that belongs to one file into the frame the morph has reached.
- *
- * A morph layer draws three things at once: the overview's own shapes, the child's own shapes,
- * and the paired shapes interpolating between the two. Only the paired ones are in the frame
- * the camera follows. The other two are each a whole projection away — for the Eleventh
- * Circuit a million units — so without this the child's districts and its seat blocks hang
- * north of the map they belong to for the whole of the crossfade, worst in the middle where
- * both are half visible.
- *
- * Scaling stays uniform even though the two extents rarely agree on aspect: a fraction of a
- * percent of slack in the outlines is not worth squashing the seat blocks over.
+ * How to place content that belongs to one file into the frame the morph has reached. A morph
+ * layer draws the overview's own shapes, the child's own shapes and the paired shapes between
+ * them; only the paired ones are in the frame the camera follows, and the other two are each a
+ * whole projection away. Scaling stays uniform: a fraction of a percent of slack in the
+ * outlines is not worth squashing the seat blocks over.
  */
 export function frameScale(content: readonly number[], blended: readonly number[]): number {
   const [, , aw, ah] = content as [number, number, number, number]
@@ -271,16 +244,9 @@ const CROSS_MARGIN = 1.35
 
 /**
  * The view a crossing passes through, in the overview's own coordinates: far enough out to
- * hold both maps and their surroundings, and no further.
- *
- * Both halves must agree here — at the join they are drawing the same country, and the camera
- * swaps between them — so this is computed once from the two ends rather than by each half.
- * Going all the way out to the whole country is a longer journey than most crossings need: two
- * neighbouring circuits do not require a national view to travel between, and now that the
- * shapes travel smoothly the pull-back is the only part that still feels like a detour.
- *
- * Never wider than the country, because the country is what the shapes have become by then and
- * there is nothing beyond it to show.
+ * hold both maps and no further, since two neighbouring circuits do not need a national view
+ * to travel between. Computed once from the two ends, because both halves must agree — at the
+ * join they are drawing the same country. Never wider than the country itself.
  */
 export function crossApexViewBox(
   from: readonly number[],

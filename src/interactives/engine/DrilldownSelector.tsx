@@ -50,11 +50,9 @@ interface DrilldownSelectorProps {
 const viaOf = (e: React.MouseEvent): SelectVia => (e.detail === 0 ? "keyboard" : "pointer")
 
 /**
- * The chosen region, as an inversion of the rail's own two colours.
- *
- * Not the default active tint, which is the same wash as hover and vanished down a column of
- * a hundred rows. Not `sidebar-primary` either: in this theme that token is a blue, and blue
- * on this page means a Democratic appointee — a selection must not read as a party.
+ * The chosen region, as an inversion of the rail's own two colours. Not the active tint, which
+ * is the same wash as hover and vanishes down a hundred rows; not `sidebar-primary`, which is
+ * a blue, and blue on this page means a Democratic appointee.
  */
 const ACTIVE_ROW =
   "data-active:bg-sidebar-foreground data-active:text-sidebar data-active:hover:bg-sidebar-foreground data-active:hover:text-sidebar"
@@ -76,9 +74,8 @@ const rowProps = (
   "data-region-item": regionId,
   "aria-pressed": selected,
   tabIndex: tabbable ? 0 : -1,
-  // Court names run to "District of the Northern Mariana Islands"; the rail is sized for most
-  // of them and this is how a reader gets the rest. Top-level rows say it in a tooltip
-  // instead — they have to, since folded they are a glyph with no name showing at all.
+  // The rail is sized for most names and this is how a reader gets the rest. Top-level rows
+  // use a tooltip instead: folded, they are a glyph with no name showing at all.
   title: titled ? label : undefined,
 })
 
@@ -86,16 +83,10 @@ const rowProps = (
 const BRANCH_MS = 220
 
 /**
- * A branch that grows and shrinks rather than appearing and vanishing.
- *
- * The point is the swap: when a reader opens a second circuit, the first one's districts
- * shrink away while the new ones grow in, so it is visible where the list that just arrived
- * came from. Both are therefore on screen together, which is why a closing branch stays
- * mounted until its transition is over.
- *
- * `grid-template-rows: 0fr → 1fr` is what animates to a height nobody has measured. A branch
- * that mounts already open — every first open, since its children arrive with the fetch —
- * would have nothing to animate from, so the first frame is spent closed.
+ * A branch that grows and shrinks rather than appearing and vanishing, so a reader opening a
+ * second circuit can see where the list that arrived came from — which is why a closing branch
+ * stays mounted until its transition is over. `grid-template-rows: 0fr → 1fr` animates to a
+ * height nobody has measured, and a branch that mounts open spends its first frame closed.
  */
 function Branch({
   open,
@@ -114,13 +105,11 @@ function Branch({
   return (
     <div
       data-drilldown-branch={open ? "open" : "closing"}
-      // Not focusable, not clickable, not in the accessibility tree: a branch on its way out
-      // is a picture of where the reader has been, not somewhere they can go.
+      // A branch on its way out is a picture of where the reader has been, not a place to go.
       inert={!open || undefined}
       className={cn(
         // Duration and easing sit inside the guard with the property: `transition-property`
-        // defaults to `all`, so a bare `duration-200` animates everything — including this
-        // height — for a reader who asked for no motion.
+        // defaults to `all`, so a bare `duration-200` animates this height regardless.
         "grid motion-safe:transition-[grid-template-rows] motion-safe:duration-200 motion-safe:ease-out",
         grown && open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
         className,
@@ -133,18 +122,12 @@ function Branch({
 
 /**
  * The region rail: every top-level region down the left of the stage, each drillable one
- * opening to show its own children in place. A tree rather than a strip that swaps its
- * contents, so the reader can see where a district sits without first having to go there.
+ * opening to show its children in place. Built on the sidebar primitives, `collapsible="none"`
+ * — this is a column beside a map, not an app shell — though the provider is still required.
  *
- * Built on the sidebar primitives (`components/ui/sidebar`), which is what a menu of nested
- * rows with a secondary action on each is in this design system — `collapsible="none"`,
- * because this is a column beside a map rather than an app shell that folds away. The
- * provider is still required: a menu button reads the sidebar's state whether or not anything
- * ever collapses.
- *
- * One tab stop: the selected item (or the first) is tabbable and the arrow keys move focus
- * through the visible rows, so a keyboard reader crosses 94 districts with one Tab, not 94.
- * Right/Left open and close a region, as in any tree.
+ * One tab stop: the selected item is tabbable and the arrow keys move focus through the
+ * visible rows, so a keyboard reader crosses 94 districts with one Tab. Right/Left open and
+ * close a region, as in any tree.
  */
 export function DrilldownSelector({
   regions,
@@ -163,7 +146,6 @@ export function DrilldownSelector({
 }: DrilldownSelectorProps): React.ReactElement {
   const navRef = useRef<HTMLDivElement | null>(null)
   // The branch that was open when this one was chosen, kept mounted while it shrinks away.
-  // Adjusted during render rather than in an effect, so the two never disagree for a frame.
   const [previous, setPrevious] = useState(expanded)
   const [leaving, setLeaving] = useState<string | null>(null)
   if (previous !== expanded) {
@@ -212,20 +194,15 @@ export function DrilldownSelector({
   }
 
   return (
-    // The rail is two parts: a header that stays put, and the region list that scrolls under
-    // it. The list is the scrolling element rather than the page, so the search box needs no
-    // `sticky` to hold its place — and sitting outside that scroll box is what keeps its
-    // results from being clipped by it.
+    // A header that stays put over a region list that scrolls under it. The list is the
+    // scrolling element, so the search box needs no `sticky` and its results are not clipped.
     <SidebarProvider
       data-drilldown-rail=""
-      // Folding is a state of this one rail, not a second rail: the rows stay where they are
-      // and their names collapse away, so the glyphs slide into the narrow column rather than
-      // being replaced by a different set of buttons in a different place.
+      // Folding is a state of this rail, not a second one: the rows stay and their names
+      // collapse away, so the glyphs slide into the narrow column.
       data-collapsed={collapsed ? "" : undefined}
-      // An in-page rail, not an app shell: the wrapper must not claim the viewport's height
-      // or the row's whole width. Never taller than the stage beside it either, so it scrolls
-      // within its own height instead of stretching the page — and shorter still on a phone,
-      // where it sits above the map.
+      // An in-page rail, not an app shell: never the viewport's height or the row's whole
+      // width, and never taller than the stage beside it.
       className={cn("group/rail max-h-56 min-h-0 w-auto md:max-h-(--drilldown-stage-h)", className)}
     >
       {/* `h-auto`, not the sidebar's own `h-full`: the column is bounded by a max-height and
@@ -313,15 +290,9 @@ export function DrilldownSelector({
                           isActive={selected === id}
                           onClick={(e) => onSelect(id, viaOf(e))}
                           className={cn(
-                            // Nothing about the row's padding changes when it folds, so the
-                            // glyph keeps the same offset from the rail's edge either way and
-                            // the column narrowing is the only movement there is to see.
-                            //
-                            // Square once folded, and square at the row's own height: 4px of
-                            // padding around a 20px glyph is 28, which is what `h-7` already
-                            // is. The glyph sits 4px nearer the edge than it does open, which
-                            // is the whole of the movement — a column built for a name has
-                            // more air in it than one built for a numeral.
+                            // Square once folded, at the row's own height: 4px around a 20px
+                            // glyph is 28, which is what `h-7` already is. The padding does
+                            // not change, so the column narrowing is the only movement.
                             "group-data-[collapsed]/rail:p-1",
                             ACTIVE_ROW,
                           )}
@@ -346,9 +317,8 @@ export function DrilldownSelector({
                           aria-label={`${expanded === id ? "Collapse" : "Expand"} ${region.label}`}
                           tabIndex={-1}
                           onClick={() => onToggle(id)}
-                          // The action sits over the row, so on the selected row it is drawn on
-                          // the inverted pill and its own `sidebar-foreground` is the colour of
-                          // the ground beneath it — invisible until hovered.
+                          // On the selected row the action is drawn on the inverted pill,
+                          // where its own `sidebar-foreground` is the ground's colour.
                           className={cn(selected === id && "text-sidebar")}
                         >
                           <ChevronRight

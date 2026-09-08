@@ -36,13 +36,7 @@ const SVGNS = "http://www.w3.org/2000/svg"
 
 export type LayerState = "visible" | "hidden" | "hidden-hard" | "fade-out" | "fading" | "fade-in"
 
-/**
- * Where a drag happened, which is half of what its number means.
- *
- * `writable` is false when the position is computed rather than declared — a circuit's own
- * block in the gutter of its map, or a shape nudged on a map no offsets file covers. Those
- * drags are worth seeing and worth nothing to paste.
- */
+/** Where a drag happened. `writable` is false when the position is computed, not declared. */
 export interface DragOrigin {
   layer: string
   writable: boolean
@@ -95,11 +89,7 @@ interface Layer {
   flipY: boolean
   /** Overview: null. Child view: the drilled parent. */
   parentId: string | null
-  /**
-   * Where a cluster put its members, worked out from their measured sizes at the scale of the
-   * moment. Not the anchor member's: that one stays whatever the profile declares, which is
-   * what the group hangs from.
-   */
+  /** Where a cluster put its members, worked out from their measured sizes. */
   clusterAnchors: Map<string, [number, number]>
 }
 
@@ -116,11 +106,9 @@ interface BlockContext {
 }
 
 /**
- * Where the reader has moved the map to.
- *
- * `k` is how far in, where 1 is the whole map and nothing to pan around; `cx`/`cy` are what is
- * under the middle of the frame, in the current layer's own drawn units. It is one camera and
- * not one per layer because only one map is ever on screen, and moving to another resets it.
+ * Where the reader has moved the map to: `k` is how far in, where 1 is the whole map, and
+ * `cx`/`cy` are what sits under the middle of the frame, in the current layer's drawn units.
+ * One camera and not one per layer — only one map is ever on screen, and moving resets it.
  */
 interface Camera {
   k: number
@@ -135,8 +123,7 @@ interface MorphPlan {
   vbStart: number[]
   /** Read live, never captured: a child's box is re-cut whenever the viewport changes. */
   layer: Layer
-  /** The paired shapes' extent in each frame, which is what tells the camera how far the
-      drawing has translated and shrunk by any point in the morph. */
+  /** The paired shapes' extent in each frame — how far the drawing has moved by any point. */
   contentFrom: number[]
   contentTo: number[]
   /** Cloned seat blocks, and the drawing they were taken from, so a redraw can be noticed. */
@@ -147,13 +134,9 @@ interface MorphPlan {
   fadeIn: SVGGElement[]
 }
 
-// Seat-block geometry (see renderBlocks). Square edge is constant in CSS px across views; the
-// projections differ ~4× in scale, so a map-unit size would swamp a child view.
-/**
- * Rows in a seat block. Four rather than five: a bench of 29 over five rows is six columns of
- * a two-square-tall sliver, and the shape said "tall and thin" about every court regardless of
- * its size. Four rows makes the same bench squarer and the small ones no worse.
- */
+// Seat-block geometry (see renderBlocks). The square edge is constant in CSS px across views:
+// the projections differ ~4x in scale, so a map-unit size would swamp a child view.
+/** Rows in a seat block. Four rather than five keeps a bench of 29 from reading as a sliver. */
 const BLOCK_ROWS = 4
 const BLOCK_PX = 6.5
 /**
@@ -162,18 +145,12 @@ const BLOCK_PX = 6.5
  */
 const OUTLINE_MIN_PX = 12
 /**
- * How long a second press still counts as a double press, while layout editing is on.
- *
- * Counted from the pointer rather than listened for as `dblclick`: preventing the default of a
- * pointerdown — which the drag has to, or the map selects the region under it — takes the
- * compatibility mouse events with it, and `dblclick` is one of them.
+ * How long a second press still counts as a double press, while layout editing is on. Counted
+ * from the pointer rather than heard as `dblclick`: the drag has to preventDefault the
+ * pointerdown, and that takes the compatibility mouse events — `dblclick` among them — with it.
  */
 const DOUBLE_PRESS_MS = 350
-/**
- * Below this rendered map width the blocks shrink and drop their labels: at phone widths the
- * circuits' blocks overlap each other and their labels collide, and the R/D balance still
- * reads without either.
- */
+/** Below this width blocks shrink and drop their labels; the R/D balance still reads. */
 const COMPACT_MAP_PX = 560
 /** Between members of a cluster, in CSS px, when the profile does not say. */
 const CLUSTER_GAP_PX = 12
@@ -187,21 +164,15 @@ const LABEL_EM = 10
 const ONE_NUDGE_EM = 1.4
 const VACANCY_INSET_PX = 0.55
 /**
- * Hover/selected enlargement, written as per-frame INLINE transforms and deliberately not a
+ * Hover/selected enlargement, written as per-frame inline transforms and deliberately not a
  * CSS transition: a transform transition on an SVG rect cannot run on the compositor, and
- * Chrome's promotion attempt at animation start/end re-rendered hairline strokes across the
- * whole map for the 90 ms window — a map-wide border flicker.
+ * Chrome's promotion attempt re-rendered hairline strokes map-wide for the 90 ms window.
  */
 const BLOCK_SCALE_HOVER = 1.17
 const BLOCK_SCALE_SELECTED = 1.24
 const BLOCK_SCALE_MS = 90
 const NOMINAL_MAP_PX = 900
-/**
- * The camera: how far in it can be pushed, and how far one press of the button takes it.
- *
- * Past six the country is a few counties and a lot of grey. The step is close to the square
- * root of two, so two presses roughly double.
- */
+/** How far in the camera can be pushed, and how far one press takes it. */
 export const ZOOM_MAX = 6
 export const ZOOM_STEP = 1.5
 /** Where the camera lands on a court that has no territory to be found by. */
@@ -214,18 +185,12 @@ const PAN_SLOP = 4
 const PARENT_GUTTER_MARGIN_PX = 18
 
 /**
- * Hover forgiveness. Region shapes share their borders, so a pointer resting on a seam
- * crosses between two of them several times a second and the outline, the seat blocks and
- * the tooltip all strobe. A *change* of target therefore has to hold for a moment before it
- * counts — the first region of a sweep still lights up instantly, since there is nothing to
- * flicker against, and the tooltip keeps following the pointer throughout.
+ * Hover forgiveness. Regions share their borders, so a pointer resting on a seam crosses
+ * between two of them several times a second and everything it lights strobes. A *change* of
+ * target has to hold for a moment; the first region of a sweep still lights up instantly.
  */
 const HOVER_SWITCH_MS = 80
-/**
- * Losing the target gets longer than swapping it: the anti-aliased hairline between two
- * regions reads as background for a frame or two, and blinking the highlight off mid-sweep
- * is the most visible flicker of the lot.
- */
+/** Losing the target gets longer: the hairline between two regions reads as background. */
 const HOVER_CLEAR_MS = 160
 
 const nowMs = (): number =>
@@ -266,14 +231,9 @@ function toAnchor(value: readonly number[] | undefined): [number, number] | null
 }
 
 /**
- * What a block actually draws, in the block's own units.
- *
- * Measured on the group rather than added up from its children: a label rides in a scaled
- * group of its own, so its `getBBox` is in that group's units and means nothing beside a seat
- * rect's. The group applies the transforms and answers in one frame.
- *
- * The two rectangles built from a guess at the label's width — the plinth being sized and the
- * hit area — are folded away first, or the measurement is of the guess.
+ * What a block actually draws, in the block's own units. Measured on the group, since a label
+ * rides in a scaled group whose `getBBox` is in units of its own. The two rectangles built
+ * from a guess at the label's width are folded away first, or the answer is the guess.
  */
 function contentBounds(block: Element | null): DOMRect | null {
   if (!(block instanceof SVGGraphicsElement)) return null
@@ -303,9 +263,8 @@ function parseAnchor(value: string | undefined): [number, number] | null {
 
 /**
  * Imperative owner of everything inside the map viewport that React must not touch: the
- * adopted overview SVG's hover overlay and seat blocks, the lazily built child-view layers,
- * and the morph layer that interpolates between them. React renders the shell, selector,
- * pane and tooltip around it and drives it through this class from effects.
+ * adopted overview SVG's overlay and seat blocks, the lazily built child layers, and the
+ * morph layer between them. React renders the shell around it and drives it from effects.
  */
 export class MapStage {
   private readonly opts: StageOptions
@@ -317,11 +276,8 @@ export class MapStage {
   private blocksGen = 0
   /**
    * Moved by hand this session, keyed by the layer the drag happened on and then the region.
-   *
-   * The layer is half the answer. The Ninth's block sits on the national map at the anchor
-   * `anchors.json` gives it, and again on its own map in the gutter, where the position is
-   * computed and no file has a say. The same region, the same drag, two numbers that mean
-   * entirely different things — so neither is reported without saying which map it came from.
+   * The layer is half the answer: the Ninth's block has one place on the national map and
+   * another in the gutter of its own, and the two numbers mean entirely different things.
    */
   private movedAnchors = new Map<string, Map<string, [number, number]>>()
   /** Shapes nudged by hand this session, per layer, in the geometry file's own units. */
@@ -346,10 +302,7 @@ export class MapStage {
   /** Whether the camera was sent somewhere rather than driven there, so it can be taken back. */
   private cameraAuto = false
   private cameraRAF: number | null = null
-  /**
-   * Set for the instant between a pan ending and the click it would otherwise have been.
-   * Dragging the map is not a choice made on it, and the two arrive as the same gesture.
-   */
+  /** Set for the instant between a pan ending and the click it would otherwise have been. */
   private suppressClick = false
   private readonly blockAnim = new WeakMap<SVGGElement, { raf: number | null; scale: number }>()
   private readonly disposers: (() => void)[] = []
@@ -412,18 +365,10 @@ export class MapStage {
     this.regions = regions
   }
 
-  /** Region ids that get a seat block, drawn on whichever layer holds their geometry/anchor. */
   /**
-   * Let an editor drag the seat blocks and read off where they put them.
-   *
-   * Anchors are placement, so they are ours and they are code — checked into `anchors.json`,
-   * measured against geometry beside it. Which makes moving one a matter of guessing numbers,
-   * reloading, and guessing again. This is the same loop with the guessing taken out: drag a
-   * block, and the position it lands at is printed in the form the file wants.
-   *
-   * Nothing here is a secret — every anchor is already in the payload the page ships — so this
-   * is a convenience and not a privilege. What gates it is only that a reader who has not
-   * asked for it should never find a map whose furniture slides around under the pointer.
+   * Let an editor drag the seat blocks and read off where they put them, in the form
+   * `anchors.json` wants. Nothing here is a secret — every anchor is already in the payload
+   * the page ships — the gate only keeps the furniture still for a reader who did not ask.
    */
   setLayoutEditing(on: boolean): void {
     if (this.layoutEditing === on) return
@@ -439,14 +384,10 @@ export class MapStage {
   }
 
   /**
-   * The regions drawn at exactly this outline, which is usually one and occasionally two.
-   *
-   * The D.C. Circuit's only district is the circuit — the export emits the same shape twice,
-   * once at each level — so grabbing what looks like one piece of the map and moving it left
-   * the other copy sitting where it was. Anything stacked like that moves together.
-   *
-   * By geometry rather than by parentage: the Ninth's mainland and Alaska are one region and
-   * must *not* move together, since where the insets sit is the placement being decided.
+   * The regions drawn at exactly this outline — usually one, occasionally two, since the
+   * D.C. Circuit's only district is the circuit and the export emits that shape at both
+   * levels. By geometry and not by parentage: the Ninth's mainland and Alaska must not move
+   * together, since where the insets sit is the placement being decided.
    */
   private coincidentIds(layer: Layer, d: string | null): string[] {
     const ids = new Set<string>()
@@ -470,12 +411,7 @@ export class MapStage {
     return again
   }
 
-  /**
-   * Put the hover and selection marks back over the shapes, wherever those have got to.
-   *
-   * Called while a region is being dragged: the marks are separate paths built from the
-   * shapes' coordinates, so nothing about moving a shape moves them.
-   */
+  /** Put the marks back over the shapes: they are separate paths, so a drag leaves them. */
   private refreshMarks(layer: Layer): void {
     if (this.hovered) {
       const marks = this.overlayPathsFor(layer, this.hovered)
@@ -513,12 +449,8 @@ export class MapStage {
   }
 
   /**
-   * Every shape nudged this session, grouped by the map it was nudged on.
-   *
-   * Only the overview's group belongs in `offsets.json` — that is the file the loader applies,
-   * and it applies it to the national geometry. A shape moved on a circuit's own map is
-   * reported all the same, because seeing where it went is half of why anyone drags it, but
-   * the grouping is what says so.
+   * Every shape nudged this session, grouped by the map it was nudged on. Only the overview's
+   * group belongs in `offsets.json`, which the loader applies to the national geometry.
    */
   movedRegionsJSON(): string {
     return this.movedJSON(this.movedRegions)
@@ -526,8 +458,7 @@ export class MapStage {
 
   /**
    * Where a block is drawn now, whatever decided it — a drag, the gutter, the profile, a fact
-   * or the shape's own centre. In the same geographic frame the anchors are written in, so
-   * what comes out of a drag can go straight into the file.
+   * or the shape's own centre — in the frame the anchors themselves are written in.
    */
   private anchorOf(layer: Layer, regionId: string): [number, number] | null {
     const seats = this.opts.seats
@@ -535,33 +466,25 @@ export class MapStage {
     if (moved) return moved
     const gutter = this.gutterAnchor(layer, regionId)
     if (gutter) return gutter
-    // Where the group put it, if it has been laid out yet. A member's own declared anchor is
-    // not consulted: in a cluster the distance to the others is the whole point, and a number
-    // measured on a wider screen is a distance that no longer holds.
+    // Where the group put it. A member's own declared anchor is not consulted: in a cluster
+    // the distance to the others is the point, and that only holds at one width.
     const placed = layer.clusterAnchors.get(regionId)
     if (placed) return placed
     const declared =
       toAnchor(seats?.anchors?.[regionId]) ??
       (seats?.anchorFact ? parseAnchor(this.regions.byId[regionId]?.facts[seats.anchorFact]) : null)
     if (declared) return declared
-    // Before the first layout a member has nowhere to be. It is drawn on top of the member the
-    // group hangs from, purely to be measured; the placement that follows moves it off.
+    // Before the first layout a member is drawn on the one the group hangs from, to be
+    // measured; the placement that follows moves it off.
     const cluster = this.clusterOf(regionId)
     if (cluster && cluster.anchor !== regionId) return this.anchorOf(layer, cluster.anchor)
     return this.shapeAnchor(layer, regionId)
   }
 
   /**
-   * Every anchor moved this session, grouped by the map it was moved on.
-   *
-   * `anchors.json` is flat and a region appears in it once, because a region's block is drawn
-   * on exactly one map: a circuit's on the national one, a district's on its circuit's. The
-   * grouping is therefore also the units — national under `overview`, the circuit's own under
-   * its id — and it is what stops a number measured on one map being pasted in as the other.
-   *
-   * The exception prints itself: a circuit's block on its *own* map sits in the gutter, where
-   * the position is computed from the map's box and no file has a say. Dragging it moves it
-   * for the session and nothing more.
+   * Every anchor moved this session, grouped by the map it was moved on — which is also the
+   * units, and is what stops a number measured on one map being pasted in as the other.
+   * `anchors.json` itself is flat: a region's block is drawn on exactly one map.
    */
   movedAnchorsJSON(): string {
     return this.movedJSON(this.movedAnchors)
@@ -642,10 +565,8 @@ export class MapStage {
     asset: DrilldownAsset,
   ): Promise<"done" | "fallback" | "cancelled" | "no-geometry"> {
     if (this.destroyed) return "cancelled"
-    // A region with no map of its own is read on the overview, where its children's blocks are
-    // drawn. So opening one is a journey back to the country when the reader is standing on
-    // another map — not merely a change of what `currentParent` says, which left the map they
-    // had been on painted underneath a view that had stopped believing in it.
+    // A region with no map of its own is read on the overview, where its children's blocks
+    // are drawn, so opening one from another map is a journey back to the country.
     if (!this.hasGeometry(asset) || asset.viewBox === null) {
       this.resetCamera()
       if (this.view.parentId !== null) {
@@ -684,13 +605,9 @@ export class MapStage {
   }
 
   /**
-   * From one child map straight to another, without stopping at the country between them.
-   *
-   * The shapes still travel through the overview — they have to, since the two maps share no
-   * outline to morph between, and the country is what both of them are made of. What changes
-   * is the camera: instead of flying out to the overview, halting, and flying in again, it
-   * follows one curve whose control point is the overview. The reader sees the whole country
-   * in passing, already on their way to where they asked to go.
+   * From one child map straight to another, without stopping at the country between them. The
+   * shapes still travel through the overview — the two maps share no outline to morph between
+   * — but the camera follows one curve through it rather than halting there.
    */
   async crossTo(
     parentId: string,
@@ -788,8 +705,7 @@ export class MapStage {
 
   /**
    * Move the camera. A scale change redraws the seat blocks — they are sized to come out at a
-   * constant number of CSS px, so a map that has zoomed under them has to be measured again —
-   * and a pan does not, which is what keeps dragging the map cheap.
+   * constant number of CSS px — and a pan does not, which keeps dragging the map cheap.
    */
   private setCamera(next: Camera | null, opts: { auto?: boolean } = {}): void {
     if (this.destroyed) return
@@ -838,11 +754,7 @@ export class MapStage {
     if (this.cameraAuto) this.resetCamera()
   }
 
-  /**
-   * Step the camera in or out, about a point on the screen — the pointer, or the middle of the
-   * frame when nothing says otherwise. Zooming about the pointer is what keeps the thing under
-   * it under it, which is the whole of what makes a zoom feel like one.
-   */
+  /** Step in or out about a point — the pointer, or the middle of the frame — holding it still. */
   zoomBy(factor: number, about?: { x: number; y: number }): void {
     this.cancelCameraFlight()
     const layer = this.activeLayer()
@@ -878,15 +790,9 @@ export class MapStage {
   }
 
   /**
-   * Send the camera to a region's seat block — the whole group's, when the block belongs to
-   * one.
-   *
-   * For a court with no territory this is the only way to answer "where is it": there is no
-   * shape to light up, only a block standing in the sea, and at the scale of the country that
-   * block is a thumbnail among thirteen others. Moving in a little is what makes it the
-   * subject. The blocks themselves do not grow — they are drawn to a size in px and the map
-   * that has zoomed under them is measured again — so what changes is how much country is
-   * behind them.
+   * Send the camera to a region's seat block, or to the whole group's when it belongs to one.
+   * For a court with no territory that block is the only thing that answers "where is it".
+   * The blocks do not grow with the zoom, so what changes is how much country is behind them.
    */
   focusOn(regionId: string, k: number = FOCUS_ZOOM): void {
     const layer = this.activeLayer()
@@ -897,10 +803,9 @@ export class MapStage {
   }
 
   /**
-   * The middle of what a set of seat blocks covers on this layer, in its drawn units.
-   *
-   * Kept as four numbers rather than a `DOMRect`: `getBBox` answers with one, but not every
-   * engine fills in its `right` and `bottom`, and a union built from those came out `NaN`.
+   * The middle of what a set of seat blocks covers, in the layer's drawn units. Four numbers
+   * and not a `DOMRect`: not every engine fills in `right`/`bottom`, and a union of those
+   * came out `NaN`.
    */
   private blockCentre(layer: Layer, regionIds: string[]): [number, number] | null {
     let x0 = Infinity
@@ -976,10 +881,7 @@ export class MapStage {
     }
   }
 
-  /**
-   * Rendered px a region's seat block occupies across, margins included. Blocks are a constant
-   * size on screen, so this is a px answer that owes nothing to the projection.
-   */
+  /** Rendered px a region's block takes across, margins included. Owes nothing to the projection. */
   private blockWidthPx(regionId: string): number {
     const seats = this.opts.seats
     const region = this.regions.byId[regionId]
@@ -995,10 +897,9 @@ export class MapStage {
   }
 
   /**
-   * A child map reserves a gutter down its left for the parent's own seat block — the circuit's
-   * appellate bench belongs on the circuit's map, but beside it, not on top of it. The map is
-   * letterboxed into what is left, so the reservation has to solve for the shrink it causes:
-   * widening the viewBox scales the map down, which would otherwise eat the very room it made.
+   * A child map reserves a gutter down its left for the parent's own seat block. The map is
+   * letterboxed into what is left, so the reservation solves for the shrink it causes:
+   * widening the viewBox scales the map down, which would otherwise eat the room it made.
    */
   private renderBox(raw: ViewBox, parentId: string | null): { vb: ViewBox; gutter: number } {
     const vb = padViewBox(raw)
@@ -1113,11 +1014,9 @@ export class MapStage {
   }
 
   /**
-   * Whether this path is part of how the layer draws `regionId` — which is a different
-   * question on each map, and the same one `targetOf` answers for the pointer. On the
-   * overview an inset is its parent's only presence in that spot (Alaska stands in for the
-   * 9th), so it is painted with it. On the circuit's own map that same inset is a district
-   * in its own right: selecting the circuit must not flood Alaska, Hawaii and Guam.
+   * Whether this path is part of how the layer draws `regionId`, which is a different question
+   * on each map. On the overview an inset stands in for its parent (Alaska for the 9th) and is
+   * painted with it; on the circuit's own map it is a district in its own right.
    */
   private covers(layer: Layer, path: SVGPathElement, regionId: string): boolean {
     if (path.getAttribute("data-region-id") === regionId) return true
@@ -1130,14 +1029,9 @@ export class MapStage {
   }
 
   /**
-   * A parent's outline is mainland-only, so its hover mark adds every inset that points at it.
-   * The mark is not one thing, though, and the division is not by shape but by island.
-   *
-   * The stroke is 2px and does not scale. On the Ninth's coastline that is an outline; on the
-   * Virgin Islands, five pixels across at national scale, it is wider than the island and they
-   * come out solid black — a blot rather than a region highlighting. Which is why the split is
-   * per subpath: Alaska's mainland takes the outline and the Aleutians beside it take a fill,
-   * out of the same shape, because that is the mark each of them can carry.
+   * A parent's outline is mainland-only, so its hover mark adds every inset that points at it
+   * — split per subpath, not per shape. The 2px stroke does not scale, and on five pixels of
+   * Virgin Islands it closes over the island and reads as a blot, so those take a fill instead.
    */
   private overlayPathsFor(layer: Layer, regionId: string): { outline: string; tiny: string } {
     const scale = this.fitScale(this.cameraBox(layer))
@@ -1149,15 +1043,13 @@ export class MapStage {
       if (!this.covers(layer, p, regionId)) continue
       const d = p.getAttribute("d") ?? ""
       const subs = parsePathAbs(d)
-      // The contract says absolute M/L, and everything that reaches here has already been
-      // through it; a shape that somehow has not is outlined whole rather than dropped.
+      // The contract says absolute M/L; a shape that somehow is not gets outlined whole.
       if (!subs) {
         outline.push(d)
         continue
       }
-      // The mark is built from the shapes' own coordinates, and a shape nudged with the
-      // layout tools carries its move as a transform rather than in them — so the outline
-      // stayed behind while the region walked away from it.
+      // A shape nudged with the layout tools carries its move as a transform, not in its
+      // coordinates — which is what the mark is built from.
       const nudged = this.movedRegions
         .get(this.layerKey(layer))
         ?.get(p.getAttribute("data-region-id") ?? "")
@@ -1196,9 +1088,8 @@ export class MapStage {
   }
 
   /**
-   * Route a pointer's idea of the target through the forgiveness delay. Landing on the region
-   * already highlighted cancels a pending change outright, so jittering back and forth over a
-   * shared border settles on whichever side the pointer actually stays.
+   * Route a pointer's idea of the target through the forgiveness delay. Landing back on the
+   * region already highlighted cancels a pending change outright.
    */
   private requestHover(
     layer: Layer,
@@ -1308,13 +1199,9 @@ export class MapStage {
     }
 
     /**
-     * Dragging a region's shapes, the other half of the same tool.
-     *
-     * Where the insets sit on the national map — Alaska under the southwest, the territories
-     * in a row beside it — is a placement decision, and this is how it gets made: nudge one,
-     * and the offset it takes is printed for `geometry/offsets.json`, which the loader applies
-     * over the export. The whole region moves, outline clone and all, since half a moved
-     * Alaska is not a thing anyone wants to see.
+     * Dragging a region's shapes, the other half of the same tool: nudge one, and the offset
+     * it takes is printed for `geometry/offsets.json`, which the loader applies over the
+     * export. The whole region moves, outline clone and all.
      */
     const onRegionDown = (e: PointerEvent): void => {
       const path = pathFrom(e.target)
@@ -1327,15 +1214,13 @@ export class MapStage {
       if (this.isDoublePress(layer, id)) return void this.resetLayout(layer, ids, "region")
       const shapes = ids.flatMap((each) => this.shapesOf(each))
       const scale = this.fitScale(this.cameraBox(layer))
-      // A file's coordinates are unflipped; the group they are drawn in carries the flip. So
-      // the transform goes on in the drawn frame and the number comes out in the file's.
+      // A file's coordinates are unflipped; the group they are drawn in carries the flip.
       const flip = layer.flipY ? -1 : 1
       const startX = e.clientX
       const startY = e.clientY
       const had = this.movedRegions.get(this.layerKey(layer))?.get(id) ?? [0, 0]
-      // One number, used twice: the transform goes on a path *inside* the flipped group, so
-      // the file's own units are already the right ones to move it by. Flipping again on the
-      // way to the screen sent the shape north when the pointer went south.
+      // The transform goes on a path *inside* the flipped group, so the file's own units are
+      // already the right ones to move it by — flipping again sends the shape the wrong way.
       const offsetAt = (ev: PointerEvent): [number, number] => [
         had[0] + (ev.clientX - startX) / scale,
         had[1] + ((ev.clientY - startY) / scale) * flip,
@@ -1352,8 +1237,7 @@ export class MapStage {
         svg.removeEventListener("pointercancel", up)
         const by = offsetAt(ev)
         move(ev)
-        // One line per region moved. Two shapes stacked are still two paths in the file, and
-        // an offset that names only one of them puts them back where they started.
+        // One line per region: two stacked shapes are still two paths in the file.
         for (const each of ids) {
           this.remember(this.movedRegions, layer, each, by)
           this.opts.callbacks.onRegionMoved?.(each, [Math.round(by[0]), Math.round(by[1])], {
@@ -1371,12 +1255,9 @@ export class MapStage {
     }
 
     /**
-     * Dragging the map itself, once there is more of it than the frame holds.
-     *
-     * The same press is also how a region is chosen, so the two are told apart by how far the
-     * pointer travels: under a few pixels it was a click and the map has not moved, and past
-     * that it is a pan and the click it would have been is dropped. Nothing pans at zoom 1 —
-     * the whole map is already on screen, and dragging it would only push it off.
+     * Dragging the map itself, once there is more of it than the frame holds. The same press
+     * chooses a region, so the two are told apart by how far the pointer travels; past the
+     * slop it is a pan, and the click it would have been is dropped.
      */
     const onPanDown = (e: PointerEvent): void => {
       if (this.layoutEditing || e.button !== 0 || this.zoom <= 1) return
@@ -1410,9 +1291,8 @@ export class MapStage {
         this.suppressClick = true
         setTimeout(() => (this.suppressClick = false), 0)
       }
-      // On the window rather than captured on the map, and deliberately: capturing the pointer
-      // retargets the click that follows to whatever holds the capture, so every press on the
-      // map became a press on the map as a whole and stopped choosing the region under it.
+      // On the window rather than captured on the map: a capture retargets the click that
+      // follows to whatever holds it, which stops a press choosing the region under it.
       window.addEventListener("pointermove", move)
       window.addEventListener("pointerup", up)
       window.addEventListener("pointercancel", up)
@@ -1429,9 +1309,8 @@ export class MapStage {
       if (!block) return void onRegionDown(e)
       const pressed = block.getAttribute("data-region-id")
       if (!pressed) return
-      // A cluster is spaced in px and hung from one member, so there is nothing a single
-      // member can be dragged to on its own: the group travels, and the number that comes out
-      // is the anchor member's, which is the one the profile actually carries.
+      // A cluster is spaced in px and hung from one member, so the group travels and the
+      // number that comes out is the anchor member's.
       const id = this.dragTarget(pressed)
       const from = this.anchorOf(layer, id)
       if (!from) return
@@ -1546,17 +1425,14 @@ export class MapStage {
       existing?.remove()
       return
     }
-    // Everything that decides what these blocks look like. Redrawing is a teardown and a
-    // rebuild of every square, so doing it when nothing has changed is a flash of the map's
-    // furniture disappearing and coming back — sixteen times over a single drill, because the
-    // client re-renders blocks around each of the states a move passes through.
+    // Everything that decides what these blocks look like. Redrawing tears down and rebuilds
+    // every square, so doing it when nothing has changed flashes the map's furniture.
     const signature = [
       regionIds.map((id) => `${id}:${this.regions.byId[id]?.facts[seats.totalFact] ?? ""}`).join(),
       Math.round(this.renderedWidth(layer)),
       Math.round(layer.gutter),
       layer.render.join(),
-      // The zoom, and deliberately not the pan: a block is redrawn when the map has changed
-      // size under it, and dragging the map does not change its size.
+      // The zoom, and deliberately not the pan: dragging the map does not change its size.
       Math.round(this.zoom * 100),
       [...(this.movedAnchors.get(this.layerKey(layer)) ?? [])].map(
         ([id, at]) => `${id}@${Math.round(at[0])},${Math.round(at[1])}`,
@@ -1574,8 +1450,7 @@ export class MapStage {
     const k = flipConstant(layer.viewBox)
     const rendered = this.renderedWidth(layer)
     // Compactness follows the room the page gives the map, not the rendered width: a tall
-    // child map (one circuit) letterboxes narrow on a wide screen and still has plenty of
-    // space for full-size blocks and their labels.
+    // child map letterboxes narrow on a wide screen and still has room for full-size blocks.
     const compact = (this.opts.viewport.clientWidth || rendered) < COMPACT_MAP_PX
     if (compact) layer.svg.setAttribute("data-drilldown-compact", "")
     else layer.svg.removeAttribute("data-drilldown-compact")
@@ -1590,19 +1465,17 @@ export class MapStage {
     }
     layer.annotations.appendChild(group)
     this.cutPlinths(group)
-    // Only now is a block's real size known, so this is where a cluster can place its members
-    // against each other. Doing so moves them, which is a rebuild, which is a new set of
-    // plinths to cut.
+    // Only now is a block's real size known, so this is where a cluster places its members.
+    // Doing so rebuilds them, which is a new set of plinths to cut.
     if (this.placeClusters(layer, group, regionIds, ctx)) this.cutPlinths(group)
     this.blocksGen++
     this.highlightBlocks(layer)
   }
 
   /**
-   * Cut each plinth to what its block actually holds. The label's width is the browser's to
-   * know — "SCOTUS" is twice the guess the box is built with — and a plinth its caption hangs
-   * off is worse than no plinth. `contentBounds` ignores the plinth and the hit rect, so
-   * running this twice says the same thing as running it once.
+   * Cut each plinth to what its block actually holds: the label's width is the browser's to
+   * know, and "SCOTUS" is twice the guess the box is built with. `contentBounds` ignores the
+   * plinth and the hit rect, so running this twice says what running it once did.
    */
   private cutPlinths(group: SVGGElement): void {
     for (const plinth of group.querySelectorAll<SVGRectElement>("rect[data-block-plinth]")) {
@@ -1617,11 +1490,9 @@ export class MapStage {
   }
 
   /**
-   * One region's seat block, built at whatever `anchorOf` says its place is. Everything the
-   * block's size depends on is in `ctx`, so a caller that has already worked it out for the
-   * drawing as a whole does not work it out again per region — and a block can be rebuilt on
-   * its own, which is how a cluster puts its members where they belong once it has measured
-   * how big they came out.
+   * One region's seat block, built at whatever `anchorOf` says its place is. Everything its
+   * size depends on is in `ctx`, so one block can be rebuilt on its own — which is how a
+   * cluster places its members once it has measured how big they came out.
    */
   private buildBlock(layer: Layer, id: string, ctx: BlockContext): SVGGElement | null {
     const { seats, compact, e, pitch, unitsPerPx, k } = ctx
@@ -1656,10 +1527,9 @@ export class MapStage {
       width: Math.max(wide, labelText ? e * 3.2 : 0) + 2 * m,
       height: y0 + tall + m - (top - m * 0.5),
     }
-    // A court with no territory on this map — the Supreme Court, the Federal Circuit and its
-    // feeders — has nothing to be drawn on, so its block floats in the sea with a caption
-    // over it and reads as an annotation rather than a place. This gives it something to
-    // stand on: the same fill and edge every region has, cut to the block it holds.
+    // A court with no territory on this map has nothing to be drawn on, so its block would
+    // read as an annotation floating in the sea. This gives it the same fill and edge every
+    // region has, cut to the block it holds.
     if (!layer.shapes.querySelector(`path[data-region-id="${cssEscape(id)}"]`)) {
       block.appendChild(
         svgEl("rect", {
@@ -1703,11 +1573,7 @@ export class MapStage {
     return block
   }
 
-  /**
-   * Which cluster, if any, a region's block belongs to. A block belongs to at most one: two
-   * groups laying out the same block would each be right about where it goes and the last one
-   * drawn would win, so the first mention is the one that counts.
-   */
+  /** Which cluster a block belongs to. At most one — the first mention is the one that counts. */
   private clusterOf(regionId: string): SeatCluster | null {
     for (const cluster of this.opts.seats?.clusters ?? [])
       if (cluster.rows.some((row) => row.includes(regionId))) return cluster
@@ -1720,17 +1586,10 @@ export class MapStage {
   }
 
   /**
-   * Place each cluster's members against each other, and answer whether anything moved.
-   *
-   * It runs on blocks that are already drawn because a block's size is not knowable before
-   * then — a plinth is cut to a caption the browser measures — and a group spaced by guesses
-   * would be out by the width of the word "SCOTUS". So the members are measured where they
-   * first landed, laid out from those sizes, and rebuilt at the anchors that fall out of it.
-   *
-   * The group hangs from its anchor member, whose own anchor is left exactly where the profile
-   * put it. That is what keeps the placement stable: the layout is a function of one declared
-   * position and the sizes, never of where the members happen to be sitting, so running it
-   * again lands them in the same place.
+   * Place each cluster's members against each other, and answer whether anything moved. It
+   * runs on blocks already drawn because a block's size is not knowable before then — a plinth
+   * is cut to a caption the browser measures. The layout is a function of one position and the
+   * measured sizes, never of where the members happen to be sitting, so it is stable.
    */
   private placeClusters(
     layer: Layer,
@@ -1743,9 +1602,8 @@ export class MapStage {
     const drawn = new Set(regionIds)
     const blockOf = (id: string): SVGGElement | null =>
       group.querySelector<SVGGElement>(`g[data-drilldown-block][data-region-id="${cssEscape(id)}"]`)
-    // A block is placed by its anchor but drawn as a box around it, so what the layout needs
-    // is the box, and what it has to hand back is an anchor. This is the difference between
-    // the two, and it does not change when the block moves.
+    // A block is placed by its anchor and drawn as a box around it; this is the difference
+    // between the two, and it does not change when the block moves.
     const screenY = (at: readonly number[]): number => (layer.flipY ? ctx.k - at[1]! : at[1]!)
     let moved = false
     for (const cluster of clusters) {
@@ -1777,10 +1635,8 @@ export class MapStage {
           align: cluster.align ?? "center",
         },
       )
-      // Where the group's own box goes, in the drawing's screen frame. Either the frame places
-      // it, or it hangs off the one member whose place is declared — moving the layout until
-      // that member's anchor lands back on it. A drag beats both, so an editor can still shift
-      // a frame-placed group to see where it ought to sit.
+      // Where the group's own box goes. Either the frame places it, or it hangs off the one
+      // member whose place is declared. A drag beats both.
       const home = placement.at.get(origin)
       if (!home) continue
       let groupX = originAt[0]! - (home[0] - anchorBox.offX)
@@ -1793,9 +1649,8 @@ export class MapStage {
         groupY = ry + inset + room(rh, placement.height) * cluster.at.y
       }
       for (const [id, at] of placement.at) {
-        // The anchor member only moves when the frame is what placed the group; otherwise it
-        // is the fixed point the rest hang from, and recording where it already is would let
-        // a stale reading outlive the profile's own number.
+        // The anchor member only moves when the frame placed the group; otherwise it is the
+        // fixed point the rest hang from, and a reading of it would outlive the profile's.
         if (id === origin && !cluster.at) continue
         const entry = boxes.get(id)
         const was = this.anchorOf(layer, id)
@@ -1835,9 +1690,8 @@ export class MapStage {
       )
     }
     for (const [layer, list] of ids) if (list.length) this.drawBlocks(layer, list)
-    // Nothing else a plan holds is measured in pixels — its shapes and both extents come from
-    // the files — so a running morph picks the new blocks up rather than the cache being
-    // thrown away, which never reached the morph already in the air anyway.
+    // Nothing else a plan holds is measured in pixels, so a running morph picks the new
+    // blocks up rather than the cache being thrown away.
   }
 
   private highlightBlocks(layer: Layer): void {
@@ -1849,10 +1703,8 @@ export class MapStage {
       const hovered = id !== null && id === this.hovered
       block.toggleAttribute("data-selected", selected)
       block.toggleAttribute("data-hover", hovered)
-      // A child map's own parent sits in the gutter and is selected the whole time the reader
-      // is on that map, so the selection's swell says nothing there — it only makes the block
-      // a quarter larger than the identical one they just clicked on the overview, and larger
-      // than every sibling beside it. The stroke still marks it; the size stays put.
+      // A child map's own parent sits in the gutter and is selected the whole time the
+      // reader is on that map, so the swell says nothing there. The stroke still marks it.
       const stuck = id !== null && id === layer.parentId
       this.animateBlockScale(
         block,
@@ -1960,9 +1812,8 @@ export class MapStage {
       overflow: "visible",
       "aria-hidden": "true",
     })
-    // Fading elements are grouped so the OPACITY LIVES ON THE GROUP: opacity < 1 forces a
-    // transparency layer the size of the element's bounds, and ~100 of them per morph is what
-    // made the original drag. Four groups = four buffers.
+    // Fading elements are grouped so the opacity lives on the group: opacity < 1 forces a
+    // transparency layer the size of the element's bounds, and ~100 of them per morph dragged.
     const shapesOut = svgEl("g", { "data-morph-fade": "out" })
     const shapesMorph = svgEl("g")
     const shapesIn = svgEl("g", { "data-morph-fade": "in" })
@@ -1977,8 +1828,8 @@ export class MapStage {
     })
     for (const f of pairing.fadeOut) shapesOut.appendChild(cloneFor(f.key, f.d))
     for (const f of pairing.fadeIn) shapesIn.appendChild(cloneFor(f.key, f.d))
-    // Seat blocks belong to exactly one view and live in unflipped annotation coordinates, so
-    // they crossfade too, riding the interpolating viewBox glued to their own map.
+    // Seat blocks belong to one view and live in unflipped annotation coordinates, so they
+    // crossfade too, riding the interpolating viewBox glued to their own map.
     for (const [src, into] of [
       [this.overview, blocksOut],
       [local, blocksIn],
@@ -1990,8 +1841,8 @@ export class MapStage {
     const el = document.createElement("div")
     el.setAttribute("data-drilldown-layer", "morph")
     el.appendChild(svg)
-    // The same shapes measured in both files. An overview and a child view are projected
-    // separately, so this is the only thing that says where one frame sits inside the other.
+    // The same shapes measured in both files: the two are projected separately, and this is
+    // the only thing that says where one frame sits inside the other.
     const contentFrom = subpathBounds(pairs.map((pr) => pr.start))
     const contentTo = subpathBounds(pairs.map((pr) => pr.end))
     if (!contentFrom || !contentTo) return null
@@ -2011,17 +1862,11 @@ export class MapStage {
     }
   }
 
-  /**
-   * Where the camera sits at `u` of a plan's morph: a flight over the country, carried into
-   * whatever frame the drawing has reached by then. Both transitions use it, which is what
-   * keeps a crossing's two halves agreeing at the country between them.
-   */
+  /** Where the camera sits at `u` of a plan's morph, in the frame the drawing has reached. */
   private cameraFor(plan: MorphPlan, u: number, wide: readonly number[] = plan.vbStart): number[] {
-    // `layer.render` is read every frame rather than captured with the plan. A child's box
-    // reserves a gutter for its parent's seat block, and when the map is width-bound that
-    // reservation is solved against the viewport's WIDTH — which the side panels change while
-    // the morph is still running. A captured target would land a few pixels off the layer it
-    // hands over to, and the map would visibly shrink and step right as it arrived.
+    // `layer.render` is read every frame rather than captured: a child's gutter is solved
+    // against the viewport's width, which the side panels change while the morph is running,
+    // and a captured target would land a few pixels off the layer it hands over to.
     const dest = pullbackViewBox(plan.layer.render, plan.contentFrom, plan.contentTo)
     return frameForContent(zoomViewBox(wide, dest, u), plan.contentFrom, plan.contentTo, u)
   }
@@ -2051,20 +1896,9 @@ export class MapStage {
   }
 
   /**
-   * Draw a plan at one point of its morph: shapes, camera and crossfade together.
-   *
-   * Every frame of every transition goes through here, and so does the priming that happens
-   * before a layer is attached. A plan is built at u = 0 — the country — but a transition that
-   * runs backwards starts at u = 1, and attaching it unprimed lets the browser paint one frame
-   * of the whole map before the loop's first write. That flash is a full zoom out and back.
-   */
-  /**
    * Take the block groups again if either layer has redrawn its own since the plan was built.
-   *
-   * A block is sized in map units to come out at a constant number of CSS px, and for a map
-   * wider than the stage that conversion runs off the viewport's width — which the side panels
-   * change while a transition is still running. The clone the plan took would then hand over to
-   * a layer whose blocks are a different size, and the seats would jump as the map arrived.
+   * A block's size runs off the viewport's width, which the side panels change while a
+   * transition is running, and the clone would hand over to blocks of a different size.
    */
   private syncPlanBlocks(plan: MorphPlan): void {
     if (plan.blocksGen === this.blocksGen) return
@@ -2088,12 +1922,9 @@ export class MapStage {
 
   /**
    * Hold a group's seat blocks at the size they were drawn to be, whatever the camera is doing.
-   *
-   * A block is authored in map units chosen so it comes out at a fixed number of CSS px on its
-   * own map. Its own map is the one thing a morph is not looking at: the camera crosses a five
-   * fold zoom, and the blocks rode all of it, so a circuit's districts spent most of a crossing
-   * at a fifth of their size while the country's blocks they were crossfading with were five
-   * times theirs. Each block is scaled about its own centre, so only the size moves.
+   * A block is sized in map units to come out at a fixed number of CSS px on its own map, and
+   * a morph crosses a fivefold zoom away from that. Scaled about its own centre, so only the
+   * size moves.
    */
   private sizeBlocks(group: SVGGElement, factor: number): void {
     const near = !Number.isFinite(factor) || Math.abs(factor - 1) < 0.002
@@ -2122,8 +1953,8 @@ export class MapStage {
       lerpInto(pr.start, pr.end, pr.work, u)
       pr.node.setAttribute("d", serializePath(pr.work))
     }
-    // The paired shapes define the frame; the two files' own shapes and seat blocks are each a
-    // whole projection away from it, so they are placed into it rather than left where they were.
+    // The paired shapes define the frame; each file's own shapes and blocks are a whole
+    // projection away from it, so they are placed into it rather than left where they were.
     const blended = lerpViewBox(plan.contentFrom, plan.contentTo, u)
     for (const n of plan.fadeOut)
       n.setAttribute("transform", frameTransform(plan.contentFrom, blended))
@@ -2144,19 +1975,9 @@ export class MapStage {
   }
 
   /**
-   * Attach this morph's layer and drop any OTHER stale one. When a drill-out morph is
-   * interrupted by a drill-in of a different parent, the first layer (a whole map) would
-   * otherwise stay attached with nothing to remove it, and they pile up until every later
-   * morph repaints several dead maps per frame.
-   */
-  /**
-   * The two halves of a crossing, run as one movement.
-   *
-   * The first half plays the map being left backwards to the country; the second plays the
-   * country forwards into the map being entered. At the join both plans are drawing the same
-   * thing — the overview — so swapping which one is on screen is invisible. The camera does
-   * not know about the halves at all: it follows a single curve from the box being left,
-   * through the country, to the box being entered.
+   * The two halves of a crossing, run as one movement: the map being left played backwards to
+   * the country, then the country forwards into the map being entered. At the join both plans
+   * are drawing the overview, so the swap is invisible. The camera follows one curve through.
    */
   private runCross(outPlan: MorphPlan, inPlan: MorphPlan): Promise<"done" | "cancelled"> {
     this.cancelMorph()
@@ -2168,12 +1989,10 @@ export class MapStage {
         resolve(how)
       }
       this.morphCancel = () => settle("cancelled")
-      // Longer than one morph, shorter than the two it replaces: the crossing covers a drill
-      // out and a drill in, but hands over at speed instead of waiting at the country.
+      // Longer than one morph, shorter than the two it replaces.
       const dur = reducedMotion() ? 0 : Math.round(MORPH_MS * 1.75)
-      // Both halves pull back to the same view, or the swap between them would be a jump. Only
-      // as far as it takes to hold both maps: the whole country is further than most crossings
-      // need to go, and the pull-back is the last part of one that still feels like a detour.
+      // Both halves pull back to the same view, or the swap would be a jump — and only as far
+      // as it takes to hold both maps, since the whole country is usually a detour.
       const apex = crossApexViewBox(this.destOf(outPlan), this.destOf(inPlan), outPlan.vbStart)
       const t0 = nowMs()
       let showingIn = false
@@ -2199,10 +2018,9 @@ export class MapStage {
           outPlan.el.remove()
         }
         // Eased at the outer ends only: the halves leave and arrive at rest, and cross the
-        // country at full speed rather than stopping there the way this used to.
+        // country at full speed.
         const p = half ? easeInCubic(t / 0.5) : easeOutCubic((t - 0.5) / 0.5)
-        // Each half is its own drill flown one way or the other, so both are the country at
-        // u = 0 and the swap between them lands on the same view.
+        // Each half is its own drill flown one way or the other, so both are the country at u = 0.
         const u = half ? 1 - p : p
         this.renderMorph(plan, u, this.cameraFor(plan, u, apex))
         if (t < 1) this.morphRAF = raf(frame)
@@ -2250,8 +2068,8 @@ export class MapStage {
           return
         }
         const t = dur > 0 ? Math.min(1, elapsed / dur) : 1
-        // Commit-rate cap: skip this vsync tick entirely — no DOM writes — when the last commit
-        // is too recent. The final frame always commits so the end state is exact.
+        // Commit-rate cap: skip this tick entirely when the last commit is too recent. The
+        // final frame always commits, so the end state is exact.
         if (t < 1 && elapsed - lastCommit < MORPH_MIN_COMMIT_MS) {
           this.morphRAF = raf(frame)
           return

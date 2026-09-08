@@ -4,17 +4,10 @@ import type { DrilldownData } from "../types"
 import type { Appointment } from "./upstream"
 
 /**
- * The appointment history, folded down to what the two charts draw.
- *
- * Upstream publishes every Article III appointment since 1969 — around four thousand rows,
- * over a megabyte. Both charts read it the same way every time: how many judges appointed by
- * each party were serving at the end of each year, and how many judges each president
- * commissioned in each month. That is a few kilobytes of arithmetic over rows that only
- * change when upstream rebuilds, so it is done once, when the feed is read, rather than on
- * every request against a megabyte kept in the snapshot.
- *
- * Values only, no appearance: a series names the party that appointed the judges, and the
- * profile's presentation is what turns that into a colour and a label.
+ * The appointment history, folded down to what the two charts draw: how many judges appointed
+ * by each party were serving at the end of each year, and how many each president commissioned
+ * in each month. A few kilobytes out of upstream's megabyte of rows, folded once when the feed
+ * is read. Values only — the profile's presentation turns a party into a colour and a label.
  */
 
 /** A seat's party in the vocabulary the rest of the profile uses, or null when vacant. */
@@ -62,11 +55,7 @@ interface AppointmentRow {
 
 const year = (iso: string): number => Number(iso.slice(0, 4))
 
-/**
- * Upstream's rows are string-typed — `""` stands in for null throughout — so this is where
- * they become values. A party outside the ones the profile counts becomes null, which is the
- * same bucket the map's seat blocks put it in.
- */
+/** Upstream's rows are string-typed (`""` for null), so this is where they become values. */
 function readRows(rows: Appointment[], parties: readonly string[]): AppointmentRow[] {
   const out: AppointmentRow[] = []
   for (const row of rows) {

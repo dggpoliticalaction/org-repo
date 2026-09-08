@@ -1,14 +1,10 @@
 /**
- * The drilldown mode's asset contract.
+ * The drilldown mode's asset contract: an overview asset whose paths carry region facts as
+ * `data-*` attributes, and one child asset per drillable region whose `<metadata>` carries the
+ * records. Nothing here knows what a circuit, a county or a judge is — the asset declares its
+ * own vocabulary through the `display` configuration below.
  *
- * Everything the mode renders comes out of self-contained SVG assets a writer uploads to
- * `map-assets`: an **overview** asset whose paths carry region facts as `data-*` attributes,
- * and one **child** asset per drillable region whose `<metadata>` carries the records that
- * belong to it. Nothing here knows what a circuit, a county or a judge is — the asset
- * declares its own vocabulary through the `display` configuration below.
- *
- * `.claude/skills/interactive-maps/SKILL.md` documents the contract for writers; this file
- * is the source of truth the docs describe.
+ * `.claude/skills/interactive-maps/SKILL.md` documents this for writers.
  */
 
 /** `data-*` attributes on a path, keyed WITHOUT the `data-` prefix (`data-seats` → `seats`). */
@@ -83,12 +79,9 @@ export interface SeatBlockConfig {
   groups: SeatGroup[]
   vacant?: { label: string }
   /**
-   * Where each block is drawn, in the units of the map it is drawn on, by region id.
-   *
-   * Placement is the profile's: the anchors are measured against geometry that is checked in
-   * beside them, so moving one is a code change and takes effect on a deploy. It beats
-   * `anchorFact` for that reason — a feed that carries a position is describing its own map,
-   * not ours.
+   * Where each block is drawn, in the units of the map it is drawn on, by region id. Placement
+   * is the profile's, measured against geometry checked in beside it, so it beats `anchorFact`
+   * — a feed that carries a position is describing its own map, not ours.
    */
   anchors?: Record<string, readonly number[]>
   /** Fact holding `"x,y"` in the asset's projected units; default is the shape's centre. */
@@ -100,16 +93,11 @@ export interface SeatBlockConfig {
 }
 
 /**
- * Blocks that belong to each other rather than to a place: the Supreme Court and the three
- * specialist courts beside it have no territory on the map, so they are read as a group and
- * spaced in px, which holds at any width. Only the group's own position is in map units.
+ * Blocks that belong to each other rather than to a place: courts with no territory on the
+ * map, read as a group and spaced in px, which holds at any width.
  */
 export interface SeatCluster {
-  /**
-   * The member the group hangs from. Its anchor is the one the profile declares and the one
-   * the layout tools report; the rest are placed against it, and their own anchors, if the
-   * profile still carries any, are ignored.
-   */
+  /** The member the group hangs from, and the one the layout tools report. */
   anchor: string
   /** Members, top row first, each row drawn left to right. */
   rows: readonly (readonly string[])[]
@@ -120,14 +108,9 @@ export interface SeatCluster {
   align?: "left" | "center" | "right"
   /**
    * Where the group sits in the map's frame, as a fraction of it — `{ x: 1, y: 1 }` is the
-   * bottom-right corner, `{ x: 0.5, y: 0 }` the top middle. Given, it replaces the anchor
-   * member's declared position as what the group hangs from.
-   *
-   * Which is the whole point for a group of blocks that belongs to no place. Its members are
-   * a constant size in CSS px and the map is not, so a position in map units only holds at
-   * the width it was measured at: narrow the page and the map shrinks out from under blocks
-   * that do not, until the courts in the Atlantic are standing on Florida. Solved against the
-   * frame, the group keeps its corner at every width, the way a child map's gutter does.
+   * bottom-right corner. Given, it replaces the anchor member's declared position, which is
+   * what a group belonging to no place wants: its members are a constant size in CSS px and
+   * the map is not, so a position in map units only holds at the width it was measured at.
    */
   at?: { x: number; y: number }
   /** Between the group and the frame's edge, in CSS px, when `at` places it. */
@@ -215,11 +198,7 @@ export interface RecordDisplay {
 export type DrilldownRecord = Record<string, unknown> & {
   /** Region the record belongs to. */
   _region: string
-  /**
-   * Stable identity for the record, unique across the whole drilldown. Optional — the bench
-   * does not need it — but search does: it is what a result carries so the pane can pin the
-   * record again once its region's asset has loaded.
-   */
+  /** Stable identity, unique across the drilldown. Optional; search is what needs it. */
   _id?: string
   /** `associate` records sit beside the bench, not in it. Default `seat`. */
   _role?: "seat" | "associate"
@@ -240,10 +219,9 @@ export interface RegionIcons {
   byLayer?: Record<string, string>
   default?: string
   /**
-   * The fact holding a region's short form, for the rail when it is folded to icons. A leading
-   * number in it is the region's ordinal and is drawn as a Roman numeral ("9th" → IX); anything
-   * else short enough is drawn as it stands ("DC"). A profile that names no fact gets the
-   * ordinary icons, which is fine for a handful of regions and useless for thirteen alike.
+   * The fact holding a region's short form, for the rail folded to icons. A leading number is
+   * the ordinal and is drawn as a Roman numeral ("9th" → IX); anything else short enough is
+   * drawn as it stands ("DC"). Without it the rail falls back to the ordinary icons.
    */
   shortFact?: string
 }
@@ -300,9 +278,8 @@ export interface ChildAssetRef {
   /** Same-origin path serving its shapes, hashed so it can be held forever. */
   geometryUrl: string
   /**
-   * Whether the region has a map of its own to drill into. A region without one is still a
-   * region — it has records, and a reader can select it — but its children are drawn on the
-   * parent map at their own anchors, because there is nowhere else to draw them.
+   * Whether the region has a map of its own to drill into. One without is still a region — it
+   * has records, and opening it draws its children's blocks on the map already on screen.
    */
   hasMap: boolean
 }
