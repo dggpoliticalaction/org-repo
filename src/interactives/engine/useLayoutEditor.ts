@@ -15,10 +15,10 @@ import type { MapStage } from "./stage"
  * The query is the whole gate. It keeps a reader who did not ask from meeting a map whose
  * furniture slides around under the pointer, and that is all it is for.
  */
-export function useAnchorEditor(stage: MapStage | null, enabled: boolean): void {
+export function useLayoutEditor(stage: MapStage | null, enabled: boolean): void {
   useEffect(() => {
     if (!stage || !enabled) return
-    stage.setAnchorEditing(true)
+    stage.setLayoutEditing(true)
     // The console is the whole interface. Anything cleverer would be a feature to maintain,
     // and this is a ruler.
     const expose = (name: string, read: () => string): void => {
@@ -38,7 +38,7 @@ export function useAnchorEditor(stage: MapStage | null, enabled: boolean): void 
         "`drilldownOffsets()` prints the shapes for geometry/offsets.json.",
     )
     return () => {
-      stage.setAnchorEditing(false)
+      stage.setLayoutEditing(false)
       delete (window as unknown as Record<string, unknown>).drilldownAnchors
       delete (window as unknown as Record<string, unknown>).drilldownOffsets
     }

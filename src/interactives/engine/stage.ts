@@ -235,7 +235,7 @@ export class MapStage {
   private movedAnchors = new Map<string, [number, number]>()
   /** Shapes nudged by hand this session, in the geometry file's own units. */
   private movedRegions = new Map<string, [number, number]>()
-  private anchorEditing = false
+  private layoutEditing = false
   private morphRAF: number | null = null
   private morphCancel: (() => void) | null = null
   private regions: RegionIndex
@@ -321,11 +321,11 @@ export class MapStage {
    * is a convenience and not a privilege. What gates it is only that a reader who has not
    * asked for it should never find a map whose furniture slides around under the pointer.
    */
-  setAnchorEditing(on: boolean): void {
-    if (this.anchorEditing === on) return
-    this.anchorEditing = on
+  setLayoutEditing(on: boolean): void {
+    if (this.layoutEditing === on) return
+    this.layoutEditing = on
     for (const layer of this.allLayers()) {
-      layer.annotations.toggleAttribute("data-drilldown-anchor-editing", on)
+      layer.annotations.toggleAttribute("data-drilldown-layout-editing", on)
     }
     if (on) return
     this.movedAnchors.clear()
@@ -946,8 +946,8 @@ export class MapStage {
      * the same element, so this claims the pointer outright: capture, stop the event, and put
      * the anchor back where the pointer says once it is released.
      */
-    const onAnchorDown = (e: PointerEvent): void => {
-      if (!this.anchorEditing) return
+    const onBlockDown = (e: PointerEvent): void => {
+      if (!this.layoutEditing) return
       const block = blockFrom(e.target)
       if (!block) return void onRegionDown(e)
       const id = block.getAttribute("data-region-id")
@@ -986,7 +986,7 @@ export class MapStage {
       svg.addEventListener("pointercancel", up)
     }
 
-    svg.addEventListener("pointerdown", onAnchorDown)
+    svg.addEventListener("pointerdown", onBlockDown)
     svg.addEventListener("pointerover", onOver)
     svg.addEventListener("pointermove", onMove)
     svg.addEventListener("pointerleave", onLeave)
@@ -997,7 +997,7 @@ export class MapStage {
     this.disposers.push(() => {
       svg.removeEventListener("pointerover", onOver)
       svg.removeEventListener("pointermove", onMove)
-      svg.removeEventListener("pointerdown", onAnchorDown)
+      svg.removeEventListener("pointerdown", onBlockDown)
       svg.removeEventListener("pointerleave", onLeave)
       svg.removeEventListener("click", onClick)
       svg.removeEventListener("keydown", onKey)

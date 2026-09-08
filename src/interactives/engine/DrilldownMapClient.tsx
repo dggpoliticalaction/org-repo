@@ -27,8 +27,8 @@ import { buildRegionIndex, displayFacts } from "./regions"
 import type { SearchResult } from "./search"
 import { DrilldownSelectionProvider } from "./selection"
 import { MapStage } from "./stage"
-import { ANCHOR_EDIT_PARAM } from "./layoutTools"
-import { useAnchorEditor } from "./useAnchorEditor"
+import { DEBUG_LAYOUT, DEBUG_PARAM } from "./layoutTools"
+import { useLayoutEditor } from "./useLayoutEditor"
 import type { ChildAssetRef, DrilldownAsset, RegionIndex, RegionInfo } from "./types"
 
 export interface DrilldownMapClientProps {
@@ -185,14 +185,14 @@ export function DrilldownMapClient({
     () => buildRegionIndex([overview, ...Object.values(loaded)]),
     [overview, loaded],
   )
-  // Nothing unless the address asks for it: see `useAnchorEditor`. Read once, from the address
+  // Nothing unless the address asks for it: see `useLayoutEditor`. Read once, from the address
   // the page was opened at — this is a tool an editor arrives with, not a mode to toggle.
-  const [anchorEditing] = useState(
+  const [layoutEditing] = useState(
     () =>
       typeof window !== "undefined" &&
-      new URLSearchParams(window.location.search).get(ANCHOR_EDIT_PARAM) === "1",
+      new URLSearchParams(window.location.search).get(DEBUG_PARAM) === DEBUG_LAYOUT,
   )
-  useAnchorEditor(mounted, anchorEditing)
+  useLayoutEditor(mounted, layoutEditing)
 
   const drillable = useMemo(() => new Set(childAssets.map((a) => a.regionId)), [childAssets])
   /** The regions whose children have nowhere of their own to be drawn, so they are drawn here. */

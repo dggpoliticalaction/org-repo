@@ -4,8 +4,17 @@
  * pulling it out of the hook module dragged the whole client stage into the server render.
  */
 
-/** The query the map watches for. Nothing is wired without it, on any page, for anybody. */
-export const ANCHOR_EDIT_PARAM = "anchors"
+/**
+ * The query the map watches for, and the value that turns the layout tools on.
+ *
+ * A namespace rather than a switch of its own. It began as `?anchors=1`, which named half of
+ * what it does — the same mode drags a region's shapes as well as a seat block's anchor — and
+ * a second tool would have wanted a second boolean. `?debug=<mode>` says what kind of thing it
+ * is, which matters now the footer tells readers about it: nobody should mistake it for a
+ * display preference.
+ */
+export const DEBUG_PARAM = "debug"
+export const DEBUG_LAYOUT = "layout"
 
 /**
  * What the tools are, said out loud in the footer's info popup.
@@ -16,7 +25,7 @@ export const ANCHOR_EDIT_PARAM = "anchors"
  * enough to look is welcome to them, and there is no account to check.
  */
 export const LAYOUT_TOOL_NOTES = [
-  { label: "Layout tools", value: `?${ANCHOR_EDIT_PARAM}=1` },
+  { label: "Layout tools", value: `?${DEBUG_PARAM}=${DEBUG_LAYOUT}` },
   { label: "Drag", value: "a seat block, or a region's shape" },
   { label: "Print", value: "drilldownAnchors(), drilldownOffsets()" },
 ] as const
