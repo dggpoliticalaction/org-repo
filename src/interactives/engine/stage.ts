@@ -968,10 +968,30 @@ export class MapStage {
   }
 
   private drawBlocks(layer: Layer, regionIds: string[]): void {
-    layer.annotations.querySelectorAll("g[data-drilldown-blocks]").forEach((n) => n.remove())
     const seats = this.opts.seats
-    if (!seats || regionIds.length === 0) return
-    const group = svgEl("g", { "data-drilldown-blocks": "" })
+    const existing = layer.annotations.querySelector("g[data-drilldown-blocks]")
+    if (!seats || regionIds.length === 0) {
+      existing?.remove()
+      return
+    }
+    // Everything that decides what these blocks look like. Redrawing is a teardown and a
+    // rebuild of every square, so doing it when nothing has changed is a flash of the map's
+    // furniture disappearing and coming back — sixteen times over a single drill, because the
+    // client re-renders blocks around each of the states a move passes through.
+    const signature = [
+      regionIds.map((id) => `${id}:${this.regions.byId[id]?.facts[seats.totalFact] ?? ""}`).join(),
+      Math.round(this.renderedWidth(layer)),
+      Math.round(layer.gutter),
+      layer.render.join(),
+      [...this.movedAnchors].map(([id, at]) => `${id}@${Math.round(at[0])},${Math.round(at[1])}`),
+    ].join("|")
+    if (existing?.getAttribute("data-signature") === signature) {
+      // Hover and selection are written onto the blocks that are already there.
+      this.highlightBlocks(layer)
+      return
+    }
+    existing?.remove()
+    const group = svgEl("g", { "data-drilldown-blocks": "", "data-signature": signature })
     const [, , vw] = layer.render
     // The gutter only widens the box to the left, so the Y flip is the raw one either way.
     const k = flipConstant(layer.viewBox)
