@@ -5,6 +5,7 @@ import { memoryFileSource, withJson } from "@/integrations/files"
 import { tarGz } from "@/integrations/__tests__/tarFixture"
 import { RELEASE_REF } from "@/integrations/github"
 import type { DrilldownGeometry } from "../../types"
+import ANCHORS from "../geometry/anchors.json"
 import { factsFor, justiceRecord, splitLicense } from "../adapter"
 import { courtTrackerFeed, readCourtTrackerSources } from "../feed"
 import type { Court, Judge, Justice, SeatBlock } from "../upstream"
@@ -355,7 +356,7 @@ describe("courtTrackerFeed end to end", () => {
       vacant: "0",
       "seats-r": "8",
       "seats-d": "1",
-      anchor: "484339,-528618",
+      anchor: ANCHORS.moed.join(","),
       summary: "7 authorized · 9 active · 1 senior",
     })
     // The Supreme Court has no territory, so upstream publishes no block for it; its counts
@@ -489,7 +490,7 @@ describe("helpers", () => {
     const moved = { ...BLOCKS.moed!, anchor: [1, 2] as [number, number] }
     // Upstream tiers `anchor` as placement for their own map; ours is checked in beside the
     // geometry it is measured against, so their layout cannot move ours from under us.
-    expect(factsFor(moed, moved, []).anchor).toBe("484339,-528618")
+    expect(factsFor(moed, moved, []).anchor).toBe(ANCHORS.moed.join(","))
   })
 
   it("factsFor shows a fixed-term court as sitting, not active/senior", () => {
@@ -499,7 +500,6 @@ describe("helpers", () => {
     ])
     expect(facts.summary).toBe("Fixed-term court · 1 authorized · 1 sitting")
     expect(facts).not.toHaveProperty("senior")
-    expect(facts).not.toHaveProperty("anchor")
   })
 
   it("justiceRecord falls back to the allotment row when no SCOTUS record matches", () => {

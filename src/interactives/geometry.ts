@@ -14,13 +14,17 @@ import type { GeometryFile } from "./types"
  * clean one.
  */
 /**
- * Nudge whole regions across a geometry file, by region id, in the file's own units.
+ * Nudge whole regions across a geometry file, by region id, in that file's own units.
  *
  * The shapes come from a QGIS export, and where the insets sit in it — Alaska under the
  * southwest, Hawaii and the territories in a row beside them — is a placement decision rather
  * than a fact about the world. This is where that decision is kept: a layer of offsets over
  * the export, so moving Alaska does not mean re-exporting and does not go missing the next
  * time somebody does. Nothing here moves unless an offset names it.
+ *
+ * Every map gets its own set, because Alaska is placed twice: once beside the southwest on the
+ * national map, and again on the Ninth's own, where it is a district among the Ninth's and
+ * sits somewhere else entirely. The units differ too — each file is separately projected.
  *
  * Paths are absolute `M`/`L` by contract, so a translation is arithmetic on the points.
  */

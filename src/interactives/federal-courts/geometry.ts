@@ -57,9 +57,14 @@ export function loadFederalCourtsGeometry(): Promise<DrilldownGeometry> {
       children[id] = circuits[i]!
     })
     children.cafc = null
-    // Where the insets sit on the national map is ours, not the export's — see
-    // `offsetGeometry`. Empty by default, so an untouched profile gets the export verbatim.
-    return { overview: offsetGeometry(overview, OFFSETS), children }
+    // Where the insets sit is ours, not the export's — see `offsetGeometry`. Keyed by map,
+    // the same shape the layout tools print, because Alaska is placed once on the national
+    // map and again on the Ninth's own and the two have nothing to do with each other.
+    const nudged: DrilldownGeometry["children"] = {}
+    for (const [id, file] of Object.entries(children)) {
+      nudged[id] = file ? offsetGeometry(file, OFFSETS[id as keyof typeof OFFSETS]) : null
+    }
+    return { overview: offsetGeometry(overview, OFFSETS.overview), children: nudged }
   })()
   return cached
 }
