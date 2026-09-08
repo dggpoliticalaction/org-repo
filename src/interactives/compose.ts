@@ -102,9 +102,14 @@ export function composeIndex({ geometry, data }: Omit<ComposeInput, "presentatio
   return buildRegionIndex(assets)
 }
 
-/** Bucketing only asks which regions have an asset, so the URLs can be empty here. */
+/** Bucketing only asks which regions have an asset, so the rest can be empty here. */
 function refsFor(geometry: DrilldownGeometry): ChildAssetRef[] {
-  return childKeys(geometry).map((regionId) => ({ regionId, url: "", geometryUrl: "" }))
+  return childKeys(geometry).map((regionId) => ({
+    regionId,
+    url: "",
+    geometryUrl: "",
+    hasMap: geometry.children[regionId] !== null,
+  }))
 }
 
 /** The child asset key each record is served from, or null for the overview. */

@@ -52,7 +52,7 @@ export function geometryHash(file: GeometryFile | null): string {
  * the old shape: a deploy that quietly does nothing. This is the part a person has to
  * remember, so it is one line and it says so.
  */
-const COMPOSE_VERSION = 2
+const COMPOSE_VERSION = 3
 
 /**
  * What a profile's *code* contributes to a composed asset: its presentation, the geometry it

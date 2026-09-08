@@ -113,6 +113,7 @@ async function composeOverviewFor(
       regionId,
       url: base,
       geometryUrl: `${base}/geometry/${geometryHash(geometry.children[regionId] ?? null)}`,
+      hasMap: geometry.children[regionId] !== null,
     }
   })
   const problems: string[] = []
