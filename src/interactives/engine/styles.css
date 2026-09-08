@@ -178,6 +178,20 @@ path[data-drilldown-overlay="selected"] {
 [data-drilldown-blocks] {
   pointer-events: none;
 }
+/* What a court with no territory stands on, so its bench reads as a place on the map rather
+   than a caption floating beside one. The map's own fill and edge, at the map's own weight. */
+rect[data-block-plinth] {
+  fill: var(--drilldown-selected-fill);
+  stroke: var(--drilldown-border, var(--foreground));
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.55;
+  pointer-events: none;
+}
+[data-drilldown-block][data-hover] rect[data-block-plinth],
+[data-drilldown-block][data-selected] rect[data-block-plinth] {
+  opacity: 1;
+}
 rect[data-block-hit] {
   fill: transparent;
   pointer-events: all;

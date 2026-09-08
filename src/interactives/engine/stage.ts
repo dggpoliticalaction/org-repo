@@ -179,6 +179,35 @@ function toAnchor(value: readonly number[] | undefined): [number, number] | null
   return Number.isFinite(x) && Number.isFinite(y) ? [x as number, y as number] : null
 }
 
+/**
+ * What a block actually draws, in the block's own units.
+ *
+ * Measured on the group rather than added up from its children: a label rides in a scaled
+ * group of its own, so its `getBBox` is in that group's units and means nothing beside a seat
+ * rect's. The group applies the transforms and answers in one frame.
+ *
+ * The two rectangles built from a guess at the label's width — the plinth being sized and the
+ * hit area — are folded away first, or the measurement is of the guess.
+ */
+function contentBounds(block: Element | null): DOMRect | null {
+  if (!(block instanceof SVGGraphicsElement)) return null
+  const guessed = [...block.children].filter(
+    (c) => c.hasAttribute("data-block-plinth") || c.hasAttribute("data-block-hit"),
+  )
+  const held = guessed.map((c) => [c.getAttribute("width"), c.getAttribute("height")] as const)
+  for (const c of guessed) {
+    c.setAttribute("width", "0")
+    c.setAttribute("height", "0")
+  }
+  const box = block.getBBox()
+  guessed.forEach((c, i) => {
+    const [w, h] = held[i]!
+    if (w !== null) c.setAttribute("width", w)
+    if (h !== null) c.setAttribute("height", h)
+  })
+  return box.width > 0 && box.height > 0 ? box : null
+}
+
 function parseAnchor(value: string | undefined): [number, number] | null {
   if (!value) return null
   const parts = value.split(/[\s,]+/).map(Number)
@@ -992,15 +1021,29 @@ export class MapStage {
         !compact && seats.labelFact ? region.facts[seats.labelFact]?.trim() || null : null
       const m = e * 0.6
       const top = labelText ? y0 - e * 0.45 - e * 1.9 : y0 - m
-      block.appendChild(
-        svgEl("rect", {
-          "data-block-hit": "",
-          x: x0 - m,
-          y: top - m * 0.5,
-          width: Math.max(wide, labelText ? e * 3.2 : 0) + 2 * m,
-          height: y0 + tall + m - (top - m * 0.5),
-        }),
-      )
+      const box = {
+        x: x0 - m,
+        y: top - m * 0.5,
+        width: Math.max(wide, labelText ? e * 3.2 : 0) + 2 * m,
+        height: y0 + tall + m - (top - m * 0.5),
+      }
+      // A court with no territory on this map — the Supreme Court, the Federal Circuit and its
+      // feeders — has nothing to be drawn on, so its block floats in the sea with a caption
+      // over it and reads as an annotation rather than a place. This gives it something to
+      // stand on: the same fill and edge every region has, cut to the block it holds.
+      if (!layer.shapes.querySelector(`path[data-region-id="${cssEscape(id)}"]`)) {
+        block.appendChild(
+          svgEl("rect", {
+            "data-block-plinth": "",
+            x: box.x,
+            y: box.y,
+            width: box.width,
+            height: box.height,
+            rx: e * 0.35,
+          }),
+        )
+      }
+      block.appendChild(svgEl("rect", { "data-block-hit": "", ...box }))
       squares.forEach((sq, i) => {
         const inset = sq.color === null ? VACANCY_INSET_PX * unitsPerPx : 0
         const rect = svgEl("rect", {
@@ -1031,6 +1074,18 @@ export class MapStage {
       group.appendChild(block)
     }
     layer.annotations.appendChild(group)
+    // Now that the blocks are in the document, cut each plinth to what it actually holds. The
+    // label's width is the browser's to know — "SCOTUS" is twice the guess the box is built
+    // with — and a plinth its caption hangs off is worse than no plinth.
+    for (const plinth of group.querySelectorAll<SVGRectElement>("rect[data-block-plinth]")) {
+      const box = contentBounds(plinth.parentElement)
+      if (!box) continue
+      const pad = Number(plinth.getAttribute("rx")) || 0
+      plinth.setAttribute("x", String(box.x - pad))
+      plinth.setAttribute("y", String(box.y - pad))
+      plinth.setAttribute("width", String(box.width + pad * 2))
+      plinth.setAttribute("height", String(box.height + pad * 2))
+    }
     this.blocksGen++
     this.highlightBlocks(layer)
   }
