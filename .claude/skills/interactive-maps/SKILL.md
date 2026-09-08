@@ -455,7 +455,14 @@ from a feed.
   `"x,y"` in the projected units of the file that region is drawn in (a
   district's anchor belongs to its circuit's child geometry, a circuit's to the
   overview); default is the centre of the shape's largest sub-path. `labelFact`
-  puts a short label above the block.
+  puts a short label above the block. `clusters` groups blocks that have no
+  territory — the Supreme Court and the three specialist courts — so they are
+  spaced against each other in **CSS px** rather than by an anchor apiece: a gap
+  written as a difference between anchors is map units, and only holds at the
+  width it was measured at. A cluster names the member it hangs from (`anchor`),
+  its `rows` top-first, and `gap`/`rowGap`/`align`; every other member's own
+  anchor is ignored, so delete it rather than leave it looking live. Dragging any
+  member with the layout tools moves the group and prints the anchor member.
 - **`display`** maps record fields to the pane.
 
 Records themselves come from the feed. Each carries `_region` (the region key),
@@ -623,6 +630,7 @@ shows the full overview, strip, facts and any records carried in the overview.
 | Pane shows "Details could not be loaded"                    | The region route failed. Open `/interactives/<slug>/regions/<id>` in the browser.                                                                                                                                                  |
 | Drill-in zooms and crossfades instead of morphing           | By design when shapes are not absolute `M`/`L` or vertex counts differ. The paired validator run names the shapes.                                                                                                                 |
 | No seat blocks                                              | No `seats` in `presentation.ts`, or no region's facts carry `totalFact`.                                                                                                                                                           |
+| A cluster member's anchor does nothing                      | Members of a `seats.clusters` group are placed against the member the cluster hangs from; only that one's anchor is read. Move the group by dragging any member, and paste the anchor it prints.                                   |
 | Seat block in the wrong place                               | `anchor` is in the wrong projection — a district's anchor must be in its circuit's child geometry units. Federal Courts' anchors are checked in (`geometry/anchors.json`); re-run the geometry snapshot after upstream reprojects. |
 | Tooltip lists machine facts (`seats-r`, `anchor`)           | Add them to `facts.hide`, or reference them from `seats`/`display.seatsFact` so they hide automatically.                                                                                                                           |
 | Facts show `Active count` instead of your wording           | Add `facts.labels`.                                                                                                                                                                                                                |

@@ -95,6 +95,29 @@ export interface SeatBlockConfig {
   anchorFact?: string
   /** Fact holding a short label drawn above the block. */
   labelFact?: string
+  /** Groups of blocks placed against each other rather than against the map. See `cluster.ts`. */
+  clusters?: readonly SeatCluster[]
+}
+
+/**
+ * Blocks that belong to each other rather than to a place: the Supreme Court and the three
+ * specialist courts beside it have no territory on the map, so they are read as a group and
+ * spaced in px, which holds at any width. Only the group's own position is in map units.
+ */
+export interface SeatCluster {
+  /**
+   * The member the group hangs from. Its anchor is the one the profile declares and the one
+   * the layout tools report; the rest are placed against it, and their own anchors, if the
+   * profile still carries any, are ignored.
+   */
+  anchor: string
+  /** Members, top row first, each row drawn left to right. */
+  rows: readonly (readonly string[])[]
+  /** CSS px between members along a row, and between one row and the next. */
+  gap?: number
+  rowGap?: number
+  /** How a row narrower than the widest one sits against it. Defaults to centred. */
+  align?: "left" | "center" | "right"
 }
 
 export interface CategoryValue {

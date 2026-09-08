@@ -21,7 +21,9 @@ import {
   subpathBounds,
   zoomViewBox,
 } from "./morph"
-import type { DrilldownAsset, RegionIndex, SeatBlockConfig, ViewBox } from "./types"
+import type { ClusterBox } from "./cluster"
+import { layoutCluster } from "./cluster"
+import type { DrilldownAsset, RegionIndex, SeatBlockConfig, SeatCluster, ViewBox } from "./types"
 
 const SVGNS = "http://www.w3.org/2000/svg"
 
@@ -84,6 +86,24 @@ interface Layer {
   flipY: boolean
   /** Overview: null. Child view: the drilled parent. */
   parentId: string | null
+  /**
+   * Where a cluster put its members, worked out from their measured sizes at the scale of the
+   * moment. Not the anchor member's: that one stays whatever the profile declares, which is
+   * what the group hangs from.
+   */
+  clusterAnchors: Map<string, [number, number]>
+}
+
+/** What every block in one drawing shares: its scale, and the fields the size is read from. */
+interface BlockContext {
+  seats: SeatBlockConfig
+  compact: boolean
+  /** Square edge, in map units. */
+  e: number
+  pitch: number
+  unitsPerPx: number
+  /** The Y flip's constant, so an anchor in geographic Y can be put on the screen. */
+  k: number
 }
 
 interface MorphPlan {
@@ -133,6 +153,10 @@ const DOUBLE_PRESS_MS = 350
  * reads without either.
  */
 const COMPACT_MAP_PX = 560
+/** Between members of a cluster, in CSS px, when the profile does not say. */
+const CLUSTER_GAP_PX = 12
+/** Under a fiftieth of a px on screen is not a move; it is arithmetic that did not quite land. */
+const CLUSTER_EPSILON_PX = 0.02
 const BLOCK_PX_COMPACT = 4.5
 const BLOCK_GAP = 0.3
 const LABEL_EM = 10
@@ -462,10 +486,20 @@ export class MapStage {
     if (moved) return moved
     const gutter = this.gutterAnchor(layer, regionId)
     if (gutter) return gutter
+    // Where the group put it, if it has been laid out yet. A member's own declared anchor is
+    // not consulted: in a cluster the distance to the others is the whole point, and a number
+    // measured on a wider screen is a distance that no longer holds.
+    const placed = layer.clusterAnchors.get(regionId)
+    if (placed) return placed
     const declared =
       toAnchor(seats?.anchors?.[regionId]) ??
       (seats?.anchorFact ? parseAnchor(this.regions.byId[regionId]?.facts[seats.anchorFact]) : null)
-    return declared ?? this.shapeAnchor(layer, regionId)
+    if (declared) return declared
+    // Before the first layout a member has nowhere to be. It is drawn on top of the member the
+    // group hangs from, purely to be measured; the placement that follows moves it off.
+    const cluster = this.clusterOf(regionId)
+    if (cluster && cluster.anchor !== regionId) return this.anchorOf(layer, cluster.anchor)
+    return this.shapeAnchor(layer, regionId)
   }
 
   /**
@@ -693,6 +727,7 @@ export class MapStage {
       viewBox,
       render: render.vb,
       gutter: render.gutter,
+      clusterAnchors: new Map(),
       flipY,
       parentId,
     }
@@ -1113,13 +1148,22 @@ export class MapStage {
       if (!this.layoutEditing) return
       const block = blockFrom(e.target)
       if (!block) return void onRegionDown(e)
-      const id = block.getAttribute("data-region-id")
-      if (!id) return
+      const pressed = block.getAttribute("data-region-id")
+      if (!pressed) return
+      // A cluster is spaced in px and hung from one member, so there is nothing a single
+      // member can be dragged to on its own: the group travels, and the number that comes out
+      // is the anchor member's, which is the one the profile actually carries.
+      const id = this.dragTarget(pressed)
       const from = this.anchorOf(layer, id)
       if (!from) return
       e.preventDefault()
       e.stopPropagation()
-      if (this.isDoublePress(layer, id)) return void this.resetLayout(layer, [id], "anchor")
+      if (this.isDoublePress(layer, pressed)) return void this.resetLayout(layer, [id], "anchor")
+      const moving = this.clusterOf(pressed)
+        ? [...layer.annotations.querySelectorAll<SVGGElement>("g[data-drilldown-block]")].filter(
+            (g) => this.dragTarget(g.getAttribute("data-region-id") ?? "") === id,
+          )
+        : [block]
       const scale = this.fitScale(layer.render)
       const startX = e.clientX
       const startY = e.clientY
@@ -1129,13 +1173,13 @@ export class MapStage {
       const move = (ev: PointerEvent): void => {
         const dx = (ev.clientX - startX) / scale
         const dy = (ev.clientY - startY) / scale
-        block.setAttribute("transform", `translate(${dx} ${dy})`)
+        for (const g of moving) g.setAttribute("transform", `translate(${dx} ${dy})`)
       }
       const up = (ev: PointerEvent): void => {
         svg.removeEventListener("pointermove", move)
         svg.removeEventListener("pointerup", up)
         svg.removeEventListener("pointercancel", up)
-        block.removeAttribute("transform")
+        for (const g of moving) g.removeAttribute("transform")
         const at: [number, number] = [
           from[0] + (ev.clientX - startX) / scale,
           from[1] + ((ev.clientY - startY) / scale) * flip,
@@ -1256,97 +1300,28 @@ export class MapStage {
     const e = (compact ? BLOCK_PX_COMPACT : BLOCK_PX) * unitsPerPx
     const pitch = e * (1 + BLOCK_GAP)
 
+    const ctx: BlockContext = { seats, compact, e, pitch, unitsPerPx, k }
     for (const id of regionIds) {
-      const region = this.regions.byId[id]
-      if (!region) continue
-      const total = Number(region.facts[seats.totalFact])
-      if (!Number.isFinite(total) || total <= 0) continue
-      const squares: { color: string | null }[] = []
-      for (const g of seats.groups) {
-        const n = Number(region.facts[g.fact])
-        for (let i = 0; i < (Number.isFinite(n) ? n : 0); i++) squares.push({ color: g.color })
-      }
-      // Size to whichever is larger so no member is ever dropped from the block.
-      while (squares.length < total) squares.push({ color: null })
-      const anchor =
-        // Whatever the editor has dragged this session outranks everything — on the map they
-        // dragged it on, which is the only one it means anything for.
-        this.movedAnchors.get(this.layerKey(layer))?.get(id) ??
-        this.gutterAnchor(layer, id) ??
-        // The profile's own placement first: it is measured against the geometry checked in
-        // beside it, where a fact carrying a position was measured against somebody else's map.
-        toAnchor(seats.anchors?.[id]) ??
-        (seats.anchorFact ? parseAnchor(region.facts[seats.anchorFact]) : null) ??
-        this.shapeAnchor(layer, id)
-      if (!anchor) continue
-      const cols = Math.ceil(squares.length / BLOCK_ROWS)
-      const wide = cols * pitch - (pitch - e)
-      const tall = Math.min(squares.length, BLOCK_ROWS) * pitch - (pitch - e)
-      const x0 = anchor[0] - wide / 2
-      // the annotation group sits outside the Y-flip group: convert geographic-Y-up to screen-Y-down
-      const y0 = (layer.flipY ? k - anchor[1] : anchor[1]) - tall / 2
-
-      const block = svgEl("g", { "data-drilldown-block": "", "data-region-id": id })
-      const labelText =
-        !compact && seats.labelFact ? region.facts[seats.labelFact]?.trim() || null : null
-      const m = e * 0.6
-      const top = labelText ? y0 - e * 0.45 - e * 1.9 : y0 - m
-      const box = {
-        x: x0 - m,
-        y: top - m * 0.5,
-        width: Math.max(wide, labelText ? e * 3.2 : 0) + 2 * m,
-        height: y0 + tall + m - (top - m * 0.5),
-      }
-      // A court with no territory on this map — the Supreme Court, the Federal Circuit and its
-      // feeders — has nothing to be drawn on, so its block floats in the sea with a caption
-      // over it and reads as an annotation rather than a place. This gives it something to
-      // stand on: the same fill and edge every region has, cut to the block it holds.
-      if (!layer.shapes.querySelector(`path[data-region-id="${cssEscape(id)}"]`)) {
-        block.appendChild(
-          svgEl("rect", {
-            "data-block-plinth": "",
-            x: box.x,
-            y: box.y,
-            width: box.width,
-            height: box.height,
-            rx: e * 0.35,
-          }),
-        )
-      }
-      block.appendChild(svgEl("rect", { "data-block-hit": "", ...box }))
-      squares.forEach((sq, i) => {
-        const inset = sq.color === null ? VACANCY_INSET_PX * unitsPerPx : 0
-        const rect = svgEl("rect", {
-          "data-block-seat": sq.color === null ? "vacant" : "filled",
-          x: x0 + Math.floor(i / BLOCK_ROWS) * pitch + inset,
-          y: y0 + (i % BLOCK_ROWS) * pitch + inset,
-          width: e - 2 * inset,
-          height: e - 2 * inset,
-        })
-        if (sq.color !== null) rect.style.fill = sq.color
-        block.appendChild(rect)
-      })
-      if (labelText) {
-        // Browsers clamp font-size at 10000px and these viewBoxes are millions of units across,
-        // so the label rides in a scaled group with a small font.
-        const scale = (e * 1.9) / LABEL_EM
-        const tg = svgEl("g", { transform: `translate(${x0} ${y0 - e * 0.45}) scale(${scale})` })
-        const t = svgEl("text", {
-          "data-block-label": "",
-          "font-size": LABEL_EM,
-          // Optical alignment: a leading "1" puts its stem ~2px right of where other glyphs' mass sits.
-          x: /^1/.test(labelText) ? -ONE_NUDGE_EM : 0,
-        })
-        t.textContent = labelText
-        tg.appendChild(t)
-        block.appendChild(tg)
-      }
-      group.appendChild(block)
+      const block = this.buildBlock(layer, id, ctx)
+      if (block) group.appendChild(block)
     }
     layer.annotations.appendChild(group)
-    // Now that the blocks are in the document, cut each plinth to what it actually holds. The
-    // label's width is the browser's to know — "SCOTUS" is twice the guess the box is built
-    // with — and a plinth its caption hangs off is worse than no plinth.
+    this.cutPlinths(group)
+    // Only now is a block's real size known, so this is where a cluster can place its members
+    // against each other. Doing so moves them, which is a rebuild, which is a new set of
+    // plinths to cut.
+    if (this.placeClusters(layer, group, regionIds, ctx)) this.cutPlinths(group)
+    this.blocksGen++
+    this.highlightBlocks(layer)
+  }
+
+  /**
+   * Cut each plinth to what its block actually holds. The label's width is the browser's to
+   * know — "SCOTUS" is twice the guess the box is built with — and a plinth its caption hangs
+   * off is worse than no plinth. `contentBounds` ignores the plinth and the hit rect, so
+   * running this twice says the same thing as running it once.
+   */
+  private cutPlinths(group: SVGGElement): void {
     for (const plinth of group.querySelectorAll<SVGRectElement>("rect[data-block-plinth]")) {
       const box = contentBounds(plinth.parentElement)
       if (!box) continue
@@ -1356,8 +1331,191 @@ export class MapStage {
       plinth.setAttribute("width", String(box.width + pad * 2))
       plinth.setAttribute("height", String(box.height + pad * 2))
     }
-    this.blocksGen++
-    this.highlightBlocks(layer)
+  }
+
+  /**
+   * One region's seat block, built at whatever `anchorOf` says its place is. Everything the
+   * block's size depends on is in `ctx`, so a caller that has already worked it out for the
+   * drawing as a whole does not work it out again per region — and a block can be rebuilt on
+   * its own, which is how a cluster puts its members where they belong once it has measured
+   * how big they came out.
+   */
+  private buildBlock(layer: Layer, id: string, ctx: BlockContext): SVGGElement | null {
+    const { seats, compact, e, pitch, unitsPerPx, k } = ctx
+    const region = this.regions.byId[id]
+    if (!region) return null
+    const total = Number(region.facts[seats.totalFact])
+    if (!Number.isFinite(total) || total <= 0) return null
+    const squares: { color: string | null }[] = []
+    for (const g of seats.groups) {
+      const n = Number(region.facts[g.fact])
+      for (let i = 0; i < (Number.isFinite(n) ? n : 0); i++) squares.push({ color: g.color })
+    }
+    // Size to whichever is larger so no member is ever dropped from the block.
+    while (squares.length < total) squares.push({ color: null })
+    const anchor = this.anchorOf(layer, id)
+    if (!anchor) return null
+    const cols = Math.ceil(squares.length / BLOCK_ROWS)
+    const wide = cols * pitch - (pitch - e)
+    const tall = Math.min(squares.length, BLOCK_ROWS) * pitch - (pitch - e)
+    const x0 = anchor[0] - wide / 2
+    // the annotation group sits outside the Y-flip group: convert geographic-Y-up to screen-Y-down
+    const y0 = (layer.flipY ? k - anchor[1] : anchor[1]) - tall / 2
+
+    const block = svgEl("g", { "data-drilldown-block": "", "data-region-id": id })
+    const labelText =
+      !compact && seats.labelFact ? region.facts[seats.labelFact]?.trim() || null : null
+    const m = e * 0.6
+    const top = labelText ? y0 - e * 0.45 - e * 1.9 : y0 - m
+    const box = {
+      x: x0 - m,
+      y: top - m * 0.5,
+      width: Math.max(wide, labelText ? e * 3.2 : 0) + 2 * m,
+      height: y0 + tall + m - (top - m * 0.5),
+    }
+    // A court with no territory on this map — the Supreme Court, the Federal Circuit and its
+    // feeders — has nothing to be drawn on, so its block floats in the sea with a caption
+    // over it and reads as an annotation rather than a place. This gives it something to
+    // stand on: the same fill and edge every region has, cut to the block it holds.
+    if (!layer.shapes.querySelector(`path[data-region-id="${cssEscape(id)}"]`)) {
+      block.appendChild(
+        svgEl("rect", {
+          "data-block-plinth": "",
+          x: box.x,
+          y: box.y,
+          width: box.width,
+          height: box.height,
+          rx: e * 0.35,
+        }),
+      )
+    }
+    block.appendChild(svgEl("rect", { "data-block-hit": "", ...box }))
+    squares.forEach((sq, i) => {
+      const inset = sq.color === null ? VACANCY_INSET_PX * unitsPerPx : 0
+      const rect = svgEl("rect", {
+        "data-block-seat": sq.color === null ? "vacant" : "filled",
+        x: x0 + Math.floor(i / BLOCK_ROWS) * pitch + inset,
+        y: y0 + (i % BLOCK_ROWS) * pitch + inset,
+        width: e - 2 * inset,
+        height: e - 2 * inset,
+      })
+      if (sq.color !== null) rect.style.fill = sq.color
+      block.appendChild(rect)
+    })
+    if (labelText) {
+      // Browsers clamp font-size at 10000px and these viewBoxes are millions of units across,
+      // so the label rides in a scaled group with a small font.
+      const scale = (e * 1.9) / LABEL_EM
+      const tg = svgEl("g", { transform: `translate(${x0} ${y0 - e * 0.45}) scale(${scale})` })
+      const t = svgEl("text", {
+        "data-block-label": "",
+        "font-size": LABEL_EM,
+        // Optical alignment: a leading "1" puts its stem ~2px right of where other glyphs' mass sits.
+        x: /^1/.test(labelText) ? -ONE_NUDGE_EM : 0,
+      })
+      t.textContent = labelText
+      tg.appendChild(t)
+      block.appendChild(tg)
+    }
+    return block
+  }
+
+  /**
+   * Which cluster, if any, a region's block belongs to. A block belongs to at most one: two
+   * groups laying out the same block would each be right about where it goes and the last one
+   * drawn would win, so the first mention is the one that counts.
+   */
+  private clusterOf(regionId: string): SeatCluster | null {
+    for (const cluster of this.opts.seats?.clusters ?? [])
+      if (cluster.rows.some((row) => row.includes(regionId))) return cluster
+    return null
+  }
+
+  /** The block a drag on this one moves: a cluster travels whole, from its anchor member. */
+  private dragTarget(regionId: string): string {
+    return this.clusterOf(regionId)?.anchor ?? regionId
+  }
+
+  /**
+   * Place each cluster's members against each other, and answer whether anything moved.
+   *
+   * It runs on blocks that are already drawn because a block's size is not knowable before
+   * then — a plinth is cut to a caption the browser measures — and a group spaced by guesses
+   * would be out by the width of the word "SCOTUS". So the members are measured where they
+   * first landed, laid out from those sizes, and rebuilt at the anchors that fall out of it.
+   *
+   * The group hangs from its anchor member, whose own anchor is left exactly where the profile
+   * put it. That is what keeps the placement stable: the layout is a function of one declared
+   * position and the sizes, never of where the members happen to be sitting, so running it
+   * again lands them in the same place.
+   */
+  private placeClusters(
+    layer: Layer,
+    group: SVGGElement,
+    regionIds: string[],
+    ctx: BlockContext,
+  ): boolean {
+    const clusters = this.opts.seats?.clusters
+    if (!clusters?.length) return false
+    const drawn = new Set(regionIds)
+    const blockOf = (id: string): SVGGElement | null =>
+      group.querySelector<SVGGElement>(`g[data-drilldown-block][data-region-id="${cssEscape(id)}"]`)
+    // A block is placed by its anchor but drawn as a box around it, so what the layout needs
+    // is the box, and what it has to hand back is an anchor. This is the difference between
+    // the two, and it does not change when the block moves.
+    const screenY = (at: readonly number[]): number => (layer.flipY ? ctx.k - at[1]! : at[1]!)
+    let moved = false
+    for (const cluster of clusters) {
+      const origin = cluster.anchor
+      const originAt = this.anchorOf(layer, origin)
+      if (!drawn.has(origin) || !originAt) continue
+      const boxes = new Map<string, { box: ClusterBox; offX: number; offY: number }>()
+      for (const id of cluster.rows.flat()) {
+        const el = drawn.has(id) ? blockOf(id) : null
+        const at = el ? this.anchorOf(layer, id) : null
+        if (!el || !at) continue
+        const bb = el.getBBox()
+        if (!(bb.width > 0 && bb.height > 0)) continue
+        boxes.set(id, {
+          box: { id, width: bb.width, height: bb.height },
+          offX: bb.x - at[0]!,
+          offY: bb.y - screenY(at),
+        })
+      }
+      const anchorBox = boxes.get(origin)
+      if (!anchorBox) continue
+      const gap = (cluster.gap ?? CLUSTER_GAP_PX) * ctx.unitsPerPx
+      const placement = layoutCluster(
+        cluster.rows.map((row) => row.flatMap((id) => boxes.get(id)?.box ?? [])),
+        {
+          gap,
+          rowGap: (cluster.rowGap ?? cluster.gap ?? CLUSTER_GAP_PX) * ctx.unitsPerPx,
+          align: cluster.align ?? "center",
+        },
+      )
+      // Hang the whole group off the one member whose place is declared, by moving the layout
+      // until that member's anchor lands back on it.
+      const home = placement.at.get(origin)
+      if (!home) continue
+      const shiftX = originAt[0]! - (home[0] - anchorBox.offX)
+      const shiftY = screenY(originAt) - (home[1] - anchorBox.offY)
+      for (const [id, at] of placement.at) {
+        if (id === origin) continue
+        const entry = boxes.get(id)
+        const was = this.anchorOf(layer, id)
+        if (!entry || !was) continue
+        const x = at[0] - entry.offX + shiftX
+        const y = at[1] - entry.offY + shiftY
+        const to: [number, number] = [x, layer.flipY ? ctx.k - y : y]
+        const still = CLUSTER_EPSILON_PX * ctx.unitsPerPx
+        if (Math.abs(to[0] - was[0]!) < still && Math.abs(to[1] - was[1]!) < still) continue
+        layer.clusterAnchors.set(id, to)
+        const rebuilt = this.buildBlock(layer, id, ctx)
+        if (rebuilt) blockOf(id)?.replaceWith(rebuilt)
+        moved = true
+      }
+    }
+    return moved
   }
 
   private refreshBlocks(): void {
