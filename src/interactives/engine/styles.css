@@ -179,9 +179,11 @@ path[data-drilldown-overlay="selected"] {
   pointer-events: none;
 }
 /* What a court with no territory stands on, so its bench reads as a place on the map rather
-   than a caption floating beside one. The map's own fill and edge, at the map's own weight. */
+   than a caption floating beside one. The regions' own fill and edge, not the neutral the
+   selection uses: a court standing on the map should be the colour of the map, or it reads as
+   a court that is already selected. */
 rect[data-block-plinth] {
-  fill: var(--drilldown-selected-fill);
+  fill: var(--drilldown-parent-fill);
   stroke: var(--drilldown-border, var(--foreground));
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
