@@ -13,7 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { HeaderChrome, HeaderLogo } from "@/Header/chrome"
+import { HeaderLogo } from "@/Header/chrome"
 import { HeaderActions } from "@/Header/HeaderActions/Component"
 import { SearchForm } from "@/Header/SearchForm/Component"
 import type { Footer, Header } from "@/payload-types"
@@ -29,7 +29,7 @@ export async function Header(): Promise<React.JSX.Element> {
 
   return (
     <>
-      <HeaderChrome>
+      <header className="bg-background sticky top-0 z-50">
         <div className="container">
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b py-3">
             <Sheet>
@@ -106,7 +106,7 @@ export async function Header(): Promise<React.JSX.Element> {
             </div>
           </div>
         </div>
-      </HeaderChrome>
+      </header>
       <MegaMenu menu={navItems} />
     </>
   )

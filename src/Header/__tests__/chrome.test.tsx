@@ -9,48 +9,26 @@ vi.mock("@/components/Logo/AnimatedLogo", () => ({
   AnimatedLogo: () => <div data-testid="animated-logo" />,
 }))
 
-import { HeaderChrome, HeaderLogo, headerVariants, toneFor } from "../chrome"
+import { drawsLogo, HeaderLogo } from "../chrome"
 
-describe("toneFor", () => {
-  it("puts the band on the interactives and nowhere else", () => {
-    expect(toneFor("/interactives")).toBe("brand")
-    expect(toneFor("/interactives/federal-courts")).toBe("brand")
-    expect(toneFor("/")).toBe("paper")
-    expect(toneFor("/articles/something")).toBe("paper")
-    expect(toneFor(null)).toBe("paper")
-  })
-
-  it("paints the band and leaves the paper alone", () => {
-    expect(headerVariants({ tone: "brand" })).toContain("bg-brand")
-    expect(headerVariants({ tone: "paper" })).toContain("bg-background")
-    // Whatever an editor picked in the CMS, a button on the band is an outline on it.
-    expect(headerVariants({ tone: "brand" })).toContain("bg-transparent")
-  })
-})
-
-describe("HeaderChrome", () => {
-  it("wears the tone of wherever the reader is, and says which", () => {
-    pathname = "/interactives/federal-courts"
-    const { container, rerender } = render(<HeaderChrome>content</HeaderChrome>)
-    const header = (): HTMLElement => container.querySelector("header")!
-    expect(header()).toHaveAttribute("data-header-tone", "brand")
-    expect(header()).toHaveClass("bg-brand")
-
-    pathname = "/"
-    rerender(<HeaderChrome>content</HeaderChrome>)
-    expect(header()).toHaveAttribute("data-header-tone", "paper")
-    expect(header()).toHaveClass("bg-background")
+describe("drawsLogo", () => {
+  it("draws the wordmark on the interactives and nowhere else", () => {
+    expect(drawsLogo("/interactives")).toBe(true)
+    expect(drawsLogo("/interactives/federal-courts")).toBe(true)
+    expect(drawsLogo("/")).toBe(false)
+    expect(drawsLogo("/articles/something")).toBe(false)
+    expect(drawsLogo(null)).toBe(false)
   })
 })
 
 describe("HeaderLogo", () => {
-  it("draws the wordmark on the band and sets it everywhere else", () => {
+  it("draws the wordmark on an interactive and sets it everywhere else", () => {
     pathname = "/interactives"
     const { container, queryByTestId, rerender } = render(<HeaderLogo />)
     expect(queryByTestId("animated-logo")).toBeInTheDocument()
 
-    // Off the band the animation is not merely hidden — it is never reached, so neither is
-    // the player it would have brought with it.
+    // Elsewhere the animation is not merely hidden — it is never reached, so neither is the
+    // player it would have brought with it.
     pathname = "/articles/x"
     rerender(<HeaderLogo />)
     expect(queryByTestId("animated-logo")).not.toBeInTheDocument()
