@@ -27,7 +27,8 @@ import { buildRegionIndex, displayFacts } from "./regions"
 import type { SearchResult } from "./search"
 import { DrilldownSelectionProvider } from "./selection"
 import { MapStage } from "./stage"
-import { ANCHOR_EDIT_PARAM, useAnchorEditor } from "./useAnchorEditor"
+import { ANCHOR_EDIT_PARAM } from "./layoutTools"
+import { useAnchorEditor } from "./useAnchorEditor"
 import type { ChildAssetRef, DrilldownAsset, RegionIndex, RegionInfo } from "./types"
 
 export interface DrilldownMapClientProps {

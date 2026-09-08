@@ -5,6 +5,7 @@ import { getPayload } from "payload"
 import React from "react"
 
 import { Sources } from "@/blocks/InteractiveMap/Sources"
+import { LAYOUT_TOOL_NOTES } from "@/interactives/engine/layoutTools"
 import { interactivePath } from "@/collections/InteractiveSnapshots/tag"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
@@ -110,7 +111,15 @@ export default async function InteractivePage({
         </p>
       )}
 
-      <Sources sources={interactive.sources} colorBias={null} className="mt-4" />
+      {/* The map's layout tools, said out loud: they are a query string away and nothing
+          they do is saved, so there is more to gain from a curious reader finding them than
+          from hiding them behind an account. */}
+      <Sources
+        sources={interactive.sources}
+        colorBias={null}
+        notes={LAYOUT_TOOL_NOTES}
+        className="mt-4"
+      />
     </div>
   )
 }
