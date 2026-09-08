@@ -237,13 +237,13 @@ export function DrilldownSelector({
       <TooltipProvider delay={400} closeDelay={0}>
         <Sidebar collapsible="none" className="h-auto min-h-0 w-full bg-transparent">
           {search && (
-            <SidebarHeader className="p-0 pb-2 group-data-collapsed/rail:hidden">
+            <SidebarHeader className="p-0 pb-2 group-data-[collapsed]/rail:hidden">
               {search}
             </SidebarHeader>
           )}
           {/* A search box needs a rail's width, so folded it is a glyph that gives one back. */}
           {search && onSearch && (
-            <SidebarHeader className="hidden p-0 pb-1 group-data-collapsed/rail:block">
+            <SidebarHeader className="hidden p-0 pb-1 group-data-[collapsed]/rail:block">
               <Tooltip>
                 <TooltipTrigger
                   render={
@@ -253,9 +253,9 @@ export function DrilldownSelector({
                       data-drilldown-search-open=""
                       aria-label="Search"
                       onClick={onSearch}
-                      // The same padding as a region row, so the glyph lands in the one column
-                      // they all share rather than a little to one side of it.
-                      className="text-muted-foreground w-full"
+                      // The same padding and the same square as a region row, so the glyph
+                      // lands in the column they all share, not a little to one side of it.
+                      className="text-muted-foreground h-9 w-full"
                     />
                   }
                 >
@@ -283,7 +283,7 @@ export function DrilldownSelector({
                   onClick={onBack}
                   // Folded there is no room for it and no need either: the trail across the top
                   // of the map says where the reader is and takes them back up it.
-                  className="text-muted-foreground mb-1 group-data-collapsed/rail:hidden"
+                  className="text-muted-foreground mb-1 group-data-[collapsed]/rail:hidden"
                 >
                   <ChevronLeft aria-hidden="true" />
                   <span>Back to overview</span>
@@ -312,10 +312,19 @@ export function DrilldownSelector({
                           aria-label={region.label}
                           isActive={selected === id}
                           onClick={(e) => onSelect(id, viaOf(e))}
-                          // Nothing about the row's padding changes when it folds, so the
-                          // glyph keeps the same offset from the rail's edge either way and
-                          // the column narrowing is the only movement there is to see.
-                          className={ACTIVE_ROW}
+                          className={cn(
+                            // Nothing about the row's padding changes when it folds, so the
+                            // glyph keeps the same offset from the rail's edge either way and
+                            // the column narrowing is the only movement there is to see.
+                            //
+                            // Square once folded. The width is the glyph plus its padding and
+                            // is not negotiable — it is what the column is cut to — so it is
+                            // the height that gives, carried by the row's own transition.
+                            // Nothing to do with the labels: "Fed" is drawn inside the very
+                            // box "IX" is.
+                            "group-data-[collapsed]/rail:h-9",
+                            ACTIVE_ROW,
+                          )}
                           render={<TooltipTrigger render={<button type="button" />} />}
                         >
                           {regionGlyph(region, icons)}
@@ -349,7 +358,7 @@ export function DrilldownSelector({
                         </SidebarMenuAction>
                       )}
                       {kids.length > 0 && (
-                        <Branch open={open} className="group-data-collapsed/rail:hidden">
+                        <Branch open={open} className="group-data-[collapsed]/rail:hidden">
                           <SidebarMenuSub>
                             {kids.map((childId) => {
                               const child = regions.byId[childId]
