@@ -1,15 +1,16 @@
 "use client"
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
-import * as React from "react"
-
 import { cn } from "@/utilities/utils"
 
-function TooltipProvider({ ...props }: TooltipPrimitive.Provider.Props): React.ReactNode {
-  return <TooltipPrimitive.Provider data-slot="tooltip-provider" delay={400} {...props} />
+function TooltipProvider({
+  delay = 0,
+  ...props
+}: TooltipPrimitive.Provider.Props): React.ReactNode {
+  return <TooltipPrimitive.Provider data-slot="tooltip-provider" delay={delay} {...props} />
 }
 
-function TooltipRoot({ ...props }: TooltipPrimitive.Root.Props): React.ReactNode {
+function Tooltip({ ...props }: TooltipPrimitive.Root.Props): React.ReactNode {
   return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
 }
 
@@ -17,74 +18,42 @@ function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props): React.Rea
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
 }
 
-function TooltipPortal({ ...props }: TooltipPrimitive.Portal.Props): React.ReactNode {
-  return <TooltipPrimitive.Portal data-slot="tooltip-portal" {...props} />
-}
-
-function TooltipPositioner({
-  className,
-  ...props
-}: TooltipPrimitive.Positioner.Props): React.ReactNode {
-  return (
-    <TooltipPrimitive.Positioner
-      data-slot="tooltip-positioner"
-      sideOffset={6}
-      className={cn("z-50", className)}
-      {...props}
-    />
-  )
-}
-
-function TooltipPopup({ className, ...props }: TooltipPrimitive.Popup.Props): React.ReactNode {
-  return (
-    <TooltipPrimitive.Popup
-      data-slot="tooltip-popup"
-      className={cn(
-        "bg-foreground text-background rounded-xs px-2.5 py-1.5 text-xs shadow-md",
-        "opacity-0 transition-opacity data-[instant]:transition-none data-[open]:opacity-100",
-        className,
-      )}
-      {...props}
-    />
-  )
-}
-
-/**
- * The two-part shape the shadcn registry writes against: a `Tooltip` wrapping a trigger and a
- * `TooltipContent`. It composes the parts above, so a component copied in from the registry —
- * `sidebar.tsx` is the first — works unedited, while anything bespoke here keeps reaching for
- * the portal, positioner and popup directly.
- */
-function Tooltip({ ...props }: TooltipPrimitive.Root.Props): React.ReactNode {
-  return <TooltipRoot {...props} />
-}
-
-type TooltipContentProps = TooltipPrimitive.Popup.Props &
-  Pick<TooltipPrimitive.Positioner.Props, "side" | "align" | "sideOffset" | "hidden">
-
 function TooltipContent({
-  side,
-  align,
-  sideOffset,
-  hidden,
+  className,
+  side = "top",
+  sideOffset = 4,
+  align = "center",
+  alignOffset = 0,
+  children,
   ...props
-}: TooltipContentProps): React.ReactNode {
+}: TooltipPrimitive.Popup.Props &
+  Pick<
+    TooltipPrimitive.Positioner.Props,
+    "align" | "alignOffset" | "side" | "sideOffset"
+  >): React.ReactNode {
   return (
-    <TooltipPortal>
-      <TooltipPositioner side={side} align={align} sideOffset={sideOffset} hidden={hidden}>
-        <TooltipPopup {...props} />
-      </TooltipPositioner>
-    </TooltipPortal>
+    <TooltipPrimitive.Portal>
+      <TooltipPrimitive.Positioner
+        align={align}
+        alignOffset={alignOffset}
+        side={side}
+        sideOffset={sideOffset}
+        className="isolate z-50"
+      >
+        <TooltipPrimitive.Popup
+          data-slot="tooltip-content"
+          className={cn(
+            "bg-foreground text-background data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 z-50 inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 rounded-md px-3 py-1.5 text-xs has-data-[slot=kbd]:pr-1.5 **:data-[slot=kbd]:relative **:data-[slot=kbd]:isolate **:data-[slot=kbd]:z-50 **:data-[slot=kbd]:rounded-sm",
+            className,
+          )}
+          {...props}
+        >
+          {children}
+          <TooltipPrimitive.Arrow className="bg-foreground fill-foreground z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-xs data-[side=bottom]:top-1 data-[side=inline-end]:top-1/2! data-[side=inline-end]:-left-1 data-[side=inline-end]:-translate-y-1/2 data-[side=inline-start]:top-1/2! data-[side=inline-start]:-right-1 data-[side=inline-start]:-translate-y-1/2 data-[side=left]:top-1/2! data-[side=left]:-right-1 data-[side=left]:-translate-y-1/2 data-[side=right]:top-1/2! data-[side=right]:-left-1 data-[side=right]:-translate-y-1/2 data-[side=top]:-bottom-2.5" />
+        </TooltipPrimitive.Popup>
+      </TooltipPrimitive.Positioner>
+    </TooltipPrimitive.Portal>
   )
 }
 
-export {
-  Tooltip,
-  TooltipContent,
-  TooltipPortal,
-  TooltipPositioner,
-  TooltipPopup,
-  TooltipProvider,
-  TooltipRoot,
-  TooltipTrigger,
-}
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
