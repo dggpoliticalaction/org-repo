@@ -77,8 +77,11 @@ export const syncInteractiveDataTask: TaskConfig<"syncInteractiveData"> = {
           if (interactive.slug) revalidatePath(interactivePath(interactive.slug))
         } catch (err) {
           // Same caveat as the merch sync: revalidation wants a request scope and the
-          // scheduled run has none. The snapshot is written; the cache catches up on the
-          // next editorial save or the next request after the page's revalidate window.
+          // scheduled run has none. The snapshot is written regardless; the cache catches up
+          // on the next editorial save that happens to touch this interactive, or on its own
+          // in at most an hour — the `unstable_cache` calls in `interactives/load.ts` carry a
+          // `revalidate: 3600` alongside their tag for exactly this: a tag write that never
+          // lands must still expire, not stay wrong until someone unrelated publishes.
           log.warn(
             `[interactive-sync:${interactive.slug}] published but revalidation failed: ${err instanceof Error ? err.message : String(err)}`,
           )

@@ -156,7 +156,12 @@ export async function loadInteractiveOverview(
       interactive.slug,
       await fingerprintOf(profile),
     ],
-    { tags: [interactiveTag(interactive.id)] },
+    // The tag is what invalidates this on a publish; the TTL is what still invalidates it if
+    // that tag write is ever missed — the scheduled sync's own revalidateTag call runs outside
+    // a request scope and can throw (see syncInteractiveData/index.ts). An hour matches the
+    // s-maxage this same data is served with over HTTP, so the two layers agree on how stale
+    // "worst case" means.
+    { tags: [interactiveTag(interactive.id)], revalidate: 3600 },
   )()
 }
 
@@ -200,7 +205,9 @@ export async function loadInteractiveRegion(
   return unstable_cache(
     () => composeChildFor(interactive, profile, regionId, false),
     ["interactive-region", String(interactive.id), regionId, await fingerprintOf(profile)],
-    { tags: [interactiveTag(interactive.id)] },
+    // See loadInteractiveOverview: the TTL is the fallback for a missed tag invalidation, not
+    // the primary one, and it matches this route's own s-maxage.
+    { tags: [interactiveTag(interactive.id)], revalidate: 3600 },
   )()
 }
 
@@ -225,6 +232,8 @@ export async function loadInteractiveSearchIndex(
   return unstable_cache(
     () => composeSearchIndexFor(interactive, profile, false),
     ["interactive-search", String(interactive.id), interactive.slug, await fingerprintOf(profile)],
-    { tags: [interactiveTag(interactive.id)] },
+    // See loadInteractiveOverview: the TTL is the fallback for a missed tag invalidation, not
+    // the primary one, and it matches this route's own s-maxage.
+    { tags: [interactiveTag(interactive.id)], revalidate: 3600 },
   )()
 }
