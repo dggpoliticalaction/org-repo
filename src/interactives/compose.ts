@@ -101,7 +101,6 @@ function refsFor(geometry: DrilldownGeometry): ChildAssetRef[] {
     regionId,
     url: "",
     geometryUrl: "",
-    hasMap: geometry.children[regionId] !== null,
   }))
 }
 

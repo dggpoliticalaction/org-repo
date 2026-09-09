@@ -277,9 +277,4 @@ export interface ChildAssetRef {
   url: string
   /** Same-origin path serving its shapes, hashed so it can be held forever. */
   geometryUrl: string
-  /**
-   * Whether the region has a map of its own to drill into. One without is still a region — it
-   * has records, and opening it draws its children's blocks on the map already on screen.
-   */
-  hasMap: boolean
 }

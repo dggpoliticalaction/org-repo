@@ -189,18 +189,8 @@ function setup({
       overview={{ ...overview, paths: overview.paths.map((p) => ({ ...p, d: "" })) }}
       search={search}
       childAssets={[
-        {
-          regionId: "west",
-          url: "/regions/west",
-          geometryUrl: "/regions/west/geometry/w1",
-          hasMap: true,
-        },
-        {
-          regionId: "east",
-          url: "/regions/east",
-          geometryUrl: "/regions/east/geometry/e1",
-          hasMap: eastMap,
-        },
+        { regionId: "west", url: "/regions/west", geometryUrl: "/regions/west/geometry/w1" },
+        { regionId: "east", url: "/regions/east", geometryUrl: "/regions/east/geometry/e1" },
       ]}
     >
       <div data-drilldown-layer="overview" data-state="visible">
