@@ -74,11 +74,18 @@ export interface ArcDims {
  * Top-half dome hugging the stage bottom; the count text sits below the baseline, fixed
  * relative to the arc centre, so variable whitespace lives above the dome where it labels
  * nothing.
+ *
+ * `rMax` answers to both dimensions it is drawn in, not only the one it is named for: capped
+ * by the stage height as before, and now also by the stage width, since a semicircle this
+ * wide sits inside a box this narrow — a dome (or, worse, an outer band, which reaches a ring
+ * further still) that ignored the second constraint ran its ends off the edges of a pane
+ * narrower than a fully-grown one is tall.
  */
 export function arcDims(width: number, height: number, m: SeatMetrics = REGULAR_METRICS): ArcDims {
   const cx = width / 2
   const cy = height - m.bottom
-  return { cx, cy, rMax: Math.max(60, cy - 30), r0: Math.min(width * m.r0Fraction, m.r0Max) }
+  const rMax = Math.max(60, Math.min(cy - 30, width / 2 - (m.half + 6)))
+  return { cx, cy, rMax, r0: Math.min(width * m.r0Fraction, m.r0Max, rMax) }
 }
 
 /** Seats per ring ∝ ring radius, so intra-ring spacing is as equal as possible. */

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import {
   arcDims,
   ARC_STAGE_HEIGHT,
+  COMPACT_METRICS,
   layoutArc,
   layoutTimeline,
   MIN_SPACING,
@@ -83,5 +84,15 @@ describe("layouts", () => {
 
   it("gives the seat chart the radial budget its geometry was tuned at", () => {
     expect(ARC_STAGE_HEIGHT).toBe(360)
+  })
+
+  it("keeps the dome — and the band a big bench pushes further out — inside the stage width", () => {
+    // A pane-width stage (COMPACT metrics) with a big bench and a supernumerary band: rMax
+    // used to come from the height alone, and a band this wide ran its ends past the stage's
+    // own left and right edges rather than being cut down to fit beside them.
+    const width = 330
+    const { dims, bandRadius } = layoutArc(29, 22, width, ARC_STAGE_HEIGHT, COMPACT_METRICS)
+    expect(dims.cx + bandRadius + COMPACT_METRICS.half).toBeLessThanOrEqual(width + 1)
+    expect(dims.cx - bandRadius - COMPACT_METRICS.half).toBeGreaterThanOrEqual(-1)
   })
 })

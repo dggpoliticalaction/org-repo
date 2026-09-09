@@ -1,5 +1,6 @@
 "use client"
 
+import { Armchair, History } from "lucide-react"
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -151,7 +152,13 @@ export function DrilldownPane({
     setDetail(unpin ? null : { record, display: recDisplay, pinned: true })
   }
 
-  const notes = (region?.notes ?? []).filter((n) => n.mode === "always" || mode === "seats")
+  // Notes split by what they are for. An `always` note (a territorial district's holdover
+  // rule) is its own small fact and stays a line under the bench. A `seats` note explains the
+  // supernumerary control itself — what "Senior" and its options mean — wherever that control
+  // is drawn, in either view, which is a tooltip on the control rather than a paragraph below
+  // whatever happens to be on screen when the reader opened it.
+  const alwaysNotes = (region?.notes ?? []).filter((n) => n.mode === "always")
+  const seatsNote = region?.notes.find((n) => n.mode === "seats")?.text ?? null
 
   return (
     <section
@@ -200,11 +207,11 @@ export function DrilldownPane({
           {/* No heading of its own: the sheet's bar carries the region's name, and saying it
               twice a line apart is one name too many. What is left here is what the bar does
               not say — the counts, and the facts the summary line leaves out. */}
-          <header className="flex flex-wrap items-start gap-x-4 gap-y-2">
+          <header className="flex flex-wrap items-start gap-x-4 gap-y-1">
             <div className="min-w-0 flex-1">
               {region.summary && <p className="text-muted-foreground text-sm">{region.summary}</p>}
               {facts.length > 0 && (
-                <dl className="text-muted-foreground mt-2 flex flex-wrap gap-x-4 gap-y-0.5 text-sm">
+                <dl className="text-muted-foreground mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-sm">
                   {facts.map((f) => (
                     <div key={f.key} className="flex gap-1.5">
                       <dt>{f.label}</dt>
@@ -231,10 +238,21 @@ export function DrilldownPane({
             {display && (
               <Segmented<BenchMode>
                 label="View"
+                hideLabel
                 value={mode}
                 options={[
-                  { value: "seats", label: "Seats" },
-                  { value: "timeline", label: "Timeline" },
+                  {
+                    value: "seats",
+                    label: "Seats",
+                    icon: Armchair,
+                    hint: "Seats — the bench now, by seat",
+                  },
+                  {
+                    value: "timeline",
+                    label: "Timeline",
+                    icon: History,
+                    hint: "Timeline — every commission, in order",
+                  },
                 ]}
                 onChange={setMode}
               />
@@ -253,6 +271,7 @@ export function DrilldownPane({
             {showSupernumeraryRow && (
               <Segmented<SupernumeraryMode>
                 label={supLabel}
+                labelHint={seatsNote}
                 // A timeline has no seats and no majority, so only two of the three mean
                 // anything in it.
                 value={
@@ -310,8 +329,15 @@ export function DrilldownPane({
             )}
           </div>
 
+          {/* No `min-h-0` on this row or the column inside it: their default `min-height:
+              auto` is what a plain nested flex chain has anyway, and it is what lets the
+              bench's own floor (DrilldownBench.tsx) reach all the way up to the ONE place
+              that should act on it — the scrolling wrapper this whole region sits in. Cut
+              anywhere along that chain, the floor stops one level short of where it is read
+              and whatever sits below it — first found with the detail card — overflows a box
+              smaller than what it had just insisted on being. */}
           <div className="flex flex-1 flex-col gap-4 @2xl:flex-row @2xl:items-stretch">
-            <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 flex-1 flex-col">
               {recordsState === "loading" && (
                 <p
                   className="text-muted-foreground py-6 text-center text-sm"
@@ -355,7 +381,7 @@ export function DrilldownPane({
                   {cohort.label} · {cohort.count} of {cohort.total}
                 </p>
               )}
-              {notes.map((n, i) => (
+              {alwaysNotes.map((n, i) => (
                 <p
                   key={i}
                   className="text-muted-foreground mt-2 text-xs italic"
