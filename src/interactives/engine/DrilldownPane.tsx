@@ -339,7 +339,7 @@ export function DrilldownPane({
               bench's own floor (DrilldownBench.tsx) reach all the way up to the ONE place
               that should act on it — the scrolling wrapper this whole region sits in. Cut
               anywhere along that chain, the floor stops one level short of where it is read
-              and whatever sits below it — first found with the detail card — overflows a box
+              and whatever sits below it — first found with the detail panel — overflows a box
               smaller than what it had just insisted on being. */}
           <div className="flex flex-1 flex-col gap-4 @2xl:flex-row @2xl:items-stretch">
             <div className="flex min-w-0 flex-1 flex-col">

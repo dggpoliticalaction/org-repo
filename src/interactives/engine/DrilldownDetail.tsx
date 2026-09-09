@@ -191,8 +191,9 @@ export function DrilldownDetail({
       data-pinned={selection?.pinned ? "" : undefined}
       aria-live="polite"
       className={cn(
-        "bg-muted/40 text-card-foreground border-border flex min-h-40 w-full flex-col gap-1.5 rounded-md border p-3 text-xs @2xl:w-64 @2xl:shrink-0 @4xl:w-72",
-        selection?.pinned && "border-foreground",
+        // A rule, not a nested card — the pane is already the card.
+        "text-card-foreground flex min-h-40 w-full flex-col gap-1.5 border-t pt-3 text-xs @2xl:w-64 @2xl:shrink-0 @2xl:border-t-0 @2xl:border-l @2xl:pt-0 @2xl:pl-3 @4xl:w-72",
+        selection?.pinned ? "border-foreground" : "border-border",
         className,
       )}
     >
