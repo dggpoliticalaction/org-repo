@@ -203,7 +203,10 @@ export function DrilldownPane({
         ))}
 
       {region && (
-        <div className="-mt-4 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4 sm:p-5">
+        // Horizontal inset matches the heading's (`px-2`) rather than carrying its own wider
+        // one: the seat arc reads its width from this box, and every pixel of side padding is
+        // a pixel the dome doesn't get. Vertical padding is unrelated and stays generous.
+        <div className="-mt-4 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-2 py-4 sm:py-5">
           {/* No heading of its own: the sheet's bar carries the region's name, and saying it
               twice a line apart is one name too many. What is left here is what the bar does
               not say — the counts, and the facts the summary line leaves out. */}
