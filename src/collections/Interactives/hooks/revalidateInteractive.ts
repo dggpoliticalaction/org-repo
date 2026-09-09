@@ -16,8 +16,10 @@ export const revalidateInteractive: CollectionAfterChangeHook<Interactive> = ({
     payload.logger.info(`Revalidating interactive at path: ${path}`)
     revalidatePath(path)
     revalidateTag(interactiveTag(doc.id), "max")
+    revalidateTag("interactives-sitemap", "max")
   }
-  // Unpublished, or the slug moved: the old path must stop serving the old page.
+  // Unpublished, or the slug moved: the old path must stop serving the old page, and the
+  // sitemap must stop naming it (or must name the new slug instead).
   if (
     previousDoc?._status === "published" &&
     (doc._status !== "published" || previousDoc.slug !== doc.slug)
@@ -26,6 +28,7 @@ export const revalidateInteractive: CollectionAfterChangeHook<Interactive> = ({
     payload.logger.info(`Revalidating old interactive at path: ${oldPath}`)
     revalidatePath(oldPath)
     revalidateTag(interactiveTag(doc.id), "max")
+    revalidateTag("interactives-sitemap", "max")
   }
   return doc
 }
@@ -37,6 +40,7 @@ export const revalidateInteractiveDelete: CollectionAfterDeleteHook<Interactive>
   if (!context.disableRevalidate) {
     revalidatePath(interactivePath(doc?.slug ?? ""))
     revalidateTag(interactiveTag(doc.id), "max")
+    revalidateTag("interactives-sitemap", "max")
   }
   return doc
 }
