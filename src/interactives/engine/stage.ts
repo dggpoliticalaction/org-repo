@@ -194,6 +194,14 @@ const wheelPx = (e: WheelEvent, viewportHeight: number): number =>
 const KEY_PAN_FRACTION = 0.18
 /** Breathing room either side of the parent's seat block in its gutter, in CSS px. */
 const PARENT_GUTTER_MARGIN_PX = 18
+/**
+ * Extra headroom above a child map, as a fraction of its (already padded) height. A seat
+ * block grows upward from its anchor, and a region anchored near the true top of its map —
+ * Northern Alabama's, on the Eleventh Circuit's — reaches past the shared edge pad
+ * (`VIEWBOX_PAD_FRACTION`) and crowds the viewport's own edge. The overview has no blocks
+ * anchored that tight to its own bounds, so this is child views only.
+ */
+const CHILD_TOP_PAD_FRACTION = 0.05
 
 /**
  * Hover forgiveness. Regions share their borders, so a pointer resting on a seam crosses
@@ -937,7 +945,9 @@ export class MapStage {
    * widening the viewBox scales the map down, which would otherwise eat the room it made.
    */
   private renderBox(raw: ViewBox, parentId: string | null): { vb: ViewBox; gutter: number } {
-    const vb = padViewBox(raw)
+    const [px, py, pw, ph] = padViewBox(raw)
+    const topPad = CHILD_TOP_PAD_FRACTION * ph
+    const vb: ViewBox = [px, py - topPad, pw, ph + topPad]
     const need = parentId ? this.blockWidthPx(parentId) : 0
     if (need <= 0) return { vb, gutter: 0 }
     const { cw, ch } = this.viewportPx()
