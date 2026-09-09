@@ -277,6 +277,9 @@ export function DrilldownPane({
               <Segmented<SupernumeraryMode>
                 label={supLabel}
                 labelHint={seatsNote}
+                // Its three options read as captions ("Alongside", "Counted") that a toggle
+                // button has to fit, not just a name — a dropdown shows only the one chosen.
+                variant="select"
                 // A timeline has no seats and no majority, so only two of the three mean
                 // anything in it.
                 value={

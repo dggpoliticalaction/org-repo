@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, waitFor, within } from "@testing-library/react"
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import React from "react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
@@ -206,6 +206,19 @@ const pane = (container: HTMLElement) =>
   container.querySelector<HTMLElement>("[data-drilldown-pane]")!
 const selector = (container: HTMLElement) =>
   within(container.querySelector<HTMLElement>("[data-drilldown-selector]")!)
+
+/**
+ * Pick an option from a `Segmented` rendered as a select (the pane's seniority control): the
+ * popup portals to `document.body`, outside whatever `within(...)` the trigger was found in,
+ * so the option is queried from `screen`. A click alone does not commit — the item's own
+ * onClick declines unless it is already the composite's active one, which a keydown sets.
+ */
+function chooseOption(trigger: HTMLElement, name: string): void {
+  fireEvent.click(trigger)
+  const option = screen.getByRole("option", { name })
+  fireEvent.keyDown(option, { key: "ArrowDown" })
+  fireEvent.click(option)
+}
 
 describe("DrilldownMapClient", () => {
   beforeEach(() => {
@@ -799,16 +812,17 @@ describe("DrilldownMapClient", () => {
 
     // The same default the seat chart has: who sits now, not everyone who has sat.
     const hopper = (): HTMLElement => within(p).getByRole("button", { name: "Grace Hopper" })
-    expect(within(p).getByRole("button", { name: "Hidden" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    )
+    const senior = within(p).getByRole("combobox", { name: "Senior" })
+    expect(senior).toHaveTextContent("Hidden")
     expect(hopper()).toHaveClass("opacity-0")
 
     // Two options here, not three: a timeline has no seats to take and no majority to count
     // toward, so "Counted" would be a second word for "Shown".
-    expect(within(p).queryByRole("button", { name: "Counted" })).not.toBeInTheDocument()
-    fireEvent.click(within(p).getByRole("button", { name: "Shown" }))
+    fireEvent.click(senior)
+    expect(screen.queryByRole("option", { name: "Counted" })).not.toBeInTheDocument()
+    const shown = screen.getByRole("option", { name: "Shown" })
+    fireEvent.keyDown(shown, { key: "ArrowDown" })
+    fireEvent.click(shown)
     expect(hopper()).not.toHaveClass("opacity-0")
   })
 
@@ -820,18 +834,16 @@ describe("DrilldownMapClient", () => {
     // seats is the default view, and the seniors start off the chart entirely
     const count = () => p.querySelector("[data-drilldown-count]")!.textContent
     expect(count()).toBe("D-appointed 1 of 2 · majority 2 (no majority)")
-    expect(within(p).getByRole("button", { name: "Hidden" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    )
+    const senior = within(p).getByRole("combobox", { name: "Senior" })
+    expect(senior).toHaveTextContent("Hidden")
     // A hidden member stays mounted so it can animate back in; it is off the chart, not gone.
     const hopper = (): HTMLElement => within(p).getByRole("button", { name: "Grace Hopper" })
     expect(hopper()).toHaveClass("opacity-0")
     // alongside puts them in an outer band, still outside the count
-    fireEvent.click(within(p).getByRole("button", { name: "Alongside" }))
+    chooseOption(senior, "Alongside")
     expect(count()).toBe("D-appointed 1 of 2 · majority 2 (no majority)")
     expect(hopper()).not.toHaveClass("opacity-0")
-    fireEvent.click(within(p).getByRole("button", { name: "Counted" }))
+    chooseOption(senior, "Counted")
     expect(count()).toBe("D-appointed 2 of 3 · majority 2 ✓ · incl. senior")
   })
 
@@ -1039,11 +1051,15 @@ describe("DrilldownMapClient", () => {
   })
 
   it("Escape in the search box dismisses the list without closing the pane", async () => {
-    const { container, getByRole } = setup({ search: { url: "/search" } })
+    const { container } = setup({ search: { url: "/search" } })
     fireEvent.click(selector(container).getByRole("button", { name: "West" }))
     await waitFor(() => expect(pane(container)).toHaveAttribute("data-open"))
 
-    const box = getByRole("combobox")
+    // Scoped to the search box's own container: the pane just opened has a "combobox" of its
+    // own too, the seniority select.
+    const box = within(container.querySelector<HTMLElement>("[data-drilldown-search]")!).getByRole(
+      "combobox",
+    )
     fireEvent.change(box, { target: { value: "ada" } })
     await within(container).findByRole("option", { name: /Ada Lovelace/ })
     fireEvent.keyDown(box, { key: "Escape" })
