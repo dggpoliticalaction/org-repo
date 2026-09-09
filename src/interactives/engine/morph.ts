@@ -122,15 +122,27 @@ export function lerpViewBox(a: readonly number[], b: readonly number[], u: numbe
  * therefore interpolated geometrically — equal ratios in equal time — and the centre carried
  * along in proportion to its progress, which holds the pan to a steady speed on screen.
  */
+/**
+ * How far a geometric zoom from width `aw` to `bw` has come at `u`, as a fraction of the
+ * whole move — `zoomViewBox`'s own `f`, exposed so a second interpolation riding along with
+ * the camera (`frameForContent`'s content-tracking) can share the same rate instead of
+ * drifting against it on raw, linear `u`.
+ */
+export function zoomProgress(aw: number, bw: number, u: number): number {
+  if (aw <= 0 || bw <= 0) return u
+  const w = aw * Math.pow(bw / aw, u)
+  // Equal to `u` when there is no zoom, which is also the only case where the ratio below
+  // would divide by nothing.
+  return Math.abs(bw - aw) > 1e-6 ? (w - aw) / (bw - aw) : u
+}
+
 export function zoomViewBox(a: readonly number[], b: readonly number[], u: number): number[] {
   const [ax, ay, aw, ah] = a as [number, number, number, number]
   const [bx, by, bw, bh] = b as [number, number, number, number]
   if (aw <= 0 || bw <= 0 || ah <= 0 || bh <= 0) return lerpViewBox(a, b, u)
   const w = aw * Math.pow(bw / aw, u)
   const h = ah * Math.pow(bh / ah, u)
-  // How far the scale has come, as a fraction of the whole move. Equal to `u` when there is
-  // no zoom, which is also the only case where the ratio would divide by nothing.
-  const f = Math.abs(bw - aw) > 1e-6 ? (w - aw) / (bw - aw) : u
+  const f = zoomProgress(aw, bw, u)
   const cx = ax + aw / 2 + (bx + bw / 2 - (ax + aw / 2)) * f
   const cy = ay + ah / 2 + (by + bh / 2 - (ay + ah / 2)) * f
   return [cx - w / 2, cy - h / 2, w, h]

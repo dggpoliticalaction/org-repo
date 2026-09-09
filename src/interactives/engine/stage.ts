@@ -26,6 +26,7 @@ import {
   pullbackViewBox,
   serializePath,
   subpathBounds,
+  zoomProgress,
   zoomViewBox,
 } from "./morph"
 import type { ClusterBox } from "./cluster"
@@ -1938,7 +1939,13 @@ export class MapStage {
     wide: readonly number[] = plan.vbStart,
     dest: readonly number[] = this.destOf(plan),
   ): number[] {
-    return frameForContent(zoomViewBox(wide, dest, u), plan.contentFrom, plan.contentTo, u)
+    // The content tracker rides the same rate as the camera's own zoom (`f`), not raw `u`:
+    // on raw `u` the two drifted apart mid-flight — the camera's geometric zoom (correctly)
+    // outran a linear `u`, and the content correction, still on `u`, fell behind the camera's
+    // own pan, so the frame spent most of the flight zoomed in on a point that hadn't yet
+    // caught up to the destination.
+    const f = zoomProgress(wide[2]!, dest[2]!, u)
+    return frameForContent(zoomViewBox(wide, dest, u), plan.contentFrom, plan.contentTo, f)
   }
 
   /** A plan's own destination in the overview's coordinates, which is where a flight aims. */
