@@ -174,8 +174,10 @@ function DetailBody({
 }
 
 /**
- * Docked panel for one record. Sticky: hover-out keeps the last record up so the reader can
- * move into the panel and use its links; a click pins it until dismissed.
+ * Docked panel for one record. Hover fills it and hover-out empties it again, so what is in
+ * the panel is always the thing under the pointer. Reaching the panel's own links is what the
+ * click is for: it pins the record until dismissed, which the empty state says in as many
+ * words.
  */
 export function DrilldownDetail({
   selection,

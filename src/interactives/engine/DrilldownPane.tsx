@@ -142,8 +142,7 @@ export function DrilldownPane({
 
   const hoverRecord = (record: DrilldownRecord | null, recDisplay: RecordDisplay | null): void => {
     if (detail?.pinned) return
-    if (record && recDisplay) setDetail({ record, display: recDisplay, pinned: false })
-    // Hover-out keeps the last record up (sticky) so the panel's links stay reachable.
+    setDetail(record && recDisplay ? { record, display: recDisplay, pinned: false } : null)
   }
   const clickRecord = (record: DrilldownRecord, recDisplay: RecordDisplay): void => {
     const unpin = detail?.pinned && detail.record === record
@@ -183,7 +182,10 @@ export function DrilldownPane({
         // the top of what they just opened, but it is not a stop on the way through the page.
         tabIndex={-1}
         data-drilldown-pane-title=""
-        className="shrink-0 px-2 py-1.5 text-2xl outline-none"
+        // `leading-none` restated: the site's global heading rule already sets it, but
+        // `text-2xl` carries its own line-height and, same specificity, wins over the base
+        // layer — so this heading alone sat in a line box taller than its own glyphs.
+        className="shrink-0 px-2 py-1.5 text-2xl leading-none outline-none"
       >
         {region?.label ?? overviewLabel}
       </h2>
