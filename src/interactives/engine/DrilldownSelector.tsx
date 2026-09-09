@@ -242,6 +242,31 @@ export function DrilldownSelector({
               </Tooltip>
             </SidebarHeader>
           )}
+          {/* The full "Back to overview" row below carries its own name and is dropped when
+              folded — the trail across the top of the map already says where the reader is.
+              But the way *back* is not the same thing as the way *there*, and a folded column
+              that can open eleven maps and close none of them is missing half its purpose. */}
+          {view.parentId && (
+            <SidebarHeader className="hidden p-0 pb-1 group-data-[collapsed]/rail:block">
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <SidebarMenuButton
+                      type="button"
+                      size="sm"
+                      data-drilldown-back-collapsed=""
+                      aria-label="Back to overview"
+                      onClick={onBack}
+                      className="text-muted-foreground w-full p-1"
+                    />
+                  }
+                >
+                  <ChevronLeft aria-hidden="true" />
+                </TooltipTrigger>
+                <TooltipContent side="right">Back to overview</TooltipContent>
+              </Tooltip>
+            </SidebarHeader>
+          )}
           <SidebarContent
             ref={navRef}
             role="navigation"
