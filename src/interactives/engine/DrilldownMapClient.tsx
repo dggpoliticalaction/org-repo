@@ -971,7 +971,7 @@ export function DrilldownMapClient({
               <div
                 data-drilldown-sheet=""
                 data-open={paneOpen ? "" : undefined}
-                className="bg-card border-border flex min-h-0 flex-col rounded-lg border md:h-(--drilldown-stage-h) md:w-88 lg:w-96"
+                className="bg-card border-border flex min-h-0 flex-col rounded-lg border md:h-(--drilldown-stage-h) md:w-90"
               >
                 {pane}
               </div>
