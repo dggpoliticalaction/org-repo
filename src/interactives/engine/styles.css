@@ -84,6 +84,14 @@
   outline: none;
 }
 
+/* The stage is a control, not a page of text: a drag chooses a region or pans the map, and
+   should never leave a reader with the seat-block labels highlighted instead. Scoped to the
+   viewport, which is also where the control bar sits, rather than to the page as a whole. */
+[data-drilldown-viewport] {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* Once the map is larger than its frame it can be dragged around inside it, and says so. The
    grab cursor is on the viewport rather than on the paths, so the sea between the regions
    drags too — it is as much of the map as the land is. */
