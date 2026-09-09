@@ -170,6 +170,24 @@ export async function loadInteractiveGeometry(
   return composeChildGeometry(await profile.loadGeometry(), regionId)
 }
 
+/**
+ * The hash that names one region's geometry right now, or null for a region with no entry at
+ * all. Read by the geometry route to check the URL it was asked for against the file it would
+ * actually serve — the same computation `childKeys` used to build that URL in the first place,
+ * so the two can never quietly disagree. `loadGeometry` is memoised per process, so this costs
+ * nothing beyond the `loadInteractiveGeometry` call the route already makes.
+ */
+export async function loadInteractiveGeometryHash(
+  interactive: Interactive,
+  regionId: string,
+): Promise<string | null> {
+  const profile = getProfile(interactive.profile)
+  if (!profile) return null
+  const geometry = await profile.loadGeometry()
+  if (!Object.prototype.hasOwnProperty.call(geometry.children, regionId)) return null
+  return geometryHash(geometry.children[regionId] ?? null)
+}
+
 /** One region's records, or null when the region is not drillable / there is no snapshot. */
 export async function loadInteractiveRegion(
   interactive: Interactive,

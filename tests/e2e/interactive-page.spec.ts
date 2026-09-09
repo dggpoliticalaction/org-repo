@@ -230,6 +230,18 @@ test.describe("interactive page — federal courts", () => {
     expect(res.status()).toBe(404)
   })
 
+  test("a geometry URL naming the wrong hash is a 404, not a year-long cache of the current map", async ({
+    page,
+  }) => {
+    const href = await page
+      .locator(`head link[rel='prefetch'][href*='/regions/ca8/geometry/']`)
+      .getAttribute("href")
+    const stale = href!.replace(/\/geometry\/[^/]+$/, "/geometry/not-the-real-hash")
+    const res = await page.request.get(stale)
+    expect(res.status()).toBe(404)
+    expect(res.headers()["cache-control"]).not.toContain("immutable")
+  })
+
   test("the region list is one tab stop, and a keyboard selection lands in the pane", async ({
     page,
   }) => {
