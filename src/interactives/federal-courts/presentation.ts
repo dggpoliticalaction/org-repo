@@ -17,7 +17,8 @@ export const COLORS = {
 export const federalCourtsPresentation: DrilldownPresentation = {
   facts: {
     labels: {
-      "full-name": "Court",
+      // Not "Court" — the heading already names the court; this is its citation form.
+      "full-name": "Official name",
       authorized: "Authorized judgeships",
       active: "Active judges",
       senior: "Senior judges",
