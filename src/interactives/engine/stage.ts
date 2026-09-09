@@ -589,6 +589,8 @@ export class MapStage {
       this.view = { parentId }
       return "no-geometry"
     }
+    // Where the reader is looking, before the camera is put back: the flight starts there.
+    const wide = this.cameraBox(this.overview).slice()
     this.resetCamera()
     const local = this.ensureLocalLayer(parentId, asset)
     this.view = { parentId }
@@ -606,10 +608,13 @@ export class MapStage {
       })
       return "fallback"
     }
+    // Primed at the reader's own view, not at the country: the plan is cached and was last
+    // left wherever its previous run ended, and attaching it unprimed paints that frame.
+    this.renderMorph(plan, 0, this.cameraFor(plan, 0, wide))
     this.attachMorphLayer(plan.el)
     this.setLayerState(this.overview, "hidden-hard")
     this.setLayerState(local, "hidden")
-    if ((await this.runMorph(plan, true)) !== "done") return "cancelled"
+    if ((await this.runMorph(plan, true, { wide })) !== "done") return "cancelled"
     this.handoff(local, true)
     plan.el.remove()
     return "done"
@@ -631,6 +636,7 @@ export class MapStage {
     if (!fromId || !from || !this.hasGeometry(asset) || asset.viewBox === null) {
       return this.drillIn(parentId, asset)
     }
+    const leaving = this.cameraBox(from).slice()
     this.resetCamera()
     const to = this.ensureLocalLayer(parentId, asset)
     const outPlan = this.morphPlanFor(fromId, from)
@@ -642,12 +648,13 @@ export class MapStage {
     this.cancelPendingHover()
     this.opts.callbacks.onHover(null, null)
     // The reader is looking at `from`, and that is where the crossing starts.
-    this.renderMorph(outPlan, 1, this.cameraFor(outPlan, 1))
+    const outDest = this.zoomedDestOf(outPlan, leaving)
+    this.renderMorph(outPlan, 1, this.cameraFor(outPlan, 1, undefined, outDest))
     this.attachMorphLayer(outPlan.el)
     this.setLayerState(this.overview, "hidden-hard")
     this.setLayerState(from, "hidden")
     this.setLayerState(to, "hidden")
-    const how = await this.runCross(outPlan, inPlan)
+    const how = await this.runCross(outPlan, inPlan, outDest)
     if (how !== "done") return "cancelled"
     this.handoff(to, true)
     outPlan.el.remove()
@@ -656,9 +663,10 @@ export class MapStage {
   }
 
   async drillOut(): Promise<"done" | "fallback" | "cancelled"> {
-    this.resetCamera()
     const parentId = this.view.parentId
     const local = parentId ? this.locals.get(parentId) : undefined
+    const leaving = local ? this.cameraBox(local).slice() : null
+    this.resetCamera()
     this.view = { parentId: null }
     this.setSelected(null)
     this.cancelPendingHover()
@@ -671,10 +679,11 @@ export class MapStage {
       this.setLayerState(this.overview, "visible")
       return "fallback"
     }
-    this.renderMorph(plan, 1, this.cameraFor(plan, 1))
+    const dest = this.zoomedDestOf(plan, leaving)
+    this.renderMorph(plan, 1, this.cameraFor(plan, 1, undefined, dest))
     this.attachMorphLayer(plan.el)
     this.handoff(local!, false)
-    if ((await this.runMorph(plan, false)) !== "done") return "cancelled"
+    if ((await this.runMorph(plan, false, { dest })) !== "done") return "cancelled"
     this.setLayerState(this.overview, "visible")
     plan.el.remove()
     return "done"
@@ -1910,17 +1919,37 @@ export class MapStage {
   }
 
   /** Where the camera sits at `u` of a plan's morph, in the frame the drawing has reached. */
-  private cameraFor(plan: MorphPlan, u: number, wide: readonly number[] = plan.vbStart): number[] {
+  private cameraFor(
+    plan: MorphPlan,
+    u: number,
+    // Both ends of the flight, in the overview's coordinates. The defaults are the whole
+    // country and the whole child map, which is what a transition between two unzoomed views
+    // travels between; a reader who has moved the camera hands in where they actually are.
+    //
     // `layer.render` is read every frame rather than captured: a child's gutter is solved
     // against the viewport's width, which the side panels change while the morph is running,
     // and a captured target would land a few pixels off the layer it hands over to.
-    const dest = pullbackViewBox(plan.layer.render, plan.contentFrom, plan.contentTo)
+    wide: readonly number[] = plan.vbStart,
+    dest: readonly number[] = this.destOf(plan),
+  ): number[] {
     return frameForContent(zoomViewBox(wide, dest, u), plan.contentFrom, plan.contentTo, u)
   }
 
   /** A plan's own destination in the overview's coordinates, which is where a flight aims. */
   private destOf(plan: MorphPlan): number[] {
     return pullbackViewBox(plan.layer.render, plan.contentFrom, plan.contentTo)
+  }
+
+  /**
+   * A child map's end of a flight, cut down to what the reader is actually looking at.
+   *
+   * The camera is put back to the whole map before a transition — the blocks have to be
+   * redrawn at one scale, and the plan's clones taken at that scale — but where the reader was
+   * is still where the movement should begin. Without this, choosing a circuit from a map
+   * zoomed twice snapped out to the whole country and only then flew in.
+   */
+  private zoomedDestOf(plan: MorphPlan, box: readonly number[] | null): number[] | undefined {
+    return box ? pullbackViewBox(box, plan.contentFrom, plan.contentTo) : undefined
   }
 
   /** Cached per parent; a null result is cached too — a view that cannot morph is not re-checked. */
@@ -2026,7 +2055,11 @@ export class MapStage {
    * the country, then the country forwards into the map being entered. At the join both plans
    * are drawing the overview, so the swap is invisible. The camera follows one curve through.
    */
-  private runCross(outPlan: MorphPlan, inPlan: MorphPlan): Promise<"done" | "cancelled"> {
+  private runCross(
+    outPlan: MorphPlan,
+    inPlan: MorphPlan,
+    outDest?: readonly number[],
+  ): Promise<"done" | "cancelled"> {
     this.cancelMorph()
     return new Promise((resolve) => {
       const settle = (how: "done" | "cancelled"): void => {
@@ -2040,7 +2073,8 @@ export class MapStage {
       const dur = reducedMotion() ? 0 : Math.round(MORPH_MS * 1.75)
       // Both halves pull back to the same view, or the swap would be a jump — and only as far
       // as it takes to hold both maps, since the whole country is usually a detour.
-      const apex = crossApexViewBox(this.destOf(outPlan), this.destOf(inPlan), outPlan.vbStart)
+      const leaving = outDest ?? this.destOf(outPlan)
+      const apex = crossApexViewBox(leaving, this.destOf(inPlan), outPlan.vbStart)
       const t0 = nowMs()
       let showingIn = false
       let lastCommit = -Infinity
@@ -2069,7 +2103,7 @@ export class MapStage {
         const p = half ? easeInCubic(t / 0.5) : easeOutCubic((t - 0.5) / 0.5)
         // Each half is its own drill flown one way or the other, so both are the country at u = 0.
         const u = half ? 1 - p : p
-        this.renderMorph(plan, u, this.cameraFor(plan, u, apex))
+        this.renderMorph(plan, u, this.cameraFor(plan, u, apex, half ? leaving : undefined))
         if (t < 1) this.morphRAF = raf(frame)
         else settle("done")
       }
@@ -2093,7 +2127,11 @@ export class MapStage {
   }
 
   /** Resolves "done" if it ran to the end, or "cancelled" if a newer transition took over. */
-  private runMorph(plan: MorphPlan, forward: boolean): Promise<"done" | "cancelled"> {
+  private runMorph(
+    plan: MorphPlan,
+    forward: boolean,
+    view: { wide?: readonly number[]; dest?: readonly number[] } = {},
+  ): Promise<"done" | "cancelled"> {
     this.cancelMorph()
     return new Promise((resolve) => {
       const settle = (how: "done" | "cancelled"): void => {
@@ -2123,7 +2161,7 @@ export class MapStage {
         }
         lastCommit = elapsed
         const u = forward ? easeInOutCubic(t) : 1 - easeInOutCubic(t)
-        this.renderMorph(plan, u, this.cameraFor(plan, u))
+        this.renderMorph(plan, u, this.cameraFor(plan, u, view.wide, view.dest))
         if (t < 1) this.morphRAF = raf(frame)
         else settle("done")
       }
