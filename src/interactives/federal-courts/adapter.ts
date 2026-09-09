@@ -161,9 +161,11 @@ function countsFor(court: Court, block: SeatBlock | undefined, judges: Judge[]):
   }
 }
 
+// Tenure gets its own `tenure` fact too (for anything that reads facts one at a time), but as
+// a line in the pane it only ever appeared beside this one — same court, same breath. Folding
+// it in here instead removes that second line without losing the information.
 function summaryFor(court: Court, counts: SeatCounts): string {
   const parts: string[] = []
-  if (court.tenure_type === "fixed_term") parts.push("Fixed-term court")
   parts.push(`${counts.authorized} authorized`)
   parts.push(
     court.tenure_type === "fixed_term" ? `${counts.active} sitting` : `${counts.active} active`,
@@ -172,6 +174,7 @@ function summaryFor(court: Court, counts: SeatCounts): string {
     parts.push(`${counts.senior} senior`)
   // A full bench is the unremarkable case, and "0 vacant" spends the tooltip's one line on it.
   if (counts.vacant > 0) parts.push(`${counts.vacant} vacant`)
+  parts.push(tenureLabel(court.tenure_type))
   return parts.join(" · ")
 }
 

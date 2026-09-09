@@ -18,13 +18,12 @@ export const federalCourtsPresentation: DrilldownPresentation = {
   facts: {
     labels: {
       "full-name": "Court",
-      tenure: "Tenure",
       authorized: "Authorized judgeships",
       active: "Active judges",
       senior: "Senior judges",
       vacant: "Vacancies",
     },
-    order: ["full-name", "tenure", "authorized", "active", "senior", "vacant"],
+    order: ["full-name", "authorized", "active", "senior", "vacant"],
     hide: [
       // Machine inputs consumed by the seat blocks and the seat chart, never shown as facts.
       "seats",
@@ -34,12 +33,13 @@ export const federalCourtsPresentation: DrilldownPresentation = {
       "anchor",
       "short-label",
       // The counts are the region's `summary` line ("11 authorized · 10 active · 6 senior ·
-      // 1 vacant"), which the pane and tooltip already show; listing them again as facts
-      // said everything twice. What remains as facts is what the summary lacks.
+      // 1 vacant · Life tenure"), which the pane and tooltip already show; listing them again
+      // as facts said everything twice. What remains as facts is what the summary lacks.
       "authorized",
       "active",
       "senior",
       "vacant",
+      "tenure",
     ],
   },
   // The Supreme Court is a building everyone knows; a circuit is the scales. Districts get

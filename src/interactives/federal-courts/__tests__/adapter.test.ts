@@ -357,7 +357,7 @@ describe("courtTrackerFeed end to end", () => {
       "seats-r": "8",
       "seats-d": "1",
       anchor: ANCHORS.moed.join(","),
-      summary: "7 authorized · 9 active · 1 senior",
+      summary: "7 authorized · 9 active · 1 senior · Life tenure",
     })
     // The Supreme Court has no territory, so upstream publishes no block for it; its counts
     // come from the rows instead.
@@ -482,7 +482,7 @@ describe("helpers", () => {
     const facts = factsFor(moed, undefined, full)
     expect(facts.vacant).toBe("0")
     expect(facts.summary).not.toContain("vacant")
-    expect(facts.summary).toBe(`${seats} authorized · ${seats} active · 0 senior`)
+    expect(facts.summary).toBe(`${seats} authorized · ${seats} active · 0 senior · Life tenure`)
   })
 
   it("factsFor places a seat block from our own anchors, not from the feed's", () => {
@@ -498,7 +498,7 @@ describe("helpers", () => {
     const facts = factsFor(gud, undefined, [
       judge({ court_id: "gud", term_expiration_date: "2030-01-01" }),
     ])
-    expect(facts.summary).toBe("Fixed-term court · 1 authorized · 1 sitting")
+    expect(facts.summary).toBe("1 authorized · 1 sitting · Fixed term")
     expect(facts).not.toHaveProperty("senior")
   })
 
