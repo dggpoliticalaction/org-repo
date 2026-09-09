@@ -6,6 +6,7 @@ import React from "react"
 
 import { Sources } from "@/blocks/InteractiveMap/Sources"
 import { LAYOUT_TOOL_NOTES } from "@/interactives/engine/layoutTools"
+import { MAP_SHORTCUTS } from "@/interactives/engine/shortcuts"
 import { interactivePath } from "@/collections/InteractiveSnapshots/tag"
 import { LivePreviewListener } from "@/components/LivePreviewListener"
 import { PayloadRedirects } from "@/components/PayloadRedirects"
@@ -117,7 +118,7 @@ export default async function InteractivePage({
       <Sources
         sources={interactive.sources}
         colorBias={null}
-        notes={LAYOUT_TOOL_NOTES}
+        notes={[...MAP_SHORTCUTS, ...LAYOUT_TOOL_NOTES]}
         className="mt-4"
       />
     </div>

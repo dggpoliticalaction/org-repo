@@ -8,7 +8,7 @@ import { cn } from "@/utilities/utils"
 
 export interface Data {
   label: string
-  value: string | number
+  value: React.ReactNode
 }
 
 interface InfoProps {
