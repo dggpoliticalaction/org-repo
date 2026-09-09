@@ -597,12 +597,60 @@ export function DrilldownMapClient({
     return () => document.removeEventListener("keydown", onKey)
   }, [paneOpen, deselect])
 
-  // Escape with nothing selected steps out of a child view, but only while focus is inside
-  // the map: elsewhere that key belongs to whatever the reader is using.
+  /**
+   * The map's shortcuts, live while focus is inside it — elsewhere on the page these keys
+   * belong to whatever the reader is using, and inside a text field they belong to the text.
+   *
+   * The arrows are the exception to "inside it": at rest they are how the rail's tree is
+   * walked, so they only pan once there is a map larger than the frame to pan around, and only
+   * from the map itself.
+   */
   const onKeyDown = (e: React.KeyboardEvent): void => {
-    if (e.key !== "Escape" || paneOpen || !view.parentId) return
-    e.preventDefault()
-    void drillOut()
+    if (e.metaKey || e.ctrlKey || e.altKey) return
+    const from = e.target instanceof Element ? e.target : null
+    if (from?.closest("input, textarea, select, [contenteditable='true']")) return
+    const stage = stageRef.current
+    const pan = (dx: number, dy: number): void => {
+      if (!stage || stage.zoom <= 1 || !from?.closest("[data-drilldown-viewport]")) return
+      e.preventDefault()
+      stage.panBy(dx * stage.panStep, dy * stage.panStep)
+    }
+    switch (e.key) {
+      case "Escape":
+        if (paneOpen || !view.parentId) return
+        e.preventDefault()
+        void drillOut()
+        return
+      case "f":
+      case "F":
+        e.preventDefault()
+        toggleFull()
+        return
+      case "+":
+      case "=":
+        e.preventDefault()
+        stage?.zoomBy(ZOOM_STEP)
+        return
+      case "-":
+      case "_":
+        e.preventDefault()
+        stage?.zoomBy(1 / ZOOM_STEP)
+        return
+      case "0":
+        e.preventDefault()
+        stage?.resetCamera()
+        return
+      case "ArrowLeft":
+        return pan(-1, 0)
+      case "ArrowRight":
+        return pan(1, 0)
+      case "ArrowUp":
+        return pan(0, -1)
+      case "ArrowDown":
+        return pan(0, 1)
+      default:
+        return
+    }
   }
 
   // ---- derived view model ------------------------------------------------------------------
@@ -734,6 +782,17 @@ export function DrilldownMapClient({
             data-drilldown-viewport=""
             data-view={view.parentId ? "child" : "overview"}
             aria-busy={busy || undefined}
+            // Focusable by script only, so the map gains no tab stop of its own but does take
+            // focus when a reader touches it — which is what puts the shortcuts within reach
+            // without them having to tab to a region first.
+            tabIndex={-1}
+            onPointerDown={(e) => {
+              // The map itself, not the controls over it: a button pressed here must keep the
+              // focus it was given, or a keyboard reader loses their place in the bar.
+              if (!(e.target instanceof Element) || !e.target.closest("[data-drilldown-layer]"))
+                return
+              viewportRef.current?.focus({ preventScroll: true })
+            }}
             className={cn(
               // The map keeps its whole height and gives up width instead. `flex-1` only
               // from `md`, where the row flexes across; on a phone it is a column, and a basis
@@ -828,6 +887,7 @@ export function DrilldownMapClient({
                   variant="ghost"
                   size="icon-sm"
                   aria-label="Zoom out"
+                  title="Zoom out (−)"
                   onClick={() => stageRef.current?.zoomBy(1 / ZOOM_STEP)}
                   disabled={zoom <= 1}
                 >
@@ -838,6 +898,7 @@ export function DrilldownMapClient({
                   variant="ghost"
                   size="icon-sm"
                   aria-label="Zoom in"
+                  title="Zoom in (+)"
                   onClick={() => stageRef.current?.zoomBy(ZOOM_STEP)}
                   disabled={zoom >= ZOOM_MAX}
                 >
@@ -852,6 +913,7 @@ export function DrilldownMapClient({
                   size="icon-sm"
                   data-drilldown-zoom-reset=""
                   aria-label="Fit the whole map"
+                  title="Fit the whole map (0)"
                   onClick={() => stageRef.current?.resetCamera()}
                   disabled={zoom <= 1}
                 >
@@ -881,6 +943,7 @@ export function DrilldownMapClient({
                 data-drilldown-fullscreen=""
                 aria-pressed={full}
                 aria-label={full ? "Leave full screen" : "Full screen"}
+                title={full ? "Leave full screen (F)" : "Full screen (F)"}
                 onClick={toggleFull}
                 className="shrink-0"
               >

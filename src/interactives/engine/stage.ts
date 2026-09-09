@@ -181,6 +181,17 @@ const FOCUS_ZOOM = 1.8
 const CAMERA_MS = 340
 /** Pointer travel, in CSS px, that makes a press a drag of the map rather than a choice on it. */
 const PAN_SLOP = 4
+/**
+ * How much zoom a pixel of wheel travel is worth, applied as a ratio so a trackpad's stream of
+ * small deltas and a mouse's ~100 px notch both feel like the same gesture. A notch is ~1.16x,
+ * so three of them are about one press of the button.
+ */
+const WHEEL_ZOOM_RATE = 0.0015
+/** A wheel event's travel in CSS px, whatever unit the device reports it in. */
+const wheelPx = (e: WheelEvent, viewportHeight: number): number =>
+  e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * viewportHeight : e.deltaY
+/** How far one press of the arrow keys moves the map, as a fraction of the frame. */
+const KEY_PAN_FRACTION = 0.18
 /** Breathing room either side of the parent's seat block in its gutter, in CSS px. */
 const PARENT_GUTTER_MARGIN_PX = 18
 
@@ -741,6 +752,21 @@ export class MapStage {
       this.cameraRAF = t < 1 ? raf(step) : null
     }
     step()
+  }
+
+  /** Move the map by a distance on screen, which is what an arrow key means. */
+  panBy(dxPx: number, dyPx: number): void {
+    const cam = this.camera
+    if (!cam) return
+    this.cancelCameraFlight()
+    const scale = this.fitScale(this.cameraBox(this.activeLayer()))
+    this.setCamera({ k: cam.k, cx: cam.cx + dxPx / scale, cy: cam.cy + dyPx / scale })
+  }
+
+  /** One press of an arrow key, in CSS px. */
+  get panStep(): number {
+    const { cw, ch } = this.viewportPx()
+    return Math.min(cw, ch) * KEY_PAN_FRACTION
   }
 
   /** The whole map again. */
@@ -1360,7 +1386,27 @@ export class MapStage {
       svg.addEventListener("pointercancel", up)
     }
 
+    /**
+     * The wheel zooms about the pointer, which is what a reader expects of a map.
+     *
+     * A gesture that cannot change anything is handed back to the page — scrolling out at the
+     * whole map, or in at the limit — so a reader passing the map on their way down the page is
+     * never held by it. `ctrl`/`⌘` is the trackpad's pinch and the browser's own page zoom, so
+     * it is always taken: over a map, pinching means the map.
+     */
+    const onWheel = (e: WheelEvent): void => {
+      if (this.layoutEditing || e.deltaY === 0) return
+      const pinch = e.ctrlKey || e.metaKey
+      const inward = e.deltaY < 0
+      if (!pinch && ((inward && this.zoom >= ZOOM_MAX) || (!inward && this.zoom <= 1))) return
+      e.preventDefault()
+      const px = wheelPx(e, this.viewportPx().ch)
+      this.zoomBy(Math.exp(-px * WHEEL_ZOOM_RATE), { x: e.clientX, y: e.clientY })
+    }
+
     svg.addEventListener("pointerdown", onBlockDown)
+    // Not passive: the whole point is to keep the page from scrolling under the gesture.
+    svg.addEventListener("wheel", onWheel, { passive: false })
     svg.addEventListener("pointerover", onOver)
     svg.addEventListener("pointermove", onMove)
     svg.addEventListener("pointerleave", onLeave)
@@ -1372,6 +1418,7 @@ export class MapStage {
       svg.removeEventListener("pointerover", onOver)
       svg.removeEventListener("pointermove", onMove)
       svg.removeEventListener("pointerdown", onBlockDown)
+      svg.removeEventListener("wheel", onWheel)
       svg.removeEventListener("pointerleave", onLeave)
       svg.removeEventListener("click", onClick)
       svg.removeEventListener("keydown", onKey)
