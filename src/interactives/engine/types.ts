@@ -107,14 +107,14 @@ export interface SeatCluster {
   /** How a row narrower than the widest one sits against it. Defaults to centred. */
   align?: "left" | "center" | "right"
   /**
-   * Where the group sits in the map's frame, as a fraction of it — `{ x: 1, y: 1 }` is the
-   * bottom-right corner. Given, it replaces the anchor member's declared position, which is
-   * what a group belonging to no place wants: its members are a constant size in CSS px and
-   * the map is not, so a position in map units only holds at the width it was measured at.
+   * How close the group's box may come to the frame's edge, in CSS px, before it is pulled
+   * back. The group still hangs from the anchor member's own declared position — an anchor is
+   * a place like any other — but its members are a constant size in CSS px and the frame is
+   * not, so at a narrow enough width the same anchor would push them off the visible map.
+   * Clamping is what keeps a group meant to be read together from spilling off one side of it
+   * while the anchor itself stays exactly where the file says.
    */
-  at?: { x: number; y: number }
-  /** Between the group and the frame's edge, in CSS px, when `at` places it. */
-  inset?: number
+  edgeMargin?: number
 }
 
 export interface CategoryValue {

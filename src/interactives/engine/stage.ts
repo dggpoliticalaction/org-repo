@@ -1378,14 +1378,13 @@ export class MapStage {
           from[1] + ((ev.clientY - startY) / scale) * flip,
         ]
         // Read before remembering, or the check sees the drag it is being asked about.
-        const computed = this.gutterAnchor(layer, id) !== null || !!this.clusterOf(id)?.at
+        const gutter = this.gutterAnchor(layer, id) !== null
         this.remember(this.movedAnchors, layer, id, at)
         this.opts.callbacks.onAnchorMoved?.(id, [Math.round(at[0]), Math.round(at[1])], {
           layer: this.layerKey(layer),
-          // A circuit's block on its own map sits in the gutter, and a group placed against
-          // the frame sits where the frame puts it. Both are worked out from the map's box, so
-          // dragging one moves it for the session and `anchors.json` has no say over it.
-          writable: !computed,
+          // A circuit's block on its own map sits in the gutter, placed from the map's box.
+          // Dragging it moves it for the session; `anchors.json` has no say over it.
+          writable: !gutter,
         })
         this.refreshBlocks()
       }
@@ -1681,7 +1680,6 @@ export class MapStage {
       }
       const anchorBox = boxes.get(origin)
       if (!anchorBox) continue
-      const dragged = this.movedAnchors.get(this.layerKey(layer))?.get(origin)
       const gap = (cluster.gap ?? CLUSTER_GAP_PX) * ctx.unitsPerPx
       const placement = layoutCluster(
         cluster.rows.map((row) => row.flatMap((id) => boxes.get(id)?.box ?? [])),
@@ -1691,23 +1689,21 @@ export class MapStage {
           align: cluster.align ?? "center",
         },
       )
-      // Where the group's own box goes. Either the frame places it, or it hangs off the one
-      // member whose place is declared. A drag beats both.
+      // Where the group hangs from the anchor member's own declared position.
       const home = placement.at.get(origin)
       if (!home) continue
-      let groupX = originAt[0]! - (home[0] - anchorBox.offX)
-      let groupY = screenY(originAt) - (home[1] - anchorBox.offY)
-      if (cluster.at && !dragged) {
-        const [rx, ry, rw, rh] = layer.render
-        const inset = (cluster.inset ?? CLUSTER_INSET_PX) * ctx.unitsPerPx
-        const room = (span: number, size: number): number => Math.max(0, span - size - 2 * inset)
-        groupX = rx + inset + room(rw, placement.width) * cluster.at.x
-        groupY = ry + inset + room(rh, placement.height) * cluster.at.y
-      }
+      const rawX = originAt[0]! - (home[0] - anchorBox.offX)
+      const rawY = screenY(originAt) - (home[1] - anchorBox.offY)
+      // Pulled back inside the frame if the anchor would otherwise push the group off it. A
+      // clamp of zero range (the group is wider than the frame has room for) leaves it at the
+      // near edge rather than folding it inside out.
+      const [rx, ry, rw, rh] = layer.render
+      const margin = (cluster.edgeMargin ?? CLUSTER_INSET_PX) * ctx.unitsPerPx
+      const clamp = (v: number, lo: number, hi: number): number =>
+        Math.min(Math.max(v, lo), Math.max(lo, hi))
+      const groupX = clamp(rawX, rx + margin, rx + rw - margin - placement.width)
+      const groupY = clamp(rawY, ry + margin, ry + rh - margin - placement.height)
       for (const [id, at] of placement.at) {
-        // The anchor member only moves when the frame placed the group; otherwise it is the
-        // fixed point the rest hang from, and a reading of it would outlive the profile's.
-        if (id === origin && !cluster.at) continue
         const entry = boxes.get(id)
         const was = this.anchorOf(layer, id)
         if (!entry || !was) continue
