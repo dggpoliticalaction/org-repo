@@ -1,15 +1,6 @@
 "use client"
 
-import {
-  MapIcon,
-  Maximize2,
-  Minimize2,
-  PanelLeft,
-  PanelRight,
-  Scan,
-  ZoomIn,
-  ZoomOut,
-} from "lucide-react"
+import { MapIcon, Maximize2, Minimize2, PanelLeft, PanelRight, ZoomIn, ZoomOut } from "lucide-react"
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 import {
@@ -752,7 +743,10 @@ export function DrilldownMapClient({
               "has-[path[tabindex]:focus-visible]:outline-ring has-[path[tabindex]:focus-visible]:outline-2 has-[path[tabindex]:focus-visible]:outline-offset-2",
             )}
           >
-            <div className="absolute top-1 left-2 z-10 flex max-w-[calc(100%-1rem)] items-center gap-1">
+            {/* One bar across the top of the map: where the reader is on the left, what they
+                can do to it on the right. A row rather than two absolutely placed corners, so
+                a long trail truncates against the controls instead of running under them. */}
+            <div className="absolute inset-x-2 top-1 z-10 flex items-center gap-1">
               <Button
                 type="button"
                 variant="ghost"
@@ -825,64 +819,72 @@ export function DrilldownMapClient({
                   </Breadcrumb>
                 </>
               )}
-            </div>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              data-drilldown-pane-toggle-map=""
-              aria-expanded={paneOpen}
-              aria-controls={paneId}
-              aria-label={paneOpen ? "Hide the details" : "Show the details"}
-              onClick={() => showPane(!paneOpen)}
-              className="absolute top-1 right-11 z-10"
-            >
-              <PanelRight aria-hidden="true" />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              data-drilldown-fullscreen=""
-              aria-pressed={full}
-              aria-label={full ? "Leave full screen" : "Full screen"}
-              onClick={toggleFull}
-              className="absolute top-1 right-2 z-10"
-            >
-              {full ? <Minimize2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
-            </Button>
-            {/* The camera. There is nowhere to drag the map until it is larger than the
-                frame, so the way in comes first. */}
-            <div data-drilldown-zoom="" className="absolute top-11 right-2 z-10 flex flex-col">
+              {/* The camera, then the panels: two different things, so a rule between them —
+                  and both kept out of the trail's way by the row rather than by a guess at how
+                  much room the trail has left. */}
+              <div data-drilldown-zoom="" className="ml-auto flex shrink-0 items-center gap-0.5">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Zoom out"
+                  onClick={() => stageRef.current?.zoomBy(1 / ZOOM_STEP)}
+                  disabled={zoom <= 1}
+                >
+                  <ZoomOut aria-hidden="true" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Zoom in"
+                  onClick={() => stageRef.current?.zoomBy(ZOOM_STEP)}
+                  disabled={zoom >= ZOOM_MAX}
+                >
+                  <ZoomIn aria-hidden="true" />
+                </Button>
+                {/* Written out rather than drawn: every "fit" glyph in the set is a variation
+                    on the corner brackets that mean full screen, and the button beside it is
+                    the one that means full screen. */}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  data-drilldown-zoom-reset=""
+                  aria-label="Fit the whole map"
+                  onClick={() => stageRef.current?.resetCamera()}
+                  disabled={zoom <= 1}
+                >
+                  <span aria-hidden="true" className="text-[0.7rem] font-semibold">
+                    1×
+                  </span>
+                </Button>
+              </div>
+              <Separator orientation="vertical" className="mx-1 shrink-0" />
               <Button
                 type="button"
                 variant="ghost"
                 size="icon-sm"
-                aria-label="Zoom in"
-                onClick={() => stageRef.current?.zoomBy(ZOOM_STEP)}
-                disabled={zoom >= ZOOM_MAX}
+                data-drilldown-pane-toggle-map=""
+                aria-expanded={paneOpen}
+                aria-controls={paneId}
+                aria-label={paneOpen ? "Hide the details" : "Show the details"}
+                onClick={() => showPane(!paneOpen)}
+                className="shrink-0"
               >
-                <ZoomIn aria-hidden="true" />
+                <PanelRight aria-hidden="true" />
               </Button>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon-sm"
-                aria-label="Zoom out"
-                onClick={() => stageRef.current?.zoomBy(1 / ZOOM_STEP)}
-                disabled={zoom <= 1}
+                data-drilldown-fullscreen=""
+                aria-pressed={full}
+                aria-label={full ? "Leave full screen" : "Full screen"}
+                onClick={toggleFull}
+                className="shrink-0"
               >
-                <ZoomOut aria-hidden="true" />
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Fit the whole map"
-                onClick={() => stageRef.current?.resetCamera()}
-                disabled={zoom <= 1}
-              >
-                <Scan aria-hidden="true" />
+                {full ? <Minimize2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
               </Button>
             </div>
             {children}
