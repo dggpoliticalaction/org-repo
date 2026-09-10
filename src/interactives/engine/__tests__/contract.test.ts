@@ -127,4 +127,66 @@ describe("validateDrilldownPayload", () => {
       ]),
     )
   })
+
+  it("names each field whose type is wrong", () => {
+    const cases: [unknown, string][] = [
+      [{ regions: {} }, "regions must be an array"],
+      [{ regions: [{ id: "a", facts: { seats: 1 } }] }, "regions[0].facts must map strings"],
+      [{ facts: [] }, "facts must be an object"],
+      [{ facts: { labels: { seats: 1 } } }, "facts.labels must map fact keys"],
+      [{ facts: { order: "seats" } }, "facts.order must be an array"],
+      [{ records: [] }, "records must be an object"],
+      [{ records: { items: {} } }, "records.items must be an array"],
+      [{ records: { items: [], display: "name" } }, "records.display must be an object"],
+      [{ icons: "gavel" }, "icons must be an object"],
+      [{ lookups: [] }, "lookups must be an object of tables"],
+      [{ lookups: { presidents: "x" } }, "lookups.presidents must be an object keyed by value"],
+    ]
+    for (const [fields, message] of cases) {
+      const { payload, errors } = validateDrilldownPayload({
+        schema: DRILLDOWN_SCHEMA,
+        ...(fields as object),
+      })
+      expect(payload).toBeNull()
+      expect(errors).toEqual([expect.stringContaining(message)])
+    }
+  })
+
+  it("keeps a region's label and parent", () => {
+    const { payload } = validateDrilldownPayload({
+      schema: DRILLDOWN_SCHEMA,
+      regions: [{ id: "moed", label: "E.D. Mo.", parentId: "ca8" }],
+    })
+    expect(payload?.regions).toEqual([{ id: "moed", label: "E.D. Mo.", parentId: "ca8" }])
+  })
+
+  it("keeps the icon maps it can read and drops the rest without complaint", () => {
+    const { payload, errors } = validateDrilldownPayload({
+      schema: DRILLDOWN_SCHEMA,
+      icons: { byRegion: { scotus: "landmark" }, byLayer: 3, default: "gavel" },
+    })
+    expect(errors).toEqual([])
+    expect(payload?.icons).toEqual({ byRegion: { scotus: "landmark" }, default: "gavel" })
+  })
+
+  it("trims lookup tables to the fields a portrait reads and drops what's left empty", () => {
+    const { payload, errors } = validateDrilldownPayload({
+      schema: DRILLDOWN_SCHEMA,
+      lookups: {
+        presidents: {
+          obama: { image: "obama.jpg", label: "Barack Obama", source: "wiki", party: "D" },
+          nobody: { party: "D" },
+          broken: "x",
+        },
+        empty: {},
+      },
+    })
+    expect(errors).toEqual([])
+    expect(payload?.lookups).toEqual({
+      presidents: { obama: { image: "obama.jpg", label: "Barack Obama", source: "wiki" } },
+    })
+    expect(
+      validateDrilldownPayload({ schema: DRILLDOWN_SCHEMA, lookups: { empty: {} } }).payload,
+    ).toEqual({ schema: DRILLDOWN_SCHEMA })
+  })
 })

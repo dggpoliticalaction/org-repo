@@ -1,7 +1,11 @@
-import { describe, expect, it, vi } from "vitest"
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
+
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
 
 import { githubFileSource } from "../github/contents"
-import { memoryFileSource } from "../files"
+import { localFileSource, memoryFileSource } from "../files"
 
 function stubFetch(status: number, body: string): typeof fetch {
   return vi.fn(async () => ({
@@ -59,6 +63,35 @@ describe("githubFileSource", () => {
     await expect(src.readJson("data/courts.json")).rejects.toThrow(
       /github:org\/repo@main data\/courts.json: not valid JSON/,
     )
+  })
+})
+
+describe("localFileSource", () => {
+  let dir: string
+
+  beforeAll(async () => {
+    dir = await mkdtemp(join(tmpdir(), "file-source-"))
+    await mkdir(join(dir, "data"))
+    await writeFile(join(dir, "data", "manifest.json"), '{"version":"abc"}')
+    await writeFile(join(dir, "data", "broken.json"), "{nope")
+  })
+
+  afterAll(async () => {
+    await rm(dir, { recursive: true, force: true })
+  })
+
+  it("reads paths relative to the checkout", async () => {
+    const src = localFileSource(dir)
+    expect(src.describe()).toBe(`dir:${dir}`)
+    await expect(src.readJson("data/manifest.json")).resolves.toEqual({ version: "abc" })
+  })
+
+  it("names the checkout and path when a file is not JSON or not there", async () => {
+    const src = localFileSource(dir)
+    await expect(src.readJson("data/broken.json")).rejects.toThrow(
+      `dir:${dir} data/broken.json: not valid JSON`,
+    )
+    await expect(src.read("data/missing.json")).rejects.toThrow(/ENOENT/)
   })
 })
 
