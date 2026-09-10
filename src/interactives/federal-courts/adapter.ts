@@ -317,7 +317,7 @@ export function justiceRecord(
     _region: jz.circuit_id,
     _role: "associate",
     _id: `justice-${jz.circuit_id}`,
-    full_name: jz.full_name || jz.justice_name,
+    full_name: jz.justice_name,
     display_name: `Circ. Justice ${surname(jz.justice_name)}`,
     // The Chief Justice is not the chief of the circuit bench he appears over.
     is_chief: false,

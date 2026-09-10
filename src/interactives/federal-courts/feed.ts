@@ -28,7 +28,7 @@ export const COURT_TRACKER_JSON_ASSET = "data-json.tar.gz"
  * the *shape*, separate from `version`'s content hash, so a MAJOR bump is the one thing that
  * can break this adapter without changing a single number we render.
  */
-export const COURT_TRACKER_SCHEMA_MAJOR = 1
+export const COURT_TRACKER_SCHEMA_MAJOR = 2
 
 /** Reads upstream's manifest first, then exactly the files it lists. Geometry is never read. */
 export async function readCourtTrackerSources(

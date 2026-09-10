@@ -55,7 +55,6 @@ interface AppointmentRow {
 
 const year = (iso: string): number => Number(iso.slice(0, 4))
 
-/** Upstream's rows are string-typed (`""` for null), so this is where they become values. */
 function readRows(rows: Appointment[], parties: readonly string[]): AppointmentRow[] {
   const out: AppointmentRow[] = []
   for (const row of rows) {
@@ -63,7 +62,7 @@ function readRows(rows: Appointment[], parties: readonly string[]): AppointmentR
     if (typeof commission !== "string" || commission.length < 7) continue
     out.push({
       commission,
-      termination: row.termination_date || null,
+      termination: row.termination_date,
       president: row.appointing_president || "",
       party: parties.includes(row.president_party) ? row.president_party : null,
     })

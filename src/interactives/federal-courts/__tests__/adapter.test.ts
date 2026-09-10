@@ -147,7 +147,6 @@ const BLOCKS: Record<string, SeatBlock> = {
 const JUSTICE: Justice = {
   circuit_id: "ca8",
   justice_name: "Brett Kavanaugh",
-  full_name: "Brett M. Kavanaugh",
   photo_url: null,
   photo_source: null,
   photo_license: null,
@@ -235,20 +234,20 @@ const FILE_MAP: Record<string, object> = {
       nomination_date: "2013-12-01",
       confirmation_date: "2014-01-01",
       commission_date: "2014-01-02",
-      recess_appointment_date: "",
-      senior_date: "",
-      termination_date: "",
-      termination_reason: "",
+      recess_appointment_date: null,
+      senior_date: null,
+      termination_date: null,
+      termination_reason: null,
       date_precision: "day",
-      sitting: "true",
-      fjc_jid: "1",
-      fedsoc_reported: "",
-      acs_reported: "true",
-      photo_url: "",
-      photo_source: "",
-      photo_license: "",
+      sitting: true,
+      fjc_jid: 1,
+      fedsoc_reported: null,
+      acs_reported: true,
+      photo_url: null,
+      photo_source: null,
+      photo_license: null,
       source: "fjc",
-      notes: "",
+      notes: null,
     },
   ],
 }
@@ -295,7 +294,7 @@ describe("readCourtTrackerSources", () => {
   it("reads a manifest that states the shape version it was built to", async () => {
     const stated = memoryFileSource({
       ...FILE_MAP,
-      "data/manifest.json": { ...MANIFEST, schema_version: "1.4.0" },
+      "data/manifest.json": { ...MANIFEST, schema_version: "2.4.0" },
     })
     await expect(readCourtTrackerSources(stated)).resolves.toMatchObject({
       version: "05d95d9fcf1b",
@@ -305,11 +304,19 @@ describe("readCourtTrackerSources", () => {
   it("refuses a MAJOR shape bump here, where the message can say what happened", async () => {
     const moved = memoryFileSource({
       ...FILE_MAP,
-      "data/manifest.json": { ...MANIFEST, schema_version: "2.0.0" },
+      "data/manifest.json": { ...MANIFEST, schema_version: "3.0.0" },
     })
     await expect(readCourtTrackerSources(moved)).rejects.toThrow(
-      /data schema 2\.0\.0 is not the 1\.x this adapter reads/,
+      /data schema 3\.0\.0 is not the 2\.x this adapter reads/,
     )
+  })
+
+  it("refuses a release built to the 1.x shape it no longer reads", async () => {
+    const stale = memoryFileSource({
+      ...FILE_MAP,
+      "data/manifest.json": { ...MANIFEST, schema_version: "1.0.0" },
+    })
+    await expect(readCourtTrackerSources(stale)).rejects.toThrow(/data schema 1\.0\.0/)
   })
 
   it("refuses an unknown manifest schema", async () => {
@@ -504,7 +511,7 @@ describe("helpers", () => {
 
   it("justiceRecord falls back to the allotment row when no SCOTUS record matches", () => {
     const r = justiceRecord({ ...JUSTICE, justice_name: "Nobody Here" }, SCOTUS_JUDGES, COURTS[0])
-    expect(r.full_name).toBe("Brett M. Kavanaugh")
+    expect(r.full_name).toBe("Nobody Here")
     expect(r.appointing_president).toBeUndefined()
   })
 })

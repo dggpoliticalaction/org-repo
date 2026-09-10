@@ -62,7 +62,7 @@ export interface Court {
  * because this file is what upstream publishes, verbatim.
  */
 export interface SeatBlock {
-  level: "circuit" | "district" | "feeder"
+  level: "circuit" | "district" | "specialized"
   parent_id: string | null
   authorized: number
   total: number
@@ -107,7 +107,6 @@ export interface Judge {
 export interface Justice {
   circuit_id: string
   justice_name: string
-  full_name: string
   photo_url: string | null
   photo_thumb?: string | null
   photo_source: string | null
@@ -129,15 +128,16 @@ export interface Appointment {
   court_level: string
   appointing_president: string
   president_party: string
-  nomination_date: string
-  confirmation_date: string
-  commission_date: string
-  senior_date: string
-  termination_date: string
-  termination_reason: string
-  sitting: string
-  fedsoc_reported: string
-  acs_reported: string
+  nomination_date: string | null
+  confirmation_date: string | null
+  commission_date: string | null
+  senior_date: string | null
+  termination_date: string | null
+  termination_reason: string | null
+  sitting: boolean
+  /** Three-state: null means the question was never asked, false that it was asked and answered no. */
+  fedsoc_reported: boolean | null
+  acs_reported: boolean | null
   photo_thumb: string | null
 }
 

@@ -4,22 +4,21 @@ import { PARTIES } from "../adapter"
 import { aggregateAppointments, readAppointmentSummary } from "../appointments"
 import type { Appointment } from "../upstream"
 
-/** Upstream's rows are string-typed throughout: "" is how they say null. */
 const row = (over: Partial<Appointment>): Appointment => ({
   full_name: "Jane Q. Judge",
   court_id: "moed",
   court_level: "district",
   appointing_president: "R1",
   president_party: "Republican",
-  nomination_date: "",
-  confirmation_date: "",
+  nomination_date: null,
+  confirmation_date: null,
   commission_date: "1990-02-01",
-  senior_date: "",
-  termination_date: "",
-  termination_reason: "",
-  sitting: "true",
-  fedsoc_reported: "",
-  acs_reported: "",
+  senior_date: null,
+  termination_date: null,
+  termination_reason: null,
+  sitting: true,
+  fedsoc_reported: null,
+  acs_reported: null,
   photo_thumb: null,
   ...over,
 })
@@ -82,7 +81,7 @@ describe("aggregateAppointments — appointment history", () => {
   })
 
   it("ignores a row with no commission to place it by", () => {
-    const partial = aggregateAppointments([...ROWS, row({ commission_date: "" })], PARTIES)
+    const partial = aggregateAppointments([...ROWS, row({ commission_date: null })], PARTIES)
     expect(partial!.history!.bursts.reduce((n, b) => n + b.count, 0)).toBe(4)
   })
 })
