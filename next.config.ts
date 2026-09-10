@@ -44,6 +44,41 @@ const nextConfig: NextConfig = {
     ],
   },
   reactStrictMode: true,
+  experimental: {
+    serverActions: {
+      // Payload's admin panel drives its document forms through a Server Action (this
+      // repo's own `serverFunction` in `src/app/(payload)/layout.tsx`), and an interactive
+      // snapshot carries the researcher's feed as one JSON field on that form — 1.3 MB for
+      // the federal judiciary today, and it only grows. Next's default limit is 1 MB, so
+      // unpublishing a snapshot failed with "Body exceeded 1 MB limit". The field never
+      // needs to be in that form at all (issue #905), but the limit is what stands between
+      // an editor and a broken publish button today.
+      //
+      // There is no per-action override for this in Next — `bodySizeLimit` is one number
+      // for every Server Action in the app, so this also covers `getAuth.ts` and
+      // `SocialEmbed/hooks/revalidateSnapshot.ts`. Neither is publicly reachable, so the
+      // practical exposure is low; it is still wider than the one flow this was raised for.
+      bodySizeLimit: "8mb",
+    },
+  },
+  // Interactive Map drilldown assets are fetched lazily from stable, same-origin paths that
+  // are emitted into the article HTML (so a crawler can capture them). With local storage the
+  // files sit in public/map-assets and Next serves them directly; with S3 enabled this proxies
+  // the same path to the bucket, so the URL never changes between environments.
+  async rewrites() {
+    if (process.env.USE_LOCAL_STORAGE === "true") return []
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const bucket = process.env.S3_BUCKET
+    if (!supabaseUrl || !bucket) return []
+    return {
+      afterFiles: [
+        {
+          source: "/map-assets/:path*",
+          destination: `${supabaseUrl.replace(/\/$/, "")}/storage/v1/object/public/${bucket}/map-assets/:path*`,
+        },
+      ],
+    }
+  },
   redirects: async () => [
     {
       destination: "/ie-incompatible.html",
